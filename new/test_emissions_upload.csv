@@ -1,0 +1,6 @@
+Date,Activity,Division,Field,Facility Name,Process Type,Fuel,Factor Type,Quantity,Unit,C1,C2,C3,Flare Type,Tank GOR,Tank Control Eff,Blowdown Volume,Blowdown Pressure,Device Count,HHV,EF Unit,Combustion Fuel Type
+2024-05-01,Upstream,Texas,Permian,Test Facility A,Flaring,Natural Gas,API 2021,1000,mscf,80.5,10.2,5.1,elevated,,,,,,,,,
+2024-05-01,Upstream,Texas,Permian,Test Facility A,Tanks,Crude Oil,API 2021,500,bbl,,,,,,0.5,95,,,,,,
+2024-05-01,Upstream,Texas,Permian,Test Facility A,Venting,Natural Gas,API 2021,0,mcf,,,,,,,,150,50,,,,
+2024-05-01,Upstream,Texas,Permian,Test Facility A,Pneumatics,Natural Gas,API 2021,10,count,,,,,,,,,,10,,,
+2024-05-01,Upstream,Texas,Permian,Test Facility A,Combustion,Diesel,Standard,200,gal,,,,,,,,,,,138000,kg/gal,liquids

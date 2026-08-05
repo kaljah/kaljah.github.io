@@ -1,0 +1,52 @@
+{
+  "name": "ghg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "start:electron": "electron .",
+    "build:exe": "electron-builder build --windows",
+    "start:web": "node server.js"
+  },
+  "build": {
+    "appId": "com.ghg.reporting",
+    "productName": "GHG Reporting Platform",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "icon.png",
+      "target": "portable",
+      "asar": false
+    },
+    "files": [
+      "main.js",
+      "server.js",
+      "package.json",
+      "public/**/*",
+      "users_v2.db",
+      "node_modules/**/*"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.17.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "^26.0.12",
+    "nodemon": "^3.1.11"
+  }
+}

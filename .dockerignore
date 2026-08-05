@@ -1,0 +1,16 @@
+node_modules
+dist
+_archive
+*.db
+*.db-shm
+*.db-wal
+icon.png
+main.js
+package-lock.json
+.git
+.gitignore
+.gemini
+tests/
+Dockerfile
+docker-compose.yml
+.dockerignore
