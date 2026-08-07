@@ -19,6 +19,7 @@ import ReferenceData from './pages/ReferenceData';
 import Diagnostics from './pages/Diagnostics';
 import AuditTrail from './pages/AuditTrail';
 import UserManagement from './pages/UserManagement';
+import Settings from './pages/Settings';
 import LoadingSpinner from './components/LoadingSpinner';
 
 const PrivateRoute = ({ children }) => {
@@ -69,6 +70,7 @@ const AppRoutes = () => {
         <Route path="diagnostics" element={<AdminRoute><Diagnostics /></AdminRoute>} />{/* NEW-01 FIX */}
         <Route path="audit-trail" element={<AdminRoute><AuditTrail /></AdminRoute>} />
         <Route path="user-management" element={<ITRoute><UserManagement /></ITRoute>} />
+        <Route path="settings" element={<NonITRoute><Settings /></NonITRoute>} />
       </Route>
     </Routes>
   );

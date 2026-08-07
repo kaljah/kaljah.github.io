@@ -90,6 +90,17 @@ const BlowdownForm = ({ data, onChange }) => {
                 </div>
 
                 <div className="input-group">
+                    <label>Operating Temperature (°F)</label>
+                    <input 
+                        type="number" 
+                        className="mole-input" 
+                        value={data.blowdown_temp !== undefined ? data.blowdown_temp : ''} 
+                        onChange={(e) => onChange('blowdown_temp', e.target.value)} 
+                        placeholder="Default: 60°F"
+                    />
+                </div>
+
+                <div className="input-group">
                     <label>Flare Efficiency (%) <small style={{ color: '#6b7280' }}>(0 if vented)</small></label>
                     <input 
                         type="number" 
@@ -101,7 +112,7 @@ const BlowdownForm = ({ data, onChange }) => {
                 </div>
             </div>
             <div style={{ marginTop: '10px', fontSize: '0.85rem', color: '#9ca3af' }}>
-                * Standard volume is calculated by expanding the physical volume from the system pressure down to standard atmospheric pressure (14.7 psia).
+                * Standard volume is calculated per API Compendium §6.6 using Boyle-Charles ideal/real gas law normalization ($P_1 V_1 / T_1 Z_1$).
             </div>
         </div>
     );

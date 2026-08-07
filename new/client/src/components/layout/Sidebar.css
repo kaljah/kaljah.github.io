@@ -152,12 +152,22 @@
 }
 
 /* ============================================================
-   ACCOUNT AREA
+   SETTINGS PIN & ACCOUNT AREA
    ============================================================ */
+.sidebar-settings-pin {
+    margin-top: auto;
+    padding-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.sidebar-settings-btn {
+    border-radius: 10px;
+    margin: 0;
+}
+
 .account-wrapper {
     position: relative;
-    margin-top: auto;
-    padding-top: 14px;
+    padding-top: 10px;
     border-top: 1px solid var(--border-color);
     flex-shrink: 0;
     overflow: visible;

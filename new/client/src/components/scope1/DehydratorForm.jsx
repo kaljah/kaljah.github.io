@@ -109,12 +109,44 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
                     </div>
 
                     <div className="input-group">
+                        <label>
+                            Contactor Pressure (psig)
+                            <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="mole-input"
+                            value={data.dehy_pressure !== undefined ? data.dehy_pressure : ''}
+                            onChange={(e) => onChange('dehy_pressure', e.target.value)}
+                            placeholder="e.g. 1000"
+                            required
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label>
+                            Contactor Temperature (°F)
+                            <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="mole-input"
+                            value={data.dehy_temp !== undefined ? data.dehy_temp : ''}
+                            onChange={(e) => onChange('dehy_temp', e.target.value)}
+                            placeholder="e.g. 100"
+                            required
+                        />
+                    </div>
+
+                    <div className="input-group">
                         <label>Control Device</label>
                         <CustomDropdown
                             options={[
                                 { value: 'none', label: 'No Controls' },
-                                { value: 'flash', label: 'Flash Tank Separator' },
-                                { value: 'condenser', label: 'Condenser' }
+                                { value: 'flash', label: 'Flash Tank Separator Only' },
+                                { value: 'condenser', label: 'Condenser' },
+                                { value: 'flare', label: 'Flare / Thermal Oxidizer' },
+                                { value: 'vru', label: 'Vapor Recovery Unit (VRU)' }
                             ]}
                             value={data.dehy_control || 'none'}
                             onChange={(val) => onChange('dehy_control', val)}

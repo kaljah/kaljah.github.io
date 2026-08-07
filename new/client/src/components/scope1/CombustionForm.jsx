@@ -154,6 +154,30 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
                             </select>
                         </div>
                     )}
+
+                    {/* Operating conditions for Gas standard volume normalization */}
+                    <div className="form-grid-2" style={{ gap: '10px', marginTop: '10px' }}>
+                        <div className="input-group" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.75rem' }}>Operating Temp (°F)</label>
+                            <input
+                                type="number"
+                                className="mole-input"
+                                value={data.operating_temperature !== undefined ? data.operating_temperature : ''}
+                                onChange={(e) => onChange('operating_temperature', e.target.value)}
+                                placeholder="Def: 60°F"
+                            />
+                        </div>
+                        <div className="input-group" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.75rem' }}>Operating Pres. (psia)</label>
+                            <input
+                                type="number"
+                                className="mole-input"
+                                value={data.operating_pressure !== undefined ? data.operating_pressure : ''}
+                                onChange={(e) => onChange('operating_pressure', e.target.value)}
+                                placeholder="Def: 14.696"
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

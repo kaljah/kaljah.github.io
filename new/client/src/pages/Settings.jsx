@@ -1,272 +1,598 @@
 import React, { useState, useEffect } from 'react';
-import './Settings.css';
-import { useAuth } from '../context/AuthContext';
-import { useToast } from '../components/Toast';
+import { 
+    Globe, 
+    Target, 
+    Building2, 
+    SlidersHorizontal, 
+    Save, 
+    CheckCircle2, 
+    Scale, 
+    ShieldCheck, 
+    Activity, 
+    Layers
+} from 'lucide-react';
 import api from '../api';
-import '../pages/Dashboard.css';
+import { useToast } from '../components/Toast';
+import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';
+import './Settings.css';
+
+const GWP_DATA = {
+    AR5: {
+        name: 'IPCC 5th Assessment Report (AR5)',
+        year: '2014',
+        status: 'UNFCCC / EU Standard (Default)',
+        ch4_100: 28.0,
+        ch4_20: 82.5,
+        n2o_100: 265.0,
+        co2: 1.0,
+        description: 'Standard baseline used by OGMP 2.0, UNFCCC National Inventories, and corporate GHG reporting frameworks.'
+    },
+    AR6: {
+        name: 'IPCC 6th Assessment Report (AR6)',
+        year: '2021',
+        status: 'Latest IPCC Physical Science Basis',
+        ch4_100: 27.9,
+        ch4_20: 82.5,
+        n2o_100: 273.0,
+        co2: 1.0,
+        description: 'Most recent scientific consensus incorporating updated radiative efficiency and tropospheric adjustments.'
+    },
+    AR4: {
+        name: 'IPCC 4th Assessment Report (AR4)',
+        year: '2007',
+        status: 'Legacy Regulatory Frameworks',
+        ch4_100: 25.0,
+        ch4_20: 72.0,
+        n2o_100: 298.0,
+        co2: 1.0,
+        description: 'Historical standard preserved for legacy compliance agreements and multi-decade baseline tracking.'
+    }
+};
 
 const Settings = () => {
-    const { user, preferences, updatePreferences } = useAuth();
     const toast = useToast();
-    const [activeTab, setActiveTab] = useState('general');
+    const { user } = useAuth();
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [facilities, setFacilities] = useState([]);
+    const [activeTab, setActiveTab] = useState('gwp');
 
-    // Settings State
-    const [settings, setSettings] = useState({
-        language: 'en',
-        theme: 'dark',
-        timezone: 'UTC',
-        gwpModel: 'AR4',
-        consolidation: 'Control',
-        notifWeekly: true,
-        notifTargets: true,
-        notifAudit: false
-    });
+    // Settings state
+    const [gwpStandard, setGwpStandard] = useState('AR5');
+    const [defaultBaseYear, setDefaultBaseYear] = useState(2023);
+    const [globalThreshold, setGlobalThreshold] = useState(20.0);
+    const [upstreamTarget, setUpstreamTarget] = useState(0.20);
+    const [midstreamTarget, setMidstreamTarget] = useState(0.05);
+    const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+    const [unitSystem, setUnitSystem] = useState('metric');
+    const [autoFlagDiscrepancy, setAutoFlagDiscrepancy] = useState(true);
 
-    // Password Change State
-    const [passwordData, setPasswordData] = useState({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-    });
+    // Facility specific overrides
+    const [facilityEdits, setFacilityEdits] = useState({});
 
     useEffect(() => {
-        // Initialize from global preferences
-        if (preferences && Object.keys(preferences).length > 0) {
-            setSettings(prev => ({ ...prev, ...preferences }));
-        }
-        setLoading(false);
-    }, [preferences]);
+        loadSettings();
+    }, []);
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setSettings(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
-    };
-
-    const handlePasswordChange = (e) => {
-        const { name, value } = e.target;
-        setPasswordData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleSave = async () => {
+    const loadSettings = async () => {
         try {
-            await updatePreferences(settings);
-            toast.success('Settings saved successfully!');
+            setLoading(true);
+            const [settingsRes, facRes] = await Promise.all([
+                api.get('/auth/settings').catch(() => ({ data: {} })),
+                api.get('/facilities').catch(() => ({ data: [] }))
+            ]);
+
+            const settings = settingsRes.data;
+            if (settings) {
+                if (settings.gwp_standard) setGwpStandard(settings.gwp_standard);
+                if (settings.ogmp_default_base_year) setDefaultBaseYear(settings.ogmp_default_base_year);
+                if (settings.reconciliation_threshold) setGlobalThreshold(settings.reconciliation_threshold);
+                if (settings.ogmp_upstream_target_pct !== undefined) setUpstreamTarget(Number(settings.ogmp_upstream_target_pct));
+                if (settings.ogmp_midstream_target_pct !== undefined) setMidstreamTarget(Number(settings.ogmp_midstream_target_pct));
+                if (settings.theme) {
+                    setTheme(settings.theme);
+                    applyThemeLive(settings.theme);
+                }
+                if (settings.unit_system) setUnitSystem(settings.unit_system);
+                if (settings.auto_flag_discrepancy !== undefined) setAutoFlagDiscrepancy(settings.auto_flag_discrepancy);
+            }
+
+            const facList = facRes.data;
+            if (facList && Array.isArray(facList)) {
+                setFacilities(facList);
+                const initialMap = {};
+                facList.forEach(f => {
+                    initialMap[f.id] = {
+                        operator_status: f.operator_status || 'operated',
+                        country: f.country || 'Algeria',
+                        ogmp_membership_year: f.ogmp_membership_year || 2023,
+                        reconciliation_threshold: f.reconciliation_threshold || 20.0
+                    };
+                });
+                setFacilityEdits(initialMap);
+            }
         } catch (err) {
-            console.error("Failed to save settings", err);
-            toast.error('Failed to save settings.');
+            console.error('Failed to load settings:', err);
+            toast.error('Failed to load settings');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleSavePassword = async () => {
-        if (passwordData.newPassword !== passwordData.confirmPassword) {
-            toast.error("New passwords do not match.");
-            return;
+    const applyThemeLive = (newTheme) => {
+        if (newTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
         }
-        if (passwordData.newPassword.length < 10) {
-            toast.error("Password must be at least 10 characters.");
-            return;
-        }
+    };
 
+    const handleThemeChange = (newTheme) => {
+        setTheme(newTheme);
+        applyThemeLive(newTheme);
+    };
+
+    const handleSaveGlobal = async () => {
         try {
-            await api.post('/auth/change-password', {
-                currentPassword: passwordData.currentPassword,
-                newPassword: passwordData.newPassword
+            setSaving(true);
+            await api.post('/auth/settings', {
+                gwp_standard: gwpStandard,
+                ogmp_default_base_year: Number(defaultBaseYear),
+                reconciliation_threshold: Number(globalThreshold),
+                ogmp_upstream_target_pct: Number(upstreamTarget),
+                ogmp_midstream_target_pct: Number(midstreamTarget),
+                theme,
+                unit_system: unitSystem,
+                auto_flag_discrepancy: autoFlagDiscrepancy
             });
-            toast.success('Password changed successfully!');
-            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            applyThemeLive(theme);
+            toast.success('System settings and GWP standards updated successfully!');
         } catch (err) {
-            console.error("Failed to change password", err);
-            toast.error(err.response?.data?.error || 'Failed to change password.');
+            console.error('Save failed:', err);
+            toast.error('Error saving settings');
+        } finally {
+            setSaving(false);
         }
     };
 
-    if (loading) return <div className="loading-spinner"></div>;
+    const handleFacilityChange = (facId, field, value) => {
+        setFacilityEdits(prev => ({
+            ...prev,
+            [facId]: {
+                ...prev[facId],
+                [field]: value
+            }
+        }));
+    };
+
+    const handleSaveFacility = async (facId) => {
+        try {
+            const data = facilityEdits[facId];
+            await api.put(`/facilities/${facId}`, {
+                operator_status: data.operator_status,
+                country: data.country,
+                ogmp_membership_year: Number(data.ogmp_membership_year),
+                reconciliation_threshold: Number(data.reconciliation_threshold)
+            });
+            toast.success('Facility OGMP settings updated!');
+        } catch (err) {
+            console.error('Facility save failed:', err);
+            toast.error('Failed to update facility');
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="settings-loading-container">
+                <LoadingSpinner message="Loading Standards & System Preferences..." />
+            </div>
+        );
+    }
+
+    const currentGwp = GWP_DATA[gwpStandard] || GWP_DATA.AR5;
 
     return (
-        <div className="settings-page">
-            <header className="top-bar">
-                <div className="breadcrumbs">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-                        <circle cx="12" cy="12" r="3" />
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                    </svg>
-                    <span>Dashboard</span>
-                    <span style={{ margin: '0 8px', color: 'var(--text-secondary)' }}>/</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Settings</span>
+        <div className="settings-page-wrapper">
+            {/* Header */}
+            <div className="settings-hero-card">
+                <div className="settings-header-content">
+                    <div className="settings-header-left">
+                        <div className="settings-badge">
+                            <SlidersHorizontal size={14} />
+                            <span>STANDARDS & METHODOLOGIES</span>
+                        </div>
+                        <h1 className="settings-title">System Settings & Protocols</h1>
+                        <p className="settings-subtitle">
+                            Configure IPCC Global Warming Potential (GWP) conversion factors, OGMP 2.0 Gold Standard compliance parameters, and facility-specific reconciliation tolerances.
+                        </p>
+                    </div>
+                    <div className="settings-header-right">
+                        <button 
+                            className="btn-save-primary" 
+                            onClick={handleSaveGlobal} 
+                            disabled={saving}
+                            id="save-settings-btn"
+                        >
+                            {saving ? (
+                                <>
+                                    <span className="spinner-small"></span>
+                                    <span>Saving...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={16} />
+                                    <span>Save All Changes</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </div>
-                <div className="top-actions">
-                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user?.fullName || 'User'}</span>
-                </div>
-            </header>
 
-            <div className="settings-container">
-                <div className="settings-layout">
-                    {/* Sidebar */}
-                    <aside className="settings-nav">
-                        <div className={`nav-item ${activeTab === 'general' ? 'active' : ''}`} onClick={() => setActiveTab('general')}>
-                            <span>General Settings</span>
-                        </div>
-                        <div className={`nav-item ${activeTab === 'reporting' ? 'active' : ''}`} onClick={() => setActiveTab('reporting')}>
-                            <span>Reporting Prefs</span>
-                        </div>
-                        <div className={`nav-item ${activeTab === 'notifications' ? 'active' : ''}`} onClick={() => setActiveTab('notifications')}>
-                            <span>Notifications</span>
-                        </div>
-                        <div className={`nav-item ${activeTab === 'security' ? 'active' : ''}`} onClick={() => setActiveTab('security')}>
-                            <span>Security</span>
-                        </div>
-                    </aside>
-
-                    {/* Content */}
-                    <section>
-                        {/* General Tab */}
-                        {activeTab === 'general' && (
-                            <div className="settings-card">
-                                <div className="settings-header">
-                                    <h2 className="settings-title">General Settings</h2>
-                                    <p className="settings-subtitle">Personalize your experience and application behavior.</p>
-                                </div>
-
-                                <div className="grid-forms">
-                                    <div className="input-group">
-                                        <label>Language</label>
-                                        <select name="language" value={settings.language} onChange={handleChange} className="component-select">
-                                            <option value="en">English (US)</option>
-                                            <option value="fr">French</option>
-                                        </select>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Interface Theme</label>
-                                        <select name="theme" value={settings.theme} onChange={handleChange} className="component-select">
-                                            <option value="dark">Dark Mode</option>
-                                            <option value="light">Light Mode</option>
-                                        </select>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Timezone</label>
-                                        <select name="timezone" value={settings.timezone} onChange={handleChange} className="component-select">
-                                            <option value="UTC">UTC</option>
-                                            <option value="EST">EST</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <button className="btn-save" onClick={handleSave}>Save Preferences</button>
-                            </div>
-                        )}
-
-                        {/* Reporting Prefs Tab */}
-                        {activeTab === 'reporting' && (
-                            <div className="settings-card">
-                                <div className="settings-header">
-                                    <h2 className="settings-title">Calculation & Reporting</h2>
-                                    <p className="settings-subtitle">Set global defaults for calculation models and units.</p>
-                                </div>
-
-                                <div className="grid-forms">
-                                    <div className="input-group">
-                                        <label>GWP Assessment Model</label>
-                                        <select name="gwpModel" className="input-field" value={settings.gwpModel} onChange={handleChange}>
-                                            <option value="AR4">IPCC AR4 (2007)</option>
-                                            <option value="AR5">IPCC AR5 (2013)</option>
-                                            <option value="AR6">IPCC AR6 (2021)</option>
-                                        </select>
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Inventory Consolidation Approach</label>
-                                        <select name="consolidation" value={settings.consolidation} onChange={handleChange} className="component-select">
-                                            <option value="Control">Operational Control</option>
-                                            <option value="Financial">Financial Control</option>
-                                            <option value="Equity">Equity Share</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <button className="btn-save" onClick={handleSave}>Save Preferences</button>
-                            </div>
-                        )}
-
-                        {/* Notifications Tab */}
-                        {activeTab === 'notifications' && (
-                            <div className="settings-card">
-                                <div className="settings-header">
-                                    <h2 className="settings-title">Notification Settings</h2>
-                                    <p className="settings-subtitle">Control how and when you receive alerts and reports.</p>
-                                </div>
-
-                                <div className="settings-group">
-                                    <label className="checkbox-label">
-                                        <input type="checkbox" name="notifWeekly" checked={settings.notifWeekly} onChange={handleChange} />
-                                        Weekly Emissions Summary
-                                    </label>
-                                    <label className="checkbox-label">
-                                        <input type="checkbox" name="notifTargets" checked={settings.notifTargets} onChange={handleChange} />
-                                        Target Exceedance Alerts
-                                    </label>
-                                    <label className="checkbox-label">
-                                        <input type="checkbox" name="notifAudit" checked={settings.notifAudit} onChange={handleChange} />
-                                        New Audit Log Entry Notifications
-                                    </label>
-                                </div>
-                                <button className="btn-save" onClick={handleSave}>Save Notifications</button>
-                            </div>
-                        )}
-
-                        {/* Security Tab */}
-                        {activeTab === 'security' && (
-                            <div className="settings-card">
-                                <div className="settings-header">
-                                    <h2 className="settings-title">Security Settings</h2>
-                                    <p className="settings-subtitle">Manage your password and account security.</p>
-                                </div>
-
-                                <div className="grid-forms">
-                                    <div className="input-group">
-                                        <label>Current Password</label>
-                                        <input
-                                            type="password"
-                                            name="currentPassword"
-                                            value={passwordData.currentPassword}
-                                            onChange={handlePasswordChange}
-                                            className="component-input"
-                                            placeholder="Enter current password"
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>New Password</label>
-                                        <input
-                                            type="password"
-                                            name="newPassword"
-                                            value={passwordData.newPassword}
-                                            onChange={handlePasswordChange}
-                                            className="component-input"
-                                            placeholder="Minimum 10 characters"
-                                        />
-                                    </div>
-                                    <div className="input-group">
-                                        <label>Confirm New Password</label>
-                                        <input
-                                            type="password"
-                                            name="confirmPassword"
-                                            value={passwordData.confirmPassword}
-                                            onChange={handlePasswordChange}
-                                            className="component-input"
-                                            placeholder="Re-enter new password"
-                                        />
-                                    </div>
-                                </div>
-                                <button className="btn-save" onClick={handleSavePassword}>Change Password</button>
-                            </div>
-                        )}
-
-                    </section>
+                {/* Navigation Tabs Bar */}
+                <div className="settings-tabs-bar">
+                    <button 
+                        className={`settings-tab-btn ${activeTab === 'gwp' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('gwp')}
+                        id="tab-gwp"
+                    >
+                        <Globe size={17} className="tab-icon-svg" />
+                        <span>IPCC GWP Standards</span>
+                    </button>
+                    <button 
+                        className={`settings-tab-btn ${activeTab === 'ogmp' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('ogmp')}
+                        id="tab-ogmp"
+                    >
+                        <Target size={17} className="tab-icon-svg" />
+                        <span>OGMP 2.0 Baseline & Thresholds</span>
+                    </button>
+                    <button 
+                        className={`settings-tab-btn ${activeTab === 'facilities' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('facilities')}
+                        id="tab-facilities"
+                    >
+                        <Building2 size={17} className="tab-icon-svg" />
+                        <span>Facility Overrides ({facilities.length})</span>
+                    </button>
                 </div>
             </div>
+
+            {/* TAB CONTENT: GWP Standards */}
+            {activeTab === 'gwp' && (
+                <div className="settings-section-card">
+                    <div className="section-intro">
+                        <div className="section-intro-header">
+                            <Scale size={20} className="section-icon" />
+                            <h2>IPCC Global Warming Potential (GWP) Standard</h2>
+                        </div>
+                        <p>Select which Intergovernmental Panel on Climate Change (IPCC) assessment report conversion factors are applied to Methane (CH₄) and Nitrous Oxide (N₂O) emissions calculations.</p>
+                    </div>
+
+                    <div className="gwp-cards-grid">
+                        {Object.entries(GWP_DATA).map(([key, data]) => {
+                            const isSelected = gwpStandard === key;
+                            return (
+                                <div 
+                                    key={key} 
+                                    className={`gwp-card ${isSelected ? 'selected' : ''}`}
+                                    onClick={() => setGwpStandard(key)}
+                                    id={`gwp-card-${key.toLowerCase()}`}
+                                >
+                                    <div className="gwp-card-header">
+                                        <div className="gwp-version-badge">{key}</div>
+                                        {isSelected && (
+                                            <div className="gwp-active-indicator">
+                                                <CheckCircle2 size={13} />
+                                                <span>ACTIVE STANDARD</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <h3 className="gwp-title">{data.name}</h3>
+                                    <div className="gwp-status-pill">{data.status}</div>
+                                    <p className="gwp-desc">{data.description}</p>
+
+                                    <div className="gwp-factors-box">
+                                        <div className="factor-item">
+                                            <span className="factor-label">CH₄ (100-yr)</span>
+                                            <span className="factor-val">{data.ch4_100}×</span>
+                                        </div>
+                                        <div className="factor-item highlight">
+                                            <span className="factor-label">CH₄ (20-yr)</span>
+                                            <span className="factor-val">{data.ch4_20}×</span>
+                                        </div>
+                                        <div className="factor-item">
+                                            <span className="factor-label">N₂O (100-yr)</span>
+                                            <span className="factor-val">{data.n2o_100}×</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* Live Comparison Table */}
+                    <div className="comparison-container">
+                        <div className="comparison-header">
+                            <Layers size={18} className="comparison-icon" />
+                            <h3>Conversion Factor Matrix Comparison</h3>
+                        </div>
+                        <div className="comparison-table-wrapper">
+                            <table className="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Metric / Gas</th>
+                                        <th>AR4 (2007)</th>
+                                        <th>AR5 (2014 - Default)</th>
+                                        <th>AR6 (2021)</th>
+                                        <th>Application Context</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Carbon Dioxide (CO₂)</strong></td>
+                                        <td>1.0</td>
+                                        <td>1.0</td>
+                                        <td>1.0</td>
+                                        <td>Universal baseline anchor</td>
+                                    </tr>
+                                    <tr className={gwpStandard === 'AR5' ? 'active-row' : ''}>
+                                        <td><strong>Methane (CH₄) - 100 Year</strong></td>
+                                        <td>25.0×</td>
+                                        <td><strong>28.0×</strong></td>
+                                        <td>27.9×</td>
+                                        <td>Corporate GHG Inventory / Scope 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Methane (CH₄) - 20 Year</strong></td>
+                                        <td>72.0×</td>
+                                        <td><strong>82.5×</strong></td>
+                                        <td>82.5×</td>
+                                        <td>Near-Term Climate Impact / ESG Analytics</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Nitrous Oxide (N₂O) - 100 Year</strong></td>
+                                        <td>298.0×</td>
+                                        <td><strong>265.0×</strong></td>
+                                        <td>273.0×</td>
+                                        <td>Flaring / Combustion byproducts</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* TAB CONTENT: OGMP 2.0 Baseline & Thresholds */}
+            {activeTab === 'ogmp' && (
+                <div className="settings-section-card">
+                    <div className="section-intro">
+                        <div className="section-intro-header">
+                            <Target size={20} className="section-icon" />
+                            <h2>OGMP 2.0 Framework & Threshold Configuration</h2>
+                        </div>
+                        <p>Establish global compliance benchmarks, default asset membership years, and acceptable reconciliation tolerances.</p>
+                    </div>
+
+                    <div className="ogmp-config-grid">
+                        <div className="config-card">
+                            <label className="config-label">
+                                Default OGMP 2.0 Membership Baseline Year
+                            </label>
+                            <span className="config-subtext">The year from which the Gold Standard milestone clock begins (Year 0).</span>
+                            <div className="year-selector-buttons">
+                                {[2021, 2022, 2023, 2024, 2025, 2026].map(yr => (
+                                    <button
+                                        key={yr}
+                                        type="button"
+                                        className={`btn-year-pill ${defaultBaseYear === yr ? 'active' : ''}`}
+                                        onClick={() => setDefaultBaseYear(yr)}
+                                    >
+                                        {yr}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="deadline-preview-note">
+                                <div className="deadline-title">
+                                    <ShieldCheck size={15} />
+                                    <span>Gold Standard Deadlines:</span>
+                                </div>
+                                <ul className="deadline-list">
+                                    <li>Operated Assets (3 Years): <strong>{defaultBaseYear + 3}</strong></li>
+                                    <li>Non-Operated Assets (5 Years): <strong>{defaultBaseYear + 5}</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="config-card">
+                            <label className="config-label">
+                                Global Reconciliation Variance Threshold (±%)
+                            </label>
+                            <span className="config-subtext">Maximum tolerable difference between Bottom-Up (L1-L4) inventory and Top-Down (L4/L5) site measurements.</span>
+                            
+                            <div className="threshold-slider-box">
+                                <input 
+                                    type="range" 
+                                    min="5" 
+                                    max="50" 
+                                    step="1"
+                                    value={globalThreshold} 
+                                    onChange={(e) => setGlobalThreshold(Number(e.target.value))}
+                                    className="range-slider"
+                                    id="global-threshold-slider"
+                                />
+                                <div className="threshold-val-display">
+                                    ±{globalThreshold}%
+                                </div>
+                            </div>
+                            <p className="slider-hint">OGMP 2.0 recommended default is <strong>±20.0%</strong>. Facilities exceeding this threshold will be flagged for investigation.</p>
+                        </div>
+                    </div>
+
+                    <div className="target-standards-box">
+                        <div className="target-header">
+                            <Activity size={18} className="target-icon" />
+                            <h3>OGMP 2.0 Methane Intensity Targets</h3>
+                        </div>
+                        <div className="targets-grid">
+                            <div className="target-card upstream">
+                                <div className="target-segment">Upstream Exploration & Production</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0' }}>
+                                    <input 
+                                        type="number" 
+                                        step="0.01" 
+                                        min="0.01" 
+                                        max="5.0"
+                                        value={upstreamTarget}
+                                        onChange={(e) => setUpstreamTarget(Number(e.target.value))}
+                                        className="form-input"
+                                        style={{ width: '100px', fontWeight: 700, fontSize: '1.1rem', color: '#2563eb' }}
+                                        id="upstream-target-input"
+                                    />
+                                    <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#2563eb' }}>%</span>
+                                </div>
+                                <div className="target-desc">Methane loss volume as % of total marketable natural gas volume. (Default: 0.20%)</div>
+                            </div>
+                            <div className="target-card midstream">
+                                <div className="target-segment">Midstream Processing & LNG</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0' }}>
+                                    <input 
+                                        type="number" 
+                                        step="0.01" 
+                                        min="0.01" 
+                                        max="5.0"
+                                        value={midstreamTarget}
+                                        onChange={(e) => setMidstreamTarget(Number(e.target.value))}
+                                        className="form-input"
+                                        style={{ width: '100px', fontWeight: 700, fontSize: '1.1rem', color: '#10b981' }}
+                                        id="midstream-target-input"
+                                    />
+                                    <span style={{ fontWeight: 700, fontSize: '1.1rem', color: '#10b981' }}>%</span>
+                                </div>
+                                <div className="target-desc">Methane loss volume as % of total throughput volume. (Default: 0.05%)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+                        <button 
+                            className="btn-primary"
+                            onClick={handleSaveGlobal}
+                            disabled={saving}
+                            id="save-ogmp-settings-btn"
+                            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px' }}
+                        >
+                            <Save size={18} />
+                            {saving ? 'Saving Changes...' : 'Save OGMP & Target Settings'}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* TAB CONTENT: Facility-Level Overrides */}
+            {activeTab === 'facilities' && (
+                <div className="settings-section-card">
+                    <div className="section-intro">
+                        <div className="section-intro-header">
+                            <Building2 size={20} className="section-icon" />
+                            <h2>Facility-Level OGMP Overrides</h2>
+                        </div>
+                        <p>Customize operator status (Operated vs Non-Operated), country, base year, and specific reconciliation variance thresholds for each facility.</p>
+                    </div>
+
+                    <div className="facility-table-wrapper">
+                        <table className="facility-config-table">
+                            <thead>
+                                <tr>
+                                    <th>Facility Name</th>
+                                    <th>Segment</th>
+                                    <th>Operator Status</th>
+                                    <th>Country</th>
+                                    <th>Base Year</th>
+                                    <th>Target Year</th>
+                                    <th>Threshold (±%)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {facilities.map(fac => {
+                                    const edit = facilityEdits[fac.id] || {};
+                                    const opStatus = edit.operator_status || 'operated';
+                                    const baseYear = Number(edit.ogmp_membership_year || 2023);
+                                    const targetYear = baseYear + (opStatus === 'operated' ? 3 : 5);
+
+                                    return (
+                                        <tr key={fac.id}>
+                                            <td className="fac-name-cell">
+                                                <strong>{fac.name}</strong>
+                                                <span className="fac-code">{fac.code || 'FAC-' + fac.id}</span>
+                                            </td>
+                                            <td>{fac.segment || 'Upstream'}</td>
+                                            <td>
+                                                <select 
+                                                    className="table-select"
+                                                    value={opStatus}
+                                                    onChange={(e) => handleFacilityChange(fac.id, 'operator_status', e.target.value)}
+                                                >
+                                                    <option value="operated">Operated (3-yr target)</option>
+                                                    <option value="non_operated">Non-Operated (5-yr target)</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input 
+                                                    type="text" 
+                                                    className="table-input"
+                                                    value={edit.country || 'Algeria'}
+                                                    onChange={(e) => handleFacilityChange(fac.id, 'country', e.target.value)}
+                                                />
+                                            </td>
+                                            <td>
+                                                <select 
+                                                    className="table-select-small"
+                                                    value={baseYear}
+                                                    onChange={(e) => handleFacilityChange(fac.id, 'ogmp_membership_year', e.target.value)}
+                                                >
+                                                    {[2021, 2022, 2023, 2024, 2025, 2026].map(y => (
+                                                        <option key={y} value={y}>{y}</option>
+                                                    ))}
+                                                </select>
+                                            </td>
+                                            <td className="target-yr-cell">
+                                                <span className="badge-target-year">{targetYear}</span>
+                                            </td>
+                                            <td>
+                                                <div className="threshold-input-box">
+                                                    <span>±</span>
+                                                    <input 
+                                                        type="number" 
+                                                        min="1" 
+                                                        max="100"
+                                                        className="table-input-num"
+                                                        value={edit.reconciliation_threshold || 20.0}
+                                                        onChange={(e) => handleFacilityChange(fac.id, 'reconciliation_threshold', e.target.value)}
+                                                    />
+                                                    <span>%</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button 
+                                                    className="btn-table-save"
+                                                    onClick={() => handleSaveFacility(fac.id)}
+                                                    title="Save Facility Settings"
+                                                >
+                                                    <Save size={13} />
+                                                    <span>Save</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
