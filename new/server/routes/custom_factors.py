@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify, session
 import datetime
-from models import CustomFactor
+from flask import Blueprint, request, jsonify, session, current_app
+from models import CustomFactor, User
 from extensions import db
-from routes.auth import admin_required, login_required
+from routes.auth import superuser_required, login_required
+from utils import log_activity_and_notify
 
 custom_factors_bp = Blueprint('custom_factors', __name__)
 
@@ -26,14 +27,15 @@ def get_custom_factors():
     } for f in factors])
 
 @custom_factors_bp.route('', methods=['POST'])
-@login_required
+@superuser_required
 def create_custom_factor():
-    """Create a new custom emission factor"""
+    """Create a new custom emission factor (Super User / Admin only)"""
     user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+    user = User.query.get(user_id)
     
     data = request.get_json()
+    if not data or not data.get('factor_name'):
+        return jsonify({'error': 'Factor name is required'}), 400
     
     factor = CustomFactor(
         name=data.get('factor_name'),
@@ -51,22 +53,36 @@ def create_custom_factor():
     
     db.session.add(factor)
     db.session.commit()
+
+    try:
+        log_activity_and_notify(
+            action='CREATE',
+            record_id=str(factor.id),
+            user=user,
+            request=request,
+            entity='CustomFactor',
+            details=f"Custom factor created: {factor.name}"
+        )
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(f"Audit log error on custom factor create: {e}")
     
     return jsonify({'message': 'Custom factor created', 'id': factor.id}), 201
 
 @custom_factors_bp.route('/<int:factor_id>', methods=['PUT'])
-@login_required
+@superuser_required
 def update_custom_factor(factor_id):
-    """Update a custom emission factor"""
+    """Update a custom emission factor (Super User / Admin only)"""
     user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+    user = User.query.get(user_id)
     
     factor = CustomFactor.query.get(factor_id)
     if not factor:
         return jsonify({'error': 'Factor not found'}), 404
     
     data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
     
     if 'factor_name' in data:
         factor.name = data['factor_name']
@@ -103,33 +119,58 @@ def update_custom_factor(factor_id):
     factor.updated_at = datetime.datetime.utcnow()
     
     db.session.commit()
+
+    try:
+        log_activity_and_notify(
+            action='UPDATE',
+            record_id=str(factor.id),
+            user=user,
+            request=request,
+            entity='CustomFactor',
+            details=f"Custom factor updated: {factor.name}"
+        )
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(f"Audit log error on custom factor update: {e}")
     
     return jsonify({'message': 'Custom factor updated'})
 
 @custom_factors_bp.route('/<int:factor_id>', methods=['DELETE'])
-@login_required
+@superuser_required
 def delete_custom_factor(factor_id):
-    """Delete a custom emission factor"""
+    """Delete a custom emission factor (Super User / Admin only)"""
     user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+    user = User.query.get(user_id)
     
     factor = CustomFactor.query.get(factor_id)
     if not factor:
         return jsonify({'error': 'Factor not found'}), 404
     
+    factor_name = factor.name
     db.session.delete(factor)
     db.session.commit()
+
+    try:
+        log_activity_and_notify(
+            action='DELETE',
+            record_id=str(factor_id),
+            user=user,
+            request=request,
+            entity='CustomFactor',
+            details=f"Custom factor deleted: {factor_name}"
+        )
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(f"Audit log error on custom factor delete: {e}")
     
     return jsonify({'message': 'Custom factor deleted'})
 
 @custom_factors_bp.route('/import', methods=['POST'])
-@login_required
+@superuser_required
 def import_custom_factors():
-    """Bulk import custom factors from CSV/Excel"""
+    """Bulk import custom factors from CSV/Excel (Super User / Admin only)"""
     user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+    user = User.query.get(user_id)
     
     data = request.get_json()
     factors_data = data.get('factors', [])
@@ -161,5 +202,18 @@ def import_custom_factors():
         imported_count += 1
     
     db.session.commit()
+
+    try:
+        log_activity_and_notify(
+            action='IMPORT',
+            record_id=str(imported_count),
+            user=user,
+            request=request,
+            entity='CustomFactor',
+            details=f"Bulk imported {imported_count} custom emission factors"
+        )
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(f"Audit log error on custom factor import: {e}")
     
     return jsonify({'message': f'{imported_count} factors imported successfully'})

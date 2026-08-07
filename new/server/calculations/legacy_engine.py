@@ -1,6 +1,6 @@
 import math
 from .dispatcher import dispatcher as api2021_dispatcher
-from .constants import DEFAULT_GWP
+from .constants import DEFAULT_GWP, get_active_gwp
 
 
 # Constants
@@ -288,8 +288,11 @@ class GHGCalculator:
 
 ghg_calc = GHGCalculator()
 
-def compute_emissions(payload, factor_data, gwp_dict=None):
-    if gwp_dict is None: gwp_dict = DEFAULT_GWP
+def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
+    if factor_data is None:
+        factor_data = {}
+    if gwp_dict is None:
+        gwp_dict = get_active_gwp(standard=gwp_standard)
     
     process = str(payload.get('process_type') or payload.get('process') or '').lower()
     
@@ -333,7 +336,7 @@ def compute_emissions(payload, factor_data, gwp_dict=None):
     # --- API 2021 CALCULATION DISPATCHER ---
     # Try to use the new API 2021 compliant calculators first
     uncertainties = factor_data.get('uncertainty', {})
-    api_res = api2021_dispatcher.dispatch(process, payload, factor_data, uncertainties)
+    api_res = api2021_dispatcher.dispatch(process, payload, factor_data, uncertainties, gwp_dict=gwp_dict)
     
     def get_val(r):
         # BUG-15/16 FIX: handle None results from CH4-only calculators (e.g. MudDegassing, Completions)
@@ -356,7 +359,11 @@ def compute_emissions(payload, factor_data, gwp_dict=None):
         em['co2'] = _extract(results.get('co2'))
         em['ch4'] = _extract(results.get('ch4'))
         em['n2o'] = _extract(results.get('n2o'))
-        em['totalCo2e'] = api_res.get('total_co2e', 0)
+        em['totalCo2e'] = (
+            (em['co2'] * float(gwp_dict.get('CO2', 1.0))) +
+            (em['ch4'] * float(gwp_dict.get('CH4', 28.0))) +
+            (em['n2o'] * float(gwp_dict.get('N2O', 264.0)))
+        )
         
         # We also attach the full rich result to the emission dict so the route can access it
         em['_full_api_res'] = api_res

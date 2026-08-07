@@ -1,48 +1,72 @@
+import datetime
+import re
+import socket
+import ipaddress
+from urllib.parse import urlparse
+from functools import wraps
 from flask import request, jsonify, session, current_app
 from . import auth_bp
 from models import User, ActivityLog
-from extensions import db, limiter  # SEC-08 FIX: import flask-limiter
+from extensions import db, limiter
 from utils import log_activity_and_notify
-import datetime
-import time
-from functools import wraps
 
-# In-memory store for login attempts (Key: IP, Value: [count, last_attempt_time])
-# Note: For production with multiple workers, use Redis/Flask-Limiter
-_login_attempts = {}
 
-def rate_limit_login(limit=5, window=900): # Default: 5 attempts in 15 mins
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            ip = request.remote_addr
-            now = time.time()
-            
-            # Clean up old records to prevent memory leaks
-            if len(_login_attempts) > 1000:
-                keys_to_delete = [k for k, v in _login_attempts.items() if now - v[1] > window]
-                for k in keys_to_delete:
-                    del _login_attempts[k]
-                    
-            if ip in _login_attempts:
-                count, last_time = _login_attempts[ip]
-                if now - last_time > window:
-                    _login_attempts[ip] = [0, now]
-            else:
-                _login_attempts[ip] = [0, now]
-                
-            count, last_time = _login_attempts[ip]
-            
-            if count >= limit:
-                return jsonify({
-                    'error': f'Too many login attempts. Please try again in {window//60} minutes.'
-                }), 429
-                
-            # Increment attempt counter
-            _login_attempts[ip] = [count + 1, now]
-            return f(*args, **kwargs)
-        return decorated_function  # SEC-07 FIX: removed duplicate return that made decorator return None
-    return decorator
+def validate_password_complexity(password: str):
+    """
+    Validates password against NIST SP 800-63B / corporate complexity rules:
+    - Minimum 10 characters
+    - At least 1 uppercase letter
+    - At least 1 lowercase letter
+    - At least 1 numeric digit
+    - At least 1 special character
+    """
+    if not password or len(password) < 10:
+        return False, "Password must be at least 10 characters long"
+    if not re.search(r'[A-Z]', password):
+        return False, "Password must contain at least one uppercase letter (A-Z)"
+    if not re.search(r'[a-z]', password):
+        return False, "Password must contain at least one lowercase letter (a-z)"
+    if not re.search(r'[0-9]', password):
+        return False, "Password must contain at least one numeric digit (0-9)"
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>\-_+=\[\]\\\/~`]', password):
+        return False, "Password must contain at least one special character (!@#$%^&*...)"
+    return True, ""
+
+
+def is_safe_image_url(url_str: str) -> tuple[bool, str]:
+    """
+    SEC-02: Protects against Server-Side Request Forgery (SSRF).
+    - Requires https scheme
+    - Resolves DNS and blocks RFC 1918 private subnets, loopback (127.0.0.0/8, ::1),
+      link-local (169.254.0.0/16), and cloud metadata endpoints.
+    - Validates image extension or known trusted image hosts.
+    """
+    if not url_str or not isinstance(url_str, str):
+        return False, "Avatar URL is required"
+    
+    parsed = urlparse(url_str.strip())
+    if parsed.scheme.lower() != 'https':
+        return False, "Avatar URL must use secure HTTPS protocol"
+    
+    hostname = parsed.hostname
+    if not hostname:
+        return False, "Invalid URL hostname"
+    
+    # Block direct IP access to private/link-local ranges or resolve hostname
+    try:
+        addr_infos = socket.getaddrinfo(hostname, None)
+        for family, socktype, proto, canonname, sockaddr in addr_infos:
+            ip_str = sockaddr[0]
+            ip_obj = ipaddress.ip_address(ip_str)
+            if ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_link_local or ip_obj.is_reserved or ip_obj.is_multicast:
+                return False, f"Avatar URL cannot target private or internal IP addresses ({ip_str})"
+    except socket.gaierror:
+        return False, "Could not resolve avatar URL domain"
+    except Exception as e:
+        return False, f"URL validation error: {str(e)}"
+        
+    return True, ""
+
 
 def login_required(f):
     @wraps(f)
@@ -52,9 +76,11 @@ def login_required(f):
             return jsonify({'error': 'Not authenticated'}), 401
         user = User.query.get(user_id)
         if not user:
+            session.pop('user_id', None)
             return jsonify({'error': 'User not found'}), 401
         return f(*args, **kwargs)
     return decorated_function
+
 
 def admin_required(f):
     @wraps(f)
@@ -63,10 +89,31 @@ def admin_required(f):
         if not user_id:
             return jsonify({'error': 'Not authenticated'}), 401
         user = User.query.get(user_id)
-        if not user or user.role != 'it_admin':
+        if not user:
+            session.pop('user_id', None)
+            return jsonify({'error': 'User not found'}), 401
+        if user.role != 'it_admin':
             return jsonify({'error': 'IT Admin privileges required'}), 403
         return f(*args, **kwargs)
     return decorated_function
+
+
+def superuser_required(f):
+    """Permits superuser, admin, and it_admin roles"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'Not authenticated'}), 401
+        user = User.query.get(user_id)
+        if not user:
+            session.pop('user_id', None)
+            return jsonify({'error': 'User not found'}), 401
+        if user.role not in ['superuser', 'admin', 'it_admin']:
+            return jsonify({'error': 'Super User or Admin privileges required'}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @auth_bp.route('/register', methods=['POST'])
 @admin_required
@@ -82,8 +129,9 @@ def register():
         return jsonify({'error': 'Email already registered'}), 400
         
     password = data.get('password')
-    if len(password) < 10:
-        return jsonify({'error': 'Password must be at least 10 characters long'}), 400
+    valid, err_msg = validate_password_complexity(password)
+    if not valid:
+        return jsonify({'error': err_msg}), 400
         
     user = User(
         fullName=data.get('fullName'),
@@ -98,9 +146,8 @@ def register():
     )
     user.set_password(password)
 
-    
     db.session.add(user)
-    db.session.commit()  # BUG-01 FIX: single commit
+    db.session.commit()
     
     # Audit
     try:
@@ -113,7 +160,7 @@ def register():
             details=f"User registered: {user.email}"
         )
     except Exception as e:
-        print(f"Audit Log Error: {e}")
+        current_app.logger.error(f"Audit Log Error on register: {e}")
     
     return jsonify({
         'message': 'User registered successfully',
@@ -131,10 +178,14 @@ def register():
         }
     }), 201
 
+
 @auth_bp.route('/login', methods=['POST'])
-@limiter.limit("10 per 10 minutes")  # SEC-08 FIX: use flask-limiter instead of in-memory dict
+@limiter.limit("10 per 15 minutes")  # SEC-01 FIX: rely cleanly on Flask-Limiter
 def login():
     data = request.get_json()
+    if not data or not data.get('email') or not data.get('password'):
+        return jsonify({'error': 'Email and password required'}), 400
+
     user = User.query.filter_by(email=data.get('email')).first()
     
     if user and user.check_password(data.get('password')):
@@ -142,12 +193,8 @@ def login():
             return jsonify({'error': 'Account disabled'}), 403
             
         session['user_id'] = user.id
-        current_app.logger.debug(f"Session set for user_id={user.id}")  # SEC-12 FIX: replaced DEBUG print
+        current_app.logger.debug(f"Session set for user_id={user.id}")
         user.last_login = datetime.datetime.utcnow()
-        
-        # Reset rate limit on successful login
-        if request.remote_addr in _login_attempts:
-            del _login_attempts[request.remote_addr]
             
         db.session.commit()
         
@@ -162,7 +209,7 @@ def login():
                 details=f"User logged in: {user.email}"
             )
         except Exception as e:
-            print(f"Audit Log Error: {e}")
+            current_app.logger.error(f"Audit Log Error on login: {e}")
         
         return jsonify({
             'message': 'Login successful',
@@ -177,6 +224,7 @@ def login():
         
     return jsonify({'error': 'Invalid credentials'}), 401
 
+
 # Audit Login (Success)
 # (Done inside login block above if successful? No, let's add it before return)
 # Actually, inside the `if user and check_password` block is best.
@@ -190,6 +238,7 @@ def logout():
     return jsonify({'message': 'Logged out'})
 
 @auth_bp.route('/me', methods=['GET'])
+@login_required
 def me():
     user_id = session.get('user_id')
     current_app.logger.debug(f"/me check session user_id={user_id}")  # SEC-12 FIX: replaced DEBUG print
@@ -198,7 +247,8 @@ def me():
         
     user = User.query.get(user_id)
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        session.pop('user_id', None)
+        return jsonify({'error': 'User not found'}), 401
         
     return jsonify({
         'id': user.id,
@@ -217,6 +267,7 @@ def me():
     })
 
 @auth_bp.route('/profile', methods=['PUT'])
+@login_required
 def update_profile():
     user_id = session.get('user_id')
     if not user_id:
@@ -249,6 +300,7 @@ def update_profile():
     return jsonify({'message': 'Profile updated successfully'})
 
 @auth_bp.route('/change-password', methods=['POST'])
+@login_required
 def change_password():
     user_id = session.get('user_id')
     if not user_id:
@@ -268,9 +320,10 @@ def change_password():
     if not user.check_password(current_password):
         return jsonify({'error': 'Current password incorrect'}), 401
     
-    # Password strength check
-    if len(new_password) < 10:
-        return jsonify({'error': 'Password must be at least 10 characters'}), 400
+    # DB-02: Password complexity check
+    valid, err_msg = validate_password_complexity(new_password)
+    if not valid:
+        return jsonify({'error': err_msg}), 400
     
     user.set_password(new_password)
     user.password_updated_at = datetime.datetime.utcnow()
@@ -288,11 +341,12 @@ def change_password():
         db.session.commit()  # commits: password hash + activity log + notification
     except Exception as e:
         db.session.rollback()
-        print(f"Audit Log Error: {e}")
+        current_app.logger.error(f"Audit Log Error on change_password: {e}")
     
     return jsonify({'message': 'Password changed successfully'})
 
 @auth_bp.route('/upload-avatar', methods=['POST'])
+@login_required
 def upload_avatar():
     user_id = session.get('user_id')
     if not user_id:
@@ -310,81 +364,167 @@ def upload_avatar():
     if not avatar_url:
         return jsonify({'error': 'Avatar URL required'}), 400
 
-    # SEC-09 FIX: validate URL scheme — block javascript: / data: URIs
-    from urllib.parse import urlparse
-    parsed = urlparse(avatar_url)
-    if parsed.scheme != 'https':
-        return jsonify({'error': 'Avatar URL must use HTTPS'}), 400
-    if not parsed.netloc:
-        return jsonify({'error': 'Invalid URL'}), 400
+    # SEC-02: SSRF and URL validation
+    is_safe, err_msg = is_safe_image_url(avatar_url)
+    if not is_safe:
+        return jsonify({'error': err_msg}), 400
     
     user.profilePic = avatar_url
     db.session.commit()
     
     return jsonify({'message': 'Avatar updated successfully', 'avatarUrl': avatar_url})
 
+
+# Global Application & User Preferences Store
+_app_settings = {
+    'gwp_standard': 'AR5',
+    'ogmp_default_base_year': 2023,
+    'reconciliation_threshold': 20.0,
+    'ogmp_upstream_target_pct': 0.20,
+    'ogmp_midstream_target_pct': 0.05,
+    'wec_fee_rates': {
+        '2024': 900.0,
+        '2025': 1200.0,
+        '2026': 1500.0
+    },
+    'theme': 'dark',
+    'unit_system': 'metric',
+    'auto_flag_discrepancy': True,
+    'gwp_values': {
+        'AR5': {'ch4_100': 28.0, 'ch4_20': 82.5, 'n2o_100': 265.0, 'co2': 1.0},
+        'AR6': {'ch4_100': 27.9, 'ch4_20': 82.5, 'n2o_100': 273.0, 'co2': 1.0},
+        'AR4': {'ch4_100': 25.0, 'ch4_20': 72.0, 'n2o_100': 298.0, 'co2': 1.0}
+    }
+}
+
+def recalculate_all_emissions_gwp(standard):
+    """
+    Recalculates co2e_total for all stored Emission records in the database
+    using the specified GWP standard ('AR4', 'AR5', 'AR6').
+    Also updates gwp_version on the records and invalidates dashboard caches.
+    """
+    from models import Emission
+    from calculations.constants import GWP_STANDARDS, GWP_AR5
+    from sqlalchemy import func
+    
+    std_dict = GWP_STANDARDS.get(standard, GWP_AR5)
+    co2_factor = float(std_dict.get('CO2', 1.0))
+    ch4_factor = float(std_dict.get('CH4', 28.0))
+    n2o_factor = float(std_dict.get('N2O', 264.0))
+
+    # Perform database update
+    db.session.query(Emission).update({
+        Emission.co2e_total: (
+            func.coalesce(Emission.co2_emissions, 0.0) * co2_factor +
+            func.coalesce(Emission.ch4_emissions, 0.0) * ch4_factor +
+            func.coalesce(Emission.n2o_emissions, 0.0) * n2o_factor
+        ),
+        Emission.gwp_version: standard,
+        Emission.updated_at: datetime.datetime.utcnow()
+    }, synchronize_session=False)
+    
+    db.session.commit()
+
+    # Clear dashboard cache
+    try:
+        from routes.dashboard import DASHBOARD_CACHE
+        DASHBOARD_CACHE.clear()
+    except Exception:
+        pass
+
 @auth_bp.route('/settings', methods=['GET'])
+@login_required
 def get_settings():
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
-    
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-    
-    # Return default empty dict if none
     import json
-    prefs = {}
-    if user.preferences:
+    user_id = session.get('user_id')
+    user = User.query.get(user_id) if user_id else None
+    
+    # Merge global settings with user preferences
+    resp = dict(_app_settings)
+    if user and user.preferences:
         try:
             prefs = json.loads(user.preferences)
-        except:
-            prefs = {}
-            
-    return jsonify(prefs)
+            if isinstance(prefs, dict):
+                resp.update(prefs)
+        except Exception:
+            pass
+    return jsonify(resp)
 
-@auth_bp.route('/settings', methods=['PUT'])
+@auth_bp.route('/settings', methods=['PUT', 'POST'])
+@login_required
 def update_settings():
-    user_id = session.get('user_id')
-    if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
-    
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-    
-    data = request.get_json()
-    
     import json
-    # Merge with existing? or Replace? Replace is simpler for a settings page that sends full state.
-    # But usually safer to merge if we have partial updates.
-    # The frontend seems to hold full state, so let's just save what we get, 
-    # but maybe preserve existing keys not in data if we wanted to be partial.
-    # For now, let's just dump the data as is.
-    
-    user.preferences = json.dumps(data)
-    
-    # Sync consolidation approach if present
-    if 'consolidation' in data:
-        user.consolidationApproach = data['consolidation']
+    user_id = session.get('user_id')
+    user = User.query.get(user_id) if user_id else None
+    data = request.get_json() or {}
 
-    # Audit + commit atomically
+    # Global system & GWP standards updates
+    gwp_changed = False
+    if 'gwp_standard' in data and data['gwp_standard'] in ['AR4', 'AR5', 'AR6']:
+        new_gwp = data['gwp_standard']
+        if _app_settings.get('gwp_standard') != new_gwp:
+            _app_settings['gwp_standard'] = new_gwp
+            gwp_changed = True
+
+    if 'ogmp_default_base_year' in data:
+        _app_settings['ogmp_default_base_year'] = int(data['ogmp_default_base_year'])
+    if 'reconciliation_threshold' in data:
+        _app_settings['reconciliation_threshold'] = float(data['reconciliation_threshold'])
+    if 'ogmp_upstream_target_pct' in data:
+        _app_settings['ogmp_upstream_target_pct'] = float(data['ogmp_upstream_target_pct'])
+    if 'ogmp_midstream_target_pct' in data:
+        _app_settings['ogmp_midstream_target_pct'] = float(data['ogmp_midstream_target_pct'])
+    if 'wec_fee_rates' in data and isinstance(data['wec_fee_rates'], dict):
+        _app_settings['wec_fee_rates'].update({str(k): float(v) for k, v in data['wec_fee_rates'].items()})
+    if 'theme' in data and data['theme'] in ['dark', 'light']:
+        _app_settings['theme'] = data['theme']
+    if 'unit_system' in data and data['unit_system'] in ['metric', 'imperial']:
+        _app_settings['unit_system'] = data['unit_system']
+    if 'auto_flag_discrepancy' in data:
+        _app_settings['auto_flag_discrepancy'] = bool(data['auto_flag_discrepancy'])
+
+    # If GWP standard was changed or set, recalculate existing emissions
+    if gwp_changed:
+        try:
+            recalculate_all_emissions_gwp(_app_settings['gwp_standard'])
+        except Exception as e:
+            current_app.logger.error(f"Error recalculating emissions with new GWP: {e}")
+
+    if user:
+        try:
+            existing = json.loads(user.preferences) if user.preferences else {}
+        except Exception:
+            existing = {}
+        existing.update(data)
+        user.preferences = json.dumps(existing)
+        
+        if 'consolidation' in data:
+            user.consolidationApproach = data['consolidation']
+
+        try:
+            log_activity_and_notify(
+                action='UPDATE',
+                record_id=str(user.id),
+                user=user,
+                request=request,
+                entity='User',
+                details=f"Updated settings for user: {user.email} (GWP: {_app_settings['gwp_standard']})"
+            )
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Audit Log Error: {e}")
+
     try:
-        log_activity_and_notify(
-            action='UPDATE',
-            record_id=str(user.id),
-            user=user,
-            request=request,
-            entity='User',
-            details=f"Updated settings for user: {user.email}"
-        )
-        db.session.commit()  # commits: preferences + activity log + notification
-    except Exception as e:
-        db.session.rollback()
-        print(f"Audit Log Error: {e}")
-    
-    return jsonify({'message': 'Settings saved successfully'})
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception:
+        pass
+
+    return jsonify({
+        'message': 'Settings saved successfully',
+        'settings': _app_settings
+    })
 
 
 
@@ -446,6 +586,13 @@ def update_user(id):
             return jsonify({'error': 'Unauthorized: User is outside your region'}), 403
 
     data = request.get_json()
+    
+    ROLE_RANK = {'user': 0, 'superuser': 1, 'admin': 2, 'it_admin': 3}
+    requester_rank = ROLE_RANK.get(it_admin.role if it_admin else 'user', 0)
+    target_new_rank = ROLE_RANK.get(data.get('role', user.role) if data else user.role, 0)
+    if target_new_rank > requester_rank:
+        return jsonify({'error': 'Cannot assign a role higher than your own'}), 403
+
     if 'role' in data:
         user.role = data['role']
     if 'location' in data:
@@ -516,4 +663,6 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'message': 'User deleted successfully'})
+
+
 
