@@ -50,7 +50,7 @@ export const ToastProvider = ({ children }) => {
     }, [addToast]);
 
     return (
-        <ToastContext.Provider value={{ success, error, warning, info, removeToast }}>
+        <ToastContext.Provider value={{ success, error, warning, info, removeToast, addToast }}>
             {children}
             <ToastContainer toasts={toasts} onRemove={removeToast} />
         </ToastContext.Provider>

@@ -27,6 +27,19 @@ limiter.init_app(app)  # SEC-08 FIX: activate flask-limiter
 migrate = Migrate(app, db)
 
 from sqlalchemy import event
+from sqlalchemy.engine import Engine
+import sqlite3
+from routes.dashboard import clear_dashboard_cache
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragmas(dbapi_conn, _):
+    if isinstance(dbapi_conn, sqlite3.Connection):
+        cursor = dbapi_conn.cursor()
+        cursor.execute("PRAGMA foreign_keys = ON")
+        cursor.execute("PRAGMA journal_mode = WAL")
+        cursor.execute("PRAGMA synchronous = NORMAL")
+        cursor.close()
+
 from routes.dashboard import clear_dashboard_cache
 
 @event.listens_for(db.session, 'after_commit')
@@ -45,6 +58,18 @@ def before_request():
 @app.after_request
 def after_request(response):
     response.headers['X-Request-ID'] = getattr(request, 'id', '')
+    
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data: https:; "
+        "connect-src 'self'"
+    )
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     
     # Disable caching for API endpoints to prevent stale browser reads.
     # Exception: SSE stream — it sets its own Cache-Control / Connection headers.
@@ -130,21 +155,26 @@ app.register_blueprint(factors_bp)
 app.register_blueprint(notifications_bp, url_prefix='/api/notifications')
 app.register_blueprint(audit_bp, url_prefix='/api/audit')
 
-# Swagger UI Configuration
-from flask_swagger_ui import get_swaggerui_blueprint
+# Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
+if os.environ.get('FLASK_ENV') != 'production' or os.environ.get('ENABLE_PUBLIC_SWAGGER', 'false').lower() == 'true':
+    try:
+        from flask_swagger_ui import get_swaggerui_blueprint
 
-SWAGGER_URL = '/api/docs'
-API_URL = '/static/swagger.json'
+        SWAGGER_URL = '/api/docs'
+        API_URL = '/static/swagger.json'
 
-swaggerui_blueprint = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={
-        'app_name': "GHG Platform API Docs"
-    }
-)
-app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
-csrf.exempt(swaggerui_blueprint)
+        swaggerui_blueprint = get_swaggerui_blueprint(
+            SWAGGER_URL,
+            API_URL,
+            config={
+                'app_name': "GHG Platform API Docs"
+            }
+        )
+        app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+        csrf.exempt(swaggerui_blueprint)
+    except Exception as e:
+        app.logger.warning(f"Could not initialize Swagger UI: {e}")
+
 
 
 @app.route('/api/csrf-token')
@@ -162,20 +192,6 @@ def health_check():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
-        # API-04 FIX: Enable SQLite WAL mode + foreign keys for data integrity
-        import sqlite3
-        from sqlalchemy import event
-        from sqlalchemy.engine import Engine
-
-        @event.listens_for(Engine, "connect")
-        def set_sqlite_pragmas(dbapi_conn, _):
-            if isinstance(dbapi_conn, sqlite3.Connection):
-                cursor = dbapi_conn.cursor()
-                cursor.execute("PRAGMA foreign_keys = ON")
-                cursor.execute("PRAGMA journal_mode = WAL")
-                cursor.execute("PRAGMA synchronous = NORMAL")
-                cursor.close()
 
     # SEC-05 FIX: never run debug=True in production; bind to localhost only
     is_debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'

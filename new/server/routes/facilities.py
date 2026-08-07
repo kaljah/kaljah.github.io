@@ -31,6 +31,10 @@ def get_facilities():
         'region': f.region,
         'boundary_notes': f.boundary_notes,
         'segment': f.segment,
+        'operator_status': f.operator_status or 'operated',
+        'country': f.country or 'Algeria',
+        'ogmp_membership_year': f.ogmp_membership_year or 2023,
+        'reconciliation_threshold': f.reconciliation_threshold or 20.0,
         'field': f.field,
         'latitude': f.latitude,
         'longitude': f.longitude
@@ -91,6 +95,10 @@ def add_facility():
         code=data.get('code'),
         boundary_notes=data.get('boundary_notes'),
         segment=data.get('segment'),
+        operator_status=data.get('operator_status', 'operated'),
+        country=data.get('country', 'Algeria'),
+        ogmp_membership_year=int(data.get('ogmp_membership_year', 2023) or 2023),
+        reconciliation_threshold=float(data.get('reconciliation_threshold', 20.0) or 20.0),
         latitude=data.get('latitude'),
         longitude=data.get('longitude')
     )
@@ -164,6 +172,14 @@ def update_facility(facility_id):
         facility.external_id = data['external_id']
     if 'segment' in data:
         facility.segment = data['segment']
+    if 'operator_status' in data:
+        facility.operator_status = data['operator_status']
+    if 'country' in data:
+        facility.country = data['country']
+    if 'ogmp_membership_year' in data and data['ogmp_membership_year'] is not None:
+        facility.ogmp_membership_year = int(data['ogmp_membership_year'])
+    if 'reconciliation_threshold' in data and data['reconciliation_threshold'] is not None:
+        facility.reconciliation_threshold = float(data['reconciliation_threshold'])
     if 'latitude' in data:
         facility.latitude = data['latitude']
     if 'longitude' in data:
@@ -196,6 +212,12 @@ def update_facility(facility_id):
     except Exception as e:
         db.session.rollback()
         raise e
+
+    try:
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception:
+        pass
     
     return jsonify({'message': 'Facility updated'})
 

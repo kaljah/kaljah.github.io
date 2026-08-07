@@ -109,10 +109,29 @@ def _process_file_thread(app, job_id, file_path, original_filename, user_id, glo
             mapping = _build_mapping(headers)
             
             # 3. Setup context variables for calculation
-            from models import Facility, CustomFactor, Emission
+            from models import Facility, CustomFactor, Emission, User
             from extensions import db
             from calculations import compute_emissions
+            from calculations.constants import get_active_gwp
+            from calculations.units import calculate_co2e
             from emission_factors import API_FACTORS
+            import json
+
+            user_obj = User.query.get(user_id)
+            gwp_std = 'AR5'
+            if user_obj and user_obj.preferences:
+                try:
+                    prefs = json.loads(user_obj.preferences) if isinstance(user_obj.preferences, str) else user_obj.preferences
+                    gwp_std = prefs.get('gwp_standard') or prefs.get('gwpModel') or 'AR5'
+                except Exception:
+                    pass
+            if gwp_std not in ['AR4', 'AR5', 'AR6']:
+                try:
+                    from routes.auth import _app_settings
+                    gwp_std = _app_settings.get('gwp_standard', 'AR5')
+                except Exception:
+                    gwp_std = 'AR5'
+            gwp_dict = get_active_gwp(standard=gwp_std)
             
             all_facilities = Facility.query.all()
             fac_name_map = { f.name.lower(): f for f in all_facilities }
@@ -163,7 +182,9 @@ def _process_file_thread(app, job_id, file_path, original_filename, user_id, glo
                     cf_name_map, 
                     compute_emissions,
                     API_FACTORS,
-                    global_factor_type
+                    global_factor_type,
+                    gwp_dict=gwp_dict,
+                    gwp_std=gwp_std
                 )
                 
                 if row_errors:
@@ -204,8 +225,7 @@ def _process_file_thread(app, job_id, file_path, original_filename, user_id, glo
             upload_jobs[job_id]['processed'] = processed
             upload_jobs[job_id]['progress'] = 100
             upload_jobs[job_id]['status'] = 'completed'
-            
-            # Generate Error CSV if needed
+                        # Generate Error CSV if needed
             if skipped_rows:
                 error_file = file_path + "_errors.csv"
                 with open(error_file, 'w', newline='', encoding='utf-8') as ef:
@@ -226,6 +246,7 @@ def _process_file_thread(app, job_id, file_path, original_filename, user_id, glo
                 f.close()
             # Clean up the original uploaded file
             try:
+                import os
                 if os.path.exists(file_path):
                     os.remove(file_path)
             except:
@@ -237,7 +258,7 @@ def _build_mapping(headers):
     EXPECTED_FIELDS = [
         ('date', 'date'), 
         ('activity', 'activity'), 
-        ('division', 'division'),
+        ('division', 'division'), 
         ('field', 'field'), 
         ('facility_name', 'region'), # Region maps to Facility
         ('group', 'emission source'), # Emission Source maps to Group
@@ -288,12 +309,13 @@ def _build_mapping(headers):
     return mapping
 
 
-def _process_row(row, user_id, fac_name_map, fac_id_map, cf_name_map, compute_emissions_fn, API_FACTORS_dict, global_factor_type):
+def _process_row(row, user_id, fac_name_map, fac_id_map, cf_name_map, compute_emissions_fn, API_FACTORS_dict, global_factor_type, gwp_dict=None, gwp_std='AR5'):
     """
     Validates a single mapped row and runs calculation via compute_emissions.
     Returns (Emission_Object, list_of_errors)
     """
     from models import Emission
+    from calculations.units import calculate_co2e
     errors = []
 
     # Skip instructional walkthrough rows
@@ -380,25 +402,20 @@ def _process_row(row, user_id, fac_name_map, fac_id_map, cf_name_map, compute_em
     # Inject all other optional variables dynamically (e.g. C1-C10, flare_type, etc.)
     for k, v in row.items():
         if k not in calc_data and v is not None:
-            val = str(v).strip()
-            if val:
-                try:
-                    calc_data[k] = float(val)
-                except ValueError:
-                    calc_data[k] = val
-                    
+            calc_data[k] = v
+
     # Defaults if missing
     if 'ch4_content' not in calc_data: calc_data['ch4_content'] = 85.0
     if 'co2_content' not in calc_data: calc_data['co2_content'] = 2.0
 
     # 6. Run calculation
     try:
-        em_result, _method = compute_emissions_fn(calc_data, factor_data)
+        em_result, _method = compute_emissions_fn(calc_data, factor_data, gwp_dict=gwp_dict)
 
         co2_val = float(em_result.get('co2') or 0)
         ch4_val = float(em_result.get('ch4') or 0)
         n2o_val = float(em_result.get('n2o') or 0)
-        total   = float(em_result.get('totalCo2e') or (co2_val + ch4_val * 28 + n2o_val * 265))
+        total   = float(em_result.get('totalCo2e') or calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict))
 
         # 7. Uncertainty extraction
         api_res = em_result.get('_full_api_res')
@@ -448,6 +465,7 @@ def _process_row(row, user_id, fac_name_map, fac_id_map, cf_name_map, compute_em
             n2o_emissions=n2o_val,
             co2e_total=total,
             calc_method=_method,
+            gwp_version=gwp_std,
             source_payload=json.dumps(calc_data),
             factor_source=factor_data.get('type', 'API'),
             ef_used_co2=factor_data.get('co2', 0),
@@ -462,4 +480,3 @@ def _process_row(row, user_id, fac_name_map, fac_id_map, cf_name_map, compute_em
 
     except Exception as e:
         return None, [f"Calculation error: {str(e)}"]
-

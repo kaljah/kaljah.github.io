@@ -195,6 +195,30 @@ const Reports = () => {
         }
     };
 
+    const handleOGMPExport = async () => {
+        try {
+            toast.info('Generating OGMP 2.0 Excel Workbook...');
+            const yr = reportYear !== 'all' ? reportYear : (year !== 'all' ? year : '2024');
+            const response = await api.get(`/reports/ogmp-export?year=${yr}`, {
+                responseType: 'blob'
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `OGMP_2.0_Methane_Report_${yr}.xlsx`;
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                link.remove();
+                window.URL.revokeObjectURL(url);
+            }, 1000);
+            toast.success(`OGMP 2.0 Excel report for ${yr} downloaded successfully!`);
+        } catch (error) {
+            console.error('OGMP Excel export failed:', error);
+            toast.error('Failed to export OGMP 2.0 Excel report.');
+        }
+    };
+
     const handleISOReport = async () => {
         setLoading(true);
         toast.info("Generating ISO 14064-1 Report...");
@@ -350,6 +374,14 @@ const Reports = () => {
                                     <path d="M3 3v5h5" />
                                 </svg>
                                 Reset Filters
+                            </button>
+                            <button className="btn-action btn-excel" onClick={handleOGMPExport} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: '#ffffff', border: 'none' }}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                OGMP 2.0 (Excel)
                             </button>
                             <button className="btn-action btn-excel" onClick={handleExcelExport}>
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -45,8 +45,12 @@ class Config:
     # CSRF Configuration
     # Set CSRF time limit to None so it lives as long as the session
     # Fixes: 'The CSRF token has expired' for long-running SPA sessions
-    WTF_CSRF_TIME_LIMIT = None
+    WTF_CSRF_TIME_LIMIT = 86400
 
     # API-03 FIX: Hard limit on all incoming request bodies — prevents large-payload DoS
-    MAX_CONTENT_LENGTH = 1024 * 1024 * 1024  # 1 GB
+    MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50 MB
+
+    # Rate Limiting Backend (Memory default, Redis in multi-worker production)
+    RATELIMIT_STORAGE_URI = os.environ.get('RATELIMIT_STORAGE_URI', 'memory://')
+
 

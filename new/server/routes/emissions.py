@@ -331,17 +331,33 @@ def get_emissions():
         'current_page': page
     })
 
-# Helper: Get GWP based on user prefs
-def resolve_gwp_dict(user):
+# Helper: Get GWP based on user prefs and global settings
+def resolve_gwp_dict(user=None):
+    import json
+    from calculations.constants import get_active_gwp
+    try:
+        prefs = json.loads(user.preferences or '{}') if user and user.preferences else {}
+        model = prefs.get('gwp_standard') or prefs.get('gwpModel')
+        if model in ['AR4', 'AR5', 'AR6']:
+            return get_active_gwp(standard=model)
+    except Exception:
+        pass
+    return get_active_gwp()
+
+def resolve_gwp_standard(user=None):
     import json
     try:
-        prefs = json.loads(user.preferences or '{}')
-        model = prefs.get('gwpModel')
-        if model == 'AR4': return GWP_AR4
-        if model == 'AR6': return GWP_AR6
-        return GWP_AR5 # Default to AR5
-    except:
-        return GWP_AR5
+        prefs = json.loads(user.preferences or '{}') if user and user.preferences else {}
+        model = prefs.get('gwp_standard') or prefs.get('gwpModel')
+        if model in ['AR4', 'AR5', 'AR6']:
+            return model
+    except Exception:
+        pass
+    try:
+        from routes.auth import _app_settings
+        return _app_settings.get('gwp_standard', 'AR5')
+    except Exception:
+        return 'AR5'
 
 @emissions_bp.route('/bulk-upload', methods=['POST'])
 @login_required
@@ -550,8 +566,10 @@ def add_bulk_upload():
             calc_data['factor_source'] = factor_type
         
         # 6. Compute
+        gwp_dict = resolve_gwp_dict(user)
+        gwp_std = resolve_gwp_standard(user)
         try:
-            em_result, method = compute_emissions(calc_data, factor_data)
+            em_result, method = compute_emissions(calc_data, factor_data, gwp_dict=gwp_dict)
         except Exception as e:
             errors.append({"row": row_num, "reasons": [f"Calculation failed: {str(e)}"], "original": row})
             continue
@@ -561,7 +579,7 @@ def add_bulk_upload():
             co2_val = em_result.get('co2', 0)
             ch4_val = em_result.get('ch4', 0)
             n2o_val = em_result.get('n2o', 0)
-            em_result['totalCo2e'] = co2_val + (ch4_val * DEFAULT_GWP['CH4']) + (n2o_val * DEFAULT_GWP['N2O'])
+            em_result['totalCo2e'] = calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)
 
         # Uncertainty
         api_res = em_result.get('_full_api_res')
@@ -596,6 +614,7 @@ def add_bulk_upload():
             co_emissions=em_result.get('co', 0),
             co2e_total=em_result['totalCo2e'],
             calc_method=method,
+            gwp_version=gwp_std,
             source_payload=json.dumps(calc_data),
             created_by=user.id,
             uncertainty=uncertainty.get('co2', None) if isinstance(uncertainty, dict) else (uncertainty or None),
@@ -1339,8 +1358,10 @@ def add_emission():
                     factor_data['uncertainty'] = parent_factor['uncertainty']
     
     # Call compute_emissions to calculate the actual emissions
+    gwp_dict = resolve_gwp_dict(user)
+    gwp_std = resolve_gwp_standard(user)
     try:
-        em_result, method = compute_emissions(data, factor_data)
+        em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
     except ValueError as e:
         # Extract missing field name from error message
         import re
@@ -1353,7 +1374,7 @@ def add_emission():
         co2_val = em_result.get('co2', 0)
         ch4_val = em_result.get('ch4', 0)
         n2o_val = em_result.get('n2o', 0)
-        em_result['totalCo2e'] = co2_val + (ch4_val * DEFAULT_GWP['CH4']) + (n2o_val * DEFAULT_GWP['N2O'])
+        em_result['totalCo2e'] = calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)
 
     # Extract uncertainty from rich API result if available, otherwise fallback to factor data
     api_res = em_result.get('_full_api_res')
@@ -1391,6 +1412,7 @@ def add_emission():
         co2e_total=em_result['totalCo2e'],
         
         calc_method=method,
+        gwp_version=gwp_std,
         source_payload=json.dumps(data),
         created_by=user.id,
         uncertainty=uncertainty.get('co2', None) if isinstance(uncertainty, dict) else (uncertainty or None),
@@ -1502,20 +1524,20 @@ def add_emission():
         'calculation_method': method
     }), 201
 
-@emissions_bp.route('/<int:id>', methods=['DELETE'])
+@emissions_bp.route('/<id>', methods=['DELETE'])
 @login_required  # SEC-01 FIX: was missing
 def delete_emission(id):
     user = get_current_user()
     if not user: return jsonify({'error': 'Unauthorized'}), 401
     
-    # BUG-06 FIX: use db.session.get instead of deprecated Query.get()
-    record = db.session.get(Emission, id)
+    record = Emission.query.filter_by(record_id=id).first() or db.session.get(Emission, int(id) if str(id).isdigit() else -1)
     if not record:
         return jsonify({'error': 'Record not found'}), 404
-    # SEC-03 FIX: IDOR — enforce ownership; admins may delete any record
+    # SEC-03 FIX: IDOR — enforce ownership; admins may delete any record, users can delete own records
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None and record.facility_id not in allowed_fids:
-        return jsonify({'error': 'Forbidden: Outside your region'}), 403
+        if record.created_by != user.id:
+            return jsonify({'error': 'Forbidden: Outside your region'}), 403
 
     # BUG-05 FIX: capture audit data before deletion, then commit everything atomically
     log_details = f"Deleted {record.process_type} record: {record.quantity} {record.unit} of {record.fuel_type} ({record.month}/{record.year})"
@@ -1603,6 +1625,7 @@ def update_emission(id):
                         factor_data['uncertainty'] = parent_factor['uncertainty']
 
         gwp_dict = resolve_gwp_dict(user)
+        gwp_std = resolve_gwp_standard(user)
         try:
             calculated_em, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
             record.co2_emissions = calculated_em['co2']
@@ -1611,6 +1634,7 @@ def update_emission(id):
             record.co_emissions = calculated_em.get('co', 0)
             record.co2e_total = calculated_em['totalCo2e']
             record.calc_method = method
+            record.gwp_version = gwp_std
             
             # Update record uncertainty
             u_dict = factor_data.get('uncertainty', {})
@@ -1843,14 +1867,16 @@ def import_emissions():
                             factor_data['uncertainty'] = parent_factor['uncertainty']
 
             # 3. Compute emissions
-            em_result, method = compute_emissions(rec_data, factor_data)
+            gwp_dict = resolve_gwp_dict(user)
+            gwp_std = resolve_gwp_standard(user)
+            em_result, method = compute_emissions(rec_data, factor_data, gwp_dict=gwp_dict)
             
             # Fallback for totalCo2e
             if not em_result.get('totalCo2e') or em_result.get('totalCo2e') == 0:
                 co2_val = em_result.get('co2', 0)
                 ch4_val = em_result.get('ch4', 0)
                 n2o_val = em_result.get('n2o', 0)
-                em_result['totalCo2e'] = co2_val + (ch4_val * DEFAULT_GWP['CH4']) + (n2o_val * DEFAULT_GWP['N2O'])
+                em_result['totalCo2e'] = calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)
 
             # 4. Create record
             record = Emission(
@@ -1873,6 +1899,7 @@ def import_emissions():
                 co_emissions=em_result.get('co') if em_result.get('co') is not None else 0,
                 co2e_total=em_result.get('totalCo2e') if em_result.get('totalCo2e') is not None else 0,
                 calc_method=method,
+                gwp_version=gwp_std,
                 source_payload=json.dumps(rec_data),
                 created_by=user.id,
                 uncertainty=factor_data.get('uncertainty', {}).get('co2', 0) if isinstance(factor_data.get('uncertainty'), dict) else (factor_data.get('uncertainty') or 0),
