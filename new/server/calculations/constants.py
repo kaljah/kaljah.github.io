@@ -16,9 +16,9 @@ GWP_AR4 = {
 GWP_AR5 = {
     'CO2': 1.0,
     'CH4': 28.0,
-    'N2O': 264.0,
+    'N2O': 265.0,
     'CH4_20': 82.5,
-    'N2O_20': 264.0
+    'N2O_20': 268.0
 }
 
 # IPCC 6th Assessment Report (AR6 - 2021)
@@ -37,8 +37,8 @@ GWP_STANDARDS = {
     'AR6': GWP_AR6
 }
 
-# Legacy alias for backward compatibility
-GWP_DEFAULT_GWP = GWP_AR4
+# Legacy alias for backward compatibility (resolves to AR5)
+GWP_DEFAULT_GWP = GWP_AR5
 
 # Standard GWP for the application (default to AR5)
 DEFAULT_GWP = GWP_AR5
@@ -70,11 +70,11 @@ def get_active_gwp(standard=None, gwp_dict=None, horizon='100'):
         return {
             'CO2': 1.0,
             'CH4': std_profile.get('CH4_20', 82.5),
-            'N2O': std_profile.get('N2O_20', 264.0)
+            'N2O': std_profile.get('N2O_20', 268.0)
         }
 
     return {
         'CO2': std_profile.get('CO2', 1.0),
         'CH4': std_profile.get('CH4', 28.0),
-        'N2O': std_profile.get('N2O', 264.0)
+        'N2O': std_profile.get('N2O', 265.0)
     }

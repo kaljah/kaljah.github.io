@@ -20,14 +20,14 @@ class BaseCalculator:
 
     def calculate_uncertainty(self, value, relative_uncertainty):
         """
-        Calculates absolute uncertainty and bounds.
+        Calculates absolute uncertainty and non-negative bounds at 95% CI.
         """
         abs_uncertainty = value * relative_uncertainty
         return {
             "value": value,
             "uncertainty": relative_uncertainty,
             "abs_uncertainty": abs_uncertainty,
-            "lower_bound": value - abs_uncertainty,
+            "lower_bound": max(0.0, value - abs_uncertainty),
             "upper_bound": value + abs_uncertainty
         }
 

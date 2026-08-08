@@ -138,6 +138,7 @@ from routes.managedata import managedata_bp
 from routes.emission_factors_routes import factors_bp
 from routes.notifications import notifications_bp
 from routes.audit import audit_bp
+from routes.satellite import satellite_bp
 
 
 
@@ -154,6 +155,7 @@ app.register_blueprint(managedata_bp, url_prefix='/api')
 app.register_blueprint(factors_bp)
 app.register_blueprint(notifications_bp, url_prefix='/api/notifications')
 app.register_blueprint(audit_bp, url_prefix='/api/audit')
+app.register_blueprint(satellite_bp, url_prefix='/api/satellite')
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if os.environ.get('FLASK_ENV') != 'production' or os.environ.get('ENABLE_PUBLIC_SWAGGER', 'false').lower() == 'true':

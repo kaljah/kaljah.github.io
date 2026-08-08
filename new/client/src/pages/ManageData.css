@@ -240,3 +240,50 @@ textarea.mole-input {
         transform: translateY(0);
     }
 }
+
+.goal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.goal-badge-active {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+.goal-badge-historical {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.guidance-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--accent-color, #ff6600);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.baseline-highlight-card {
+    background: linear-gradient(135deg, rgba(255, 102, 0, 0.06), rgba(255, 153, 51, 0.02));
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}

@@ -49,6 +49,7 @@ def get_batch_dashboard_data():
     month       = request.args.get('month')
     activity    = request.args.get('activity')
     division    = request.args.get('division')
+    segment     = request.args.get('segment')
     group_by    = request.args.get('groupBy')
 
     user = get_current_user()
@@ -66,19 +67,19 @@ def get_batch_dashboard_data():
         # Each future wraps the call in _run_in_app_ctx to supply the app context.
         with concurrent.futures.ThreadPoolExecutor(max_workers=7) as executor:
             f_summary    = executor.submit(_run_in_app_ctx, app, _query_summary,
-                facility_id=facility_id, year=None, activity=activity,
-                division=division, group_by=group_by, allowed_fids=allowed_fids)
+                facility_id=facility_id, year=year, activity=activity,
+                division=division, group_by=group_by, allowed_fids=allowed_fids, segment=segment)
             f_mitigation = executor.submit(_run_in_app_ctx, app, _query_mitigation,
-                facility_id=facility_id, year=None, allowed_fids=allowed_fids)
+                facility_id=facility_id, year=year, allowed_fids=allowed_fids, segment=segment)
             f_scope3     = executor.submit(_run_in_app_ctx, app, _query_scope3_summary,
                 facility_id=facility_id, year=year, activity=activity,
-                division=division, allowed_fids=allowed_fids)
+                division=division, allowed_fids=allowed_fids, segment=segment)
             f_categorical = executor.submit(_run_in_app_ctx, app, _query_categorical_breakdown,
                 facility_id=facility_id, year=year, activity=activity,
-                division=division, allowed_fids=allowed_fids)
+                division=division, allowed_fids=allowed_fids, segment=segment)
             f_intensity  = executor.submit(_run_in_app_ctx, app, _query_intensity_stats,
                 facility_id=facility_id, year=year, activity=activity,
-                division=division, allowed_fids=allowed_fids)
+                division=division, allowed_fids=allowed_fids, segment=segment)
             f_uncertainty = executor.submit(_run_in_app_ctx, app, _query_uncertainty,
                 year=uncertainty_year, allowed_fids=allowed_fids)
             f_years      = executor.submit(_run_in_app_ctx, app, _query_available_years)
@@ -132,6 +133,7 @@ def get_intensity_trend():
     facility_id = request.args.get('facilityId')
     activity = request.args.get('activity')
     division = request.args.get('division')
+    segment = request.args.get('segment')
     years_str = request.args.get('years', '')
 
     allowed_fids = get_allowed_facility_ids(get_current_user())
@@ -147,13 +149,14 @@ def get_intensity_trend():
         years=tuple(years),
         activity=activity,
         division=division,
-        allowed_fids=allowed_fids
+        allowed_fids=allowed_fids,
+        segment=segment
     )
     return jsonify(bulk)
 
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key('_query_summary'), lock=CACHE_LOCK)
-def _query_summary(facility_id=None, year=None, activity=None, division=None, group_by=None, allowed_fids=None):
+def _query_summary(facility_id=None, year=None, activity=None, division=None, group_by=None, allowed_fids=None, segment=None):
     """Pure query logic for /summary — returns a plain Python list."""
     sel = [
         Emission.year.label('year'),
@@ -170,6 +173,8 @@ def _query_summary(facility_id=None, year=None, activity=None, division=None, gr
         scope1_query = scope1_query.filter(Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         scope1_query = scope1_query.filter(Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        scope1_query = scope1_query.join(Facility, Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         scope1_query = scope1_query.filter(Emission.activity == activity)
     if division and division != 'all':
@@ -194,6 +199,8 @@ def _query_summary(facility_id=None, year=None, activity=None, division=None, gr
         scope2_query = scope2_query.filter(Scope2Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         scope2_query = scope2_query.filter(Scope2Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        scope2_query = scope2_query.join(Facility, Scope2Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         scope2_query = scope2_query.filter(Scope2Emission.activity == activity)
     if division and division != 'all':
@@ -280,13 +287,15 @@ def _query_summary(facility_id=None, year=None, activity=None, division=None, gr
 
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key('_query_mitigation'), lock=CACHE_LOCK)
-def _query_mitigation(facility_id=None, year=None, allowed_fids=None):
+def _query_mitigation(facility_id=None, year=None, allowed_fids=None, segment=None):
     """Pure query logic for /mitigation — returns a plain Python list."""
     proj_query = MitigationProject.query
     if allowed_fids is not None:
         proj_query = proj_query.filter(MitigationProject.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         proj_query = proj_query.filter(MitigationProject.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        proj_query = proj_query.join(Facility, MitigationProject.facility_id == Facility.id).filter(Facility.segment == segment)
     if year and year != 'all':
         proj_query = proj_query.filter(MitigationProject.year == int(year))
     projects = proj_query.all()
@@ -318,7 +327,7 @@ def _query_mitigation(facility_id=None, year=None, allowed_fids=None):
 
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key('_query_scope3_summary'), lock=CACHE_LOCK)
-def _query_scope3_summary(facility_id=None, year=None, activity=None, division=None, allowed_fids=None):
+def _query_scope3_summary(facility_id=None, year=None, activity=None, division=None, allowed_fids=None, segment=None):
     """Pure query logic for /scope3/summary — returns a plain Python dict."""
     query = db.session.query(func.sum(Scope3Emission.co2e))
     if allowed_fids is not None:
@@ -327,19 +336,22 @@ def _query_scope3_summary(facility_id=None, year=None, activity=None, division=N
         query = query.filter(Scope3Emission.year == int(year))
     if facility_id and facility_id != 'all':
         query = query.filter(Scope3Emission.facility_id == int(facility_id))
-    if (activity and activity != 'all') or (division and division != 'all'):
+    need_join = (activity and activity != 'all') or (division and division != 'all') or (segment and segment != 'all')
+    if need_join:
         query = query.join(Facility, Facility.id == Scope3Emission.facility_id)
         if activity and activity != 'all':
             query = query.filter(Facility.activity == activity)
         if division and division != 'all':
             query = query.filter(Facility.division == division)
+        if segment and segment != 'all':
+            query = query.filter(Facility.segment == segment)
     query = query.filter(Scope3Emission.status != 'Draft')
     total = query.scalar() or 0
     return {'total': float(total)}
 
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key('_query_categorical_breakdown'), lock=CACHE_LOCK)
-def _query_categorical_breakdown(facility_id=None, year=None, activity=None, division=None, allowed_fids=None):
+def _query_categorical_breakdown(facility_id=None, year=None, activity=None, division=None, allowed_fids=None, segment=None):
     """Pure query logic for /categorical-breakdown — returns a plain Python list."""
     query = db.session.query(
         Facility.activity, Facility.division,
@@ -352,6 +364,8 @@ def _query_categorical_breakdown(facility_id=None, year=None, activity=None, div
         query = query.filter(Emission.year == int(year))
     if facility_id and facility_id != 'all':
         query = query.filter(Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        query = query.filter(Facility.segment == segment)
     if activity and activity != 'all':
         query = query.filter(Emission.activity == activity)
     if division and division != 'all':
@@ -370,6 +384,8 @@ def _query_categorical_breakdown(facility_id=None, year=None, activity=None, div
         scope2_q = scope2_q.filter(Scope2Emission.year == int(year))
     if facility_id and facility_id != 'all':
         scope2_q = scope2_q.filter(Scope2Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        scope2_q = scope2_q.filter(Facility.segment == segment)
     if activity and activity != 'all':
         scope2_q = scope2_q.filter(Scope2Emission.activity == activity)
     if division and division != 'all':
@@ -388,6 +404,8 @@ def _query_categorical_breakdown(facility_id=None, year=None, activity=None, div
         scope3_q = scope3_q.filter(Scope3Emission.year == int(year))
     if facility_id and facility_id != 'all':
         scope3_q = scope3_q.filter(Facility.id == int(facility_id))
+    if segment and segment != 'all':
+        scope3_q = scope3_q.filter(Facility.segment == segment)
     if activity and activity != 'all':
         scope3_q = scope3_q.filter(Facility.activity == activity)
     if division and division != 'all':
@@ -445,7 +463,8 @@ def get_dashboard_summary():
         activity=request.args.get('activity'),
         division=request.args.get('division'),
         group_by=request.args.get('groupBy'),
-        allowed_fids=allowed_fids
+        allowed_fids=allowed_fids,
+        segment=request.args.get('segment')
     ))
 
 
@@ -610,6 +629,8 @@ def get_ogmp_metrics():
         query = query.filter(Facility.id.in_(allowed_fids))
     if fac_id and fac_id != 'all' and str(fac_id).isdigit():
         query = query.filter(Facility.id == int(fac_id))
+    if request.args.get('segment'):
+        query = query.filter(Facility.segment == request.args.get('segment'))
         
     facilities = query.all()
 
@@ -713,7 +734,8 @@ def get_intensity_stats():
         year=request.args.get('year'),
         activity=request.args.get('activity'),
         division=request.args.get('division'),
-        allowed_fids=allowed_fids
+        allowed_fids=allowed_fids,
+        segment=request.args.get('segment')
     ))
 
 
@@ -722,7 +744,7 @@ def get_intensity_stats():
 # ─────────────────────────────────────────────────────────────────────────────
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key('_query_intensity_trend_bulk'), lock=CACHE_LOCK)
-def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, division=None, allowed_fids=None):
+def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, division=None, allowed_fids=None, segment=None):
     """
     Fetches intensity data for ALL requested years in 5 bulk queries instead of
     5 queries × N_years (the previous N+1 pattern).
@@ -744,6 +766,8 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
         prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         prod_q = prod_q.filter(ProductionData.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        prod_q = prod_q.join(Facility, ProductionData.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         prod_q = prod_q.filter(ProductionData.activity == activity)
     if division and division != 'all':
@@ -786,6 +810,8 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
         em_q = em_q.filter(Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         em_q = em_q.filter(Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        em_q = em_q.join(Facility, Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         em_q = em_q.filter(Emission.activity == activity)
     if division and division != 'all':
@@ -819,6 +845,8 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
         flare_q = flare_q.filter(Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         flare_q = flare_q.filter(Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        flare_q = flare_q.join(Facility, Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         flare_q = flare_q.filter(Emission.activity == activity)
     if division and division != 'all':
@@ -847,6 +875,8 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
         s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         s2_q = s2_q.filter(Scope2Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        s2_q = s2_q.join(Facility, Scope2Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     s2_rows = s2_q.group_by(Scope2Emission.year, Scope2Emission.facility_id).all()
     for rec in s2_rows:
         key = (rec.year, rec.facility_id)
@@ -866,6 +896,8 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
         s3_q = s3_q.filter(Scope3Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != 'all':
         s3_q = s3_q.filter(Scope3Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        s3_q = s3_q.join(Facility, Scope3Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     s3_rows = s3_q.group_by(Scope3Emission.year, Scope3Emission.facility_id).all()
     s3_map = {}  # {(year, fid): co2e}
     for rec in s3_rows:
@@ -953,7 +985,7 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
 
 
 @cached(cache=DASHBOARD_CACHE, key=make_cache_key('_query_intensity_stats'), lock=CACHE_LOCK)
-def _query_intensity_stats(facility_id=None, year=None, activity=None, division=None, allowed_fids=None):
+def _query_intensity_stats(facility_id=None, year=None, activity=None, division=None, allowed_fids=None, segment=None):
     """
     Pure query logic for /intensity-stats — returns a plain Python list.
     Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility.
@@ -973,6 +1005,8 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
         prod_query = prod_query.filter(ProductionData.year == int(year))
     if facility_id and facility_id != 'all':
         prod_query = prod_query.filter(ProductionData.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        prod_query = prod_query.join(Facility, ProductionData.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         prod_query = prod_query.filter(ProductionData.activity == activity)
     if division and division != 'all':
@@ -1031,6 +1065,8 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
         em_query = em_query.filter(Emission.year == int(year))
     if facility_id and facility_id != 'all':
         em_query = em_query.filter(Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        em_query = em_query.join(Facility, Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         em_query = em_query.filter(Emission.activity == activity)
     if division and division != 'all':
@@ -1104,6 +1140,8 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
         flare_query = flare_query.filter(Emission.year == int(year))
     if facility_id and facility_id != 'all':
         flare_query = flare_query.filter(Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        flare_query = flare_query.join(Facility, Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         flare_query = flare_query.filter(Emission.activity == activity)
     if division and division != 'all':
@@ -1147,6 +1185,8 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
         s2_query = s2_query.filter(Scope2Emission.year == int(year))
     if facility_id and facility_id != 'all':
         s2_query = s2_query.filter(Scope2Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        s2_query = s2_query.join(Facility, Scope2Emission.facility_id == Facility.id).filter(Facility.segment == segment)
     if activity and activity != 'all':
         s2_query = s2_query.filter(Scope2Emission.activity == activity)
     if division and division != 'all':
@@ -1177,6 +1217,8 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
         s3_query = s3_query.filter(Scope3Emission.year == int(year))
     if facility_id and facility_id != 'all':
         s3_query = s3_query.filter(Scope3Emission.facility_id == int(facility_id))
+    if segment and segment != 'all':
+        s3_query = s3_query.filter(Facility.segment == segment)
     if activity and activity != 'all':
         s3_query = s3_query.filter(Facility.activity == activity)
     if division and division != 'all':
@@ -1192,6 +1234,8 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
     )
     if year and year != 'all':
         ogmp_query = ogmp_query.filter(OgmpSurvey.year == int(year))
+    if segment and segment != 'all':
+        ogmp_query = ogmp_query.join(Facility, OgmpSurvey.facility_id == Facility.id).filter(Facility.segment == segment)
     ogmp_surveys = {o.facility_id: float(o.total_top_down_tch4 or 0) for o in ogmp_query.group_by(OgmpSurvey.facility_id).all()}
 
     output = []

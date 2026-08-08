@@ -49,28 +49,32 @@ def client(app):
 @pytest.fixture
 def admin_user(app):
     with app.app_context():
-        u = User(
-            fullName='Admin User', email='admin@test.com',
-            password_hash=generate_password_hash('Admin@123!'),
-            orgName='TestOrg', sector='Energy',
-            role='admin'
-        )
-        db.session.add(u)
-        db.session.commit()
+        u = User.query.filter_by(email='admin@test.com').first()
+        if not u:
+            u = User(
+                fullName='Admin User', email='admin@test.com',
+                password_hash=generate_password_hash('Admin@123!'),
+                orgName='TestOrg', sector='Energy',
+                role='admin'
+            )
+            db.session.add(u)
+            db.session.commit()
         return u.id
 
 
 @pytest.fixture
 def regular_user(app):
     with app.app_context():
-        u = User(
-            fullName='Regular User', email='user@test.com',
-            password_hash=generate_password_hash('User@123!'),
-            orgName='TestOrg', sector='Energy',
-            role='user'
-        )
-        db.session.add(u)
-        db.session.commit()
+        u = User.query.filter_by(email='user@test.com').first()
+        if not u:
+            u = User(
+                fullName='Regular User', email='user@test.com',
+                password_hash=generate_password_hash('User@123!'),
+                orgName='TestOrg', sector='Energy',
+                role='user'
+            )
+            db.session.add(u)
+            db.session.commit()
         return u.id
 
 

@@ -15,7 +15,7 @@ class MudDegassingCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Drilling Mud Degassing", "Section 6.2")
 
-    def calculate(self, mud_volume, mud_type, uncertainties, ef_ch4=None):
+    def calculate(self, mud_volume, mud_type, uncertainties, ef_ch4=None, gwp_dict=None):
         """
         API Section 6.2 - CH4 from mud degassing
         """
@@ -45,7 +45,7 @@ class MudDegassingCalculator(BaseCalculator):
             process_category='vented', 
             gas='ch4'
         )
-        total_co2e = calculate_co2e(ch4=ch4_tonnes)
+        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             ch4=ch4_res,
@@ -60,7 +60,8 @@ class CompletionFlowbackCalculator(BaseCalculator):
     def calculate(self, flowback_volume=None, ch4_content=0.85, control_efficiency=0.0, uncertainties=None,
                   co2_content=0.0, ef_co2=None, ef_ch4=None, ef_n2o=None,
                   calculation_method='metered_volume', flowback_rate=None, flowback_duration_hours=None,
-                  liquid_flowback_bbl=None, gas_oil_ratio=None, choke_size_in=None, well_head_pressure=None):
+                  liquid_flowback_bbl=None, gas_oil_ratio=None, choke_size_in=None, well_head_pressure=None,
+                  gwp_dict=None):
         """
         API Compendium 2021 §6.3 & EPA Subpart W §98.233(c) Completions & Workovers Flowback:
         Supports 3 rigorous calculation methodologies:
@@ -150,7 +151,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
             gas='n2o'
         ) if flared_n2o_tonnes > 0 else None
         
-        total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes)
+        total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             ch4=ch4_res,
@@ -176,7 +177,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
 
     def calculate(self, well_depth, diameter, pressure, ch4_content, events, uncertainties, 
                   co2_content=0.0, control_efficiency=0.0, ef_co2=None, ef_ch4=None, ef_n2o=None,
-                  operating_temperature=60.0, temp_unit='F'):
+                  operating_temperature=60.0, temp_unit='F', gwp_dict=None):
         """
         API Equation 6-3 - Volume per unloading event with temperature correction:
         V_std = (pi/4) * D^2 * Depth * (P_tubing_abs / P_std) * (T_std / T_well_abs)
@@ -233,6 +234,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
                 flared_ch4_combusted = (ch4_tonnes * ctrl_eff) * 0.98
                 flared_co2_tonnes = flared_ch4_combusted * (44.01 / 16.04) + (co2_tonnes * ctrl_eff)
                 flared_unburnt_ch4_tonnes = (ch4_tonnes * ctrl_eff) * 0.02
+                flared_n2o_tonnes = (total_v_std * ctrl_eff * (ef_n2o or 0.0001)) / 1000.0
 
         total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4_tonnes
         total_co2 = vented_co2_tonnes + flared_co2_tonnes
@@ -260,7 +262,7 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             gas='n2o'
         ) if flared_n2o_tonnes > 0 else None
         
-        total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes)
+        total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             ch4=ch4_res,
@@ -290,7 +292,7 @@ class BlowdownCalculator(BaseCalculator):
 
     def calculate(self, blowdown_volume, pressure, events, ch4_content, uncertainties, 
                   co2_content=0.0, control_efficiency=0.0, ef_co2=None, ef_ch4=None, ef_n2o=None,
-                  operating_temperature=60.0, temp_unit='F', press_unit='psig', z_factor=1.0):
+                  operating_temperature=60.0, temp_unit='F', press_unit='psig', z_factor=1.0, gwp_dict=None):
         self.validate_inputs({
             "blowdown_volume": blowdown_volume,
             "pressure": pressure,
@@ -336,6 +338,7 @@ class BlowdownCalculator(BaseCalculator):
                 flared_ch4_combusted = (ch4_tonnes * ctrl_eff) * 0.98
                 flared_co2_tonnes = flared_ch4_combusted * (44.01 / 16.04) + (co2_tonnes * ctrl_eff)
                 flared_unburnt_ch4_tonnes = (ch4_tonnes * ctrl_eff) * 0.02
+                flared_n2o_tonnes = (total_v_std * ctrl_eff * (ef_n2o or 0.0001)) / 1000.0
 
         total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4_tonnes
         total_co2 = vented_co2_tonnes + flared_co2_tonnes
@@ -363,7 +366,7 @@ class BlowdownCalculator(BaseCalculator):
             gas='n2o'
         ) if flared_n2o_tonnes > 0 else None
         
-        total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes)
+        total_co2e = calculate_co2e(ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             ch4=ch4_res,
@@ -389,7 +392,7 @@ class TankFlashingCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Storage Tank Emissions", "Section 6.8")
 
-    def calculate(self, throughput, gas_oil_ratio, ch4_content, control_efficiency, uncertainties, process_type="tank_flashing", ef_ch4=0):
+    def calculate(self, throughput, gas_oil_ratio, ch4_content, control_efficiency, uncertainties, process_type="tank_flashing", ef_ch4=0, gwp_dict=None):
         """
         Calculates Tank Emissions.
         If Flashing: Uses GOR method (Vasquez-Beggs or simple GOR * Throughput).
@@ -431,7 +434,7 @@ class TankFlashingCalculator(BaseCalculator):
                 gas='ch4'
             )
 
-        total_co2e = calculate_co2e(ch4=ch4_res["value"])
+        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             ch4=ch4_res,
@@ -448,7 +451,7 @@ class PneumaticDeviceCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Pneumatic Devices", "Section 6.10")
 
-    def calculate(self, count, hours, bleed_rate, ch4_content, uncertainties):
+    def calculate(self, count, hours, bleed_rate, ch4_content, uncertainties, gwp_dict=None):
         """
         API Section 6.10 - Device count * Bleed rate
         """
@@ -469,7 +472,7 @@ class PneumaticDeviceCalculator(BaseCalculator):
             process_category='pneumatic', 
             gas='ch4'
         )
-        total_co2e = calculate_co2e(ch4=ch4_tonnes)
+        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             ch4=ch4_res,
