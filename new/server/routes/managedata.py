@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import EmissionSource, MitigationRecord, MitigationProject, ReportingMetadata, Facility, ProductionData, Emission, Scope2Emission, Scope3Emission, Notification, User
+from models import EmissionSource, MitigationRecord, MitigationProject, ReportingMetadata, Facility, ProductionData, Emission, Scope2Emission, Scope3Emission, Notification, User, Goal, BaseYear, BaseYearRecalculation
 from extensions import db
 from utils import get_current_user, get_allowed_facility_ids
 from sqlalchemy import func, distinct, or_
@@ -365,14 +365,21 @@ def get_available_filters():
         fac_query = fac_query.filter(Facility.id.in_(allowed_fids))
     facilities = fac_query.filter(Facility.id.in_(facility_ids)).all() if facility_ids else fac_query.all()
     
+    segment_query = db.session.query(distinct(Facility.segment))
+    if allowed_fids is not None:
+        segment_query = segment_query.filter(Facility.id.in_(allowed_fids))
+    segments = [r[0] for r in segment_query.all() if r[0]]
+    
     return jsonify({
         'years': sorted(list(available_years), reverse=True),
+        'segments': sorted(segments),
         'regions': [{
             'id': f.id,
             'name': f.name,
             'activity': f.activity,
             'division': f.division,
-            'field': f.field
+            'field': f.field,
+            'segment': f.segment
         } for f in facilities]
     })
 
@@ -463,3 +470,157 @@ def bulk_import_mitigation():
         
     db.session.commit()
     return jsonify({'message': f'{imported_count} mitigation projects imported'}), 201
+
+
+# --- Yearly Emission Goals ---
+@managedata_bp.route('/goals', methods=['GET'])
+@login_required
+def get_all_goals():
+    try:
+        goals = Goal.query.order_by(Goal.year.desc()).all()
+        return jsonify([{
+            'year': g.year,
+            'target_amount': float(g.target_amount) if g.target_amount is not None else 0.0,
+            'created_at': g.created_at.isoformat() if g.created_at else None
+        } for g in goals])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@managedata_bp.route('/goals', methods=['POST'])
+@login_required
+def add_or_update_goal():
+    try:
+        data = request.get_json() or {}
+        if not data.get('year') or data.get('target_amount') is None:
+            return jsonify({'error': 'Year and target amount are required'}), 400
+        
+        year = int(data['year'])
+        target = float(data['target_amount'])
+        
+        existing = Goal.query.filter_by(year=year).first()
+        if existing:
+            existing.target_amount = target
+        else:
+            goal = Goal(year=year, target_amount=target)
+            db.session.add(goal)
+        
+        db.session.commit()
+        return jsonify({'message': 'Emission goal saved successfully', 'year': year, 'target_amount': target}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@managedata_bp.route('/goals/<int:year>', methods=['DELETE'])
+@login_required
+def delete_goal(year):
+    try:
+        goal = Goal.query.filter_by(year=year).first()
+        if not goal:
+            return jsonify({'error': 'Goal not found'}), 404
+        db.session.delete(goal)
+        db.session.commit()
+        return jsonify({'message': 'Goal deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# --- Base Years & Recalculations ---
+@managedata_bp.route('/base-years', methods=['GET'])
+@login_required
+def get_base_years():
+    try:
+        active_rec = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
+        base_year_entry = BaseYear.query.get(1)
+        
+        active_year = None
+        if active_rec:
+            active_year = active_rec.year
+        elif base_year_entry:
+            active_year = base_year_entry.year
+            
+        recalculations = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).all()
+        history = [{
+            'id': r.id,
+            'year': r.year,
+            'reason': r.reason,
+            'recalc_date': r.recalc_date.isoformat() if r.recalc_date else None,
+            'previous_emissions': r.previous_emissions,
+            'adjusted_emissions': r.adjusted_emissions,
+            'created_at': r.created_at.isoformat() if r.created_at else None
+        } for r in recalculations]
+        
+        return jsonify({
+            'active_year': active_year,
+            'active_record': {
+                'id': active_rec.id,
+                'year': active_rec.year,
+                'reason': active_rec.reason,
+                'recalc_date': active_rec.recalc_date.isoformat() if active_rec.recalc_date else None
+            } if active_rec else None,
+            'history': history
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@managedata_bp.route('/base-years', methods=['POST'])
+@login_required
+def add_base_year_recalculation():
+    try:
+        data = request.get_json() or {}
+        if not data.get('year') or not data.get('reason'):
+            return jsonify({'error': 'Year and reason for change are required'}), 400
+            
+        year = int(data['year'])
+        reason = str(data['reason']).strip()
+        prev_em = float(data['previous_emissions']) if data.get('previous_emissions') not in (None, '') else None
+        adj_em = float(data['adjusted_emissions']) if data.get('adjusted_emissions') not in (None, '') else None
+        
+        user = get_current_user()
+        user_id = user.id if user else None
+        
+        recalc = BaseYearRecalculation(
+            year=year,
+            reason=reason,
+            previous_emissions=prev_em,
+            adjusted_emissions=adj_em,
+            created_by=user_id
+        )
+        db.session.add(recalc)
+        
+        # Keep BaseYear singleton synchronized
+        base_year_singleton = BaseYear.query.get(1)
+        if base_year_singleton:
+            base_year_singleton.year = year
+        else:
+            base_year_singleton = BaseYear(id=1, year=year, locked=1)
+            db.session.add(base_year_singleton)
+            
+        db.session.commit()
+        return jsonify({'message': 'Base year recalculated successfully', 'id': recalc.id}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@managedata_bp.route('/base-years/<int:rec_id>', methods=['DELETE'])
+@login_required
+def delete_base_year_recalculation(rec_id):
+    try:
+        rec = BaseYearRecalculation.query.get(rec_id)
+        if not rec:
+            return jsonify({'error': 'Recalculation record not found'}), 404
+        db.session.delete(rec)
+        db.session.commit()
+        
+        # Resync singleton with latest remaining
+        latest = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
+        if latest:
+            singleton = BaseYear.query.get(1)
+            if singleton:
+                singleton.year = latest.year
+                db.session.commit()
+                
+        return jsonify({'message': 'Recalculation record deleted'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+

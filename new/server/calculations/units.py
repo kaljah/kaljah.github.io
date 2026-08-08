@@ -166,9 +166,9 @@ def convert(value, from_unit, to_unit):
     raise ValueError(f"Unsupported conversion: {from_unit} to {to_unit}")
 
 def calculate_co2e(co2=0, ch4=0, n2o=0, gwp_dict=None, gwp_standard=None, horizon='100'):
-    """Calculates CO2e using dynamically resolved GWPs."""
+    """Calculates CO2e using dynamically resolved GWPs (AR4/AR5/AR6)."""
     gwp = get_active_gwp(standard=gwp_standard, gwp_dict=gwp_dict, horizon=horizon)
     co2_val = float(co2 or 0)
     ch4_val = float(ch4 or 0)
     n2o_val = float(n2o or 0)
-    return (co2_val * gwp.get('CO2', 1.0)) + (ch4_val * gwp.get('CH4', 28.0)) + (n2o_val * gwp.get('N2O', 264.0))
+    return (co2_val * gwp.get('CO2', 1.0)) + (ch4_val * gwp.get('CH4', 28.0)) + (n2o_val * gwp.get('N2O', 265.0))

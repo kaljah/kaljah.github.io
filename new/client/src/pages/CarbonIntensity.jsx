@@ -20,9 +20,11 @@ const CarbonIntensity = () => {
     const [currentActivity, setCurrentActivity] = useState('all');
     const [currentDivision, setCurrentDivision] = useState('all');
     const [currentRegion, setCurrentRegion] = useState('all');
+    const [currentSegment, setCurrentSegment] = useState('all');
     const [selectedYear, setSelectedYear] = useState('all');
     const [facilities, setFacilities] = useState([]);
     const [availableYears, setAvailableYears] = useState([]);
+    const [availableSegments, setAvailableSegments] = useState([]);
 
     // GWP Horizon State: '100' or '20' & Active Standard
     const [gwpHorizon, setGwpHorizon] = useState('100');
@@ -84,6 +86,9 @@ const CarbonIntensity = () => {
                 } else {
                     setAvailableYears(['2023', '2024', '2025', '2026']);
                 }
+                if (filterRes.data && filterRes.data.segments) {
+                    setAvailableSegments(filterRes.data.segments);
+                }
                 setSelectedYear('all');
             } catch (error) {
                 console.error('Initialization error:', error);
@@ -95,14 +100,14 @@ const CarbonIntensity = () => {
     // Load data on filter changes
     useEffect(() => {
         loadIntensityData();
-    }, [currentActivity, currentDivision, currentRegion, selectedYear]);
+    }, [currentActivity, currentDivision, currentRegion, selectedYear, currentSegment]);
 
     // Load trend data
     useEffect(() => {
         if (selectedYear) {
             loadTrendData(selectedYear);
         }
-    }, [selectedYear, currentActivity, currentDivision]);
+    }, [selectedYear, currentActivity, currentDivision, currentSegment]);
 
     const loadIntensityData = async () => {
         try {
@@ -113,6 +118,9 @@ const CarbonIntensity = () => {
                 activity: currentActivity,
                 division: currentDivision
             });
+            if (currentSegment !== 'all') {
+                params.append('segment', currentSegment);
+            }
 
             const res = await api.get(`/dashboard/intensity-stats?${params}`);
             const data = res.data || [];
@@ -179,6 +187,9 @@ const CarbonIntensity = () => {
                 activity: currentActivity,
                 division: currentDivision
             });
+            if (currentSegment !== 'all') {
+                params.append('segment', currentSegment);
+            }
             params.append('years', years.join(','));
             const res = await api.get(`/dashboard/intensity-trend?${params}`).catch(() => ({ data: [] }));
             setRawTrendData(res.data || []);
@@ -188,6 +199,13 @@ const CarbonIntensity = () => {
     };
 
     // Filter helpers
+    const handleSegmentChange = (val) => {
+        setCurrentSegment(val);
+        setCurrentActivity('all');
+        setCurrentDivision('all');
+        setCurrentRegion('all');
+    };
+
     const handleActivityChange = (val) => {
         setCurrentActivity(val);
         setCurrentDivision('all');
@@ -199,27 +217,36 @@ const CarbonIntensity = () => {
         setCurrentRegion('all');
     };
 
-    const getActivityOptions = () => [
-        { value: 'all', label: 'All Activities' },
-        { value: 'EP', label: 'EP' },
-        { value: 'LQS', label: 'LQS' },
-        { value: 'RPC', label: 'RPC' },
-        { value: 'TRC', label: 'TRC' }
+    const getSegmentOptions = () => [
+        { value: 'all', label: 'All Supply Chains' },
+        ...availableSegments.map(s => ({ value: s, label: s }))
     ];
+
+    const getActivityOptions = () => {
+        const filtered = facilities.filter(f =>
+            currentSegment === 'all' || f.segment === currentSegment
+        );
+        const activities = new Set(filtered.map(f => f.activity));
+        return [
+            { value: 'all', label: 'All Activities' },
+            ...Array.from(activities).sort().map(a => ({ value: a, label: a }))
+        ];
+    };
 
     const getDivisionOptions = () => {
         let divisions = [{ value: 'all', label: 'All Divisions' }];
-        if (currentActivity === 'all') {
-            const allDivisions = new Set(facilities.map(f => f.division).filter(Boolean));
-            divisions.push(...Array.from(allDivisions).sort().map(d => ({ value: d, label: d })));
-        } else if (HIERARCHY[currentActivity]) {
-            divisions.push(...HIERARCHY[currentActivity].map(d => ({ value: d, label: d })));
-        }
+        const filtered = facilities.filter(f =>
+            (currentSegment === 'all' || f.segment === currentSegment) &&
+            (currentActivity === 'all' || f.activity === currentActivity)
+        );
+        const divs = new Set(filtered.map(f => f.division).filter(Boolean));
+        divisions.push(...Array.from(divs).sort().map(d => ({ value: d, label: d })));
         return divisions;
     };
 
     const getRegionOptions = () => {
         const filtered = facilities.filter(f =>
+            (currentSegment === 'all' || f.segment === currentSegment) &&
             (currentActivity === 'all' || f.activity === currentActivity) &&
             (currentDivision === 'all' || f.division === currentDivision)
         );
@@ -248,20 +275,23 @@ const CarbonIntensity = () => {
                         placeholder="Year"
                     />
                 </div>
+                <div style={{ width: '180px' }}>
+                    <CustomDropdown options={getSegmentOptions()} value={currentSegment} onChange={handleSegmentChange} placeholder="Supply Chain" />
+                </div>
                 <div style={{ width: '160px' }}>
                     <CustomDropdown options={getActivityOptions()} value={currentActivity} onChange={handleActivityChange} placeholder="Activity" />
                 </div>
                 <div style={{ width: '160px' }}>
-                    <CustomDropdown options={getDivisionOptions()} value={currentDivision} onChange={handleDivisionChange} placeholder="Division" disabled={currentActivity === 'all'} />
+                    <CustomDropdown options={getDivisionOptions()} value={currentDivision} onChange={handleDivisionChange} placeholder="Division" />
                 </div>
                 <div style={{ width: '220px' }}>
-                    <CustomDropdown options={getRegionOptions()} value={currentRegion} onChange={setCurrentRegion} placeholder="Region" disabled={currentDivision === 'all'} />
+                    <CustomDropdown options={getRegionOptions()} value={currentRegion} onChange={setCurrentRegion} placeholder="Region" />
                 </div>
             </div>
         );
 
         return () => { setTopBarLeft(null); setTopBarRight(null); };
-    }, [availableYears, selectedYear, currentActivity, currentDivision, currentRegion, facilities]);
+    }, [availableYears, selectedYear, currentActivity, currentDivision, currentRegion, currentSegment, facilities]);
 
     // Trend chart data based on active GWP toggle
     const trendChartData = useMemo(() => {

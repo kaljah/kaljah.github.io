@@ -219,6 +219,8 @@ def get_ogmp_surveys():
         query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
     if request.args.get('facilityId'):
         query = query.filter_by(facility_id=request.args.get('facilityId'))
+    if request.args.get('segment'):
+        query = query.join(Facility, OgmpSurvey.facility_id == Facility.id).filter(Facility.segment == request.args.get('segment'))
     if request.args.get('year'):
         query = query.filter_by(year=request.args.get('year'))
     if request.args.get('survey_type'):

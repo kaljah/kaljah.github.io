@@ -13,7 +13,7 @@ class AGRCalculator(BaseCalculator):
         super().__init__("Acid Gas Removal", "Section 6.5")
 
     def calculate(self, throughput, co2_in, co2_out, uncertainties, 
-                  ch4_in=0.85, ch4_slip_fraction=0.001, acid_gas_control_eff=0.0):
+                  ch4_in=0.85, ch4_slip_fraction=0.001, acid_gas_control_eff=0.0, gwp_dict=None):
         """
         API Compendium 2021 §6.5 & Table 6-5:
         - CO2 mass balance from amine sweetening process
@@ -73,9 +73,9 @@ class AGRCalculator(BaseCalculator):
             process_category='midstream', 
             gas='ch4'
         )
-        n2o_res = {"value": 0.0, "uncertainty": 0.0, "lower": 0.0, "upper": 0.0}
+        n2o_res = None
         
-        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes)
+        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             co2=co2_res,
@@ -104,7 +104,7 @@ class DehydratorCalculator(BaseCalculator):
                   contactor_pressure=800.0, press_unit='psig',
                   contactor_temperature=100.0, temp_unit='F',
                   has_flash_tank=True, flash_control_eff=0.0,
-                  still_control_type='none', **kwargs):
+                  still_control_type='none', gwp_dict=None, **kwargs):
         """
         API Compendium 2021 §6.6 & GRI-GLYCalc Parametric Solubility Model (CALC-02 Remediation).
         
@@ -119,7 +119,7 @@ class DehydratorCalculator(BaseCalculator):
         
         # 1. Check if Tier 1 (Default Emission Factor based on throughput alone)
         if (pump_rate is None or float(pump_rate or 0) <= 0) and throughput is not None:
-            # API Compendium 2021 Table 6-6: Tier 1 default = 0.266 tonnes CH4 / MMscf (uncontrolled)
+            # API Compendium 2021 Table 6-6 & EPA Subpart W Table W-1A: Tier 1 default = 0.266 tonnes CH4 / MMscf (uncontrolled)
             # or 0.0532 tonnes CH4 / MMscf (controlled)
             tp_mmscf = float(throughput)
             eff = float(control_eff or 0.0)
@@ -135,13 +135,13 @@ class DehydratorCalculator(BaseCalculator):
                 process_category='midstream', 
                 gas='ch4'
             )
-            total_co2e = calculate_co2e(ch4=ch4_tonnes)
+            total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
             
             return self.format_result(
                 ch4=ch4_res,
                 total_co2e=total_co2e,
                 inputs={"throughput_mmscf": tp_mmscf, "tier": "Tier 1 (Default Factor)"},
-                metadata={"method": "API Table 6-6 Default Factor"}
+                metadata={"method": "API Table 6-6 / EPA Subpart W Table W-1A Default Factor"}
             )
 
         # 2. Tier 3 Parametric Engineering Calculation
@@ -216,7 +216,7 @@ class DehydratorCalculator(BaseCalculator):
             process_category='midstream', 
             gas='ch4'
         )
-        total_co2e = calculate_co2e(ch4=ch4_tonnes)
+        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
         
         return self.format_result(
             ch4=ch4_res,

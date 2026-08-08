@@ -1,6 +1,9 @@
 from extensions import db
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
+
+def utc_now():
+    return datetime.now(timezone.utc)
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -19,10 +22,10 @@ class User(db.Model):
     consolidationApproach = db.Column(db.String(50))
     role = db.Column(db.String(20), default='user')
     status = db.Column(db.String(20), default='active')
-    password_updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    password_updated_at = db.Column(db.DateTime, default=utc_now)
     last_login = db.Column(db.DateTime)
     preferences = db.Column(db.Text) # JSON string for user settings (theme, language, etc.)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -51,8 +54,8 @@ class Facility(db.Model):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
     # Cascading Deletes
     emissions = db.relationship('Emission', backref='facility_parent', cascade='all, delete-orphan', lazy=True)
@@ -120,8 +123,13 @@ class Emission(db.Model):
     
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     updated_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+
+    __table_args__ = (
+        db.Index('ix_emissions_fac_yr_status', 'facility_id', 'year', 'status'),
+        db.Index('ix_emissions_act_div', 'activity', 'division'),
+    )
 
 class ProductionData(db.Model):
     __tablename__ = 'production_data'
@@ -141,8 +149,8 @@ class ProductionData(db.Model):
     field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / Pétrochimie
     
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_at = db.Column(db.DateTime, default=utc_now)
     
     __table_args__ = (db.UniqueConstraint('facility_id', 'month', 'year', name='_facility_month_year_uc'),)
 
@@ -167,8 +175,8 @@ class EmissionSource(db.Model):
     external_id = db.Column(db.String(50))
     
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 class CustomFactor(db.Model):
     __tablename__ = 'custom_factors'
@@ -189,8 +197,8 @@ class CustomFactor(db.Model):
     ch4_uncertainty = db.Column(db.Float)
     n2o_uncertainty = db.Column(db.Float)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 class ActivityLog(db.Model):
     __tablename__ = 'activity_log'
@@ -204,20 +212,20 @@ class ActivityLog(db.Model):
     entity = db.Column(db.String(50), index=True)   # DB-03 FIX: add index
     entity_id = db.Column(db.String(50))
     metadata_json = db.Column('metadata', db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    timestamp = db.Column(db.DateTime, default=utc_now, index=True)
 
 class Goal(db.Model):
     __tablename__ = 'goals'
     year = db.Column(db.Integer, primary_key=True)
     target_amount = db.Column(db.Float)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 class BaseYear(db.Model):
     __tablename__ = 'base_year'
     id = db.Column(db.Integer, primary_key=True)  # DB-02 FIX: enforced singleton via CheckConstraint below
     year = db.Column(db.Integer, nullable=False)
     locked = db.Column(db.Integer, default=1)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
     
     # DB-02 FIX: Only one row is ever allowed (id must equal 1)
     __table_args__ = (
@@ -233,7 +241,7 @@ class MitigationRecord(db.Model):
     quantity_tco2e = db.Column(db.Float, default=0)
     notes = db.Column(db.Text)
     reference_id = db.Column(db.String(50))
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime, default=utc_now)
 
 class Scope3Data(db.Model):
     __tablename__ = 'scope3_data'
@@ -247,7 +255,7 @@ class Scope3Data(db.Model):
     emission_factor = db.Column(db.Float, default=0)
     emissions_tco2e = db.Column(db.Float, default=0)
     notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 class Scope2Emission(db.Model):
     __tablename__ = 'scope2_emissions'
@@ -274,7 +282,11 @@ class Scope2Emission(db.Model):
     
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     status = db.Column(db.String(20), default='Verified', index=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index('ix_scope2_fac_yr_status', 'facility_id', 'year', 'status'),
+    )
 
 class Scope3Emission(db.Model):
     __tablename__ = 'scope3_emissions'
@@ -294,7 +306,11 @@ class Scope3Emission(db.Model):
     notes = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     status = db.Column(db.String(20), default='Verified', index=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    __table_args__ = (
+        db.Index('ix_scope3_fac_yr_status', 'facility_id', 'year', 'status'),
+    )
 
 class MitigationProject(db.Model):
     __tablename__ = 'mitigation_projects'
@@ -311,19 +327,19 @@ class MitigationProject(db.Model):
     facility_id = db.Column(db.Integer, db.ForeignKey('facilities.id'))
     facility = db.relationship('Facility', overlaps="facility_parent,mitigation_projects")
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 class BaseYearRecalculation(db.Model):
     __tablename__ = 'base_year_recalculations'
     id = db.Column(db.Integer, primary_key=True)
     year = db.Column(db.Integer, nullable=False)
     reason = db.Column(db.Text, nullable=False)
-    recalc_date = db.Column(db.DateTime, default=datetime.utcnow)
+    recalc_date = db.Column(db.DateTime, default=utc_now)
     previous_emissions = db.Column(db.Float)
     adjusted_emissions = db.Column(db.Float)
     approved_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 class ReportingMetadata(db.Model):
     __tablename__ = 'reporting_metadata'
@@ -344,7 +360,7 @@ class Notification(db.Model):
     title = db.Column(db.String(120))
     message = db.Column(db.Text)
     is_read = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
     metadata_json = db.Column('metadata', db.Text) # JSON string for extra data
     
     @staticmethod
@@ -385,7 +401,7 @@ class OgmpSurvey(db.Model):
     status = db.Column(db.String(50), default='pending')  # pending, reviewed, reported
     operator_notes = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 
 class MethaneSourceType(db.Model):
@@ -396,7 +412,7 @@ class MethaneSourceType(db.Model):
     category = db.Column(db.String(50), nullable=False)  # fugitive / vented / combustion_slip / flaring
     default_ef_reference = db.Column(db.String(150))
     default_level = db.Column(db.Integer, default=3)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
 
 
 class LevelUpgradeLog(db.Model):
@@ -409,7 +425,7 @@ class LevelUpgradeLog(db.Model):
     new_level = db.Column(db.Integer, nullable=False)
     target_date = db.Column(db.String(20))
     justification = db.Column(db.Text)
-    changed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    changed_at = db.Column(db.DateTime, default=utc_now)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 

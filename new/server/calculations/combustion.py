@@ -13,7 +13,7 @@ class CombustionCalculator(BaseCalculator):
 
     def calculate(self, fuel_quantity, ef_co2, ef_ch4, ef_n2o, uncertainties, hhv, ef_unit, fuel_unit, fuel_type, 
                   combustion_efficiency=0.995, operating_temperature=None, temp_unit='C', 
-                  operating_pressure=None, press_unit='psig', z_factor=1.0, **comps):
+                  operating_pressure=None, press_unit='psig', z_factor=1.0, gwp_dict=None, **comps):
         """
         Standard fuel-based combustion calculation with API §4.2.1 thermodynamic normalization.
         Emissions = Quantity * EF * (HHV if energy-based)
@@ -47,6 +47,9 @@ class CombustionCalculator(BaseCalculator):
         elif u in ['mmscf']:
             # 1 MMscf = 1,000,000 scf
             normalized_quantity = raw_quantity * 1_000_000.0
+        elif u in ['mscf']:
+            # 1 Mscf = 1,000 scf
+            normalized_quantity = raw_quantity * 1_000.0
         elif u in ['l', 'liter', 'liters']:
             normalized_quantity = raw_quantity * CONVERSIONS.get("l_to_gal", 0.264172)
         elif u in ['bbl', 'barrel', 'barrels']:
@@ -67,6 +70,7 @@ class CombustionCalculator(BaseCalculator):
             energy_factor = (hhv or 1020.0) / 1_000_000.0
         
         # Calculate raw values in kg
+        # Note: In Tier 1/2 combustion, standard published EFs already incorporate unburned fractions.
         co2_kg = normalized_quantity * energy_factor * ef_co2
         ch4_kg = normalized_quantity * energy_factor * ef_ch4
         n2o_kg = normalized_quantity * energy_factor * ef_n2o
@@ -111,6 +115,7 @@ class CombustionCalculator(BaseCalculator):
                 # Convert quantity to standard m3
                 vol_m3 = raw_quantity
                 if u in ['scf']: vol_m3 = raw_quantity * CONVERSIONS.get('scf_to_m3', 0.0283168)
+                elif u in ['mscf']: vol_m3 = raw_quantity * 1_000.0 * CONVERSIONS.get('scf_to_m3', 0.0283168)
                 elif u in ['mmscf']: vol_m3 = raw_quantity * 1_000_000.0 * CONVERSIONS.get('scf_to_m3', 0.0283168)
                 
                 density_co2 = CONVERSIONS.get("density_co2", 1.861)
@@ -145,7 +150,7 @@ class CombustionCalculator(BaseCalculator):
             tier=_tier, process_category=_cat, gas='n2o'
         )
         
-        total_co2e = calculate_co2e(co2_val, ch4_val, n2o_val)
+        total_co2e = calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)
         
         return self.format_result(
             co2=co2_res,
@@ -166,8 +171,8 @@ class FlaringCalculator(BaseCalculator):
         super().__init__("Flaring Dual-Efficiency", "Section 5.2")
 
     def calculate(self, gas_volume, ch4_fraction, flare_type, uncertainties, hhv=None, ef_unit=None, 
-                  fuel_unit=None, fuel_type=None, ef_n2o=0.0, operating_temperature=None, temp_unit='C',
-                  operating_pressure=None, press_unit='psig', z_factor=1.0, **comps):
+                  fuel_unit=None, fuel_type=None, ef_n2o=0.0, operating_temperature=None, temp_unit='C', 
+                  operating_pressure=None, press_unit='psig', z_factor=1.0, gwp_dict=None, **comps):
         """
         Dual-efficiency flaring model (API 5-3, 5-4) with API §4.2.1 thermodynamic normalization.
         Supports full C1-C10 gas composition tracking for accurate CO2 math.
@@ -270,7 +275,7 @@ class FlaringCalculator(BaseCalculator):
             tier=_tier, process_category=_cat, gas='n2o'
         )
 
-        total_co2e = calculate_co2e(co2_tonnes, ch4_tonnes, n2o_tonnes)
+        total_co2e = calculate_co2e(co2_tonnes, ch4_tonnes, n2o_tonnes, gwp_dict=gwp_dict)
 
         return self.format_result(
             co2=co2_res,

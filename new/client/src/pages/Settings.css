@@ -318,10 +318,6 @@
     font-weight: 600;
 }
 
-[data-theme='dark'] .gwp-status-pill {
-    color: #38bdf8;
-}
-
 .gwp-desc {
     font-size: 0.84rem;
     color: var(--text-secondary, #64748b);
@@ -719,12 +715,6 @@
     font-size: 0.82rem;
 }
 
-[data-theme='dark'] .badge-target-year {
-    background: rgba(56, 189, 248, 0.12);
-    color: #38bdf8;
-    border-color: rgba(56, 189, 248, 0.3);
-}
-
 .btn-table-save {
     display: inline-flex;
     align-items: center;
@@ -858,4 +848,282 @@
 
 .toggle-switch input:checked + .slider-round:before {
     transform: translateX(22px);
+}
+
+/* ============================================================
+   COPERNICUS SATELLITE INTEGRATION TAB STYLES
+   ============================================================ */
+
+.satellite-guide-banner {
+    background: rgba(2, 132, 199, 0.05);
+    border: 1px solid rgba(2, 132, 199, 0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    transition: all 0.2s ease;
+}
+
+.satellite-guide-banner:hover {
+    border-color: rgba(2, 132, 199, 0.35);
+}
+
+.guide-banner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    gap: 16px;
+}
+
+.guide-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text-primary, #0f172a);
+}
+
+.guide-toggle-btn {
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.guide-toggle-btn:hover {
+    background: #0369a1;
+}
+
+.guide-steps-body {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(2, 132, 199, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.guide-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.step-num {
+    background: #0284c7;
+    color: #ffffff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.step-content {
+    font-size: 0.88rem;
+    color: var(--text-secondary, #475569);
+    line-height: 1.5;
+}
+
+.step-content ul {
+    margin: 6px 0 0 18px;
+    padding: 0;
+}
+
+.step-content li {
+    margin-bottom: 4px;
+}
+
+.link-ext {
+    color: #0284c7;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.link-ext:hover {
+    text-decoration: underline;
+}
+
+/* Satellite Specs Grid */
+.satellite-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.spec-card {
+    background: var(--bg-card-secondary, #f8fafc);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.spec-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #64748b);
+    font-weight: 700;
+}
+
+.spec-val {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0284c7;
+}
+
+.spec-desc {
+    font-size: 0.78rem;
+    color: var(--text-secondary, #94a3b8);
+}
+
+/* Form Styling */
+.satellite-config-form {
+    background: var(--bg-card-secondary, #f8fafc);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.config-form-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary, #0f172a);
+    margin-bottom: 4px;
+}
+
+.config-form-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.auth-mode-selector {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.auth-mode-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #cbd5e1);
+    background: var(--bg-card, #ffffff);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary, #475569);
+    transition: all 0.2s ease;
+}
+
+.auth-mode-pill.active {
+    border-color: #0284c7;
+    background: rgba(2, 132, 199, 0.08);
+    color: #0284c7;
+}
+
+.form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-row-2col {
+        grid-template-columns: 1fr;
+    }
+}
+
+.range-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border-color, #cbd5e1);
+    outline: none;
+    accent-color: #0284c7;
+    cursor: pointer;
+}
+
+.connection-test-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-test-connection {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #0284c7;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-test-connection:hover:not(:disabled) {
+    background: #0369a1;
+}
+
+.btn-test-connection:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.connection-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.connection-status-badge.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.connection-status-badge.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.token-expiry {
+    font-size: 0.78rem;
+    opacity: 0.8;
 }

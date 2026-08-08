@@ -9,7 +9,14 @@ import {
     Scale, 
     ShieldCheck, 
     Activity, 
-    Layers
+    Layers,
+    Radio,
+    Satellite,
+    ExternalLink,
+    KeyRound,
+    AlertCircle,
+    Check,
+    HelpCircle
 } from 'lucide-react';
 import api from '../api';
 import { useToast } from '../components/Toast';
@@ -64,9 +71,21 @@ const Settings = () => {
     const [globalThreshold, setGlobalThreshold] = useState(20.0);
     const [upstreamTarget, setUpstreamTarget] = useState(0.20);
     const [midstreamTarget, setMidstreamTarget] = useState(0.05);
-    const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+    const [theme, setTheme] = useState('light');
     const [unitSystem, setUnitSystem] = useState('metric');
     const [autoFlagDiscrepancy, setAutoFlagDiscrepancy] = useState(true);
+
+    // Copernicus Sentinel-5P Satellite Integration States
+    const [copernicusUsername, setCopernicusUsername] = useState('');
+    const [copernicusPassword, setCopernicusPassword] = useState('');
+    const [copernicusClientId, setCopernicusClientId] = useState('');
+    const [copernicusClientSecret, setCopernicusClientSecret] = useState('');
+    const [copernicusQaThreshold, setCopernicusQaThreshold] = useState(0.5);
+    const [copernicusEnabled, setCopernicusEnabled] = useState(false);
+    const [authMode, setAuthMode] = useState('password'); // 'password' or 'oauth_client'
+    const [testingConnection, setTestingConnection] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState(null); // { success: bool, message: str, expires_in?: int }
+    const [showGuide, setShowGuide] = useState(false);
 
     // Facility specific overrides
     const [facilityEdits, setFacilityEdits] = useState({});
@@ -90,9 +109,18 @@ const Settings = () => {
                 if (settings.reconciliation_threshold) setGlobalThreshold(settings.reconciliation_threshold);
                 if (settings.ogmp_upstream_target_pct !== undefined) setUpstreamTarget(Number(settings.ogmp_upstream_target_pct));
                 if (settings.ogmp_midstream_target_pct !== undefined) setMidstreamTarget(Number(settings.ogmp_midstream_target_pct));
+                if (settings.copernicus_username) setCopernicusUsername(settings.copernicus_username);
+                if (settings.copernicus_password) setCopernicusPassword(settings.copernicus_password);
+                if (settings.copernicus_client_id) {
+                    setCopernicusClientId(settings.copernicus_client_id);
+                    setAuthMode('oauth_client');
+                }
+                if (settings.copernicus_client_secret) setCopernicusClientSecret(settings.copernicus_client_secret);
+                if (settings.copernicus_qa_threshold !== undefined) setCopernicusQaThreshold(Number(settings.copernicus_qa_threshold));
+                if (settings.copernicus_enabled !== undefined) setCopernicusEnabled(Boolean(settings.copernicus_enabled));
                 if (settings.theme) {
-                    setTheme(settings.theme);
-                    applyThemeLive(settings.theme);
+                    setTheme('light');
+                    applyThemeLive('light');
                 }
                 if (settings.unit_system) setUnitSystem(settings.unit_system);
                 if (settings.auto_flag_discrepancy !== undefined) setAutoFlagDiscrepancy(settings.auto_flag_discrepancy);
@@ -121,16 +149,12 @@ const Settings = () => {
     };
 
     const applyThemeLive = (newTheme) => {
-        if (newTheme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-        }
+        document.documentElement.removeAttribute('data-theme');
     };
 
     const handleThemeChange = (newTheme) => {
-        setTheme(newTheme);
-        applyThemeLive(newTheme);
+        setTheme('light');
+        applyThemeLive('light');
     };
 
     const handleSaveGlobal = async () => {
@@ -142,17 +166,48 @@ const Settings = () => {
                 reconciliation_threshold: Number(globalThreshold),
                 ogmp_upstream_target_pct: Number(upstreamTarget),
                 ogmp_midstream_target_pct: Number(midstreamTarget),
-                theme,
+                copernicus_username: copernicusUsername,
+                copernicus_password: copernicusPassword,
+                copernicus_client_id: copernicusClientId,
+                copernicus_client_secret: copernicusClientSecret,
+                copernicus_qa_threshold: Number(copernicusQaThreshold),
+                copernicus_enabled: Boolean(copernicusEnabled),
+                theme: 'light',
                 unit_system: unitSystem,
                 auto_flag_discrepancy: autoFlagDiscrepancy
             });
-            applyThemeLive(theme);
-            toast.success('System settings and GWP standards updated successfully!');
+            applyThemeLive('light');
+            toast.success('System settings and Copernicus credentials saved successfully!');
         } catch (err) {
             console.error('Save failed:', err);
             toast.error('Error saving settings');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleTestConnection = async () => {
+        try {
+            setTestingConnection(true);
+            setConnectionStatus(null);
+            const payload = authMode === 'password'
+                ? { copernicus_username: copernicusUsername, copernicus_password: copernicusPassword }
+                : { copernicus_client_id: copernicusClientId, copernicus_client_secret: copernicusClientSecret };
+            
+            const res = await api.post('/satellite/sentinel5p/test-connection', payload);
+            if (res.data && res.data.connected) {
+                setConnectionStatus({ success: true, message: res.data.message, expires_in: res.data.expires_in });
+                toast.success('Copernicus Data Space connection verified successfully!');
+            } else {
+                setConnectionStatus({ success: false, message: res.data.message || 'Connection failed' });
+                toast.error(res.data.message || 'Authentication rejected by Copernicus CDSE');
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || err.message || 'Failed to connect to Copernicus CDSE';
+            setConnectionStatus({ success: false, message: msg });
+            toast.error(msg);
+        } finally {
+            setTestingConnection(false);
         }
     };
 
@@ -254,6 +309,14 @@ const Settings = () => {
                     >
                         <Building2 size={17} className="tab-icon-svg" />
                         <span>Facility Overrides ({facilities.length})</span>
+                    </button>
+                    <button 
+                        className={`settings-tab-btn ${activeTab === 'satellite' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('satellite')}
+                        id="tab-satellite"
+                    >
+                        <Satellite size={17} className="tab-icon-svg" />
+                        <span>Copernicus Satellite (S5P)</span>
                     </button>
                 </div>
             </div>
@@ -590,6 +653,261 @@ const Settings = () => {
                                 })}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            )}
+
+            {/* TAB CONTENT: Copernicus Sentinel-5P Satellite Integration */}
+            {activeTab === 'satellite' && (
+                <div className="settings-section-card">
+                    <div className="section-intro">
+                        <div className="section-intro-header">
+                            <Satellite size={22} className="section-icon" style={{ color: '#0284c7' }} />
+                            <h2>ESA Copernicus Sentinel-5P (TROPOMI) Satellite Integration</h2>
+                        </div>
+                        <p>
+                            Configure access to the **Copernicus Data Space Ecosystem (CDSE)** to stream global Level-3 Methane total column mixing ratio (<code style={{ color: '#0284c7' }}>COPERNICUS/S5P/OFFL/L3_CH4</code>) directly into the Emissions Map and OGMP 2.0 top-down reconciliation engine.
+                        </p>
+                    </div>
+
+                    {/* Step-by-step account guide toggle banner */}
+                    <div className="satellite-guide-banner">
+                        <div className="guide-banner-header" onClick={() => setShowGuide(!showGuide)}>
+                            <div className="guide-title">
+                                <HelpCircle size={18} color="#0284c7" />
+                                <strong>Need a Copernicus Account? Click here for the Step-by-Step Setup Guide</strong>
+                            </div>
+                            <button className="guide-toggle-btn" type="button">
+                                {showGuide ? 'Hide Guide' : 'Show Step-by-Step Guide'}
+                            </button>
+                        </div>
+
+                        {showGuide && (
+                            <div className="guide-steps-body">
+                                <div className="guide-step">
+                                    <div className="step-num">1</div>
+                                    <div className="step-content">
+                                        <strong>Visit Copernicus Data Space:</strong> Go to{' '}
+                                        <a href="https://dataspace.copernicus.eu" target="_blank" rel="noopener noreferrer" className="link-ext">
+                                            dataspace.copernicus.eu <ExternalLink size={12} />
+                                        </a>{' '}
+                                        and click <strong>"Register"</strong> in the top-right corner.
+                                    </div>
+                                </div>
+                                <div className="guide-step">
+                                    <div className="step-num">2</div>
+                                    <div className="step-content">
+                                        <strong>Create Free Account:</strong> Fill in your name, organization, email, and choose a password. Confirm the activation email sent to your inbox.
+                                    </div>
+                                </div>
+                                <div className="guide-step">
+                                    <div className="step-num">3</div>
+                                    <div className="step-content">
+                                        <strong>Choose Login Method:</strong>
+                                        <ul>
+                                            <li><strong>Direct Login (Recommended):</strong> Use your registered Copernicus Email and Password directly below.</li>
+                                            <li><strong>OAuth2 API Keys (Enterprise):</strong> Go to <a href="https://identity.dataspace.copernicus.eu" target="_blank" rel="noopener noreferrer" className="link-ext">identity.dataspace.copernicus.eu <ExternalLink size={12} /></a> &rarr; <em>OAuth Clients / API Keys</em> &rarr; <em>Create New Client</em>.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div className="guide-step">
+                                    <div className="step-num">4</div>
+                                    <div className="step-content">
+                                        <strong>Test & Save:</strong> Enter credentials below, click <strong>"Test Connection"</strong> to verify authentication, then click <strong>"Save All Changes"</strong>.
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Satellite Specs Overview */}
+                    <div className="satellite-specs-grid">
+                        <div className="spec-card">
+                            <div className="spec-label">Satellite Instrument</div>
+                            <div className="spec-val">Sentinel-5P (TROPOMI)</div>
+                            <div className="spec-desc">European Space Agency (ESA)</div>
+                        </div>
+                        <div className="spec-card">
+                            <div className="spec-label">Spatial Resolution</div>
+                            <div className="spec-val">5.5 × 7.0 km</div>
+                            <div className="spec-desc">Regional & Basin Plume Scale</div>
+                        </div>
+                        <div className="spec-card">
+                            <div className="spec-label">Global Revisit Rate</div>
+                            <div className="spec-val">~2 Days</div>
+                            <div className="spec-desc">High-frequency column monitoring</div>
+                        </div>
+                        <div className="spec-card">
+                            <div className="spec-label">Measured Variable</div>
+                            <div className="spec-val">Total Column CH₄ (ppb)</div>
+                            <div className="spec-desc">Dry Air Mixing Ratio</div>
+                        </div>
+                    </div>
+
+                    {/* Credentials Form Section */}
+                    <div className="satellite-config-form">
+                        <div className="config-form-header">
+                            <KeyRound size={18} />
+                            <h3>Copernicus Data Space Ecosystem (CDSE) Credentials</h3>
+                        </div>
+
+                        <div className="auth-mode-selector">
+                            <label className={`auth-mode-pill ${authMode === 'password' ? 'active' : ''}`}>
+                                <input 
+                                    type="radio" 
+                                    name="authMode" 
+                                    value="password" 
+                                    checked={authMode === 'password'} 
+                                    onChange={() => setAuthMode('password')}
+                                />
+                                <span>Copernicus Account (Email &amp; Password)</span>
+                            </label>
+                            <label className={`auth-mode-pill ${authMode === 'oauth_client' ? 'active' : ''}`}>
+                                <input 
+                                    type="radio" 
+                                    name="authMode" 
+                                    value="oauth_client" 
+                                    checked={authMode === 'oauth_client'} 
+                                    onChange={() => setAuthMode('oauth_client')}
+                                />
+                                <span>Dedicated OAuth2 API Keys (Client ID &amp; Secret)</span>
+                            </label>
+                        </div>
+
+                        {authMode === 'password' ? (
+                            <div className="form-row-2col">
+                                <div className="form-group">
+                                    <label className="field-label">Copernicus Email / Username</label>
+                                    <input 
+                                        type="email" 
+                                        placeholder="user@example.com" 
+                                        value={copernicusUsername} 
+                                        onChange={(e) => setCopernicusUsername(e.target.value)}
+                                        className="form-input"
+                                        id="copernicus-email-input"
+                                    />
+                                    <span className="field-hint">Registered account on dataspace.copernicus.eu</span>
+                                </div>
+                                <div className="form-group">
+                                    <label className="field-label">Copernicus Password</label>
+                                    <input 
+                                        type="password" 
+                                        placeholder="••••••••••••" 
+                                        value={copernicusPassword} 
+                                        onChange={(e) => setCopernicusPassword(e.target.value)}
+                                        className="form-input"
+                                        id="copernicus-password-input"
+                                    />
+                                    <span className="field-hint">Encrypted and authenticated directly against Keycloak</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="form-row-2col">
+                                <div className="form-group">
+                                    <label className="field-label">OAuth2 Client ID</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="e.g. 9b1deb4d-3b7d-4bad-9bdd-..." 
+                                        value={copernicusClientId} 
+                                        onChange={(e) => setCopernicusClientId(e.target.value)}
+                                        className="form-input"
+                                        id="copernicus-client-id-input"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="field-label">OAuth2 Client Secret</label>
+                                    <input 
+                                        type="password" 
+                                        placeholder="••••••••••••" 
+                                        value={copernicusClientSecret} 
+                                        onChange={(e) => setCopernicusClientSecret(e.target.value)}
+                                        className="form-input"
+                                        id="copernicus-client-secret-input"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Quality Filtering and Enable Toggle */}
+                        <div className="form-row-2col" style={{ marginTop: '16px' }}>
+                            <div className="form-group">
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                                    <label className="field-label" style={{ margin: 0 }}>Cloud Quality Filter (QA Value Threshold)</label>
+                                    <span style={{ fontWeight: 700, color: '#0284c7' }}>&ge; {copernicusQaThreshold}</span>
+                                </div>
+                                <input 
+                                    type="range" 
+                                    min="0.3" 
+                                    max="0.9" 
+                                    step="0.05"
+                                    value={copernicusQaThreshold} 
+                                    onChange={(e) => setCopernicusQaThreshold(Number(e.target.value))}
+                                    className="range-slider"
+                                    id="copernicus-qa-slider"
+                                />
+                                <span className="field-hint">ESA standard: 0.5 (filters out cloud, snow, and low-confidence pixels)</span>
+                            </div>
+
+                            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                <label className="field-label">Satellite Layer Streaming</label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginTop: '4px' }}>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={copernicusEnabled} 
+                                        onChange={(e) => setCopernicusEnabled(e.target.checked)}
+                                        style={{ width: '18px', height: '18px', accentColor: '#0284c7' }}
+                                        id="copernicus-enabled-checkbox"
+                                    />
+                                    <span style={{ fontSize: '0.92rem', fontWeight: 600 }}>Enable Live Sentinel-5P Methane Layer on Map</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Connection Test Action & Status Display */}
+                        <div className="connection-test-row">
+                            <button 
+                                type="button"
+                                className="btn-test-connection" 
+                                onClick={handleTestConnection}
+                                disabled={testingConnection}
+                                id="test-copernicus-connection-btn"
+                            >
+                                {testingConnection ? (
+                                    <>
+                                        <span className="spinner-small"></span>
+                                        <span>Testing Connection...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Radio size={16} />
+                                        <span>Test Copernicus Connection</span>
+                                    </>
+                                )}
+                            </button>
+
+                            {connectionStatus && (
+                                <div className={`connection-status-badge ${connectionStatus.success ? 'success' : 'error'}`}>
+                                    {connectionStatus.success ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                                    <span>{connectionStatus.message}</span>
+                                    {connectionStatus.expires_in && (
+                                        <span className="token-expiry">(Token TTL: {Math.round(connectionStatus.expires_in / 60)}m)</span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+                        <button 
+                            className="btn-primary"
+                            onClick={handleSaveGlobal}
+                            disabled={saving}
+                            id="save-satellite-settings-btn"
+                            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 24px' }}
+                        >
+                            <Save size={18} />
+                            {saving ? 'Saving...' : 'Save Satellite Settings'}
+                        </button>
                     </div>
                 </div>
             )}

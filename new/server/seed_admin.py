@@ -14,6 +14,20 @@ def seed_admin():
         
         users_to_seed = [
             {
+                'email': 'a@a',
+                'password': 'a',
+                'role': 'admin',
+                'fullName': 'Admin User',
+                'jobTitle': 'Sustainability Administrator'
+            },
+            {
+                'email': 'z@z',
+                'password': 'z',
+                'role': 'it_admin',
+                'fullName': 'IT Admin User',
+                'jobTitle': 'IT Administrator'
+            },
+            {
                 'email': 'a',
                 'password': 'a',
                 'role': 'admin',
