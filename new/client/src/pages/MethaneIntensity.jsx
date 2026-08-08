@@ -10,7 +10,8 @@ import { formatNumber } from '../utils/formatters';
 import { 
     Wind, Flame, Activity, BarChart2, Grid, Layers, 
     ShieldCheck, AlertTriangle, CheckCircle, Compass, 
-    Radio, Download, Award, TrendingUp, Calendar, Check
+    Radio, Download, Award, TrendingUp, Calendar, Check,
+    ChevronDown, ChevronUp
 } from 'lucide-react';
 import './CarbonIntensity.css';
 
@@ -23,13 +24,17 @@ const MethaneIntensity = () => {
     const [currentActivity, setCurrentActivity] = useState('all');
     const [currentDivision, setCurrentDivision] = useState('all');
     const [currentRegion, setCurrentRegion] = useState('all');
+    const [currentSegment, setCurrentSegment] = useState('all');
     const [selectedYear, setSelectedYear] = useState('all');
     const [facilities, setFacilities] = useState([]);
     const [availableYears, setAvailableYears] = useState([]);
+    const [availableSegments, setAvailableSegments] = useState([]);
 
     // View states
     const [trendView, setTrendView] = useState('chart'); // 'chart' or 'heatmap'
     const [exporting, setExporting] = useState(false);
+    const [ogmpCollapsed, setOgmpCollapsed] = useState(true);
+    const [roadmapCollapsed, setRoadmapCollapsed] = useState(true);
     const [selectedBaselineYear, setSelectedBaselineYear] = useState(2023);
     const [globalThreshold, setGlobalThreshold] = useState(20.0);
     const [upstreamTargetPct, setUpstreamTargetPct] = useState(0.20);
@@ -96,6 +101,9 @@ const MethaneIntensity = () => {
                 } else {
                     setAvailableYears(['2023', '2024', '2025', '2026']);
                 }
+                if (filterRes.data && filterRes.data.segments) {
+                    setAvailableSegments(filterRes.data.segments);
+                }
                 setSelectedYear('all');
             } catch (error) {
                 console.error('Initialization error:', error);
@@ -109,14 +117,14 @@ const MethaneIntensity = () => {
         loadMethaneData();
         loadOgmpData();
         loadRoadmapData();
-    }, [currentActivity, currentDivision, currentRegion, selectedYear]);
+    }, [currentActivity, currentDivision, currentRegion, selectedYear, currentSegment]);
 
     // Load trend data
     useEffect(() => {
         if (selectedYear) {
             loadTrendData(selectedYear);
         }
-    }, [selectedYear, currentActivity, currentDivision]);
+    }, [selectedYear, currentActivity, currentDivision, currentSegment]);
 
     const loadMethaneData = async () => {
         try {
@@ -127,6 +135,9 @@ const MethaneIntensity = () => {
                 activity: currentActivity,
                 division: currentDivision
             });
+            if (currentSegment !== 'all') {
+                params.append('segment', currentSegment);
+            }
 
             const res = await api.get(`/dashboard/intensity-stats?${params}`);
             const data = res.data || [];
@@ -188,6 +199,7 @@ const MethaneIntensity = () => {
             const params = new URLSearchParams();
             if (selectedYear && selectedYear !== 'all') params.append('year', selectedYear);
             if (currentRegion && currentRegion !== 'all') params.append('facilityId', currentRegion);
+            if (currentSegment && currentSegment !== 'all') params.append('segment', currentSegment);
             const res = await api.get(`/data/ogmp-surveys?${params}`).catch(() => ({ data: [] }));
             setOgmpSurveys(res.data || []);
         } catch (error) {
@@ -200,6 +212,7 @@ const MethaneIntensity = () => {
             const params = new URLSearchParams();
             if (selectedYear && selectedYear !== 'all') params.append('year', selectedYear);
             if (currentRegion && currentRegion !== 'all') params.append('facilityId', currentRegion);
+            if (currentSegment && currentSegment !== 'all') params.append('segment', currentSegment);
             const res = await api.get(`/dashboard/ogmp-metrics?${params}`).catch(() => ({ data: {} }));
             if (res.data) {
                 if (res.data.facilities) {
@@ -235,6 +248,9 @@ const MethaneIntensity = () => {
                 activity: currentActivity,
                 division: currentDivision
             });
+            if (currentSegment !== 'all') {
+                params.append('segment', currentSegment);
+            }
             params.append('years', years.join(','));
             const res = await api.get(`/dashboard/intensity-trend?${params}`).catch(() => ({ data: [] }));
             setRawTrendData(res.data || []);
@@ -267,6 +283,13 @@ const MethaneIntensity = () => {
     };
 
     // Filter helpers
+    const handleSegmentChange = (val) => {
+        setCurrentSegment(val);
+        setCurrentActivity('all');
+        setCurrentDivision('all');
+        setCurrentRegion('all');
+    };
+
     const handleActivityChange = (val) => {
         setCurrentActivity(val);
         setCurrentDivision('all');
@@ -278,27 +301,36 @@ const MethaneIntensity = () => {
         setCurrentRegion('all');
     };
 
-    const getActivityOptions = () => [
-        { value: 'all', label: 'All Activities' },
-        { value: 'EP', label: 'EP' },
-        { value: 'LQS', label: 'LQS' },
-        { value: 'RPC', label: 'RPC' },
-        { value: 'TRC', label: 'TRC' }
+    const getSegmentOptions = () => [
+        { value: 'all', label: 'All Supply Chains' },
+        ...availableSegments.map(s => ({ value: s, label: s }))
     ];
+
+    const getActivityOptions = () => {
+        const filtered = facilities.filter(f =>
+            currentSegment === 'all' || f.segment === currentSegment
+        );
+        const activities = new Set(filtered.map(f => f.activity));
+        return [
+            { value: 'all', label: 'All Activities' },
+            ...Array.from(activities).sort().map(a => ({ value: a, label: a }))
+        ];
+    };
 
     const getDivisionOptions = () => {
         let divisions = [{ value: 'all', label: 'All Divisions' }];
-        if (currentActivity === 'all') {
-            const allDivisions = new Set(facilities.map(f => f.division).filter(Boolean));
-            divisions.push(...Array.from(allDivisions).sort().map(d => ({ value: d, label: d })));
-        } else if (HIERARCHY[currentActivity]) {
-            divisions.push(...HIERARCHY[currentActivity].map(d => ({ value: d, label: d })));
-        }
+        const filtered = facilities.filter(f =>
+            (currentSegment === 'all' || f.segment === currentSegment) &&
+            (currentActivity === 'all' || f.activity === currentActivity)
+        );
+        const divs = new Set(filtered.map(f => f.division).filter(Boolean));
+        divisions.push(...Array.from(divs).sort().map(d => ({ value: d, label: d })));
         return divisions;
     };
 
     const getRegionOptions = () => {
         const filtered = facilities.filter(f =>
+            (currentSegment === 'all' || f.segment === currentSegment) &&
             (currentActivity === 'all' || f.activity === currentActivity) &&
             (currentDivision === 'all' || f.division === currentDivision)
         );
@@ -327,14 +359,17 @@ const MethaneIntensity = () => {
                         placeholder="Year"
                     />
                 </div>
+                <div style={{ width: '180px' }}>
+                    <CustomDropdown options={getSegmentOptions()} value={currentSegment} onChange={handleSegmentChange} placeholder="Supply Chain" />
+                </div>
                 <div style={{ width: '160px' }}>
                     <CustomDropdown options={getActivityOptions()} value={currentActivity} onChange={handleActivityChange} placeholder="Activity" />
                 </div>
                 <div style={{ width: '160px' }}>
-                    <CustomDropdown options={getDivisionOptions()} value={currentDivision} onChange={handleDivisionChange} placeholder="Division" disabled={currentActivity === 'all'} />
+                    <CustomDropdown options={getDivisionOptions()} value={currentDivision} onChange={handleDivisionChange} placeholder="Division" />
                 </div>
                 <div style={{ width: '220px' }}>
-                    <CustomDropdown options={getRegionOptions()} value={currentRegion} onChange={setCurrentRegion} placeholder="Region" disabled={currentDivision === 'all'} />
+                    <CustomDropdown options={getRegionOptions()} value={currentRegion} onChange={setCurrentRegion} placeholder="Region" />
                 </div>
             </div>
         );
@@ -352,7 +387,7 @@ const MethaneIntensity = () => {
         );
 
         return () => { setTopBarLeft(null); setTopBarRight(null); };
-    }, [availableYears, selectedYear, currentActivity, currentDivision, currentRegion, facilities, exporting]);
+    }, [availableYears, selectedYear, currentActivity, currentDivision, currentRegion, currentSegment, facilities, exporting]);
 
     // Trend chart data
     const trendChartData = useMemo(() => {
@@ -516,8 +551,12 @@ const MethaneIntensity = () => {
                 </div>
 
                 {/* OGMP 2.0 GOLD STANDARD PATHWAY & ROADMAP */}
-                <div className="ogmp-roadmap-card">
-                    <div className="roadmap-header-row">
+                <div className={`ogmp-roadmap-card ${roadmapCollapsed ? 'collapsed-card' : ''}`}>
+                    <div 
+                        className="roadmap-header-row"
+                        onClick={() => setRoadmapCollapsed(!roadmapCollapsed)}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
                         <div className="roadmap-title-area">
                             <h3>
                                 <Award size={22} color="#ff6600" />
@@ -526,116 +565,125 @@ const MethaneIntensity = () => {
                             <p>Multi-year reporting level progression towards Level 4/5 site-level measurement reconciliation.</p>
                         </div>
 
-                        {/* Interactive Baseline Selector UI button/pill matching theme */}
-                        <div className="baseline-selector-wrapper">
-                            <span className="baseline-selector-label">
-                                <Calendar size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
-                                Base Year:
-                            </span>
-                            <div className="baseline-pills">
-                                {[2021, 2022, 2023, 2024, 2025, 2026].map(yr => (
-                                    <button
-                                        key={yr}
-                                        type="button"
-                                        className={`btn-baseline-pill ${selectedBaselineYear === yr ? 'active' : ''}`}
-                                        onClick={() => setSelectedBaselineYear(yr)}
-                                    >
-                                        {yr}
-                                    </button>
-                                ))}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            {/* Interactive Baseline Selector UI button/pill matching theme */}
+                            <div className="baseline-selector-wrapper" onClick={(e) => e.stopPropagation()}>
+                                <span className="baseline-selector-label">
+                                    <Calendar size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
+                                    Base Year:
+                                </span>
+                                <div className="baseline-pills">
+                                    {[2021, 2022, 2023, 2024, 2025, 2026].map(yr => (
+                                        <button
+                                            key={yr}
+                                            type="button"
+                                            className={`btn-baseline-pill ${selectedBaselineYear === yr ? 'active' : ''}`}
+                                            onClick={() => setSelectedBaselineYear(yr)}
+                                        >
+                                            {yr}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
+                            {roadmapCollapsed ? <ChevronDown size={18} color="var(--text-secondary)" /> : <ChevronUp size={18} color="var(--text-secondary)" />}
                         </div>
                     </div>
 
-                    {/* Facility Roadmap Cards Grid */}
-                    <div className="facility-roadmap-grid">
-                        {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(fac => {
-                            const facName = fac.facility_name || fac.name;
-                            const opStatus = fac.operator_status || 'operated';
-                            const baseYear = selectedBaselineYear || Number(fac.ogmp_membership_year || 2023);
-                            const targetYear = baseYear + (opStatus === 'operated' ? 3 : 5);
-                            const currentYear = Number(selectedYear !== 'all' ? selectedYear : new Date().getFullYear());
-                            const yearsLeft = targetYear - currentYear;
-                            
-                            const matchedSurvey = ogmpSurveys.find(s => (s.facilityId || s.facility_id) === (fac.facility_id || fac.id) || (s.facility_name || s.facilityName) === facName);
-                            const highestLevel = fac.highest_ogmp_level || (fac.current_ogmp_level || (matchedSurvey ? 5 : 3));
-                            const isReconciled = fac.is_reconciled || highestLevel >= 5;
-                            const variancePct = fac.reconciliation_variance_pct ?? (fac.variance_pct ?? (matchedSurvey ? (matchedSurvey.reconciliation_variance_pct ?? 14.5) : null));
-                            const threshold = Number(fac.reconciliation_threshold ?? globalThreshold ?? 20.0);
-                            const passThreshold = variancePct !== null ? Math.abs(variancePct) <= threshold : true;
+                    <div className={`ogmp-roadmap-body-wrapper ${roadmapCollapsed ? 'collapsed' : ''}`}>
+                        {/* Facility Roadmap Cards Grid */}
+                        <div className="facility-roadmap-grid">
+                            {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(fac => {
+                                const facName = fac.facility_name || fac.name;
+                                const opStatus = fac.operator_status || 'operated';
+                                const baseYear = selectedBaselineYear || Number(fac.ogmp_membership_year || 2023);
+                                const targetYear = baseYear + (opStatus === 'operated' ? 3 : 5);
+                                const currentYear = Number(selectedYear !== 'all' ? selectedYear : new Date().getFullYear());
+                                const yearsLeft = targetYear - currentYear;
+                                
+                                const matchedSurvey = ogmpSurveys.find(s => (s.facilityId || s.facility_id) === (fac.facility_id || fac.id) || (s.facility_name || s.facilityName) === facName);
+                                const highestLevel = fac.highest_ogmp_level || (fac.current_ogmp_level || (matchedSurvey ? 5 : 3));
+                                const isReconciled = fac.is_reconciled || highestLevel >= 5;
+                                const variancePct = fac.reconciliation_variance_pct ?? (fac.variance_pct ?? (matchedSurvey ? (matchedSurvey.reconciliation_variance_pct ?? 14.5) : null));
+                                const threshold = Number(fac.reconciliation_threshold ?? globalThreshold ?? 20.0);
+                                const passThreshold = variancePct !== null ? Math.abs(variancePct) <= threshold : true;
 
-                            let statusBadgeClass = 'ontrack';
-                            let statusText = `On Track (${yearsLeft > 0 ? `${yearsLeft} yrs to Level 5` : 'Target Year'})`;
-                            if (isReconciled && highestLevel >= 5) {
-                                statusBadgeClass = 'achieved';
-                                statusText = 'Gold Standard Achieved (Level 5)';
-                            } else if (yearsLeft < 0) {
-                                statusBadgeClass = 'action';
-                                statusText = 'Action Plan Required (Overdue)';
-                            } else if (yearsLeft === 0) {
-                                statusBadgeClass = 'ontrack';
-                                statusText = 'Target Milestone Year (Level 5 Due)';
-                            }
+                                let statusBadgeClass = 'ontrack';
+                                let statusText = `On Track (${yearsLeft > 0 ? `${yearsLeft} yrs to Level 5` : 'Target Year'})`;
+                                if (isReconciled && highestLevel >= 5) {
+                                    statusBadgeClass = 'achieved';
+                                    statusText = 'Gold Standard Achieved (Level 5)';
+                                } else if (yearsLeft < 0) {
+                                    statusBadgeClass = 'action';
+                                    statusText = 'Action Plan Required (Overdue)';
+                                } else if (yearsLeft === 0) {
+                                    statusBadgeClass = 'ontrack';
+                                    statusText = 'Target Milestone Year (Level 5 Due)';
+                                }
 
-                            return (
-                                <div key={fac.facility_id || fac.id} className="fac-roadmap-card">
-                                    <div className="fac-roadmap-top">
-                                        <div className="fac-roadmap-info">
-                                            <span className="fac-roadmap-name">{facName}</span>
-                                            <span className="fac-roadmap-meta">
-                                                {opStatus === 'operated' ? 'Operated Asset (3-Yr Target)' : 'Non-Operated Asset (5-Yr Target)'} • Base: {baseYear} • Target: {targetYear}
+                                return (
+                                    <div key={fac.facility_id || fac.id} className="fac-roadmap-card">
+                                        <div className="fac-roadmap-top">
+                                            <div className="fac-roadmap-info">
+                                                <span className="fac-roadmap-name">{facName}</span>
+                                                <span className="fac-roadmap-meta">
+                                                    {opStatus === 'operated' ? 'Operated Asset (3-Yr Target)' : 'Non-Operated Asset (5-Yr Target)'} • Base: {baseYear} • Target: {targetYear}
+                                                </span>
+                                            </div>
+                                            <span className={`badge-roadmap-status ${statusBadgeClass}`}>
+                                                {statusBadgeClass === 'achieved' && <Check size={13} />}
+                                                {statusBadgeClass === 'action' && <AlertTriangle size={13} />}
+                                                {statusText}
                                             </span>
                                         </div>
-                                        <span className={`badge-roadmap-status ${statusBadgeClass}`}>
-                                            {statusBadgeClass === 'achieved' && <Check size={13} />}
-                                            {statusBadgeClass === 'action' && <AlertTriangle size={13} />}
-                                            {statusText}
-                                        </span>
-                                    </div>
 
-                                    {/* 5-Level Stepper */}
-                                    <div className="ogmp-stepper-container">
-                                        {[1, 2, 3, 4, 5].map(lvl => {
-                                             const isDone = highestLevel >= lvl;
-                                             const isCurrent = highestLevel === lvl;
-                                             const levelNames = ['L1: Venture', 'L2: Segment', 'L3: Generic', 'L4: Specific', 'L5: Reconciled'];
-                                             return (
-                                                 <div key={lvl} className={`ogmp-step ${isDone ? 'completed' : ''} ${isCurrent ? 'current' : ''}`}>
-                                                     <div className="step-circle">
-                                                         {isDone ? '✓' : lvl}
+                                        {/* 5-Level Stepper */}
+                                        <div className="ogmp-stepper-container">
+                                            {[1, 2, 3, 4, 5].map(lvl => {
+                                                 const isDone = highestLevel >= lvl;
+                                                 const isCurrent = highestLevel === lvl;
+                                                 const levelNames = ['L1: Venture', 'L2: Segment', 'L3: Generic', 'L4: Specific', 'L5: Reconciled'];
+                                                 return (
+                                                     <div key={lvl} className={`ogmp-step ${isDone ? 'completed' : ''} ${isCurrent ? 'current' : ''}`}>
+                                                         <div className="step-circle">
+                                                             {isDone ? '✓' : lvl}
+                                                         </div>
+                                                         <span className="step-name">{levelNames[lvl - 1]}</span>
                                                      </div>
-                                                     <span className="step-name">{levelNames[lvl - 1]}</span>
-                                                 </div>
-                                             );
-                                         })}
-                                    </div>
+                                                 );
+                                             })}
+                                        </div>
 
-                                    {/* Footer stats */}
-                                    <div className="fac-roadmap-stats">
-                                        <div className="roadmap-stat-item">
-                                            <span className="roadmap-stat-label">Current Milestone</span>
-                                            <span className="roadmap-stat-val">OGMP Level {highestLevel}</span>
-                                        </div>
-                                        <div className="roadmap-stat-item">
-                                            <span className="roadmap-stat-label">Reconciliation Var.</span>
-                                            <span className={`roadmap-stat-val ${variancePct !== null ? (passThreshold ? 'variance-pass' : 'variance-fail') : ''}`}>
-                                                {variancePct !== null ? (variancePct >= 0 ? `+${Number(variancePct).toFixed(1)}%` : `${Number(variancePct).toFixed(1)}%`) : 'Pending Survey'}
-                                            </span>
-                                        </div>
-                                        <div className="roadmap-stat-item">
-                                            <span className="roadmap-stat-label">Tolerance Limit</span>
-                                            <span className="roadmap-stat-val">±{threshold.toFixed(1)}% {variancePct !== null ? (passThreshold ? '(PASS)' : '(FLAGGED)') : ''}</span>
+                                        {/* Footer stats */}
+                                        <div className="fac-roadmap-stats">
+                                            <div className="roadmap-stat-item">
+                                                <span className="roadmap-stat-label">Current Milestone</span>
+                                                <span className="roadmap-stat-val">OGMP Level {highestLevel}</span>
+                                            </div>
+                                            <div className="roadmap-stat-item">
+                                                <span className="roadmap-stat-label">Reconciliation Var.</span>
+                                                <span className={`roadmap-stat-val ${variancePct !== null ? (passThreshold ? 'variance-pass' : 'variance-fail') : ''}`}>
+                                                    {variancePct !== null ? (variancePct >= 0 ? `+${Number(variancePct).toFixed(1)}%` : `${Number(variancePct).toFixed(1)}%`) : 'Pending Survey'}
+                                                </span>
+                                            </div>
+                                            <div className="roadmap-stat-item">
+                                                <span className="roadmap-stat-label">Tolerance Limit</span>
+                                                <span className="roadmap-stat-val">±{threshold.toFixed(1)}% {variancePct !== null ? (passThreshold ? '(PASS)' : '(FLAGGED)') : ''}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 
                 {/* OGMP 2.0 LEVEL 4/5 TOP-DOWN SURVEY RECONCILIATION SECTION */}
                 <div className="card ogmp-section">
-                    <div className="chart-header">
+                    <div 
+                        className="chart-header" 
+                        onClick={() => setOgmpCollapsed(!ogmpCollapsed)}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
                         <div>
                             <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <Radio size={20} color="var(--accent-secondary)" />
@@ -645,84 +693,89 @@ const MethaneIntensity = () => {
                                 Site-level measurement (Satellite, OGI, Drone, Aircraft) reconciled with source-level bottom-up inventory
                             </p>
                         </div>
-                        <div className="ogmp-level-badge" style={{ background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb', padding: '6px 14px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600 }}>
-                            Gold Standard Pathway: Level 5 Reconciled
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div className="ogmp-level-badge" style={{ background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb', padding: '6px 14px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600 }}>
+                                Gold Standard Pathway: Level 5 Reconciled
+                            </div>
+                            {ogmpCollapsed ? <ChevronDown size={18} color="var(--text-secondary)" /> : <ChevronUp size={18} color="var(--text-secondary)" />}
                         </div>
                     </div>
 
-                    {ogmpSurveys.length > 0 ? (
-                        <div className="table-responsive" style={{ marginTop: '16px' }}>
-                            <table className="custom-table">
-                                <thead>
-                                    <tr>
-                                        <th>Facility</th>
-                                        <th>Survey Date</th>
-                                        <th>Technology / Method</th>
-                                        <th>Measured Rate (kg CH₄/hr)</th>
-                                        <th>Annualized Rate (tCH₄/yr)</th>
-                                        <th>Bottom-Up Annual (tCH₄)</th>
-                                        <th>Variance (%)</th>
-                                        <th>Reconciliation Status</th>
-                                        <th>Operator Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {ogmpSurveys.map((s, idx) => {
-                                        const fid = s.facilityId ?? s.facility_id;
-                                        const matchingFac = regionalData.find(f => f.facility_id === fid);
-                                        const bottomUpCh4 = matchingFac ? matchingFac.total_ch4 : null;
-                                        const facName = s.facilityName || s.facility_name || (matchingFac ? matchingFac.facility_name : '—');
-                                        const sDate = s.surveyDate || s.survey_date || '—';
-                                        const sType = s.surveyType || s.survey_type || 'Top-Down';
-                                        const rateKgHr = s.measuredRateKgHr ?? s.measured_rate_kg_hr;
-                                        const annTch4 = s.estimatedAnnualTch4 ?? s.estimated_annual_tch4 ?? 0;
-                                        const recStatus = s.reconciliationStatus || s.reconciliation_status || 'Reconciled';
-                                        const notes = s.operatorNotes || s.operator_notes || '—';
+                    <div className={`ogmp-body-wrapper ${ogmpCollapsed ? 'collapsed' : ''}`}>
+                        {ogmpSurveys.length > 0 ? (
+                            <div className="table-responsive">
+                                <table className="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Facility</th>
+                                            <th>Survey Date</th>
+                                            <th>Technology / Method</th>
+                                            <th>Measured Rate (kg CH₄/hr)</th>
+                                            <th>Annualized Rate (tCH₄/yr)</th>
+                                            <th>Bottom-Up Annual (tCH₄)</th>
+                                            <th>Variance (%)</th>
+                                            <th>Reconciliation Status</th>
+                                            <th>Operator Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {ogmpSurveys.map((s, idx) => {
+                                            const fid = s.facilityId ?? s.facility_id;
+                                            const matchingFac = regionalData.find(f => f.facility_id === fid);
+                                            const bottomUpCh4 = matchingFac ? matchingFac.total_ch4 : null;
+                                            const facName = s.facilityName || s.facility_name || (matchingFac ? matchingFac.facility_name : '—');
+                                            const sDate = s.surveyDate || s.survey_date || '—';
+                                            const sType = s.surveyType || s.survey_type || 'Top-Down';
+                                            const rateKgHr = s.measuredRateKgHr ?? s.measured_rate_kg_hr;
+                                            const annTch4 = s.estimatedAnnualTch4 ?? s.estimated_annual_tch4 ?? 0;
+                                            const recStatus = s.reconciliationStatus || s.reconciliation_status || 'Reconciled';
+                                            const notes = s.operatorNotes || s.operator_notes || '—';
 
-                                        let variancePct = null;
-                                        if (bottomUpCh4 && bottomUpCh4 > 0 && annTch4 > 0) {
-                                            variancePct = ((annTch4 - bottomUpCh4) / bottomUpCh4) * 100.0;
-                                        }
+                                            let variancePct = null;
+                                            if (bottomUpCh4 && bottomUpCh4 > 0 && annTch4 > 0) {
+                                                variancePct = ((annTch4 - bottomUpCh4) / bottomUpCh4) * 100.0;
+                                            }
 
-                                        return (
-                                            <tr key={s.id || idx}>
-                                                <td style={{ fontWeight: 600 }}>{facName}</td>
-                                                <td>{sDate}</td>
-                                                <td><span className="code-pill">{sType}</span></td>
-                                                <td><strong style={{ color: '#2563eb' }}>{typeof rateKgHr === 'number' ? rateKgHr.toFixed(2) : '—'}</strong></td>
-                                                <td><strong>{formatNumber(annTch4, 2)}</strong></td>
-                                                <td>{bottomUpCh4 !== null ? `${bottomUpCh4.toFixed(2)} t` : '—'}</td>
-                                                <td>
-                                                    {variancePct !== null ? (
-                                                        <span style={{ 
-                                                            fontWeight: 700, 
-                                                            color: Math.abs(variancePct) <= 20.0 ? '#10b981' : '#ef4444' 
+                                            return (
+                                                <tr key={s.id || idx}>
+                                                    <td style={{ fontWeight: 600 }}>{facName}</td>
+                                                    <td>{sDate}</td>
+                                                    <td><span className="code-pill">{sType}</span></td>
+                                                    <td><strong style={{ color: '#2563eb' }}>{typeof rateKgHr === 'number' ? rateKgHr.toFixed(2) : '—'}</strong></td>
+                                                    <td><strong>{formatNumber(annTch4, 2)}</strong></td>
+                                                    <td>{bottomUpCh4 !== null ? `${bottomUpCh4.toFixed(2)} t` : '—'}</td>
+                                                    <td>
+                                                        {variancePct !== null ? (
+                                                            <span style={{ 
+                                                                fontWeight: 700, 
+                                                                color: Math.abs(variancePct) <= 20.0 ? '#10b981' : '#ef4444' 
+                                                            }}>
+                                                                {variancePct >= 0 ? `+${variancePct.toFixed(1)}%` : `${variancePct.toFixed(1)}%`}
+                                                            </span>
+                                                        ) : '—'}
+                                                    </td>
+                                                    <td>
+                                                        <span className={`status-badge ${recStatus === 'Reconciled' ? 'badge-success' : 'badge-warning'}`} style={{
+                                                            padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600,
+                                                            background: recStatus === 'Reconciled' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                                                            color: recStatus === 'Reconciled' ? '#10b981' : '#f59e0b'
                                                         }}>
-                                                            {variancePct >= 0 ? `+${variancePct.toFixed(1)}%` : `${variancePct.toFixed(1)}%`}
+                                                            {recStatus}
                                                         </span>
-                                                    ) : '—'}
-                                                </td>
-                                                <td>
-                                                    <span className={`status-badge ${recStatus === 'Reconciled' ? 'badge-success' : 'badge-warning'}`} style={{
-                                                        padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600,
-                                                        background: recStatus === 'Reconciled' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-                                                        color: recStatus === 'Reconciled' ? '#10b981' : '#f59e0b'
-                                                    }}>
-                                                        {recStatus}
-                                                    </span>
-                                                </td>
-                                                <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{notes}</td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="ogmp-empty-state">
-                            <p>No OGMP 2.0 top-down surveys registered for the selected filters. Record survey campaigns via <strong>Manage Data &gt; OGMP Surveys</strong>.</p>
-                        </div>
-                    )}
+                                                    </td>
+                                                    <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{notes}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="ogmp-empty-state">
+                                <p>No OGMP 2.0 top-down surveys registered for the selected filters. Record survey campaigns via <strong>Manage Data &gt; OGMP Surveys</strong>.</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Regional Bar Charts */}

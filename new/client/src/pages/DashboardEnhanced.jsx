@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
-import Modal from '../components/Modal';
 import { useToast } from '../components/Toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { SkeletonCard } from '../components/SkeletonLoader';
@@ -9,6 +9,7 @@ import { PieChart as PieChartWrapper, LineChart as LineChartWrapper } from '../c
 import CustomDropdown from '../components/CustomDropdown';
 import { formatCompactNumber, formatNumber, calculateTrend } from '../utils/formatters';
 import { useLayout } from '../context/LayoutContext';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import './Dashboard.css';
 
 // Simple Linear Regression for Forecasting
@@ -49,8 +50,9 @@ const DashboardEnhanced = () => {
     const [currentActivity, setCurrentActivity] = useState('all');
     const [currentDivision, setCurrentDivision] = useState('all');
     const [currentRegion, setCurrentRegion] = useState('all');
+    const [currentSegment, setCurrentSegment] = useState('all');
     const [facilities, setFacilities] = useState([]);
-    const [availableFilters, setAvailableFilters] = useState({ years: [], regions: [] });
+    const [availableFilters, setAvailableFilters] = useState({ years: [], regions: [], segments: [] });
 
     // Data states
     const [stats, setStats] = useState({
@@ -80,14 +82,10 @@ const DashboardEnhanced = () => {
     const [isCompareMode, setIsCompareMode] = useState(false);
     const [variance, setVariance] = useState({ emissions: '—', intensity: '—' });
     const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    const [categoricalCollapsed, setCategoricalCollapsed] = useState(true);
+    const [detailedBreakdownCollapsed, setDetailedBreakdownCollapsed] = useState(true);
 
-    // Modal states
-    const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
-    const [isBaseYearModalOpen, setIsBaseYearModalOpen] = useState(false);
-    const [goalYear, setGoalYear] = useState(new Date().getFullYear());
-    const [goalTarget, setGoalTarget] = useState('');
-    const [baseYearInput, setBaseYearInput] = useState('');
-    const [baseYearReason, setBaseYearReason] = useState('');
+    const navigate = useNavigate();
 
     // Load facilities and available filters
     useEffect(() => {
@@ -115,7 +113,7 @@ const DashboardEnhanced = () => {
     // Load dashboard data
     useEffect(() => {
         loadDashboardData();
-    }, [currentActivity, currentDivision, currentRegion, currentYear, isCompareMode]);
+    }, [currentActivity, currentDivision, currentRegion, currentYear, currentSegment, isCompareMode]);
 
     const loadDashboardData = async () => {
         try {
@@ -125,13 +123,12 @@ const DashboardEnhanced = () => {
                 activity: currentActivity,
                 division: currentDivision
             };
+            if (currentSegment !== 'all') {
+                queryParams.segment = currentSegment;
+            }
             if (isCompareMode) {
                 queryParams.groupBy = 'facility';
             }
-
-            const params = new URLSearchParams(queryParams);
-
-            const goalYearToFetch = currentYear === 'all' ? new Date().getFullYear() : parseInt(currentYear);
 
             const filterParams = new URLSearchParams(queryParams);
             if (currentYear !== 'all') {
@@ -335,44 +332,21 @@ const DashboardEnhanced = () => {
         // Now integrated into loadDashboardData for performance
     };
 
-    const handleSaveGoal = async () => {
-        if (!goalYear || !goalTarget) {
-            toast.warning('Please enter both year and target');
-            return;
-        }
-        try {
-            await api.post('/dashboard/goals', {
-                year: parseInt(goalYear),
-                target_amount: parseFloat(goalTarget)
-            });
-            toast.success('Emissions goal saved');
-            setIsGoalModalOpen(false);
-            loadDashboardData();
-        } catch (error) {
-            toast.error('Failed to save goal');
-        }
-    };
 
-    const handleSaveBaseYear = async () => {
-        if (!baseYearInput || !baseYearReason) {
-            toast.warning('Please enter both year and reason');
-            return;
-        }
-        try {
-            await api.post('/dashboard/base-year-recalculation', {
-                year: parseInt(baseYearInput),
-                reason: baseYearReason
-            });
-            toast.success('Base year recalculation saved');
-            setIsBaseYearModalOpen(false);
-            loadDashboardData();
-        } catch (error) {
-            toast.error('Failed to save base year');
-        }
+
+    const getSegmentOptions = () => {
+        const segments = availableFilters.segments || [];
+        return [
+            { value: 'all', label: 'All Supply Chains' },
+            ...segments.map(s => ({ value: s, label: s }))
+        ];
     };
 
     const getActivityOptions = () => {
-        const activities = new Set(availableFilters.regions.map(r => r.activity));
+        const filtered = availableFilters.regions.filter(r =>
+            currentSegment === 'all' || r.segment === currentSegment
+        );
+        const activities = new Set(filtered.map(r => r.activity));
         return [
             { value: 'all', label: 'All Activities' },
             ...Array.from(activities).sort().map(a => ({ value: a, label: formatActivityName(a) }))
@@ -381,13 +355,11 @@ const DashboardEnhanced = () => {
 
     const getDivisionOptions = () => {
         let divisionsSet = new Set();
-        if (currentActivity === 'all') {
-            availableFilters.regions.forEach(r => divisionsSet.add(r.division));
-        } else {
-            availableFilters.regions
-                .filter(r => r.activity === currentActivity)
-                .forEach(r => divisionsSet.add(r.division));
-        }
+        const filtered = availableFilters.regions.filter(r =>
+            (currentSegment === 'all' || r.segment === currentSegment) &&
+            (currentActivity === 'all' || r.activity === currentActivity)
+        );
+        filtered.forEach(r => divisionsSet.add(r.division));
         return [
             { value: 'all', label: 'All Divisions' },
             ...Array.from(divisionsSet).sort().map(d => ({ value: d, label: d }))
@@ -396,6 +368,7 @@ const DashboardEnhanced = () => {
 
     const getRegionOptions = () => {
         const filtered = availableFilters.regions.filter(f =>
+            (currentSegment === 'all' || f.segment === currentSegment) &&
             (currentActivity === 'all' || f.activity === currentActivity) &&
             (currentDivision === 'all' || f.division === currentDivision)
         );
@@ -416,6 +389,12 @@ const DashboardEnhanced = () => {
         ];
     };
 
+    const handleSegmentChange = (value) => {
+        setCurrentSegment(value);
+        setCurrentActivity('all');
+        setCurrentDivision('all');
+        setCurrentRegion('all');
+    };
 
     const handleActivityChange = (value) => {
         setCurrentActivity(value);
@@ -482,6 +461,9 @@ const DashboardEnhanced = () => {
                     <CustomDropdown options={getYearOptions()} value={currentYear} onChange={setCurrentYear} placeholder="Year" />
                 </div>
                 <div className="filter-wrapper">
+                    <CustomDropdown options={getSegmentOptions()} value={currentSegment} onChange={handleSegmentChange} placeholder="Supply Chain" />
+                </div>
+                <div className="filter-wrapper">
                     <CustomDropdown options={getActivityOptions()} value={currentActivity} onChange={handleActivityChange} placeholder="Activity" />
                 </div>
                 <div className="filter-wrapper">
@@ -494,14 +476,40 @@ const DashboardEnhanced = () => {
         );
 
         setTopBarRight(
-            <div style={{ display: 'flex', gap: '12px' }}>
-                <button className="action-button secondary" onClick={() => setIsBaseYearModalOpen(true)}>Set Base Year</button>
-                <button className="action-button" onClick={() => setIsGoalModalOpen(true)}>Set Emissions Goal</button>
-            </div>
+            goal ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{
+                        fontSize: '0.8rem', fontWeight: 600, color: '#6b7280',
+                        display: 'flex', alignItems: 'center', gap: '6px'
+                    }}>
+                        Target {goal.year}:
+                        <strong style={{ color: '#111827' }}>
+                            {Number(goal.target_amount).toLocaleString()} tCO₂e
+                        </strong>
+                    </span>
+                    <button
+                        className="action-button secondary"
+                        style={{ padding: '5px 12px', fontSize: '0.78rem' }}
+                        onClick={() => navigate('/manage-data', { state: { tab: 'goals' } })}
+                        title="Manage emission goals and base years in Manage Data"
+                    >
+                        Edit Goals
+                    </button>
+                </div>
+            ) : (
+                <button
+                    className="action-button secondary"
+                    style={{ padding: '5px 12px', fontSize: '0.78rem' }}
+                    onClick={() => navigate('/manage-data', { state: { tab: 'goals' } })}
+                    title="Set emission targets in Manage Data"
+                >
+                    + Set Emission Target
+                </button>
+            )
         );
 
         return () => { setTopBarLeft(null); setTopBarRight(null); };
-    }, [currentActivity, currentDivision, currentRegion, currentYear, facilities, setTopBarLeft, setTopBarRight]);
+    }, [currentActivity, currentDivision, currentRegion, currentYear, currentSegment, facilities, goal, navigate, setTopBarLeft, setTopBarRight]);
 
     const toggleActivity = (act) => {
         setExpandedActivities(prev => ({ ...prev, [act]: !prev[act] }));
@@ -686,128 +694,147 @@ const DashboardEnhanced = () => {
 
                 {/* Categorical Breakdown Cards */}
 
-                <div className="card categorical-card">
-                    <div className="card-header-row">
-                        <h3 className="card-subtitle">Categorical Emissions Overview</h3>
-                        <div className="card-info-badge">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                            </svg>
-                            Activity → Division → Region
+                <div className={`card categorical-card ${categoricalCollapsed ? 'collapsed-card' : ''}`}>
+                    <div 
+                        className="card-header-row clickable-card-header"
+                        onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
+                        style={{ cursor: 'pointer', userSelect: 'none', marginBottom: categoricalCollapsed ? '0' : '24px' }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <h3 className="card-subtitle">Categorical Emissions Overview</h3>
+                            <div className="card-info-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                </svg>
+                                Activity → Division → Region
+                            </div>
+                        </div>
+                        <div className="collapse-toggle-icon" style={{ display: 'flex', alignItems: 'center', color: '#64748b' }}>
+                            {categoricalCollapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
                         </div>
                     </div>
-                    <div className="categorical-hierarchy-grid">
-                        {getActivityOptions().filter(o => o.value !== 'all').map(opt => (
-                            <div key={opt.value} className="activity-group">
-                                <div className="activity-group-header">{opt.label}</div>
-                                {getHierarchicalData[opt.value] ? (
-                                    Object.entries(getHierarchicalData[opt.value].divisions).map(([div, divData]) => (
-                                        <div key={div} className="division-group">
-                                            <div className="division-group-header">{div}</div>
-                                            <div className="region-cards-grid">
-                                                {divData.regions.map((reg, ridx) => (
-                                                    <div key={ridx} className="region-compact-card">
-                                                        <div className="region-name">{reg.region} {reg.field && <span className="region-field">- {reg.field}</span>}</div>
-                                                        <div className="region-value">{formatCompactNumber(reg.total_emissions)} <span className="unit">tCO₂e</span></div>
-                                                    </div>
-                                                ))}
+                    <div className={`collapsible-body-wrapper ${categoricalCollapsed ? 'collapsed' : ''}`}>
+                        <div className="categorical-hierarchy-grid">
+                            {getActivityOptions().filter(o => o.value !== 'all').map(opt => (
+                                <div key={opt.value} className="activity-group">
+                                    <div className="activity-group-header">{opt.label}</div>
+                                    {getHierarchicalData[opt.value] ? (
+                                        Object.entries(getHierarchicalData[opt.value].divisions).map(([div, divData]) => (
+                                            <div key={div} className="division-group">
+                                                <div className="division-group-header">{div}</div>
+                                                <div className="region-cards-grid">
+                                                    {divData.regions.map((reg, ridx) => (
+                                                        <div key={ridx} className="region-compact-card">
+                                                            <div className="region-name">{reg.region} {reg.field && <span className="region-field">- {reg.field}</span>}</div>
+                                                            <div className="region-value">{formatCompactNumber(reg.total_emissions)} <span className="unit">tCO₂e</span></div>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="no-data-msg">No emissions data for this activity</div>
-                                )}
-                            </div>
-                        ))}
+                                        ))
+                                    ) : (
+                                        <div className="no-data-msg">No emissions data for this activity</div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-
                 </div>
 
                 <div className="main-dashboard-grid">
                     <div className="detailed-breakdown-section">
-                        <div className="card detailed-table-card">
-                            <div className="table-header-row">
-                                <h3 className="card-title">Detailed Breakdown</h3>
+                        <div className={`card detailed-table-card ${detailedBreakdownCollapsed ? 'collapsed-card' : ''}`}>
+                            <div 
+                                className="table-header-row clickable-card-header"
+                                onClick={() => setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)}
+                                style={{ cursor: 'pointer', userSelect: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                            >
+                                <h3 className="card-title" style={{ margin: 0 }}>Detailed Breakdown</h3>
+                                <div className="collapse-toggle-icon" style={{ display: 'flex', alignItems: 'center', color: '#64748b' }}>
+                                    {detailedBreakdownCollapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
+                                </div>
                             </div>
-                            <div className="table-container">
-                                <table className="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Category / Source</th>
-                                            <th className="text-right">Results (tCO₂e)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr className="summary-row">
-                                            <td>Scope 1 (Direct)</td>
-                                            <td className="text-right font-bold">{formatCompactNumber(stats.scope1)}</td>
-                                        </tr>
-                                        <tr className="detail-row">
-                                            <td className="indent">Stationary Combustion</td>
-                                            <td className="text-right">{formatCompactNumber(stats.combustion)}</td>
-                                        </tr>
-                                        <tr className="detail-row">
-                                            <td className="indent">Flaring</td>
-                                            <td className="text-right">{formatCompactNumber(stats.flaring)}</td>
-                                        </tr>
-                                        <tr className="detail-row">
-                                            <td className="indent">Venting</td>
-                                            <td className="text-right">{formatCompactNumber(stats.venting)}</td>
-                                        </tr>
-                                        <tr className="detail-row">
-                                            <td className="indent">Other Sources</td>
-                                            <td className="text-right">{formatCompactNumber(stats.other)}</td>
-                                        </tr>
-                                        <tr className="summary-row">
-                                            <td>Scope 2 (Indirect - Energy)</td>
-                                            <td className="text-right font-bold">{formatCompactNumber(stats.scope2)}</td>
-                                        </tr>
-                                        <tr className="summary-row">
-                                            <td>Scope 3 (Supply Chain)</td>
-                                            <td className="text-right font-bold">{formatCompactNumber(stats.scope3)}</td>
-                                        </tr>
-                                        <tr className="total-row">
-                                            <td>Total Footprint</td>
-                                            <td className="text-right">{formatCompactNumber(stats.totalEmissions)}</td>
-                                        </tr>
-                                        <tr className="total-row" style={{ color: '#10b981', borderTop: 'none' }}>
-                                            <td>Net Footprint</td>
-                                            <td className="text-right">{formatCompactNumber(stats.netEmissions)}</td>
-                                        </tr>
+                            <div className={`collapsible-body-wrapper ${detailedBreakdownCollapsed ? 'collapsed' : ''}`}>
+                                <div className="table-container" style={{ marginTop: '16px' }}>
+                                    <table className="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Category / Source</th>
+                                                <th className="text-right">Results (tCO₂e)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr className="summary-row">
+                                                <td>Scope 1 (Direct)</td>
+                                                <td className="text-right font-bold">{formatCompactNumber(stats.scope1)}</td>
+                                            </tr>
+                                            <tr className="detail-row">
+                                                <td className="indent">Stationary Combustion</td>
+                                                <td className="text-right">{formatCompactNumber(stats.combustion)}</td>
+                                            </tr>
+                                            <tr className="detail-row">
+                                                <td className="indent">Flaring</td>
+                                                <td className="text-right">{formatCompactNumber(stats.flaring)}</td>
+                                            </tr>
+                                            <tr className="detail-row">
+                                                <td className="indent">Venting</td>
+                                                <td className="text-right">{formatCompactNumber(stats.venting)}</td>
+                                            </tr>
+                                            <tr className="detail-row">
+                                                <td className="indent">Other Sources</td>
+                                                <td className="text-right">{formatCompactNumber(stats.other)}</td>
+                                            </tr>
+                                            <tr className="summary-row">
+                                                <td>Scope 2 (Indirect - Energy)</td>
+                                                <td className="text-right font-bold">{formatCompactNumber(stats.scope2)}</td>
+                                            </tr>
+                                            <tr className="summary-row">
+                                                <td>Scope 3 (Supply Chain)</td>
+                                                <td className="text-right font-bold">{formatCompactNumber(stats.scope3)}</td>
+                                            </tr>
+                                            <tr className="total-row">
+                                                <td>Total Footprint</td>
+                                                <td className="text-right">{formatCompactNumber(stats.totalEmissions)}</td>
+                                            </tr>
+                                            <tr className="total-row" style={{ color: '#10b981', borderTop: 'none' }}>
+                                                <td>Net Footprint</td>
+                                                <td className="text-right">{formatCompactNumber(stats.netEmissions)}</td>
+                                            </tr>
 
-                                        <tr className="header-divider">
-                                            <td colSpan="2">Organizational Breakdown</td>
-                                        </tr>
-                                        {Object.entries(getHierarchicalData).map(([act, actData]) => (
-                                            <React.Fragment key={act}>
-                                                <tr className="act-row clickable" onClick={() => toggleActivity(act)}>
-                                                    <td>
-                                                        <span className="toggle-icon">{expandedActivities[act] ? '▼' : '▶'}</span>
-                                                        {formatActivityName(act)}
-                                                    </td>
-                                                    <td className="text-right font-bold">{formatCompactNumber(actData.total)}</td>
-                                                </tr>
-                                                {expandedActivities[act] && Object.entries(actData.divisions).map(([div, divData]) => (
-                                                    <React.Fragment key={div}>
-                                                        <tr className="div-row clickable" onClick={(e) => { e.stopPropagation(); toggleDivision(div); }}>
-                                                            <td className="indent">
-                                                                <span className="toggle-icon">{expandedDivisions[div] ? '▼' : '▶'}</span>
-                                                                {div}
-                                                            </td>
-                                                            <td className="text-right">{formatCompactNumber(divData.total)}</td>
-                                                        </tr>
-                                                        {expandedDivisions[div] && divData.regions.map((reg, ridx) => (
-                                                            <tr key={ridx} className="reg-row">
-                                                                <td className="indent-double">{reg.region}</td>
-                                                                <td className="text-right">{formatCompactNumber(reg.total_emissions)}</td>
+                                            <tr className="header-divider">
+                                                <td colSpan="2">Organizational Breakdown</td>
+                                            </tr>
+                                            {Object.entries(getHierarchicalData).map(([act, actData]) => (
+                                                <React.Fragment key={act}>
+                                                    <tr className="act-row clickable" onClick={() => toggleActivity(act)}>
+                                                        <td>
+                                                            <span className="toggle-icon">{expandedActivities[act] ? '▼' : '▶'}</span>
+                                                            {formatActivityName(act)}
+                                                        </td>
+                                                        <td className="text-right font-bold">{formatCompactNumber(actData.total)}</td>
+                                                    </tr>
+                                                    {expandedActivities[act] && Object.entries(actData.divisions).map(([div, divData]) => (
+                                                        <React.Fragment key={div}>
+                                                            <tr className="div-row clickable" onClick={(e) => { e.stopPropagation(); toggleDivision(div); }}>
+                                                                <td className="indent">
+                                                                    <span className="toggle-icon">{expandedDivisions[div] ? '▼' : '▶'}</span>
+                                                                    {div}
+                                                                </td>
+                                                                <td className="text-right">{formatCompactNumber(divData.total)}</td>
                                                             </tr>
-                                                        ))}
-                                                    </React.Fragment>
-                                                ))}
-                                            </React.Fragment>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                                            {expandedDivisions[div] && divData.regions.map((reg, ridx) => (
+                                                                <tr key={ridx} className="reg-row">
+                                                                    <td className="indent-double">{reg.region}</td>
+                                                                    <td className="text-right">{formatCompactNumber(reg.total_emissions)}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </React.Fragment>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -849,35 +876,7 @@ const DashboardEnhanced = () => {
                 </div>
             </div>
 
-            <Modal isOpen={isGoalModalOpen} onClose={() => setIsGoalModalOpen(false)} title="Set Emissions Goal">
-                <div className="form-group">
-                    <label>Year</label>
-                    <input type="number" className="form-input" value={goalYear} onChange={(e) => setGoalYear(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label>Target Emissions (tCO2e)</label>
-                    <input type="number" className="form-input" value={goalTarget} onChange={(e) => setGoalTarget(e.target.value)} />
-                </div>
-                <div className="modal-actions">
-                    <button className="action-button secondary" onClick={() => setIsGoalModalOpen(false)}>Cancel</button>
-                    <button className="action-button" onClick={handleSaveGoal}>Save Goal</button>
-                </div>
-            </Modal>
 
-            <Modal isOpen={isBaseYearModalOpen} onClose={() => setIsBaseYearModalOpen(false)} title="Set Base Year">
-                <div className="form-group">
-                    <label>Base Year</label>
-                    <input type="number" className="form-input" value={baseYearInput} onChange={(e) => setBaseYearInput(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label>Reason for Recalculation</label>
-                    <textarea className="form-input" value={baseYearReason} onChange={(e) => setBaseYearReason(e.target.value)} rows="4" />
-                </div>
-                <div className="modal-actions">
-                    <button className="action-button secondary" onClick={() => setIsBaseYearModalOpen(false)}>Cancel</button>
-                    <button className="action-button" onClick={handleSaveBaseYear}>Save Base Year</button>
-                </div>
-            </Modal>
         </div >
     );
 };

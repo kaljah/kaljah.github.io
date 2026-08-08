@@ -20,13 +20,8 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const applyTheme = (theme) => {
-        // Default to dark if not specified, or respect preference
-        // Since our CSS default is light, we need to set data-theme='dark' for dark mode.
-        if (theme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-        }
+        // Enforce light theme only by removing data-theme attribute
+        document.documentElement.removeAttribute('data-theme');
     };
 
     useEffect(() => {
@@ -40,7 +35,7 @@ export const AuthProvider = ({ children }) => {
                     const settingsRes = await api.get('/auth/settings');
                     if (settingsRes.data) {
                         setPreferences(settingsRes.data);
-                        applyTheme(settingsRes.data.theme);
+                        applyTheme('light');
                     }
                 } catch (e) {
                     console.error("Failed to fetch settings on auth check", e);
@@ -68,7 +63,7 @@ export const AuthProvider = ({ children }) => {
             const settingsRes = await api.get('/auth/settings');
             if (settingsRes.data) {
                 setPreferences(settingsRes.data);
-                applyTheme(settingsRes.data.theme);
+                applyTheme('light');
             }
         } catch (e) {
             console.error("Failed to fetch settings on login", e);
@@ -86,7 +81,7 @@ export const AuthProvider = ({ children }) => {
         await api.post('/auth/logout');
         setUser(null);
         setPreferences({});
-        applyTheme('dark'); // Default reset
+        applyTheme('light'); // Default reset to light
         // Refresh CSRF token after logout to sync session
         await fetchCsrfToken();
     };

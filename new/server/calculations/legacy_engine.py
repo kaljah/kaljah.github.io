@@ -362,7 +362,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
         em['totalCo2e'] = (
             (em['co2'] * float(gwp_dict.get('CO2', 1.0))) +
             (em['ch4'] * float(gwp_dict.get('CH4', 28.0))) +
-            (em['n2o'] * float(gwp_dict.get('N2O', 264.0)))
+            (em['n2o'] * float(gwp_dict.get('N2O', 265.0)))
         )
         
         # We also attach the full rich result to the emission dict so the route can access it

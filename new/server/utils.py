@@ -8,24 +8,22 @@ def get_current_user():
 
 def get_allowed_facility_ids(user):
     """
-    Returns None if user is admin (allowed all).
+    Returns None if user is admin/it_admin/superuser (allowed all).
     Returns a list of facility IDs if user is restricted to a region.
     """
     if not user:
         return []
-    if user.role == 'admin':
+    if user.role in ['admin', 'it_admin', 'superuser']:
         return None
-    if user.role == 'it_admin':
-        return []
         
     # User is tied to a specific location/region
     user_region = user.location
     if not user_region:
         return [] # No region assigned, no access
         
-    facilities = Facility.query.filter_by(region=user_region).all()
-    # also fallback to name if region isn't used consistently
-    facilities += Facility.query.filter_by(name=user_region).all()
+    facilities = Facility.query.filter(
+        db.or_(Facility.region == user_region, Facility.location == user_region)
+    ).all()
     
     allowed_ids = list(set([f.id for f in facilities]))
     return allowed_ids

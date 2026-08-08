@@ -1760,11 +1760,14 @@ def import_emissions():
                 # Provided value is potentially an ID
                 try:
                     fid = int(f_val) if f_val else None
-                    if fid in facility_cache:
-                        facility = facility_cache[fid]
+                    if fid is not None:
+                        if fid in facility_cache:
+                            facility = facility_cache[fid]
+                        else:
+                            facility = db.session.get(Facility, fid)
+                            facility_cache[fid] = facility
                     else:
-                        facility = Facility.query.get(fid)
-                        facility_cache[fid] = facility
+                        facility = None
                 except (ValueError, TypeError):
                     facility = None
 

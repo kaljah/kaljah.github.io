@@ -71,10 +71,12 @@ def is_safe_image_url(url_str: str) -> tuple[bool, str]:
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        if request.method == 'OPTIONS':
+            return ('', 204)
         user_id = session.get('user_id')
         if not user_id:
             return jsonify({'error': 'Not authenticated'}), 401
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             session.pop('user_id', None)
             return jsonify({'error': 'User not found'}), 401
@@ -85,6 +87,8 @@ def login_required(f):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        if request.method == 'OPTIONS':
+            return ('', 204)
         user_id = session.get('user_id')
         if not user_id:
             return jsonify({'error': 'Not authenticated'}), 401
@@ -102,6 +106,8 @@ def superuser_required(f):
     """Permits superuser, admin, and it_admin roles"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        if request.method == 'OPTIONS':
+            return ('', 204)
         user_id = session.get('user_id')
         if not user_id:
             return jsonify({'error': 'Not authenticated'}), 401
@@ -180,21 +186,24 @@ def register():
 
 
 @auth_bp.route('/login', methods=['POST'])
-@limiter.limit("10 per 15 minutes")  # SEC-01 FIX: rely cleanly on Flask-Limiter
+@limiter.limit("20 per 15 minutes")  # SEC-01 FIX: rely cleanly on Flask-Limiter
 def login():
     data = request.get_json()
     if not data or not data.get('email') or not data.get('password'):
         return jsonify({'error': 'Email and password required'}), 400
 
-    user = User.query.filter_by(email=data.get('email')).first()
+    email_input = str(data.get('email', '')).strip()
+    password_input = str(data.get('password', ''))
+
+    user = User.query.filter(db.func.lower(User.email) == email_input.lower()).first()
     
-    if user and user.check_password(data.get('password')):
+    if user and user.check_password(password_input):
         if user.status != 'active':
             return jsonify({'error': 'Account disabled'}), 403
             
         session['user_id'] = user.id
         current_app.logger.debug(f"Session set for user_id={user.id}")
-        user.last_login = datetime.datetime.utcnow()
+        user.last_login = datetime.datetime.now(datetime.timezone.utc)
             
         db.session.commit()
         
@@ -382,12 +391,18 @@ _app_settings = {
     'reconciliation_threshold': 20.0,
     'ogmp_upstream_target_pct': 0.20,
     'ogmp_midstream_target_pct': 0.05,
+    'copernicus_username': '',
+    'copernicus_password': '',
+    'copernicus_client_id': '',
+    'copernicus_client_secret': '',
+    'copernicus_qa_threshold': 0.5,
+    'copernicus_enabled': False,
     'wec_fee_rates': {
         '2024': 900.0,
         '2025': 1200.0,
         '2026': 1500.0
     },
-    'theme': 'dark',
+    'theme': 'light',
     'unit_system': 'metric',
     'auto_flag_discrepancy': True,
     'gwp_values': {
@@ -410,7 +425,7 @@ def recalculate_all_emissions_gwp(standard):
     std_dict = GWP_STANDARDS.get(standard, GWP_AR5)
     co2_factor = float(std_dict.get('CO2', 1.0))
     ch4_factor = float(std_dict.get('CH4', 28.0))
-    n2o_factor = float(std_dict.get('N2O', 264.0))
+    n2o_factor = float(std_dict.get('N2O', 265.0))
 
     # Perform database update
     db.session.query(Emission).update({

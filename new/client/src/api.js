@@ -55,6 +55,14 @@ api.interceptors.response.use(
                 window.__authLogout();
             }
         }
+
+        // Sanitize generic 500 internal server errors to avoid leaking stack traces
+        if (status === 500 && (!error.response?.data?.error || typeof error.response.data.error !== 'string')) {
+            if (error.response) {
+                error.response.data = { error: 'An unexpected server error occurred. Please try again or contact support.' };
+            }
+        }
+
         return Promise.reject(error);
     }
 );

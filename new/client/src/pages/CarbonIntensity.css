@@ -447,6 +447,21 @@
     box-shadow: var(--card-shadow);
 }
 
+.ogmp-body-wrapper {
+    max-height: 1500px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+    margin-top: 16px;
+}
+
+.ogmp-body-wrapper.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
+}
+
 .ogmp-empty-state {
     padding: 32px;
     text-align: center;
@@ -540,6 +555,25 @@
     display: flex;
     flex-direction: column;
     gap: 22px;
+    transition: gap 0.3s ease;
+}
+
+.ogmp-roadmap-card.collapsed-card {
+    gap: 0;
+}
+
+.ogmp-roadmap-body-wrapper {
+    max-height: 2500px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+}
+
+.ogmp-roadmap-body-wrapper.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
 }
 
 .roadmap-header-row {

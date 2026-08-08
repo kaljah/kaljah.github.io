@@ -19,16 +19,6 @@
   font-family: 'Outfit', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-[data-theme='dark'] {
-  --bg-body: #0f172a;
-  --bg-card: #1e293b;
-  --bg-hover: #334155;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border-color: #334155;
-  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

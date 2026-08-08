@@ -11,7 +11,7 @@ def test_constants_and_helpers():
 
     ar5 = get_active_gwp('AR5')
     assert ar5['CH4'] == 28.0
-    assert ar5['N2O'] == 264.0
+    assert ar5['N2O'] == 265.0
 
     ar6 = get_active_gwp('AR6')
     assert ar6['CH4'] == 27.9
@@ -29,9 +29,9 @@ def test_calculate_co2e_dynamic():
     co2e_ar4 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR4)
     assert pytest.approx(co2e_ar4, 0.01) == 358.0
 
-    # AR5: 10*1 + 2*28 + 1*264 = 10 + 56 + 264 = 330.0
+    # AR5: 10*1 + 2*28 + 1*265 = 10 + 56 + 265 = 331.0
     co2e_ar5 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR5)
-    assert pytest.approx(co2e_ar5, 0.01) == 330.0
+    assert pytest.approx(co2e_ar5, 0.01) == 331.0
 
     # AR6: 10*1 + 2*27.9 + 1*273 = 10 + 55.8 + 273 = 338.8
     co2e_ar6 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR6)
