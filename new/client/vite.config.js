@@ -10,12 +10,12 @@ export default defineConfig({
       // SSE stream — must NOT compress or buffer, otherwise events are held
       // until the connection closes and real-time delivery is lost.
       '/api/notifications/stream': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5000',
         changeOrigin: true,
         compress: false,        // No gzip — SSE frames must flush immediately
       },
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5000',
         changeOrigin: true,
       }
     }

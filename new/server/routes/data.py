@@ -7,6 +7,13 @@ from sqlalchemy import func
 from models import ProductionData, ActivityLog, User, Facility, OgmpSurvey, MethaneSourceType, LevelUpgradeLog, Emission
 from extensions import db
 
+# Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
+NON_OG_ACTIVITIES = [
+    'Steel & Iron (Acier DRI)',
+    'Chemicals & Fertilizers',
+    'Cement & Clinker',
+]
+
 @data_bp.route('/production', methods=['GET'])
 @login_required
 def get_production():
@@ -219,12 +226,16 @@ def get_ogmp_surveys():
         query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
     if request.args.get('facilityId'):
         query = query.filter_by(facility_id=request.args.get('facilityId'))
+    # Single join to Facility — needed for O&G scope filter and optional segment filter
+    query = query.join(Facility, OgmpSurvey.facility_id == Facility.id)
+    # Restrict to Oil & Gas facilities only (OGMP 2.0 scope)
+    query = query.filter(~Facility.activity.in_(NON_OG_ACTIVITIES))
     if request.args.get('segment'):
-        query = query.join(Facility, OgmpSurvey.facility_id == Facility.id).filter(Facility.segment == request.args.get('segment'))
+        query = query.filter(Facility.segment == request.args.get('segment'))
     if request.args.get('year'):
-        query = query.filter_by(year=request.args.get('year'))
+        query = query.filter(OgmpSurvey.year == int(request.args.get('year')))
     if request.args.get('survey_type'):
-        query = query.filter_by(survey_type=request.args.get('survey_type'))
+        query = query.filter(OgmpSurvey.survey_type == request.args.get('survey_type'))
 
     data = query.order_by(OgmpSurvey.survey_date.desc()).all()
     return jsonify([{
@@ -277,6 +288,13 @@ def save_ogmp_survey():
 
     if not facility_id or not survey_date or measured_rate_kg_hr < 0:
         return jsonify({'error': 'Facility, survey date, and measured emission rate are required'}), 400
+
+    # Validate facility is Oil & Gas scope
+    fac = Facility.query.get(facility_id)
+    if not fac:
+        return jsonify({'error': 'Facility not found'}), 404
+    if fac.activity in NON_OG_ACTIVITIES:
+        return jsonify({'error': f'OGMP 2.0 surveys are only applicable to Oil & Gas facilities. "{fac.name}" ({fac.activity}) is not in scope.'}), 400
 
     estimated_annual_tch4 = round(measured_rate_kg_hr * operating_hours / 1000.0, 2)
 
