@@ -683,7 +683,7 @@ const ManageDataInner = () => {
             <div className="manage-container">
                 <div className="manage-layout">
                     {/* Sidebar Navigation */}
-                    <aside className="manage-nav-panel">
+                    <aside className="manage-nav-panel glass-panel">
                         <h3 style={{ margin: '0 0 16px 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>
                             Management
                         </h3>
@@ -763,7 +763,7 @@ const ManageDataInner = () => {
 
                         {/* Factors Tab */}
                         {activeTab === 'factors' && (
-                            <div className="manage-card">
+                            <div className="manage-card glass-panel">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
                                     <div>
                                         <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Custom Emission Factors</h2>
@@ -989,7 +989,7 @@ const ManageDataInner = () => {
 
                         {/* Regions Tab — Admin only */}
                         {activeTab === 'facilities' && user?.role === 'admin' && (
-                            <div className="manage-card">
+                            <div className="manage-card glass-panel">
                                 <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Active Regions</h2>
                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational regions and their boundaries.</p>
 
@@ -1150,7 +1150,7 @@ const ManageDataInner = () => {
 
                         {/* Production Tab */}
                         {activeTab === 'production' && (
-                            <div className="manage-card">
+                            <div className="manage-card glass-panel">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
                                     <div>
                                         <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Annual Production Records</h2>
@@ -1326,7 +1326,7 @@ const ManageDataInner = () => {
 
                         {/* Sources Tab */}
                         {activeTab === 'sources' && (
-                            <div className="manage-card">
+                            <div className="manage-card glass-panel">
                                 <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Emission Sources Inventory</h2>
                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational equipment and emission sources.</p>
 
@@ -1459,7 +1459,7 @@ const ManageDataInner = () => {
 
                         {/* Emission Goals & Base Years Tab */}
                         {activeTab === 'goals' && (
-                            <div className="manage-card">
+                            <div className="manage-card glass-panel">
                                 {/* Active Baseline Status Banner */}
                                 <div className="baseline-highlight-card">
                                     <div>
@@ -1783,7 +1783,7 @@ const ManageDataInner = () => {
 
                         {/* Mitigation Tab */}
                         {activeTab === 'mitigation' && (
-                            <div className="manage-card">
+                            <div className="manage-card glass-panel">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
                                     <div>
                                         <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Mitigation Projects</h2>

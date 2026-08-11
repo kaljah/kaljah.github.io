@@ -1,6 +1,7 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import './Login.css';
 
 const GhgCloud = () => {
@@ -111,7 +112,12 @@ const Login = () => {
 
             <GhgCloud />
 
-            <div className="login-container fade-in">
+            <motion.div 
+                className="login-container glass-panel"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+            >
                 
                 {/* Welcome Text */}
                 <div className="login-header">
@@ -132,8 +138,20 @@ const Login = () => {
                 )}
 
                 {/* Login Form */}
-                <form onSubmit={handleLogin} className="login-form">
-                    <div className="form-group">
+                <motion.form 
+                    onSubmit={handleLogin} 
+                    className="login-form"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+                        }
+                    }}
+                >
+                    <motion.div className="form-group" variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 }}}>
                         <div className="input-wrapper">
                             <span className="input-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -151,9 +169,9 @@ const Login = () => {
                                 autoComplete="username"
                             />
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <div className="form-group">
+                    <motion.div className="form-group" variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 }}}>
                         <div className="input-wrapper">
                             <span className="input-icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -171,10 +189,18 @@ const Login = () => {
                                 autoComplete="current-password"
                             />
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <button type="submit" className="btn-primary">Sign In</button>
-                </form>
+                    <motion.button 
+                        type="submit" 
+                        className="btn-primary"
+                        variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 }}}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        Sign In
+                    </motion.button>
+                </motion.form>
 
                 {/* Footer / Compliance */}
                 <div className="login-footer">
@@ -186,7 +212,7 @@ const Login = () => {
                     <p>© {new Date().getFullYear()} Carbon Tech. All rights reserved.</p>
                 </div>
 
-            </div>
+            </motion.div>
         </div>
     );
 };

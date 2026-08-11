@@ -2,7 +2,7 @@
     display: flex;
     height: 100vh;
     width: 100%;
-    background-color: var(--bg-dark);
+    background-color: transparent; /* Rely on index.css body background */
     overflow: hidden;
 }
 
@@ -12,7 +12,7 @@
     flex-direction: column;
     overflow: hidden;
     position: relative;
-    background: var(--bg-dark);
+    background: transparent;
 }
 
 /* Scrollable Content Containers */

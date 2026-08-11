@@ -18,6 +18,29 @@
     margin: 0 auto;
 }
 
+/* Staggered entrances for dashboard sections */
+.dashboard-grid > * {
+    opacity: 0;
+    animation: dashboardFadeIn 0.6s ease-out forwards;
+}
+
+.dashboard-grid > *:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-grid > *:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-grid > *:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-grid > *:nth-child(4) { animation-delay: 0.4s; }
+.dashboard-grid > *:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes dashboardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Header Row */
 .dashboard-header-row {
     display: flex;
@@ -81,10 +104,8 @@
 /* Hero Card - Modern Light */
 .hero-card {
     padding: 32px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
     border-radius: 24px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    /* background and border handled by glass-panel */
 }
 
 /* Charts Section */
@@ -95,11 +116,8 @@
 }
 
 .trend-card-enhanced {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
     border-radius: 24px;
     padding: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -113,12 +131,9 @@
 }
 
 .donut-card-enhanced {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
     border-radius: 24px;
     padding: 20px;
     flex: 1;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* Goal Progress Badge */
@@ -282,10 +297,10 @@
 .scope-pills-row {
     display: flex;
     gap: 16px;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.4);
     padding: 16px;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 .scope-pill {
@@ -690,10 +705,7 @@
 
 /* Common Card Styles */
 .card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
     border-radius: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     position: relative;
     overflow: hidden;
 }
