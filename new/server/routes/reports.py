@@ -4,412 +4,555 @@ from datetime import datetime
 from io import BytesIO
 import html
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
-from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph,
+    Spacer,
+)
+from reportlab.lib.enums import TA_CENTER
 from extensions import db
-from models import Emission, Facility, Scope2Emission, Scope3Emission, OgmpSurvey, ProductionData, LevelUpgradeLog, Goal, BaseYearRecalculation
+from models import (
+    Emission,
+    Facility,
+    OgmpSurvey,
+    ProductionData,
+    Goal,
+    BaseYearRecalculation,
+)
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
-reports_bp = Blueprint('reports', __name__)
+reports_bp = Blueprint("reports", __name__)
+
 
 def _safe_excel_value(val):
     """Prevent formula injection (DDE/CSV injection) in Excel cells."""
-    if isinstance(val, str) and val and val[0] in ('=', '-', '+', '@', '\t', '\r'):
+    if isinstance(val, str) and val and val[0] in ("=", "-", "+", "@", "\t", "\r"):
         return "'" + val
     return val
+
 
 def create_pdf_report(emissions_data, filters):
     """Generate PDF report for emissions data"""
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=0.5*inch, leftMargin=0.5*inch,
-                          topMargin=0.75*inch, bottomMargin=0.5*inch)
-    
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=0.5 * inch,
+        leftMargin=0.5 * inch,
+        topMargin=0.75 * inch,
+        bottomMargin=0.5 * inch,
+    )
+
     elements = []
     styles = getSampleStyleSheet()
-    
+
     # Custom styles
     title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
+        "CustomTitle",
+        parent=styles["Heading1"],
         fontSize=24,
-        textColor=colors.HexColor('#10b981'),
+        textColor=colors.HexColor("#10b981"),
         spaceAfter=12,
-        alignment=TA_CENTER
+        alignment=TA_CENTER,
     )
-    
+
     subtitle_style = ParagraphStyle(
-        'CustomSubtitle',
-        parent=styles['Normal'],
+        "CustomSubtitle",
+        parent=styles["Normal"],
         fontSize=11,
         textColor=colors.grey,
         spaceAfter=20,
-        alignment=TA_CENTER
+        alignment=TA_CENTER,
     )
-    
+
     heading_style = ParagraphStyle(
-        'CustomHeading',
-        parent=styles['Heading2'],
+        "CustomHeading",
+        parent=styles["Heading2"],
         fontSize=14,
-        textColor=colors.HexColor('#1e293b'),
-        spaceAfter=10
+        textColor=colors.HexColor("#1e293b"),
+        spaceAfter=10,
     )
-    
+
     # Title
     elements.append(Paragraph("GHG Emissions Report", title_style))
-    
+
     # Report metadata
     report_date = datetime.now().strftime("%B %d, %Y")
     elements.append(Paragraph(f"Generated on {report_date}", subtitle_style))
-    elements.append(Spacer(1, 0.2*inch))
-    
+    elements.append(Spacer(1, 0.2 * inch))
+
     # Filter summary
     filter_text = "<b>Report Filters:</b><br/>"
-    if filters.get('year'):
+    if filters.get("year"):
         filter_text += f"Year: {html.escape(str(filters['year']))}<br/>"
-    if filters.get('month'):
+    if filters.get("month"):
         filter_text += f"Month: {html.escape(str(filters['month']))}<br/>"
-    if filters.get('facility_id'):
-        facility = Facility.query.get(filters['facility_id'])
+    if filters.get("facility_id"):
+        facility = Facility.query.get(filters["facility_id"])
         if facility:
             filter_text += f"Facility: {html.escape(str(facility.name))}<br/>"
-    if filters.get('process_type'):
+    if filters.get("process_type"):
         filter_text += f"Process Type: {html.escape(str(filters['process_type']))}<br/>"
-    
-    elements.append(Paragraph(filter_text, styles['Normal']))
-    elements.append(Spacer(1, 0.3*inch))
-    
+
+    elements.append(Paragraph(filter_text, styles["Normal"]))
+    elements.append(Spacer(1, 0.3 * inch))
+
     # Summary statistics
-    total_co2e = sum(e.get('total_co2e', 0) for e in emissions_data)
-    total_co2 = sum(e.get('co2_emissions', 0) for e in emissions_data)
-    total_ch4 = sum(e.get('ch4_emissions', 0) for e in emissions_data)
-    total_n2o = sum(e.get('n2o_emissions', 0) for e in emissions_data)
-    scope1_total = sum(e.get('total_co2e', 0) for e in emissions_data if e.get('scope') == 1)
-    scope2_total = sum(e.get('total_co2e', 0) for e in emissions_data if e.get('scope') == 2)
-    scope3_total = sum(e.get('total_co2e', 0) for e in emissions_data if e.get('scope') == 3)
-    
+    total_co2e = sum(e.get("total_co2e", 0) for e in emissions_data)
+    total_co2 = sum(e.get("co2_emissions", 0) for e in emissions_data)
+    total_ch4 = sum(e.get("ch4_emissions", 0) for e in emissions_data)
+    total_n2o = sum(e.get("n2o_emissions", 0) for e in emissions_data)
+    scope1_total = sum(
+        e.get("total_co2e", 0) for e in emissions_data if e.get("scope") == 1
+    )
+    scope2_total = sum(
+        e.get("total_co2e", 0) for e in emissions_data if e.get("scope") == 2
+    )
+    scope3_total = sum(
+        e.get("total_co2e", 0) for e in emissions_data if e.get("scope") == 3
+    )
+
     elements.append(Paragraph("Emission Summary", heading_style))
-    
+
     summary_data = [
-        ['Metric', 'Value (tonnes CO₂e)'],
-        ['Scope 1 — Direct Emissions', f'{scope1_total:,.2f}'],
-        ['Scope 2 — Indirect Electricity', f'{scope2_total:,.2f}'],
-        ['Scope 3 — Value Chain', f'{scope3_total:,.2f}'],
-        ['Total CO₂ Gas', f'{total_co2:,.2f}'],
-        ['Total CH₄ Gas', f'{total_ch4:,.2f}'],
-        ['Total N₂O Gas', f'{total_n2o:,.2f}'],
-        ['Total CO₂e (Grand Total)', f'{total_co2e:,.2f}']
+        ["Metric", "Value (tonnes CO₂e)"],
+        ["Scope 1 — Direct Emissions", f"{scope1_total:,.2f}"],
+        ["Scope 2 — Indirect Electricity", f"{scope2_total:,.2f}"],
+        ["Scope 3 — Value Chain", f"{scope3_total:,.2f}"],
+        ["Total CO₂ Gas", f"{total_co2:,.2f}"],
+        ["Total CH₄ Gas", f"{total_ch4:,.2f}"],
+        ["Total N₂O Gas", f"{total_n2o:,.2f}"],
+        ["Total CO₂e (Grand Total)", f"{total_co2e:,.2f}"],
     ]
-    
-    summary_table = Table(summary_data, colWidths=[3*inch, 2*inch])
-    summary_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#10b981')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#d1fae5'))
-    ]))
-    
+
+    summary_table = Table(summary_data, colWidths=[3 * inch, 2 * inch])
+    summary_table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#10b981")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("ALIGN", (1, 0), (1, -1), "RIGHT"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                ("FONTNAME", (0, -1), (-1, -1), "Helvetica-Bold"),
+                ("BACKGROUND", (0, -1), (-1, -1), colors.HexColor("#d1fae5")),
+            ]
+        )
+    )
+
     elements.append(summary_table)
-    elements.append(Spacer(1, 0.4*inch))
-    
+    elements.append(Spacer(1, 0.4 * inch))
+
     # Detailed emissions table
     elements.append(Paragraph("Detailed Emissions Data", heading_style))
-    
+
     # Table headers
-    table_data = [['Date', 'Facility', 'Process', 'Fuel/Source', 'Amount', 'CO₂', 'CH₄', 'N₂O', 'Total CO₂e']]
-    
+    table_data = [
+        [
+            "Date",
+            "Facility",
+            "Process",
+            "Fuel/Source",
+            "Amount",
+            "CO₂",
+            "CH₄",
+            "N₂O",
+            "Total CO₂e",
+        ]
+    ]
+
     # Table rows (support up to 500 records in PDF cleanly)
     for emission in emissions_data[:500]:
-        table_data.append([
-            str(emission.get('date', 'N/A')),
-            str(emission.get('facility_name', 'N/A'))[:15],
-            str(emission.get('process_type', 'N/A'))[:12],
-            str(emission.get('fuel_type', 'N/A'))[:12],
-            f"{emission.get('amount', 0):,.1f}",
-            f"{emission.get('co2_emissions', 0):,.2f}",
-            f"{emission.get('ch4_emissions', 0):,.2f}",
-            f"{emission.get('n2o_emissions', 0):,.2f}",
-            f"{emission.get('total_co2e', 0):,.2f}"
-        ])
-    
+        table_data.append(
+            [
+                str(emission.get("date", "N/A")),
+                str(emission.get("facility_name", "N/A"))[:15],
+                str(emission.get("process_type", "N/A"))[:12],
+                str(emission.get("fuel_type", "N/A"))[:12],
+                f"{emission.get('amount', 0):,.1f}",
+                f"{emission.get('co2_emissions', 0):,.2f}",
+                f"{emission.get('ch4_emissions', 0):,.2f}",
+                f"{emission.get('n2o_emissions', 0):,.2f}",
+                f"{emission.get('total_co2e', 0):,.2f}",
+            ]
+        )
+
     # Create table
-    col_widths = [0.8*inch, 1*inch, 0.9*inch, 0.9*inch, 0.7*inch, 0.7*inch, 0.7*inch, 0.7*inch, 0.9*inch]
+    col_widths = [
+        0.8 * inch,
+        1 * inch,
+        0.9 * inch,
+        0.9 * inch,
+        0.7 * inch,
+        0.7 * inch,
+        0.7 * inch,
+        0.7 * inch,
+        0.9 * inch,
+    ]
     details_table = Table(table_data, colWidths=col_widths)
-    details_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1e293b')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-        ('ALIGN', (4, 1), (-1, -1), 'RIGHT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 8),
-        ('FONTSIZE', (0, 1), (-1, -1), 7),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey])
-    ]))
-    
+    details_table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e293b")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+                ("ALIGN", (4, 1), (-1, -1), "RIGHT"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 8),
+                ("FONTSIZE", (0, 1), (-1, -1), 7),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+            ]
+        )
+    )
+
     elements.append(details_table)
-    
+
     # Footer
-    elements.append(Spacer(1, 0.5*inch))
-    footer_text = f"<i>Report contains {len(emissions_data)} emission records. " \
-                 f"Generated by GHG Emissions Management System.</i>"
-    elements.append(Paragraph(footer_text, styles['Italic']))
-    
+    elements.append(Spacer(1, 0.5 * inch))
+    footer_text = (
+        f"<i>Report contains {len(emissions_data)} emission records. "
+        f"Generated by GHG Emissions Management System.</i>"
+    )
+    elements.append(Paragraph(footer_text, styles["Italic"]))
+
     # Build PDF
     doc.build(elements)
     buffer.seek(0)
     return buffer
 
-@reports_bp.route('/generate', methods=['POST'])
+
+@reports_bp.route("/generate", methods=["POST"])
 @login_required
 def generate_report():
     """Generate PDF report based on filters"""
     try:
         from models import Scope2Emission, Scope3Emission
+
         data = request.get_json()
-        filters = data.get('filters', {})
-        scope = filters.get('scope', 'all')
-        
+        filters = data.get("filters", {})
+        scope = filters.get("scope", "all")
+
         # Determine years/months/facilities
         try:
-            year = int(filters['year']) if filters.get('year') and filters['year'] != 'all' else None
+            year = (
+                int(filters["year"])
+                if filters.get("year") and filters["year"] != "all"
+                else None
+            )
         except (ValueError, TypeError):
             year = None
-            
+
         try:
-            month = int(filters['month']) if filters.get('month') and filters['month'] != 'all' else None
+            month = (
+                int(filters["month"])
+                if filters.get("month") and filters["month"] != "all"
+                else None
+            )
         except (ValueError, TypeError):
             month = None
-            
+
         facility_id = None
-        if filters.get('facility_id') and filters['facility_id'] != 'all':
+        if filters.get("facility_id") and filters["facility_id"] != "all":
             try:
-                facility_id = int(filters['facility_id'])
+                facility_id = int(filters["facility_id"])
             except (ValueError, TypeError):
                 facility_id = None
-                
-        process_type = filters.get('process_type') if filters.get('process_type') and filters['process_type'] != 'all' else None
+
+        process_type = (
+            filters.get("process_type")
+            if filters.get("process_type") and filters["process_type"] != "all"
+            else None
+        )
 
         emissions_data = []
 
         # 1. SCOPE 1
-        if scope in ['all', '1']:
+        if scope in ["all", "1"]:
             q = Emission.query
-            if year: q = q.filter_by(year=year)
-            if month: q = q.filter_by(month=month)
-            if facility_id: q = q.filter_by(facility_id=facility_id)
-            if process_type: q = q.filter_by(process_type=process_type)
-            q = q.filter(Emission.status != 'Draft')
-            
+            if year:
+                q = q.filter_by(year=year)
+            if month:
+                q = q.filter_by(month=month)
+            if facility_id:
+                q = q.filter_by(facility_id=facility_id)
+            if process_type:
+                q = q.filter_by(process_type=process_type)
+            q = q.filter(Emission.status != "Draft")
+
             for e in q.all():
                 fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
-                emissions_data.append({
-                    'scope': 1,
-                    'date': f"{e.year or 0}-{m_val:02d}-01",
-                    'facility_name': fac.name if fac else 'Unknown',
-                    'process_type': e.process_type or 'N/A',
-                    'fuel_type': e.fuel_type or 'N/A',
-                    'amount': e.quantity or 0,
-                    'co2_emissions': e.co2_emissions or 0,
-                    'ch4_emissions': e.ch4_emissions or 0,
-                    'n2o_emissions': e.n2o_emissions or 0,
-                    'total_co2e': e.co2e_total or 0
-                })
+                emissions_data.append(
+                    {
+                        "scope": 1,
+                        "date": f"{e.year or 0}-{m_val:02d}-01",
+                        "facility_name": fac.name if fac else "Unknown",
+                        "process_type": e.process_type or "N/A",
+                        "fuel_type": e.fuel_type or "N/A",
+                        "amount": e.quantity or 0,
+                        "co2_emissions": e.co2_emissions or 0,
+                        "ch4_emissions": e.ch4_emissions or 0,
+                        "n2o_emissions": e.n2o_emissions or 0,
+                        "total_co2e": e.co2e_total or 0,
+                    }
+                )
 
         # 2. SCOPE 2
-        if scope in ['all', '2']:
+        if scope in ["all", "2"]:
             q2 = Scope2Emission.query
-            if year: q2 = q2.filter_by(year=year)
-            if month: q2 = q2.filter_by(month=month)
-            if facility_id: q2 = q2.filter_by(facility_id=facility_id)
-            q2 = q2.filter(Scope2Emission.status != 'Draft')
+            if year:
+                q2 = q2.filter_by(year=year)
+            if month:
+                q2 = q2.filter_by(month=month)
+            if facility_id:
+                q2 = q2.filter_by(facility_id=facility_id)
+            q2 = q2.filter(Scope2Emission.status != "Draft")
             for e in q2.all():
                 fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
-                emissions_data.append({
-                    'scope': 2,
-                    'date': f"{e.year or 0}-{m_val:02d}-01",
-                    'facility_name': fac.name if fac else 'Unknown',
-                    'process_type': f"Scope 2: {e.source_type or 'Electricity'}",
-                    'fuel_type': e.grid_region or 'Grid',
-                    'amount': e.electricity_kwh or 0,
-                    'co2_emissions': 0, 'ch4_emissions': 0, 'n2o_emissions': 0,
-                    'total_co2e': e.co2e or 0
-                })
+                emissions_data.append(
+                    {
+                        "scope": 2,
+                        "date": f"{e.year or 0}-{m_val:02d}-01",
+                        "facility_name": fac.name if fac else "Unknown",
+                        "process_type": f"Scope 2: {e.source_type or 'Electricity'}",
+                        "fuel_type": e.grid_region or "Grid",
+                        "amount": e.electricity_kwh or 0,
+                        "co2_emissions": 0,
+                        "ch4_emissions": 0,
+                        "n2o_emissions": 0,
+                        "total_co2e": e.co2e or 0,
+                    }
+                )
 
         # 3. SCOPE 3
-        if scope in ['all', '3']:
+        if scope in ["all", "3"]:
             q3 = Scope3Emission.query
-            if year: q3 = q3.filter_by(year=year)
-            if month: q3 = q3.filter_by(month=month)
-            if facility_id: q3 = q3.filter_by(facility_id=facility_id)
-            q3 = q3.filter(Scope3Emission.status != 'Draft')
+            if year:
+                q3 = q3.filter_by(year=year)
+            if month:
+                q3 = q3.filter_by(month=month)
+            if facility_id:
+                q3 = q3.filter_by(facility_id=facility_id)
+            q3 = q3.filter(Scope3Emission.status != "Draft")
             for e in q3.all():
                 fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
-                emissions_data.append({
-                    'scope': 3,
-                    'date': f"{e.year or 0}-{m_val:02d}-01",
-                    'facility_name': fac.name if fac else 'Unknown',
-                    'process_type': e.category or 'Scope 3',
-                    'fuel_type': e.sub_category or 'Value Chain',
-                    'amount': e.activity_data or 0,
-                    'co2_emissions': 0, 'ch4_emissions': 0, 'n2o_emissions': 0,
-                    'total_co2e': e.co2e or 0
-                })
-        
+                emissions_data.append(
+                    {
+                        "scope": 3,
+                        "date": f"{e.year or 0}-{m_val:02d}-01",
+                        "facility_name": fac.name if fac else "Unknown",
+                        "process_type": e.category or "Scope 3",
+                        "fuel_type": e.sub_category or "Value Chain",
+                        "amount": e.activity_data or 0,
+                        "co2_emissions": 0,
+                        "ch4_emissions": 0,
+                        "n2o_emissions": 0,
+                        "total_co2e": e.co2e or 0,
+                    }
+                )
+
         # Sort by date
-        emissions_data.sort(key=lambda x: x['date'], reverse=True)
+        emissions_data.sort(key=lambda x: x["date"], reverse=True)
 
         # Generate PDF
         pdf_buffer = create_pdf_report(emissions_data, filters)
-        
+
         # Return PDF file
         filename = f"emissions_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         return send_file(
             pdf_buffer,
-            mimetype='application/pdf',
+            mimetype="application/pdf",
             as_attachment=True,
-            download_name=filename
+            download_name=filename,
         )
-        
+
     except Exception as e:
         current_app.logger.error(f"Error generating PDF report: {e}", exc_info=True)
-        return jsonify({'error': 'Report generation failed. Please try again or contact support.'}), 500
+        return (
+            jsonify(
+                {
+                    "error": "Report generation failed. Please try again or contact support."
+                }
+            ),
+            500,
+        )
 
-@reports_bp.route('/export', methods=['GET'])
+
+@reports_bp.route("/export", methods=["GET"])
 @login_required
 def export_emissions():
     """Export emissions data as PDF - GET version for frontend integration"""
     try:
         from models import Scope2Emission, Scope3Emission
+
         # Get query parameters
-        year = request.args.get('year')
-        month = request.args.get('month')
-        facility_id = request.args.get('facility_id')
-        process_type = request.args.get('process_type')
-        scope = request.args.get('scope', 'all')
-        
-        filters = {'year': year, 'month': month, 'facility_id': facility_id, 'process_type': process_type, 'scope': scope}
-        
+        year = request.args.get("year")
+        month = request.args.get("month")
+        facility_id = request.args.get("facility_id")
+        process_type = request.args.get("process_type")
+        scope = request.args.get("scope", "all")
+
+        filters = {
+            "year": year,
+            "month": month,
+            "facility_id": facility_id,
+            "process_type": process_type,
+            "scope": scope,
+        }
+
         emissions_data = []
 
         # Scope filters for SQL
         y_int = None
-        if year and year != 'all':
-            try: y_int = int(year)
-            except: pass
-            
+        if year and year != "all":
+            try:
+                y_int = int(year)
+            except:
+                pass
+
         m_int = None
-        if month and month != 'all':
-            try: m_int = int(month)
-            except: pass
-            
+        if month and month != "all":
+            try:
+                m_int = int(month)
+            except:
+                pass
+
         f_int = None
-        if facility_id and facility_id != 'all':
-            try: f_int = int(facility_id)
-            except: pass
+        if facility_id and facility_id != "all":
+            try:
+                f_int = int(facility_id)
+            except:
+                pass
 
         # 1. SCOPE 1
-        if scope in ['all', '1']:
+        if scope in ["all", "1"]:
             q1 = Emission.query
-            if y_int: q1 = q1.filter_by(year=y_int)
-            if m_int: q1 = q1.filter_by(month=m_int)
-            if f_int: q1 = q1.filter_by(facility_id=f_int)
-            if process_type and process_type != 'all': q1 = q1.filter_by(process_type=process_type)
-            q1 = q1.filter(Emission.status != 'Draft')
+            if y_int:
+                q1 = q1.filter_by(year=y_int)
+            if m_int:
+                q1 = q1.filter_by(month=m_int)
+            if f_int:
+                q1 = q1.filter_by(facility_id=f_int)
+            if process_type and process_type != "all":
+                q1 = q1.filter_by(process_type=process_type)
+            q1 = q1.filter(Emission.status != "Draft")
             for e in q1.all():
                 fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
-                emissions_data.append({
-                    'scope': 1,
-                    'date': f"{e.year or 0}-{m_val:02d}-01",
-                    'facility_name': fac.name if fac else 'Unknown',
-                    'process_type': e.process_type or 'N/A',
-                    'fuel_type': e.fuel_type or 'N/A',
-                    'amount': e.quantity or 0,
-                    'co2_emissions': e.co2_emissions or 0, 'ch4_emissions': e.ch4_emissions or 0, 'n2o_emissions': e.n2o_emissions or 0,
-                    'total_co2e': e.co2e_total or 0
-                })
+                emissions_data.append(
+                    {
+                        "scope": 1,
+                        "date": f"{e.year or 0}-{m_val:02d}-01",
+                        "facility_name": fac.name if fac else "Unknown",
+                        "process_type": e.process_type or "N/A",
+                        "fuel_type": e.fuel_type or "N/A",
+                        "amount": e.quantity or 0,
+                        "co2_emissions": e.co2_emissions or 0,
+                        "ch4_emissions": e.ch4_emissions or 0,
+                        "n2o_emissions": e.n2o_emissions or 0,
+                        "total_co2e": e.co2e_total or 0,
+                    }
+                )
 
         # 2. SCOPE 2
-        if scope in ['all', '2']:
+        if scope in ["all", "2"]:
             q2 = Scope2Emission.query
-            if y_int: q2 = q2.filter_by(year=y_int)
-            if m_int: q2 = q2.filter_by(month=m_int)
-            if f_int: q2 = q2.filter_by(facility_id=f_int)
-            q2 = q2.filter(Scope2Emission.status != 'Draft')
+            if y_int:
+                q2 = q2.filter_by(year=y_int)
+            if m_int:
+                q2 = q2.filter_by(month=m_int)
+            if f_int:
+                q2 = q2.filter_by(facility_id=f_int)
+            q2 = q2.filter(Scope2Emission.status != "Draft")
             for e in q2.all():
                 fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
-                emissions_data.append({
-                    'scope': 2,
-                    'date': f"{e.year or 0}-{m_val:02d}-01",
-                    'facility_name': fac.name if fac else 'Unknown',
-                    'process_type': 'Indirect Electricity',
-                    'fuel_type': e.source_type or 'Electricity',
-                    'amount': e.electricity_kwh or 0,
-                    'co2_emissions': 0, 'ch4_emissions': 0, 'n2o_emissions': 0,
-                    'total_co2e': e.co2e or 0
-                })
+                emissions_data.append(
+                    {
+                        "scope": 2,
+                        "date": f"{e.year or 0}-{m_val:02d}-01",
+                        "facility_name": fac.name if fac else "Unknown",
+                        "process_type": "Indirect Electricity",
+                        "fuel_type": e.source_type or "Electricity",
+                        "amount": e.electricity_kwh or 0,
+                        "co2_emissions": 0,
+                        "ch4_emissions": 0,
+                        "n2o_emissions": 0,
+                        "total_co2e": e.co2e or 0,
+                    }
+                )
 
         # 3. SCOPE 3
-        if scope in ['all', '3']:
+        if scope in ["all", "3"]:
             q3 = Scope3Emission.query
-            if y_int: q3 = q3.filter_by(year=y_int)
-            if m_int: q3 = q3.filter_by(month=m_int)
-            if f_int: q3 = q3.filter_by(facility_id=f_int)
-            q3 = q3.filter(Scope3Emission.status != 'Draft')
+            if y_int:
+                q3 = q3.filter_by(year=y_int)
+            if m_int:
+                q3 = q3.filter_by(month=m_int)
+            if f_int:
+                q3 = q3.filter_by(facility_id=f_int)
+            q3 = q3.filter(Scope3Emission.status != "Draft")
             for e in q3.all():
                 fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
-                emissions_data.append({
-                    'scope': 3,
-                    'date': f"{e.year or 0}-{m_val:02d}-01",
-                    'facility_name': fac.name if fac else 'Unknown',
-                    'process_type': e.category or 'Value Chain',
-                    'fuel_type': e.sub_category or 'Scope 3',
-                    'amount': e.activity_data or 0,
-                    'co2_emissions': 0, 'ch4_emissions': 0, 'n2o_emissions': 0,
-                    'total_co2e': e.co2e or 0
-                })
+                emissions_data.append(
+                    {
+                        "scope": 3,
+                        "date": f"{e.year or 0}-{m_val:02d}-01",
+                        "facility_name": fac.name if fac else "Unknown",
+                        "process_type": e.category or "Value Chain",
+                        "fuel_type": e.sub_category or "Scope 3",
+                        "amount": e.activity_data or 0,
+                        "co2_emissions": 0,
+                        "ch4_emissions": 0,
+                        "n2o_emissions": 0,
+                        "total_co2e": e.co2e or 0,
+                    }
+                )
 
-        emissions_data.sort(key=lambda x: x['date'], reverse=True)
-        
+        emissions_data.sort(key=lambda x: x["date"], reverse=True)
+
         # Generate PDF
         pdf_buffer = create_pdf_report(emissions_data, filters)
-        
+
         # Return PDF file
-        year_str = year if year and year != 'all' else 'all'
-        month_str = month if month and month != 'all' else 'all'
+        year_str = year if year and year != "all" else "all"
+        month_str = month if month and month != "all" else "all"
         filename = f"emissions_{year_str}_{month_str}.pdf"
-        
+
         return send_file(
             pdf_buffer,
-            mimetype='application/pdf',
+            mimetype="application/pdf",
             as_attachment=True,
-            download_name=filename
+            download_name=filename,
         )
-        
+
     except Exception as e:
         current_app.logger.error(f"Error exporting emissions: {e}", exc_info=True)
-        return jsonify({'error': 'Report export failed. Please try again or contact support.'}), 500
+        return (
+            jsonify(
+                {"error": "Report export failed. Please try again or contact support."}
+            ),
+            500,
+        )
 
 
-@reports_bp.route('/ogmp-export', methods=['GET'])
+@reports_bp.route("/ogmp-export", methods=["GET"])
 @login_required
 def export_ogmp_excel():
     """
@@ -421,29 +564,39 @@ def export_ogmp_excel():
     5. Gold Standard Progression Roadmap
     """
     try:
-        year = request.args.get('year', 'all')
+        year = request.args.get("year", "all")
         year_filter = int(year) if year and year.isdigit() else None
-        facility_id = request.args.get('facility_id')
-        facility_filter = int(facility_id) if facility_id and facility_id.isdigit() else None
+        facility_id = request.args.get("facility_id")
+        facility_filter = (
+            int(facility_id) if facility_id and facility_id.isdigit() else None
+        )
 
         # Prepare workbook
         wb = openpyxl.Workbook()
         wb.remove(wb.active)  # Remove default empty sheet
 
         # Styling definitions
-        header_fill = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")  # Navy
-        sub_fill = PatternFill(start_color="2563EB", end_color="2563EB", fill_type="solid")     # Blue
-        accent_fill = PatternFill(start_color="0D9488", end_color="0D9488", fill_type="solid")  # Teal
-        gold_fill = PatternFill(start_color="D97706", end_color="D97706", fill_type="solid")    # Amber
+        header_fill = PatternFill(
+            start_color="1E3A8A", end_color="1E3A8A", fill_type="solid"
+        )  # Navy
+        sub_fill = PatternFill(
+            start_color="2563EB", end_color="2563EB", fill_type="solid"
+        )  # Blue
+        accent_fill = PatternFill(
+            start_color="0D9488", end_color="0D9488", fill_type="solid"
+        )  # Teal
+        gold_fill = PatternFill(
+            start_color="D97706", end_color="D97706", fill_type="solid"
+        )  # Amber
         header_font = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
         title_font = Font(name="Calibri", size=16, bold=True, color="1E3A8A")
         bold_font = Font(name="Calibri", size=11, bold=True)
         regular_font = Font(name="Calibri", size=11)
         thin_border = Border(
-            left=Side(style='thin', color='CBD5E1'),
-            right=Side(style='thin', color='CBD5E1'),
-            top=Side(style='thin', color='CBD5E1'),
-            bottom=Side(style='thin', color='CBD5E1')
+            left=Side(style="thin", color="CBD5E1"),
+            right=Side(style="thin", color="CBD5E1"),
+            top=Side(style="thin", color="CBD5E1"),
+            bottom=Side(style="thin", color="CBD5E1"),
         )
 
         def style_header_row(ws, row_idx, fill=header_fill):
@@ -451,22 +604,28 @@ def export_ogmp_excel():
                 cell = ws.cell(row=row_idx, column=col)
                 cell.fill = fill
                 cell.font = header_font
-                cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+                cell.alignment = Alignment(
+                    horizontal="center", vertical="center", wrap_text=True
+                )
 
         def autofit_columns(ws):
             for col in ws.columns:
                 max_len = 0
                 col_letter = get_column_letter(col[0].column)
                 for cell in col:
-                    val_str = str(cell.value or '')
-                    if '\n' in val_str:
-                        val_str = max(val_str.split('\n'), key=len)
+                    val_str = str(cell.value or "")
+                    if "\n" in val_str:
+                        val_str = max(val_str.split("\n"), key=len)
                     max_len = max(max_len, len(val_str))
                 ws.column_dimensions[col_letter].width = max(max_len + 4, 12)
 
         GAS_UNIT_TO_M3 = {
-            'mscf': 28.3168, 'mcf': 28.3168, 'mmscf': 28316.8,
-            'm3': 1.0, 'scf': 0.0283168, 'bbl': 0.158987
+            "mscf": 28.3168,
+            "mcf": 28.3168,
+            "mmscf": 28316.8,
+            "m3": 1.0,
+            "scf": 0.0283168,
+            "bbl": 0.158987,
         }
 
         # -------------------------------------------------------------
@@ -474,20 +633,34 @@ def export_ogmp_excel():
         # -------------------------------------------------------------
         ws1 = wb.create_sheet(title="1. Executive Summary")
         ws1.views.sheetView[0].showGridLines = True
-        ws1.cell(row=1, column=1, value="OGMP 2.0 COMPLIANCE & ASSET SUMMARY").font = title_font
-        ws1.cell(row=2, column=1, value=f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Reporting Period: {year if year != 'all' else 'All Active Years'}").font = regular_font
+        ws1.cell(row=1, column=1, value="OGMP 2.0 COMPLIANCE & ASSET SUMMARY").font = (
+            title_font
+        )
+        ws1.cell(
+            row=2,
+            column=1,
+            value=f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Reporting Period: {year if year != 'all' else 'All Active Years'}",
+        ).font = regular_font
 
         # Emission goal and base year from ManageData
         _goal_yr = year_filter if year_filter else datetime.now().year
         _active_goal = Goal.query.filter_by(year=_goal_yr).first()
-        _active_base_year = BaseYearRecalculation.query.order_by(BaseYearRecalculation.recalc_date.desc()).first()
+        _active_base_year = BaseYearRecalculation.query.order_by(
+            BaseYearRecalculation.recalc_date.desc()
+        ).first()
         if _active_goal:
-            ws1.cell(row=3, column=1, value=f"Emission Target {_active_goal.year}: {float(_active_goal.target_amount):,.0f} tCO\u2082e").font = bold_font
+            ws1.cell(
+                row=3,
+                column=1,
+                value=f"Emission Target {_active_goal.year}: {float(_active_goal.target_amount):,.0f} tCO\u2082e",
+            ).font = bold_font
         if _active_base_year:
             by_val = f"Active Base Year: {_active_base_year.year}"
             if _active_base_year.reason:
                 by_val += f" — {_active_base_year.reason[:80]}"
-            ws1.cell(row=3, column=6 if _active_goal else 1, value=by_val).font = bold_font
+            ws1.cell(row=3, column=6 if _active_goal else 1, value=by_val).font = (
+                bold_font
+            )
 
         ws1.cell(row=4, column=1, value="Facility Name")
         ws1.cell(row=4, column=2, value="Code")
@@ -513,50 +686,84 @@ def export_ogmp_excel():
 
         row_curr = 5
         for f in facilities:
-            op_st = f.operator_status or 'operated'
+            op_st = f.operator_status or "operated"
             b_yr = f.ogmp_membership_year or 2023
-            target_yr = b_yr + (3 if op_st == 'operated' else 5)
-            
+            target_yr = b_yr + (3 if op_st == "operated" else 5)
+
             # Aggregate CH4
             em_q = db.session.query(db.func.sum(Emission.ch4_emissions)).filter(
-                Emission.facility_id == f.id,
-                Emission.status != 'Draft'
+                Emission.facility_id == f.id, Emission.status != "Draft"
             )
-            if year_filter: em_q = em_q.filter(Emission.year == year_filter)
+            if year_filter:
+                em_q = em_q.filter(Emission.year == year_filter)
             bu_ch4 = em_q.scalar() or 0.0
 
             # Aggregate Gas Production with unit conversion
             prod_q = ProductionData.query.filter(ProductionData.facility_id == f.id)
-            if year_filter: prod_q = prod_q.filter(ProductionData.year == year_filter)
+            if year_filter:
+                prod_q = prod_q.filter(ProductionData.year == year_filter)
             prod_records = prod_q.all()
-            gas_m3 = sum(float(p.gas_amount or 0) * GAS_UNIT_TO_M3.get(str(p.gas_unit or 'mscf').lower(), 28.3168) for p in prod_records)
+            gas_m3 = sum(
+                float(p.gas_amount or 0)
+                * GAS_UNIT_TO_M3.get(str(p.gas_unit or "mscf").lower(), 28.3168)
+                for p in prod_records
+            )
 
             # Top Down
-            td_q = db.session.query(db.func.sum(OgmpSurvey.estimated_annual_tch4)).filter(
-                OgmpSurvey.facility_id == f.id
-            )
-            if year_filter: td_q = td_q.filter(OgmpSurvey.year == year_filter)
+            td_q = db.session.query(
+                db.func.sum(OgmpSurvey.estimated_annual_tch4)
+            ).filter(OgmpSurvey.facility_id == f.id)
+            if year_filter:
+                td_q = td_q.filter(OgmpSurvey.year == year_filter)
             td_ch4 = td_q.scalar() or 0.0
 
             # Loss rate %
             ch4_vol_m3 = (bu_ch4 * 1000.0) / 0.6785 if bu_ch4 > 0 else 0.0
             loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
-            target_rate = 0.20 if 'upstream' in (f.segment or 'Upstream').lower() else 0.05
-            comp_status = 'Compliant' if loss_rate_pct <= target_rate else 'Non-Compliant'
+            target_rate = (
+                0.20 if "upstream" in (f.segment or "Upstream").lower() else 0.05
+            )
+            comp_status = (
+                "Compliant" if loss_rate_pct <= target_rate else "Non-Compliant"
+            )
 
             # Level 5 requires top-down AND bottom-up in the same reporting year with reconciled variance
-            curr_lvl = 5 if (
-                td_ch4 > 0 and bu_ch4 > 0
-                and abs(td_ch4 - bu_ch4) / bu_ch4 <= (f.reconciliation_threshold or 20.0)/100.0
-                and (year_filter is None or OgmpSurvey.query.filter_by(facility_id=f.id, year=year_filter).first() is not None)
-            ) else (4 if td_ch4 > 0 else 3)
-            pathway = 'Gold Standard Achieved' if curr_lvl == 5 else ('On Track' if (year_filter or 2026) <= target_yr else 'Overdue')
+            curr_lvl = (
+                5
+                if (
+                    td_ch4 > 0
+                    and bu_ch4 > 0
+                    and abs(td_ch4 - bu_ch4) / bu_ch4
+                    <= (f.reconciliation_threshold or 20.0) / 100.0
+                    and (
+                        year_filter is None
+                        or OgmpSurvey.query.filter_by(
+                            facility_id=f.id, year=year_filter
+                        ).first()
+                        is not None
+                    )
+                )
+                else (4 if td_ch4 > 0 else 3)
+            )
+            pathway = (
+                "Gold Standard Achieved"
+                if curr_lvl == 5
+                else ("On Track" if (year_filter or 2026) <= target_yr else "Overdue")
+            )
 
             ws1.cell(row=row_curr, column=1, value=_safe_excel_value(f.name))
-            ws1.cell(row=row_curr, column=2, value=_safe_excel_value(f.code or 'N/A'))
-            ws1.cell(row=row_curr, column=3, value=_safe_excel_value(f.segment or 'Upstream'))
-            ws1.cell(row=row_curr, column=4, value=_safe_excel_value(op_st.replace('_', '-').title()))
-            ws1.cell(row=row_curr, column=5, value=_safe_excel_value(f.country or 'Algeria'))
+            ws1.cell(row=row_curr, column=2, value=_safe_excel_value(f.code or "N/A"))
+            ws1.cell(
+                row=row_curr, column=3, value=_safe_excel_value(f.segment or "Upstream")
+            )
+            ws1.cell(
+                row=row_curr,
+                column=4,
+                value=_safe_excel_value(op_st.replace("_", "-").title()),
+            )
+            ws1.cell(
+                row=row_curr, column=5, value=_safe_excel_value(f.country or "Algeria")
+            )
             ws1.cell(row=row_curr, column=6, value=b_yr)
             ws1.cell(row=row_curr, column=7, value=target_yr)
             ws1.cell(row=row_curr, column=8, value=f"Level {curr_lvl}")
@@ -579,8 +786,10 @@ def export_ogmp_excel():
         # -------------------------------------------------------------
         ws2 = wb.create_sheet(title="2. Bottom-Up Inventory")
         ws2.views.sheetView[0].showGridLines = True
-        ws2.cell(row=1, column=1, value="OGMP 2.0 SOURCE-LEVEL EMISSIONS INVENTORY (L1 - L4)").font = title_font
-        
+        ws2.cell(
+            row=1, column=1, value="OGMP 2.0 SOURCE-LEVEL EMISSIONS INVENTORY (L1 - L4)"
+        ).font = title_font
+
         ws2.cell(row=3, column=1, value="Record ID")
         ws2.cell(row=3, column=2, value="Facility")
         ws2.cell(row=3, column=3, value="Year")
@@ -598,47 +807,107 @@ def export_ogmp_excel():
         style_header_row(ws2, 3, sub_fill)
 
         OGMP_SOURCE_MAP = {
-            'combustion': 'Combustion', 'stationary_combustion': 'Combustion', 'mobile': 'Combustion',
-            'flaring': 'Flaring', 'fugitive': 'Fugitive', 'fugitive_component': 'Fugitive',
-            'equipment_fugitive': 'Fugitive', 'pneumatic': 'Vented',
-            'pneumatic_devices': 'Vented', 'venting': 'Vented', 'blowdown': 'Vented',
-            'completions': 'Vented', 'tank': 'Vented', 'tank_flashing': 'Vented',
-            'liquids_unloading': 'Vented', 'agr': 'Process', 'dehydrator': 'Process',
+            "combustion": "Combustion",
+            "stationary_combustion": "Combustion",
+            "mobile": "Combustion",
+            "flaring": "Flaring",
+            "fugitive": "Fugitive",
+            "fugitive_component": "Fugitive",
+            "equipment_fugitive": "Fugitive",
+            "pneumatic": "Vented",
+            "pneumatic_devices": "Vented",
+            "venting": "Vented",
+            "blowdown": "Vented",
+            "completions": "Vented",
+            "tank": "Vented",
+            "tank_flashing": "Vented",
+            "liquids_unloading": "Vented",
+            "agr": "Process",
+            "dehydrator": "Process",
         }
 
-        em_list_q = Emission.query.filter(Emission.status != 'Draft')
-        if year_filter: em_list_q = em_list_q.filter_by(year=year_filter)
-        if facility_filter: em_list_q = em_list_q.filter_by(facility_id=facility_filter)
+        em_list_q = Emission.query.filter(Emission.status != "Draft")
+        if year_filter:
+            em_list_q = em_list_q.filter_by(year=year_filter)
+        if facility_filter:
+            em_list_q = em_list_q.filter_by(facility_id=facility_filter)
         total_count = em_list_q.count()
         if total_count > 1500:
-            ws2.cell(row=2, column=1,
-                     value=f"⚠ NOTICE: Inventory truncated to 1,500 records. Full dataset contains {total_count} records. Apply facility/year filters for complete disclosure."
+            ws2.cell(
+                row=2,
+                column=1,
+                value=f"⚠ NOTICE: Inventory truncated to 1,500 records. Full dataset contains {total_count} records. Apply facility/year filters for complete disclosure.",
             ).font = Font(color="FF0000", bold=True)
-        em_list = em_list_q.order_by(Emission.year.desc(), Emission.month.desc()).limit(1500).all()
+        em_list = (
+            em_list_q.order_by(Emission.year.desc(), Emission.month.desc())
+            .limit(1500)
+            .all()
+        )
 
         row_curr = 4
         for em in em_list:
-            fac_name = em.facility.name if em.facility else (Facility.query.get(em.facility_id).name if em.facility_id else 'Unknown')
-            lvl = em.ogmp_level or (
-                4 if em.factor_source == 'specific' and (em.calc_method in ['direct_measurement', 'tier3', 'engineering', 'specific'] or em.c1 is not None)
-                else 3 if em.factor_source in ['specific', 'custom', 'api_table']
-                else 2 if em.factor_source == 'custom'
-                else 1
+            fac_name = (
+                em.facility.name
+                if em.facility
+                else (
+                    Facility.query.get(em.facility_id).name
+                    if em.facility_id
+                    else "Unknown"
+                )
             )
-            ogmp_cat = OGMP_SOURCE_MAP.get((em.process_type or '').lower(), 'Other')
-            ws2.cell(row=row_curr, column=1, value=_safe_excel_value(em.record_id or f"EM-{em.id}"))
+            lvl = em.ogmp_level or (
+                4
+                if em.factor_source == "specific"
+                and (
+                    em.calc_method
+                    in ["direct_measurement", "tier3", "engineering", "specific"]
+                    or em.c1 is not None
+                )
+                else (
+                    3
+                    if em.factor_source in ["specific", "custom", "api_table"]
+                    else 2 if em.factor_source == "custom" else 1
+                )
+            )
+            ogmp_cat = OGMP_SOURCE_MAP.get((em.process_type or "").lower(), "Other")
+            ws2.cell(
+                row=row_curr,
+                column=1,
+                value=_safe_excel_value(em.record_id or f"EM-{em.id}"),
+            )
             ws2.cell(row=row_curr, column=2, value=_safe_excel_value(fac_name))
             ws2.cell(row=row_curr, column=3, value=em.year)
             ws2.cell(row=row_curr, column=4, value=em.month)
-            ws2.cell(row=row_curr, column=5, value=_safe_excel_value(em.process_type or 'N/A'))
-            ws2.cell(row=row_curr, column=6, value=_safe_excel_value(em.source_type_code or em.equipment_id or 'N/A'))
+            ws2.cell(
+                row=row_curr,
+                column=5,
+                value=_safe_excel_value(em.process_type or "N/A"),
+            )
+            ws2.cell(
+                row=row_curr,
+                column=6,
+                value=_safe_excel_value(
+                    em.source_type_code or em.equipment_id or "N/A"
+                ),
+            )
             ws2.cell(row=row_curr, column=7, value=em.quantity or 0)
-            ws2.cell(row=row_curr, column=8, value=_safe_excel_value(em.unit or ''))
-            ws2.cell(row=row_curr, column=9, value=_safe_excel_value(em.factor_source or 'Default EF'))
+            ws2.cell(row=row_curr, column=8, value=_safe_excel_value(em.unit or ""))
+            ws2.cell(
+                row=row_curr,
+                column=9,
+                value=_safe_excel_value(em.factor_source or "Default EF"),
+            )
             ws2.cell(row=row_curr, column=10, value=round(em.ch4_emissions or 0, 4))
             ws2.cell(row=row_curr, column=11, value=round(em.co2e_total or 0, 2))
             ws2.cell(row=row_curr, column=12, value=f"Level {lvl}")
-            ws2.cell(row=row_curr, column=13, value=_safe_excel_value(em.calc_method or ('Facility Specific' if lvl >= 4 else 'Generic EF')))
+            ws2.cell(
+                row=row_curr,
+                column=13,
+                value=_safe_excel_value(
+                    em.calc_method
+                    or ("Facility Specific" if lvl >= 4 else "Generic EF")
+                ),
+            )
             ws2.cell(row=row_curr, column=14, value=_safe_excel_value(ogmp_cat))
 
             for c in range(1, 15):
@@ -652,8 +921,10 @@ def export_ogmp_excel():
         # -------------------------------------------------------------
         ws3 = wb.create_sheet(title="3. Top-Down Surveys")
         ws3.views.sheetView[0].showGridLines = True
-        ws3.cell(row=1, column=1, value="OGMP 2.0 SITE-LEVEL MEASUREMENT CAMPAIGNS (L4 / L5)").font = title_font
-        
+        ws3.cell(
+            row=1, column=1, value="OGMP 2.0 SITE-LEVEL MEASUREMENT CAMPAIGNS (L4 / L5)"
+        ).font = title_font
+
         ws3.cell(row=3, column=1, value="Survey ID")
         ws3.cell(row=3, column=2, value="Facility")
         ws3.cell(row=3, column=3, value="Year")
@@ -669,13 +940,23 @@ def export_ogmp_excel():
         style_header_row(ws3, 3, accent_fill)
 
         surv_q = OgmpSurvey.query
-        if year_filter: surv_q = surv_q.filter_by(year=year_filter)
-        if facility_filter: surv_q = surv_q.filter_by(facility_id=facility_filter)
+        if year_filter:
+            surv_q = surv_q.filter_by(year=year_filter)
+        if facility_filter:
+            surv_q = surv_q.filter_by(facility_id=facility_filter)
         surveys = surv_q.order_by(OgmpSurvey.survey_date.desc()).all()
 
         row_curr = 4
         for s in surveys:
-            fac_name = s.facility.name if s.facility else (Facility.query.get(s.facility_id).name if s.facility_id else 'Unknown')
+            fac_name = (
+                s.facility.name
+                if s.facility
+                else (
+                    Facility.query.get(s.facility_id).name
+                    if s.facility_id
+                    else "Unknown"
+                )
+            )
             ws3.cell(row=row_curr, column=1, value=_safe_excel_value(f"OGMP-{s.id}"))
             ws3.cell(row=row_curr, column=2, value=_safe_excel_value(fac_name))
             ws3.cell(row=row_curr, column=3, value=s.year)
@@ -684,10 +965,24 @@ def export_ogmp_excel():
             ws3.cell(row=row_curr, column=6, value=s.measured_rate_kg_hr)
             ws3.cell(row=row_curr, column=7, value=s.operating_hours_year or 8760)
             ws3.cell(row=row_curr, column=8, value=s.estimated_annual_tch4)
-            ws3.cell(row=row_curr, column=9, value=_safe_excel_value(s.detection_threshold or 'N/A'))
-            ws3.cell(row=row_curr, column=10, value=_safe_excel_value(s.instrument_vendor or 'N/A'))
-            ws3.cell(row=row_curr, column=11, value=_safe_excel_value(s.reconciliation_status or 'Reconciled'))
-            ws3.cell(row=row_curr, column=12, value=_safe_excel_value(s.operator_notes or ''))
+            ws3.cell(
+                row=row_curr,
+                column=9,
+                value=_safe_excel_value(s.detection_threshold or "N/A"),
+            )
+            ws3.cell(
+                row=row_curr,
+                column=10,
+                value=_safe_excel_value(s.instrument_vendor or "N/A"),
+            )
+            ws3.cell(
+                row=row_curr,
+                column=11,
+                value=_safe_excel_value(s.reconciliation_status or "Reconciled"),
+            )
+            ws3.cell(
+                row=row_curr, column=12, value=_safe_excel_value(s.operator_notes or "")
+            )
 
             for c in range(1, 13):
                 ws3.cell(row=row_curr, column=c).border = thin_border
@@ -700,7 +995,11 @@ def export_ogmp_excel():
         # -------------------------------------------------------------
         ws4 = wb.create_sheet(title="4. Reconciliation Matrix")
         ws4.views.sheetView[0].showGridLines = True
-        ws4.cell(row=1, column=1, value="OGMP 2.0 BOTTOM-UP VS TOP-DOWN RECONCILIATION MATRIX").font = title_font
+        ws4.cell(
+            row=1,
+            column=1,
+            value="OGMP 2.0 BOTTOM-UP VS TOP-DOWN RECONCILIATION MATRIX",
+        ).font = title_font
 
         ws4.cell(row=3, column=1, value="Facility")
         ws4.cell(row=3, column=2, value="Reporting Year")
@@ -718,51 +1017,70 @@ def export_ogmp_excel():
         for f in facilities:
             # Bottom-Up
             bu_q = db.session.query(db.func.sum(Emission.ch4_emissions)).filter(
-                Emission.facility_id == f.id,
-                Emission.status != 'Draft'
+                Emission.facility_id == f.id, Emission.status != "Draft"
             )
-            if year_filter: bu_q = bu_q.filter(Emission.year == year_filter)
+            if year_filter:
+                bu_q = bu_q.filter(Emission.year == year_filter)
             bu_total = bu_q.scalar() or 0.0
 
             # Top-Down
-            td_q = db.session.query(db.func.sum(OgmpSurvey.estimated_annual_tch4)).filter(
-                OgmpSurvey.facility_id == f.id
-            )
-            if year_filter: td_q = td_q.filter(OgmpSurvey.year == year_filter)
+            td_q = db.session.query(
+                db.func.sum(OgmpSurvey.estimated_annual_tch4)
+            ).filter(OgmpSurvey.facility_id == f.id)
+            if year_filter:
+                td_q = td_q.filter(OgmpSurvey.year == year_filter)
             td_total = td_q.scalar() or 0.0
 
             thresh = f.reconciliation_threshold or 20.0
             if bu_total > 0 and td_total > 0:
                 var_pct = round(((td_total - bu_total) / bu_total * 100.0), 2)
                 is_flagged = abs(var_pct) > thresh
-                rec_status = 'Reconciled' if not is_flagged else 'Discrepancy Flagged'
+                rec_status = "Reconciled" if not is_flagged else "Discrepancy Flagged"
                 var_str = f"{var_pct:+.2f}%"
             elif bu_total == 0 and td_total > 0:
                 var_pct = None
                 is_flagged = True
-                rec_status = 'No Bottom-Up Inventory — Discrepancy Flagged'
+                rec_status = "No Bottom-Up Inventory — Discrepancy Flagged"
                 var_str = "N/A (No BU)"
             elif td_total == 0:
                 var_pct = None
                 is_flagged = False
-                rec_status = 'Pending Measurement'
+                rec_status = "Pending Measurement"
                 var_str = "Pending TD"
             else:
                 var_pct = None
                 is_flagged = False
-                rec_status = 'No Data'
+                rec_status = "No Data"
                 var_str = "No Data"
 
             ws4.cell(row=row_curr, column=1, value=_safe_excel_value(f.name))
-            ws4.cell(row=row_curr, column=2, value=_safe_excel_value(year if year != 'all' else 'All Years'))
-            ws4.cell(row=row_curr, column=3, value=_safe_excel_value(f.segment or 'Upstream'))
+            ws4.cell(
+                row=row_curr,
+                column=2,
+                value=_safe_excel_value(year if year != "all" else "All Years"),
+            )
+            ws4.cell(
+                row=row_curr, column=3, value=_safe_excel_value(f.segment or "Upstream")
+            )
             ws4.cell(row=row_curr, column=4, value=round(bu_total, 2))
             ws4.cell(row=row_curr, column=5, value=round(td_total, 2))
             ws4.cell(row=row_curr, column=6, value=var_str)
             ws4.cell(row=row_curr, column=7, value=f"±{thresh}%")
-            ws4.cell(row=row_curr, column=8, value="FLAGGED (> Threshold)" if is_flagged else "PASS")
+            ws4.cell(
+                row=row_curr,
+                column=8,
+                value="FLAGGED (> Threshold)" if is_flagged else "PASS",
+            )
             ws4.cell(row=row_curr, column=9, value=_safe_excel_value(rec_status))
-            ws4.cell(row=row_curr, column=10, value=_safe_excel_value("Within acceptable variance bounds" if not is_flagged else "Site measurement exceeds bottom-up inventory. Investigate uncombusted slip or uninventoried vent sources."))
+            ws4.cell(
+                row=row_curr,
+                column=10,
+                value=_safe_excel_value(
+                    "Within acceptable variance bounds"
+                    if not is_flagged
+                    else "Site measurement exceeds bottom-up inventory. Investigate uncombusted slip or uninventoried vent sources."
+                ),
+            )
 
             for c in range(1, 11):
                 ws4.cell(row=row_curr, column=c).border = thin_border
@@ -775,7 +1093,9 @@ def export_ogmp_excel():
         # -------------------------------------------------------------
         ws5 = wb.create_sheet(title="5. Gold Standard Roadmap")
         ws5.views.sheetView[0].showGridLines = True
-        ws5.cell(row=1, column=1, value="OGMP 2.0 GOLD STANDARD PATHWAY & MILESTONE TRACKER").font = title_font
+        ws5.cell(
+            row=1, column=1, value="OGMP 2.0 GOLD STANDARD PATHWAY & MILESTONE TRACKER"
+        ).font = title_font
 
         ws5.cell(row=3, column=1, value="Facility")
         ws5.cell(row=3, column=2, value="Operator Type")
@@ -789,25 +1109,55 @@ def export_ogmp_excel():
 
         row_curr = 4
         for f in facilities:
-            op_st = f.operator_status or 'operated'
+            op_st = f.operator_status or "operated"
             b_yr = f.ogmp_membership_year or 2023
-            timeline = "3 Years (Operated Asset)" if op_st == 'operated' else "5 Years (Non-Operated Asset)"
-            target_yr = b_yr + (3 if op_st == 'operated' else 5)
-            
+            timeline = (
+                "3 Years (Operated Asset)"
+                if op_st == "operated"
+                else "5 Years (Non-Operated Asset)"
+            )
+            target_yr = b_yr + (3 if op_st == "operated" else 5)
+
             # Check reconciled survey existence
-            latest_survey = OgmpSurvey.query.filter_by(facility_id=f.id).order_by(OgmpSurvey.year.desc(), OgmpSurvey.survey_date.desc()).first()
+            latest_survey = (
+                OgmpSurvey.query.filter_by(facility_id=f.id)
+                .order_by(OgmpSurvey.year.desc(), OgmpSurvey.survey_date.desc())
+                .first()
+            )
             is_reconciled = (
-                latest_survey is not None and
-                latest_survey.reconciliation_status == 'Reconciled' and
-                not latest_survey.variance_flag
+                latest_survey is not None
+                and latest_survey.reconciliation_status == "Reconciled"
+                and not latest_survey.variance_flag
             )
             has_survey = latest_survey is not None
-            curr_lvl = "Level 5 (Reconciled)" if is_reconciled else ("Level 4 (Measured)" if has_survey else "Level 3 (Generic Factors)")
-            status = "Gold Standard Achieved" if is_reconciled else ("On Track" if 2026 <= target_yr else "Action Plan Required")
-            action = "Maintain annual top-down measurement campaigns" if is_reconciled else ("Reconcile measurement discrepancy with inventory" if has_survey else "Schedule aerial / satellite top-down measurement and upgrade to equipment-level EFs")
+            curr_lvl = (
+                "Level 5 (Reconciled)"
+                if is_reconciled
+                else (
+                    "Level 4 (Measured)" if has_survey else "Level 3 (Generic Factors)"
+                )
+            )
+            status = (
+                "Gold Standard Achieved"
+                if is_reconciled
+                else ("On Track" if 2026 <= target_yr else "Action Plan Required")
+            )
+            action = (
+                "Maintain annual top-down measurement campaigns"
+                if is_reconciled
+                else (
+                    "Reconcile measurement discrepancy with inventory"
+                    if has_survey
+                    else "Schedule aerial / satellite top-down measurement and upgrade to equipment-level EFs"
+                )
+            )
 
             ws5.cell(row=row_curr, column=1, value=_safe_excel_value(f.name))
-            ws5.cell(row=row_curr, column=2, value=_safe_excel_value(op_st.replace('_', '-').title()))
+            ws5.cell(
+                row=row_curr,
+                column=2,
+                value=_safe_excel_value(op_st.replace("_", "-").title()),
+            )
             ws5.cell(row=row_curr, column=3, value=b_yr)
             ws5.cell(row=row_curr, column=4, value=timeline)
             ws5.cell(row=row_curr, column=5, value=target_yr)
@@ -826,15 +1176,25 @@ def export_ogmp_excel():
         wb.save(output_buffer)
         output_buffer.seek(0)
 
-        filename = f"OGMP_2.0_Methane_Disclosure_{year if year != 'all' else 'AllYears'}.xlsx"
+        filename = (
+            f"OGMP_2.0_Methane_Disclosure_{year if year != 'all' else 'AllYears'}.xlsx"
+        )
         return send_file(
             output_buffer,
             mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             as_attachment=True,
-            download_name=filename
+            download_name=filename,
         )
 
     except Exception as e:
-        current_app.logger.error(f"Error generating OGMP Excel report: {e}", exc_info=True)
-        return jsonify({'error': 'OGMP report export failed. Please try again or contact support.'}), 500
-
+        current_app.logger.error(
+            f"Error generating OGMP Excel report: {e}", exc_info=True
+        )
+        return (
+            jsonify(
+                {
+                    "error": "OGMP report export failed. Please try again or contact support."
+                }
+            ),
+            500,
+        )

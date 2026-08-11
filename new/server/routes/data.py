@@ -4,7 +4,10 @@ import json
 from . import data_bp
 from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
 from sqlalchemy import func
-from models import ProductionData, ActivityLog, User, Facility, OgmpSurvey, MethaneSourceType, LevelUpgradeLog, Emission
+from models import (
+    ProductionData, ActivityLog, User, Facility, OgmpSurvey, 
+    MethaneSourceType, LevelUpgradeLog, Emission, CbamProductExport
+)
 from extensions import db
 
 # Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
@@ -427,3 +430,151 @@ def get_level_logs():
         'changed_at': l.changed_at.isoformat() if l.changed_at else None
     } for l in logs])
 
+
+# ==========================================
+# CBAM PRODUCT EXPORTS
+# ==========================================
+@data_bp.route('/cbam-exports', methods=['GET'])
+@login_required
+def get_cbam_exports():
+    from models import CbamProductExport
+    from flask import request, jsonify
+    query = CbamProductExport.query
+    allowed_fids = get_allowed_facility_ids(get_current_user())
+    if allowed_fids is not None:
+        query = query.filter(CbamProductExport.facility_id.in_(allowed_fids))
+    if request.args.get('facilityId'):
+        query = query.filter_by(facility_id=request.args.get('facilityId'))
+    if request.args.get('year'):
+        query = query.filter_by(year=request.args.get('year'))
+    
+    records = query.order_by(CbamProductExport.created_at.desc()).all()
+    return jsonify([{
+        'id': r.id,
+        'facility_id': r.facility_id,
+        'year': r.year,
+        'month': r.month,
+        'product_name': r.product_name,
+        'cn_code': r.cn_code,
+        'quantity_tonnes': r.quantity_tonnes,
+        'export_destination': r.export_destination,
+        'specific_embedded_direct': r.specific_embedded_direct,
+        'specific_embedded_indirect': r.specific_embedded_indirect,
+        'notes': r.notes,
+        'created_at': r.created_at.isoformat() if r.created_at else None
+    } for r in records])
+
+@data_bp.route('/cbam-exports', methods=['POST'])
+@login_required
+def save_cbam_export():
+    try:
+        from models import CbamProductExport, Emission, Scope2Emission
+        from flask import request, jsonify, session
+        data = request.get_json() or {}
+        record_id = data.get('id')
+        facility_id = data.get('facility_id') or data.get('facilityId')
+        year = int(data.get('year', 2026))
+        month = int(data.get('month', 1))
+        product_name = (data.get('product_name') or data.get('productName') or '').strip()
+        cn_code = (data.get('cn_code') or data.get('cnCode') or '').strip()
+        quantity_tonnes = float(data.get('quantity_tonnes') or data.get('quantityTonnes') or 0.0)
+        export_destination = (data.get('export_destination') or data.get('exportDestination') or 'EU').strip()
+        specific_embedded_direct = float(data.get('specific_embedded_direct') or data.get('specificEmbeddedDirect') or 0.0)
+        specific_embedded_indirect = float(data.get('specific_embedded_indirect') or data.get('specificEmbeddedIndirect') or 0.0)
+        notes = (data.get('notes') or '').strip()
+
+        if not facility_id or not product_name or not cn_code or quantity_tonnes <= 0:
+            return jsonify({'error': 'Facility, product name, valid CN code, and positive tonnage are required'}), 400
+
+        total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter(
+            Emission.facility_id == facility_id,
+            Emission.year == year,
+            Emission.status != 'Draft'
+        ).scalar()
+        
+        total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter(
+            Scope2Emission.facility_id == facility_id,
+            Scope2Emission.year == year,
+            Scope2Emission.status != 'Draft'
+        ).scalar()
+
+        se_dir = round(total_direct_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+        se_ind = round(total_indirect_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+
+        if record_id:
+            record = CbamProductExport.query.get_or_404(record_id)
+            record.facility_id = facility_id
+            record.year = year
+            record.month = month
+            record.product_name = product_name
+            record.cn_code = cn_code
+            record.quantity_tonnes = quantity_tonnes
+            record.export_destination = export_destination
+            record.specific_embedded_direct = se_dir
+            record.specific_embedded_indirect = se_ind
+            record.notes = notes
+            action = 'UPDATE'
+        else:
+            user_id = session.get('user_id') if session else None
+            record = CbamProductExport(
+                facility_id=facility_id,
+                year=year,
+                month=month,
+                product_name=product_name,
+                cn_code=cn_code,
+                quantity_tonnes=quantity_tonnes,
+                export_destination=export_destination,
+                specific_embedded_direct=se_dir,
+                specific_embedded_indirect=se_ind,
+                notes=notes,
+                created_by=user_id
+            )
+            db.session.add(record)
+            action = 'CREATE'
+
+        user_id = session.get('user_id') if session else None
+        user = db.session.get(User, user_id) if user_id else None
+
+        log_activity_and_notify(
+            action=action,
+            record_id=str(record.id or 'new'),
+            user=user,
+            request=request,
+            entity='CbamProductExport',
+            details=f'{action} CBAM Export: {product_name} ({quantity_tonnes} t) to {export_destination}'
+        )
+        db.session.commit()
+        return jsonify({'message': 'CBAM Export saved successfully', 'id': record.id})
+    except Exception as e:
+        import traceback
+        with open('trace.log', 'a') as f:
+            f.write(traceback.format_exc() + '\n')
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@data_bp.route('/cbam-exports/<int:record_id>', methods=['DELETE'])
+@login_required
+def delete_cbam_export(record_id):
+    try:
+        from models import CbamProductExport
+        from flask import request, jsonify, session
+        record = CbamProductExport.query.get_or_404(record_id)
+        db.session.delete(record)
+        user_id = session.get('user_id') if session else None
+        user = db.session.get(User, user_id) if user_id else None
+        log_activity_and_notify(
+            action='DELETE',
+            record_id=str(record.id),
+            user=user,
+            request=request,
+            entity='CbamProductExport',
+            details=f'Deleted CBAM Export: {record.product_name}'
+        )
+        db.session.commit()
+        return jsonify({'message': 'CBAM export deleted successfully'})
+    except Exception as e:
+        import traceback
+        with open('trace.log', 'a') as f:
+            f.write(traceback.format_exc() + '\n')
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500

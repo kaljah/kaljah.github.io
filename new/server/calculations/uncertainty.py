@@ -19,28 +19,32 @@ Activity-data uncertainty is tier-specific per IPCC GL Vol.1 Table 3.1:
   Tier 3 (calibrated meters/CEMS):    ±2%
   Fugitive/vented (physical meas.):   ±20%
 """
+
 import math
 
 # ---------------------------------------------------------------------------
 # TIER CONSTANTS
 # ---------------------------------------------------------------------------
 
+
 class Tier:
     """Calculation tier following IPCC 2006 GL Vol.1 §2.4 hierarchy."""
+
     T1 = 1  # Default / tabulated EFs (least accurate)
     T2 = 2  # Country/region-specific or custom EFs
     T3 = 3  # Site-measured, CEMS, mass balance (most accurate)
 
+
 # Activity-data uncertainty by tier — IPCC GL Vol.1 Table 3.1
 ACTIVITY_UNCERTAINTY = {
-    Tier.T1: 0.10,   # ±10% — metering without calibration, allocation methods
-    Tier.T2: 0.07,   # ±7%  — regional data, estimated throughput
-    Tier.T3: 0.02,   # ±2%  — calibrated CEMS / Coriolis meters
+    Tier.T1: 0.10,  # ±10% — metering without calibration, allocation methods
+    Tier.T2: 0.07,  # ±7%  — regional data, estimated throughput
+    Tier.T3: 0.02,  # ±2%  — calibrated CEMS / Coriolis meters
 }
 
 # Supplemental activity uncertainty for processes dominated by physical variance
-ACTIVITY_UNCERTAINTY_FUGITIVE = 0.20   # ±20%  — equipment leak frequency / count
-ACTIVITY_UNCERTAINTY_VENTED   = 0.15   # ±15%  — vent volume measurement
+ACTIVITY_UNCERTAINTY_FUGITIVE = 0.20  # ±20%  — equipment leak frequency / count
+ACTIVITY_UNCERTAINTY_VENTED = 0.15  # ±15%  — vent volume measurement
 
 # GUM coverage factor for 95% confidence interval (two-sided, ~normal distribution)
 # ISO/IEC Guide 98-3 §6.2
@@ -50,65 +54,66 @@ COVERAGE_FACTOR_95 = 2.0
 # Values align with API Compendium 2021 §2.4 and IPCC 2006 GL Vol.1 Annex 3A
 DEFAULT_EF_UNCERTAINTY = {
     # Combustion sources — well-characterised stoichiometry
-    'combustion': {
-        'co2': {'T1': 0.05, 'T2': 0.03, 'T3': 0.02},  # ±2–5%
-        'ch4': {'T1': 0.15, 'T2': 0.10, 'T3': 0.05},  # ±5–15%
-        'n2o': {'T1': 0.20, 'T2': 0.15, 'T3': 0.10},  # ±10–20%
+    "combustion": {
+        "co2": {"T1": 0.05, "T2": 0.03, "T3": 0.02},  # ±2–5%
+        "ch4": {"T1": 0.15, "T2": 0.10, "T3": 0.05},  # ±5–15%
+        "n2o": {"T1": 0.20, "T2": 0.15, "T3": 0.10},  # ±10–20%
     },
     # Flaring — combustion efficiency variation is primary driver
-    'flaring': {
-        'co2': {'T1': 0.10, 'T2': 0.07, 'T3': 0.05},  # ±5–10%
-        'ch4': {'T1': 0.25, 'T2': 0.20, 'T3': 0.10},  # ±10–25% (destruction eff.)
-        'n2o': {'T1': 0.50, 'T2': 0.40, 'T3': 0.30},  # ±30–50% (poorly constrained)
+    "flaring": {
+        "co2": {"T1": 0.10, "T2": 0.07, "T3": 0.05},  # ±5–10%
+        "ch4": {"T1": 0.25, "T2": 0.20, "T3": 0.10},  # ±10–25% (destruction eff.)
+        "n2o": {"T1": 0.50, "T2": 0.40, "T3": 0.30},  # ±30–50% (poorly constrained)
     },
     # Fugitive — high inherent variability in leak rates
-    'fugitive': {
-        'co2': {'T1': 0.30, 'T2': 0.20, 'T3': 0.10},
-        'ch4': {'T1': 0.60, 'T2': 0.40, 'T3': 0.20},
-        'n2o': {'T1': 0.50, 'T2': 0.35, 'T3': 0.20},
+    "fugitive": {
+        "co2": {"T1": 0.30, "T2": 0.20, "T3": 0.10},
+        "ch4": {"T1": 0.60, "T2": 0.40, "T3": 0.20},
+        "n2o": {"T1": 0.50, "T2": 0.35, "T3": 0.20},
     },
     # Vented / pneumatics / blowdowns
-    'vented': {
-        'co2': {'T1': 0.20, 'T2': 0.15, 'T3': 0.07},
-        'ch4': {'T1': 0.40, 'T2': 0.25, 'T3': 0.10},
-        'n2o': {'T1': 0.50, 'T2': 0.40, 'T3': 0.25},
+    "vented": {
+        "co2": {"T1": 0.20, "T2": 0.15, "T3": 0.07},
+        "ch4": {"T1": 0.40, "T2": 0.25, "T3": 0.10},
+        "n2o": {"T1": 0.50, "T2": 0.40, "T3": 0.25},
     },
     # Midstream (AGR, dehydrator)
-    'midstream': {
-        'co2': {'T1': 0.10, 'T2': 0.07, 'T3': 0.03},
-        'ch4': {'T1': 0.25, 'T2': 0.15, 'T3': 0.07},
-        'n2o': {'T1': 0.50, 'T2': 0.40, 'T3': 0.20},
+    "midstream": {
+        "co2": {"T1": 0.10, "T2": 0.07, "T3": 0.03},
+        "ch4": {"T1": 0.25, "T2": 0.15, "T3": 0.07},
+        "n2o": {"T1": 0.50, "T2": 0.40, "T3": 0.20},
     },
 }
 
 # Process-to-source-category mapping for looking up defaults above
 PROCESS_CATEGORY = {
-    'combustion':          'combustion',
-    'stationary_combustion': 'combustion',
-    'mobile':              'combustion',
-    'flaring':             'flaring',
-    'fugitive':            'fugitive',
-    'fugitive_component':  'fugitive',
-    'equipment_fugitive':  'fugitive',
-    'compressor_fugitive': 'fugitive',
-    'venting':             'vented',
-    'blowdown':            'vented',
-    'completions':         'vented',
-    'drilling':            'vented',
-    'unloading':           'vented',
-    'tank':                'vented',
-    'tank_flashing':       'vented',
-    'tank_working':        'vented',
-    'tank_breathing':      'vented',
-    'pneumatic':           'vented',
-    'pneumatic_devices':   'vented',
-    'agr':                 'midstream',
-    'dehydrator':          'midstream',
+    "combustion": "combustion",
+    "stationary_combustion": "combustion",
+    "mobile": "combustion",
+    "flaring": "flaring",
+    "fugitive": "fugitive",
+    "fugitive_component": "fugitive",
+    "equipment_fugitive": "fugitive",
+    "compressor_fugitive": "fugitive",
+    "venting": "vented",
+    "blowdown": "vented",
+    "completions": "vented",
+    "drilling": "vented",
+    "unloading": "vented",
+    "tank": "vented",
+    "tank_flashing": "vented",
+    "tank_working": "vented",
+    "tank_breathing": "vented",
+    "pneumatic": "vented",
+    "pneumatic_devices": "vented",
+    "agr": "midstream",
+    "dehydrator": "midstream",
 }
 
 # ---------------------------------------------------------------------------
 # CORE PROPAGATION FUNCTIONS
 # ---------------------------------------------------------------------------
+
 
 def combine_uncertainties_product(u_ef, u_ad):
     """
@@ -117,7 +122,7 @@ def combine_uncertainties_product(u_ef, u_ad):
     Reference: IPCC 2006 GL Vol.1 §3.3 Eq. 3.1
     Returns: combined relative standard uncertainty (1σ)
     """
-    return math.sqrt(u_ef ** 2 + u_ad ** 2)
+    return math.sqrt(u_ef**2 + u_ad**2)
 
 
 def combine_uncertainties_sum(val1, u1_rel, val2, u2_rel):
@@ -132,7 +137,7 @@ def combine_uncertainties_sum(val1, u1_rel, val2, u2_rel):
     total_val = val1 + val2
     if total_val == 0:
         return 0.0
-    u_total_abs = math.sqrt(u1_abs ** 2 + u2_abs ** 2)
+    u_total_abs = math.sqrt(u1_abs**2 + u2_abs**2)
     return u_total_abs / total_val
 
 
@@ -141,24 +146,26 @@ def srss_inventory(source_list):
     Aggregate uncertainty across multiple sources using SRSS Approach 1.
     Formula: U_inv = √(Σ(Eᵢ·uᵢ)²) / Σ(Eᵢ)
     Reference: IPCC 2006 GL Vol.1 §3.3 Eq. 3.3
-    
+
     Args:
         source_list: list of dicts with keys 'value' (tCO2e) and 'relative_uncertainty' (1σ)
-    
+
     Returns:
         dict with relative_uncertainty_1sigma, relative_uncertainty_95pct, total_value
     """
-    total_value = sum(s['value'] for s in source_list if s['value'] > 0)
+    total_value = sum(s["value"] for s in source_list if s["value"] > 0)
     if total_value == 0:
-        return {'relative_uncertainty_1sigma': 0.0,
-                'relative_uncertainty_95pct': 0.0,
-                'total_value': 0.0}
-    sum_sq = sum((s['value'] * s['relative_uncertainty']) ** 2 for s in source_list)
+        return {
+            "relative_uncertainty_1sigma": 0.0,
+            "relative_uncertainty_95pct": 0.0,
+            "total_value": 0.0,
+        }
+    sum_sq = sum((s["value"] * s["relative_uncertainty"]) ** 2 for s in source_list)
     u_1sigma = math.sqrt(sum_sq) / total_value
     return {
-        'relative_uncertainty_1sigma': u_1sigma,
-        'relative_uncertainty_95pct': COVERAGE_FACTOR_95 * u_1sigma,
-        'total_value': total_value
+        "relative_uncertainty_1sigma": u_1sigma,
+        "relative_uncertainty_95pct": COVERAGE_FACTOR_95 * u_1sigma,
+        "total_value": total_value,
     }
 
 
@@ -166,15 +173,16 @@ def srss_inventory(source_list):
 # MAIN PROPAGATION FUNCTION
 # ---------------------------------------------------------------------------
 
+
 def propagate_uncertainty(
     value,
     ef_uncertainty,
     activity_uncertainty=None,
     tier=Tier.T1,
-    process_category='combustion',
-    gas='co2',
+    process_category="combustion",
+    gas="co2",
     composition_uncertainty=None,
-    uncertainties_dict=None
+    uncertainties_dict=None,
 ):
     """
     Propagate uncertainty for a single emission source.
@@ -213,32 +221,65 @@ def propagate_uncertainty(
     """
     if uncertainties_dict:
         if activity_uncertainty is None:
-            activity_uncertainty = uncertainties_dict.get('_activity_uncertainty')
+            activity_uncertainty = uncertainties_dict.get("_activity_uncertainty")
         if composition_uncertainty is None:
-            composition_uncertainty = uncertainties_dict.get('_composition_uncertainty')
+            composition_uncertainty = uncertainties_dict.get("_composition_uncertainty")
 
     # --- Resolve activity uncertainty from tier if not explicitly provided ---
     if activity_uncertainty is None:
-        if process_category in ('fugitive', 'fugitive_component', 'equipment_fugitive',
-                                'compressor_fugitive'):
+        if process_category in (
+            "fugitive",
+            "fugitive_component",
+            "equipment_fugitive",
+            "compressor_fugitive",
+        ):
             activity_uncertainty = ACTIVITY_UNCERTAINTY_FUGITIVE
-        elif process_category in ('vented', 'venting', 'blowdown', 'completions',
-                                  'drilling', 'unloading', 'tank', 'tank_flashing',
-                                  'tank_working', 'tank_breathing', 'pneumatic',
-                                  'pneumatic_devices'):
+        elif process_category in (
+            "vented",
+            "venting",
+            "blowdown",
+            "completions",
+            "drilling",
+            "unloading",
+            "tank",
+            "tank_flashing",
+            "tank_working",
+            "tank_breathing",
+            "pneumatic",
+            "pneumatic_devices",
+        ):
             if tier == Tier.T3:
                 activity_uncertainty = ACTIVITY_UNCERTAINTY[Tier.T3]
             else:
                 activity_uncertainty = ACTIVITY_UNCERTAINTY_VENTED
         else:
-            activity_uncertainty = ACTIVITY_UNCERTAINTY.get(tier, ACTIVITY_UNCERTAINTY[Tier.T1])
+            activity_uncertainty = ACTIVITY_UNCERTAINTY.get(
+                tier, ACTIVITY_UNCERTAINTY[Tier.T1]
+            )
+
+    # --- Cast to float to prevent TypeError if a string or dict was accidentally passed ---
+    try:
+        ef_float = float(ef_uncertainty) if isinstance(ef_uncertainty, (int, float, str)) else 0.05
+    except (ValueError, TypeError):
+        ef_float = 0.05
+
+    try:
+        act_float = float(activity_uncertainty) if isinstance(activity_uncertainty, (int, float, str)) else 0.05
+    except (ValueError, TypeError):
+        act_float = 0.05
 
     # --- SRSS combination (relative standard uncertainty, 1σ) ---
-    u_components = [ef_uncertainty, activity_uncertainty]
-    if composition_uncertainty is not None and float(composition_uncertainty) > 0:
-        u_components.append(float(composition_uncertainty))
+    u_components = [ef_float, act_float]
     
-    u_combined_1sigma = math.sqrt(sum(u ** 2 for u in u_components))
+    if composition_uncertainty is not None:
+        try:
+            comp_float = float(composition_uncertainty)
+            if comp_float > 0:
+                u_components.append(comp_float)
+        except (ValueError, TypeError):
+            pass
+
+    u_combined_1sigma = math.sqrt(sum(u**2 for u in u_components))
 
     # --- Absolute values ---
     abs_unc_1sigma = value * u_combined_1sigma
@@ -255,32 +296,35 @@ def propagate_uncertainty(
 
     return {
         # Core values
-        "value":                  value,
+        "value": value,
         # Component uncertainties (1σ, relative)
-        "ef_uncertainty_1sigma":  ef_uncertainty,
-        "ad_uncertainty_1sigma":  activity_uncertainty,
-        "comp_uncertainty_1sigma": float(composition_uncertainty) if composition_uncertainty else 0.0,
+        "ef_uncertainty_1sigma": ef_uncertainty,
+        "ad_uncertainty_1sigma": activity_uncertainty,
+        "comp_uncertainty_1sigma": (
+            float(composition_uncertainty) if composition_uncertainty else 0.0
+        ),
         # Combined standard uncertainty (1σ)
-        "relative_uncertainty":   u_combined_1sigma,
-        "uncertainty":            u_combined_1sigma,  # Alias for backend DB saver
-        "absolute_uncertainty":   abs_unc_1sigma,
+        "relative_uncertainty": u_combined_1sigma,
+        "uncertainty": u_combined_1sigma,  # Alias for backend DB saver
+        "absolute_uncertainty": abs_unc_1sigma,
         # Expanded 95% CI (k=2)
-        "ci_95_abs":              ci_95,
-        "ci_95_pct":              ci_95_pct,
-        "lower_bound_95":         lower_95,
-        "upper_bound_95":         upper_95,
-        "lower_bound":            lower_95,           # Alias for frontend charts
-        "upper_bound":            upper_95,           # Alias for frontend charts
+        "ci_95_abs": ci_95,
+        "ci_95_pct": ci_95_pct,
+        "lower_bound_95": lower_95,
+        "upper_bound_95": upper_95,
+        "lower_bound": lower_95,  # Alias for frontend charts
+        "upper_bound": upper_95,  # Alias for frontend charts
         # Metadata
-        "tier":                   tier,
-        "coverage_factor":        COVERAGE_FACTOR_95,
-        "confidence_level_pct":   95
+        "tier": tier,
+        "coverage_factor": COVERAGE_FACTOR_95,
+        "confidence_level_pct": 95,
     }
 
 
 # ---------------------------------------------------------------------------
 # HELPER: resolve tier from factor_source string
 # ---------------------------------------------------------------------------
+
 
 def resolve_tier(factor_source: str) -> int:
     """
@@ -290,15 +334,16 @@ def resolve_tier(factor_source: str) -> int:
     if not factor_source:
         return Tier.T1
     fs = str(factor_source).lower().strip()
-    if fs == 'specific':
+    if fs == "specific":
         return Tier.T3
-    if fs == 'custom':
+    if fs == "custom":
         return Tier.T2
     return Tier.T1  # 'default' or unknown → Tier 1
 
 
-def resolve_ef_uncertainty(process_type: str, gas: str, tier: int,
-                            measured_u: float = None) -> float:
+def resolve_ef_uncertainty(
+    process_type: str, gas: str, tier: int, measured_u: float = None
+) -> float:
     """
     Return the EF uncertainty for a given process, gas, and tier.
     If the user has supplied a measured uncertainty (measured_u), use that.
@@ -316,9 +361,9 @@ def resolve_ef_uncertainty(process_type: str, gas: str, tier: int,
     if measured_u is not None and float(measured_u) > 0:
         return float(measured_u)
 
-    category = PROCESS_CATEGORY.get(str(process_type).lower(), 'combustion')
+    category = PROCESS_CATEGORY.get(str(process_type).lower(), "combustion")
     gas_lu = str(gas).lower()
-    tier_key = {Tier.T1: 'T1', Tier.T2: 'T2', Tier.T3: 'T3'}.get(tier, 'T1')
+    tier_key = {Tier.T1: "T1", Tier.T2: "T2", Tier.T3: "T3"}.get(tier, "T1")
     try:
         return DEFAULT_EF_UNCERTAINTY[category][gas_lu][tier_key]
     except KeyError:

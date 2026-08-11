@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vite.dev/config/
 // FE-01 FIX: add dev proxy + production build optimisations
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    visualizer({ filename: "stats.html", open: false })
+  ],
   server: {
     proxy: {
       // SSE stream — must NOT compress or buffer, otherwise events are held
