@@ -1,7 +1,6 @@
 import os
-from flask import Flask, jsonify, request, current_app
+from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 from flask_wtf.csrf import CSRFProtect, generate_csrf
@@ -17,9 +16,7 @@ app.config.from_object(Config)
 
 
 # Enable CORS
-CORS(app, 
-     origins=app.config.get('ALLOWED_ORIGINS', []),
-     supports_credentials=True)
+CORS(app, origins=app.config.get("ALLOWED_ORIGINS", []), supports_credentials=True)
 
 # Database
 db.init_app(app)
@@ -31,6 +28,7 @@ from sqlalchemy.engine import Engine
 import sqlite3
 from routes.dashboard import clear_dashboard_cache
 
+
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragmas(dbapi_conn, _):
     if isinstance(dbapi_conn, sqlite3.Connection):
@@ -40,26 +38,31 @@ def set_sqlite_pragmas(dbapi_conn, _):
         cursor.execute("PRAGMA synchronous = NORMAL")
         cursor.close()
 
+
 from routes.dashboard import clear_dashboard_cache
 
-@event.listens_for(db.session, 'after_commit')
+
+@event.listens_for(db.session, "after_commit")
 def receive_after_commit(session):
     clear_dashboard_cache()
 
+
 # CSRF Protection
 csrf = CSRFProtect(app)
+
 
 # Request Logging & Request ID Middleware
 @app.before_request
 def before_request():
     request.start_time = time.time()
-    request.id = request.headers.get('X-Request-ID', str(uuid.uuid4()))
+    request.id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+
 
 @app.after_request
 def after_request(response):
-    response.headers['X-Request-ID'] = getattr(request, 'id', '')
-    
-    response.headers['Content-Security-Policy'] = (
+    response.headers["X-Request-ID"] = getattr(request, "id", "")
+
+    response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
         "script-src 'self' 'unsafe-inline'; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
@@ -67,20 +70,23 @@ def after_request(response):
         "img-src 'self' data: https:; "
         "connect-src 'self'"
     )
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-    
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
     # Disable caching for API endpoints to prevent stale browser reads.
     # Exception: SSE stream — it sets its own Cache-Control / Connection headers.
-    if request.path.startswith('/api') and not request.path.startswith('/api/notifications/stream'):
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+    if request.path.startswith("/api") and not request.path.startswith(
+        "/api/notifications/stream"
+    ):
+        response.headers["Cache-Control"] = (
+            "no-store, no-cache, must-revalidate, max-age=0"
+        )
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
 
-        
     # Calculate duration
-    if hasattr(request, 'start_time'):
+    if hasattr(request, "start_time"):
         duration = time.time() - request.start_time
         app.logger.info(
             f"{request.method} {request.path} {response.status_code} "
@@ -88,41 +94,64 @@ def after_request(response):
         )
     return response
 
+
 # Global JSON Error Handlers
 @app.errorhandler(404)
 def not_found_error(error):
-    return jsonify({
-        'error': 'Not found',
-        'code': 404,
-        'request_id': getattr(request, 'id', '')
-    }), 404
+    return (
+        jsonify(
+            {
+                "error": "Not found",
+                "code": 404,
+                "request_id": getattr(request, "id", ""),
+            }
+        ),
+        404,
+    )
+
 
 @app.errorhandler(Exception)
 def internal_error(error):
+    import traceback
+    with open('trace.log', 'a') as f:
+        f.write(f"Unhandled Exception: {str(error)}\n{traceback.format_exc()}\n\n")
     # Log the traceback
     app.logger.error(f"Unhandled Exception: {str(error)}\n{traceback.format_exc()}")
-    
+
     # Return 422 for unprocessable entity to match standard
-    if hasattr(error, 'code') and error.code == 422:
-        return jsonify({
-            'error': str(error),
-            'code': 422,
-            'request_id': getattr(request, 'id', '')
-        }), 422
-        
+    if hasattr(error, "code") and error.code == 422:
+        return (
+            jsonify(
+                {
+                    "error": str(error),
+                    "code": 422,
+                    "request_id": getattr(request, "id", ""),
+                }
+            ),
+            422,
+        )
+
     # Prevent masking of CSRF errors
-    if 'CSRF' in str(type(error)):
-        return jsonify({
-            'error': str(error),
-            'code': 400,
-            'request_id': getattr(request, 'id', '')
-        }), 400
-        
-    return jsonify({
-        'error': 'Internal server error',
-        'code': getattr(error, 'code', 500),
-        'request_id': getattr(request, 'id', '')
-    }), getattr(error, 'code', 500)
+    if "CSRF" in str(type(error)):
+        return (
+            jsonify(
+                {
+                    "error": str(error),
+                    "code": 400,
+                    "request_id": getattr(request, "id", ""),
+                }
+            ),
+            400,
+        )
+
+    return jsonify(
+        {
+            "error": "Internal server error",
+            "code": getattr(error, "code", 500),
+            "request_id": getattr(request, "id", ""),
+        }
+    ), getattr(error, "code", 500)
+
 
 # Register Blueprints
 from routes.auth import auth_bp
@@ -141,36 +170,34 @@ from routes.audit import audit_bp
 from routes.satellite import satellite_bp
 
 
-
-app.register_blueprint(auth_bp, url_prefix='/api/auth')
-app.register_blueprint(emissions_bp, url_prefix='/api/emissions')
-app.register_blueprint(facilities_bp, url_prefix='/api/facilities')
-app.register_blueprint(data_bp, url_prefix='/api/data')
-app.register_blueprint(reports_bp, url_prefix='/api/reports')
-app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
-app.register_blueprint(custom_factors_bp, url_prefix='/api/custom-factors')
-app.register_blueprint(scope2_bp, url_prefix='/api/scope2')
-app.register_blueprint(scope3_bp, url_prefix='/api/scope3')
-app.register_blueprint(managedata_bp, url_prefix='/api')
+app.register_blueprint(auth_bp, url_prefix="/api/auth")
+app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
+app.register_blueprint(facilities_bp, url_prefix="/api/facilities")
+app.register_blueprint(data_bp, url_prefix="/api/data")
+app.register_blueprint(reports_bp, url_prefix="/api/reports")
+app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
+app.register_blueprint(custom_factors_bp, url_prefix="/api/custom-factors")
+app.register_blueprint(scope2_bp, url_prefix="/api/scope2")
+app.register_blueprint(scope3_bp, url_prefix="/api/scope3")
+app.register_blueprint(managedata_bp, url_prefix="/api")
 app.register_blueprint(factors_bp)
-app.register_blueprint(notifications_bp, url_prefix='/api/notifications')
-app.register_blueprint(audit_bp, url_prefix='/api/audit')
-app.register_blueprint(satellite_bp, url_prefix='/api/satellite')
+app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
+app.register_blueprint(audit_bp, url_prefix="/api/audit")
+app.register_blueprint(satellite_bp, url_prefix="/api/satellite")
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
-if os.environ.get('FLASK_ENV') != 'production' or os.environ.get('ENABLE_PUBLIC_SWAGGER', 'false').lower() == 'true':
+if (
+    os.environ.get("FLASK_ENV") != "production"
+    or os.environ.get("ENABLE_PUBLIC_SWAGGER", "false").lower() == "true"
+):
     try:
         from flask_swagger_ui import get_swaggerui_blueprint
 
-        SWAGGER_URL = '/api/docs'
-        API_URL = '/static/swagger.json'
+        SWAGGER_URL = "/api/docs"
+        API_URL = "/static/swagger.json"
 
         swaggerui_blueprint = get_swaggerui_blueprint(
-            SWAGGER_URL,
-            API_URL,
-            config={
-                'app_name': "GHG Platform API Docs"
-            }
+            SWAGGER_URL, API_URL, config={"app_name": "GHG Platform API Docs"}
         )
         app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
         csrf.exempt(swaggerui_blueprint)
@@ -178,27 +205,21 @@ if os.environ.get('FLASK_ENV') != 'production' or os.environ.get('ENABLE_PUBLIC_
         app.logger.warning(f"Could not initialize Swagger UI: {e}")
 
 
-
-@app.route('/api/csrf-token')
+@app.route("/api/csrf-token")
 def get_csrf_token():
-    return jsonify({'csrf_token': generate_csrf()})
+    return jsonify({"csrf_token": generate_csrf()})
 
-@app.route('/api/health')
+
+@app.route("/api/health")
 def health_check():
     # SEC-06 FIX: no longer expose DB engine name
-    return jsonify({
-        'status': 'ok',
-        'version': app.config.get('APP_VERSION', '1.0.0')
-    })
+    return jsonify({"status": "ok", "version": app.config.get("APP_VERSION", "1.0.0")})
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
     # SEC-05 FIX: never run debug=True in production; bind to localhost only
-    is_debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
-    app.run(
-        debug=is_debug,
-        host='127.0.0.1',
-        port=int(os.environ.get('PORT', 5000))
-    )
+    is_debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(debug=is_debug, host="127.0.0.1", port=int(os.environ.get("PORT", 5000)))

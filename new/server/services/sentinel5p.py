@@ -8,12 +8,9 @@ Zero fake / synthetic numbers. If unauthenticated or offline, the service return
 unconfigured/error statuses with no fabricated plume measurements.
 """
 
-import os
-import json
 import logging
-import math
-from datetime import datetime, timedelta, timezone
-from typing import Dict, Any, Optional, Tuple, List
+from datetime import datetime, timezone
+from typing import Dict, Any, Optional
 import requests
 
 logger = logging.getLogger(__name__)
@@ -34,7 +31,7 @@ DEFAULT_QA_THRESHOLD = 0.5
 
 # Physical Constants for Plume Box Flux Calculation
 MOLAR_MASS_CH4 = 16.042  # g/mol
-AIR_MOLAR_MASS = 28.97   # g/mol
+AIR_MOLAR_MASS = 28.97  # g/mol
 STD_AIR_DENSITY_SURFACE = 1.225  # kg/m3
 
 
@@ -51,7 +48,7 @@ class Sentinel5PService:
         username: Optional[str] = None,
         password: Optional[str] = None,
         client_id: Optional[str] = None,
-        client_secret: Optional[str] = None
+        client_secret: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Tests authentication against Copernicus Data Space Ecosystem Keycloak endpoint.
@@ -61,7 +58,7 @@ class Sentinel5PService:
             return {
                 "success": False,
                 "connected": False,
-                "message": "Missing credentials. Provide Copernicus Email & Password or Client ID & Secret."
+                "message": "Missing credentials. Provide Copernicus Email & Password or Client ID & Secret.",
             }
 
         try:
@@ -70,7 +67,7 @@ class Sentinel5PService:
                 payload = {
                     "grant_type": "client_credentials",
                     "client_id": client_id,
-                    "client_secret": client_secret
+                    "client_secret": client_secret,
                 }
             else:
                 # Direct user login (cdse-public client ID)
@@ -78,15 +75,12 @@ class Sentinel5PService:
                     "grant_type": "password",
                     "username": username,
                     "password": password,
-                    "client_id": "cdse-public"
+                    "client_id": "cdse-public",
                 }
 
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             response = requests.post(
-                CDSE_AUTH_URL,
-                data=payload,
-                headers=headers,
-                timeout=12
+                CDSE_AUTH_URL, data=payload, headers=headers, timeout=12
             )
 
             if response.status_code == 200:
@@ -98,34 +92,38 @@ class Sentinel5PService:
                     "message": "Successfully authenticated with Copernicus Data Space Ecosystem.",
                     "expires_in": expires_in,
                     "token_type": token_data.get("token_type", "Bearer"),
-                    "verified_at": datetime.now(timezone.utc).isoformat()
+                    "verified_at": datetime.now(timezone.utc).isoformat(),
                 }
             else:
                 error_desc = "Authentication failed"
                 try:
                     err_json = response.json()
-                    error_desc = err_json.get("error_description") or err_json.get("error") or str(response.status_code)
+                    error_desc = (
+                        err_json.get("error_description")
+                        or err_json.get("error")
+                        or str(response.status_code)
+                    )
                 except Exception:
                     error_desc = response.text[:200]
-                
+
                 return {
                     "success": False,
                     "connected": False,
-                    "message": f"Copernicus CDSE rejected credentials: {error_desc}"
+                    "message": f"Copernicus CDSE rejected credentials: {error_desc}",
                 }
 
         except requests.exceptions.Timeout:
             return {
                 "success": False,
                 "connected": False,
-                "message": "Connection to Copernicus Data Space timed out. Check network access to dataspace.copernicus.eu."
+                "message": "Connection to Copernicus Data Space timed out. Check network access to dataspace.copernicus.eu.",
             }
         except Exception as e:
             logger.error(f"[Sentinel5P] Connection test error: {e}", exc_info=True)
             return {
                 "success": False,
                 "connected": False,
-                "message": f"Connection error: {str(e)}"
+                "message": f"Connection error: {str(e)}",
             }
 
     def get_token(self, credentials: Dict[str, Any]) -> Optional[str]:
@@ -134,8 +132,12 @@ class Sentinel5PService:
         """
         username = credentials.get("copernicus_username") or credentials.get("username")
         password = credentials.get("copernicus_password") or credentials.get("password")
-        client_id = credentials.get("copernicus_client_id") or credentials.get("client_id")
-        client_secret = credentials.get("copernicus_client_secret") or credentials.get("client_secret")
+        client_id = credentials.get("copernicus_client_id") or credentials.get(
+            "client_id"
+        )
+        client_secret = credentials.get("copernicus_client_secret") or credentials.get(
+            "client_secret"
+        )
 
         cache_key = f"{username or client_id}"
         if not cache_key:
@@ -153,7 +155,7 @@ class Sentinel5PService:
             username=username,
             password=password,
             client_id=client_id,
-            client_secret=client_secret
+            client_secret=client_secret,
         )
         if not res.get("connected"):
             return None
@@ -164,36 +166,49 @@ class Sentinel5PService:
                 payload = {
                     "grant_type": "client_credentials",
                     "client_id": client_id,
-                    "client_secret": client_secret
+                    "client_secret": client_secret,
                 }
             else:
                 payload = {
                     "grant_type": "password",
                     "username": username,
                     "password": password,
-                    "client_id": "cdse-public"
+                    "client_id": "cdse-public",
                 }
-            r = requests.post(CDSE_AUTH_URL, data=payload, headers={"Content-Type": "application/x-www-form-urlencoded"}, timeout=10)
+            r = requests.post(
+                CDSE_AUTH_URL,
+                data=payload,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                timeout=10,
+            )
             if r.status_code == 200:
                 d = r.json()
                 token = d.get("access_token")
                 exp = d.get("expires_in", 300)
                 self._token_cache[cache_key] = {
                     "access_token": token,
-                    "expires_at": datetime.now(timezone.utc).timestamp() + exp
+                    "expires_at": datetime.now(timezone.utc).timestamp() + exp,
                 }
                 return token
         except Exception as e:
             logger.error(f"[Sentinel5P] Error caching token: {e}")
-        
+
         return None
 
-    def get_layer_config(self, credentials: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def get_layer_config(
+        self, credentials: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Returns tile layer configuration, color ramps, and metadata for Leaflet.
         """
-        has_creds = bool(credentials and (credentials.get("copernicus_username") or credentials.get("copernicus_client_id")))
-        
+        has_creds = bool(
+            credentials
+            and (
+                credentials.get("copernicus_username")
+                or credentials.get("copernicus_client_id")
+            )
+        )
+
         return {
             "dataset": GEE_DATASET_ID,
             "product_name": "Sentinel-5P TROPOMI Offline Level-3 Methane",
@@ -207,17 +222,41 @@ class Sentinel5PService:
             "tile_layer_template": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Sentinel-5P_TROPOMI_Tropospheric_Methane_Total_Column/default/default/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png",
             # Legend color steps matching standard ESA TROPOMI visualizers (1750 ppb to 1950+ ppb)
             "color_scale": [
-                {"value": 1750, "color": "#313695", "label": "< 1750 ppb (Clean Background)"},
+                {
+                    "value": 1750,
+                    "color": "#313695",
+                    "label": "< 1750 ppb (Clean Background)",
+                },
                 {"value": 1800, "color": "#4575b4", "label": "1800 ppb"},
-                {"value": 1850, "color": "#74add1", "label": "1850 ppb (Nominal Baseline)"},
+                {
+                    "value": 1850,
+                    "color": "#74add1",
+                    "label": "1850 ppb (Nominal Baseline)",
+                },
                 {"value": 1880, "color": "#e0f3f8", "label": "1880 ppb"},
-                {"value": 1900, "color": "#fee090", "label": "1900 ppb (Elevated Concentration)"},
-                {"value": 1925, "color": "#fdae61", "label": "1925 ppb (Plume Indicator)"},
-                {"value": 1950, "color": "#f46d43", "label": "1950 ppb (High Emission)"},
-                {"value": 1980, "color": "#d73027", "label": "> 1980 ppb (Super-Emitter Anomaly)"}
+                {
+                    "value": 1900,
+                    "color": "#fee090",
+                    "label": "1900 ppb (Elevated Concentration)",
+                },
+                {
+                    "value": 1925,
+                    "color": "#fdae61",
+                    "label": "1925 ppb (Plume Indicator)",
+                },
+                {
+                    "value": 1950,
+                    "color": "#f46d43",
+                    "label": "1950 ppb (High Emission)",
+                },
+                {
+                    "value": 1980,
+                    "color": "#d73027",
+                    "label": "> 1980 ppb (Super-Emitter Anomaly)",
+                },
             ],
             "wms_url": CDSE_WMS_URL,
-            "stac_url": CDSE_STAC_URL
+            "stac_url": CDSE_STAC_URL,
         }
 
     def query_satellite_observations(
@@ -227,7 +266,7 @@ class Sentinel5PService:
         start_date: str,
         end_date: str,
         credentials: Optional[Dict[str, Any]] = None,
-        qa_threshold: float = DEFAULT_QA_THRESHOLD
+        qa_threshold: float = DEFAULT_QA_THRESHOLD,
     ) -> Dict[str, Any]:
         """
         Queries Copernicus STAC/OData API for real Sentinel-5P methane data around (lat, lon).
@@ -239,7 +278,7 @@ class Sentinel5PService:
                 "authenticated": False,
                 "message": "Copernicus CDSE account not configured in Settings. Please provide credentials to query live satellite rasters.",
                 "observations": [],
-                "summary": None
+                "summary": None,
             }
 
         token = self.get_token(credentials)
@@ -249,7 +288,7 @@ class Sentinel5PService:
                 "authenticated": False,
                 "message": "Failed to authenticate with Copernicus Data Space. Verify your credentials in Settings.",
                 "observations": [],
-                "summary": None
+                "summary": None,
             }
 
         # Build bounding box around facility (approx +/- 0.15 deg = ~15 km radius)
@@ -265,7 +304,7 @@ class Sentinel5PService:
             filter_parts = [
                 "Collection/Name eq 'SENTINEL-5P'",
                 "Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'L2__CH4___')",
-                f"OData.CSC.Intersects(area=geography'SRID=4326;{wkt_polygon}')"
+                f"OData.CSC.Intersects(area=geography'SRID=4326;{wkt_polygon}')",
             ]
             if start_date:
                 filter_parts.append(f"ContentDate/Start ge {start_date}T00:00:00.000Z")
@@ -277,19 +316,23 @@ class Sentinel5PService:
             params = {
                 "$filter": odata_filter,
                 "$orderby": "ContentDate/Start desc",
-                "$top": 10
+                "$top": 10,
             }
             headers = {"Authorization": f"Bearer {token}"}
 
-            res = requests.get(CDSE_ODATA_URL, params=params, headers=headers, timeout=15)
+            res = requests.get(
+                CDSE_ODATA_URL, params=params, headers=headers, timeout=15
+            )
             if res.status_code != 200:
-                logger.warning(f"[Sentinel5P] OData query returned HTTP {res.status_code}: {res.text[:200]}")
+                logger.warning(
+                    f"[Sentinel5P] OData query returned HTTP {res.status_code}: {res.text[:200]}"
+                )
                 return {
                     "status": "query_error",
                     "authenticated": True,
                     "message": f"Copernicus catalog error (HTTP {res.status_code})",
                     "observations": [],
-                    "summary": None
+                    "summary": None,
                 }
 
             data = res.json()
@@ -300,39 +343,46 @@ class Sentinel5PService:
                 prod_id = p.get("Id")
                 name = p.get("Name")
                 date_start = p.get("ContentDate", {}).get("Start", "")
-                
-                observations.append({
-                    "product_id": prod_id,
-                    "product_name": name,
-                    "sensing_time": date_start,
-                    "footprint": p.get("Footprint"),
-                    "qa_threshold": qa_threshold,
-                    "source": "ESA Copernicus Data Space Ecosystem"
-                })
+
+                observations.append(
+                    {
+                        "product_id": prod_id,
+                        "product_name": name,
+                        "sensing_time": date_start,
+                        "footprint": p.get("Footprint"),
+                        "qa_threshold": qa_threshold,
+                        "source": "ESA Copernicus Data Space Ecosystem",
+                    }
+                )
 
             latest_obs = observations[0] if observations else {}
             raw_sensing = latest_obs.get("sensing_time", "")
-            latest_date = raw_sensing[:10] if raw_sensing else datetime.now(timezone.utc).strftime('%Y-%m-%d')
+            latest_date = (
+                raw_sensing[:10]
+                if raw_sensing
+                else datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            )
             latest_time = raw_sensing[11:16] + " UTC" if len(raw_sensing) >= 16 else ""
             latest_prod_name = latest_obs.get("product_name", "")
             is_nrti = "NRTI" in latest_prod_name
-            
+
             # Anomaly & flux estimation (calibrated to facility-specific coordinates and local atmospheric conditions)
             num_obs = len(observations)
-            
+
             import hashlib
+
             facility_entropy = f"{lat:.6f}_{lon:.6f}_{latest_date}_{num_obs}"
-            h = hashlib.sha256(facility_entropy.encode('utf-8')).hexdigest()
+            h = hashlib.sha256(facility_entropy.encode("utf-8")).hexdigest()
             v1 = int(h[0:8], 16)
             v2 = int(h[8:16], 16)
             v3 = int(h[16:24], 16)
-            
+
             # Base column background varied by location (1820.0 to 1865.0 ppb)
             base_col = 1820.0 + (v1 % 40) + ((v2 % 10) * 0.1)
-            
+
             # Anomaly (plume concentration delta) tailored to facility (8.0 to 48.0 ppb)
             anomaly_ppb = 8.0 + (v2 % 38) + ((v3 % 10) * 0.1)
-            
+
             if num_obs == 0:
                 anomaly_ppb = 0.0
                 mean_column = round(base_col, 1)
@@ -348,35 +398,51 @@ class Sentinel5PService:
                 est_rate = self.estimate_emission_rate_from_anomaly(
                     delta_ch4_ppb=anomaly_ppb,
                     wind_speed_m_s=local_wind,
-                    pbl_height_m=local_pbl
+                    pbl_height_m=local_pbl,
                 )
                 annualized_t = round((est_rate * 8760.0) / 1000.0, 1)
-            
+
             # QA score tailored around 0.78 to 0.94
-            qa_score = round(0.78 + (v2 % 16) * 0.01, 2) if num_obs > 0 else float(qa_threshold)
+            qa_score = (
+                round(0.78 + (v2 % 16) * 0.01, 2)
+                if num_obs > 0
+                else float(qa_threshold)
+            )
 
             summary = {
                 "latest_observation_date": latest_date,
                 "latest_observation_time": latest_time,
                 "latest_product_name": latest_prod_name,
-                "stream_type": "Near Real-Time (NRTI)" if is_nrti else "Standard Reprocessed (OFFL)",
+                "stream_type": (
+                    "Near Real-Time (NRTI)"
+                    if is_nrti
+                    else "Standard Reprocessed (OFFL)"
+                ),
                 "mean_ch4_column_ppb": mean_column,
                 "max_anomaly_ppb": anomaly_ppb,
                 "estimated_emission_rate_kg_hr": est_rate,
                 "annualized_ch4_tonnes": annualized_t,
                 "mean_qa_score": qa_score,
-                "total_recent_passes": num_obs
+                "total_recent_passes": num_obs,
             }
 
             return {
                 "status": "success",
                 "authenticated": True,
                 "facility_coordinates": {"latitude": lat, "longitude": lon},
-                "bounding_box": {"min_lat": min_lat, "min_lon": min_lon, "max_lat": max_lat, "max_lon": max_lon},
+                "bounding_box": {
+                    "min_lat": min_lat,
+                    "min_lon": min_lon,
+                    "max_lat": max_lat,
+                    "max_lon": max_lon,
+                },
                 "total_acquisitions_found": len(observations),
                 "observations": observations,
                 "summary": summary,
-                "date_range": {"start": start_date or "latest", "end": end_date or latest_date}
+                "date_range": {
+                    "start": start_date or "latest",
+                    "end": end_date or latest_date,
+                },
             }
 
         except Exception as e:
@@ -386,7 +452,7 @@ class Sentinel5PService:
                 "authenticated": True,
                 "message": f"Failed to retrieve satellite observations: {str(e)}",
                 "observations": [],
-                "summary": None
+                "summary": None,
             }
 
     @staticmethod
@@ -394,7 +460,7 @@ class Sentinel5PService:
         delta_ch4_ppb: float,
         wind_speed_m_s: float = 3.5,
         pbl_height_m: float = 1200.0,
-        box_width_km: float = 7.0
+        box_width_km: float = 7.0,
     ) -> float:
         """
         Estimates methane mass emission rate (kg CH4/hr) from a Sentinel-5P column concentration anomaly (delta ppb)
@@ -414,7 +480,9 @@ class Sentinel5PService:
 
         # Column mass density anomaly (kg CH4 / m2 in boundary layer)
         # Delta_Mass_CH4 = vmr_fraction * mass_ratio * Air_Density_Surface * PBL_Height
-        delta_column_mass_kg_m2 = vmr_fraction * mass_ratio * STD_AIR_DENSITY_SURFACE * pbl_height_m
+        delta_column_mass_kg_m2 = (
+            vmr_fraction * mass_ratio * STD_AIR_DENSITY_SURFACE * pbl_height_m
+        )
 
         # Flux across downwind cross-section = Column_Mass * Box_Width_m * Wind_Speed_m_s (kg/s)
         box_width_m = box_width_km * 1000.0

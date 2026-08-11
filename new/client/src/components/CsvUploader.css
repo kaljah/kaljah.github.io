@@ -1,318 +1,329 @@
 .csv-uploader-entry {
-    display: inline-flex;
-    align-items: center;
+  display: inline-flex;
+  align-items: center;
 }
 
 .csv-upload-trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 18px;
-    border-radius: 8px;
-    border: 1.5px solid #e2e8f0;
-    background: #fff;
-    color: #334155;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 .csv-upload-trigger svg {
-    width: 17px;
-    height: 17px;
-    color: #2563eb;
+  width: 17px;
+  height: 17px;
+  color: #2563eb;
 }
 .csv-upload-trigger:hover {
-    background: #eff6ff;
-    border-color: #2563eb;
-    color: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12);
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12);
 }
 
 .csv-uploader-wrapper {
-    display: inline-block;
-    margin-left: 10px;
+  display: inline-block;
+  margin-left: 10px;
 }
-
 
 /* Modal Overlay */
 .csv-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(15, 23, 42, 0.4); /* Dark, premium slate overlay */
-    backdrop-filter: blur(4px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-    animation: fadeIn 0.2s ease-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.4); /* Dark, premium slate overlay */
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  animation: fadeIn 0.2s ease-out;
 }
 
 /* Main Modal Card */
 .csv-modal {
-    background: #ffffff;
-    border-radius: 16px; /* Modern roundness */
-    width: 95%;
-    max-width: 700px;
-    max-height: 85vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05); /* Deep soft shadow */
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #ffffff;
+  border-radius: 16px; /* Modern roundness */
+  width: 95%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05); /* Deep soft shadow */
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .csv-modal-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 0;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
 }
 
 /* Header */
 .csv-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px 30px;
-    background: #ffffff;
-    border-bottom: 1px solid #f1f5f9;
-    flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
 }
 
 .csv-modal-header h3 {
-    margin: 0;
-    font-size: 1.35rem;
-    font-weight: 600;
-    color: #0f172a;
-    letter-spacing: -0.01em;
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: -0.01em;
 }
 
 /* Body and Scrollbar */
 .csv-modal-body {
-    padding: 0 30px 24px 30px;
-    overflow-y: auto;
-    flex: 1;
-    min-height: 0;
+  padding: 0 30px 24px 30px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 .csv-modal-body p {
-    color: #64748b;
-    font-size: 0.95rem;
-    margin: 20px 0;
-    line-height: 1.5;
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 20px 0;
+  line-height: 1.5;
 }
 
 .csv-modal-body::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 .csv-modal-body::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 .csv-modal-body::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 /* Footer */
 .csv-modal-footer {
-    padding: 20px 30px;
-    border-top: 1px solid #f1f5f9;
-    background: #f8fafc;
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    flex-shrink: 0;
+  padding: 20px 30px;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 /* Mapping Grid System */
 .mapping-grid {
-    margin-top: 10px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #ffffff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  margin-top: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .mapping-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 20px;
-    border-bottom: 1px solid #f1f5f9;
-    transition: background-color 0.15s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.15s ease;
 }
 
 .mapping-row:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .mapping-row:hover {
-    background-color: #f8fafc; /* Subtle hover highlight */
+  background-color: #f8fafc; /* Subtle hover highlight */
 }
 
 /* Optional rows */
 .mapping-row.optional-row .field-label {
-    color: #64748b;
-    font-weight: 400;
+  color: #64748b;
+  font-weight: 400;
 }
 
 .mapping-row.header-row {
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 12px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 20px;
 }
 
 .header-cell {
-    flex: 1;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #475569;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .mapping-section-title {
-    padding: 16px 20px 8px 20px;
-    background: #ffffff;
-    font-weight: 600;
-    color: #0f172a;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #f1f5f9;
-    border-top: 1px solid #f1f5f9;
+  padding: 16px 20px 8px 20px;
+  background: #ffffff;
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #f1f5f9;
+  border-top: 1px solid #f1f5f9;
 }
 
 .mapping-grid > .mapping-section-title:first-of-type {
-    border-top: none;
+  border-top: none;
 }
 
 /* Labels and Selects */
 .field-label {
-    flex: 1;
-    font-size: 0.95rem;
-    color: #334155;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  flex: 1;
+  font-size: 0.95rem;
+  color: #334155;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .req-star {
-    color: #ef4444;
-    font-weight: bold;
+  color: #ef4444;
+  font-weight: bold;
 }
 
 .mapping-select {
-    flex: 1;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    background-color: #ffffff;
-    font-size: 0.95rem;
-    color: #0f172a;
-    outline: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px;
-    padding-right: 36px;
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  font-size: 0.95rem;
+  color: #0f172a;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px;
 }
 
 .mapping-select:hover {
-    border-color: #94a3b8;
+  border-color: #94a3b8;
 }
 
 .mapping-select:focus {
-    border-color: #0d9488; /* Premium Teal */
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); /* Soft focus ring */
+  border-color: #0d9488; /* Premium Teal */
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); /* Soft focus ring */
 }
 
 /* Icon Buttons inside modal */
 .icon-btn {
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
-    color: #0f172a;
-    background: #f1f5f9;
+  color: #0f172a;
+  background: #f1f5f9;
 }
 
 /* Specific Modal Headers (Warning/Success) */
 .csv-modal-header.warning h3 {
-    color: #ea580c; /* Orange */
+  color: #ea580c; /* Orange */
 }
 .csv-modal-header.success h3 {
-    color: #0d9488; /* Teal */
+  color: #0d9488; /* Teal */
 }
 
 /* Buttons overriding default classes if needed inside modal */
 .csv-modal-footer .btn-secondary {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .csv-modal-footer .btn-secondary:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
-    color: #0f172a;
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
 .csv-modal-footer .btn-primary {
-    background: #0d9488;
-    border: 1px solid #0d9488;
-    color: #ffffff;
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
+  background: #0d9488;
+  border: 1px solid #0d9488;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);
 }
 
 .csv-modal-footer .btn-primary:hover {
-    background: #0f766e;
-    border-color: #0f766e;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(13, 148, 136, 0.25);
+  background: #0f766e;
+  border-color: #0f766e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(13, 148, 136, 0.25);
 }
 
 .csv-modal-footer .btn-primary:disabled {
-    background: #94a3b8;
-    border-color: #94a3b8;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+  background: #94a3b8;
+  border-color: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Animations */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

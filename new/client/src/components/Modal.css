@@ -1,126 +1,126 @@
 .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
 }
 
 .modal-content {
-    background: var(--bg-card);
-    border-radius: 16px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-color);
 }
 
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h3 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .modal-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    padding: 4px;
-    border-radius: 6px;
-    transition: all 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .modal-close:hover {
-    background: var(--bg-hover);
-    color: var(--text-primary);
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .modal-body {
-    padding: 24px;
+  padding: 24px;
 }
 
 .modal-body label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 .modal-body input,
 .modal-body textarea,
 .modal-body select {
-    width: 100%;
-    padding: 12px;
-    background: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 0.95rem;
-    margin-bottom: 20px;
-    transition: all 0.2s;
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  transition: all 0.2s;
 }
 
 .modal-body input:focus,
 .modal-body textarea:focus,
 .modal-body select:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .modal-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
 }
 
 .modal-button {
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
 }
 
 .modal-button-primary {
-    background: var(--accent-color);
-    color: white;
-    border: none;
+  background: var(--accent-color);
+  color: white;
+  border: none;
 }
 
 .modal-button-primary:hover {
-    background: #0d9488;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  background: #0d9488;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .modal-button-secondary {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .modal-button-secondary:hover {
-    background: var(--bg-hover);
+  background: var(--bg-hover);
 }

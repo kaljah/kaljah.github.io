@@ -1,108 +1,117 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api, { fetchCsrfToken } from '../api';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import api, { fetchCsrfToken } from "../api";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [preferences, setPreferences] = useState({});
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [preferences, setPreferences] = useState({});
+  const [loading, setLoading] = useState(true);
 
-    // Register global logout hook for API interceptor
-    useEffect(() => {
-        window.__authLogout = () => {
-            setUser(null);
-            setLoading(false);
-        };
-        return () => {
-            delete window.__authLogout;
-        };
-    }, []);
-
-    const applyTheme = (theme) => {
-        // Enforce light theme only by removing data-theme attribute
-        document.documentElement.removeAttribute('data-theme');
+  // Register global logout hook for API interceptor
+  useEffect(() => {
+    window.__authLogout = () => {
+      setUser(null);
+      setLoading(false);
     };
+    return () => {
+      delete window.__authLogout;
+    };
+  }, []);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const { data } = await api.get('/auth/me');
-                setUser(data);
+  const applyTheme = (theme) => {
+    // Enforce light theme only by removing data-theme attribute
+    document.documentElement.removeAttribute("data-theme");
+  };
 
-                // Fetch settings as well
-                try {
-                    const settingsRes = await api.get('/auth/settings');
-                    if (settingsRes.data) {
-                        setPreferences(settingsRes.data);
-                        applyTheme('light');
-                    }
-                } catch (e) {
-                    console.error("Failed to fetch settings on auth check", e);
-                }
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data } = await api.get("/auth/me");
+        setUser(data);
 
-            } catch (err) {
-                setUser(null);
-                setPreferences({});
-            } finally {
-                setLoading(false);
-            }
-        };
-        checkAuth();
-    }, []);
-
-    const login = async (email, password) => {
-        const { data } = await api.post('/auth/login', { email, password });
-        setUser(data.user);
-        
-        // Refresh CSRF token after login to sync session
-        await fetchCsrfToken();
-
-        // Fetch settings after login
+        // Fetch settings as well
         try {
-            const settingsRes = await api.get('/auth/settings');
-            if (settingsRes.data) {
-                setPreferences(settingsRes.data);
-                applyTheme('light');
-            }
+          const settingsRes = await api.get("/auth/settings");
+          if (settingsRes.data) {
+            setPreferences(settingsRes.data);
+            applyTheme("light");
+          }
         } catch (e) {
-            console.error("Failed to fetch settings on login", e);
+          console.error("Failed to fetch settings on auth check", e);
         }
-
-        return data;
-    };
-
-    const register = async (userData) => {
-        const { data } = await api.post('/auth/register', userData);
-        return data;
-    };
-
-    const logout = async () => {
-        await api.post('/auth/logout');
+      } catch (err) {
         setUser(null);
         setPreferences({});
-        applyTheme('light'); // Default reset to light
-        // Refresh CSRF token after logout to sync session
-        await fetchCsrfToken();
+      } finally {
+        setLoading(false);
+      }
     };
+    checkAuth();
+  }, []);
 
-    const updatePreferences = async (newPrefs) => {
-        setPreferences(prev => ({ ...prev, ...newPrefs }));
-        applyTheme(newPrefs.theme);
-        // Persist
-        try {
-            await api.put('/auth/settings', newPrefs);
-        } catch (e) {
-            console.error("Failed to persist settings", e);
-            // Revert? For now, assume success or user sees toast in Settings page
-        }
-    };
+  const login = async (email, password) => {
+    const { data } = await api.post("/auth/login", { email, password });
+    setUser(data.user);
 
-    return (
-        <AuthContext.Provider value={{ user, preferences, updatePreferences, login, register, logout, loading }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    // Refresh CSRF token after login to sync session
+    await fetchCsrfToken();
+
+    // Fetch settings after login
+    try {
+      const settingsRes = await api.get("/auth/settings");
+      if (settingsRes.data) {
+        setPreferences(settingsRes.data);
+        applyTheme("light");
+      }
+    } catch (e) {
+      console.error("Failed to fetch settings on login", e);
+    }
+
+    return data;
+  };
+
+  const register = async (userData) => {
+    const { data } = await api.post("/auth/register", userData);
+    return data;
+  };
+
+  const logout = async () => {
+    await api.post("/auth/logout");
+    setUser(null);
+    setPreferences({});
+    applyTheme("light"); // Default reset to light
+    // Refresh CSRF token after logout to sync session
+    await fetchCsrfToken();
+  };
+
+  const updatePreferences = async (newPrefs) => {
+    setPreferences((prev) => ({ ...prev, ...newPrefs }));
+    applyTheme(newPrefs.theme);
+    // Persist
+    try {
+      await api.put("/auth/settings", newPrefs);
+    } catch (e) {
+      console.error("Failed to persist settings", e);
+      // Revert? For now, assume success or user sees toast in Settings page
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        preferences,
+        updatePreferences,
+        login,
+        register,
+        logout,
+        loading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);

@@ -7,14 +7,14 @@
  * @returns {string} Formatted number
  */
 export const formatCompactNumber = (value, decimals = 1) => {
-    const num = parseFloat(value);
-    if (isNaN(num)) return '0';
+  const num = parseFloat(value);
+  if (isNaN(num)) return "0";
 
-    return new Intl.NumberFormat('en-US', {
-        notation: "compact",
-        compactDisplay: "short",
-        maximumFractionDigits: decimals
-    }).format(num);
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    compactDisplay: "short",
+    maximumFractionDigits: decimals,
+  }).format(num);
 };
 
 /**
@@ -24,13 +24,13 @@ export const formatCompactNumber = (value, decimals = 1) => {
  * @returns {string} Formatted number
  */
 export const formatNumber = (value, decimals = 3) => {
-    const num = parseFloat(value);
-    if (isNaN(num)) return '0';
+  const num = parseFloat(value);
+  if (isNaN(num)) return "0";
 
-    return num.toLocaleString('en-US', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-    });
+  return num.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
 };
 
 /**
@@ -40,12 +40,12 @@ export const formatNumber = (value, decimals = 3) => {
  * @returns {string} Formatted percentage with + or -
  */
 export const calculateTrend = (current, base) => {
-    if (!base || base === 0) return '—';
+  if (!base || base === 0) return "—";
 
-    const change = ((current - base) / base) * 100;
-    const sign = change > 0 ? '+' : '';
+  const change = ((current - base) / base) * 100;
+  const sign = change > 0 ? "+" : "";
 
-    return `${sign}${change.toFixed(1)}%`;
+  return `${sign}${change.toFixed(1)}%`;
 };
 
 /**
@@ -54,12 +54,12 @@ export const calculateTrend = (current, base) => {
  * @returns {string} Formatted date
  */
 export const formatDate = (date) => {
-    if (!date) return '';
+  if (!date) return "";
 
-    const d = new Date(date);
-    return d.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
+  const d = new Date(date);
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 };

@@ -5,360 +5,378 @@
    ============================================================ */
 
 .sidebar {
-    /* Collapsed by default */
-    width: 64px;
-    /* Background and border are handled by glass-panel utility class */
-    display: flex;
-    flex-direction: column;
-    padding: 24px 10px;
-    z-index: 200;
-    box-shadow: 4px 0 24px -12px rgba(0, 0, 0, 0.08);
-    height: 100vh;
-    overflow: hidden;
-    flex-shrink: 0;
-    position: relative;
+  /* Collapsed by default */
+  width: 64px;
+  /* Background and border are handled by glass-panel utility class */
+  display: flex;
+  flex-direction: column;
+  padding: 24px 10px;
+  z-index: 200;
+  box-shadow: 4px 0 24px -12px rgba(0, 0, 0, 0.08);
+  height: 100vh;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
 
-    /* Smooth expand */
-    transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-                padding 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.28s ease;
+  /* Smooth expand */
+  transition:
+    width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.28s ease;
 }
 
 .sidebar:hover {
-    width: 260px;
-    padding: 24px 16px;
-    box-shadow: var(--shadow-hover);
+  width: 260px;
+  padding: 24px 16px;
+  box-shadow: var(--shadow-hover);
 }
 
 /* ============================================================
    HEADER
    ============================================================ */
 .sidebar-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 28px;
-    padding: 0 2px;
-    min-height: 36px;
-    flex-shrink: 0;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding: 0 2px;
+  min-height: 36px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .logo-box {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    background: var(--accent-color);
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  background: var(--accent-color);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
 }
 
 .brand-text {
-    font-size: 1rem;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    color: var(--text-primary);
-    opacity: 0;
-    max-width: 0;
-    transition: opacity 0.2s ease 0.05s, max-width 0.25s ease;
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--text-primary);
+  opacity: 0;
+  max-width: 0;
+  transition:
+    opacity 0.2s ease 0.05s,
+    max-width 0.25s ease;
 }
 
 .sidebar:hover .brand-text {
-    opacity: 1;
-    max-width: 200px;
+  opacity: 1;
+  max-width: 200px;
 }
 
 /* ============================================================
    NAV LINKS
    ============================================================ */
 .nav-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .nav-item {
-    margin-bottom: 2px;
+  margin-bottom: 2px;
 }
 
 .nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    padding: 10px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    border-radius: 10px;
-    transition: background 0.18s, color 0.18s, gap 0.28s;
-    font-size: 0.9rem;
-    font-weight: 500;
-    border: 1px solid transparent;
-    white-space: nowrap;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 10px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 10px;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    gap 0.28s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* On sidebar hover, restore gap so icon and label breathe */
 .sidebar:hover .nav-link {
-    gap: 10px;
-    padding: 10px 12px;
+  gap: 10px;
+  padding: 10px 12px;
 }
 
 .nav-link:hover {
-    background: var(--bg-hover);
-    color: var(--accent-color);
+  background: var(--bg-hover);
+  color: var(--accent-color);
 }
 
 .nav-link.active {
-    background: var(--accent-gradient);
-    color: white;
-    box-shadow: 0 4px 14px rgba(255, 102, 0, 0.22);
-    font-weight: 600;
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.22);
+  font-weight: 600;
 }
 
 .nav-icon {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    opacity: 0.75;
-    flex-shrink: 0;
-    transition: opacity 0.2s;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  opacity: 0.75;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
 }
 
 .nav-link:hover .nav-icon,
 .nav-link.active .nav-icon {
-    opacity: 1;
+  opacity: 1;
 }
 
 /* Labels: hidden (zero width, transparent) by default */
 .nav-label {
-    overflow: hidden;
-    white-space: nowrap;
-    opacity: 0;
-    max-width: 0;
-    transition: opacity 0.18s ease 0.05s, max-width 0.25s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  max-width: 0;
+  transition:
+    opacity 0.18s ease 0.05s,
+    max-width 0.25s ease;
 }
 
 /* Labels appear when sidebar is hovered */
 .sidebar:hover .nav-label {
-    opacity: 1;
-    max-width: 180px;
+  opacity: 1;
+  max-width: 180px;
 }
 
 /* ============================================================
    SETTINGS PIN & ACCOUNT AREA
    ============================================================ */
 .sidebar-settings-pin {
-    margin-top: auto;
-    padding-bottom: 8px;
-    flex-shrink: 0;
+  margin-top: auto;
+  padding-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .sidebar-settings-btn {
-    border-radius: 10px;
-    margin: 0;
+  border-radius: 10px;
+  margin: 0;
 }
 
 .account-wrapper {
-    position: relative;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-color);
-    flex-shrink: 0;
-    overflow: visible;
+  position: relative;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  overflow: visible;
 }
 
 .user-profile-sidebar {
-    padding: 8px 10px;
-    background: transparent;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    gap: 0;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: gap 0.28s ease, padding 0.28s ease, border-color 0.2s, background 0.2s;
-    overflow: hidden;
+  padding: 8px 10px;
+  background: transparent;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    gap 0.28s ease,
+    padding 0.28s ease,
+    border-color 0.2s,
+    background 0.2s;
+  overflow: hidden;
 }
 
 .sidebar:hover .user-profile-sidebar {
-    gap: 10px;
-    padding: 8px 12px;
+  gap: 10px;
+  padding: 8px 12px;
 }
 
 .user-profile-sidebar:hover {
-    border-color: var(--accent-color);
-    background: var(--bg-hover);
+  border-color: var(--accent-color);
+  background: var(--bg-hover);
 }
 
 .user-profile-sidebar.active {
-    border-color: var(--accent-color);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* User info block hidden until expanded */
 .user-info {
-    flex: 1;
-    overflow: hidden;
-    min-width: 0;
-    opacity: 0;
-    max-width: 0;
-    transition: opacity 0.18s ease 0.05s, max-width 0.25s ease;
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+  opacity: 0;
+  max-width: 0;
+  transition:
+    opacity 0.18s ease 0.05s,
+    max-width 0.25s ease;
 }
 
 .sidebar:hover .user-info {
-    opacity: 1;
-    max-width: 160px;
+  opacity: 1;
+  max-width: 160px;
 }
 
 .chevron-icon {
-    opacity: 0;
-    flex-shrink: 0;
-    transition: opacity 0.18s ease 0.05s;
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.18s ease 0.05s;
 }
 
 .sidebar:hover .chevron-icon {
-    opacity: 0.45;
+  opacity: 0.45;
 }
 
 .user-name {
-    font-size: 0.875rem;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
 }
 
 .user-role {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ============================================================
    AVATAR
    ============================================================ */
 .avatar-small {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ff6600, #ff8533);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: white;
-    flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6600, #ff8533);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: white;
+  flex-shrink: 0;
 }
 
 /* ============================================================
    DROPDOWN — anchors above the account area
    ============================================================ */
 .account-dropdown {
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 14px;
-    padding: 8px;
-    box-shadow: var(--shadow-hover);
-    display: none;
-    flex-direction: column;
-    z-index: 1000;
-    opacity: 0;
-    transform: translateY(10px) scale(0.96);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transform-origin: bottom left;
-    min-width: 210px;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: var(--shadow-hover);
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: bottom left;
+  min-width: 210px;
 }
 
 .account-dropdown.visible {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 /* ============================================================
    DROPDOWN ITEMS
    ============================================================ */
 .dropdown-header {
-    padding: 10px 14px;
-    margin-bottom: 4px;
+  padding: 10px 14px;
+  margin-bottom: 4px;
 }
 
 .user-name-full {
-    color: #0f172a;
-    font-weight: 600;
-    font-size: 0.9rem;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .user-email-drop {
-    color: #64748b;
-    font-size: 0.78rem;
-    margin-top: 2px;
+  color: #64748b;
+  font-size: 0.78rem;
+  margin-top: 2px;
 }
 
 .dropdown-divider {
-    height: 1px;
-    background: #f1f5f9;
-    margin: 4px 0;
+  height: 1px;
+  background: #f1f5f9;
+  margin: 4px 0;
 }
 
 .dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    color: #334155 !important;
-    text-decoration: none;
-    transition: background 0.15s, transform 0.15s;
-    border-radius: 8px;
-    background: transparent !important;
-    border: none !important;
-    width: 100%;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: #334155 !important;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+  border-radius: 8px;
+  background: transparent !important;
+  border: none !important;
+  width: 100%;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: "Outfit", sans-serif;
+  text-align: left;
 }
 
 .dropdown-item:hover {
-    background: #f1f5f9 !important;
-    color: #0f172a !important;
-    transform: translateX(3px);
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  transform: translateX(3px);
 }
 
 .dropdown-item svg {
-    opacity: 0.6;
-    transition: opacity 0.15s, color 0.15s;
-    color: #64748b;
-    flex-shrink: 0;
+  opacity: 0.6;
+  transition:
+    opacity 0.15s,
+    color 0.15s;
+  color: #64748b;
+  flex-shrink: 0;
 }
 
 .dropdown-item:hover svg {
-    opacity: 1;
-    color: #ff6600;
+  opacity: 1;
+  color: #ff6600;
 }
 
 .logout-item {
-    color: #ef4444 !important;
+  color: #ef4444 !important;
 }
 
 .logout-item:hover {
-    background: #fef2f2 !important;
-    color: #dc2626 !important;
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
 }

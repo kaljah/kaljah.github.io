@@ -15,7 +15,7 @@
   --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   --shadow-hover: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
   --sidebar-width: 260px;
-  font-family: 'Outfit', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Outfit", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 @tailwind base;
@@ -32,10 +32,10 @@ body {
   overflow: hidden;
   background-color: var(--bg-body);
   /* A subtle geometric/mesh gradient for the background to make glass pop */
-  background-image: 
-    radial-gradient(at 0% 0%, hsla(28,100%,74%,0.1) 0, transparent 50%), 
-    radial-gradient(at 50% 0%, hsla(225,39%,30%,0.05) 0, transparent 50%), 
-    radial-gradient(at 100% 0%, hsla(339,49%,30%,0.05) 0, transparent 50%);
+  background-image:
+    radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.1) 0, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.05) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.05) 0, transparent 50%);
   color: var(--text-primary);
   width: 100%;
   height: 100vh;
@@ -55,14 +55,14 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent; 
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1; 
+  background: #cbd5e1;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-color); 
+  background: var(--accent-color);
 }
 
 /* Glassmorphism utility class */

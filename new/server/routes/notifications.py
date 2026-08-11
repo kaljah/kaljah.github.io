@@ -1,36 +1,54 @@
 import json
 import time
-from flask import Blueprint, jsonify, request, session, Response, stream_with_context, current_app
+from flask import (
+    Blueprint,
+    jsonify,
+    request,
+    session,
+    Response,
+    stream_with_context,
+    current_app,
+)
 from routes.auth import login_required
 from extensions import db
-from models import Notification, User
+from models import Notification
 
-notifications_bp = Blueprint('notifications', __name__)
+notifications_bp = Blueprint("notifications", __name__)
 
 
-@notifications_bp.route('/', methods=['GET'])
+@notifications_bp.route("/", methods=["GET"])
 @login_required
 def get_notifications():
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+        return jsonify({"error": "Not authenticated"}), 401
 
-    notifs = Notification.query.filter(
-        (Notification.user_id == user_id) | (Notification.user_id == None)
-    ).order_by(Notification.created_at.desc()).limit(50).all()
+    notifs = (
+        Notification.query.filter(
+            (Notification.user_id == user_id) | (Notification.user_id == None)
+        )
+        .order_by(Notification.created_at.desc())
+        .limit(50)
+        .all()
+    )
 
-    return jsonify([{
-        'id': n.id,
-        'type': n.type,
-        'title': n.title,
-        'message': n.message,
-        'is_read': n.is_read,
-        'time': n.created_at.isoformat() + 'Z',
-        'metadata': n.metadata_json
-    } for n in notifs])
+    return jsonify(
+        [
+            {
+                "id": n.id,
+                "type": n.type,
+                "title": n.title,
+                "message": n.message,
+                "is_read": n.is_read,
+                "time": n.created_at.isoformat() + "Z",
+                "metadata": n.metadata_json,
+            }
+            for n in notifs
+        ]
+    )
 
 
-@notifications_bp.route('/stream')
+@notifications_bp.route("/stream")
 @login_required
 def stream_notifications():
     """
@@ -46,11 +64,11 @@ def stream_notifications():
     X-Accel-Buffering: no  — disables nginx proxy buffering so events flow
     through immediately in production deployments behind nginx/gunicorn.
     """
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+        return jsonify({"error": "Not authenticated"}), 401
 
-    last_id = request.args.get('last_id', 0, type=int)
+    last_id = request.args.get("last_id", 0, type=int)
 
     def generate(uid, lid):
         yield ": connected\n\n"
@@ -62,24 +80,24 @@ def stream_notifications():
         while True:
             try:
                 new_notifs = (
-                    Notification.query
-                    .filter(
-                        Notification.user_id == uid,
-                        Notification.id > lid
+                    Notification.query.filter(
+                        Notification.user_id == uid, Notification.id > lid
                     )
                     .order_by(Notification.id.asc())
                     .all()
                 )
 
                 for n in new_notifs:
-                    payload = json.dumps({
-                        'id': n.id,
-                        'type': n.type,
-                        'title': n.title,
-                        'message': n.message,
-                        'is_read': n.is_read,
-                        'time': n.created_at.isoformat() + 'Z',
-                    })
+                    payload = json.dumps(
+                        {
+                            "id": n.id,
+                            "type": n.type,
+                            "title": n.title,
+                            "message": n.message,
+                            "is_read": n.is_read,
+                            "time": n.created_at.isoformat() + "Z",
+                        }
+                    )
                     yield f"data: {payload}\n\n"
                     lid = n.id
 
@@ -101,68 +119,70 @@ def stream_notifications():
 
     return Response(
         stream_with_context(generate(user_id, last_id)),
-        mimetype='text/event-stream',
+        mimetype="text/event-stream",
         headers={
-            'Cache-Control': 'no-cache',
-            'X-Accel-Buffering': 'no',
-            'Connection': 'keep-alive',
-        }
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
     )
 
 
-@notifications_bp.route('/<int:id>/read', methods=['PUT'])
+@notifications_bp.route("/<int:id>/read", methods=["PUT"])
 @login_required
 def mark_read(id):
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+        return jsonify({"error": "Not authenticated"}), 401
 
     n = Notification.query.get_or_404(id)
     if n.user_id is not None and n.user_id != user_id:
-        return jsonify({'error': 'Unauthorized'}), 403
+        return jsonify({"error": "Unauthorized"}), 403
 
     n.is_read = True
     db.session.commit()
-    return jsonify({'success': True})
+    return jsonify({"success": True})
 
 
-@notifications_bp.route('/dismiss-all', methods=['POST'])
+@notifications_bp.route("/dismiss-all", methods=["POST"])
 @login_required
 def dismiss_all():
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+        return jsonify({"error": "Not authenticated"}), 401
 
-    Notification.query.filter_by(user_id=user_id, is_read=False).update({'is_read': True})
+    Notification.query.filter_by(user_id=user_id, is_read=False).update(
+        {"is_read": True}
+    )
     db.session.commit()
-    return jsonify({'success': True})
+    return jsonify({"success": True})
 
 
-@notifications_bp.route('/<int:id>', methods=['DELETE'])
+@notifications_bp.route("/<int:id>", methods=["DELETE"])
 @login_required
 def delete_notification(id):
     """Permanently delete a single notification."""
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+        return jsonify({"error": "Not authenticated"}), 401
 
     n = Notification.query.get_or_404(id)
     if n.user_id is not None and n.user_id != user_id:
-        return jsonify({'error': 'Unauthorized'}), 403
+        return jsonify({"error": "Unauthorized"}), 403
 
     db.session.delete(n)
     db.session.commit()
-    return jsonify({'success': True})
+    return jsonify({"success": True})
 
 
-@notifications_bp.route('/all', methods=['DELETE'])
+@notifications_bp.route("/all", methods=["DELETE"])
 @login_required
 def delete_all_notifications():
     """Permanently delete all notifications for the current user."""
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
     if not user_id:
-        return jsonify({'error': 'Not authenticated'}), 401
+        return jsonify({"error": "Not authenticated"}), 401
 
     deleted = Notification.query.filter_by(user_id=user_id).delete()
     db.session.commit()
-    return jsonify({'success': True, 'deleted': deleted})
+    return jsonify({"success": True, "deleted": deleted})
