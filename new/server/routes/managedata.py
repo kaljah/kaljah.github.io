@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models import EmissionSource, MitigationRecord, MitigationProject, ReportingMetadata, Facility, ProductionData, Emission, Scope2Emission, Scope3Emission, Notification, User, Goal, BaseYear, BaseYearRecalculation
 from extensions import db
-from utils import get_current_user, get_allowed_facility_ids
+from utils import log_activity_and_notify, get_current_user, get_allowed_facility_ids
 from sqlalchemy import func, distinct, or_
 from routes.auth import admin_required, login_required
 
@@ -57,6 +57,10 @@ def add_source():
     db.session.add(source)
     db.session.commit()
     return jsonify({'message': 'Source added', 'id': source.id}), 201
+    try:
+        log_activity_and_notify('CREATE', source.id, f'Added emission source {source.name}', user=get_current_user(), request=request, entity='EmissionSource')
+    except Exception as e:
+        pass
 
 @managedata_bp.route('/sources/<int:source_id>', methods=['DELETE'])
 @login_required
@@ -67,6 +71,10 @@ def delete_source(source_id):
     db.session.delete(source)
     db.session.commit()
     return jsonify({'message': 'Source deleted'})
+    try:
+        log_activity_and_notify('DELETE', source_id, f'Deleted emission source', user=get_current_user(), request=request, entity='EmissionSource')
+    except Exception as e:
+        pass
 
 @managedata_bp.route('/sources/bulk-import', methods=['POST'])
 @login_required
@@ -124,6 +132,10 @@ def bulk_import_sources():
     
     db.session.commit()
     return jsonify({'message': f'{imported_count} sources imported'}), 201
+    try:
+        log_activity_and_notify('CREATE', 'bulk', f'Bulk imported {imported_count} emission sources', user=get_current_user(), request=request, entity='EmissionSource')
+    except Exception as e:
+        pass
 
 # --- Mitigation Records ---
 @managedata_bp.route('/mitigation', methods=['GET'])
@@ -470,6 +482,10 @@ def bulk_import_mitigation():
         
     db.session.commit()
     return jsonify({'message': f'{imported_count} mitigation projects imported'}), 201
+    try:
+        log_activity_and_notify('CREATE', 'bulk', f'Bulk imported {imported_count} mitigation projects', user=get_current_user(), request=request, entity='MitigationProject')
+    except Exception as e:
+        pass
 
 
 # --- Yearly Emission Goals ---
