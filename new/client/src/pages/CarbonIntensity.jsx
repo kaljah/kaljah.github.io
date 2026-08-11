@@ -75,7 +75,8 @@ const CarbonIntensity = () => {
                     api.get('/filters/available'),
                     api.get('/auth/settings').catch(() => ({ data: {} }))
                 ]);
-                setFacilities(facRes.data);
+                const facilitiesData = Array.isArray(facRes.data) ? facRes.data : (facRes.data?.data || []);
+                setFacilities(facilitiesData);
 
                 if (settingsRes?.data?.gwp_standard) {
                     setActiveGwpStandard(settingsRes.data.gwp_standard);
@@ -123,7 +124,7 @@ const CarbonIntensity = () => {
             }
 
             const res = await api.get(`/dashboard/intensity-stats?${params}`);
-            const data = res.data || [];
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setRegionalData(data);
 
             let tOil = 0, tGas = 0, tBoe = 0, tFlaringVol = 0, tFlaringEm = 0;
@@ -192,7 +193,8 @@ const CarbonIntensity = () => {
             }
             params.append('years', years.join(','));
             const res = await api.get(`/dashboard/intensity-trend?${params}`).catch(() => ({ data: [] }));
-            setRawTrendData(res.data || []);
+            const trendData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setRawTrendData(trendData);
         } catch (error) {
             console.error('Trend load error:', error);
         }

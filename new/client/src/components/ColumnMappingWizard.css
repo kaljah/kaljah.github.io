@@ -592,3 +592,25 @@
 .cmw-body::-webkit-scrollbar-track { background: transparent; }
 .cmw-body::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
 .cmw-body::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+/* --- Mode Cards ------------------------------------------------------------ */
+.cmw-mode-card {
+    transition: all 0.2s ease;
+}
+.cmw-mode-card:hover {
+    border-color: #cbd5e1 !important;
+    background: #f8fafc !important;
+}
+.cmw-mode-card.active {
+    border-color: #2563eb !important;
+    background: #eff6ff !important;
+    box-shadow: 0 0 0 1px #2563eb;
+}
+.cmw-mode-card.active h4 {
+    color: #1e40af !important;
+}
+.cmw-mode-card.active > div > div {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+}
+

@@ -3,7 +3,7 @@ import api from '../api';
 import CustomDropdown from './CustomDropdown';
 import { useToast } from './Toast';
 import { formatNumber } from '../utils/formatters';
-import BulkImportModal from './BulkImportModal';
+import ColumnMappingWizard from './ColumnMappingWizard';
 import { Upload, Trash2 } from 'lucide-react';
 import './ScopeTables.css';
 
@@ -190,7 +190,8 @@ const Scope3Form = () => {
     const loadFacilities = async () => {
         try {
             const res = await api.get('/facilities');
-            setFacilities(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setFacilities(data);
         } catch (error) {
             console.error('Failed to load facilities:', error);
             toast.error('Failed to load regions');
@@ -201,7 +202,7 @@ const Scope3Form = () => {
         setLoading(true);
         try {
             const res = await api.get('/scope3');
-            const allEntries = res.data || [];
+            const allEntries = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             const start = (currentPage - 1) * RECORDS_PER_PAGE;
             const end = start + RECORDS_PER_PAGE;
             setEntries(allEntries.slice(start, end));
@@ -368,10 +369,9 @@ const Scope3Form = () => {
                 </div>
 
                 {importModal.isOpen && (
-                    <BulkImportModal
-                        isOpen={importModal.isOpen}
+                    <ColumnMappingWizard
                         onClose={() => setImportModal({ ...importModal, isOpen: false })}
-                        onImportSuccess={handleImportSuccess}
+                        onUploadSuccess={handleImportSuccess}
                         type={importModal.type}
                     />
                 )}

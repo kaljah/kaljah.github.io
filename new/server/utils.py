@@ -13,7 +13,7 @@ def get_allowed_facility_ids(user):
     """
     if not user:
         return []
-    if user.role in ['admin', 'it_admin', 'superuser']:
+    if user.role in ['admin', 'it_admin'] or (user.role == 'superuser' and user.location == 'all'):
         return None
         
     # User is tied to a specific location/region

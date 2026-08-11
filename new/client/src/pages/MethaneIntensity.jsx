@@ -79,7 +79,8 @@ const MethaneIntensity = () => {
                     api.get('/filters/available'),
                     api.get('/auth/settings').catch(() => ({ data: {} }))
                 ]);
-                setFacilities(facRes.data);
+                const facilitiesData = Array.isArray(facRes.data) ? facRes.data : (facRes.data?.data || []);
+                setFacilities(facilitiesData);
 
                 if (settingsRes.data) {
                     if (settingsRes.data.ogmp_default_base_year) {
@@ -140,7 +141,7 @@ const MethaneIntensity = () => {
             }
 
             const res = await api.get(`/dashboard/intensity-stats?${params}`);
-            const data = res.data || [];
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setRegionalData(data);
 
             let tOil = 0, tGasMscf = 0, tGasM3 = 0, tBoe = 0, tFlaringVol = 0, tFlaringEm = 0;
@@ -201,7 +202,8 @@ const MethaneIntensity = () => {
             if (currentRegion && currentRegion !== 'all') params.append('facilityId', currentRegion);
             if (currentSegment && currentSegment !== 'all') params.append('segment', currentSegment);
             const res = await api.get(`/data/ogmp-surveys?${params}`).catch(() => ({ data: [] }));
-            setOgmpSurveys(res.data || []);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setOgmpSurveys(data);
         } catch (error) {
             console.error('OGMP load error:', error);
         }
@@ -253,7 +255,8 @@ const MethaneIntensity = () => {
             }
             params.append('years', years.join(','));
             const res = await api.get(`/dashboard/intensity-trend?${params}`).catch(() => ({ data: [] }));
-            setRawTrendData(res.data || []);
+            const trendData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setRawTrendData(trendData);
         } catch (error) {
             console.error('Trend load error:', error);
         }

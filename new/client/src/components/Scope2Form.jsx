@@ -4,7 +4,7 @@ import CustomDropdown from './CustomDropdown';
 import { useToast } from './Toast';
 import LoadingSpinner from './LoadingSpinner';
 import { formatNumber } from '../utils/formatters';
-import BulkImportModal from './BulkImportModal';
+import ColumnMappingWizard from './ColumnMappingWizard';
 import { Upload, Copy, Trash2 } from 'lucide-react';
 import './ScopeTables.css';
 
@@ -73,7 +73,8 @@ const Scope2Form = () => {
     const loadFacilities = async () => {
         try {
             const res = await api.get('/facilities/');
-            setFacilities(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setFacilities(data);
         } catch (error) {
             console.error('Failed to load regions:', error);
             toast.error('Failed to load regions');
@@ -83,7 +84,8 @@ const Scope2Form = () => {
     const loadGridFactors = async () => {
         try {
             const res = await api.get('/scope2/emission-factors');
-            setGridFactors(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setGridFactors(data);
         } catch (error) {
             console.error('Failed to load grid factors:', error);
         }
@@ -93,7 +95,8 @@ const Scope2Form = () => {
         setLoading(true);
         try {
             const res = await api.get('/scope2');
-            const sorted = (res.data || []).sort((a, b) => b.id - a.id);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            const sorted = data.sort((a, b) => b.id - a.id);
             const start = (currentPage - 1) * RECORDS_PER_PAGE;
             setEntries(sorted.slice(start, start + RECORDS_PER_PAGE));
             setTotalPages(Math.ceil(sorted.length / RECORDS_PER_PAGE));
@@ -230,7 +233,7 @@ const Scope2Form = () => {
 
                 {/* 1. IDENTITY & LOCATION */}
                 <div style={{ marginBottom: '30px' }}>
-                    <h4 className="section-title">1. IDENTITY & LOCATION</h4>
+                    <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
                     <div className="form-grid-4">
                         <div className="input-group">
                             <label>Activity</label>
@@ -265,9 +268,9 @@ const Scope2Form = () => {
                     </div>
                 </div>
 
-                {/* 2. SOURCE DETAILS */}
+                {/* 2. GRID & SOURCE DETAILS */}
                 <div style={{ marginBottom: '30px' }}>
-                    <h4 className="section-title">2. GRID & SOURCE DETAILS</h4>
+                    <h4 className="section-title">2. GRID &amp; SOURCE DETAILS</h4>
                     <div className="form-grid-2">
                         <div className="input-group">
                             <label>Source Type</label>
@@ -363,10 +366,9 @@ const Scope2Form = () => {
             </div>
 
             {importModal.isOpen && (
-                <BulkImportModal
-                    isOpen={importModal.isOpen}
+                <ColumnMappingWizard
                     onClose={() => setImportModal({ ...importModal, isOpen: false })}
-                    onImportSuccess={handleImportSuccess}
+                    onUploadSuccess={handleImportSuccess}
                     type={importModal.type}
                 />
             )}
