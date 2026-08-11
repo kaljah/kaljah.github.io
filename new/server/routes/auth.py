@@ -243,6 +243,22 @@ def login():
 
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        if user:
+            try:
+                log_activity_and_notify(
+                    action='LOGOUT',
+                    record_id=str(user.id),
+                    user=user,
+                    request=request,
+                    entity='User',
+                    details=f"User logged out: {user.email}"
+                )
+            except Exception as e:
+                current_app.logger.error(f"Audit Log Error on logout: {e}")
+                
     session.pop('user_id', None)
     return jsonify({'message': 'Logged out'})
 
