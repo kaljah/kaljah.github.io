@@ -1,54 +1,54 @@
 .chart-wrapper {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .chart-title {
-    margin: 0 0 16px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-primary);
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 /* CustomTooltip */
 .custom-tooltip {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px 16px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .tooltip-label {
-    margin: 0 0 6px 0;
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 600;
+  margin: 0 0 6px 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
 }
 
 .tooltip-value {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1e293b;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
 }
 
 /* Recharts Overrides */
 .recharts-legend-item-text {
-    color: var(--text-primary) !important;
+  color: var(--text-primary) !important;
 }
 
 .recharts-label {
-    fill: #64748b;
-    font-size: 0.75rem;
-    font-weight: 500;
+  fill: #64748b;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .recharts-pie-label-line {
-    stroke: rgba(255, 255, 255, 0.3);
+  stroke: rgba(255, 255, 255, 0.3);
 }

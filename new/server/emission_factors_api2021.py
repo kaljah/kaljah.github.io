@@ -32,7 +32,7 @@ COMBUSTION_FACTORS = {
         "segment": "Upstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5, Table 5-1"
+        "source": "API Compendium 2021 Section 5, Table 5-1",
     },
     "Landfill Gas": {
         "code": "LFG",
@@ -46,7 +46,7 @@ COMBUSTION_FACTORS = {
         "segment": "Midstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Coke Oven Gas": {
         "code": "COG",
@@ -60,7 +60,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Blast Furnace Gas": {
         "code": "BFG",
@@ -74,7 +74,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Propane (Gas)": {
         "code": "LPG_Gas",
@@ -88,7 +88,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Refinery Fuel Gas": {
         "code": "RFG",
@@ -102,9 +102,8 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
-    
     # LIQUID FUELS
     "Marine Diesel Oil": {
         "code": "MDO",
@@ -118,7 +117,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 4, Table 4-14"
+        "source": "API Compendium 2021 Section 4, Table 4-14",
     },
     "Diesel (No. 2 Fuel Oil)": {
         "code": "DSL",
@@ -132,7 +131,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5, Table 5-1"
+        "source": "API Compendium 2021 Section 5, Table 5-1",
     },
     "Residual Fuel Oil (No. 6)": {
         "code": "RFO",
@@ -146,7 +145,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5, Table 5-1"
+        "source": "API Compendium 2021 Section 5, Table 5-1",
     },
     "Kerosene": {
         "code": "Kero",
@@ -160,7 +159,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Motor Gasoline": {
         "code": "GAS",
@@ -174,7 +173,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "mobile_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Jet Fuel": {
         "code": "JET",
@@ -188,7 +187,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "mobile_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Propane (Liquid/LPG)": {
         "code": "LPG_Liq",
@@ -202,7 +201,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Ethane": {
         "code": "Ethane",
@@ -216,7 +215,7 @@ COMBUSTION_FACTORS = {
         "segment": "Midstream",
         "process_category": "stationary_combustion",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Crude Oil": {
         "code": "Crude",
@@ -230,9 +229,8 @@ COMBUSTION_FACTORS = {
         "segment": "Upstream",
         "process_category": "stationary_combustion",
         "type": "liquids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
-    
     # SOLID FUELS
     "Anthracite Coal": {
         "code": "CoalAnth",
@@ -246,7 +244,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Bituminous Coal": {
         "code": "CoalBit",
@@ -260,7 +258,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Sub-Bituminous Coal": {
         "code": "CoalSub",
@@ -274,7 +272,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Lignite Coal": {
         "code": "CoalLig",
@@ -288,7 +286,7 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5"
+        "source": "API Compendium 2021 Section 5",
     },
     "Petroleum Coke": {
         "code": "PetCoke",
@@ -302,8 +300,8 @@ COMBUSTION_FACTORS = {
         "segment": "Downstream",
         "process_category": "stationary_combustion",
         "type": "solids",
-        "source": "API Compendium 2021 Section 5"
-    }
+        "source": "API Compendium 2021 Section 5",
+    },
 }
 
 # FLARING EMISSION FACTORS (Section 5.2)
@@ -321,7 +319,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2, Equations 5-3 & 5-4"
+        "source": "API Compendium 2021 Section 5.2, Equations 5-3 & 5-4",
     },
     "Natural Gas (Flaring - Ground)": {
         "code": "NG_Flare_Ground",
@@ -336,7 +334,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2"
+        "source": "API Compendium 2021 Section 5.2",
     },
     "Natural Gas (Flaring)": {
         "code": "NG_Flare",
@@ -351,7 +349,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2"
+        "source": "API Compendium 2021 Section 5.2",
     },
     "Natural Gas (Flaring - Enclosed)": {
         "code": "NG_Flare_Enc",
@@ -366,7 +364,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2"
+        "source": "API Compendium 2021 Section 5.2",
     },
     "Associated Gas (Flaring)": {
         "code": "AG_Flare",
@@ -381,7 +379,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2"
+        "source": "API Compendium 2021 Section 5.2",
     },
     "Sour Gas (Flaring)": {
         "code": "SG_Flare",
@@ -396,7 +394,7 @@ FLARING_FACTORS = {
         "segment": "Upstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2"
+        "source": "API Compendium 2021 Section 5.2",
     },
     "Refinery Gas (Flaring)": {
         "code": "REF_Flare",
@@ -411,8 +409,8 @@ FLARING_FACTORS = {
         "segment": "Downstream",
         "process_category": "flaring",
         "type": "gases",
-        "source": "API Compendium 2021 Section 5.2, Eq 5-4"
-    }
+        "source": "API Compendium 2021 Section 5.2, Eq 5-4",
+    },
 }
 
 # =============================================================================
@@ -431,7 +429,7 @@ VENTED_FACTORS = {
         "segment": "Upstream",
         "process_category": "venting",
         "type": "gases",
-        "source": "API Compendium 2021 Section 6"
+        "source": "API Compendium 2021 Section 6",
     },
     "Asphalt": {
         "code": "Asphalt",
@@ -443,8 +441,8 @@ VENTED_FACTORS = {
         "unit": "kg/ton",
         "segment": "Downstream",
         "process_category": "asphalt_blowing",
-        "source": "API Compendium 2021 Section 6, Table 6-52"
-    }
+        "source": "API Compendium 2021 Section 6, Table 6-52",
+    },
 }
 
 # CHEMICAL PRODUCTION FACTORS (Section 6, Table 6-167)
@@ -459,7 +457,7 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167"
+        "source": "API Compendium 2021 Section 6, Table 6-167",
     },
     "Carbon Black": {
         "code": "CB_Prod",
@@ -471,7 +469,7 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167"
+        "source": "API Compendium 2021 Section 6, Table 6-167",
     },
     "Ethylene": {
         "code": "ETH_Prod",
@@ -483,7 +481,7 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167"
+        "source": "API Compendium 2021 Section 6, Table 6-167",
     },
     "Ethylene Dichloride": {
         "code": "EDC_Prod",
@@ -495,7 +493,7 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167"
+        "source": "API Compendium 2021 Section 6, Table 6-167",
     },
     "Ethylene Oxide": {
         "code": "ETO_Prod",
@@ -507,7 +505,7 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167"
+        "source": "API Compendium 2021 Section 6, Table 6-167",
     },
     "Methanol": {
         "code": "MEOH_Prod",
@@ -519,8 +517,8 @@ CHEMICAL_PRODUCTION_FACTORS = {
         "usage": ["chemical_production"],
         "segment": "Downstream",
         "process_category": "chemical_production",
-        "source": "API Compendium 2021 Section 6, Table 6-167"
-    }
+        "source": "API Compendium 2021 Section 6, Table 6-167",
+    },
 }
 
 # N₂O EMISSION FACTORS (Section 6, pg 407)
@@ -535,7 +533,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["nitric_acid_production"],
         "segment": "Downstream",
         "process_category": "nitric_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407"
+        "source": "API Compendium 2021 Section 6, pg 407",
     },
     "Nitric Acid - Without NSCR": {
         "code": "HNO3_NoNSCR",
@@ -547,7 +545,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["nitric_acid_production"],
         "segment": "Downstream",
         "process_category": "nitric_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407"
+        "source": "API Compendium 2021 Section 6, pg 407",
     },
     "Adipic Acid - Thermal Abatement": {
         "code": "AA_Thermal",
@@ -559,7 +557,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407"
+        "source": "API Compendium 2021 Section 6, pg 407",
     },
     "Adipic Acid - Catalytic Abatement": {
         "code": "AA_Catalytic",
@@ -571,7 +569,7 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407"
+        "source": "API Compendium 2021 Section 6, pg 407",
     },
     "Adipic Acid - Uncontrolled": {
         "code": "AA_Uncontrolled",
@@ -583,8 +581,8 @@ N2O_PRODUCTION_FACTORS = {
         "usage": ["adipic_acid_production"],
         "segment": "Downstream",
         "process_category": "adipic_acid_production",
-        "source": "API Compendium 2021 Section 6, pg 407"
-    }
+        "source": "API Compendium 2021 Section 6, pg 407",
+    },
 }
 
 # Merge all API factors
@@ -593,11 +591,11 @@ API_FACTORS = {
     **FLARING_FACTORS,
     **VENTED_FACTORS,
     **CHEMICAL_PRODUCTION_FACTORS,
-    **N2O_PRODUCTION_FACTORS
+    **N2O_PRODUCTION_FACTORS,
 }
 
 # =============================================================================
-# SECTION 7: FUGITIVE & EQUIPMENT EMISSION FACTORS  
+# SECTION 7: FUGITIVE & EQUIPMENT EMISSION FACTORS
 # =============================================================================
 
 EQUIPMENT_FACTORS = {
@@ -614,7 +612,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "pneumatic_devices",
         "type": "equipment",
         "description": "Continuous bleed pneumatic controller in gas processing",
-        "source": "API Compendium 2021 Section 6, Table 6-34"
+        "source": "API Compendium 2021 Section 6, Table 6-34",
     },
     "Pneumatic Controller - Low Bleed (<6 scfh)": {
         "code": "LowBleed",
@@ -628,7 +626,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "pneumatic_devices",
         "type": "equipment",
         "description": "Pneumatic/hydraulic valve operator in gas processing",
-        "source": "API Compendium 2021 Section 6, Table 6-34"
+        "source": "API Compendium 2021 Section 6, Table 6-34",
     },
     "Pneumatic Controller - Intermittent": {
         "code": "Intermittent",
@@ -642,7 +640,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "pneumatic_devices",
         "type": "equipment",
         "description": "Intermittent vent controller in transmission/storage",
-        "source": "API Compendium 2021 Section 6, Table 6-42"
+        "source": "API Compendium 2021 Section 6, Table 6-42",
     },
     "Pneumatic Controller - Continuous Vent (T&S)": {
         "code": "ContinuousVentTS",
@@ -656,9 +654,8 @@ EQUIPMENT_FACTORS = {
         "process_category": "pneumatic_devices",
         "type": "equipment",
         "description": "Continuous vent controller in transmission/storage",
-        "source": "API Compendium 2021 Section 6, Table 6-42"
+        "source": "API Compendium 2021 Section 6, Table 6-42",
     },
-    
     # ========== STORAGE TANKS (TANK FLASHING) ==========
     "Tank - Crude Oil (Small, ≤10 bbl/d)": {
         "code": "TankCrudeSmall",
@@ -672,7 +669,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Crude oil flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4"
+        "source": "API Compendium 2021 Section 6, Table 6-4",
     },
     "Tank - Crude Oil (Large, >10 bbl/d)": {
         "code": "TankCrudeLarge",
@@ -686,7 +683,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Crude oil flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4"
+        "source": "API Compendium 2021 Section 6, Table 6-4",
     },
     "Tank - Production Condensate (Small, ≤10 bbl/d)": {
         "code": "TankProdSmall",
@@ -700,7 +697,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Production condensate flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4"
+        "source": "API Compendium 2021 Section 6, Table 6-4",
     },
     "Tank - Production Condensate (Large, >10 bbl/d)": {
         "code": "TankProdLarge",
@@ -714,7 +711,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Production condensate flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4"
+        "source": "API Compendium 2021 Section 6, Table 6-4",
     },
     "Tank - Gas-Well Condensate (Small, ≤10 bbl/d)": {
         "code": "TankGasSmall",
@@ -728,7 +725,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Gas-well condensate flashing, small tank (≤ 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4"
+        "source": "API Compendium 2021 Section 6, Table 6-4",
     },
     "Tank - Gas-Well Condensate (Large, >10 bbl/d)": {
         "code": "TankGasLarge",
@@ -742,9 +739,8 @@ EQUIPMENT_FACTORS = {
         "process_category": "storage_tanks",
         "type": "equipment",
         "description": "Gas-well condensate flashing, large tank (> 10 bbl/d)",
-        "source": "API Compendium 2021 Section 6, Table 6-4"
+        "source": "API Compendium 2021 Section 6, Table 6-4",
     },
-    
     # ========== DRILLING ==========
     "Drilling - Mud Degassing (Water Based)": {
         "code": "MudWater",
@@ -758,7 +754,7 @@ EQUIPMENT_FACTORS = {
         "process_category": "drilling",
         "type": "equipment",
         "description": "Drilling mud degassing - water based",
-        "source": "API Compendium 2021 Section 6.2"
+        "source": "API Compendium 2021 Section 6.2",
     },
     "Drilling - Mud Degassing (Oil Based)": {
         "code": "MudOil",
@@ -772,9 +768,8 @@ EQUIPMENT_FACTORS = {
         "process_category": "drilling",
         "type": "equipment",
         "description": "Drilling mud degassing - oil based (diesel)",
-        "source": "API Compendium 2021 Section 6.2"
+        "source": "API Compendium 2021 Section 6.2",
     },
-    
     # ========== DEHYDRATORS ==========
     "Dehydrator - Glycol (Uncontrolled)": {
         "code": "DehyUncont",
@@ -788,14 +783,13 @@ EQUIPMENT_FACTORS = {
         "process_category": "dehydrator",
         "type": "equipment",
         "description": "Glycol dehydrator venting (uncontrolled)",
-        "source": "API Compendium 2021 Section 6.11"
+        "source": "API Compendium 2021 Section 6.11",
     },
-    
     # ========== UPSTREAM: OIL WELLHEADS (Table 7-9) ==========
     "Wellhead - Oil (Heavy Crude)": {
         "code": "WellOilHeavy",
         "type": "wellhead",
-        "ch4": 6.63E-07,  # tonne CH₄/well/hr
+        "ch4": 6.63e-07,  # tonne CH₄/well/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -804,12 +798,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "wellhead_fugitive",
         "type": "equipment",
         "description": "Oil wellhead fugitive emissions - heavy crude (API < 20°)",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-9"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
     },
     "Wellhead - Oil (Light Crude)": {
         "code": "WellOilLight",
         "type": "wellhead",
-        "ch4": 1.56E-05,  # tonne CH₄/well/hr
+        "ch4": 1.56e-05,  # tonne CH₄/well/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -818,12 +812,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "wellhead_fugitive",
         "type": "equipment",
         "description": "Oil wellhead fugitive emissions - light crude (API ≥ 20°)",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-9"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
     },
     "Wellhead - Gas": {
         "code": "WellGas",
         "type": "wellhead",
-        "ch4": 1.80E-05,  # tonne CH₄/well/hr  
+        "ch4": 1.80e-05,  # tonne CH₄/well/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.257, "n2o": 0},
@@ -832,14 +826,13 @@ EQUIPMENT_FACTORS = {
         "process_category": "wellhead_fugitive",
         "type": "equipment",
         "description": "Gas wellhead fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-10"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
     },
-    
     # ========== UPSTREAM: SEPARATORS (Tables 7-9, 7-10) ==========
     "Separator - Heavy Crude": {
         "code": "SepHeavy",
         "type": "separator",
-        "ch4": 6.79E-07,  # tonne CH₄/separator/hr
+        "ch4": 6.79e-07,  # tonne CH₄/separator/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -848,12 +841,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "separator_fugitive",
         "type": "equipment",
         "description": "Separator fugitive emissions - heavy crude",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-9"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
     },
     "Separator - Light Crude": {
         "code": "SepLight",
         "type": "separator",
-        "ch4": 4.10E-05,  # tonne CH₄/separator/hr
+        "ch4": 4.10e-05,  # tonne CH₄/separator/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -862,12 +855,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "separator_fugitive",
         "type": "equipment",
         "description": "Separator fugitive emissions - light crude",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-9"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
     },
     "Separator - Gas Production": {
         "code": "SepGas",
         "type": "separator",
-        "ch4": 4.42E-05,  # tonne CH₄/separator/hr
+        "ch4": 4.42e-05,  # tonne CH₄/separator/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.879, "n2o": 0},
@@ -875,14 +868,13 @@ EQUIPMENT_FACTORS = {
         "segment": "Upstream",
         "process_category": "separator_fugitive",
         "description": "Separator fugitive emissions - gas production",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-10"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
     },
-    
     # ========== UPSTREAM: COMPRESSORS (Tables 7-9, 7-10) ==========
     "Compressor - Small Reciprocating": {
         "code": "CompSmall",
         "type": "compressor",
-        "ch4": 3.69E-05,  # tonne CH₄/compressor/hr (light crude)
+        "ch4": 3.69e-05,  # tonne CH₄/compressor/hr (light crude)
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 1.00, "n2o": 0},
@@ -891,12 +883,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "compressor_fugitive",
         "type": "equipment",
         "description": "Small reciprocating compressor fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-9"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
     },
     "Compressor - Large Reciprocating": {
         "code": "CompLarge",
         "type": "compressor",
-        "ch4": 1.31E-02,  # tonne CH₄/compressor/hr (light crude)
+        "ch4": 1.31e-02,  # tonne CH₄/compressor/hr (light crude)
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 1.00, "n2o": 0},
@@ -905,12 +897,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "compressor_fugitive",
         "type": "equipment",
         "description": "Large reciprocating compressor fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-9"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-9",
     },
     "Compressor - Gas Production Small Recip": {
         "code": "CompGasSmall",
         "type": "compressor",
-        "ch4": 2.12E-04,  # tonne CH₄/compressor/hr
+        "ch4": 2.12e-04,  # tonne CH₄/compressor/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 1.27, "n2o": 0},
@@ -919,28 +911,27 @@ EQUIPMENT_FACTORS = {
         "process_category": "compressor_fugitive",
         "type": "equipment",
         "description": "Small reciprocating gas compressor in production",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-10"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
     },
     "Compressor - Gas Production Large Recip": {
         "code": "CompGasLarge",
         "type": "compressor",
-        "ch4": 1.22E-02,  # tonne CH₄/compressor/hr
+        "ch4": 1.22e-02,  # tonne CH₄/compressor/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 2.02, "n2o": 0},
         "unit": "tonne CH₄/compressor/hr",
-        "segment": "Upstream", 
+        "segment": "Upstream",
         "process_category": "compressor_fugitive",
         "type": "equipment",
         "description": "Large reciprocating gas compressor in production",
-        "source": "API Compendium 2021 Section 7.2.2, Table 7-10"
+        "source": "API Compendium 2021 Section 7.2.2, Table 7-10",
     },
-    
     # ========== MIDSTREAM: GATHERING & BOOSTING (Table 7-29) ==========
     "Gathering - AGRU": {
         "code": "GathAGRU",
         "type": "equipment",
-        "ch4": 6.83E-05,  # tonne CH₄/unit/hr
+        "ch4": 6.83e-05,  # tonne CH₄/unit/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.46, "n2o": 0},
@@ -949,12 +940,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "gathering_boosting",
         "type": "equipment",
         "description": "AGRU fugitive emissions in gathering",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-29"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
     },
     "Gathering - Compressor": {
         "code": "GathComp",
         "type": "equipment",
-        "ch4": 1.84E-03,  # tonne CH₄/unit/hr
+        "ch4": 1.84e-03,  # tonne CH₄/unit/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.14, "n2o": 0},
@@ -963,12 +954,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "gathering_boosting",
         "type": "equipment",
         "description": "Compressor fugitive emissions in gathering",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-29"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
     },
     "Gathering - Dehydrator": {
         "code": "GathDehy",
         "type": "equipment",
-        "ch4": 5.69E-05,  # tonne CH₄/unit/hr
+        "ch4": 5.69e-05,  # tonne CH₄/unit/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.13, "n2o": 0},
@@ -977,12 +968,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "gathering_boosting",
         "type": "equipment",
         "description": "Dehydrator fugitive emissions in gathering",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-29"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
     },
     "Gathering - Separator": {
         "code": "GathSep",
         "type": "equipment",
-        "ch4": 1.05E-05,  # tonne CH₄/unit/hr
+        "ch4": 1.05e-05,  # tonne CH₄/unit/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.12, "n2o": 0},
@@ -991,12 +982,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "gathering_boosting",
         "type": "equipment",
         "description": "Separator fugitive emissions in gathering",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-29"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
     },
     "Gathering - Tank": {
         "code": "GathTank",
         "type": "equipment",
-        "ch4": 6.4E-04,  # tonne CH₄/unit/hr
+        "ch4": 6.4e-04,  # tonne CH₄/unit/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.099, "n2o": 0},
@@ -1005,14 +996,13 @@ EQUIPMENT_FACTORS = {
         "process_category": "gathering_boosting",
         "type": "equipment",
         "description": "Tank fugitive emissions in gathering",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-29"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-29",
     },
-    
     # ========== MIDSTREAM: COMPONENT-LEVEL FUGITIVE (Table 7-30) ==========
     "Component - Connector (Non-Compressor)": {
         "code": "ConnNonComp",
         "type": "component",
-        "ch4": 9.79E-07,  # tonne CH₄/hr/source
+        "ch4": 9.79e-07,  # tonne CH₄/hr/source
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
@@ -1021,12 +1011,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "fugitive_component",
         "type": "equipment",
         "description": "Connector fugitive emissions (non-compressor area)",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-30"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
     },
     "Component - Block Valve": {
         "code": "BlockValve",
         "type": "component",
-        "ch4": 4.36E-06,  # tonne CH₄/hr/source
+        "ch4": 4.36e-06,  # tonne CH₄/hr/source
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
@@ -1035,12 +1025,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "fugitive_component",
         "type": "equipment",
         "description": "Block valve fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-30"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
     },
     "Component - Control Valve": {
         "code": "ControlValve",
         "type": "component",
-        "ch4": 1.11E-05,  # tonne CH₄/hr/source
+        "ch4": 1.11e-05,  # tonne CH₄/hr/source
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
@@ -1049,12 +1039,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "fugitive_component",
         "type": "equipment",
         "description": "Control valve fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-30"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
     },
     "Component - Pressure Relief Valve": {
         "code": "PRV",
         "type": "component",
-        "ch4": 1.39E-07,  # tonne CH₄/hr/source
+        "ch4": 1.39e-07,  # tonne CH₄/hr/source
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
@@ -1063,12 +1053,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "fugitive_component",
         "type": "equipment",
         "description": "Pressure relief valve fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-30"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
     },
     "Component - Pressure Regulator": {
         "code": "Regulator",
         "type": "component",
-        "ch4": 1.87E-06,  # tonne CH₄/hr/source
+        "ch4": 1.87e-06,  # tonne CH₄/hr/source
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
@@ -1077,12 +1067,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "fugitive_component",
         "type": "equipment",
         "description": "Pressure regulator fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-30"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
     },
     "Component - Compressor Seal": {
         "code": "CompSeal",
         "type": "component",
-        "ch4": 1.54E-04,  # tonne CH₄/hr/source
+        "ch4": 1.54e-04,  # tonne CH₄/hr/source
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0.30, "ch4": 0.30, "n2o": 0.30},
@@ -1091,14 +1081,13 @@ EQUIPMENT_FACTORS = {
         "process_category": "fugitive_component",
         "type": "equipment",
         "description": "Compressor seal fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2.3, Table 7-30"
+        "source": "API Compendium 2021 Section 7.2.3, Table 7-30",
     },
-    
     # ========== MIDSTREAM: GAS PROCESSING (Table 7-35) ==========
     "Processing - Reciprocating Compressor": {
         "code": "ProcRecipComp",
         "type": "compressor",
-        "ch4": 8.95E-03,  # tonne CH₄/compressor/hr
+        "ch4": 8.95e-03,  # tonne CH₄/compressor/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.952, "n2o": 0},
@@ -1107,12 +1096,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "gas_processing",
         "type": "equipment",
         "description": "Reciprocating compressor in gas processing",
-        "source": "API Compendium 2021 Section 7.3, Table 7-35"
+        "source": "API Compendium 2021 Section 7.3, Table 7-35",
     },
     "Processing - Centrifugal Compressor": {
         "code": "ProcCentComp",
         "type": "compressor",
-        "ch4": 1.70E-02,  # tonne CH₄/compressor/hr
+        "ch4": 1.70e-02,  # tonne CH₄/compressor/hr
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.518, "n2o": 0},
@@ -1121,14 +1110,13 @@ EQUIPMENT_FACTORS = {
         "process_category": "gas_processing",
         "type": "equipment",
         "description": "Centrifugal compressor in gas processing",
-        "source": "API Compendium 2021 Section 7.3, Table 7-35"
+        "source": "API Compendium 2021 Section 7.3, Table 7-35",
     },
-    
     # ========== DOWNSTREAM: LNG OPERATIONS (Table 7-76) ==========
     "LNG - Storage Station": {
         "code": "LNGStorage",
         "type": "facility",
-        "ch4": 4.39E-04,  # tonne CH₄/facility
+        "ch4": 4.39e-04,  # tonne CH₄/facility
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1137,12 +1125,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "lng_operations",
         "type": "equipment",
         "description": "LNG storage station fugitive emissions",
-        "source": "API Compendium 2021 Section 7.3.6, Table 7-76"
+        "source": "API Compendium 2021 Section 7.3.6, Table 7-76",
     },
     "LNG - Import Terminal": {
         "code": "LNGImport",
         "type": "facility",
-        "ch4": 3.29E-04,  # tonne CH₄/facility
+        "ch4": 3.29e-04,  # tonne CH₄/facility
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1151,12 +1139,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "lng_operations",
         "type": "equipment",
         "description": "LNG import terminal fugitive emissions",
-        "source": "API Compendium 2021 Section 7.3.6, Table 7-76"
+        "source": "API Compendium 2021 Section 7.3.6, Table 7-76",
     },
     "LNG - Export Terminal": {
         "code": "LNGExport",
         "type": "facility",
-        "ch4": 1.26E-03,  # tonne CH₄/facility
+        "ch4": 1.26e-03,  # tonne CH₄/facility
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1165,14 +1153,13 @@ EQUIPMENT_FACTORS = {
         "process_category": "lng_operations",
         "type": "equipment",
         "description": "LNG export terminal fugitive emissions",
-        "source": "API Compendium 2021 Section 7.3.6, Table 7-76"
+        "source": "API Compendium 2021 Section 7.3.6, Table 7-76",
     },
-    
     # ========== DOWNSTREAM: REFINERY GAS SYSTEMS (Table 7-80) ==========
     "Refinery - Fuel Gas System (50-99k bbl/day)": {
         "code": "RefFuelGasSmall",
         "type": "facility",
-        "ch4": 3.75E-04,  # tonnes CH₄/10³ bbl feedstock
+        "ch4": 3.75e-04,  # tonnes CH₄/10³ bbl feedstock
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1181,12 +1168,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "refinery_fugitive",
         "type": "equipment",
         "description": "Refinery fuel gas system (50,000-99,000 bbl/day)",
-        "source": "API Compendium 2021 Section 7.4.1, Table 7-80"
+        "source": "API Compendium 2021 Section 7.4.1, Table 7-80",
     },
     "Refinery - Fuel Gas System (100-199k bbl/day)": {
         "code": "RefFuelGasLarge",
         "type": "facility",
-        "ch4": 1.41E-03,  # tonnes CH₄/10³ bbl feedstock
+        "ch4": 1.41e-03,  # tonnes CH₄/10³ bbl feedstock
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1195,14 +1182,13 @@ EQUIPMENT_FACTORS = {
         "process_category": "refinery_fugitive",
         "type": "equipment",
         "description": "Refinery fuel gas system (100,000-199,000 bbl/day)",
-        "source": "API Compendium 2021 Section 7.4.1, Table 7-80"
+        "source": "API Compendium 2021 Section 7.4.1, Table 7-80",
     },
-    
     # ========== OFFSHORE PRODUCTION (Table 7-3) ==========
     "Offshore - Oil Production (Facility)": {
         "code": "OffshoreOil",
         "type": "facility",
-        "ch4": 3.86E-06,  # tonne CH₄/bbl produced
+        "ch4": 3.86e-06,  # tonne CH₄/bbl produced
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1211,12 +1197,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "wellhead_fugitive",
         "type": "equipment",
         "description": "Offshore oil production facility-level fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2, Table 7-3"
+        "source": "API Compendium 2021 Section 7.2, Table 7-3",
     },
     "Offshore - Gas Production (Facility)": {
         "code": "OffshoreGas",
         "type": "facility",
-        "ch4": 1.040E-02,  # tonne CH₄/10⁶ scf produced
+        "ch4": 1.040e-02,  # tonne CH₄/10⁶ scf produced
         "co2": 0,
         "n2o": 0,
         "uncertainty": {"co2": 0, "ch4": 0.30, "n2o": 0},
@@ -1225,15 +1211,12 @@ EQUIPMENT_FACTORS = {
         "process_category": "wellhead_fugitive",
         "type": "equipment",
         "description": "Offshore gas production facility-level fugitive emissions",
-        "source": "API Compendium 2021 Section 7.2, Table 7-3"
-    }
+        "source": "API Compendium 2021 Section 7.2, Table 7-3",
+    },
 }
 
 # Merge all emission factors
-ALL_EMISSION_FACTORS = {
-    **API_FACTORS,
-    **EQUIPMENT_FACTORS
-}
+ALL_EMISSION_FACTORS = {**API_FACTORS, **EQUIPMENT_FACTORS}
 
 # Correlation equations for screening-based fugitive estimation (Section 7.3.1.6)
 CORRELATION_EQUATIONS = {
@@ -1244,7 +1227,7 @@ CORRELATION_EQUATIONS = {
         "pegged_10k": 0.064,  # kg/hr
         "pegged_100k": 0.11,
         "description": "Valves in gas service",
-        "unit": "kg/hr/component"
+        "unit": "kg/hr/component",
     },
     "light_liquid_valve": {
         "A": 6.41e-6,
@@ -1253,7 +1236,7 @@ CORRELATION_EQUATIONS = {
         "pegged_10k": 0.074,
         "pegged_100k": 0.15,
         "description": "Valves in light liquid service",
-        "unit": "kg/hr/component"
+        "unit": "kg/hr/component",
     },
     "light_liquid_pump": {
         "A": 5.03e-5,
@@ -1262,7 +1245,7 @@ CORRELATION_EQUATIONS = {
         "pegged_10k": 0.16,
         "pegged_100k": 0.68,
         "description": "Pump seals in light liquid service",
-        "unit": "kg/hr/component"
+        "unit": "kg/hr/component",
     },
     "connector": {
         "A": 1.53e-6,
@@ -1271,7 +1254,7 @@ CORRELATION_EQUATIONS = {
         "pegged_10k": 0.028,
         "pegged_100k": 0.030,
         "description": "Connectors in gas service",
-        "unit": "kg/hr/component"
+        "unit": "kg/hr/component",
     },
     "flange": {
         "A": 4.61e-6,
@@ -1280,7 +1263,7 @@ CORRELATION_EQUATIONS = {
         "pegged_10k": 0.085,
         "pegged_100k": 0.089,
         "description": "Flanges in gas service",
-        "unit": "kg/hr/component"
+        "unit": "kg/hr/component",
     },
     "open_ended_line": {
         "A": 2.20e-6,
@@ -1289,7 +1272,7 @@ CORRELATION_EQUATIONS = {
         "pegged_10k": 0.012,
         "pegged_100k": 0.014,
         "description": "Open-ended lines in gas service",
-        "unit": "kg/hr/component"
+        "unit": "kg/hr/component",
     },
     "other": {
         "A": 1.36e-5,
@@ -1298,18 +1281,19 @@ CORRELATION_EQUATIONS = {
         "pegged_10k": 0.073,
         "pegged_100k": 0.11,
         "description": "Other components in gas service",
-        "unit": "kg/hr/component"
-    }
+        "unit": "kg/hr/component",
+    },
 }
+
 
 # Helper functions for emission factor access
 def get_factor_by_segment(segment):
     """
     Returns all emission factors applicable to the given segment.
-    
+
     Args:
         segment (str): One of 'Upstream', 'Midstream', 'Downstream'
-    
+
     Returns:
         dict: Filtered emission factors dictionary
     """
@@ -1319,13 +1303,14 @@ def get_factor_by_segment(segment):
         if factor_data.get("segment") == segment
     }
 
+
 def get_factor_by_process_category(process_category):
     """
     Returns all emission factors for the given process category.
-    
+
     Args:
         process_category (str): Process category ID
-    
+
     Returns:
         dict: Filtered emission factors dictionary
     """
@@ -1335,20 +1320,23 @@ def get_factor_by_process_category(process_category):
         if factor_data.get("process_category") == process_category
     }
 
+
 def get_factors_by_segment_and_category(segment, process_category):
     """
     Returns all emission factors for a specific segment and process category.
-    
+
     Args:
         segment (str): One of 'Upstream', 'Midstream', 'Downstream'
         process_category (str): Process category ID
-    
+
     Returns:
         dict: Filtered emission factors dictionary
     """
     return {
         factor_name: factor_data
         for factor_name, factor_data in ALL_EMISSION_FACTORS.items()
-        if (factor_data.get("segment") == segment and 
-            factor_data.get("process_category") == process_category)
+        if (
+            factor_data.get("segment") == segment
+            and factor_data.get("process_category") == process_category
+        )
     }

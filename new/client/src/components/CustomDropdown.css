@@ -1,105 +1,105 @@
 .custom-dropdown {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .dropdown-selected {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 14px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.2s;
-    font-size: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+  font-size: 0.9rem;
 }
 
 .dropdown-selected:hover {
-    border-color: var(--accent-color);
-    background: var(--bg-hover);
+  border-color: var(--accent-color);
+  background: var(--bg-hover);
 }
 
 .dropdown-selected svg {
-    transition: transform 0.2s;
-    opacity: 0.5;
+  transition: transform 0.2s;
+  opacity: 0.5;
 }
 
 .custom-dropdown.open .dropdown-selected svg {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .dropdown-options {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    max-height: 280px;
-    overflow-y: auto;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  max-height: 280px;
+  overflow-y: auto;
 }
 
 .dropdown-option {
-    padding: 10px 14px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    transition: background 0.15s;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  transition: background 0.15s;
 }
 
 .dropdown-option:hover {
-    background: var(--bg-hover);
+  background: var(--bg-hover);
 }
 
 .dropdown-option.selected {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--accent-color);
-    font-weight: 600;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-color);
+  font-weight: 600;
 }
 
 .dropdown-options::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .dropdown-options::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
 }
 
 .dropdown-options::-webkit-scrollbar-thumb {
-    background: rgba(16, 185, 129, 0.3);
-    border-radius: 4px;
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 4px;
 }
 
 .dropdown-options::-webkit-scrollbar-thumb:hover {
-    background: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.5);
 }
 
 /* Region-Field Styling - ENSURE THIS IS PRESENT */
 .sub-label {
-    font-size: 0.72rem !important;
-    color: #94a3b8 !important; /* Slightly lighter grey */
-    font-weight: 500 !important;
-    display: inline-block;
-    margin-left: 2px;
+  font-size: 0.72rem !important;
+  color: #94a3b8 !important; /* Slightly lighter grey */
+  font-weight: 500 !important;
+  display: inline-block;
+  margin-left: 2px;
 }
 
 .selected-with-sub,
 .option-with-sub {
-    display: flex;
-    align-items: center;
-    gap: 2px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .display-text {
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -10,6 +10,5 @@ db = SQLAlchemy()
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=[],
-    storage_uri=os.environ.get('RATELIMIT_STORAGE_URI', 'memory://')
+    storage_uri=os.environ.get("RATELIMIT_STORAGE_URI", "memory://"),
 )
-

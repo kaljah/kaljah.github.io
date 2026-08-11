@@ -1,187 +1,187 @@
 .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
 .field-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .required-mark {
-    color: #ef4444;
-    font-size: 0.875rem;
+  color: #ef4444;
+  font-size: 0.875rem;
 }
 
 /* Input Fields */
 .field-input,
 .field-select,
 .field-textarea {
-    padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    outline: none;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
 }
 
 .field-input:focus,
 .field-select:focus,
 .field-textarea:focus {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .field-input:disabled,
 .field-select:disabled,
 .field-textarea:disabled {
-    background: rgba(255, 255, 255, 0.03);
-    cursor: not-allowed;
-    opacity: 0.6;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .field-error {
-    border-color: #ef4444 !important;
+  border-color: #ef4444 !important;
 }
 
 .field-error:focus {
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
 
 .field-textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-    line-height: 1.5;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  line-height: 1.5;
 }
 
 .field-select {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 36px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
 .field-select option {
-    background: #1a1a1a;
-    color: var(--text-primary);
-    padding: 8px;
+  background: #1a1a1a;
+  color: var(--text-primary);
+  padding: 8px;
 }
 
 .field-select option:disabled {
-    color: var(--text-secondary);
-    font-weight: 600;
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* Checkbox */
 .checkbox-field {
-    margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .field-checkbox {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: var(--accent-color);
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--accent-color);
 }
 
 .field-checkbox:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Radio Group */
 .radio-group {
-    display: flex;
-    gap: 16px;
+  display: flex;
+  gap: 16px;
 }
 
 .radio-vertical {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .radio-horizontal {
-    flex-direction: row;
-    flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .radio-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .field-radio {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--accent-color);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent-color);
 }
 
 .field-radio:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Helper & Error Text */
 .error-text {
-    font-size: 0.75rem;
-    color: #ef4444;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .error-text::before {
-    content: '⚠';
-    font-size: 0.875rem;
+  content: "⚠";
+  font-size: 0.875rem;
 }
 
 .helper-text {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
 }
 
 /* Placeholder Styling */
 .field-input::placeholder,
 .field-textarea::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 /* Number Input Arrows */
 .field-input[type="number"]::-webkit-inner-spin-button,
 .field-input[type="number"]::-webkit-outer-spin-button {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 /* Date Input */
 .field-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.7);
-    cursor: pointer;
+  filter: invert(0.7);
+  cursor: pointer;
 }
