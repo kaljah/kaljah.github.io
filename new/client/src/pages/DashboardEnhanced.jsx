@@ -95,8 +95,13 @@ const DashboardEnhanced = () => {
                     api.get('/facilities'),
                     api.get('/filters/available')
                 ]);
-                setFacilities(facRes.data);
-                setAvailableFilters(filterRes.data);
+                const facilitiesData = Array.isArray(facRes.data) ? facRes.data : (facRes.data?.data || []);
+                setFacilities(facilitiesData);
+                setAvailableFilters({
+                    years: Array.isArray(filterRes.data?.years) ? filterRes.data.years : [],
+                    regions: Array.isArray(filterRes.data?.regions) ? filterRes.data.regions : [],
+                    segments: Array.isArray(filterRes.data?.segments) ? filterRes.data.segments : []
+                });
 
                 // Set default year to 'all' (explicitly, though it initializes to 'all')
                 // if (filterRes.data.years?.length > 0) {
@@ -241,7 +246,7 @@ const DashboardEnhanced = () => {
             if (currentYear !== 'all') {
                 const cy = parseInt(currentYear);
                 const py = cy - 1;
-                
+
                 // BUG FIX: Calculate aggregate emissions dynamically from summaryData to support Compare Mode
                 // because yearlyTrend uses facility names instead of 'emissions' key when in Compare Mode.
                 let cyEmissions = 0, pyEmissions = 0;
@@ -429,10 +434,10 @@ const DashboardEnhanced = () => {
     // Palette: one distinct color per activity
     const ACTIVITY_PALETTE = ['#f59e0b', '#3b82f6', '#10b981', '#6366f1', '#ef4444', '#ec4899', '#14b8a6', '#a855f7'];
     const ACTIVITY_COLOR_MAP = {
-        'E&P (Upstream)':       '#f59e0b',  // amber
-        'LQS (Liquefaction)':   '#3b82f6',  // blue
-        'RPC (Refining)':       '#10b981',  // green
-        'TRC (Transport)':      '#6366f1',  // indigo
+        'E&P (Upstream)': '#f59e0b',  // amber
+        'LQS (Liquefaction)': '#3b82f6',  // blue
+        'RPC (Refining)': '#10b981',  // green
+        'TRC (Transport)': '#6366f1',  // indigo
     };
 
     const activityChartData = useMemo(() => {
@@ -695,7 +700,7 @@ const DashboardEnhanced = () => {
                 {/* Categorical Breakdown Cards */}
 
                 <div className={`card categorical-card ${categoricalCollapsed ? 'collapsed-card' : ''}`}>
-                    <div 
+                    <div
                         className="card-header-row clickable-card-header"
                         onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
                         style={{ cursor: 'pointer', userSelect: 'none', marginBottom: categoricalCollapsed ? '0' : '24px' }}
@@ -744,7 +749,7 @@ const DashboardEnhanced = () => {
                 <div className="main-dashboard-grid">
                     <div className="detailed-breakdown-section">
                         <div className={`card detailed-table-card ${detailedBreakdownCollapsed ? 'collapsed-card' : ''}`}>
-                            <div 
+                            <div
                                 className="table-header-row clickable-card-header"
                                 onClick={() => setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)}
                                 style={{ cursor: 'pointer', userSelect: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}

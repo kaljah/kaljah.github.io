@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
 import CustomDropdown from '../components/CustomDropdown';
+
+import ColumnMappingWizard from '../components/ColumnMappingWizard';
 import { PROCESS_TYPES } from '../utils/EmissionFactors';
 import { GWP_AR5, BOUNDARY_OPTIONS } from '../constants';
 import { useToast } from '../components/Toast';
 import LoadingSpinner from '../components/LoadingSpinner';
-import BulkImportModal from '../components/BulkImportModal';
 import ErrorBoundary from '../components/ErrorBoundary'; // FE-03 FIX
 import { useAuth } from '../context/AuthContext';
 import { ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, Database, Shield, Zap, Upload, Target, Calendar, Edit2, Trash2, CheckCircle, AlertCircle, History } from 'lucide-react';
@@ -51,6 +52,13 @@ const ManageDataInner = () => {
         'RPC': ['Refining', 'Petrochemicals'],
         'TRC': ['TRC']
     };
+
+    // Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
+    const NON_OG_ACTIVITIES = [
+        'Steel & Iron (Acier DRI)',
+        'Chemicals & Fertilizers',
+        'Cement & Clinker',
+    ];
 
     const ACTIVITY_LABELS = {
         'EP': 'Exploration & Production',
@@ -238,8 +246,9 @@ const ManageDataInner = () => {
     const fetchFacilities = async () => {
         try {
             const res = await api.get('/facilities/');
-            setFacilities(res.data);
-            const regions = [...new Set(res.data.map(f => f.location))].filter(Boolean);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setFacilities(data);
+            const regions = [...new Set(data.map(f => f.location))].filter(Boolean);
             setAvailableFilters(prev => ({ ...prev, regions }));
         } catch (err) { console.error(err); }
     };
@@ -247,15 +256,17 @@ const ManageDataInner = () => {
     const fetchCustomFactors = async () => {
         try {
             const res = await api.get('/custom-factors/');
-            setCustomFactors(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setCustomFactors(data);
         } catch (err) { console.error(err); }
     };
 
     const fetchProduction = async () => {
         try {
             const res = await api.get('/data/production/');
-            setProductionData(res.data);
-            const years = [...new Set(res.data.map(d => d.year))].sort((a, b) => b - a);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setProductionData(data);
+            const years = [...new Set(data.map(d => d.year))].sort((a, b) => b - a);
             setAvailableFilters(prev => ({ ...prev, years }));
         } catch (err) { console.error(err); }
     };
@@ -263,28 +274,32 @@ const ManageDataInner = () => {
     const fetchSources = async () => {
         try {
             const res = await api.get('/sources/');
-            setSources(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setSources(data);
         } catch (err) { console.error(err); }
     };
 
     const fetchMitigations = async () => {
         try {
             const res = await api.get('/mitigation/');
-            setMitigations(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setMitigations(data);
         } catch (err) { console.error(err); }
     };
 
     const fetchOgmpSurveys = async () => {
         try {
             const res = await api.get('/data/ogmp-surveys');
-            setOgmpSurveys(res.data || []);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setOgmpSurveys(data);
         } catch (err) { console.error(err); }
     };
 
     const fetchGoals = async () => {
         try {
             const res = await api.get('/goals');
-            setGoals(res.data || []);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setGoals(data);
         } catch (err) { console.error('Failed to fetch goals:', err); }
     };
 
@@ -610,6 +625,9 @@ const ManageDataInner = () => {
         const rStatus = o.reconciliation_status || o.reconciliationStatus || '';
         const yr = (o.year || (o.survey_date || o.surveyDate ? new Date(o.survey_date || o.surveyDate).getFullYear() : '')).toString();
 
+        // Only show O&G facilities in the OGMP tab
+        const isOilAndGas = !fac || !NON_OG_ACTIVITIES.includes(fac.activity);
+
         const matchesSearch = sType.toLowerCase().includes(searchTerm.toLowerCase()) ||
             fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             rStatus.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -618,7 +636,7 @@ const ManageDataInner = () => {
         const matchesDivision = filterDivision ? (fac && fac.division === filterDivision) : true;
         const matchesRegion = filterRegion ? (fac && fac.location === filterRegion) : true;
         const matchesYear = filterYear ? yr === filterYear.toString() : true;
-        return matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
+        return isOilAndGas && matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
     });
 
     const getFilteredGoals = () => goals.filter(g => {
@@ -1242,9 +1260,6 @@ const ManageDataInner = () => {
                                 </div>
                                 <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
                                     <button className="action-btn" onClick={handleSaveProduction}>Save Record</button>
-                                    <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'activity' })} style={{ background: '#10b981' }}>
-                                        <Upload size={16} /> Import Activity CSV
-                                    </button>
                                 </div>
                                 <div style={{ display: 'flex', gap: '12px', marginTop: '10px' }}>
                                     <button className="action-btn" onClick={() => exportToCSV(productionData, 'production_data.csv')} style={{ background: 'var(--text-secondary)' }}>Export CSV</button>
@@ -1952,6 +1967,25 @@ const ManageDataInner = () => {
                                     </p>
                                 </div>
 
+                                {/* O&G Scope Notice */}
+                                <div style={{
+                                    display: 'flex', alignItems: 'center', gap: '10px',
+                                    background: '#eff6ff', border: '1px solid #bfdbfe',
+                                    borderRadius: '10px', padding: '12px 16px', marginBottom: '24px'
+                                }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="12" y1="8" x2="12" y2="12" />
+                                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                                    </svg>
+                                    <div>
+                                        <strong style={{ color: '#1d4ed8', fontSize: '0.85rem' }}>Oil & Gas Scope Only</strong>
+                                        <span style={{ color: '#3b82f6', fontSize: '0.83rem', marginLeft: '8px' }}>
+                                            OGMP 2.0 applies exclusively to Oil & Gas operations (Upstream, Midstream, LNG). Heavy industry facilities (Steel, Cement, Chemicals) are not in scope.
+                                        </span>
+                                    </div>
+                                </div>
+
                                 <div className="form-grid-3">
                                     <div className="input-group">
                                         <label>Activity</label>
@@ -1967,8 +2001,8 @@ const ManageDataInner = () => {
                                             }}
                                             className="component-select"
                                         >
-                                            <option value="">-- Select Activity --</option>
-                                            {getAvailableActivities().map(a => (
+                                            <option value="">-- Select Activity (Oil &amp; Gas) --</option>
+                                            {getAvailableActivities().filter(a => !NON_OG_ACTIVITIES.includes(a)).map(a => (
                                                 <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>
                                             ))}
                                         </select>
@@ -2001,9 +2035,13 @@ const ManageDataInner = () => {
                                             onChange={(e) => setOgmpForm({ ...ogmpForm, facility_id: e.target.value })}
                                             className="component-select"
                                         >
-                                            <option value="">-- Select Facility --</option>
+                                            <option value="">-- Select O&amp;G Facility --</option>
                                             {facilities
-                                                .filter(f => (!ogmpForm.activity || f.activity === ogmpForm.activity) && (!ogmpForm.division || f.division === ogmpForm.division))
+                                                .filter(f =>
+                                                    !NON_OG_ACTIVITIES.includes(f.activity) &&
+                                                    (!ogmpForm.activity || f.activity === ogmpForm.activity) &&
+                                                    (!ogmpForm.division || f.division === ogmpForm.division)
+                                                )
                                                 .map(f => (
                                                     <option key={f.id} value={f.id}>{f.name} ({f.location || f.field || 'General'})</option>
                                                 ))
@@ -2212,21 +2250,22 @@ const ManageDataInner = () => {
                 </div>
             </div>
 
-            <BulkImportModal
-                isOpen={importModal.isOpen}
-                onClose={() => setImportModal({ ...importModal, isOpen: false })}
-                type={importModal.type}
-                onImportSuccess={() => {
-                    if (importModal.type === 'sources') fetchSources();
-                    if (importModal.type === 'custom_factors') fetchCustomFactors();
-                    if (importModal.type === 'activity') {
-                        fetchProduction();
-                        toast.success('Activity data imported and emissions calculated!');
-                    }
-                    if (importModal.type === 'production') fetchProduction();
-                    if (importModal.type === 'mitigation') fetchMitigations();
-                }}
-            />
+            {importModal.isOpen && (
+                <ColumnMappingWizard
+                    type={importModal.type}
+                    onClose={() => setImportModal({ ...importModal, isOpen: false })}
+                    onUploadSuccess={() => {
+                        if (importModal.type === 'sources') fetchSources();
+                        if (importModal.type === 'custom_factors') fetchCustomFactors();
+                        if (importModal.type === 'production') fetchProduction();
+                        if (importModal.type === 'mitigation') fetchMitigations();
+                        if (importModal.type === 'activity') {
+                            fetchProduction();
+                            toast.success('Activity data imported and emissions calculated!');
+                        }
+                    }}
+                />
+            )}
         </div >
     );
 };

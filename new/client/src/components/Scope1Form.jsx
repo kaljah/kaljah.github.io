@@ -8,8 +8,7 @@ import './ScopeTables.css';
 import './Scope1Form.css';
 
 // Sub-components
-import BulkImportModal from './BulkImportModal';
-import CsvUploader from './CsvUploader';
+import ColumnMappingWizard from './ColumnMappingWizard';
 import { Upload, Trash2 } from 'lucide-react';
 import CombustionForm from './scope1/CombustionForm';
 import DrillingForm from './scope1/DrillingForm';
@@ -135,7 +134,8 @@ const Scope1Form = () => {
     const loadCustomFactors = async () => {
         try {
             const res = await api.get('/custom-factors');
-            setCustomFactors(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setCustomFactors(data);
         } catch (error) {
             console.error('Failed to load custom factors:', error);
         }
@@ -317,7 +317,8 @@ const Scope1Form = () => {
     const loadFacilities = async () => {
         try {
             const res = await api.get('/facilities/');
-            setFacilities(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setFacilities(data);
         } catch (error) {
             console.error('Failed to load facilities:', error);
             toast.error('Failed to load regions');
@@ -327,7 +328,8 @@ const Scope1Form = () => {
     const loadEmissionSources = async () => {
         try {
             const res = await api.get('/sources');
-            setEmissionSources(res.data);
+            const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            setEmissionSources(data);
         } catch (error) {
             console.error('Failed to load emission sources:', error);
         }
@@ -909,7 +911,7 @@ const Scope1Form = () => {
 
                 {/* 1. IDENTITY & LOCATION */}
                 <div style={{ marginBottom: '30px' }}>
-                    <h4 className="section-title">1. IDENTITY & LOCATION</h4>
+                    <h4 className="section-title">1. IDENTITY &amp; LOCATION</h4>
                     <div className="form-grid-4">
                         <div className="input-group">
                             <label>Activity</label>
@@ -1203,10 +1205,9 @@ const Scope1Form = () => {
             </div>
 
             {importModal.isOpen && (
-                <BulkImportModal
-                    isOpen={importModal.isOpen}
+                <ColumnMappingWizard
                     onClose={() => setImportModal({ ...importModal, isOpen: false })}
-                    onImportSuccess={() => {
+                    onUploadSuccess={() => {
                         loadEntries();
                         toast.success('Records imported and calculated successfully!');
                     }}
@@ -1252,7 +1253,13 @@ const Scope1Form = () => {
                     >
                         ↓ Export CSV
                     </button>
-                    <CsvUploader onUploadSuccess={() => { loadEntries(); toast.success("Bulk import completed successfully!"); }} />
+                    <button
+                        className="action-btn"
+                        onClick={() => setImportModal({ isOpen: true, type: 'activity' })}
+                        style={{ background: '#10b981', padding: '6px 14px', fontSize: '0.82rem', whiteSpace: 'nowrap' }}
+                    >
+                        ↑ Bulk Import (Wizard)
+                    </button>
                 </div>
                 <div className="table-scroll-container">
                     <table className="excel-table">

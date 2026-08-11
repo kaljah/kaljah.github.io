@@ -11,7 +11,7 @@ import copy
 # Structure: { job_id: { 'status', 'progress', 'processed', 'total', 'skipped': [{row, reason, ...}], 'error_csv_path' } }
 upload_jobs = {}
 
-def start_background_upload(app, file_path, original_filename, user_id, global_factor_type):
+def start_background_upload(app, file_path, original_filename, user_id, global_factor_type, provided_mapping=None, scope=1):
     job_id = str(uuid.uuid4())
     upload_jobs[job_id] = {
         'status': 'processing',
@@ -26,7 +26,7 @@ def start_background_upload(app, file_path, original_filename, user_id, global_f
     # Spawn the background thread
     thread = threading.Thread(
         target=_process_file_thread, 
-        args=(app, job_id, file_path, original_filename, user_id, global_factor_type)
+        args=(app, job_id, file_path, original_filename, user_id, global_factor_type, provided_mapping, scope)
     )
     thread.daemon = True
     thread.start()
@@ -49,7 +49,7 @@ def get_job_status(job_id):
         'error_csv_path': job.get('error_csv_path'),
     }
 
-def _process_file_thread(app, job_id, file_path, original_filename, user_id, global_factor_type):
+def _process_file_thread(app, job_id, file_path, original_filename, user_id, global_factor_type, provided_mapping, scope=1):
     with app.app_context():
         try:
             is_excel = original_filename.lower().endswith('.xlsx')
@@ -105,16 +105,20 @@ def _process_file_thread(app, job_id, file_path, original_filename, user_id, glo
             
             upload_jobs[job_id]['total'] = total_rows
             
-            # 2. Setup Field Mappings (Fuzzy Match)
-            mapping = _build_mapping(headers)
+            # Resolve mapping
+            if provided_mapping:
+                mapping = provided_mapping
+            else:
+                mapping = _build_mapping(headers)
             
             # 3. Setup context variables for calculation
-            from models import Facility, CustomFactor, Emission, User
+            from models import Facility, CustomFactor, Emission, Scope2Emission, Scope3Emission, User, EmissionSource, ProductionData, MitigationProject
             from extensions import db
             from calculations import compute_emissions
             from calculations.constants import get_active_gwp
             from calculations.units import calculate_co2e
             from emission_factors import API_FACTORS
+            from electricity_factors import GRID_FACTORS
             import json
 
             user_obj = User.query.get(user_id)
@@ -132,8 +136,14 @@ def _process_file_thread(app, job_id, file_path, original_filename, user_id, glo
                 except Exception:
                     gwp_std = 'AR5'
             gwp_dict = get_active_gwp(standard=gwp_std)
+            from utils import get_allowed_facility_ids
+            allowed_fac_ids = get_allowed_facility_ids(user_obj)
             
-            all_facilities = Facility.query.all()
+            if allowed_fac_ids is None:
+                all_facilities = Facility.query.all()
+            else:
+                all_facilities = Facility.query.filter(Facility.id.in_(allowed_fac_ids)).all()
+                
             fac_name_map = { f.name.lower(): f for f in all_facilities }
             fac_id_map = { str(f.id): f for f in all_facilities }
             
@@ -173,19 +183,47 @@ def _process_file_thread(app, job_id, file_path, original_filename, user_id, glo
                 if eq_id_raw and eq_id_raw in tier3_data_map:
                     mapped_data.update(tier3_data_map[eq_id_raw])
                         
-                # Process Row
-                emission_obj, row_errors = _process_row(
-                    mapped_data, 
-                    user_id, 
-                    fac_name_map, 
-                    fac_id_map,
-                    cf_name_map, 
-                    compute_emissions,
-                    API_FACTORS,
-                    global_factor_type,
-                    gwp_dict=gwp_dict,
-                    gwp_std=gwp_std
-                )
+                # Process Row based on scope
+                if str(scope) == '2':
+                    emission_obj, row_errors = _process_row_scope2(
+                        mapped_data, user_id, fac_name_map, fac_id_map, GRID_FACTORS
+                    )
+                elif str(scope) == '3':
+                    emission_obj, row_errors = _process_row_scope3(
+                        mapped_data, user_id, fac_name_map, fac_id_map
+                    )
+                elif str(scope) == 'sources':
+                    emission_obj, row_errors = _process_row_sources(
+                        mapped_data, user_id, fac_name_map, fac_id_map
+                    )
+                elif str(scope) == 'production':
+                    emission_obj, row_errors = _process_row_production(
+                        mapped_data, user_id, fac_name_map, fac_id_map
+                    )
+                elif str(scope) == 'mitigation':
+                    emission_obj, row_errors = _process_row_mitigation(
+                        mapped_data, user_id, fac_name_map, fac_id_map
+                    )
+                elif str(scope) == 'custom_factors':
+                    emission_obj, row_errors = _process_row_custom_factors(
+                        mapped_data, user_id
+                    )
+                elif str(scope) == '1':
+                    emission_obj, row_errors = _process_row(
+                        mapped_data, 
+                        user_id, 
+                        fac_name_map, 
+                        fac_id_map,
+                        cf_name_map, 
+                        compute_emissions,
+                        API_FACTORS,
+                        global_factor_type,
+                        gwp_dict=gwp_dict,
+                        gwp_std=gwp_std
+                    )
+                else:
+                    emission_obj = None
+                    row_errors = [f"Unknown scope identifier: '{scope}'. Cannot process row."]
                 
                 if row_errors:
                     skip_entry = {
@@ -295,7 +333,58 @@ def _build_mapping(headers):
         ('c9', 'c9'), ('c10', 'c10'), ('n2', 'n2 mol'), ('hhv', 'hhv'),
         ('user_unc_co2', 'user uncertainty co2'),
         ('user_unc_ch4', 'user uncertainty ch4'),
-        ('user_unc_n2o', 'user uncertainty n2o')
+        ('user_unc_n2o', 'user uncertainty n2o'),
+        # Scope 2 fields
+        ('grid_region', 'grid region'),
+        ('grid_region', 'region'), # Might overlap with facility region but we check mapping
+        ('consumption', 'consumption'),
+        ('consumption', 'kwh'),
+        # Scope 3 fields
+        ('category', 'category'),
+        ('sub_category', 'sub category'),
+        ('amount', 'amount'),
+        ('amount', 'activity data'),
+        ('emission_factor', 'emission factor'),
+        ('emission_factor', 'ef'),
+        ('ef_unit', 'ef unit'),
+        ('co2e', 'co2e'),
+        ('notes', 'notes'),
+        # Sources fields
+        ('name', 'name'),
+        ('equipment_id', 'equipment id'),
+        ('type', 'type'),
+        ('type', 'process type'),
+        ('fuel_type', 'fuel type'),
+        ('design_capacity', 'design capacity'),
+        ('installation_date', 'installation date'),
+        ('status', 'status'),
+        ('description', 'description'),
+        # Production fields
+        ('oil_volume', 'oil volume'),
+        ('oil_unit', 'oil unit'),
+        ('gas_volume', 'gas volume'),
+        ('gas_unit', 'gas unit'),
+        # Mitigation fields
+        ('quantity_tco2e', 'quantity tco2e'),
+        ('start_date', 'start date'),
+        ('end_date', 'end date'),
+        ('investment_amount', 'investment amount'),
+        ('investment_amount', 'investment'),
+        ('project_type', 'project type'),
+        # Custom factors fields
+        ('co2_factor', 'co2 factor'),
+        ('ch4_factor', 'ch4 factor'),
+        ('n2o_factor', 'n2o factor'),
+        ('co_factor', 'co factor'),
+        ('hhv_factor', 'hhv factor'),
+        ('usage', 'usage'),
+        ('parent_fuel', 'parent fuel'),
+        ('source', 'source'),
+        ('version', 'version'),
+        ('uncertainty', 'uncertainty'),
+        ('co2_uncertainty', 'co2 uncertainty'),
+        ('ch4_uncertainty', 'ch4 uncertainty'),
+        ('n2o_uncertainty', 'n2o uncertainty')
     ]
     
     mapping = {}
@@ -307,6 +396,319 @@ def _build_mapping(headers):
                     mapping[sys_key] = h
                     break
     return mapping
+
+
+def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS):
+    from models import Scope2Emission
+    errors = []
+
+    # 1. Parse Date
+    date_str = str(row.get('date') or '').strip()
+    year = int(row.get('year') or 2024)
+    month = int(row.get('month') or 1)
+    if date_str and date_str != 'None':
+        try:
+            parts = date_str.split('-')
+            year = int(parts[0])
+            if len(parts) > 1: month = int(parts[1])
+        except:
+            pass
+
+    # 2. Resolve Facility
+    facility = None
+    fac_input = row.get('facility_name') or row.get('facility')
+    if fac_input:
+        fac_str = str(fac_input).strip().lower()
+        if fac_str in fac_name_map:
+            facility = fac_name_map[fac_str]
+        elif fac_str in fac_id_map:
+            facility = fac_id_map[fac_str]
+    
+    if not facility:
+        errors.append(f"Facility '{fac_input}' not found")
+        return None, errors
+
+    grid_region = str(row.get('grid_region') or '').strip()
+    factor_info = GRID_FACTORS.get(grid_region)
+    if not factor_info:
+        errors.append(f"Grid Region '{grid_region}' not found")
+        return None, errors
+        
+    ef = factor_info['factor']
+    val = float(row.get('consumption') or 0)
+    unit = str(row.get('unit') or 'kWh').strip()
+    
+    kwh = val
+    if unit.lower() == 'mwh': kwh = val * 1000
+    elif unit.lower() == 'gwh': kwh = val * 1000000
+    
+    co2e = (kwh * ef) / 1000
+
+    emission = Scope2Emission(
+        facility_id=facility.id,
+        year=year,
+        month=month,
+        source_type='electricity',
+        electricity_kwh=kwh,
+        emission_factor=ef,
+        co2e=co2e,
+        grid_region=grid_region,
+        location=grid_region,
+        activity=row.get('activity') or facility.activity,
+        division=row.get('division') or facility.division,
+        field=row.get('field') or facility.field,
+        created_by=user_id
+    )
+    return emission, errors
+
+def _process_row_scope3(row, user_id, fac_name_map, fac_id_map):
+    from models import Scope3Emission
+    errors = []
+
+    # 1. Parse Date
+    date_str = str(row.get('date') or '').strip()
+    year = int(row.get('year') or 2024)
+    month = int(row.get('month') or 1)
+    if date_str and date_str != 'None':
+        try:
+            parts = date_str.split('-')
+            year = int(parts[0])
+            if len(parts) > 1: month = int(parts[1])
+        except:
+            pass
+
+    # 2. Resolve Facility
+    facility = None
+    fac_input = row.get('facility_name') or row.get('facility')
+    if fac_input:
+        fac_str = str(fac_input).strip().lower()
+        if fac_str in fac_name_map:
+            facility = fac_name_map[fac_str]
+        elif fac_str in fac_id_map:
+            facility = fac_id_map[fac_str]
+    
+    if not facility:
+        errors.append(f"Facility '{fac_input}' not found")
+        return None, errors
+
+    cat = row.get('category', '11')
+    sub_cat = row.get('sub_category')
+    
+    try:
+        amt = float(row.get('amount') or 0)
+    except:
+        amt = 0
+        
+    try:
+        ef = float(row.get('emission_factor') or 0)
+    except:
+        ef = 0
+        
+    ef_unit = str(row.get('ef_unit') or 'kg').lower()
+
+    if row.get('co2e'):
+        try:
+            co2e = float(row.get('co2e'))
+        except:
+            co2e = 0
+    elif 't' in ef_unit or 'tonne' in ef_unit:
+        co2e = amt * ef
+    else:
+        co2e = (amt * ef) / 1000.0
+
+    emission = Scope3Emission(
+        facility_id=facility.id,
+        year=year,
+        month=month,
+        category=f"Category {cat}" if not str(cat).startswith('Category') else cat,
+        sub_category=sub_cat,
+        activity_data=amt,
+        unit=row.get('unit'),
+        emission_factor=ef,
+        co2e=co2e,
+        notes=row.get('notes', 'Bulk Imported'),
+        created_by=user_id
+    )
+    return emission, errors
+
+def _process_row_sources(row, user_id, fac_name_map, fac_id_map):
+    from models import EmissionSource
+    errors = []
+    
+    facility = None
+    fac_input = row.get('facility_name') or row.get('facility')
+    if fac_input:
+        fac_str = str(fac_input).strip().lower()
+        if fac_str in fac_name_map:
+            facility = fac_name_map[fac_str]
+        elif fac_str in fac_id_map:
+            facility = fac_id_map[fac_str]
+            
+    if not facility:
+        errors.append(f"Facility '{fac_input}' not found")
+        return None, errors
+
+    source = EmissionSource(
+        facility_id=facility.id,
+        name=row.get('name'),
+        equipment_id=row.get('equipment_id'),
+        type=row.get('type') or row.get('process_type'),
+        fuel_type=row.get('fuel_type') or row.get('fuel'),
+        design_capacity=row.get('design_capacity'),
+        installation_date=row.get('installation_date'),
+        status=row.get('status', 'Active'),
+        description=row.get('description'),
+        activity=row.get('activity') or facility.activity,
+        division=row.get('division') or facility.division,
+        field=row.get('field') or facility.field
+    )
+    return source, errors
+
+
+def _process_row_production(row, user_id, fac_name_map, fac_id_map):
+    from models import ProductionData
+    errors = []
+    
+    facility = None
+    fac_input = row.get('facility_name') or row.get('facility')
+    if fac_input:
+        fac_str = str(fac_input).strip().lower()
+        if fac_str in fac_name_map:
+            facility = fac_name_map[fac_str]
+        elif fac_str in fac_id_map:
+            facility = fac_id_map[fac_str]
+            
+    if not facility:
+        errors.append(f"Facility '{fac_input}' not found")
+        return None, errors
+
+    year = row.get('year')
+    month = row.get('month')
+    if not year or not month:
+        errors.append("Year and month are required")
+        return None, errors
+        
+    try:
+        year = int(year)
+        month = int(month)
+    except ValueError:
+        errors.append("Invalid year or month format")
+        return None, errors
+        
+    try:
+        oil_vol = float(row.get('oil_volume') or 0)
+    except ValueError:
+        oil_vol = 0
+        
+    try:
+        gas_vol = float(row.get('gas_volume') or 0)
+    except ValueError:
+        gas_vol = 0
+
+    prod = ProductionData(
+        facility_id=facility.id,
+        year=year,
+        month=month,
+        oil_volume=oil_vol,
+        oil_unit=row.get('oil_unit', 'bbl'),
+        gas_volume=gas_vol,
+        gas_unit=row.get('gas_unit', 'mscf')
+    )
+    return prod, errors
+
+
+def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
+    from models import MitigationProject
+    from datetime import datetime
+    errors = []
+    
+    facility = None
+    fac_input = row.get('facility_name') or row.get('facility')
+    if fac_input:
+        fac_str = str(fac_input).strip().lower()
+        if fac_str in fac_name_map:
+            facility = fac_name_map[fac_str]
+        elif fac_str in fac_id_map:
+            facility = fac_id_map[fac_str]
+            
+    if not facility:
+        errors.append(f"Facility '{fac_input}' not found")
+        return None, errors
+
+    try:
+        year = int(row.get('year') or 2024)
+    except:
+        errors.append("Invalid year")
+        return None, errors
+        
+    try:
+        qty = float(row.get('quantity_tco2e') or row.get('quantity') or 0)
+    except:
+        qty = 0
+
+    start_date = None
+    end_date = None
+    if row.get('start_date'):
+        try:
+            start_date = datetime.strptime(str(row.get('start_date')), '%Y-%m-%d').date()
+        except:
+            pass
+    if row.get('end_date'):
+        try:
+            end_date = datetime.strptime(str(row.get('end_date')), '%Y-%m-%d').date()
+        except:
+            pass
+            
+    investment = None
+    if row.get('investment_amount') or row.get('investment'):
+        try:
+            investment = float(row.get('investment_amount') or row.get('investment'))
+        except:
+            pass
+
+    proj = MitigationProject(
+        facility_id=facility.id,
+        name=row.get('name'),
+        project_type=row.get('project_type') or row.get('type'),
+        year=year,
+        quantity_tco2e=qty,
+        status=row.get('status', 'Active'),
+        start_date=start_date,
+        end_date=end_date,
+        investment_amount=investment,
+        description=row.get('description'),
+        created_by=user_id
+    )
+    return proj, errors
+
+
+def _process_row_custom_factors(row, user_id):
+    from models import CustomFactor
+    errors = []
+
+    if not row.get('name'):
+        errors.append("Name is required for custom factor")
+        return None, errors
+
+    factor = CustomFactor(
+        name=row.get('name'),
+        co2_factor=float(row.get('co2_factor') or 0),
+        ch4_factor=float(row.get('ch4_factor') or 0),
+        n2o_factor=float(row.get('n2o_factor') or 0),
+        co_factor=float(row.get('co_factor') or 0),
+        unit=row.get('unit'),
+        hhv_factor=float(row.get('hhv_factor') or 0),
+        usage=row.get('usage'),
+        parent_fuel=row.get('parent_fuel'),
+        source=row.get('source'),
+        version=row.get('version'),
+        uncertainty=float(row.get('uncertainty') or 0),
+        co2_uncertainty=float(row.get('co2_uncertainty') or 0),
+        ch4_uncertainty=float(row.get('ch4_uncertainty') or 0),
+        n2o_uncertainty=float(row.get('n2o_uncertainty') or 0),
+        created_by=user_id
+    )
+    return factor, errors
 
 
 def _process_row(row, user_id, fac_name_map, fac_id_map, cf_name_map, compute_emissions_fn, API_FACTORS_dict, global_factor_type, gwp_dict=None, gwp_std='AR5'):

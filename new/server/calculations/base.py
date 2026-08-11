@@ -37,12 +37,12 @@ class BaseCalculator:
             "method": self.name,
             "api_reference": self.section_ref,
             "inputs": inputs or {},
-            "total_co2e": total_co2e,
+            "total_co2e": total_co2e if total_co2e is not None else 0.0,
             "results": {
-                "co2": co2,
-                "ch4": ch4,
-                "n2o": n2o,
-                "total_co2e": total_co2e
+                "co2": co2 if co2 is not None else 0.0,
+                "ch4": ch4 if ch4 is not None else 0.0,
+                "n2o": n2o if n2o is not None else 0.0,
+                "total_co2e": total_co2e if total_co2e is not None else 0.0
             },
             "metadata": metadata or {}
         }

@@ -56,8 +56,13 @@ const Reports = () => {
                     api.get('/facilities'),
                     api.get('/filters/available')
                 ]);
-                setFacilities(facRes.data);
-                setAvailableFilters(filterRes.data);
+                const facilitiesData = Array.isArray(facRes.data) ? facRes.data : (facRes.data?.data || []);
+                setFacilities(facilitiesData);
+                setAvailableFilters({
+                    years: Array.isArray(filterRes.data?.years) ? filterRes.data.years : [],
+                    regions: Array.isArray(filterRes.data?.regions) ? filterRes.data.regions : [],
+                    segments: Array.isArray(filterRes.data?.segments) ? filterRes.data.segments : []
+                });
 
                 // Sync BOTH year pickers to the most recent year that has actual data
                 if (filterRes.data.years?.length > 0) {

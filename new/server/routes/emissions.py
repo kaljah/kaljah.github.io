@@ -439,7 +439,7 @@ def add_bulk_upload():
                 
             if not facility:
                 row_errors.append(f"Facility not found: '{fac_name}'")
-            elif allowed_facilities and facility.id not in allowed_facilities:
+            elif allowed_facilities is not None and facility.id not in allowed_facilities:
                 row_errors.append(f"You do not have permission to add data for facility: '{fac_name}'")
         else:
             row_errors.append("Missing facility.")
@@ -535,19 +535,22 @@ def add_bulk_upload():
         # Inject all other optional variables dynamically
         has_specific = False
         specific_keys = {
-            'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'n2', 'co2_comp', 'h2s', 'flare_type', 'control_efficiency',
-            'mud_type', 'comp_flare_eff', 'gor', 'flowback_days',
-            'unload_depth', 'unload_diam', 'unload_press', 'unload_freq', 'unload_flare_eff',
-            'blowdown_volume', 'blowdown_press', 'blowdown_temp', 'blowdown_ch4',
-            'tank_gor', 'tank_press', 'tank_temp', 'tank_flare_eff',
-            'pneumatic_type', 'pneumatic_count', 'pneumatic_hours',
-            'agr_co2_in', 'agr_co2_out', 'agr_ch4_in',
-            'dehy_pump_rate', 'dehy_pump_unit', 'dehy_hours', 'dehy_eff', 'dehy_ch4_content',
+            'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'n2_mol', 'co2_mol', 'n2', 'co2_comp', 'h2s', 
+            'flare_type', 'control_efficiency', 'ch4_content', 'co2_content', 'combustion_efficiency',
+            'operating_temperature', 'temp_unit', 'operating_pressure', 'press_unit', 'z_factor',
+            'mud_type', 'mud_unit', 
+            'comp_method', 'comp_rate', 'comp_duration', 'comp_liquid_bbl', 'comp_gor', 'comp_flare_eff', 'comp_choke_size', 'comp_whp', 'gor', 'flowback_days',
+            'unload_depth', 'unload_diam', 'unload_press', 'unload_freq', 'unload_flare_eff', 'unload_temp',
+            'blowdown_volume', 'blowdown_pressure', 'blowdown_events', 'blowdown_unit', 'blowdown_temp', 'blowdown_temp_unit', 'blowdown_press_unit', 'blowdown_ch4',
+            'tank_gor', 'tank_press', 'tank_temp', 'tank_flare_eff', 'tank_ch4_content', 'tank_control_eff', 'tank_unit', 'tank_api_gravity',
+            'pneumatic_type', 'pneumatic_count', 'pneumatic_hours', 'pneu_count', 'pneu_bleed_rate', 'pneu_bleed_unit', 'pneu_hours', 'pneu_ch4_content',
+            'agr_co2_in', 'agr_co2_out', 'agr_ch4_in', 'agr_unit', 'agr_ch4_slip', 'agr_control_eff',
+            'dehy_pump_rate', 'dehy_pump_unit', 'dehy_hours', 'dehy_eff', 'dehy_ch4_content', 'dehy_press', 'dehy_press_unit', 'dehy_temp', 'dehy_temp_unit', 'dehy_has_flash', 'dehy_flash_eff', 'dehy_still_type',
             'hhv', 'ef_unit', 'fuel_type',
             'boiler_eff', 'trans_loss', 'heat_unit',
             'total_emissions', 'heat_output', 'power_output', 'allocation_method',
             'carbon_content', 'molecular_weight',
-            'ch4_content', 'co2_content'
+            'fugitive_method', 'fugitive_ppm'
         }
 
         for k, v in row.items():
@@ -685,139 +688,408 @@ import tempfile
 from flask import send_file, Response
 import openpyxl
 from background_processor import start_background_upload, get_job_status
-
 @emissions_bp.route('/template/csv', methods=['GET'])
 def get_csv_template():
+    """
+    Returns a comprehensive CSV template with all fields needed for
+    Tier 1 (default/custom factor) and Tier 3 (specific engineering) calculations
+    across all 18 supported process types.
+    """
     import csv, io
-    # Exact match of the UI data table columns
-    headers = [
-        '[Data Entry] Date (YYYY-MM)',
-        '[Data Entry] Activity',
-        '[Data Entry] Division',
-        '[Data Entry] Field',
-        '[Data Entry] Region / Facility',
-        '[Data Entry] Emission Source (Group)',
-        '[Data Entry] Equipment Name',
-        '[Data Entry] Equipment ID',
-        '[Data Entry] Process Type',
-        '[Data Entry] Activity / Fuel',
-        '[Data Entry] Factor Type',
-        '[Data Entry] Quantity',
-        '[Data Entry] Unit',
-        # Engineering / Tier 3 columns
-        '[Tier 3] CH4 Content (%)',
-        '[Tier 3] CO2 Content (%)',
-        '[Tier 3] HHV (Btu/scf)',
-        '[Tier 3] C1 Mol%', '[Tier 3] C2 Mol%', '[Tier 3] C3 Mol%', '[Tier 3] C4 Mol%', '[Tier 3] C5 Mol%', '[Tier 3] C6 Mol%',
-        '[Tier 3] C7 Mol%', '[Tier 3] C8 Mol%', '[Tier 3] C9 Mol%', '[Tier 3] C10 Mol%',
-        '[Tier 3] N2 Mol%', '[Tier 3] CO2 Mol% (Gas Comp)',
-        '[Tier 3] Flare Type',
-        '[Tier 3] Flare Control Efficiency (%)',
-        '[Tier 3] User Uncertainty CO2 (%)', '[Tier 3] User Uncertainty CH4 (%)', '[Tier 3] User Uncertainty N2O (%)',
-        '[Tier 3] Mud Type',
-        '[Tier 3] GOR (scf/bbl)',
-        '[Tier 3] Flowback Days',
-        '[Tier 3] Completions Flare Efficiency (%)',
-        '[Tier 3] Well Depth (ft)',
-        '[Tier 3] Casing Diameter (in)',
-        '[Tier 3] Well Pressure (psia)',
-        '[Tier 3] Unloading Events',
-        '[Tier 3] Unloading Flare Efficiency (%)',
-        '[Tier 3] Tank GOR (scf/bbl)',
-        '[Tier 3] Tank API Gravity',
-        '[Tier 3] Tank Control Efficiency (%)',
-        '[Tier 3] Blowdown Volume (scf)',
-        '[Tier 3] Blowdown Pressure (psia)',
-        '[Tier 3] Blowdown Events',
-        '[Tier 3] Pneumatic Device Count',
-        '[Tier 3] Pneumatic Bleed Rate (scf/hr/device)',
-        '[Tier 3] Pneumatic Hours',
-        '[Tier 3] Fugitive Method',
-        '[Tier 3] Leak Concentration (ppm)',
-        '[Tier 3] Pipeline Length (km)',
-        '[Tier 3] AGR Unit Type',
-        '[Tier 3] AGR Flow Rate',
-        '[Tier 3] AGR Flow Unit',
+    tier = request.args.get('tier', '3')
+    process = request.args.get('process', 'all')
+
+    # -----------------------------------------------------------------------
+    # COLUMN DEFINITIONS
+    # Format: (header_label, internal_key, tier, description)
+    # -----------------------------------------------------------------------
+    COLUMNS = [
+        # ── REQUIRED CORE FIELDS ─────────────────────────────────────────
+        ('[Required] date',                   'date',                  'Core',   'Date as YYYY-MM (e.g. 2024-03). Required.'),
+        ('[Required] facility_name',          'facility_name',         'Core',   'Exact facility/region name from Manage Data → Regions. Required.'),
+        ('[Required] process_type',           'process_type',          'Core',   'combustion | flaring | venting | blowdown | pneumatic | tank_flashing | tank_working | tank_breathing | drilling | completions | unloading | agr | dehydrator | fugitive | mobile | indirect_steam | stoichiometry | separation'),
+        ('[Required] fuel',                   'fuel',                  'Core',   'Fuel or activity type exactly as in API factors catalog (e.g. Natural Gas, Diesel, Associated Gas). Required for Tier 1.'),
+        ('[Required] quantity',               'quantity',              'Core',   'Numeric activity quantity (volume, mass, count, etc.). Required.'),
+        ('[Required] unit',                   'unit',                  'Core',   'Unit of quantity: m3 | scf | mscf | mmscf | bbl | gal | l | kg | tonne | lb | kWh. Required.'),
+        ('[Required] factor_type',            'factor_type',           'Core',   'default = API standard factors (Tier 1) | custom = user-saved factor | specific = engineering/Tier 3 calculation'),
+
+        # ── OPTIONAL METADATA ─────────────────────────────────────────────
+        ('[Optional] activity',               'activity',              'Meta',   'Activity label (e.g. Exploration & Production). Defaults to facility activity if blank.'),
+        ('[Optional] region',                 'region',                'Meta',   'Region label. Defaults to facility region if blank.'),
+        ('[Optional] division',               'division',              'Meta',   'Division label. Defaults to facility division if blank.'),
+        ('[Optional] field',                  'field',                 'Meta',   'Field/sub-unit name. Defaults to facility field if blank.'),
+        ('[Optional] group',                  'group',                 'Meta',   'Emission source group (e.g. Compressor Station A). For reporting grouping only.'),
+        ('[Optional] equipment',              'equipment',             'Meta',   'Equipment tag/ID (e.g. EQ-001). Used for duplicate detection.'),
+        ('[Optional] equipment_name',         'equipment_name',        'Meta',   'Human-readable equipment name (e.g. Caterpillar G3516).'),
+
+        # ── TIER 1 COMBUSTION ─────────────────────────────────────────────
+        ('[T1/T3] hhv',                       'hhv',                   'T1',     'Higher Heating Value in Btu/scf (gas) or Btu/gal (liquid). Defaults from API catalog if blank. e.g. 1020 for Natural Gas.'),
+        ('[T1] ef_unit',                      'ef_unit',               'T1',     'Emission factor unit override. Usually kg/MMBtu or kg/m3. Leave blank to use catalog default.'),
+        ('[T1] combustion_efficiency',        'combustion_efficiency', 'T1',     'Combustion efficiency 0-1 or 0-100%. Default 0.995 (99.5%). Required for Tier 3 combustion.'),
+        ('[T1] fuel_type',                    'fuel_type',             'T1',     'Broad fuel category: gases | liquids | solids. Needed for unit normalization.'),
+
+        # ── T1/T3 TEMPERATURE & PRESSURE NORMALIZATION (all gas processes) ─
+        ('[T1/T3] operating_temperature',     'operating_temperature', 'T1',     'Measured gas temperature at operating conditions. Enables API §4.2.1 thermodynamic correction.'),
+        ('[T1/T3] temp_unit',                 'temp_unit',             'T1',     'Temperature unit: C | F | K. Default C.'),
+        ('[T1/T3] operating_pressure',        'operating_pressure',    'T1',     'Measured gas pressure at operating conditions (gauge or absolute depending on press_unit).'),
+        ('[T1/T3] press_unit',                'press_unit',            'T1',     'Pressure unit: psig | psia | kPa | barg | bara. Default psig.'),
+        ('[T1/T3] z_factor',                  'z_factor',              'T1',     'Gas compressibility factor Z. Default 1.0 (ideal gas). Use 0.85–0.99 for real gas conditions.'),
+
+        # ── TIER 3 GAS COMPOSITION (combustion, flaring, completions, blowdown, agr) ──
+        ('[T3] c1',                           'c1',                    'T3-GasComp','Methane (CH4) mole fraction 0–100 mol%. Required for Tier 3 combustion/flaring.'),
+        ('[T3] c2',                           'c2',                    'T3-GasComp','Ethane (C2H6) mole fraction 0–100 mol%.'),
+        ('[T3] c3',                           'c3',                    'T3-GasComp','Propane (C3H8) mole fraction 0–100 mol%.'),
+        ('[T3] c4',                           'c4',                    'T3-GasComp','Butane (C4H10) mole fraction 0–100 mol%.'),
+        ('[T3] c5',                           'c5',                    'T3-GasComp','Pentane (C5H12) mole fraction 0–100 mol%.'),
+        ('[T3] c6',                           'c6',                    'T3-GasComp','Hexane (C6H14) mole fraction 0–100 mol%.'),
+        ('[T3] c7',                           'c7',                    'T3-GasComp','Heptane (C7H16) mole fraction 0–100 mol%.'),
+        ('[T3] c8',                           'c8',                    'T3-GasComp','Octane (C8H18) mole fraction 0–100 mol%.'),
+        ('[T3] c9',                           'c9',                    'T3-GasComp','Nonane (C9H20) mole fraction 0–100 mol%.'),
+        ('[T3] c10',                          'c10',                   'T3-GasComp','Decane+ (C10+) mole fraction 0–100 mol%.'),
+        ('[T3] n2_mol',                       'n2_mol',                'T3-GasComp','Nitrogen (N2) mole fraction 0–100 mol%.'),
+        ('[T3] co2_mol',                      'co2_mol',               'T3-GasComp','CO2 mole fraction in gas stream 0–100 mol% (distinct from emitted CO2).'),
+
+        # ── T3 FLARING ────────────────────────────────────────────────────
+        ('[T3-Flare] flare_type',             'flare_type',            'T3',     'Flare design type: elevated | enclosed_ground | offshore_boom | air_assisted | steam_assisted. Default elevated.'),
+        ('[T3-Flare] ch4_content',            'ch4_content',           'T3',     'Gas stream CH4 content % (0–100). Alias for c1 for flaring/completions/unloading.'),
+        ('[T3-Flare] co2_content',            'co2_content',           'T3',     'Gas stream CO2 content % (0–100). Used by completions, blowdown, unloading.'),
+        ('[T3-Flare] control_efficiency',     'control_efficiency',    'T3',     'Flare/control device destruction efficiency 0–100%. Used by flaring, completions, blowdown, unloading, tanks.'),
+
+        # ── T3 DRILLING / MUD DEGASSING ───────────────────────────────────
+        ('[T3-Drill] mud_type',               'mud_type',              'T3',     'Drilling mud type: water_based | oil_based | synthetic. Default water_based.'),
+        ('[T3-Drill] mud_unit',               'mud_unit',              'T3',     'Unit of mud volume: m3 | bbl. Defaults to quantity unit if blank.'),
+
+        # ── T3 WELL COMPLETIONS / WORKOVERS ───────────────────────────────
+        ('[T3-Comp] comp_method',             'comp_method',           'T3-Completion',     'Completions calculation method: metered_volume (default) | rate_duration | gor_liquid.'),
+        ('[T3-Comp] comp_rate',               'comp_rate',             'T3-Completion',     'Flowback rate (Mscf/day). Required when comp_method=rate_duration.'),
+        ('[T3-Comp] comp_duration',           'comp_duration',         'T3-Completion',     'Flowback duration (hours). Required when comp_method=rate_duration.'),
+        ('[T3-Comp] comp_liquid_bbl',         'comp_liquid_bbl',       'T3-Completion',     'Liquid flowback volume (bbl). Required when comp_method=gor_liquid.'),
+        ('[T3-Comp] comp_gor',                'comp_gor',              'T3-Completion',     'Gas-Oil Ratio scf/bbl. Required when comp_method=gor_liquid.'),
+        ('[T3-Comp] comp_flare_eff',          'comp_flare_eff',        'T3-Completion',     'Completions flare/combustion control efficiency 0–100%.'),
+        ('[T3-Comp] comp_choke_size',         'comp_choke_size',       'T3-Completion',     'Choke size in inches (optional, for engineering documentation).'),
+        ('[T3-Comp] comp_whp',                'comp_whp',              'T3-Completion',     'Wellhead pressure (psia) during completions (optional).'),
+
+        # ── T3 LIQUIDS UNLOADING ──────────────────────────────────────────
+        ('[T3-Unload] unload_depth',          'unload_depth',          'T3',     'Well depth (ft). REQUIRED for liquids unloading Tier 3.'),
+        ('[T3-Unload] unload_diam',           'unload_diam',           'T3',     'Casing inner diameter (inches). REQUIRED for liquids unloading Tier 3.'),
+        ('[T3-Unload] unload_press',          'unload_press',          'T3',     'Shut-in surface pressure (psig). REQUIRED for liquids unloading Tier 3.'),
+        ('[T3-Unload] unload_freq',           'unload_freq',           'T3',     'Number of unloading events per year. REQUIRED for liquids unloading Tier 3. (quantity can be used if blank)'),
+        ('[T3-Unload] unload_flare_eff',      'unload_flare_eff',      'T3',     'Unloading vented gas flare efficiency 0–100%.'),
+        ('[T3-Unload] unload_temp',           'unload_temp',           'T3',     'Well temperature at unloading conditions. Default 60°F.'),
+
+        # ── T3 VENTING / BLOWDOWN ─────────────────────────────────────────
+        ('[T3-BDN] blowdown_pressure',        'blowdown_pressure',     'T3',     'Vessel/pipeline pressure before blowdown (psig). REQUIRED for blowdown Tier 3.'),
+        ('[T3-BDN] blowdown_events',          'blowdown_events',       'T3',     'Number of blowdown events per year. REQUIRED for blowdown Tier 3.'),
+        ('[T3-BDN] blowdown_unit',            'blowdown_unit',         'T3',     'Unit for blowdown volume: m3 | scf | bbl. Defaults to quantity unit if blank.'),
+        ('[T3-BDN] blowdown_temp',            'blowdown_temp',         'T3',     'Gas temperature in vessel before blowdown. Default 60°F.'),
+        ('[T3-BDN] blowdown_temp_unit',       'blowdown_temp_unit',    'T3',     'Temperature unit for blowdown: F | C | K. Default F.'),
+        ('[T3-BDN] blowdown_press_unit',      'blowdown_press_unit',   'T3',     'Pressure unit for blowdown: psig | psia | kPa. Default psig.'),
+
+        # ── T3 STORAGE TANKS ──────────────────────────────────────────────
+        ('[T3-Tank] tank_gor',                'tank_gor',              'T3',     'Tank flash gas-to-oil ratio (scf/bbl). REQUIRED for storage tank Tier 3.'),
+        ('[T3-Tank] tank_ch4_content',        'tank_ch4_content',      'T3',     'Tank flash gas CH4 content % (0–100). REQUIRED for storage tank Tier 3.'),
+        ('[T3-Tank] tank_control_eff',        'tank_control_eff',      'T3',     'Tank vapor control efficiency 0–100%.'),
+        ('[T3-Tank] tank_unit',               'tank_unit',             'T3',     'Unit of liquid throughput: bbl | m3 | gal | l. Default bbl.'),
+        ('[T3-Tank] tank_api_gravity',        'tank_api_gravity',      'T3',     'Crude API gravity (degrees). Optional, used for documentation.'),
+
+        # ── T3 PNEUMATIC DEVICES ──────────────────────────────────────────
+        ('[T3-Pneu] pneu_count',             'pneu_count',            'T3',     'Number of pneumatic devices (controllers/pumps). REQUIRED for pneumatic Tier 3.'),
+        ('[T3-Pneu] pneu_bleed_rate',        'pneu_bleed_rate',       'T3',     'Measured bleed rate per device (scf/hr or m3/hr). REQUIRED for pneumatic Tier 3.'),
+        ('[T3-Pneu] pneu_bleed_unit',        'pneu_bleed_unit',       'T3',     'Unit of bleed rate: scf | m3. Default scf.'),
+        ('[T3-Pneu] pneu_hours',             'pneu_hours',            'T3',     'Annual operating hours per device. REQUIRED for pneumatic Tier 3 (e.g. 8760).'),
+        ('[T3-Pneu] pneu_ch4_content',       'pneu_ch4_content',      'T3',     'Supply gas CH4 content % (0–100). Default 85%.'),
+
+        # ── T3 ACID GAS REMOVAL (AGR / Amine / Selexol) ──────────────────
+        ('[T3-AGR] agr_co2_in',              'agr_co2_in',            'T3',     'Inlet CO2 mole % in raw gas. REQUIRED for AGR Tier 3.'),
+        ('[T3-AGR] agr_co2_out',             'agr_co2_out',           'T3',     'Outlet CO2 mole % after sweetening. REQUIRED for AGR Tier 3.'),
+        ('[T3-AGR] agr_unit',                'agr_unit',              'T3',     'Unit for AGR gas throughput: mmscf | m3 | scf. Default mmscf.'),
+        ('[T3-AGR] agr_ch4_in',              'agr_ch4_in',            'T3',     'Inlet CH4 mole fraction or % (0–1 or 0–100). Default 0.85.'),
+        ('[T3-AGR] agr_ch4_slip',            'agr_ch4_slip',          'T3',     'CH4 slip fraction through solvent (0–1). Default 0.001 (0.1%).'),
+        ('[T3-AGR] agr_control_eff',         'agr_control_eff',       'T3',     'Acid gas control/destruction efficiency 0–100%. Default 0.'),
+
+        # ── T3 DEHYDRATOR ─────────────────────────────────────────────────
+        ('[T3-Dehy] dehy_pump_rate',         'dehy_pump_rate',        'T3',     'TEG/glycol circulation rate (gal/hr or liters/hr). Required when no throughput.'),
+        ('[T3-Dehy] dehy_pump_unit',         'dehy_pump_unit',        'T3',     'Unit for pump rate: gph | lph. Default gph.'),
+        ('[T3-Dehy] dehy_hours',             'dehy_hours',            'T3',     'Dehydrator annual operating hours. Default 8760.'),
+        ('[T3-Dehy] dehy_press',             'dehy_press',            'T3',     'Contactor pressure (psig). Default 800.'),
+        ('[T3-Dehy] dehy_press_unit',        'dehy_press_unit',       'T3',     'Pressure unit for dehydrator: psig | kPa. Default psig.'),
+        ('[T3-Dehy] dehy_temp',              'dehy_temp',             'T3',     'Contactor temperature (°F). Default 100.'),
+        ('[T3-Dehy] dehy_temp_unit',         'dehy_temp_unit',        'T3',     'Temperature unit for dehydrator: F | C. Default F.'),
+        ('[T3-Dehy] dehy_has_flash',         'dehy_has_flash',        'T3',     'Has flash tank? true | false. Default true.'),
+        ('[T3-Dehy] dehy_flash_eff',         'dehy_flash_eff',        'T3',     'Flash tank vapor recovery efficiency 0–100%. Default 0.'),
+        ('[T3-Dehy] dehy_still_type',        'dehy_still_type',       'T3',     'Still column type: none | condenser | fired_reboiler. Default none.'),
+        ('[T3-Dehy] dehy_ch4_content',       'dehy_ch4_content',      'T3',     'Feed gas CH4 content % (0–100). Default 85%.'),
+        ('[T3-Dehy] dehy_eff',               'dehy_eff',              'T3',     'Overall glycol dehydrator emission control efficiency 0–100%. Default 0.'),
+
+        # ── T3 INDIRECT STEAM / HEAT (Section 8) ─────────────────────────
+        ('[T3-Steam] boiler_eff',            'boiler_eff',            'T3',     'Boiler thermal efficiency fraction (e.g. 0.80 = 80%). REQUIRED for indirect_steam.'),
+        ('[T3-Steam] trans_loss',            'trans_loss',            'T3',     'Steam distribution transmission loss fraction 0–1. Default 0.'),
+        ('[T3-Steam] heat_unit',             'heat_unit',             'T3',     'Heat energy unit: btu | mmbtu | mj | gj | kwh. Default btu.'),
+
+        # ── T3 STOICHIOMETRY (Carbon Mass Balance) ────────────────────────
+        ('[T3-Stoich] carbon_content',       'carbon_content',        'T3',     'Fuel carbon mass fraction 0–1 (e.g. 0.85 for natural gas). REQUIRED for stoichiometry.'),
+
+        # ── T3 FUGITIVE ───────────────────────────────────────────────────
+        ('[T3-Fug] fugitive_method',         'fugitive_method',       'T3',     'Fugitive calculation method: average (Tier 1) | screening (OGI/EPA Method 21). Default average.'),
+        ('[T3-Fug] fugitive_ppm',            'fugitive_ppm',          'T3',     'Leak concentration in ppm. Required when fugitive_method=screening.'),
+
+        # ── UNCERTAINTY OVERRIDES ─────────────────────────────────────────
+        ('[Unc] meter_uncertainty_pct',      'meter_uncertainty_pct', 'Unc',    'Flow meter measurement uncertainty % (overrides Tier default). e.g. 2.5'),
+        ('[Unc] gc_uncertainty_pct',         'gc_uncertainty_pct',    'Unc',    'Gas chromatograph composition uncertainty %. e.g. 1.0'),
+        ('[Unc] user_unc_co2',               'user_unc_co2',          'Unc',    'Custom CO2 emission factor uncertainty % override.'),
+        ('[Unc] user_unc_ch4',               'user_unc_ch4',          'Unc',    'Custom CH4 emission factor uncertainty % override.'),
+        ('[Unc] user_unc_n2o',               'user_unc_n2o',          'Unc',    'Custom N2O emission factor uncertainty % override.'),
     ]
+
+    filtered_columns = []
+    
+    # Process grouping maps
+    p_comp = ['all', 'combustion', 'flaring', 'completions', 'blowdown', 'agr']
+    p_flare = ['all', 'flaring', 'completions', 'unloading', 'blowdown', 'tank_flashing', 'tank_working', 'tank_breathing']
+    p_drill = ['all', 'drilling']
+    p_completion = ['all', 'completions']
+    p_unload = ['all', 'unloading']
+    p_bdn = ['all', 'venting', 'blowdown']
+    p_tank = ['all', 'tank_flashing', 'tank_working', 'tank_breathing']
+    p_pneu = ['all', 'pneumatic']
+    p_agr = ['all', 'agr']
+    p_dehy = ['all', 'dehydrator']
+    p_steam = ['all', 'indirect_steam']
+    p_stoich = ['all', 'stoichiometry', 'combustion']
+    p_fug = ['all', 'fugitive']
+    
+    for c in COLUMNS:
+        t = c[2]
+        header = c[0]
+        if t in ['Core', 'Meta']:
+            filtered_columns.append(c)
+        elif tier == '3':
+            if t == 'Unc': filtered_columns.append(c)
+            elif t == 'T1': filtered_columns.append(c)
+            elif header.startswith('[T3] ') and process in p_comp: filtered_columns.append(c)
+            elif header.startswith('[T3-Flare]') and process in p_flare: filtered_columns.append(c)
+            elif header.startswith('[T3-Drill]') and process in p_drill: filtered_columns.append(c)
+            elif header.startswith('[T3-Comp]') and process in p_completion: filtered_columns.append(c)
+            elif header.startswith('[T3-Unload]') and process in p_unload: filtered_columns.append(c)
+            elif header.startswith('[T3-BDN]') and process in p_bdn: filtered_columns.append(c)
+            elif header.startswith('[T3-Tank]') and process in p_tank: filtered_columns.append(c)
+            elif header.startswith('[T3-Pneu]') and process in p_pneu: filtered_columns.append(c)
+            elif header.startswith('[T3-AGR]') and process in p_agr: filtered_columns.append(c)
+            elif header.startswith('[T3-Dehy]') and process in p_dehy: filtered_columns.append(c)
+            elif header.startswith('[T3-Steam]') and process in p_steam: filtered_columns.append(c)
+            elif header.startswith('[T3-Stoich]') and process in p_stoich: filtered_columns.append(c)
+            elif header.startswith('[T3-Fug]') and process in p_fug: filtered_columns.append(c)
+        elif tier == '1':
+            if t == 'T1': filtered_columns.append(c)
+
+    # Use filtered_columns instead of COLUMNS for mapping
+    COLUMNS = filtered_columns
+
+    headers      = [c[0] for c in COLUMNS]
+    descriptions = [c[3] for c in COLUMNS]
+
+    # -----------------------------------------------------------------------
+    # SAMPLE ROWS — one per major process type
+    # -----------------------------------------------------------------------
+    def _row(**kw):
+        """Build a row dict keyed by column header labels, filling blanks with '-'."""
+        inv = {c[0]: c[1] for c in COLUMNS}   # header → internal_key
+        fwd = {c[1]: c[0] for c in COLUMNS}   # internal_key → header
+        result = {h: '-' for h in headers}
+        for k, v in kw.items():
+            hdr = fwd.get(k, k)   # allow passing either internal key or header
+            if hdr in result:
+                result[hdr] = str(v)
+        return [result[h] for h in headers]
+
+    sample_rows = [
+        # 1. Tier 1 – Natural Gas Combustion
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='combustion',
+             fuel='Natural Gas', quantity='50000', unit='scf', factor_type='default',
+             group='Compressor Station A', equipment='EQ-001', equipment_name='CAT G3516 Generator',
+             activity='Upstream & Midstream Gas', region='Ouargla', division='Production', field='Hassi Messaoud',
+             hhv='1020', combustion_efficiency='0.995',
+             fuel_type='gases'),
+
+        # 2. Tier 3 – Combustion (Gas Composition Carbon Mass Balance)
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='combustion',
+             fuel='Natural Gas', quantity='50000', unit='scf', factor_type='specific',
+             group='Compressor Station B', equipment='EQ-002',
+             activity='Upstream & Midstream Gas', region='Ouargla', division='Production', field='Hassi Messaoud',
+             hhv='1010', combustion_efficiency='0.993',
+             c1='87.5', c2='5.2', c3='2.1', c4='1.0', c5='0.5',
+             co2_mol='1.8', n2_mol='1.9',
+             operating_temperature='45', temp_unit='C',
+             operating_pressure='300', press_unit='psig', z_factor='0.92'),
+
+        # 3. Tier 1 – Diesel Combustion
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='combustion',
+             fuel='Diesel (No. 2 Fuel Oil)', quantity='1200', unit='gal', factor_type='default',
+             group='Diesel Generators', equipment='EQ-003',
+             activity='Upstream & Midstream Gas', region='Ouargla', division='Production', field='Hassi Messaoud',
+             fuel_type='liquids', hhv='138700'),
+
+        # 4. Tier 3 – Flaring (Engineering Mode)
+        _row(date='2024-01', facility_name='Hassi R\'Mel Hub', process_type='flaring',
+             fuel='Associated Gas', quantity='120000', unit='scf', factor_type='specific',
+             group='HP Flare Stack', equipment='EQ-010',
+             c1='83', c2='6', c3='3', c4='2', c5='1', co2_mol='2', n2_mol='3',
+             flare_type='elevated', control_efficiency='98',
+             operating_temperature='60', temp_unit='F',
+             operating_pressure='150', press_unit='psig', z_factor='0.95'),
+
+        # 5. Tier 1 – Flaring (Default Factor)
+        _row(date='2024-01', facility_name='Hassi R\'Mel Hub', process_type='flaring',
+             fuel='Associated Gas', quantity='80000', unit='scf', factor_type='default',
+             group='LP Flare', equipment='EQ-011'),
+
+        # 6. Tier 3 – Drilling (Mud Degassing)
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='drilling',
+             fuel='Drilling Operations', quantity='500', unit='m3', factor_type='specific',
+             group='Well HMD-47', equipment='EQ-020',
+             mud_type='water_based', mud_unit='m3'),
+
+        # 7. Tier 3 – Well Completions (Metered Volume)
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='completions',
+             fuel='Associated Gas', quantity='25000', unit='scf', factor_type='specific',
+             group='Well HMD-55 Completion', equipment='EQ-030',
+             comp_method='metered_volume',
+             ch4_content='82', co2_content='3', comp_flare_eff='90'),
+
+        # 8. Tier 3 – Well Completions (Rate × Duration)
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='completions',
+             fuel='Associated Gas', quantity='-', unit='scf', factor_type='specific',
+             group='Well HMD-56 Workover', equipment='EQ-031',
+             comp_method='rate_duration', comp_rate='50', comp_duration='72',
+             ch4_content='84', co2_content='2', comp_flare_eff='85'),
+
+        # 9. Tier 3 – Liquids Unloading
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='unloading',
+             fuel='Natural Gas', quantity='12', unit='events', factor_type='specific',
+             group='Well HMD-22', equipment='EQ-040',
+             unload_depth='8500', unload_diam='4.5', unload_press='800',
+             unload_freq='12', unload_flare_eff='0',
+             ch4_content='87', co2_content='1.5',
+             unload_temp='75', temp_unit='F'),
+
+        # 10. Tier 3 – Venting / Blowdown
+        _row(date='2024-01', facility_name='Rhourde Nouss Gas Plant', process_type='blowdown',
+             fuel='Natural Gas (Venting/Blowdown)', quantity='200', unit='m3', factor_type='specific',
+             group='Separator S-101', equipment='EQ-050',
+             blowdown_pressure='450', blowdown_events='8',
+             ch4_content='85', co2_content='2', control_efficiency='0',
+             blowdown_temp='65', blowdown_temp_unit='F',
+             blowdown_press_unit='psig', z_factor='0.93'),
+
+        # 11. Tier 3 – Storage Tanks (Flashing)
+        _row(date='2024-01', facility_name='Rhourde Nouss Gas Plant', process_type='tank_flashing',
+             fuel='Condensate', quantity='5000', unit='bbl', factor_type='specific',
+             group='Condensate Storage TK-201', equipment='EQ-060',
+             tank_gor='85', tank_ch4_content='65', tank_control_eff='95',
+             tank_unit='bbl', tank_api_gravity='62'),
+
+        # 12. Tier 3 – Pneumatic Devices
+        _row(date='2024-01', facility_name='Hassi R\'Mel Hub', process_type='pneumatic',
+             fuel='Natural Gas', quantity='25', unit='devices', factor_type='specific',
+             group='High-Bleed Controllers', equipment='EQ-070',
+             pneu_count='25', pneu_bleed_rate='6.0', pneu_bleed_unit='scf',
+             pneu_hours='8760', pneu_ch4_content='85'),
+
+        # 13. Tier 3 – AGR (Amine / CO2 Removal)
+        _row(date='2024-01', facility_name='In Salah CCS Plant', process_type='agr',
+             fuel='Natural Gas', quantity='15', unit='mmscf', factor_type='specific',
+             group='Amine Unit K-301', equipment='EQ-080',
+             agr_co2_in='8.5', agr_co2_out='0.5', agr_unit='mmscf',
+             agr_ch4_in='85', agr_ch4_slip='0.1', agr_control_eff='0'),
+
+        # 14. Tier 3 – Dehydrator (TEG)
+        _row(date='2024-01', facility_name='Hassi R\'Mel Hub', process_type='dehydrator',
+             fuel='Natural Gas', quantity='100', unit='mmscf', factor_type='specific',
+             group='TEG Dehydrator D-401', equipment='EQ-090',
+             dehy_pump_rate='5.0', dehy_pump_unit='gph', dehy_hours='8760',
+             dehy_press='800', dehy_press_unit='psig',
+             dehy_temp='100', dehy_temp_unit='F',
+             dehy_has_flash='true', dehy_flash_eff='90', dehy_still_type='none',
+             dehy_ch4_content='87', dehy_eff='0'),
+
+        # 15. Tier 3 – Fugitive (Screening / OGI)
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='fugitive',
+             fuel='Natural Gas', quantity='350', unit='components', factor_type='specific',
+             group='Wellhead Valve Leaks', equipment='EQ-100',
+             fugitive_method='screening', fugitive_ppm='12500'),
+
+        # 16. Tier 1 – Fugitive (Average Factor)
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='fugitive',
+             fuel='Natural Gas', quantity='350', unit='components', factor_type='default',
+             group='Valve Packings', equipment='EQ-101'),
+
+        # 17. Tier 3 – Indirect Steam (Section 8)
+        _row(date='2024-01', facility_name='Hassi R\'Mel Hub', process_type='indirect_steam',
+             fuel='Natural Gas', quantity='500000000', unit='btu', factor_type='specific',
+             group='Central Boiler House', equipment='EQ-110',
+             boiler_eff='0.82', trans_loss='0.05', heat_unit='btu'),
+
+        # 18. Tier 3 – Stoichiometry (Carbon Mass Balance)
+        _row(date='2024-01', facility_name='Hassi Messaoud Gas Plant', process_type='stoichiometry',
+             fuel='Natural Gas', quantity='45000', unit='kg', factor_type='specific',
+             group='Process Furnace F-501', equipment='EQ-120',
+             carbon_content='0.748'),
+    ]
+    
+    # Filter sample rows based on requested process and tier
+    filtered_rows = []
+    for row in sample_rows:
+        # Assuming index 2 is 'process_type' (since it is the 3rd column in COLUMNS)
+        # We can find the process_type from the dictionary mapping if we constructed it dynamically,
+        # but since _row returns a list matched to headers, we need to extract process_type value.
+        process_type_idx = headers.index('[Required] process_type')
+        factor_type_idx = headers.index('[Required] factor_type')
+        
+        row_process = row[process_type_idx]
+        row_factor = row[factor_type_idx]
+        
+        # Check process match
+        process_match = (process == 'all') or (row_process == process)
+        
+        # Check tier match
+        tier_match = True
+        if tier == '1':
+            tier_match = (row_factor == 'default')
+        elif tier == '3':
+            # Tier 3 can include both specific and default for demonstration, but let's keep all if tier 3, 
+            # or just specific. Let's say if tier == 3, we show 'specific' mostly.
+            tier_match = (row_factor == 'specific')
+            
+        if process_match and tier_match:
+            filtered_rows.append(row)
+            
+    # If filtered_rows is empty (e.g. asking for Tier 1 of a process that only has Tier 3 samples),
+    # just show whatever is available for that process.
+    if not filtered_rows and process != 'all':
+        for row in sample_rows:
+            if row[headers.index('[Required] process_type')] == process:
+                filtered_rows.append(row)
+
     si = io.StringIO()
     cw = csv.writer(si)
     cw.writerow(headers)
-    
-    # Write Instruction Row
-    instructions = [
-        '[INSTRUCTION] Format: YYYY-MM',
-        'Optional Reference',
-        'Optional Reference',
-        'Optional Reference',
-        'Must exactly match a name from the Facilities sheet',
-        'Optional Reference',
-        'Optional Reference',
-        'Link to Tier 3 Equipment ID',
-        'Combustion, Flaring, Venting, etc.',
-        'Gas/fuel type e.g. Natural Gas, Diesel',
-        'default = API standard, custom = saved factor',
-        'Numeric quantity (e.g. 50000)',
-        'e.g. scf, m3, gal, bbl, kg',
-        # Tier 3 
-        'Default: 85.0',
-        'Default: 2.0',
-        'e.g. 1020',
-        'Methane fraction', 'Ethane fraction', 'Propane fraction', 'Butane fraction', 'Pentane fraction', 'Hexane fraction',
-        'Heptane fraction', 'Octane fraction', 'Nonane fraction', 'Decane+ fraction',
-        'Nitrogen fraction', 'CO2 fraction',
-        'e.g., elevated, enclosed_ground',
-        'Combustion efficiency (%)',
-        'Optional override', 'Optional override', 'Optional override',
-        'e.g., water_based, synthetic',
-        'Gas-to-Oil Ratio (scf/bbl)',
-        'Days of flowback',
-        'Efficiency (%)',
-        'Depth in feet',
-        'Diameter in inches',
-        'Pressure in psia',
-        'Number of events',
-        'Efficiency (%)',
-        'Gas-to-Oil Ratio (scf/bbl)',
-        'API Gravity',
-        'Efficiency (%)',
-        'Volume in scf',
-        'Pressure in psia',
-        'Number of events',
-        'Device count',
-        'Bleed rate (scf/hr/device)',
-        'Hours of operation',
-        'e.g., epa_method_21',
-        'PPM concentration',
-        'Length in km',
-        'e.g., amine, selexol',
-        'Flow rate',
-        'e.g., scf/day'
-    ]
-    cw.writerow(instructions)
-    
-    # Write 2 sample rows
-    cw.writerow([
-        '2024-01','Exploration & Production','Production','Hassi Messaoud','Field Alpha',
-        'Compressor Station A','Caterpillar G3516','EQ-001','Combustion','Natural Gas',
-        'default','50000','scf',
-        '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
-    ])
-    cw.writerow([
-        '2024-01','Exploration & Production','Production','Hassi Messaoud','Field Alpha',
-        'Flare Stack B','HP Flare Stack','EQ-002','Flaring','Associated Gas',
-        'default','120000','scf',
-        '83','3','1000','85','5','4','2','1','1','2','1','elevated','95',
-        '','','','','','','','','','','','','','','','','','','','','','',''
-    ])
+    cw.writerow(descriptions)
+    for row in filtered_rows:
+        cw.writerow(row)
+
     return Response(
         si.getvalue(),
-        mimetype="text/csv",
-        headers={"Content-disposition": "attachment; filename=emissions_template.csv"}
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=scope1_emissions_template.csv'}
     )
+
 
 
 @emissions_bp.route('/template/excel', methods=['GET'])
 def get_excel_template():
+    tier = request.args.get('tier', 'all')
+    process = request.args.get('process', 'all')
+    
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side, Color
     from openpyxl.worksheet.datavalidation import DataValidation
     from openpyxl.comments import Comment
@@ -1016,9 +1288,10 @@ def get_excel_template():
         # (header, width, required)
         ("Date\n(YYYY-MM)",           14, True),
         ("Activity",                   22, True),
+        ("Region",                     20, True),
         ("Division",                   20, True),
         ("Field",                      20, False),
-        ("Region / Facility",          28, True),
+        ("Facility Name",              28, True),
         ("Emission Source\n(Group)",   24, False),
         ("Equipment Name",             28, True),
         ("Equipment ID",               18, False),
@@ -1056,7 +1329,7 @@ def get_excel_template():
             5: "Must exactly match a name from the 🏢 Facilities sheet",
             9: "Select from list: Combustion, Flaring, Venting, etc.",
             10: "Gas/fuel type e.g. Natural Gas, Diesel, Associated Gas",
-            11: "default = API Compendium standard factor | custom = your saved factor",
+            11: "default = API Compendium standard factor | specific = factor for specific setup | custom = your saved factor",
             12: "Numeric quantity for the month (e.g. 50000)",
             13: "e.g. scf, m3, gal, bbl, kg, tonne",
         }
@@ -1113,13 +1386,38 @@ def get_excel_template():
 
     # ── Sample data rows ──
     samples = [
-        ["2024-01","Exploration & Production","Production","Hassi Messaoud","Field Alpha Processing Plant","Compressor Station A","Caterpillar G3516 #1","EQ-001","Combustion","Natural Gas","default",50000,"scf","Tier 1 – standard factor"],
-        ["2024-01","Exploration & Production","Production","Hassi Messaoud","Field Alpha Processing Plant","Flare Stack","HP Flare Stack - West","EQ-002","Flaring","Associated Gas","default",120000,"scf","Tier 3 – see Flaring sheet"],
-        ["2024-01","Exploration & Production","Production","Hassi Messaoud","Field Alpha Processing Plant","Production Separator","3-Phase Separator #2","EQ-003","Venting","Natural Gas (Venting/Blowdown)","default",8000,"m3","Venting from separator depressuring"],
-        ["2024-01","Exploration & Production","Production","Hassi Messaoud","Field Alpha Processing Plant","Storage","Crude Oil Storage Tank #5","EQ-004","Storage Tank - Flashing","Tank - Flash Emissions (Gas Well)","default",9500,"bbl","Monthly oil throughput"],
-        ["2024-01","Exploration & Production","Production","South Field","South Field Compressor Stn","Pneumatics","Control Valve Bank A","EQ-005","Pneumatic Device","Pneumatic High-Bleed Device","default",12,"units","Count of high-bleed controllers"],
+        ["2024-01","Exploration & Production","Ouargla","Production","Hassi Messaoud","Field Alpha Processing Plant","Compressor Station A","Caterpillar G3516 #1","EQ-001","Combustion","Natural Gas","default",50000,"scf","Tier 1 – standard factor"],
+        ["2024-01","Exploration & Production","Ouargla","Production","Hassi Messaoud","Field Alpha Processing Plant","Flare Stack","HP Flare Stack - West","EQ-002","Flaring","Associated Gas","default",120000,"scf","Tier 3 – see Flaring sheet"],
+        ["2024-01","Exploration & Production","Ouargla","Production","Hassi Messaoud","Field Alpha Processing Plant","Production Separator","3-Phase Separator #2","EQ-003","Venting","Natural Gas (Venting/Blowdown)","default",8000,"m3","Venting from separator depressuring"],
+        ["2024-01","Exploration & Production","Ouargla","Production","Hassi Messaoud","Field Alpha Processing Plant","Storage","Crude Oil Storage Tank #5","EQ-004","Storage Tank - Flashing","Tank - Flash Emissions (Gas Well)","default",9500,"bbl","Monthly oil throughput"],
+        ["2024-01","Exploration & Production","South","Production","South Field","South Field Compressor Stn","Pneumatics","Control Valve Bank A","EQ-005","Pneumatic Device","Pneumatic High-Bleed Device","default",12,"units","Count of high-bleed controllers"],
     ]
-    for r, row in enumerate(samples, 3):
+    
+    filtered_samples = []
+    for s in samples:
+        row_process = s[9] # Index 9 is 'Process Type' now (was 8)
+        if process == 'all' or process.lower() == row_process.lower().replace(' ', '_'):
+            filtered_samples.append(s)
+            
+    # Simple direct string match, wait 'Storage Tank - Flashing' to 'tank_flashing' is complex.
+    # Better to just use a custom mapping for the samples:
+    sample_process_map = {
+        0: 'combustion',
+        1: 'flaring',
+        2: 'venting',
+        3: 'tank_flashing',
+        4: 'pneumatic'
+    }
+    
+    filtered_samples = []
+    for i, s in enumerate(samples):
+        if process == 'all' or sample_process_map.get(i) == process:
+            filtered_samples.append(s)
+            
+    if not filtered_samples:
+        filtered_samples = samples # fallback if no match
+
+    for r, row in enumerate(filtered_samples, 3):
         for c, val in enumerate(row, 1):
             cell = ws_data.cell(row=r, column=c, value=val)
             cell.border = std_border
@@ -1141,97 +1439,147 @@ def get_excel_template():
     # ═══════════════════════════════════════════════════════════
     # SHEET 4+: TIER 3 ENGINEERING SHEETS (one per process)
     # ═══════════════════════════════════════════════════════════
-    TIER3_SHEETS = {
-        "⚙ Tier 3 Calculations": {
-            "desc": "Engineering parameters for Tier 3 calculations and Gas Composition data.",
-            "cols": [
-                ("Equipment ID", 18, "Link to Equipment ID in Data Entry sheet"),
-                ("Date (YYYY-MM)", 14, "Must match the date in Data Entry sheet"),
-                ("Process Type", 18, "Optional Reference"),
-                # Gas Composition
-                ("C1 (mol %)", 14, "Methane (CH4) fraction"),
-                ("C2 (mol %)", 14, "Ethane fraction"),
-                ("C3 (mol %)", 14, "Propane fraction"),
-                ("C4 (mol %)", 14, "Butane fraction"),
-                ("C5 (mol %)", 14, "Pentane fraction"),
-                ("C6 (mol %)", 14, "Hexane fraction"),
-                ("C7 (mol %)", 14, "Heptane fraction"),
-                ("C8 (mol %)", 14, "Octane fraction"),
-                ("C9 (mol %)", 14, "Nonane fraction"),
-                ("C10 (mol %)", 14, "Decane+ fraction"),
-                ("N2 (mol %)", 14, "Nitrogen fraction"),
-                ("Flare Type", 18, "e.g., elevated, enclosed_ground"),
-                ("Flare Control Efficiency (%)", 22, "Combustion efficiency (%)"),
-                # User Uncertainty Overrides
-                ("User Uncertainty CO2 (%)", 22, "Optional: Override CO2 Uncertainty"),
-                ("User Uncertainty CH4 (%)", 22, "Optional: Override CH4 Uncertainty"),
-                ("User Uncertainty N2O (%)", 22, "Optional: Override N2O Uncertainty"),
-                # Storage Tanks
-                ("Tank GOR", 14, "Gas-to-Oil Ratio (scf/bbl)"),
-                # Pneumatics
-                ("Pneumatic Count", 16, "Number of identical devices"),
-                ("Bleed Rate (scf/hr)", 20, "Bleed rate per device"),
-                ("Hours", 10, "Hours of operation in month"),
-                # Well Completions / Workovers
-                ("Well Depth (ft)", 16, "Depth of the well"),
-                ("Diameter (in)", 14, "Casing or tubing diameter"),
-                ("Pressure (psi)", 16, "Surface or bottom-hole pressure"),
-                ("Events", 10, "Number of unloading/completion events"),
-                # Venting / Blowdowns
-                ("Blowdown Volume (Mscf)", 22, "Total volume of gas blown down"),
-                # Fugitive Emissions
-                ("Fugitive Method", 18, "Component count or leak survey method"),
-                ("PPM", 10, "Leak concentration in PPM"),
-                # Dehydrators / AGR
-                ("Dehydrator Throughput (Mscf/day)", 28, "Monthly gas throughput"),
-                ("Dehy CH4 (%)", 16, "Methane slip from Dehy"),
-                ("AGR Throughput (Mscf/day)", 24, "Monthly gas feed rate to AGR"),
-                ("CO2 In (%)", 14, "CO2 in feed"),
-                ("CO2 Out (%)", 14, "CO2 in sweet gas")
-            ]
+    if tier != '1':
+        p_comp = ['all', 'combustion', 'flaring', 'completions', 'blowdown', 'agr']
+        p_flare = ['all', 'flaring', 'completions', 'unloading', 'blowdown', 'tank_flashing', 'tank_working', 'tank_breathing']
+        p_completion = ['all', 'completions', 'unloading']
+        p_bdn = ['all', 'venting', 'blowdown']
+        p_tank = ['all', 'tank_flashing', 'tank_working', 'tank_breathing']
+        p_pneu = ['all', 'pneumatic']
+        p_agr = ['all', 'agr']
+        p_dehy = ['all', 'dehydrator']
+        p_fug = ['all', 'fugitive']
+        
+        base_cols = [
+            ("Equipment ID", 18, "Link to Equipment ID in Data Entry sheet"),
+            ("Date (YYYY-MM)", 14, "Must match the date in Data Entry sheet"),
+            ("Process Type", 18, "Optional Reference"),
+            ("User Uncertainty CO2 (%)", 22, "Optional: Override CO2 Uncertainty"),
+            ("User Uncertainty CH4 (%)", 22, "Optional: Override CH4 Uncertainty"),
+            ("User Uncertainty N2O (%)", 22, "Optional: Override N2O Uncertainty")
+        ]
+        
+        t3_params = [
+            ("C1 (mol %)", 14, "Methane (CH4) fraction", p_comp),
+            ("C2 (mol %)", 14, "Ethane fraction", p_comp),
+            ("C3 (mol %)", 14, "Propane fraction", p_comp),
+            ("C4 (mol %)", 14, "Butane fraction", p_comp),
+            ("C5 (mol %)", 14, "Pentane fraction", p_comp),
+            ("C6 (mol %)", 14, "Hexane fraction", p_comp),
+            ("C7 (mol %)", 14, "Heptane fraction", p_comp),
+            ("C8 (mol %)", 14, "Octane fraction", p_comp),
+            ("C9 (mol %)", 14, "Nonane fraction", p_comp),
+            ("C10 (mol %)", 14, "Decane+ fraction", p_comp),
+            ("N2 (mol %)", 14, "Nitrogen fraction", p_comp),
+            ("Flare Type", 18, "e.g., elevated, enclosed_ground", p_flare),
+            ("Flare Control Efficiency (%)", 22, "Combustion efficiency (%)", p_flare),
+            ("Tank GOR", 14, "Gas-to-Oil Ratio (scf/bbl)", p_tank),
+            ("Pneumatic Count", 16, "Number of identical devices", p_pneu),
+            ("Bleed Rate (scf/hr)", 20, "Bleed rate per device", p_pneu),
+            ("Hours", 10, "Hours of operation in month", p_pneu),
+            ("Well Depth (ft)", 16, "Depth of the well", p_completion),
+            ("Diameter (in)", 14, "Casing or tubing diameter", p_completion),
+            ("Pressure (psi)", 16, "Surface or bottom-hole pressure", p_completion),
+            ("Events", 10, "Number of unloading/completion events", p_completion),
+            ("Blowdown Volume (Mscf)", 22, "Total volume of gas blown down", p_bdn),
+            ("Fugitive Method", 18, "Component count or leak survey method", p_fug),
+            ("PPM", 10, "Leak concentration in PPM", p_fug),
+            ("Dehydrator Throughput (Mscf/day)", 28, "Monthly gas throughput", p_dehy),
+            ("Dehy CH4 (%)", 16, "Methane slip from Dehy", p_dehy),
+            ("AGR Throughput (Mscf/day)", 24, "Monthly gas feed rate to AGR", p_agr),
+            ("CO2 In (%)", 14, "CO2 in feed", p_agr),
+            ("CO2 Out (%)", 14, "CO2 in sweet gas", p_agr)
+        ]
+        
+        filtered_cols = [c for c in base_cols]
+        for col_def in t3_params:
+            if process in col_def[3]:
+                filtered_cols.append((col_def[0], col_def[1], col_def[2]))
+                
+        TIER3_SHEETS = {
+            "⚙ Tier 3 Calculations": {
+                "desc": "Engineering parameters for Tier 3 calculations and Gas Composition data.",
+                "cols": filtered_cols
+            }
         }
-    }
-
-    for sheet_name, cfg in TIER3_SHEETS.items():
-        ws_t3 = wb.create_sheet(sheet_name)
-        ws_t3.sheet_view.showGridLines = False
-        ws_t3.freeze_panes = "A3"
-
-        # Title
-        col_count = len(cfg["cols"])
-        ws_t3.merge_cells(f"A1:{get_column_letter(col_count)}1")
-        t3_title = ws_t3["A1"]
-        t3_title.value = f"{sheet_name.replace('⚙ ', '')} – Tier 3 Engineering Parameters"
-        t3_title.font = Font(bold=True, size=13, color=WHITE, name="Calibri")
-        t3_title.fill = PatternFill(start_color=GREEN_MID, end_color=GREEN_MID, fill_type="solid")
-        t3_title.alignment = Alignment(horizontal="center", vertical="center")
-        ws_t3.row_dimensions[1].height = 35
-
-        # Description
-        ws_t3.merge_cells(f"A2:{get_column_letter(col_count)}2")
-        desc_c = ws_t3["A2"]
-        desc_c.value = cfg["desc"]
-        desc_c.font = Font(italic=True, size=10, color="37474F", name="Calibri")
-        desc_c.fill = PatternFill(start_color=GREEN_LIGHT, end_color=GREEN_LIGHT, fill_type="solid")
-        desc_c.alignment = Alignment(horizontal="center", vertical="center")
-        ws_t3.row_dimensions[2].height = 22
-
-        # Column headers
-        for i, (col_name, col_w, col_hint) in enumerate(cfg["cols"], 1):
-            cell = ws_t3.cell(row=3, column=i, value=col_name)
-            hdr_style(cell, bg=GREEN_DARK, sz=10)
-            ws_t3.column_dimensions[get_column_letter(i)].width = col_w
-            ws_t3.row_dimensions[3].height = 32
-            add_comment(cell, col_hint)
-
-        # Empty data rows
-        for r in range(4, 1004):
-            for c in range(1, col_count + 1):
-                cell = ws_t3.cell(row=r, column=c)
-                cell.border = std_border
-                bg = GREEN_LIGHT if r % 2 == 0 else WHITE
-                cell.fill = PatternFill(start_color=bg, end_color=bg, fill_type="solid")
-            ws_t3.row_dimensions[r].height = 18
+    
+        for sheet_name, cfg in TIER3_SHEETS.items():
+            ws_t3 = wb.create_sheet(sheet_name)
+            ws_t3.sheet_view.showGridLines = False
+            ws_t3.freeze_panes = "A3"
+    
+            col_count = len(cfg["cols"])
+            ws_t3.merge_cells(f"A1:{get_column_letter(col_count)}1")
+            t3_title = ws_t3["A1"]
+            t3_title.value = f"{sheet_name.replace('⚙ ', '')} – Tier 3 Engineering Parameters"
+            t3_title.font = Font(bold=True, size=13, color=WHITE, name="Calibri")
+            t3_title.fill = PatternFill(start_color=GREEN_MID, end_color=GREEN_MID, fill_type="solid")
+            t3_title.alignment = Alignment(horizontal="center", vertical="center")
+            ws_t3.row_dimensions[1].height = 35
+    
+            ws_t3.merge_cells(f"A2:{get_column_letter(col_count)}2")
+            desc_c = ws_t3["A2"]
+            desc_c.value = cfg["desc"]
+            desc_c.font = Font(italic=True, size=10, color="37474F", name="Calibri")
+            desc_c.fill = PatternFill(start_color=GREEN_LIGHT, end_color=GREEN_LIGHT, fill_type="solid")
+            desc_c.alignment = Alignment(horizontal="center", vertical="center")
+            ws_t3.row_dimensions[2].height = 22
+    
+            for i, (col_name, col_w, col_hint) in enumerate(cfg["cols"], 1):
+                cell = ws_t3.cell(row=3, column=i, value=col_name)
+                hdr_style(cell, bg=GREEN_DARK, sz=10)
+                ws_t3.column_dimensions[get_column_letter(i)].width = col_w
+                ws_t3.row_dimensions[3].height = 32
+                add_comment(cell, col_hint)
+    
+            # Define samples for Tier 3
+            t3_samples = [
+                ("EQ-002", "2024-01", "Flaring", "flaring", {"Flare Type": "elevated", "Flare Control Efficiency (%)": "98", "C1 (mol %)": "83", "C2 (mol %)": "6"}),
+                ("EQ-030", "2024-01", "Well Completions & Workovers", "completions", {"Well Depth (ft)": "8500", "Events": "1"}),
+                ("EQ-040", "2024-01", "Liquids Unloading", "unloading", {"Well Depth (ft)": "8500", "Diameter (in)": "4.5", "Pressure (psi)": "800", "Events": "12"}),
+                ("EQ-050", "2024-01", "Venting", "venting", {"Blowdown Volume (Mscf)": "200"}),
+                ("EQ-060", "2024-01", "Storage Tank - Flashing", "tank_flashing", {"Tank GOR": "85"}),
+                ("EQ-070", "2024-01", "Pneumatic Device", "pneumatic", {"Pneumatic Count": "25", "Bleed Rate (scf/hr)": "6.0", "Hours": "8760"}),
+                ("EQ-080", "2024-01", "Acid Gas Removal (AGR)", "agr", {"AGR Throughput (Mscf/day)": "15", "CO2 In (%)": "8.5", "CO2 Out (%)": "0.5"}),
+                ("EQ-090", "2024-01", "Dehydrator", "dehydrator", {"Dehydrator Throughput (Mscf/day)": "100", "Dehy CH4 (%)": "87"}),
+                ("EQ-100", "2024-01", "Fugitive Emissions", "fugitive", {"Fugitive Method": "screening", "PPM": "12500"}),
+                ("EQ-110", "2024-01", "Stationary Combustion", "combustion", {"C1 (mol %)": "87.5", "C2 (mol %)": "5.2", "C3 (mol %)": "2.1"})
+            ]
+            
+            filtered_t3_samples = []
+            for s in t3_samples:
+                if process == 'all' or s[3] == process:
+                    filtered_t3_samples.append(s)
+            
+            row_idx = 4
+            for s in filtered_t3_samples:
+                # Map s[4] dict to columns
+                row_data = {
+                    "Equipment ID": s[0],
+                    "Date (YYYY-MM)": s[1],
+                    "Process Type": s[2],
+                    **s[4]
+                }
+                
+                for c_idx, (col_name, _, _) in enumerate(cfg["cols"], 1):
+                    val = row_data.get(col_name, "")
+                    cell = ws_t3.cell(row=row_idx, column=c_idx, value=val)
+                    cell.border = std_border
+                    cell.font = Font(name="Calibri", size=10, italic=True, color="37474F")
+                    bg = GREEN_LIGHT if row_idx % 2 == 1 else WHITE
+                    cell.fill = PatternFill(start_color=bg, end_color=bg, fill_type="solid")
+                    cell.alignment = Alignment(vertical="center", wrap_text=False)
+                ws_t3.row_dimensions[row_idx].height = 18
+                row_idx += 1
+    
+            # Empty data rows
+            for r in range(row_idx, 1004):
+                for c in range(1, col_count + 1):
+                    cell = ws_t3.cell(row=r, column=c)
+                    cell.border = std_border
+                    bg = GREEN_LIGHT if r % 2 == 0 else WHITE
+                    cell.fill = PatternFill(start_color=bg, end_color=bg, fill_type="solid")
+                ws_t3.row_dimensions[r].height = 18
 
     # ─── Save ──────────────────────────────────────────────────
     # Ensure exactly 3 sheets as requested (remove instructions)
@@ -1263,6 +1611,16 @@ def upload_start():
         return jsonify({'error': 'No selected file'}), 400
         
     global_factor_type = request.form.get('global_factor_type', 'auto')
+    mapping_str = request.form.get('mapping')
+    scope = request.form.get('scope', '1')
+    
+    import json
+    provided_mapping = None
+    if mapping_str:
+        try:
+            provided_mapping = json.loads(mapping_str)
+        except json.JSONDecodeError:
+            pass
     
     fd, path = tempfile.mkstemp(suffix=os.path.splitext(file.filename)[1])
     file.save(path)
@@ -1273,7 +1631,9 @@ def upload_start():
         path, 
         file.filename, 
         user.id, 
-        global_factor_type
+        global_factor_type,
+        provided_mapping=provided_mapping,
+        scope=scope
     )
     
     return jsonify({'job_id': job_id})
@@ -1309,6 +1669,10 @@ def add_emission():
     for field in required:
         if field not in data:
             return jsonify({'error': f'Missing field: {field}'}), 422
+            
+    allowed_ids = get_allowed_facility_ids(user)
+    if allowed_ids is not None and int(data['facility_id']) not in allowed_ids:
+        return jsonify({'error': 'Unauthorized for this facility'}), 403
             
     # Calculate Emissions
     # We need to fetch factor data if not specific
@@ -1579,7 +1943,10 @@ def update_emission(id):
     if 'month' in data:
         record.month = data['month']
     if 'facility_id' in data:
-        record.facility_id = data['facility_id']
+        new_fid = int(data['facility_id'])
+        if allowed_fids is not None and new_fid not in allowed_fids:
+            return jsonify({'error': 'Unauthorized to reassign to this facility'}), 403
+        record.facility_id = new_fid
     if 'process_type' in data:
         record.process_type = data['process_type']
     if 'fuel_type' in data:
@@ -1739,6 +2106,8 @@ def import_emissions():
     imported_count = 0
     errors = []
     
+    allowed_ids = get_allowed_facility_ids(user)
+    
     # Cache for facility lookups to avoid redundant queries
     facility_cache = {}
 
@@ -1773,6 +2142,9 @@ def import_emissions():
 
             if not facility:
                 errors.append(f"Row {i}: Facility/Region '{f_val}' not found")
+                continue
+            elif allowed_ids is not None and facility.id not in allowed_ids:
+                errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
                 continue
 
             # Update rec_data with resolved ID and ensure group_name is set for calculation context

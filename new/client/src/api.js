@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     // FE-01 FIX: use env var so the URL can be configured per environment
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_URL || '/api',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'

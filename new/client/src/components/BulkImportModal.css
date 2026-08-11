@@ -5,11 +5,11 @@
 }
 
 .upload-zone {
-    border: 2px dashed rgba(255, 102, 0, 0.2);
+    border: 2px dashed rgba(16, 185, 129, 0.3);
     border-radius: 12px;
     padding: 40px;
     text-align: center;
-    background: rgba(255, 102, 0, 0.05);
+    background: rgba(16, 185, 129, 0.03);
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -19,24 +19,25 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--sonatrach-orange);
+    color: #10b981;
     font-size: 0.85rem;
     font-weight: 500;
     padding: 6px 12px;
-    border: 1px dashed var(--sonatrach-orange);
+    border: 1px dashed #10b981;
     border-radius: 4px;
-    background: rgba(255, 126, 0, 0.05);
+    background: rgba(16, 185, 129, 0.05);
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .template-download:hover {
-    background: rgba(255, 126, 0, 0.1);
+    background: rgba(16, 185, 129, 0.1);
     transform: translateY(-1px);
 }
 
 .upload-zone:hover {
-    border-color: var(--sonatrach-orange);
-    background: rgba(255, 102, 0, 0.08);
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.08);
 }
 
 .cheat-sheet-toggle {
@@ -53,7 +54,7 @@
 
 .cheat-sheet-toggle:hover {
     opacity: 1;
-    color: var(--sonatrach-orange);
+    color: #10b981;
 }
 
 .cheat-sheet-content {
@@ -232,4 +233,37 @@
     display: flex;
     align-items: center;
     gap: 6px;
+}
+.progress-container {
+    width: 100%;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.progress-track {
+    width: 100%;
+    height: 12px;
+    background: #e5e7eb;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.progress-details {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
 }

@@ -187,7 +187,7 @@ const NotificationCenter = () => {
     const connectSSE = useCallback(() => {
         if (esRef.current) esRef.current.close();
 
-        const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const base = import.meta.env.VITE_API_URL || '/api';
         const url  = `${base}/notifications/stream?last_id=${lastIdRef.current}`;
         const es   = new EventSource(url, { withCredentials: true });
         esRef.current = es;
