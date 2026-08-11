@@ -31,6 +31,24 @@ def seed_data():
             db.session.add(user)
             db.session.commit()
 
+        mgmt_user = User.query.filter_by(email='z').first()
+        if not mgmt_user:
+            print("Management user 'z' not found. Creating...")
+            mgmt_user = User(
+                fullName='Management User',
+                orgName='Carbon Tech Algeria',
+                email='z',
+                role='manager',
+                sector='Industrial Decarbonization & CBAM',
+                department='Management',
+                jobTitle='Manager',
+                location='Algiers',
+                status='active'
+            )
+            mgmt_user.set_password('z')
+            db.session.add(mgmt_user)
+            db.session.commit()
+
         # Clean existing test emissions
         Emission.query.delete()
         Scope2Emission.query.delete()
