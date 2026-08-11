@@ -554,7 +554,7 @@ const DashboardEnhanced = () => {
                 </div>
 
                 {/* Hero Overview Card */}
-                <div className="card hero-card">
+                <div className="card hero-card glass-panel">
                     <div className="hero-header">
                         <h2 className="hero-title">Emissions Overview</h2>
                         <div className="location-badge">
@@ -633,7 +633,7 @@ const DashboardEnhanced = () => {
                 {/* --- NEW SECTION: Charts (Trend & Donut) --- */}
                 <div className="charts-section">
                     {/* Trend Chart - Full Width or large */}
-                    <div className="card trend-card-enhanced">
+                    <div className="card trend-card-enhanced glass-panel">
                         <div className="card-header-row">
                             <h3 className="card-title">Emissions Trend</h3>
                             <div className="card-header-actions">
@@ -678,7 +678,7 @@ const DashboardEnhanced = () => {
 
                     {/* Donut Charts - Side by Side */}
                     <div className="donuts-row">
-                        <div className="card donut-card-enhanced">
+                        <div className="card donut-card-enhanced glass-panel">
                             <div className="donut-header">
                                 <h3 className="donut-title activity">Emissions by Activity</h3>
                             </div>
@@ -686,7 +686,7 @@ const DashboardEnhanced = () => {
                                 <PieChartWrapper data={activityChartData} height={300} innerRadius={80} outerRadius={110} />
                             </div>
                         </div>
-                        <div className="card donut-card-enhanced">
+                        <div className="card donut-card-enhanced glass-panel">
                             <div className="donut-header">
                                 <h3 className="donut-title source">Emissions by Source</h3>
                             </div>
@@ -699,7 +699,7 @@ const DashboardEnhanced = () => {
 
                 {/* Categorical Breakdown Cards */}
 
-                <div className={`card categorical-card ${categoricalCollapsed ? 'collapsed-card' : ''}`}>
+                <div className={`card categorical-card glass-panel ${categoricalCollapsed ? 'collapsed-card' : ''}`}>
                     <div
                         className="card-header-row clickable-card-header"
                         onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
@@ -748,7 +748,7 @@ const DashboardEnhanced = () => {
 
                 <div className="main-dashboard-grid">
                     <div className="detailed-breakdown-section">
-                        <div className={`card detailed-table-card ${detailedBreakdownCollapsed ? 'collapsed-card' : ''}`}>
+                        <div className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? 'collapsed-card' : ''}`}>
                             <div
                                 className="table-header-row clickable-card-header"
                                 onClick={() => setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)}
