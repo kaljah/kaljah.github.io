@@ -4,12 +4,14 @@ import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
 import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
+import Scope3ImportWizard from "./Scope3ImportWizard";
 import { Upload, Trash2 } from "lucide-react";
 import "./ScopeTables.css";
 
 const Scope3Form = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [facilityId, setFacilityId] = useState("");
@@ -482,8 +484,28 @@ const Scope3Form = () => {
       </div>
 
       <div className="calculator-grid-container" style={{ marginTop: "30px" }}>
-        <div className="table-controls">
-          <strong>Documented Scope 3 Emissions</strong>
+        <div 
+          className="table-controls"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "15px"
+          }}
+        >
+          <strong style={{ fontSize: "1rem", color: "#374151" }}>Documented Scope 3 Emissions</strong>
+          <button
+            className="action-btn secondary"
+            onClick={() => setShowWizard(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            ↑ Bulk Import (Wizard)
+          </button>
         </div>
         <div className="table-scroll-container">
           <table className="excel-table">
@@ -624,6 +646,17 @@ const Scope3Form = () => {
           </button>
         </div>
       </div>
+      
+      {showWizard && (
+        <Scope3ImportWizard
+          onClose={() => setShowWizard(false)}
+          onUploadSuccess={() => {
+            setShowWizard(false);
+            loadEntries();
+            toast.success("Bulk import completed successfully");
+          }}
+        />
+      )}
     </div>
   );
 };

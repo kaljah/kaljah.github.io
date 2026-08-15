@@ -1,0 +1,5 @@
+facility_name,year,month,category,sub_category,notes,amount,unit,emission_factor,ef_unit,co2e
+ADR,2024,1,1,Steel Pipes,Imported from Italy,15000,kg,1.5,kgCO2e/kg,
+REB,2024,2,6,Air Travel,Algiers to Paris,1000,miles,0.15,kgCO2e/mile,
+HBK,2024,3,11,Crude Oil,Burned by customer,100000,bbl,,,45000
+INVALID_FACILITY,2024,4,1,Stuff,,100,kg,1,kg,

@@ -5,12 +5,14 @@ import { useToast } from "./Toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
+import Scope2ImportWizard from "./Scope2ImportWizard";
 import { Upload, Copy, Trash2 } from "lucide-react";
 import "./ScopeTables.css";
 
 const Scope2Form = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
 
   // Identity State (Hoisted to match Scope 1)
   const [year, setYear] = useState(new Date().getFullYear());
@@ -504,12 +506,25 @@ const Scope2Form = () => {
           style={{
             display: "flex",
             justifyContent: "space-between",
+            alignItems: "center",
             padding: "15px",
           }}
         >
           <strong style={{ fontSize: "1rem", color: "#374151" }}>
             Recent Scope 2 (Electricity) Entries
           </strong>
+          <button
+            className="action-btn secondary"
+            onClick={() => setShowWizard(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            ↑ Bulk Import (Wizard)
+          </button>
         </div>
         <div
           className="table-scroll-container"
@@ -717,6 +732,17 @@ const Scope2Form = () => {
           </button>
         </div>
       </div>
+      
+      {showWizard && (
+        <Scope2ImportWizard
+          onClose={() => setShowWizard(false)}
+          onUploadSuccess={() => {
+            setShowWizard(false);
+            loadEntries();
+            toast.success("Bulk import completed successfully");
+          }}
+        />
+      )}
     </div>
   );
 };

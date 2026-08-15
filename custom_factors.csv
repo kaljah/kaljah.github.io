@@ -1,0 +1,501 @@
+Factor Name,Parent API Fuel,Unit,co2_factor,ch4_factor,n2o_factor,min_val,max_val,typical_val,default_efficiency,apply_to
+Custom Gas Factor 0,Fuel Gas,scf,144.5598,0.475627,0.020498,0,100,50,98,venting
+Custom Gas Factor 1,Diesel,m3,4.1893,0.475727,0.026828,0,100,50,98,combustion
+Custom Gas Factor 2,Fuel Gas,scf,123.4122,0.359952,0.002175,0,100,50,98,venting
+Custom Gas Factor 3,Fuel Gas,bbl,114.2018,0.469533,0.014781,0,100,50,98,combustion
+Custom Gas Factor 4,Natural Gas,gal,135.6771,0.205406,0.018506,0,100,50,98,flaring
+Custom Gas Factor 5,Fuel Gas,gal,85.417,0.406367,0.041465,0,100,50,98,flaring
+Custom Gas Factor 6,Natural Gas,scf,87.767,0.354496,0.043579,0,100,50,98,flaring
+Custom Gas Factor 7,Fuel Gas,m3,125.1081,0.276518,0.047024,0,100,50,98,fugitive
+Custom Gas Factor 8,Propane,gal,89.6675,0.073454,0.040926,0,100,50,98,fugitive
+Custom Gas Factor 9,Diesel,bbl,76.1996,0.372493,0.003443,0,100,50,98,flaring
+Custom Gas Factor 10,Fuel Gas,m3,91.9096,0.152274,5e-05,0,100,50,98,fugitive
+Custom Gas Factor 11,Propane,scf,30.6898,0.10059,0.013899,0,100,50,98,fugitive
+Custom Gas Factor 12,Diesel,gal,113.5879,0.331504,0.042269,0,100,50,98,flaring
+Custom Gas Factor 13,Propane,m3,68.4014,0.267838,0.001213,0,100,50,98,combustion
+Custom Gas Factor 14,Propane,bbl,76.8636,0.317897,0.013402,0,100,50,98,venting
+Custom Gas Factor 15,Diesel,scf,147.3426,0.20035,0.003936,0,100,50,98,venting
+Custom Gas Factor 16,Propane,gal,27.457,0.407183,0.049496,0,100,50,98,flaring
+Custom Gas Factor 17,Propane,tonnes,109.853,0.346738,0.010183,0,100,50,98,venting
+Custom Gas Factor 18,Propane,tonnes,18.3227,0.397503,0.019689,0,100,50,98,combustion
+Custom Gas Factor 19,Natural Gas,m3,123.8476,0.189879,0.042246,0,100,50,98,combustion
+Custom Gas Factor 20,Fuel Gas,gal,85.867,0.024035,0.047921,0,100,50,98,venting
+Custom Gas Factor 21,Diesel,gal,76.955,0.453477,0.017808,0,100,50,98,combustion
+Custom Gas Factor 22,Natural Gas,gal,61.3592,0.446513,0.040542,0,100,50,98,combustion
+Custom Gas Factor 23,Fuel Gas,bbl,94.3465,0.099294,0.000566,0,100,50,98,venting
+Custom Gas Factor 24,Diesel,m3,35.0729,0.473204,0.003204,0,100,50,98,flaring
+Custom Gas Factor 25,Natural Gas,m3,77.3553,0.217191,0.028103,0,100,50,98,flaring
+Custom Gas Factor 26,,m3,14.9012,0.177238,0.016089,0,100,50,98,combustion
+Custom Gas Factor 27,Fuel Gas,bbl,130.6489,0.3993,0.010433,0,100,50,98,venting
+Custom Gas Factor 28,Natural Gas,m3,52.993,0.420301,0.002175,0,100,50,98,flaring
+Custom Gas Factor 29,Natural Gas,scf,2.6671,0.385538,0.03881,0,100,50,98,combustion
+Custom Gas Factor 30,Fuel Gas,bbl,96.7295,0.218035,0.02645,0,100,50,98,flaring
+Custom Gas Factor 31,Natural Gas,tonnes,149.104,0.061192,0.029121,0,100,50,98,flaring
+Custom Gas Factor 32,Propane,bbl,60.3943,0.293097,0.044235,0,100,50,98,flaring
+Custom Gas Factor 33,Propane,gal,113.6925,0.499735,0.021764,0,100,50,98,venting
+Custom Gas Factor 34,Natural Gas,bbl,122.2483,0.223536,0.023253,0,100,50,98,venting
+Custom Gas Factor 35,Diesel,gal,39.8986,0.421615,0.023545,0,100,50,98,venting
+Custom Gas Factor 36,Fuel Gas,scf,83.7658,0.450105,0.03754,0,100,50,98,venting
+Custom Gas Factor 37,Diesel,m3,67.6946,0.104127,0.037925,0,100,50,98,combustion
+Custom Gas Factor 38,,tonnes,72.2436,0.321428,0.034671,0,100,50,98,fugitive
+Custom Gas Factor 39,Fuel Gas,tonnes,119.5198,0.142419,0.028441,0,100,50,98,flaring
+Custom Gas Factor 40,Propane,tonnes,33.8095,0.023998,0.03848,0,100,50,98,combustion
+Custom Gas Factor 41,Diesel,bbl,135.8453,0.081137,0.048625,0,100,50,98,flaring
+Custom Gas Factor 42,Propane,m3,76.1108,0.137536,0.035916,0,100,50,98,fugitive
+Custom Gas Factor 43,Diesel,scf,145.8554,0.495112,0.002834,0,100,50,98,flaring
+Custom Gas Factor 44,Natural Gas,bbl,122.9377,0.48148,0.048921,0,100,50,98,combustion
+Custom Gas Factor 45,,scf,2.4412,0.189702,0.006191,0,100,50,98,flaring
+Custom Gas Factor 46,Natural Gas,tonnes,139.8877,0.153252,0.028844,0,100,50,98,fugitive
+Custom Gas Factor 47,Natural Gas,bbl,16.5343,0.307895,0.042943,0,100,50,98,flaring
+Custom Gas Factor 48,Propane,tonnes,137.9101,0.371675,0.030122,0,100,50,98,combustion
+Custom Gas Factor 49,Propane,gal,75.2537,0.244489,0.039845,0,100,50,98,fugitive
+Custom Gas Factor 50,Propane,m3,35.5039,0.280321,0.021149,0,100,50,98,fugitive
+Custom Gas Factor 51,Propane,gal,104.6402,0.073642,0.029294,0,100,50,98,venting
+Custom Gas Factor 52,,gal,84.6577,0.248914,0.028329,0,100,50,98,fugitive
+Custom Gas Factor 53,Diesel,bbl,65.9603,0.20352,0.029569,0,100,50,98,fugitive
+Custom Gas Factor 54,,tonnes,145.3404,0.092111,0.042321,0,100,50,98,combustion
+Custom Gas Factor 55,Natural Gas,tonnes,80.8287,0.191146,0.001302,0,100,50,98,combustion
+Custom Gas Factor 56,Natural Gas,scf,123.9785,0.332261,0.041948,0,100,50,98,flaring
+Custom Gas Factor 57,Diesel,scf,0.7094,0.269793,0.001006,0,100,50,98,flaring
+Custom Gas Factor 58,Propane,bbl,13.5016,0.482134,0.040001,0,100,50,98,venting
+Custom Gas Factor 59,Diesel,scf,110.9529,0.051833,0.031072,0,100,50,98,combustion
+Custom Gas Factor 60,Propane,gal,129.9501,0.198865,0.002521,0,100,50,98,flaring
+Custom Gas Factor 61,Fuel Gas,gal,59.6841,0.434282,0.045822,0,100,50,98,fugitive
+Custom Gas Factor 62,Natural Gas,gal,57.0343,0.355034,0.007084,0,100,50,98,combustion
+Custom Gas Factor 63,Natural Gas,gal,68.6676,0.187566,0.0463,0,100,50,98,flaring
+Custom Gas Factor 64,,bbl,139.6276,0.402257,0.013225,0,100,50,98,flaring
+Custom Gas Factor 65,Diesel,gal,26.349,0.012098,0.029544,0,100,50,98,flaring
+Custom Gas Factor 66,Fuel Gas,bbl,144.7669,0.33423,0.020025,0,100,50,98,fugitive
+Custom Gas Factor 67,Diesel,bbl,11.4917,0.281481,0.033086,0,100,50,98,combustion
+Custom Gas Factor 68,Fuel Gas,scf,78.8789,0.166432,0.010438,0,100,50,98,fugitive
+Custom Gas Factor 69,Propane,bbl,10.3973,0.424203,0.010764,0,100,50,98,fugitive
+Custom Gas Factor 70,Diesel,gal,8.2949,0.018946,0.032665,0,100,50,98,fugitive
+Custom Gas Factor 71,Diesel,tonnes,130.5286,0.479847,0.02984,0,100,50,98,fugitive
+Custom Gas Factor 72,Fuel Gas,tonnes,3.0157,0.035191,0.013808,0,100,50,98,fugitive
+Custom Gas Factor 73,Fuel Gas,bbl,74.5854,0.200174,0.025765,0,100,50,98,fugitive
+Custom Gas Factor 74,,bbl,115.7594,0.017175,0.01744,0,100,50,98,combustion
+Custom Gas Factor 75,Diesel,m3,49.3539,0.392715,0.0009,0,100,50,98,combustion
+Custom Gas Factor 76,Natural Gas,tonnes,64.0001,0.320273,0.015104,0,100,50,98,flaring
+Custom Gas Factor 77,Natural Gas,tonnes,68.626,0.423333,0.011295,0,100,50,98,fugitive
+Custom Gas Factor 78,Fuel Gas,m3,37.4459,0.110309,0.007436,0,100,50,98,combustion
+Custom Gas Factor 79,Diesel,gal,127.2856,0.366525,0.033581,0,100,50,98,combustion
+Custom Gas Factor 80,Diesel,tonnes,81.7928,0.017984,0.032044,0,100,50,98,combustion
+Custom Gas Factor 81,,gal,30.7892,0.230197,0.004803,0,100,50,98,flaring
+Custom Gas Factor 82,Natural Gas,scf,5.8115,0.310812,0.025961,0,100,50,98,fugitive
+Custom Gas Factor 83,Propane,tonnes,52.7574,0.221312,0.010049,0,100,50,98,combustion
+Custom Gas Factor 84,Fuel Gas,scf,102.6583,0.076953,0.020034,0,100,50,98,fugitive
+Custom Gas Factor 85,Natural Gas,bbl,83.4463,0.007817,0.029095,0,100,50,98,combustion
+Custom Gas Factor 86,Natural Gas,tonnes,122.075,0.082443,0.014438,0,100,50,98,flaring
+Custom Gas Factor 87,Fuel Gas,m3,56.3793,0.08302,0.020323,0,100,50,98,combustion
+Custom Gas Factor 88,,gal,20.7978,0.358051,0.003696,0,100,50,98,venting
+Custom Gas Factor 89,Natural Gas,tonnes,148.0316,0.205047,0.040207,0,100,50,98,combustion
+Custom Gas Factor 90,Natural Gas,tonnes,79.5924,0.469845,0.04473,0,100,50,98,combustion
+Custom Gas Factor 91,Diesel,bbl,80.9445,0.271204,0.002897,0,100,50,98,flaring
+Custom Gas Factor 92,Propane,scf,91.002,0.407326,0.006354,0,100,50,98,venting
+Custom Gas Factor 93,Fuel Gas,m3,27.1424,0.120897,0.026329,0,100,50,98,venting
+Custom Gas Factor 94,,gal,60.3383,0.212544,0.010126,0,100,50,98,flaring
+Custom Gas Factor 95,Propane,m3,126.6953,0.143513,0.027324,0,100,50,98,venting
+Custom Gas Factor 96,Propane,tonnes,149.1907,0.131781,0.034808,0,100,50,98,fugitive
+Custom Gas Factor 97,Fuel Gas,tonnes,84.0287,0.066457,0.015297,0,100,50,98,flaring
+Custom Gas Factor 98,Fuel Gas,gal,4.9493,0.072721,0.019751,0,100,50,98,flaring
+Custom Gas Factor 99,Propane,tonnes,106.9963,0.357588,0.026041,0,100,50,98,combustion
+Custom Gas Factor 100,Fuel Gas,tonnes,64.738,0.095918,0.038177,0,100,50,98,combustion
+Custom Gas Factor 101,,m3,112.2841,0.442584,0.03187,0,100,50,98,flaring
+Custom Gas Factor 102,Propane,scf,126.8375,0.054061,0.018917,0,100,50,98,combustion
+Custom Gas Factor 103,Fuel Gas,gal,107.0448,0.403102,0.016404,0,100,50,98,combustion
+Custom Gas Factor 104,Propane,m3,0.1611,0.182712,0.042448,0,100,50,98,combustion
+Custom Gas Factor 105,Propane,scf,24.0016,0.49831,0.037862,0,100,50,98,fugitive
+Custom Gas Factor 106,Fuel Gas,tonnes,27.1313,0.321037,0.015279,0,100,50,98,venting
+Custom Gas Factor 107,Fuel Gas,gal,73.2316,0.493714,0.009624,0,100,50,98,fugitive
+Custom Gas Factor 108,Fuel Gas,m3,105.5215,0.326336,0.003871,0,100,50,98,fugitive
+Custom Gas Factor 109,Diesel,tonnes,146.268,0.435327,0.03637,0,100,50,98,fugitive
+Custom Gas Factor 110,,scf,27.7831,0.213581,0.03882,0,100,50,98,fugitive
+Custom Gas Factor 111,,m3,30.6483,0.475441,0.011839,0,100,50,98,combustion
+Custom Gas Factor 112,Natural Gas,gal,15.7628,0.378439,0.034844,0,100,50,98,venting
+Custom Gas Factor 113,Fuel Gas,tonnes,12.075,0.049866,0.042979,0,100,50,98,combustion
+Custom Gas Factor 114,,tonnes,136.2853,0.070075,0.044893,0,100,50,98,fugitive
+Custom Gas Factor 115,Propane,bbl,129.5239,0.134334,0.015236,0,100,50,98,fugitive
+Custom Gas Factor 116,,gal,139.2677,0.025903,0.048028,0,100,50,98,combustion
+Custom Gas Factor 117,Fuel Gas,bbl,86.5059,0.127667,0.008354,0,100,50,98,combustion
+Custom Gas Factor 118,Diesel,scf,44.6634,0.230796,0.029364,0,100,50,98,flaring
+Custom Gas Factor 119,Diesel,tonnes,104.8942,0.156693,0.030667,0,100,50,98,combustion
+Custom Gas Factor 120,Diesel,m3,38.3252,0.420123,0.006827,0,100,50,98,combustion
+Custom Gas Factor 121,Natural Gas,bbl,35.558,0.488885,0.036856,0,100,50,98,fugitive
+Custom Gas Factor 122,Propane,gal,89.7651,0.378581,0.005531,0,100,50,98,combustion
+Custom Gas Factor 123,Natural Gas,tonnes,31.4186,0.443054,0.014989,0,100,50,98,flaring
+Custom Gas Factor 124,Diesel,scf,126.6362,0.183864,0.024981,0,100,50,98,flaring
+Custom Gas Factor 125,Propane,scf,32.6423,0.464911,0.036617,0,100,50,98,flaring
+Custom Gas Factor 126,Fuel Gas,m3,147.8736,0.001096,0.026985,0,100,50,98,flaring
+Custom Gas Factor 127,Propane,scf,102.6378,0.171369,0.04731,0,100,50,98,flaring
+Custom Gas Factor 128,Fuel Gas,bbl,121.0356,0.15983,0.020271,0,100,50,98,flaring
+Custom Gas Factor 129,Natural Gas,scf,38.9027,0.36206,0.04553,0,100,50,98,venting
+Custom Gas Factor 130,Diesel,scf,117.4619,0.44802,0.038955,0,100,50,98,flaring
+Custom Gas Factor 131,Natural Gas,m3,29.9352,0.396183,0.043626,0,100,50,98,fugitive
+Custom Gas Factor 132,,bbl,30.2527,0.02713,0.029843,0,100,50,98,fugitive
+Custom Gas Factor 133,Propane,tonnes,54.8444,0.226128,0.007367,0,100,50,98,fugitive
+Custom Gas Factor 134,Fuel Gas,bbl,144.2601,0.210306,0.029149,0,100,50,98,flaring
+Custom Gas Factor 135,,m3,73.731,0.390124,0.018491,0,100,50,98,flaring
+Custom Gas Factor 136,Natural Gas,bbl,147.544,0.431938,0.021267,0,100,50,98,flaring
+Custom Gas Factor 137,Fuel Gas,gal,123.5054,0.173095,0.022279,0,100,50,98,combustion
+Custom Gas Factor 138,Propane,scf,103.3302,0.342967,0.044785,0,100,50,98,fugitive
+Custom Gas Factor 139,Natural Gas,gal,104.3562,0.371407,0.001175,0,100,50,98,venting
+Custom Gas Factor 140,,bbl,5.9111,0.219841,0.048479,0,100,50,98,combustion
+Custom Gas Factor 141,Fuel Gas,m3,59.2513,0.164743,0.021779,0,100,50,98,fugitive
+Custom Gas Factor 142,Fuel Gas,m3,140.3123,0.413437,0.019891,0,100,50,98,flaring
+Custom Gas Factor 143,Natural Gas,tonnes,49.0243,0.497604,0.039258,0,100,50,98,combustion
+Custom Gas Factor 144,Propane,tonnes,16.5908,0.195584,0.035231,0,100,50,98,fugitive
+Custom Gas Factor 145,Propane,bbl,83.3726,0.144849,0.047067,0,100,50,98,flaring
+Custom Gas Factor 146,Fuel Gas,bbl,11.6418,0.468423,0.013921,0,100,50,98,flaring
+Custom Gas Factor 147,,gal,85.2084,0.357336,0.04062,0,100,50,98,combustion
+Custom Gas Factor 148,Propane,bbl,38.9604,0.436726,0.018196,0,100,50,98,fugitive
+Custom Gas Factor 149,Fuel Gas,m3,21.8664,0.251973,0.018093,0,100,50,98,combustion
+Custom Gas Factor 150,Natural Gas,bbl,53.1258,0.385742,0.017089,0,100,50,98,flaring
+Custom Gas Factor 151,Diesel,gal,77.3956,0.146799,0.02348,0,100,50,98,flaring
+Custom Gas Factor 152,Diesel,m3,109.3405,0.152288,0.042173,0,100,50,98,fugitive
+Custom Gas Factor 153,Propane,m3,104.5119,0.047836,0.008867,0,100,50,98,venting
+Custom Gas Factor 154,Fuel Gas,bbl,130.35,0.050634,0.033053,0,100,50,98,combustion
+Custom Gas Factor 155,Natural Gas,gal,73.5461,0.379495,0.018011,0,100,50,98,venting
+Custom Gas Factor 156,Diesel,m3,50.0409,0.318566,0.006326,0,100,50,98,venting
+Custom Gas Factor 157,Fuel Gas,m3,19.066,0.047498,0.027897,0,100,50,98,fugitive
+Custom Gas Factor 158,,gal,86.9803,0.335895,0.041721,0,100,50,98,venting
+Custom Gas Factor 159,Natural Gas,gal,103.2235,0.260958,0.029849,0,100,50,98,flaring
+Custom Gas Factor 160,Fuel Gas,tonnes,31.9149,0.074677,0.017773,0,100,50,98,fugitive
+Custom Gas Factor 161,Natural Gas,m3,82.3762,0.080034,0.026224,0,100,50,98,venting
+Custom Gas Factor 162,,tonnes,77.4884,0.082476,0.01696,0,100,50,98,fugitive
+Custom Gas Factor 163,Natural Gas,tonnes,109.4292,0.426449,0.0252,0,100,50,98,flaring
+Custom Gas Factor 164,Propane,scf,148.2129,0.013197,0.043642,0,100,50,98,combustion
+Custom Gas Factor 165,,m3,54.4573,0.461322,0.022713,0,100,50,98,venting
+Custom Gas Factor 166,Propane,tonnes,20.599,0.33097,0.036389,0,100,50,98,venting
+Custom Gas Factor 167,,gal,37.6156,0.058953,0.046749,0,100,50,98,venting
+Custom Gas Factor 168,,scf,83.2075,0.253149,0.039545,0,100,50,98,combustion
+Custom Gas Factor 169,Diesel,scf,90.3701,0.419862,0.010433,0,100,50,98,fugitive
+Custom Gas Factor 170,Diesel,tonnes,27.9393,0.443336,0.013687,0,100,50,98,fugitive
+Custom Gas Factor 171,Fuel Gas,tonnes,70.519,0.178781,0.019084,0,100,50,98,venting
+Custom Gas Factor 172,Propane,scf,10.1559,0.40401,0.036823,0,100,50,98,venting
+Custom Gas Factor 173,Diesel,tonnes,75.2185,0.100999,0.008542,0,100,50,98,flaring
+Custom Gas Factor 174,Natural Gas,bbl,105.8878,0.091125,0.035726,0,100,50,98,flaring
+Custom Gas Factor 175,Fuel Gas,scf,144.0834,0.04152,0.046447,0,100,50,98,flaring
+Custom Gas Factor 176,Propane,tonnes,59.4568,0.103947,0.039531,0,100,50,98,venting
+Custom Gas Factor 177,Propane,gal,66.4902,0.299546,0.043915,0,100,50,98,fugitive
+Custom Gas Factor 178,,gal,100.1677,0.087203,0.048812,0,100,50,98,venting
+Custom Gas Factor 179,Fuel Gas,scf,54.4526,0.01072,0.045171,0,100,50,98,fugitive
+Custom Gas Factor 180,Fuel Gas,scf,105.562,0.148864,0.021741,0,100,50,98,flaring
+Custom Gas Factor 181,Natural Gas,gal,107.745,0.392023,0.003618,0,100,50,98,fugitive
+Custom Gas Factor 182,Fuel Gas,gal,51.9169,0.481742,0.003397,0,100,50,98,fugitive
+Custom Gas Factor 183,Natural Gas,gal,84.7727,0.056497,0.035539,0,100,50,98,fugitive
+Custom Gas Factor 184,Fuel Gas,tonnes,12.9446,0.251936,0.013423,0,100,50,98,combustion
+Custom Gas Factor 185,,m3,134.6871,0.066816,0.046687,0,100,50,98,venting
+Custom Gas Factor 186,,tonnes,103.2768,0.040432,0.002496,0,100,50,98,flaring
+Custom Gas Factor 187,,m3,36.6559,0.003439,0.001623,0,100,50,98,fugitive
+Custom Gas Factor 188,Fuel Gas,tonnes,119.9554,0.019378,0.020365,0,100,50,98,fugitive
+Custom Gas Factor 189,Fuel Gas,gal,131.5736,0.331894,0.030404,0,100,50,98,fugitive
+Custom Gas Factor 190,,scf,44.5897,0.394722,0.032279,0,100,50,98,venting
+Custom Gas Factor 191,Fuel Gas,scf,113.1525,0.104562,0.025852,0,100,50,98,combustion
+Custom Gas Factor 192,Diesel,gal,74.1113,0.026497,0.032339,0,100,50,98,flaring
+Custom Gas Factor 193,Propane,tonnes,33.0955,0.309749,0.02744,0,100,50,98,venting
+Custom Gas Factor 194,Propane,tonnes,77.7307,0.03363,0.011313,0,100,50,98,venting
+Custom Gas Factor 195,,tonnes,49.6378,0.155555,0.004999,0,100,50,98,combustion
+Custom Gas Factor 196,Propane,tonnes,95.0492,0.053006,0.004085,0,100,50,98,venting
+Custom Gas Factor 197,Diesel,tonnes,144.4516,0.193083,0.0373,0,100,50,98,combustion
+Custom Gas Factor 198,Fuel Gas,bbl,63.7776,0.461804,0.049258,0,100,50,98,fugitive
+Custom Gas Factor 199,Natural Gas,gal,34.4522,0.329915,0.00823,0,100,50,98,combustion
+Custom Gas Factor 200,Diesel,tonnes,45.2833,0.230729,0.024027,0,100,50,98,venting
+Custom Gas Factor 201,Diesel,gal,45.2938,0.301092,0.001917,0,100,50,98,venting
+Custom Gas Factor 202,Natural Gas,tonnes,128.7129,0.149082,0.047456,0,100,50,98,venting
+Custom Gas Factor 203,Natural Gas,m3,124.9817,0.407417,0.032898,0,100,50,98,venting
+Custom Gas Factor 204,Fuel Gas,m3,3.1895,0.220381,0.012478,0,100,50,98,flaring
+Custom Gas Factor 205,Diesel,scf,100.6964,0.496979,0.045736,0,100,50,98,fugitive
+Custom Gas Factor 206,Propane,scf,41.7344,0.145483,0.011157,0,100,50,98,flaring
+Custom Gas Factor 207,Fuel Gas,scf,100.7953,0.381983,0.028843,0,100,50,98,combustion
+Custom Gas Factor 208,Natural Gas,m3,27.702,0.191693,0.000995,0,100,50,98,venting
+Custom Gas Factor 209,Fuel Gas,scf,124.6183,0.070669,0.036421,0,100,50,98,venting
+Custom Gas Factor 210,Natural Gas,scf,98.5184,0.30112,0.007922,0,100,50,98,venting
+Custom Gas Factor 211,Fuel Gas,bbl,129.1966,0.184659,0.041106,0,100,50,98,venting
+Custom Gas Factor 212,Diesel,m3,131.2136,0.19147,0.042185,0,100,50,98,combustion
+Custom Gas Factor 213,Diesel,bbl,52.0252,0.33632,0.008275,0,100,50,98,venting
+Custom Gas Factor 214,Fuel Gas,m3,111.1511,0.113085,0.034703,0,100,50,98,combustion
+Custom Gas Factor 215,Diesel,gal,36.8306,0.023223,0.044813,0,100,50,98,flaring
+Custom Gas Factor 216,Natural Gas,gal,102.092,0.43111,0.019959,0,100,50,98,venting
+Custom Gas Factor 217,,bbl,147.6798,0.395122,0.014763,0,100,50,98,fugitive
+Custom Gas Factor 218,Fuel Gas,scf,29.9498,0.147307,0.015074,0,100,50,98,combustion
+Custom Gas Factor 219,Propane,scf,132.6396,0.35675,0.000661,0,100,50,98,venting
+Custom Gas Factor 220,Propane,bbl,39.8287,0.165359,0.013576,0,100,50,98,venting
+Custom Gas Factor 221,Diesel,bbl,53.9101,0.418845,0.046814,0,100,50,98,flaring
+Custom Gas Factor 222,Diesel,tonnes,39.4315,0.258376,0.038284,0,100,50,98,venting
+Custom Gas Factor 223,Propane,scf,91.9144,0.410579,0.00369,0,100,50,98,flaring
+Custom Gas Factor 224,Diesel,gal,9.7981,0.084477,0.044516,0,100,50,98,venting
+Custom Gas Factor 225,Fuel Gas,tonnes,67.2423,0.499104,0.015666,0,100,50,98,venting
+Custom Gas Factor 226,Natural Gas,scf,140.6782,0.091198,0.031287,0,100,50,98,flaring
+Custom Gas Factor 227,Diesel,bbl,35.1004,0.471139,0.027032,0,100,50,98,venting
+Custom Gas Factor 228,,m3,14.5576,0.323131,0.009613,0,100,50,98,combustion
+Custom Gas Factor 229,Propane,gal,67.9528,0.316255,0.009518,0,100,50,98,combustion
+Custom Gas Factor 230,Natural Gas,m3,8.6981,0.477723,0.04666,0,100,50,98,combustion
+Custom Gas Factor 231,Fuel Gas,bbl,117.9054,0.293308,0.017752,0,100,50,98,venting
+Custom Gas Factor 232,Fuel Gas,scf,73.3264,0.190234,0.003713,0,100,50,98,flaring
+Custom Gas Factor 233,Natural Gas,bbl,72.9183,0.467385,0.014876,0,100,50,98,venting
+Custom Gas Factor 234,Natural Gas,gal,87.9585,0.196534,0.04907,0,100,50,98,combustion
+Custom Gas Factor 235,Propane,m3,61.7563,0.049985,0.043435,0,100,50,98,combustion
+Custom Gas Factor 236,Fuel Gas,bbl,115.4365,0.087827,0.031952,0,100,50,98,venting
+Custom Gas Factor 237,,tonnes,120.0741,0.161051,0.011062,0,100,50,98,combustion
+Custom Gas Factor 238,Natural Gas,bbl,123.7173,0.34905,0.035365,0,100,50,98,fugitive
+Custom Gas Factor 239,,m3,135.3174,0.004278,0.036853,0,100,50,98,fugitive
+Custom Gas Factor 240,,bbl,85.1029,0.001155,0.046821,0,100,50,98,venting
+Custom Gas Factor 241,Diesel,tonnes,143.8182,0.080177,0.018504,0,100,50,98,combustion
+Custom Gas Factor 242,Fuel Gas,gal,67.9391,0.182703,0.041275,0,100,50,98,venting
+Custom Gas Factor 243,Diesel,m3,92.3647,0.407351,0.004795,0,100,50,98,fugitive
+Custom Gas Factor 244,Fuel Gas,tonnes,106.8539,0.056488,0.003859,0,100,50,98,combustion
+Custom Gas Factor 245,Diesel,tonnes,19.9328,0.448398,0.004753,0,100,50,98,fugitive
+Custom Gas Factor 246,Diesel,bbl,4.4884,0.259194,0.028812,0,100,50,98,flaring
+Custom Gas Factor 247,Fuel Gas,gal,107.4887,0.304927,0.040149,0,100,50,98,venting
+Custom Gas Factor 248,Propane,scf,110.9586,0.049035,0.034087,0,100,50,98,combustion
+Custom Gas Factor 249,Natural Gas,gal,142.3607,0.210904,0.025923,0,100,50,98,fugitive
+Custom Gas Factor 250,,gal,7.5104,0.419978,0.01484,0,100,50,98,combustion
+Custom Gas Factor 251,Fuel Gas,tonnes,48.8462,0.199929,0.046305,0,100,50,98,fugitive
+Custom Gas Factor 252,Diesel,tonnes,6.9803,0.212156,0.007541,0,100,50,98,combustion
+Custom Gas Factor 253,Natural Gas,gal,140.1929,0.269109,0.031591,0,100,50,98,venting
+Custom Gas Factor 254,Propane,gal,26.7327,0.487021,0.028935,0,100,50,98,combustion
+Custom Gas Factor 255,,tonnes,11.3282,0.000643,0.048866,0,100,50,98,fugitive
+Custom Gas Factor 256,Fuel Gas,tonnes,101.7879,0.331831,0.024881,0,100,50,98,flaring
+Custom Gas Factor 257,Fuel Gas,gal,143.8094,0.317441,0.009641,0,100,50,98,combustion
+Custom Gas Factor 258,Propane,gal,127.4211,0.096677,0.01345,0,100,50,98,combustion
+Custom Gas Factor 259,Natural Gas,tonnes,29.1041,0.311966,0.032478,0,100,50,98,venting
+Custom Gas Factor 260,Fuel Gas,scf,49.837,0.044857,0.031084,0,100,50,98,venting
+Custom Gas Factor 261,Fuel Gas,gal,148.6686,0.375188,0.034496,0,100,50,98,venting
+Custom Gas Factor 262,Fuel Gas,m3,60.459,0.03229,0.031303,0,100,50,98,combustion
+Custom Gas Factor 263,Diesel,bbl,63.903,0.096056,0.033034,0,100,50,98,venting
+Custom Gas Factor 264,Diesel,gal,131.2756,0.258286,0.03179,0,100,50,98,combustion
+Custom Gas Factor 265,,tonnes,12.5167,0.319964,0.037256,0,100,50,98,flaring
+Custom Gas Factor 266,Fuel Gas,m3,36.7347,0.184072,0.008571,0,100,50,98,combustion
+Custom Gas Factor 267,,bbl,70.732,0.23849,0.045911,0,100,50,98,flaring
+Custom Gas Factor 268,Propane,m3,51.8922,0.037633,0.024192,0,100,50,98,venting
+Custom Gas Factor 269,Propane,tonnes,146.9243,0.258797,0.03745,0,100,50,98,fugitive
+Custom Gas Factor 270,Fuel Gas,scf,67.9172,0.336039,0.04026,0,100,50,98,venting
+Custom Gas Factor 271,Fuel Gas,m3,34.9923,0.005785,0.003903,0,100,50,98,flaring
+Custom Gas Factor 272,Natural Gas,scf,115.9567,0.161958,0.020865,0,100,50,98,venting
+Custom Gas Factor 273,Diesel,gal,104.443,0.086162,0.043623,0,100,50,98,venting
+Custom Gas Factor 274,Natural Gas,bbl,76.1714,0.417818,0.005502,0,100,50,98,fugitive
+Custom Gas Factor 275,,scf,95.8315,0.172521,0.03939,0,100,50,98,venting
+Custom Gas Factor 276,Diesel,tonnes,71.5984,0.433565,0.017301,0,100,50,98,combustion
+Custom Gas Factor 277,Natural Gas,scf,125.5779,0.360701,0.035358,0,100,50,98,venting
+Custom Gas Factor 278,Propane,bbl,27.0868,0.144517,0.037891,0,100,50,98,combustion
+Custom Gas Factor 279,Propane,tonnes,40.6793,0.080663,0.001399,0,100,50,98,venting
+Custom Gas Factor 280,Propane,m3,75.9024,0.311187,0.041503,0,100,50,98,flaring
+Custom Gas Factor 281,Natural Gas,bbl,17.1985,0.319354,0.040618,0,100,50,98,venting
+Custom Gas Factor 282,,gal,41.6047,0.263489,0.00641,0,100,50,98,flaring
+Custom Gas Factor 283,Fuel Gas,bbl,143.4679,0.364321,0.038284,0,100,50,98,fugitive
+Custom Gas Factor 284,Fuel Gas,bbl,68.73,0.016104,0.010149,0,100,50,98,flaring
+Custom Gas Factor 285,Fuel Gas,m3,50.9202,0.061539,0.037589,0,100,50,98,combustion
+Custom Gas Factor 286,Propane,tonnes,131.6838,0.450637,0.020076,0,100,50,98,combustion
+Custom Gas Factor 287,Diesel,scf,89.0691,0.092221,0.034259,0,100,50,98,fugitive
+Custom Gas Factor 288,Natural Gas,tonnes,51.9903,0.171682,0.036537,0,100,50,98,venting
+Custom Gas Factor 289,Natural Gas,m3,134.4576,0.28611,0.037929,0,100,50,98,flaring
+Custom Gas Factor 290,,bbl,144.9222,0.088495,0.025229,0,100,50,98,flaring
+Custom Gas Factor 291,Natural Gas,tonnes,3.5531,0.008213,0.037032,0,100,50,98,venting
+Custom Gas Factor 292,Propane,m3,88.6559,0.270322,0.037975,0,100,50,98,flaring
+Custom Gas Factor 293,Fuel Gas,tonnes,73.4993,0.040598,0.037236,0,100,50,98,venting
+Custom Gas Factor 294,,tonnes,23.9634,0.372227,0.034451,0,100,50,98,flaring
+Custom Gas Factor 295,Propane,gal,137.3433,0.495762,0.031596,0,100,50,98,flaring
+Custom Gas Factor 296,,m3,76.5424,0.236167,0.022968,0,100,50,98,fugitive
+Custom Gas Factor 297,Fuel Gas,m3,85.018,0.499263,0.030804,0,100,50,98,combustion
+Custom Gas Factor 298,,scf,1.2581,0.440696,0.018319,0,100,50,98,combustion
+Custom Gas Factor 299,Fuel Gas,m3,126.9386,0.467331,0.039105,0,100,50,98,flaring
+Custom Gas Factor 300,,scf,126.3956,0.435076,0.01614,0,100,50,98,venting
+Custom Gas Factor 301,Fuel Gas,tonnes,140.8519,0.175722,0.003718,0,100,50,98,venting
+Custom Gas Factor 302,Diesel,gal,93.5115,0.259157,0.036488,0,100,50,98,venting
+Custom Gas Factor 303,Natural Gas,scf,17.9162,0.138884,0.004286,0,100,50,98,venting
+Custom Gas Factor 304,Diesel,gal,18.7756,0.138024,0.036943,0,100,50,98,fugitive
+Custom Gas Factor 305,,scf,115.896,0.320177,0.026134,0,100,50,98,flaring
+Custom Gas Factor 306,Diesel,gal,107.1198,0.446519,0.019893,0,100,50,98,combustion
+Custom Gas Factor 307,Diesel,tonnes,57.4901,0.262112,0.002193,0,100,50,98,flaring
+Custom Gas Factor 308,Natural Gas,m3,121.4471,0.114412,0.040979,0,100,50,98,venting
+Custom Gas Factor 309,Fuel Gas,bbl,70.7282,0.205588,0.036405,0,100,50,98,flaring
+Custom Gas Factor 310,,m3,45.3838,0.113798,0.029606,0,100,50,98,combustion
+Custom Gas Factor 311,Diesel,bbl,7.5676,0.076386,0.021656,0,100,50,98,fugitive
+Custom Gas Factor 312,,scf,54.1183,0.451951,0.002082,0,100,50,98,flaring
+Custom Gas Factor 313,Natural Gas,scf,6.7546,0.054761,0.023676,0,100,50,98,flaring
+Custom Gas Factor 314,Natural Gas,m3,6.9155,0.338286,0.016309,0,100,50,98,fugitive
+Custom Gas Factor 315,Diesel,gal,110.9293,0.041699,0.008703,0,100,50,98,flaring
+Custom Gas Factor 316,Natural Gas,scf,23.6241,0.195531,0.038003,0,100,50,98,combustion
+Custom Gas Factor 317,Natural Gas,scf,113.7127,0.215607,0.00913,0,100,50,98,venting
+Custom Gas Factor 318,,tonnes,117.8098,0.471156,0.019408,0,100,50,98,flaring
+Custom Gas Factor 319,,scf,47.9091,0.231313,0.010979,0,100,50,98,venting
+Custom Gas Factor 320,,bbl,144.5303,0.273616,0.030175,0,100,50,98,fugitive
+Custom Gas Factor 321,Natural Gas,gal,92.651,0.171673,0.04427,0,100,50,98,flaring
+Custom Gas Factor 322,Natural Gas,scf,108.2952,0.146639,0.049814,0,100,50,98,venting
+Custom Gas Factor 323,,scf,89.0173,0.414453,0.041472,0,100,50,98,combustion
+Custom Gas Factor 324,Propane,scf,114.0099,0.129443,0.01398,0,100,50,98,combustion
+Custom Gas Factor 325,Fuel Gas,scf,70.2181,0.417948,0.039044,0,100,50,98,venting
+Custom Gas Factor 326,Propane,gal,88.7743,0.221105,0.00099,0,100,50,98,combustion
+Custom Gas Factor 327,Natural Gas,gal,137.5434,0.216805,0.045844,0,100,50,98,fugitive
+Custom Gas Factor 328,Natural Gas,gal,140.1664,0.179609,0.043904,0,100,50,98,combustion
+Custom Gas Factor 329,Fuel Gas,bbl,17.0963,0.005107,0.026872,0,100,50,98,venting
+Custom Gas Factor 330,Fuel Gas,m3,97.6327,0.149801,0.014676,0,100,50,98,venting
+Custom Gas Factor 331,Propane,tonnes,111.194,0.248782,0.049994,0,100,50,98,fugitive
+Custom Gas Factor 332,Natural Gas,tonnes,146.2563,0.287501,0.014808,0,100,50,98,fugitive
+Custom Gas Factor 333,Propane,bbl,66.9515,0.100655,0.039661,0,100,50,98,flaring
+Custom Gas Factor 334,Natural Gas,m3,25.2654,0.233486,0.033285,0,100,50,98,venting
+Custom Gas Factor 335,Propane,scf,35.5436,0.050572,0.000661,0,100,50,98,venting
+Custom Gas Factor 336,,bbl,93.9202,0.066174,0.01286,0,100,50,98,venting
+Custom Gas Factor 337,Diesel,m3,118.3476,0.404092,0.048343,0,100,50,98,fugitive
+Custom Gas Factor 338,Fuel Gas,gal,49.2465,0.393993,0.021072,0,100,50,98,flaring
+Custom Gas Factor 339,Diesel,gal,48.1593,0.212686,0.034851,0,100,50,98,venting
+Custom Gas Factor 340,Natural Gas,tonnes,30.2229,0.43084,0.04958,0,100,50,98,venting
+Custom Gas Factor 341,Diesel,m3,61.5054,0.03255,0.015612,0,100,50,98,flaring
+Custom Gas Factor 342,,scf,55.1197,0.060625,0.024037,0,100,50,98,flaring
+Custom Gas Factor 343,Natural Gas,scf,24.2642,0.281834,0.021759,0,100,50,98,fugitive
+Custom Gas Factor 344,Propane,gal,123.0872,0.169476,0.04531,0,100,50,98,venting
+Custom Gas Factor 345,,m3,141.2811,0.298186,0.03722,0,100,50,98,flaring
+Custom Gas Factor 346,,m3,72.2533,0.373108,0.022021,0,100,50,98,combustion
+Custom Gas Factor 347,,tonnes,89.3274,0.08734,0.04963,0,100,50,98,combustion
+Custom Gas Factor 348,,gal,75.7394,0.181851,0.03438,0,100,50,98,fugitive
+Custom Gas Factor 349,Diesel,tonnes,121.722,0.355206,0.003052,0,100,50,98,flaring
+Custom Gas Factor 350,Natural Gas,scf,27.0046,0.232723,0.004408,0,100,50,98,flaring
+Custom Gas Factor 351,Fuel Gas,m3,75.5936,0.470416,0.017371,0,100,50,98,fugitive
+Custom Gas Factor 352,,gal,54.2054,0.081318,0.045227,0,100,50,98,fugitive
+Custom Gas Factor 353,Diesel,scf,23.1014,0.29235,0.037749,0,100,50,98,fugitive
+Custom Gas Factor 354,,scf,34.7753,0.23234,0.047446,0,100,50,98,flaring
+Custom Gas Factor 355,,tonnes,81.4355,0.316945,0.035884,0,100,50,98,flaring
+Custom Gas Factor 356,Natural Gas,scf,93.5929,0.464032,0.015261,0,100,50,98,venting
+Custom Gas Factor 357,Natural Gas,tonnes,67.641,0.379225,0.015353,0,100,50,98,combustion
+Custom Gas Factor 358,Diesel,scf,53.7784,0.003626,0.027955,0,100,50,98,combustion
+Custom Gas Factor 359,Diesel,gal,100.1529,0.358103,0.036979,0,100,50,98,fugitive
+Custom Gas Factor 360,Propane,tonnes,26.5577,0.121418,0.005423,0,100,50,98,venting
+Custom Gas Factor 361,,m3,57.5424,0.274889,0.046833,0,100,50,98,venting
+Custom Gas Factor 362,Fuel Gas,gal,61.7234,0.028885,0.000807,0,100,50,98,fugitive
+Custom Gas Factor 363,Diesel,scf,99.7142,0.187178,0.023209,0,100,50,98,venting
+Custom Gas Factor 364,Diesel,m3,148.0877,0.31217,0.015173,0,100,50,98,flaring
+Custom Gas Factor 365,Diesel,scf,138.2435,0.033744,0.019639,0,100,50,98,combustion
+Custom Gas Factor 366,,gal,76.2579,0.218919,0.030217,0,100,50,98,venting
+Custom Gas Factor 367,Propane,m3,56.9022,0.253779,0.020701,0,100,50,98,venting
+Custom Gas Factor 368,Fuel Gas,gal,137.4915,0.224696,0.004746,0,100,50,98,flaring
+Custom Gas Factor 369,Fuel Gas,tonnes,133.988,0.28303,0.037996,0,100,50,98,combustion
+Custom Gas Factor 370,Fuel Gas,m3,95.5738,0.251228,0.048036,0,100,50,98,fugitive
+Custom Gas Factor 371,Natural Gas,gal,20.1613,0.095643,0.015573,0,100,50,98,combustion
+Custom Gas Factor 372,Diesel,scf,104.9789,0.360732,0.003142,0,100,50,98,fugitive
+Custom Gas Factor 373,Natural Gas,gal,45.4303,0.494849,0.048238,0,100,50,98,venting
+Custom Gas Factor 374,,m3,18.0054,0.105597,0.026918,0,100,50,98,combustion
+Custom Gas Factor 375,Diesel,tonnes,148.9615,0.348289,0.001417,0,100,50,98,venting
+Custom Gas Factor 376,Fuel Gas,tonnes,48.0402,0.320718,0.000587,0,100,50,98,venting
+Custom Gas Factor 377,Natural Gas,gal,83.9471,0.041959,0.023181,0,100,50,98,combustion
+Custom Gas Factor 378,Fuel Gas,m3,15.0149,0.313969,0.033245,0,100,50,98,combustion
+Custom Gas Factor 379,Propane,bbl,110.6846,0.44915,0.0095,0,100,50,98,flaring
+Custom Gas Factor 380,Diesel,bbl,66.1426,0.323443,0.04773,0,100,50,98,venting
+Custom Gas Factor 381,Fuel Gas,tonnes,101.0089,0.465793,0.019112,0,100,50,98,fugitive
+Custom Gas Factor 382,Natural Gas,m3,80.5701,0.160613,0.009677,0,100,50,98,venting
+Custom Gas Factor 383,,gal,44.4746,0.107614,0.027313,0,100,50,98,fugitive
+Custom Gas Factor 384,Natural Gas,bbl,145.3081,0.394156,0.039968,0,100,50,98,venting
+Custom Gas Factor 385,Fuel Gas,scf,49.183,0.050883,0.047861,0,100,50,98,venting
+Custom Gas Factor 386,Diesel,gal,80.807,0.467294,0.036143,0,100,50,98,flaring
+Custom Gas Factor 387,,m3,141.5625,0.082627,0.021141,0,100,50,98,venting
+Custom Gas Factor 388,Diesel,m3,55.5978,0.35177,0.046463,0,100,50,98,combustion
+Custom Gas Factor 389,,m3,7.623,0.407885,0.000166,0,100,50,98,combustion
+Custom Gas Factor 390,Natural Gas,bbl,19.6382,0.085944,0.04663,0,100,50,98,venting
+Custom Gas Factor 391,Diesel,m3,31.6163,0.495054,0.009442,0,100,50,98,flaring
+Custom Gas Factor 392,Propane,m3,121.0281,0.177644,0.011197,0,100,50,98,venting
+Custom Gas Factor 393,,gal,65.6005,0.070402,0.044635,0,100,50,98,venting
+Custom Gas Factor 394,,scf,112.8274,0.348901,0.030198,0,100,50,98,venting
+Custom Gas Factor 395,Propane,scf,98.792,0.037805,0.020023,0,100,50,98,flaring
+Custom Gas Factor 396,Natural Gas,tonnes,101.6097,0.004987,0.035343,0,100,50,98,venting
+Custom Gas Factor 397,Diesel,scf,71.916,0.269693,0.023836,0,100,50,98,flaring
+Custom Gas Factor 398,,gal,148.3782,0.121324,0.031727,0,100,50,98,venting
+Custom Gas Factor 399,Natural Gas,scf,70.765,0.255528,0.001958,0,100,50,98,venting
+Custom Gas Factor 400,Natural Gas,m3,79.9261,0.227222,0.004463,0,100,50,98,fugitive
+Custom Gas Factor 401,,gal,20.1291,0.322702,0.005069,0,100,50,98,flaring
+Custom Gas Factor 402,Diesel,tonnes,56.9634,0.378022,0.045423,0,100,50,98,venting
+Custom Gas Factor 403,Fuel Gas,gal,29.8321,0.270896,0.047818,0,100,50,98,flaring
+Custom Gas Factor 404,Natural Gas,bbl,33.078,0.057133,0.049056,0,100,50,98,flaring
+Custom Gas Factor 405,Diesel,scf,118.11,0.267216,0.000354,0,100,50,98,fugitive
+Custom Gas Factor 406,Propane,bbl,16.9965,0.210118,0.035668,0,100,50,98,fugitive
+Custom Gas Factor 407,Diesel,m3,87.1155,0.353057,0.002206,0,100,50,98,venting
+Custom Gas Factor 408,Propane,gal,128.9486,0.254485,0.042782,0,100,50,98,fugitive
+Custom Gas Factor 409,Diesel,gal,58.6869,0.280637,0.031339,0,100,50,98,venting
+Custom Gas Factor 410,Propane,tonnes,59.7059,0.214809,0.006523,0,100,50,98,venting
+Custom Gas Factor 411,,bbl,68.9406,0.005982,0.015032,0,100,50,98,fugitive
+Custom Gas Factor 412,Fuel Gas,scf,12.9918,0.187192,0.017364,0,100,50,98,flaring
+Custom Gas Factor 413,Diesel,scf,100.6512,0.203673,0.020404,0,100,50,98,flaring
+Custom Gas Factor 414,Diesel,bbl,71.7745,0.037216,0.037784,0,100,50,98,fugitive
+Custom Gas Factor 415,Fuel Gas,gal,149.0447,0.388454,0.036858,0,100,50,98,flaring
+Custom Gas Factor 416,Natural Gas,gal,59.0309,0.206378,0.010035,0,100,50,98,combustion
+Custom Gas Factor 417,,tonnes,123.1446,0.087911,0.033683,0,100,50,98,fugitive
+Custom Gas Factor 418,Natural Gas,gal,86.9837,0.254446,0.008338,0,100,50,98,flaring
+Custom Gas Factor 419,Natural Gas,gal,15.6799,0.396439,0.026522,0,100,50,98,venting
+Custom Gas Factor 420,Natural Gas,tonnes,57.3424,0.40923,0.038238,0,100,50,98,fugitive
+Custom Gas Factor 421,Diesel,bbl,73.9668,0.446293,0.042582,0,100,50,98,venting
+Custom Gas Factor 422,,bbl,77.0699,0.025634,0.043947,0,100,50,98,venting
+Custom Gas Factor 423,Diesel,gal,66.9976,0.238144,0.011082,0,100,50,98,venting
+Custom Gas Factor 424,Propane,bbl,136.6761,0.388106,0.042226,0,100,50,98,venting
+Custom Gas Factor 425,,m3,82.1328,0.041532,0.02679,0,100,50,98,combustion
+Custom Gas Factor 426,Natural Gas,scf,63.9636,0.192199,0.007131,0,100,50,98,fugitive
+Custom Gas Factor 427,Diesel,bbl,39.8127,0.28979,0.01997,0,100,50,98,flaring
+Custom Gas Factor 428,,scf,76.3373,0.480033,0.037642,0,100,50,98,combustion
+Custom Gas Factor 429,Fuel Gas,gal,110.2327,0.216696,0.002136,0,100,50,98,fugitive
+Custom Gas Factor 430,Fuel Gas,m3,113.4173,0.169139,0.009199,0,100,50,98,flaring
+Custom Gas Factor 431,Propane,bbl,86.0083,0.497651,0.02087,0,100,50,98,flaring
+Custom Gas Factor 432,Propane,tonnes,123.0411,0.273181,0.037589,0,100,50,98,venting
+Custom Gas Factor 433,Diesel,gal,25.3371,0.368041,0.015707,0,100,50,98,venting
+Custom Gas Factor 434,Fuel Gas,scf,67.423,0.116934,0.032129,0,100,50,98,combustion
+Custom Gas Factor 435,,m3,0.9335,0.438037,0.002211,0,100,50,98,combustion
+Custom Gas Factor 436,Diesel,scf,66.9184,0.375595,0.006766,0,100,50,98,combustion
+Custom Gas Factor 437,,m3,106.7137,0.47812,0.0223,0,100,50,98,venting
+Custom Gas Factor 438,Diesel,m3,87.1448,0.475233,0.04059,0,100,50,98,combustion
+Custom Gas Factor 439,Natural Gas,bbl,128.8067,0.32017,0.031811,0,100,50,98,flaring
+Custom Gas Factor 440,Diesel,tonnes,4.3538,0.478709,0.023536,0,100,50,98,flaring
+Custom Gas Factor 441,Propane,tonnes,36.617,0.430671,0.000644,0,100,50,98,combustion
+Custom Gas Factor 442,Diesel,scf,133.3182,0.488703,0.036868,0,100,50,98,flaring
+Custom Gas Factor 443,Natural Gas,m3,49.2324,0.302416,0.026007,0,100,50,98,venting
+Custom Gas Factor 444,Natural Gas,scf,34.2337,0.36914,0.016122,0,100,50,98,combustion
+Custom Gas Factor 445,Diesel,m3,127.5472,0.318409,0.019737,0,100,50,98,venting
+Custom Gas Factor 446,,bbl,61.773,0.038045,0.014533,0,100,50,98,flaring
+Custom Gas Factor 447,,scf,11.7139,0.086833,0.035491,0,100,50,98,flaring
+Custom Gas Factor 448,Propane,tonnes,16.7061,0.180049,0.020725,0,100,50,98,fugitive
+Custom Gas Factor 449,Fuel Gas,tonnes,103.3512,0.014118,0.017469,0,100,50,98,combustion
+Custom Gas Factor 450,,bbl,52.8763,0.416658,0.002792,0,100,50,98,fugitive
+Custom Gas Factor 451,Natural Gas,scf,65.6798,0.140723,0.024831,0,100,50,98,flaring
+Custom Gas Factor 452,,scf,38.5129,0.176577,0.008941,0,100,50,98,fugitive
+Custom Gas Factor 453,Diesel,m3,98.0214,0.177473,0.005751,0,100,50,98,fugitive
+Custom Gas Factor 454,,gal,72.5481,0.140891,0.034784,0,100,50,98,venting
+Custom Gas Factor 455,Natural Gas,scf,112.2013,0.117206,0.023466,0,100,50,98,flaring
+Custom Gas Factor 456,Fuel Gas,tonnes,122.427,0.326814,0.004555,0,100,50,98,flaring
+Custom Gas Factor 457,Propane,tonnes,46.933,0.166741,0.021267,0,100,50,98,combustion
+Custom Gas Factor 458,Natural Gas,scf,92.3925,0.037539,0.021214,0,100,50,98,venting
+Custom Gas Factor 459,,gal,39.2387,0.419127,0.042787,0,100,50,98,flaring
+Custom Gas Factor 460,Propane,bbl,12.1602,0.015085,0.046715,0,100,50,98,combustion
+Custom Gas Factor 461,Fuel Gas,tonnes,115.0973,0.070067,0.025144,0,100,50,98,fugitive
+Custom Gas Factor 462,Natural Gas,bbl,107.3678,0.204895,0.033428,0,100,50,98,combustion
+Custom Gas Factor 463,Propane,scf,37.0621,0.004375,0.040179,0,100,50,98,combustion
+Custom Gas Factor 464,Propane,scf,6.4993,0.267262,0.033317,0,100,50,98,fugitive
+Custom Gas Factor 465,Diesel,scf,56.7123,0.158379,0.000841,0,100,50,98,flaring
+Custom Gas Factor 466,Fuel Gas,scf,84.5375,0.043123,0.023045,0,100,50,98,venting
+Custom Gas Factor 467,Diesel,m3,18.2506,0.44112,0.045704,0,100,50,98,combustion
+Custom Gas Factor 468,Natural Gas,bbl,72.0019,0.109499,0.014795,0,100,50,98,flaring
+Custom Gas Factor 469,Propane,tonnes,67.0581,0.347242,0.013046,0,100,50,98,venting
+Custom Gas Factor 470,Diesel,bbl,112.3425,0.411839,0.018956,0,100,50,98,fugitive
+Custom Gas Factor 471,Diesel,tonnes,60.1446,0.40627,0.036152,0,100,50,98,combustion
+Custom Gas Factor 472,Natural Gas,tonnes,101.7255,0.199262,0.022125,0,100,50,98,venting
+Custom Gas Factor 473,Natural Gas,gal,124.8901,0.05837,0.036324,0,100,50,98,venting
+Custom Gas Factor 474,Natural Gas,m3,29.2081,0.182162,0.010948,0,100,50,98,venting
+Custom Gas Factor 475,Propane,scf,59.6171,0.060865,0.015347,0,100,50,98,flaring
+Custom Gas Factor 476,Fuel Gas,bbl,38.6203,0.270634,0.033085,0,100,50,98,combustion
+Custom Gas Factor 477,,m3,44.0309,0.36597,0.049961,0,100,50,98,venting
+Custom Gas Factor 478,Fuel Gas,scf,52.2825,0.298422,0.008191,0,100,50,98,flaring
+Custom Gas Factor 479,Propane,scf,138.2844,0.293022,0.020743,0,100,50,98,venting
+Custom Gas Factor 480,Propane,gal,43.2469,0.166571,0.019205,0,100,50,98,fugitive
+Custom Gas Factor 481,Diesel,scf,96.8309,0.106588,0.048677,0,100,50,98,fugitive
+Custom Gas Factor 482,Natural Gas,scf,8.5132,0.29762,0.020745,0,100,50,98,flaring
+Custom Gas Factor 483,Natural Gas,tonnes,73.5946,0.146298,0.042253,0,100,50,98,flaring
+Custom Gas Factor 484,Fuel Gas,gal,59.5462,0.152589,0.04717,0,100,50,98,flaring
+Custom Gas Factor 485,Natural Gas,m3,71.8111,0.262222,0.011879,0,100,50,98,flaring
+Custom Gas Factor 486,Natural Gas,scf,142.7687,0.0026,0.013976,0,100,50,98,flaring
+Custom Gas Factor 487,,bbl,102.2944,0.303366,0.042697,0,100,50,98,fugitive
+Custom Gas Factor 488,Propane,tonnes,35.34,0.129173,0.015237,0,100,50,98,combustion
+Custom Gas Factor 489,,scf,107.4956,0.480149,0.028999,0,100,50,98,combustion
+Custom Gas Factor 490,,tonnes,100.3496,0.172213,0.001695,0,100,50,98,flaring
+Custom Gas Factor 491,Natural Gas,bbl,128.001,0.097102,0.032771,0,100,50,98,venting
+Custom Gas Factor 492,Propane,m3,63.6546,0.151582,0.030204,0,100,50,98,venting
+Custom Gas Factor 493,Diesel,scf,32.928,0.491404,0.007695,0,100,50,98,venting
+Custom Gas Factor 494,Propane,bbl,5.1449,0.114848,0.026051,0,100,50,98,combustion
+Custom Gas Factor 495,Propane,m3,88.3026,0.073613,0.008076,0,100,50,98,venting
+Custom Gas Factor 496,Diesel,gal,145.2352,0.407017,0.023969,0,100,50,98,venting
+Custom Gas Factor 497,Fuel Gas,scf,87.863,0.088496,0.01409,0,100,50,98,combustion
+Custom Gas Factor 498,,bbl,27.332,0.196249,0.036985,0,100,50,98,combustion
+Custom Gas Factor 499,,scf,36.1019,0.395715,0.00058,0,100,50,98,fugitive

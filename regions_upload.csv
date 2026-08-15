@@ -1,0 +1,40 @@
+Region Name,Activity,Division,Field / Block,Location (Wilaya),Consolidation Approach,Boundary Details,Supply Chain Segment,Latitude,Longitude
+ADR,Activité E&P,DP,OF,Adrar,Operational Control,Full Operational Control,Upstream,27.87,-0.29
+REB,Activité E&P,DP,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+HBK,Activité E&P,DP,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+GTL,Activité E&P,DP,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+OHT,Activité E&P,DP,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+STAH,Activité E&P,DP,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+TFT,Activité E&P,DP,GF,Illizi,Operational Control,Full Operational Control,Upstream,26.5,8.4
+HMD,Activité E&P,DP,OF,Ouargla,Operational Control,Full Operational Control,Upstream,31.68,6.06
+RNS,Activité E&P,DP,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+HRM,Activité E&P,DP,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+INAS,Activité E&P,DP,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+BRS,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+MLN,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+BMS,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+GSS,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+OURHOUD,Activité E&P,AST,OF,Ouargla,Operational Control,Full Operational Control,Upstream,31.68,6.06
+RKF,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+G SH-ENI,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+HBR,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+GB,Activité E&P,AST,OF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+REGGANE,Activité E&P,AST,GF,Adrar,Operational Control,Full Operational Control,Upstream,27.87,-0.29
+INA,Activité E&P,AST,GF,Illizi,Operational Control,Full Operational Control,Upstream,26.5,8.4
+ISG,Activité E&P,AST,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+GTIM,Activité E&P,AST,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+SH-FCP MLE,Activité E&P,AST,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+GTG,Activité E&P,AST,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+GTFT,Activité E&P,AST,GF,Algeria,Operational Control,Full Operational Control,Upstream,28.0,3.0
+GL1Z,Activité LQS,LSH,GNL,Oran,Operational Control,Full Operational Control,Midstream,35.8,-0.3
+GL2Z,Activité LQS,LSH,GNL,Oran,Operational Control,Full Operational Control,Midstream,35.8,-0.3
+GL3Z,Activité LQS,LSH,GNL,Oran,Operational Control,Full Operational Control,Midstream,35.8,-0.3
+GL1K,Activité LQS,LSH,GNL,Skikda,Operational Control,Full Operational Control,Midstream,36.8,6.9
+GP1Z,Activité LQS,LSH,GPL,Oran,Operational Control,Full Operational Control,Midstream,35.8,-0.3
+GP2Z,Activité LQS,LSH,GPL,Oran,Operational Control,Full Operational Control,Midstream,35.8,-0.3
+RA1K,Activité RPC,RAF,Raffinerie,Skikda,Operational Control,Full Operational Control,Downstream,36.8,6.9
+RA1Z,Activité RPC,RAF,Raffinerie,Oran,Operational Control,Full Operational Control,Downstream,35.8,-0.3
+RA1G,Activité RPC,RAF,Raffinerie,Alger,Operational Control,Full Operational Control,Downstream,36.7,3.1
+RA1A,Activité RPC,RAF,Raffinerie,Algeria,Operational Control,Full Operational Control,Downstream,28.0,3.0
+CP1Z,Activité RPC,PEC,Pétrochimie,Oran,Operational Control,Full Operational Control,Downstream,35.8,-0.3
+CPEK,Activité RPC,PEC,Pétrochimie,Skikda,Operational Control,Full Operational Control,Downstream,36.8,6.9

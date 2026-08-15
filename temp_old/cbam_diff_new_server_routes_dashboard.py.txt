@@ -1,0 +1,273 @@
+new/server/routes/dashboard.py b/new/server/routes/dashboard.py
+index 9e44e81..4a394ac 100644
+--- a/new/server/routes/dashboard.py
++++ b/new/server/routes/dashboard.py
+@@ -1,11 +1,12 @@
+ from routes.auth import login_required
+ from flask import Blueprint, request, jsonify, current_app
+-from models import Emission, Facility, Scope2Emission, Scope3Emission, MitigationProject, MitigationRecord, Goal, BaseYearRecalculation, ProductionData, OgmpSurvey, CbamProductExport
++from models import Emission, Facility, Scope2Emission, Scope3Emission, MitigationProject, MitigationRecord, Goal, BaseYearRecalculation, ProductionData, OgmpSurvey
+ from extensions import db
+ from utils import get_current_user, get_allowed_facility_ids
+ from sqlalchemy import func, extract
+ from datetime import datetime
+ from cachetools import TTLCache, cached, keys
++from calculations.constants import get_active_gwp
+ import threading
+ import concurrent.futures
+ 
+@@ -586,6 +587,119 @@ def create_base_year_recalculation():
+     except Exception as e:
+         db.session.rollback()
+         return jsonify({'error': str(e)}), 500
++@dashboard_bp.route('/ogmp-metrics', methods=['GET'])
++@login_required
++def get_ogmp_metrics():
++    """
++    OGMP 2.0 Gold Standard roadmap & milestone progress per facility.
++    Returns compliance deadlines, current L1-L5 levels, and reconciliation status.
++    """
++    from routes.auth import _app_settings
++    default_base_year = _app_settings.get('ogmp_default_base_year', 2023)
++    default_threshold = _app_settings.get('reconciliation_threshold', 20.0)
++
++    user = get_current_user()
++    allowed_fids = get_allowed_facility_ids(user)
++    
++    fac_id = request.args.get('facilityId')
++    year = request.args.get('year')
++    current_year = int(year) if year and year != 'all' and str(year).isdigit() else datetime.utcnow().year
++
++    query = Facility.query
++    if allowed_fids is not None:
++        query = query.filter(Facility.id.in_(allowed_fids))
++    if fac_id and fac_id != 'all' and str(fac_id).isdigit():
++        query = query.filter(Facility.id == int(fac_id))
++        
++    facilities = query.all()
++
++    # Query survey top-down sums & facility bottom-up CH4
++    survey_query = db.session.query(
++        OgmpSurvey.facility_id,
++        func.sum(OgmpSurvey.estimated_annual_tch4).label('total_td')
++    )
++    if allowed_fids is not None:
++        survey_query = survey_query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
++    survey_map = {r.facility_id: float(r.total_td or 0) for r in survey_query.group_by(OgmpSurvey.facility_id).all()}
++
++    # Query emissions for bottom-up CH4
++    ch4_query = db.session.query(
++        Emission.facility_id,
++        func.sum(Emission.ch4_emissions).label('total_ch4')
++    ).filter(Emission.status != 'Draft')
++    if allowed_fids is not None:
++        ch4_query = ch4_query.filter(Emission.facility_id.in_(allowed_fids))
++    if year and year != 'all' and str(year).isdigit():
++        ch4_query = ch4_query.filter(Emission.year == int(year))
++    ch4_map = {r.facility_id: float(r.total_ch4 or 0) for r in ch4_query.group_by(Emission.facility_id).all()}
++    
++    fac_list = []
++    total_operated = 0
++    total_non_operated = 0
++    gold_compliant_count = 0
++    
++    for f in facilities:
++        op_status = f.operator_status or 'operated'
++        membership_yr = f.ogmp_membership_year or default_base_year
++        target_yr = membership_yr + (3 if op_status == 'operated' else 5)
++        threshold = f.reconciliation_threshold or default_threshold
++        
++        if op_status == 'operated':
++            total_operated += 1
++        else:
++            total_non_operated += 1
++            
++        is_compliant = current_year <= target_yr
++        if is_compliant:
++            gold_compliant_count += 1
++
++        top_down = survey_map.get(f.id, 0.0)
++        bottom_up = ch4_map.get(f.id, 0.0)
++        variance_pct = round(((top_down - bottom_up) / bottom_up * 100.0), 2) if (top_down > 0 and bottom_up > 0) else None
++
++        if top_down > 0 and variance_pct is not None and abs(variance_pct) <= threshold:
++            highest_level = 5
++        elif top_down > 0:
++            highest_level = 4
++        else:
++            highest_level = 3
++            
++        fac_list.append({
++            'facility_id': f.id,
++            'id': f.id,
++            'facility_name': f.name,
++            'name': f.name,
++            'facility_code': f.code or f"FAC-{f.id}",
++            'segment': f.segment or 'Upstream',
++            'country': f.country or 'Algeria',
++            'operator_status': op_status,
++            'ogmp_membership_year': membership_yr,
++            'target_year': target_yr,
++            'target_compliance_year': target_yr,
++            'target_gold_year': target_yr,
++            'reconciliation_threshold': threshold,
++            'is_compliant': is_compliant,
++            'highest_ogmp_level': highest_level,
++            'reconciliation_variance_pct': variance_pct,
++            'status': 'Gold Pathway Active' if is_compliant else 'Target Milestone Overdue'
++        })
++        
++    return jsonify({
++        'facilities': fac_list,
++        'summary': {
++            'total_facilities': len(facilities),
++            'operated_count': total_operated,
++            'non_operated_count': total_non_operated,
++            'gold_compliant_count': gold_compliant_count,
++            'current_reporting_year': current_year,
++            'global_default_base_year': default_base_year,
++            'global_threshold': default_threshold,
++            'upstream_target_pct': _app_settings.get('ogmp_upstream_target_pct', 0.20),
++            'midstream_target_pct': _app_settings.get('ogmp_midstream_target_pct', 0.05)
++        }
++    })
++
++
+ @dashboard_bp.route('/intensity-stats', methods=['GET'])
+ @login_required
+ def get_intensity_stats():
+@@ -769,6 +883,11 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
+ 
+     year_buckets = {y: [] for y in year_list}
+ 
++    # Resolve active 20-year GWP factors
++    gwp20_factors = get_active_gwp(horizon='20')
++    ch4_gwp20 = float(gwp20_factors.get('CH4', 82.5))
++    n2o_gwp20 = float(gwp20_factors.get('N2O', 264.0))
++
+     for (yr, fid) in all_year_fid_keys:
+         boe = prod_map.get((yr, fid), {}).get('total_boe', 0)
+         prod_d = prod_map.get((yr, fid), {'total_oil': 0, 'total_gas': 0})
+@@ -782,9 +901,9 @@ def _query_intensity_trend_bulk(facility_id=None, years=None, activity=None, div
+         methane_loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
+         flaring_rate_pct = (ed['total_flaring_vol'] / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
+ 
+-        # Exact GWP20 formula
++        # Exact GWP20 formula using dynamic active standard
+         total_s1 = ed['total_co2e'] - ed['total_s2']
+-        s1_gwp20 = ed['total_co2'] + (ed['total_ch4'] * 82.5) + (ed['total_n2o'] * 273.0)
++        s1_gwp20 = ed['total_co2'] + (ed['total_ch4'] * ch4_gwp20) + (ed['total_n2o'] * n2o_gwp20)
+         total_gwp20 = s1_gwp20 + ed['total_s2']
+ 
+         if boe > 0:
+@@ -1099,8 +1218,11 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
+         # Flaring Rate %
+         flaring_rate_pct = (ed['total_flaring_vol'] / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
+ 
+-        # GWP 20-Year Horizon: CH4 = 82.5, N2O = 273 (AR5)
+-        s1_gwp20 = ed['total_co2'] + (ed['total_ch4'] * 82.5) + (ed['total_n2o'] * 273.0)
++        # GWP 20-Year Horizon: dynamic resolution per active standard
++        gwp20_factors = get_active_gwp(horizon='20')
++        ch4_gwp20 = float(gwp20_factors.get('CH4', 82.5))
++        n2o_gwp20 = float(gwp20_factors.get('N2O', 264.0))
++        s1_gwp20 = ed['total_co2'] + (ed['total_ch4'] * ch4_gwp20) + (ed['total_n2o'] * n2o_gwp20)
+         s2_val = s2_map.get(fid, 0)
+         total_co2e_gwp20 = s1_gwp20 + s2_val
+ 
+@@ -1117,21 +1239,66 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
+         else:
+             co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = flare_int = biogenic_int = 0.0
+ 
+-        # EPA WEC (Waste Emissions Charge)
++        # EPA WEC (Waste Emissions Charge per 40 CFR Part 99 / IRA ┬º136)
++        from routes.auth import _app_settings
++        up_target = float(_app_settings.get('ogmp_upstream_target_pct', 0.20)) / 100.0
++        mid_target = float(_app_settings.get('ogmp_midstream_target_pct', 0.05)) / 100.0
+         fac = fac_info.get(fid)
+         segment = (fac.segment or 'Upstream').lower() if fac else 'upstream'
+-        wec_threshold_pct = 0.0005 if 'processing' in segment or 'midstream' in segment else 0.0020
++        wec_threshold_pct = mid_target if ('processing' in segment or 'midstream' in segment or 'lng' in segment) else up_target
+         allowed_ch4_tonnes = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0
+         excess_ch4_tonnes = max(0.0, ed['total_ch4'] - allowed_ch4_tonnes)
+-        wec_fee_usd = round(excess_ch4_tonnes * 900.0, 2)
++        
++        # WEC Rate: $900/tonne in 2024, $1,200/tonne in 2025, $1,500/tonne in 2026+
++        yr_str = str(year) if year and year != 'all' else str(datetime.utcnow().year)
++        wec_fee_map = _app_settings.get('wec_fee_rates', {})
++        wec_rate = float(wec_fee_map.get(yr_str, 900.0 if yr_str == '2024' else (1200.0 if yr_str == '2025' else 1500.0)))
++        wec_fee_usd = round(excess_ch4_tonnes * wec_rate, 2)
+         wec_status = 'Compliant' if excess_ch4_tonnes <= 0 else 'Taxable Liability'
+ 
+-        # OGMP Level Distribution
++        # OGMP Level Distribution & Level Progression
+         total_s1 = ed['total_co2e'] - s2_val
+         l3_pct = round((ed['l3_emissions'] / total_s1 * 100.0), 1) if total_s1 > 0 else 0.0
+         l4_pct = round((ed['l4_emissions'] / total_s1 * 100.0), 1) if total_s1 > 0 else 0.0
+         top_down_tch4 = ogmp_surveys.get(fid, 0.0)
+         reconciliation_ratio = round(top_down_tch4 / ed['total_ch4'], 2) if ed['total_ch4'] > 0 and top_down_tch4 > 0 else None
++        variance_pct = round(((top_down_tch4 - ed['total_ch4']) / ed['total_ch4'] * 100.0), 2) if ed['total_ch4'] > 0 and top_down_tch4 > 0 else None
++        
++        # Gold Standard Roadmap & Deadline Tracker
++        from routes.auth import _app_settings
++        default_base_year = _app_settings.get('ogmp_default_base_year', 2023)
++        default_threshold = _app_settings.get('reconciliation_threshold', 20.0)
++
++        op_status = fac.operator_status or 'operated' if fac else 'operated'
++        country = fac.country or 'Algeria' if fac else 'Algeria'
++        base_year = fac.ogmp_membership_year or default_base_year if fac else default_base_year
++        deadline_years = 3 if op_status == 'operated' else 5
++        target_gold_year = base_year + deadline_years
++        threshold = fac.reconciliation_threshold or default_threshold if fac else default_threshold
++        variance_flag = (abs(variance_pct) > threshold) if variance_pct is not None else False
++        
++        # Determine Current OGMP Level (1 to 5)
++        if top_down_tch4 > 0 and (variance_pct is not None and abs(variance_pct) <= threshold):
++            current_level = 5
++        elif top_down_tch4 > 0:
++            current_level = 4  # Top-down measured but variance exceeds threshold (needs reconciliation review)
++        elif l4_pct >= 50:
++            current_level = 4
++        elif l3_pct > 0 or ed['total_ch4'] > 0:
++            current_level = 3
++        else:
++            current_level = 2
++
++        current_cal_year = int(year) if (year and str(year).isdigit()) else 2026
++        years_left = max(0, target_gold_year - current_cal_year)
++        if current_level == 5:
++            pathway_status = 'Gold Standard Achieved (Level 5)'
++        elif current_level == 4 and methane_loss_rate_pct <= 0.20:
++            pathway_status = 'Level 4 Pathway (Target Met)'
++        elif current_cal_year <= target_gold_year:
++            pathway_status = f'On Track ({years_left} yr{"s" if years_left != 1 else ""} remaining)'
++        else:
++            pathway_status = 'Overdue / Action Plan Required'
+ 
+         scope1_2_co2e = ed['total_co2e']
+         scope3_co2e = s3_map.get(fid, 0.0)
+@@ -1143,6 +1310,16 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
+             'division': fac.division if fac else 'N/A',
+             'region': fac.region or (fac.name if fac else 'N/A'),
+             'segment': fac.segment if fac else 'Upstream',
++            'operator_status': op_status,
++            'country': country,
++            'ogmp_membership_year': base_year,
++            'target_gold_year': target_gold_year,
++            'deadline_years': deadline_years,
++            'current_ogmp_level': current_level,
++            'gold_pathway_status': pathway_status,
++            'reconciliation_threshold': threshold,
++            'variance_pct': variance_pct,
++            'variance_flag': variance_flag,
+             # Operational intensities
+             'co2_intensity': co2_int,
+             'co2_intensity_gwp20': co2_int_gwp20,
+@@ -1155,7 +1332,7 @@ def _query_intensity_stats(facility_id=None, year=None, activity=None, division=
+             # Loss and flaring rates %
+             'methane_loss_rate_pct': methane_loss_rate_pct,
+             'flaring_rate_pct': flaring_rate_pct,
+-            'ogmp_gold_standard_target': 0.20,
++            'ogmp_gold_standard_target': 0.20 if 'upstream' in segment else 0.05,
+             'ogmp_target_status': 'Compliant' if methane_loss_rate_pct <= 0.20 else ('Warning' if methane_loss_rate_pct <= 0.25 else 'Non-Compliant'),
+             # EPA WEC
+             'wec_status': wec_status,

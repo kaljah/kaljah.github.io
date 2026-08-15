@@ -77,7 +77,6 @@ def add_source():
     )
     db.session.add(source)
     db.session.commit()
-    return jsonify({"message": "Source added", "id": source.id}), 201
     try:
         log_activity_and_notify(
             "CREATE",
@@ -87,8 +86,10 @@ def add_source():
             request=request,
             entity="EmissionSource",
         )
-    except Exception as e:
-        pass
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+    return jsonify({"message": "Source added", "id": source.id}), 201
 
 
 @managedata_bp.route("/sources/<int:source_id>", methods=["DELETE"])
@@ -99,7 +100,6 @@ def delete_source(source_id):
         return jsonify({"error": "Source not found"}), 404
     db.session.delete(source)
     db.session.commit()
-    return jsonify({"message": "Source deleted"})
     try:
         log_activity_and_notify(
             "DELETE",
@@ -109,8 +109,10 @@ def delete_source(source_id):
             request=request,
             entity="EmissionSource",
         )
-    except Exception as e:
-        pass
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+    return jsonify({"message": "Source deleted"})
 
 
 @managedata_bp.route("/sources/bulk-import", methods=["POST"])
@@ -170,7 +172,6 @@ def bulk_import_sources():
         imported_count += 1
 
     db.session.commit()
-    return jsonify({"message": f"{imported_count} sources imported"}), 201
     try:
         log_activity_and_notify(
             "CREATE",
@@ -180,8 +181,10 @@ def bulk_import_sources():
             request=request,
             entity="EmissionSource",
         )
-    except Exception as e:
-        pass
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+    return jsonify({"message": f"{imported_count} sources imported"}), 201
 
 
 # --- Mitigation Records ---
@@ -503,6 +506,11 @@ def bulk_import_mitigation():
     from datetime import datetime
 
     for rec in records:
+        # Skip records with no project name
+        project_name = str(rec.get("name") or "").strip()
+        if not project_name:
+            continue
+
         f_val = rec.get("facility_id")
         facility = None
 
@@ -561,7 +569,7 @@ def bulk_import_mitigation():
 
         proj = MitigationProject(
             facility_id=facility.id,
-            name=rec.get("name"),
+            name=project_name,
             project_type=rec.get("project_type"),
             year=year,
             quantity_tco2e=qty,
@@ -576,7 +584,6 @@ def bulk_import_mitigation():
         imported_count += 1
 
     db.session.commit()
-    return jsonify({"message": f"{imported_count} mitigation projects imported"}), 201
     try:
         log_activity_and_notify(
             "CREATE",
@@ -586,8 +593,10 @@ def bulk_import_mitigation():
             request=request,
             entity="MitigationProject",
         )
-    except Exception as e:
-        pass
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+    return jsonify({"message": f"{imported_count} mitigation projects imported"}), 201
 
 
 # --- Yearly Emission Goals ---

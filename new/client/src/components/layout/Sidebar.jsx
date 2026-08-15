@@ -30,21 +30,10 @@ const Sidebar = () => {
     <aside className="sidebar glass-panel">
       {/* Header */}
       <div className="sidebar-header">
-        <div className="logo-box">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 20V10M18 20V4M6 20v-4" />
-          </svg>
+        <div className="logo-box" style={{ background: 'transparent', padding: 0 }}>
+          <img src="/carbon_tech.svg" alt="Carbon Tech Logo" style={{ width: '32px', height: '32px' }} />
         </div>
-        <span className="brand-text">GHG Reporting</span>
+        <span className="brand-text">Carbon tech</span>
       </div>
 
       <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>

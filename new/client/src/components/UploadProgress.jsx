@@ -90,7 +90,8 @@ const IconChevron = ({ open }) => (
 /* ── Reason tag colour coding ─────────────────────────────── */
 function categoryFromReason(reason = "") {
   const r = reason.toLowerCase();
-  if (r.includes("facility")) return { label: "Facility", cls: "tag-facility" };
+  if (r.includes("access denied") || r.includes("permission")) return { label: "Access Denied", cls: "tag-access" };
+  if (r.includes("facility") || r.includes("region")) return { label: "Region", cls: "tag-facility" };
   if (r.includes("date") || r.includes("year"))
     return { label: "Date", cls: "tag-date" };
   if (r.includes("factor") || r.includes("emission factor"))
@@ -244,16 +245,18 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
           {/* Skipped reasons panel */}
           {skippedCount > 0 && (
             <div className="up-skip-panel">
-              <button
-                className="up-skip-toggle"
-                onClick={() => setShowReasons((v) => !v)}
-              >
-                <IconChevron open={showReasons} />
-                <span>
-                  {skippedCount.toLocaleString()} rows skipped — click to see
-                  reasons
-                  {skippedCount > 100 && " (showing first 100)"}
-                </span>
+              <div className="up-skip-toggle-row">
+                <button
+                  className="up-skip-toggle"
+                  onClick={() => setShowReasons((v) => !v)}
+                >
+                  <IconChevron open={showReasons} />
+                  <span>
+                    {skippedCount.toLocaleString()} rows skipped — click to see
+                    reasons
+                    {skippedCount > 100 && " (showing first 100)"}
+                  </span>
+                </button>
                 {hasErrorCsv && (
                   <button
                     className="up-dl-btn"
@@ -265,7 +268,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
                     <IconDownload /> Download full CSV
                   </button>
                 )}
-              </button>
+              </div>
 
               {showReasons && (
                 <div className="up-reasons-body">
@@ -294,7 +297,8 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
                           <th>Row #</th>
                           <th>Category</th>
                           <th>Reason</th>
-                          <th>Date</th>
+                          <th>Year</th>
+                          <th>Month</th>
                           <th>Facility</th>
                           <th>Process</th>
                           <th>Fuel</th>
@@ -313,7 +317,12 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
                                 </span>
                               </td>
                               <td className="up-td-reason">{row.reason}</td>
-                              <td className="up-td-meta">{row.date || "—"}</td>
+                              <td className="up-td-meta up-td-year">
+                                {row.year || (row.date ? row.date.split("-")[0] : "—")}
+                              </td>
+                              <td className="up-td-meta up-td-month">
+                                {row.month || (row.date ? row.date.split("-")[1] : "—")}
+                              </td>
                               <td className="up-td-meta">
                                 {row.facility || "—"}
                               </td>
@@ -329,7 +338,7 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
                         })}
                         {filtered.length === 0 && (
                           <tr>
-                            <td colSpan={8} className="up-empty">
+                            <td colSpan={9} className="up-empty">
                               No rows match this filter.
                             </td>
                           </tr>
