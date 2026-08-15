@@ -100,7 +100,7 @@ const Icon = {
 };
 
 // ─── ALL field definitions with grouping + tooltips ────────────────────────
-const FIELD_GROUPS = [
+const FIELD_GROUPS_ACTIVITY = [
   {
     id: "identity",
     label: "Location & Identity",
@@ -132,6 +132,30 @@ const FIELD_GROUPS = [
       { key: "emission_factor", label: "Emission Factor",      required: false, hint: "Custom EF. If empty, the system will try to resolve it." },
       { key: "ef_unit",         label: "EF Unit",              required: false, hint: "e.g. kgCO2e/unit. Defaults to kg." },
       { key: "co2e",            label: "Total CO2e",           required: false, hint: "Provide direct CO2e to skip calculations" },
+    ],
+  }
+];
+
+const FIELD_GROUPS_EEIO = [
+  {
+    id: "identity",
+    label: "Location & Identity",
+    IconComp: Icon.Layers,
+    fields: [
+      { key: "date",          label: "Date",           required: true,  hint: "Format: YYYY-MM-DD or YYYY-MM" },
+      { key: "facility_name", label: "Region / Facility", required: true, hint: "Must match an existing region in the system" },
+      { key: "year",          label: "Year",          required: true,  hint: "4-digit year" },
+      { key: "month",         label: "Month",         required: true,  hint: "1–12" },
+    ],
+  },
+  {
+    id: "measurement",
+    label: "Spend & NAICS",
+    IconComp: Icon.Settings,
+    fields: [
+      { key: "naics_code",      label: "NAICS Code",      required: true,  hint: "3-to-6 digit NAICS industry code" },
+      { key: "spend_usd",       label: "Spend (USD)",     required: true,  hint: "Amount spent in USD" },
+      { key: "notes",           label: "Description / Notes", required: false, hint: "Optional supplier or purchase description" },
     ],
   }
 ];
