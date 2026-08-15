@@ -28,6 +28,7 @@ def start_background_upload(
         "errors": [],  # fatal/global errors
         "skipped": [],  # per-row skip reasons [{row, reason, date, facility, ...}]
         "error_csv_path": None,
+        "anomalies": [],  # anomaly-flagged rows
     }
 
     # Spawn the background thread
@@ -56,6 +57,7 @@ def get_job_status(job_id):
     if not job:
         return None
     skipped_all = job.get("skipped", [])
+    anomalies = job.get("anomalies", [])
     return {
         "status": job["status"],
         "progress": job["progress"],
@@ -65,6 +67,8 @@ def get_job_status(job_id):
         "skipped_count": len(skipped_all),
         "skipped_preview": skipped_all[:100],  # first 100 for inline display
         "error_csv_path": job.get("error_csv_path"),
+        "anomaly_count": len(anomalies),
+        "anomalies": anomalies[:50],  # first 50 anomalies for review
     }
 
 
@@ -202,6 +206,11 @@ def _process_file_thread(
             processed = 0
             chunk = []
             skipped_rows = []  # Store raw row data for error CSV
+            anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
+
+            # Initialize anomaly detector
+            from calculations.anomaly import AnomalyDetector
+            anomaly_detector = AnomalyDetector()
 
             # Headers for error CSV
             error_headers = ["Error Reason"] + headers
@@ -300,6 +309,33 @@ def _process_file_thread(
                     skipped_rows.append(skipped_list)
                 elif emission_obj:
                     chunk.append(emission_obj)
+                    # --- Anomaly Detection ---
+                    if str(scope) in ["1", "2", "3"]:
+                        try:
+                            fac_id = getattr(emission_obj, 'facility_id', None)
+                            yr = getattr(emission_obj, 'year', 0)
+                            mo = getattr(emission_obj, 'month', 0)
+                            if scope == "1":
+                                co2e_val = getattr(emission_obj, 'co2e_total', 0) or 0
+                                anomaly = anomaly_detector.check_scope1(fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo)
+                            elif scope == "2":
+                                co2e_val = getattr(emission_obj, 'co2e', 0) or 0
+                                anomaly = anomaly_detector.check_scope2(fac_id, getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)
+                            else:  # scope 3
+                                co2e_val = getattr(emission_obj, 'co2e', 0) or 0
+                                anomaly = anomaly_detector.check_scope3(fac_id, getattr(emission_obj, 'category', ''), co2e_val, yr, mo)
+
+                            if anomaly.get('flagged'):
+                                anomaly_rows.append({
+                                    "row": processed,
+                                    "facility_id": fac_id,
+                                    "value": co2e_val,
+                                    "z_score": anomaly.get('z_score'),
+                                    "expected_range": anomaly.get('expected_range'),
+                                    "message": anomaly.get('message'),
+                                })
+                        except Exception:
+                            pass  # Never let anomaly detection crash the upload
 
                 # Commit chunks of 2000
                 if len(chunk) >= 2000:
@@ -325,6 +361,47 @@ def _process_file_thread(
             upload_jobs[job_id]["processed"] = processed
             upload_jobs[job_id]["progress"] = 100
             upload_jobs[job_id]["status"] = "completed"
+            upload_jobs[job_id]["anomalies"] = anomaly_rows  # expose anomalies
+
+            # --- Maker-Checker: Notify reviewers for bulk Scope 1/2/3 uploads ---
+            if str(scope) in ["1", "2", "3"] and processed > 0:
+                try:
+                    from models import User, Notification, Facility
+                    uploaded_regions = set()
+                    for fac in all_facilities:
+                        if fac.region:
+                            uploaded_regions.add(fac.region)
+                        if fac.location:
+                            uploaded_regions.add(fac.location)
+
+                    # Build reviewer list: superusers in matching regions + all admins
+                    reviewers = User.query.filter(
+                        User.status == "active",
+                        User.role.in_(["superuser", "admin"])
+                    ).all()
+
+                    skipped_count = len(upload_jobs[job_id].get("skipped", []))
+                    success_count = processed - skipped_count
+                    scope_label = f"Scope {scope}"
+
+                    for reviewer in reviewers:
+                        # Admin gets all notifications; superuser gets notifications for their region
+                        if reviewer.role == "admin" or not reviewer.location or reviewer.location == "all" or reviewer.location in uploaded_regions:
+                            Notification.create(
+                                user_id=reviewer.id,
+                                type="audit",
+                                title=f"{scope_label} Bulk Upload Pending Review",
+                                message=(
+                                    f"{success_count} new {scope_label} emission records were imported "
+                                    f"by {user_obj.fullName if user_obj else 'a user'} and are "
+                                    f"awaiting your approval."
+                                ),
+                            )
+                    db.session.commit()
+                except Exception as notif_err:
+                    import traceback as _tb
+                    _tb.print_exc()
+
             # Generate Error CSV if needed
             if skipped_rows:
                 error_file = file_path + "_errors.csv"
@@ -582,6 +659,7 @@ def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS):
         division=row.get("division") or facility.division,
         field=row.get("field") or facility.field,
         created_by=user_id,
+        status="Pending",  # Maker-Checker: awaits reviewer approval
     )
     return emission, errors
 
@@ -655,6 +733,7 @@ def _process_row_scope3(row, user_id, fac_name_map, fac_id_map):
         co2e=co2e,
         notes=row.get("notes", "Bulk Imported"),
         created_by=user_id,
+        status="Pending",  # Maker-Checker: awaits reviewer approval
     )
     return emission, errors
 
@@ -1199,7 +1278,7 @@ def _process_row(
             uncertainty_n2o=(
                 unc.get("n2o", None) if isinstance(unc, dict) else (unc or None)
             ),
-            status="Verified",
+            status="Pending",  # Maker-Checker: awaits reviewer approval
         )
         return emission, []
 
