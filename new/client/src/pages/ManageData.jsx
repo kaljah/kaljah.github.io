@@ -93,6 +93,41 @@ const ManageDataInner = () => {
     const toast = useToast();
     const location = useLocation();
     const [activeTab, setActiveTab] = useState('factors');
+    const [sbtiConfig, setSbtiConfig] = useState({
+        base_year: 2024,
+        base_year_emissions: 0,
+        target_year: 2050,
+        reduction_rate_pct: 4.2,
+        pathway_type: "1.5C"
+    });
+    const [hasSbti, setHasSbti] = useState(false);
+
+    const fetchSbti = async () => {
+        try {
+            const res = await api.get('/manage/sbti');
+            if (res.data.has_target) {
+                setHasSbti(true);
+                setSbtiConfig({
+                    base_year: res.data.base_year,
+                    base_year_emissions: res.data.base_year_emissions,
+                    target_year: res.data.target_year,
+                    reduction_rate_pct: res.data.reduction_rate_pct,
+                    pathway_type: res.data.pathway_type
+                });
+            }
+        } catch (e) {}
+    };
+
+    const handleSaveSbti = async () => {
+        try {
+            await api.post('/manage/sbti', sbtiConfig);
+            toast.show('SBTi Target saved successfully', 'success');
+            setHasSbti(true);
+        } catch (e) {
+            toast.show('Failed to save SBTi Target', 'error');
+        }
+    };
+
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 

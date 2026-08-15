@@ -84,6 +84,8 @@ const DashboardEnhanced = () => {
     other: 0,
   });
 
+  const [sbtiData, setSbtiData] = useState(null);
+  const [sbtiLoading, setSbtiLoading] = useState(false);
   const [trendData, setTrendData] = useState([]);
   const [categoricalData, setCategoricalData] = useState([]);
   const [currentYear, setCurrentYear] = useState("all");
@@ -194,6 +196,22 @@ const DashboardEnhanced = () => {
       setGoal(gObj);
       setBaseYear(bYearObj);
       setCategoricalData(catData);
+
+      // Fetch SBTi Trajectory Data
+      try {
+        setSbtiLoading(true);
+        const sbtiRes = await api.get('/dashboard/sbti-trajectory');
+        if (sbtiRes.data && sbtiRes.data.has_target) {
+            setSbtiData(sbtiRes.data);
+        } else {
+            setSbtiData(null);
+        }
+      } catch (err) {
+        console.error("Failed to load SBTi data", err);
+      } finally {
+        setSbtiLoading(false);
+      }
+
 
       let totals = {
         totalEmissions: 0,
@@ -927,6 +945,50 @@ const DashboardEnhanced = () => {
               />
             </div>
           </div>
+
+
+          {/* SBTi Trajectory Chart */}
+          {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
+            <div className="card full-width-card glass-panel" style={{ marginTop: '24px' }}>
+              <div className="card-header-row">
+                <div>
+                  <h3 className="card-subtitle">SBTi Trajectory Pathway ({sbtiData.pathway_type})</h3>
+                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                    Tracking emissions against Science Based Targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
+                  </p>
+                </div>
+              </div>
+              <div className="chart-container" style={{ height: "400px", width: "100%" }}>
+                <LineChartWrapper
+                  data={sbtiData.trajectory}
+                  xAxisKey="year"
+                  series={[
+                    {
+                      dataKey: "actual",
+                      name: "Actual Emissions (Verified)",
+                      color: "#3b82f6",
+                      strokeWidth: 3
+                    },
+                    {
+                      dataKey: "sbti_target",
+                      name: "SBTi Target Pathway",
+                      color: "#10b981",
+                      strokeDasharray: "5 5",
+                      strokeWidth: 2
+                    },
+                    {
+                      dataKey: "bau_projection",
+                      name: "Business as Usual",
+                      color: "#ef4444",
+                      strokeDasharray: "3 3",
+                      strokeWidth: 2
+                    }
+                  ]}
+                  height={400}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Donut Charts - Side by Side */}
           <div className="donuts-row">
