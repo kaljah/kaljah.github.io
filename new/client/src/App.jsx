@@ -19,6 +19,7 @@ import Diagnostics from "./pages/Diagnostics";
 import AuditTrail from "./pages/AuditTrail";
 import UserManagement from "./pages/UserManagement";
 import Settings from "./pages/Settings";
+import ErpSync from "./pages/ErpSync";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 // --- Lazy loaded heavy components ---
@@ -93,6 +94,14 @@ const AppRoutes = () => {
             <NonITRoute>
               <ManageData />
             </NonITRoute>
+          }
+        />
+        <Route
+          path="erp-sync"
+          element={
+            <AdminRoute>
+              <ErpSync />
+            </AdminRoute>
           }
         />
         <Route
