@@ -803,3 +803,40 @@ def delete_base_year_recalculation(rec_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+@managedata_bp.route("/sbti", methods=["GET", "POST"])
+@login_required
+def manage_sbti():
+    from models import SbtiTarget
+    user = get_current_user()
+    
+    if request.method == "GET":
+        target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+        if not target:
+            return jsonify({"has_target": False})
+        return jsonify({
+            "has_target": True,
+            "base_year": target.base_year,
+            "base_year_emissions": target.base_year_emissions,
+            "target_year": target.target_year,
+            "reduction_rate_pct": target.reduction_rate_pct,
+            "pathway_type": target.pathway_type
+        })
+        
+    # POST
+    data = request.get_json()
+    try:
+        new_target = SbtiTarget(
+            base_year=int(data.get("base_year")),
+            base_year_emissions=float(data.get("base_year_emissions")),
+            target_year=int(data.get("target_year", 2050)),
+            reduction_rate_pct=float(data.get("reduction_rate_pct", 4.2)),
+            pathway_type=data.get("pathway_type", "1.5C"),
+            created_by=user.id if user else None
+        )
+        db.session.add(new_target)
+        db.session.commit()
+        return jsonify({"message": "SBTi Target saved successfully"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400

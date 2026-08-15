@@ -2087,3 +2087,57 @@ def get_report_exclusions():
             for e in exclusions
         ]
     )
+
+@dashboard_bp.route("/sbti-trajectory", methods=["GET"])
+@login_required
+def get_sbti_trajectory():
+    from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission
+    from datetime import datetime
+    
+    target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+    if not target:
+        return jsonify({"has_target": False})
+        
+    # Get actuals per year (Scope 1+2+3 verified only)
+    actuals = {}
+    
+    for em in Emission.query.filter_by(status="Verified").all():
+        actuals[em.year] = actuals.get(em.year, 0) + (em.co2e or 0)
+    for em in Scope2Emission.query.filter_by(status="Verified").all():
+        actuals[em.year] = actuals.get(em.year, 0) + (em.co2e or 0)
+    for em in Scope3Emission.query.filter_by(status="Verified").all():
+        actuals[em.year] = actuals.get(em.year, 0) + (em.co2e or 0)
+        
+    trajectory = []
+    base_year = target.base_year
+    target_year = target.target_year
+    rate = target.reduction_rate_pct / 100.0
+    
+    # Calculate for years from base_year to target_year (or up to 10 years out from current)
+    current_year = datetime.now().year
+    end_year = min(target_year, current_year + 10)
+    
+    for yr in range(base_year, end_year + 1):
+        years_diff = yr - base_year
+        # SBTi Target line
+        sbti_emissions = target.base_year_emissions * (1 - (rate * years_diff))
+        if sbti_emissions < 0:
+            sbti_emissions = 0
+            
+        # Business As Usual (Assume 2% growth if no action taken)
+        bau_emissions = target.base_year_emissions * (1 + (0.02 * years_diff))
+        
+        trajectory.append({
+            "year": yr,
+            "sbti_target": round(sbti_emissions, 2),
+            "bau_projection": round(bau_emissions, 2),
+            "actual": round(actuals.get(yr, 0), 2) if yr <= current_year else None
+        })
+        
+    return jsonify({
+        "has_target": True,
+        "base_year": base_year,
+        "target_year": target_year,
+        "pathway_type": target.pathway_type,
+        "trajectory": trajectory
+    })
