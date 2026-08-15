@@ -3771,3 +3771,211 @@ def export_emissions():
         )
 
     return jsonify({"data": export_data, "count": len(export_data)})
+
+
+# ─── Maker-Checker Approval ───────────────────────────────────────────────────
+
+@emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
+@login_required
+def approve_emission(emission_id):
+    """Approve a single pending Scope 1 emission record."""
+    user = get_current_user()
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Insufficient permissions"}), 403
+
+    emission = db.session.get(Emission, emission_id)
+    if not emission:
+        return jsonify({"error": "Record not found"}), 404
+    if emission.status != "Pending":
+        return jsonify({"error": "Record is not pending approval"}), 400
+
+    emission.status = "Verified"
+    emission.approved_by = user.id
+    emission.approved_at = datetime.datetime.utcnow()
+    log_activity_and_notify(
+        action="UPDATE",
+        record_id=emission.record_id,
+        details=f"Scope 1 emission approved by {user.fullName}",
+        user=user,
+        entity="emission",
+        entity_id=emission.id,
+    )
+    db.session.commit()
+    return jsonify({"success": True, "id": emission_id, "status": "Verified"})
+
+
+@emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
+@login_required
+def reject_emission(emission_id):
+    """Reject (delete) a single pending Scope 1 emission record."""
+    user = get_current_user()
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Insufficient permissions"}), 403
+
+    emission = db.session.get(Emission, emission_id)
+    if not emission:
+        return jsonify({"error": "Record not found"}), 404
+
+    reason = request.json.get("reason", "Rejected by reviewer") if request.json else "Rejected"
+    log_activity_and_notify(
+        action="DELETE",
+        record_id=emission.record_id,
+        details=f"Scope 1 emission rejected by {user.fullName}: {reason}",
+        user=user,
+        entity="emission",
+        entity_id=emission.id,
+    )
+    db.session.delete(emission)
+    db.session.commit()
+    return jsonify({"success": True, "id": emission_id})
+
+
+@emissions_bp.route("/approve/batch", methods=["POST"])
+@login_required
+def approve_batch_emissions():
+    """Approve multiple pending emission records in one request.
+    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3" }
+    """
+    user = get_current_user()
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Insufficient permissions"}), 403
+
+    data = request.get_json() or {}
+    ids = data.get("ids", [])
+    scope = str(data.get("scope", "1"))
+
+    if not ids:
+        return jsonify({"error": "No IDs provided"}), 400
+
+    now = datetime.datetime.utcnow()
+    approved_ids = []
+
+    if scope == "1":
+        records = Emission.query.filter(Emission.id.in_(ids), Emission.status == "Pending").all()
+    elif scope == "2":
+        records = Scope2Emission.query.filter(Scope2Emission.id.in_(ids), Scope2Emission.status == "Pending").all()
+    elif scope == "3":
+        records = Scope3Emission.query.filter(Scope3Emission.id.in_(ids), Scope3Emission.status == "Pending").all()
+    else:
+        return jsonify({"error": f"Invalid scope: {scope}"}), 400
+
+    for record in records:
+        record.status = "Verified"
+        record.approved_by = user.id
+        record.approved_at = now
+        approved_ids.append(record.id)
+
+    db.session.commit()
+    return jsonify({
+        "success": True,
+        "approved_count": len(approved_ids),
+        "approved_ids": approved_ids,
+    })
+
+
+@emissions_bp.route("/reject/batch", methods=["POST"])
+@login_required
+def reject_batch_emissions():
+    """Reject (delete) multiple pending emission records.
+    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3", "reason": "..." }
+    """
+    user = get_current_user()
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Insufficient permissions"}), 403
+
+    data = request.get_json() or {}
+    ids = data.get("ids", [])
+    scope = str(data.get("scope", "1"))
+    reason = data.get("reason", "Batch rejected by reviewer")
+
+    if not ids:
+        return jsonify({"error": "No IDs provided"}), 400
+
+    if scope == "1":
+        records = Emission.query.filter(Emission.id.in_(ids), Emission.status == "Pending").all()
+    elif scope == "2":
+        records = Scope2Emission.query.filter(Scope2Emission.id.in_(ids), Scope2Emission.status == "Pending").all()
+    elif scope == "3":
+        records = Scope3Emission.query.filter(Scope3Emission.id.in_(ids), Scope3Emission.status == "Pending").all()
+    else:
+        return jsonify({"error": f"Invalid scope: {scope}"}), 400
+
+    deleted_count = 0
+    for record in records:
+        db.session.delete(record)
+        deleted_count += 1
+
+    log_activity_and_notify(
+        action="DELETE",
+        record_id="batch",
+        details=f"{deleted_count} Scope {scope} pending records rejected by {user.fullName}: {reason}",
+        user=user,
+        entity=f"scope{scope}_emission",
+        entity_id="batch",
+    )
+    db.session.commit()
+    return jsonify({"success": True, "deleted_count": deleted_count})
+
+
+@emissions_bp.route("/pending", methods=["GET"])
+@login_required
+def get_pending_emissions():
+    """Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard."""
+    user = get_current_user()
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Insufficient permissions"}), 403
+
+    allowed_fids = get_allowed_facility_ids(user)
+
+    def q_scope1():
+        q = Emission.query.filter_by(status="Pending")
+        if allowed_fids is not None:
+            q = q.filter(Emission.facility_id.in_(allowed_fids))
+        return [
+            {
+                "id": e.id, "scope": "1", "facility_id": e.facility_id,
+                "year": e.year, "month": e.month, "process_type": e.process_type,
+                "fuel_type": e.fuel_type, "quantity": e.quantity, "unit": e.unit,
+                "co2e_total": e.co2e_total, "created_at": e.timestamp.isoformat() if e.timestamp else None,
+            }
+            for e in q.order_by(Emission.timestamp.desc()).limit(200).all()
+        ]
+
+    def q_scope2():
+        q = Scope2Emission.query.filter_by(status="Pending")
+        if allowed_fids is not None:
+            q = q.filter(Scope2Emission.facility_id.in_(allowed_fids))
+        return [
+            {
+                "id": e.id, "scope": "2", "facility_id": e.facility_id,
+                "year": e.year, "month": e.month, "source_type": e.source_type,
+                "electricity_kwh": e.electricity_kwh, "co2e": e.co2e,
+                "created_at": e.created_at.isoformat() if e.created_at else None,
+            }
+            for e in q.order_by(Scope2Emission.created_at.desc()).limit(200).all()
+        ]
+
+    def q_scope3():
+        q = Scope3Emission.query.filter_by(status="Pending")
+        if allowed_fids is not None:
+            q = q.filter(Scope3Emission.facility_id.in_(allowed_fids))
+        return [
+            {
+                "id": e.id, "scope": "3", "facility_id": e.facility_id,
+                "year": e.year, "month": e.month, "category": e.category,
+                "co2e": e.co2e, "created_at": e.created_at.isoformat() if e.created_at else None,
+            }
+            for e in q.order_by(Scope3Emission.created_at.desc()).limit(200).all()
+        ]
+
+    return jsonify({
+        "scope1": q_scope1(),
+        "scope2": q_scope2(),
+        "scope3": q_scope3(),
+        "total_pending": (
+            Emission.query.filter_by(status="Pending").count()
+            + Scope2Emission.query.filter_by(status="Pending").count()
+            + Scope3Emission.query.filter_by(status="Pending").count()
+        ),
+    })
+
