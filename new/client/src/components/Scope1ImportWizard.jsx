@@ -337,7 +337,7 @@ const STEPS = [
   { id: 2, label: "Process Scope",  IconComp: Icon.Layers    },
   { id: 3, label: "Select File",    IconComp: Icon.Upload    },
   { id: 4, label: "Map Columns",    IconComp: Icon.Columns   },
-  { id: 5, label: "Import",         IconComp: Icon.Processing },
+  { id: 5, label: "Submitted for Review",    IconComp: Icon.Processing },
 ];
 
 // ─── Step Indicator ───────────────────────────────────────────────────────────

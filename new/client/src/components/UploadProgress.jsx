@@ -115,6 +115,9 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
   const [hasErrorCsv, setHasErrorCsv] = useState(false);
   const [showReasons, setShowReasons] = useState(false);
   const [filterCategory, setFilterCategory] = useState("all");
+  const [anomalyCount, setAnomalyCount] = useState(0);
+  const [anomalies, setAnomalies] = useState([]);
+  const [showAnomalies, setShowAnomalies] = useState(false);
 
   useEffect(() => {
     if (!jobId) return;
@@ -130,6 +133,8 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
         setSkippedCount(data.skipped_count || 0);
         setSkippedPreview(data.skipped_preview || []);
         setHasErrorCsv(!!data.error_csv_path);
+        setAnomalyCount(data.anomaly_count || 0);
+        setAnomalies(data.anomalies || []);
         if (data.status === "completed" || data.status === "error") {
           clearInterval(interval);
         }
@@ -351,9 +356,73 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
             </div>
           )}
 
+          {/* ── Anomaly Warnings Panel ── */}
+          {anomalyCount > 0 && (
+            <div className="up-anomaly-section">
+              <button
+                className="up-anomaly-toggle"
+                onClick={() => setShowAnomalies((v) => !v)}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16, flexShrink: 0 }}>
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>
+                  {anomalyCount} statistical anomaly{anomalyCount !== 1 ? "s" : ""} detected — click to review
+                </span>
+                <IconChevron open={showAnomalies} />
+              </button>
+              {showAnomalies && (
+                <div className="up-anomaly-body">
+                  <p className="up-anomaly-desc">
+                    These rows were imported but deviate significantly from historical values for the same facility and process type.
+                    Please review them carefully before approving.
+                  </p>
+                  <div className="up-reasons-table-wrap">
+                    <table className="up-reasons-table">
+                      <thead>
+                        <tr>
+                          <th>Row #</th>
+                          <th>Facility</th>
+                          <th>Value (tCO2e)</th>
+                          <th>Z-Score</th>
+                          <th>Expected Range</th>
+                          <th>Details</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {anomalies.map((a, i) => (
+                          <tr key={i} className="up-anomaly-row">
+                            <td className="up-td-row">{a.row}</td>
+                            <td className="up-td-meta">{a.facility_id || "—"}</td>
+                            <td className="up-td-meta" style={{ color: "var(--up-warn)" }}>
+                              {typeof a.value === "number" ? a.value.toFixed(2) : a.value}
+                            </td>
+                            <td className="up-td-meta">
+                              {a.z_score != null ? `±${Math.abs(a.z_score).toFixed(1)}σ` : "—"}
+                            </td>
+                            <td className="up-td-meta">
+                              {a.expected_range
+                                ? `${a.expected_range[0].toFixed(1)} – ${a.expected_range[1].toFixed(1)}`
+                                : "—"}
+                            </td>
+                            <td className="up-td-reason" style={{ fontSize: "0.75rem" }}>
+                              {a.message || "Statistical outlier"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="up-footer-actions">
             <button className="up-btn-primary" onClick={onComplete}>
-              View Dashboard
+              View Pending Review
             </button>
           </div>
         </div>

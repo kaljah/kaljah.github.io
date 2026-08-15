@@ -174,6 +174,9 @@ class Emission(db.Model):
     updated_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+    # Maker-Checker Approval
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
 
     __table_args__ = (
         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
@@ -350,6 +353,9 @@ class Scope2Emission(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     status = db.Column(db.String(20), default="Verified", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
+    # Maker-Checker Approval
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
 
     __table_args__ = (
         db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
@@ -376,6 +382,9 @@ class Scope3Emission(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     status = db.Column(db.String(20), default="Verified", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
+    # Maker-Checker Approval
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
 
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),

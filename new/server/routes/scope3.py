@@ -250,3 +250,35 @@ def bulk_import_scope3():
     return jsonify(
         {"message": f"Successfully imported {imported_count} records", "errors": errors}
     ), (200 if not errors else 207)
+
+@scope3_bp.route("/eeio-calculate", methods=["POST"])
+@login_required
+def calculate_eeio():
+    """Calculate Scope 3 Category 1 emissions based on spend and NAICS code"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+        
+    naics_code = str(data.get("naics_code", ""))
+    spend_usd = float(data.get("spend_usd", 0))
+    
+    if spend_usd <= 0:
+        return jsonify({"co2e": 0, "emission_factor": 0, "message": "Zero spend"}), 200
+        
+    from emission_factors.eeio_factors import get_eeio_factor
+    factor_data = get_eeio_factor(naics_code)
+    
+    # Calculate emissions
+    # Factor is kg CO2e per $1000 spend
+    # So formula is: (spend_usd / 1000) * factor -> gives kg CO2e
+    # Then divide by 1000 to get tonnes CO2e
+    spend_k = spend_usd / 1000.0
+    kg_co2e = spend_k * factor_data["kg_co2e_per_1000_usd"]
+    tonnes_co2e = kg_co2e / 1000.0
+    
+    return jsonify({
+        "co2e": tonnes_co2e,
+        "emission_factor": factor_data["kg_co2e_per_1000_usd"],
+        "ef_unit": "kg CO2e / $1000",
+        "industry_name": factor_data["name"]
+    }), 200

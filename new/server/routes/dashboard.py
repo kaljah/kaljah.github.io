@@ -269,7 +269,7 @@ def _query_summary(
         scope1_query = scope1_query.filter(Emission.division == division)
     if year and year != "all":
         scope1_query = scope1_query.filter(Emission.year == int(year))
-    scope1_query = scope1_query.filter(Emission.status != "Draft")
+    scope1_query = scope1_query.filter(Emission.status == "Verified")
     groups = [Emission.year]
     if group_by == "facility":
         groups.append(Emission.facility_id)
@@ -299,7 +299,7 @@ def _query_summary(
         scope2_query = scope2_query.filter(Scope2Emission.division == division)
     if year and year != "all":
         scope2_query = scope2_query.filter(Scope2Emission.year == int(year))
-    scope2_query = scope2_query.filter(Scope2Emission.status != "Draft")
+    scope2_query = scope2_query.filter(Scope2Emission.status == "Verified")
     groups2 = [Scope2Emission.year]
     if group_by == "facility":
         groups2.append(Scope2Emission.facility_id)
@@ -364,7 +364,7 @@ def _query_summary(
         activity_query = activity_query.filter(Emission.division == division)
     if year and year != "all":
         activity_query = activity_query.filter(Emission.year == int(year))
-    activity_query = activity_query.filter(Emission.status != "Draft")
+    activity_query = activity_query.filter(Emission.status == "Verified")
     activity_groups = [Emission.year, Emission.process_type]
     if group_by == "facility":
         activity_groups.append(Emission.facility_id)
@@ -482,7 +482,7 @@ def _query_scope3_summary(
             query = query.filter(Facility.division == division)
         if segment and segment != "all":
             query = query.filter(Facility.segment == segment)
-    query = query.filter(Scope3Emission.status != "Draft")
+    query = query.filter(Scope3Emission.status == "Verified")
     total = query.scalar() or 0
     return {"total": float(total)}
 
@@ -520,7 +520,7 @@ def _query_categorical_breakdown(
         query = query.filter(Emission.activity == activity)
     if division and division != "all":
         query = query.filter(Emission.division == division)
-    query = query.filter(Emission.status != "Draft")
+    query = query.filter(Emission.status == "Verified")
     results = query.group_by(
         Facility.activity, Facility.division, Facility.name, Facility.field
     ).all()
@@ -544,7 +544,7 @@ def _query_categorical_breakdown(
         scope2_q = scope2_q.filter(Scope2Emission.activity == activity)
     if division and division != "all":
         scope2_q = scope2_q.filter(Scope2Emission.division == division)
-    scope2_q = scope2_q.filter(Scope2Emission.status != "Draft")
+    scope2_q = scope2_q.filter(Scope2Emission.status == "Verified")
     scope2_results = scope2_q.group_by(
         Facility.activity, Facility.division, Facility.name, Facility.field
     ).all()
@@ -568,7 +568,7 @@ def _query_categorical_breakdown(
         scope3_q = scope3_q.filter(Facility.activity == activity)
     if division and division != "all":
         scope3_q = scope3_q.filter(Facility.division == division)
-    scope3_q = scope3_q.filter(Scope3Emission.status != "Draft")
+    scope3_q = scope3_q.filter(Scope3Emission.status == "Verified")
     scope3_results = scope3_q.group_by(
         Facility.activity, Facility.division, Facility.name, Facility.field
     ).all()
@@ -606,19 +606,19 @@ def _query_available_years():
     """Pure query logic for /years — returns a plain Python list."""
     years1 = (
         db.session.query(Emission.year)
-        .filter(Emission.status != "Draft")
+        .filter(Emission.status == "Verified")
         .distinct()
         .all()
     )
     years2 = (
         db.session.query(Scope2Emission.year)
-        .filter(Scope2Emission.status != "Draft")
+        .filter(Scope2Emission.status == "Verified")
         .distinct()
         .all()
     )
     years3 = (
         db.session.query(Scope3Emission.year)
-        .filter(Scope3Emission.status != "Draft")
+        .filter(Scope3Emission.status == "Verified")
         .distinct()
         .all()
     )
@@ -849,7 +849,7 @@ def get_ogmp_metrics():
     # Query emissions for bottom-up CH4
     ch4_query = db.session.query(
         Emission.facility_id, func.sum(Emission.ch4_emissions).label("total_ch4")
-    ).filter(Emission.status != "Draft")
+    ).filter(Emission.status == "Verified")
     if allowed_fids is not None:
         ch4_query = ch4_query.filter(Emission.facility_id.in_(allowed_fids))
     if year and year != "all" and str(year).isdigit():
@@ -1044,7 +1044,7 @@ def _query_intensity_trend_bulk(
         func.sum(Emission.co2_emissions).label("total_co2"),
         func.sum(Emission.ch4_emissions).label("total_ch4"),
         func.sum(Emission.n2o_emissions).label("total_n2o"),
-    ).filter(Emission.year.in_(year_list), Emission.status != "Draft")
+    ).filter(Emission.year.in_(year_list), Emission.status == "Verified")
     if allowed_fids is not None:
         em_q = em_q.filter(Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != "all":
@@ -1081,7 +1081,7 @@ def _query_intensity_trend_bulk(
         func.sum(Emission.quantity).label("total_flaring_qty"),
     ).filter(
         Emission.year.in_(year_list),
-        Emission.status != "Draft",
+        Emission.status == "Verified",
         Emission.process_type.ilike("%flare%")
         | Emission.process_type.ilike("%flaring%"),
     )
@@ -1130,7 +1130,7 @@ def _query_intensity_trend_bulk(
         Scope2Emission.year,
         Scope2Emission.facility_id,
         func.sum(Scope2Emission.co2e).label("total_co2e"),
-    ).filter(Scope2Emission.year.in_(year_list), Scope2Emission.status != "Draft")
+    ).filter(Scope2Emission.year.in_(year_list), Scope2Emission.status == "Verified")
     if allowed_fids is not None:
         s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != "all":
@@ -1161,7 +1161,7 @@ def _query_intensity_trend_bulk(
         Scope3Emission.year,
         Scope3Emission.facility_id,
         func.sum(Scope3Emission.co2e).label("total_co2e"),
-    ).filter(Scope3Emission.year.in_(year_list), Scope3Emission.status != "Draft")
+    ).filter(Scope3Emission.year.in_(year_list), Scope3Emission.status == "Verified")
     if allowed_fids is not None:
         s3_q = s3_q.filter(Scope3Emission.facility_id.in_(allowed_fids))
     if facility_id and facility_id != "all":
@@ -1391,7 +1391,7 @@ def _query_intensity_stats(
     if division and division != "all":
         em_query = em_query.filter(Emission.division == division)
 
-    em_query = em_query.filter(Emission.status != "Draft")
+    em_query = em_query.filter(Emission.status == "Verified")
     em_grouped = em_query.group_by(
         Emission.facility_id,
         Emission.process_type,
@@ -1458,7 +1458,7 @@ def _query_intensity_stats(
         func.sum(Emission.co2e_total).label("total_flaring"),
         func.sum(Emission.quantity).label("total_flaring_qty"),
     ).filter(
-        Emission.status != "Draft",
+        Emission.status == "Verified",
         Emission.process_type.ilike("%flare%")
         | Emission.process_type.ilike("%flaring%"),
     )
@@ -1533,7 +1533,7 @@ def _query_intensity_stats(
     if division and division != "all":
         s2_query = s2_query.filter(Scope2Emission.division == division)
 
-    s2_query = s2_query.filter(Scope2Emission.status != "Draft")
+    s2_query = s2_query.filter(Scope2Emission.status == "Verified")
     s2_results = s2_query.group_by(Scope2Emission.facility_id).all()
     s2_map = {s2.facility_id: float(s2.total_co2e or 0) for s2 in s2_results}
 
@@ -1572,7 +1572,7 @@ def _query_intensity_stats(
         s3_query = s3_query.filter(Facility.activity == activity)
     if division and division != "all":
         s3_query = s3_query.filter(Facility.division == division)
-    s3_query = s3_query.filter(Scope3Emission.status != "Draft")
+    s3_query = s3_query.filter(Scope3Emission.status == "Verified")
     s3_results = s3_query.group_by(Scope3Emission.facility_id).all()
     s3_map = {s3.facility_id: float(s3.total_co2e or 0) for s3 in s3_results}
 
@@ -1871,14 +1871,14 @@ def _query_uncertainty(year=None, allowed_fids=None):
         Emission.calc_method,
         Emission.process_type,
         Emission.fuel_type,
-    ).filter(Emission.year == year, Emission.status != "Draft")
+    ).filter(Emission.year == year, Emission.status == "Verified")
     if allowed_fids is not None:
         s1_q = s1_q.filter(Emission.facility_id.in_(allowed_fids))
     s1_emissions = s1_q.all()
 
     # 2. SCOPE 2 — lightweight column projection
     s2_q = db.session.query(Scope2Emission.co2e, Scope2Emission.source_type).filter(
-        Scope2Emission.year == year, Scope2Emission.status != "Draft"
+        Scope2Emission.year == year, Scope2Emission.status == "Verified"
     )
     if allowed_fids is not None:
         s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
@@ -1886,7 +1886,7 @@ def _query_uncertainty(year=None, allowed_fids=None):
 
     # 3. SCOPE 3 — lightweight column projection
     s3_q = db.session.query(Scope3Emission.co2e, Scope3Emission.category).filter(
-        Scope3Emission.year == year, Scope3Emission.status != "Draft"
+        Scope3Emission.year == year, Scope3Emission.status == "Verified"
     )
     if allowed_fids is not None:
         s3_q = s3_q.filter(Scope3Emission.facility_id.in_(allowed_fids))
