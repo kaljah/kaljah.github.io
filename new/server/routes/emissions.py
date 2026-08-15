@@ -3917,6 +3917,21 @@ def reject_batch_emissions():
     return jsonify({"success": True, "deleted_count": deleted_count})
 
 
+@emissions_bp.route("/erp/sync", methods=["POST"])
+@login_required
+def trigger_erp_sync():
+    """Mock ERP integration sync endpoint"""
+    from services.erp_integration import sync_erp_data
+    
+    user = get_current_user()
+    result = sync_erp_data(user.id if user else None)
+    
+    if result.get("success"):
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 500
+
+
 @emissions_bp.route("/pending", methods=["GET"])
 @login_required
 def get_pending_emissions():
