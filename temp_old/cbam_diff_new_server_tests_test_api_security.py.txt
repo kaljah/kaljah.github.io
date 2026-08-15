@@ -1,0 +1,53 @@
+new/server/tests/test_api_security.py b/new/server/tests/test_api_security.py
+index 67dd605..b2a1a19 100644
+--- a/new/server/tests/test_api_security.py
++++ b/new/server/tests/test_api_security.py
+@@ -8,7 +8,7 @@ NEW-10 FIX: Created comprehensive security test suite.
+ import pytest
+ import json
+ from app import app as flask_app
+-from extensions import db
++from extensions import db, limiter
+ from models import User, Emission, ActivityLog
+ from werkzeug.security import generate_password_hash
+ 
+@@ -21,6 +21,7 @@ def app():
+         'SECRET_KEY': 'test-secret-key',
+         'RATELIMIT_ENABLED': False,  # Disable rate limiting during tests
+     })
++    limiter.enabled = False
+     with flask_app.app_context():
+         db.create_all()
+         yield flask_app
+@@ -29,7 +30,10 @@ def app():
+             test_users = User.query.filter(User.email.in_(['admin@test.com', 'user@test.com'])).all()
+             for u in test_users:
+                 db.session.delete(u)
+-            test_emissions = Emission.query.filter(Emission.company_name == 'TestCompany').all()
++            test_emissions = Emission.query.filter(
++                (Emission.company_name == 'TestCompany') |
++                (Emission.record_id.like('test-%'))
++            ).all()
+             for e in test_emissions:
+                 db.session.delete(e)
+             db.session.commit()
+@@ -127,6 +131,9 @@ class TestIDOR:
+             self, client, app, admin_user, regular_user):
+         """User A must not be able to delete User B's emission record."""
+         with app.app_context():
++            # Clean up prior test record if any
++            Emission.query.filter_by(record_id='test-idor-001').delete()
++            db.session.commit()
+             # Create emission owned by admin
+             em = Emission(
+                 record_id='test-idor-001',
+@@ -150,6 +157,9 @@ class TestIDOR:
+     def test_user_can_delete_own_emission(self, client, app, regular_user):
+         """User should be able to delete their own emission record."""
+         with app.app_context():
++            # Clean up prior test record if any
++            Emission.query.filter_by(record_id='test-own-001').delete()
++            db.session.commit()
+             em = Emission(
+                 record_id='test-own-001',
+                 year=2024, month=1, facility_id=1,

@@ -1,0 +1,7 @@
+facility_name,year,month,source_type,grid_region,consumption,unit
+ADR,2024,1,electricity,Algerian National Grid,50000,kWh
+REB,2024,2,electricity,Captive Power Plant,2500,MWh
+HBK,2024,3,indirect_steam,Algerian National Grid,1500,MMBtu
+GTL,2024,4,cogen_allocation,Algerian National Grid,800,tCO2e
+ADR,2024,5,electricity,NON_EXISTENT_GRID,1000,kWh
+NON_EXISTENT_FACILITY,2024,6,electricity,Algerian National Grid,1000,kWh

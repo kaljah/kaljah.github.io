@@ -1,0 +1,385 @@
+new/client/src/pages/MethaneIntensity.jsx b/new/client/src/pages/MethaneIntensity.jsx
+index 4296511..640c4f4 100644
+--- a/new/client/src/pages/MethaneIntensity.jsx
++++ b/new/client/src/pages/MethaneIntensity.jsx
+@@ -7,7 +7,11 @@ import { BarChart, LineChart } from '../components/charts';
+ import { useLayout } from '../context/LayoutContext';
+ import CustomDropdown from '../components/CustomDropdown';
+ import { formatNumber } from '../utils/formatters';
+-import { Wind, Flame, Activity, BarChart2, Grid, Layers, ShieldCheck, AlertTriangle, CheckCircle, Compass, Radio } from 'lucide-react';
++import { 
++    Wind, Flame, Activity, BarChart2, Grid, Layers, 
++    ShieldCheck, AlertTriangle, CheckCircle, Compass, 
++    Radio, Download, Award, TrendingUp, Calendar, Check
++} from 'lucide-react';
+ import './CarbonIntensity.css';
+ 
+ const MethaneIntensity = () => {
+@@ -25,6 +29,11 @@ const MethaneIntensity = () => {
+ 
+     // View states
+     const [trendView, setTrendView] = useState('chart'); // 'chart' or 'heatmap'
++    const [exporting, setExporting] = useState(false);
++    const [selectedBaselineYear, setSelectedBaselineYear] = useState(2023);
++    const [globalThreshold, setGlobalThreshold] = useState(20.0);
++    const [upstreamTargetPct, setUpstreamTargetPct] = useState(0.20);
++    const [midstreamTargetPct, setMidstreamTargetPct] = useState(0.05);
+ 
+     // Data states
+     const [stats, setStats] = useState({
+@@ -45,11 +54,10 @@ const MethaneIntensity = () => {
+ 
+     const [regionalData, setRegionalData] = useState([]);
+     const [ogmpSurveys, setOgmpSurveys] = useState([]);
++    const [ogmpRoadmapData, setOgmpRoadmapData] = useState([]);
+     const [rawTrendData, setRawTrendData] = useState([]);
+     const [loading, setLoading] = useState(true);
+ 
+-    const GAS_TO_BOE = 0.178;
+-
+     const HIERARCHY = {
+         'EP': ['Production', 'Association'],
+         'LQS': ['LSH'],
+@@ -61,12 +69,28 @@ const MethaneIntensity = () => {
+     useEffect(() => {
+         const init = async () => {
+             try {
+-                const [facRes, filterRes] = await Promise.all([
++                const [facRes, filterRes, settingsRes] = await Promise.all([
+                     api.get('/facilities'),
+-                    api.get('/filters/available')
++                    api.get('/filters/available'),
++                    api.get('/auth/settings').catch(() => ({ data: {} }))
+                 ]);
+                 setFacilities(facRes.data);
+ 
++                if (settingsRes.data) {
++                    if (settingsRes.data.ogmp_default_base_year) {
++                        setSelectedBaselineYear(Number(settingsRes.data.ogmp_default_base_year));
++                    }
++                    if (settingsRes.data.reconciliation_threshold) {
++                        setGlobalThreshold(Number(settingsRes.data.reconciliation_threshold));
++                    }
++                    if (settingsRes.data.ogmp_upstream_target_pct !== undefined) {
++                        setUpstreamTargetPct(Number(settingsRes.data.ogmp_upstream_target_pct));
++                    }
++                    if (settingsRes.data.ogmp_midstream_target_pct !== undefined) {
++                        setMidstreamTargetPct(Number(settingsRes.data.ogmp_midstream_target_pct));
++                    }
++                }
++
+                 if (filterRes.data && filterRes.data.years) {
+                     setAvailableYears(filterRes.data.years);
+                 } else {
+@@ -84,6 +108,7 @@ const MethaneIntensity = () => {
+     useEffect(() => {
+         loadMethaneData();
+         loadOgmpData();
++        loadRoadmapData();
+     }, [currentActivity, currentDivision, currentRegion, selectedYear]);
+ 
+     // Load trend data
+@@ -170,6 +195,36 @@ const MethaneIntensity = () => {
+         }
+     };
+ 
++    const loadRoadmapData = async () => {
++        try {
++            const params = new URLSearchParams();
++            if (selectedYear && selectedYear !== 'all') params.append('year', selectedYear);
++            if (currentRegion && currentRegion !== 'all') params.append('facilityId', currentRegion);
++            const res = await api.get(`/dashboard/ogmp-metrics?${params}`).catch(() => ({ data: {} }));
++            if (res.data) {
++                if (res.data.facilities) {
++                    setOgmpRoadmapData(res.data.facilities);
++                }
++                if (res.data.summary) {
++                    if (res.data.summary.global_default_base_year && !selectedBaselineYear) {
++                        setSelectedBaselineYear(Number(res.data.summary.global_default_base_year));
++                    }
++                    if (res.data.summary.global_threshold) {
++                        setGlobalThreshold(Number(res.data.summary.global_threshold));
++                    }
++                    if (res.data.summary.upstream_target_pct !== undefined) {
++                        setUpstreamTargetPct(Number(res.data.summary.upstream_target_pct));
++                    }
++                    if (res.data.summary.midstream_target_pct !== undefined) {
++                        setMidstreamTargetPct(Number(res.data.summary.midstream_target_pct));
++                    }
++                }
++            }
++        } catch (error) {
++            console.error('OGMP Roadmap load error:', error);
++        }
++    };
++
+     const loadTrendData = async (endYear) => {
+         const years = [];
+         const yearInt = isNaN(parseInt(endYear)) ? new Date().getFullYear() : parseInt(endYear);
+@@ -188,6 +243,29 @@ const MethaneIntensity = () => {
+         }
+     };
+ 
++    const handleExportExcel = async () => {
++        try {
++            setExporting(true);
++            const yr = selectedYear !== 'all' ? selectedYear : '2024';
++            const res = await api.get(`/reports/ogmp-export?year=${yr}`, { responseType: 'blob' });
++            const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
++            const url = window.URL.createObjectURL(blob);
++            const a = document.createElement('a');
++            a.href = url;
++            a.download = `OGMP_2.0_Methane_Report_${yr}.xlsx`;
++            document.body.appendChild(a);
++            a.click();
++            window.URL.revokeObjectURL(url);
++            document.body.removeChild(a);
++            toast.success(`OGMP 2.0 Excel Report for ${yr} downloaded successfully!`);
++        } catch (err) {
++            console.error('Export error:', err);
++            toast.error('Failed to export OGMP Excel report');
++        } finally {
++            setExporting(false);
++        }
++    };
++
+     // Filter helpers
+     const handleActivityChange = (val) => {
+         setCurrentActivity(val);
+@@ -261,8 +339,20 @@ const MethaneIntensity = () => {
+             </div>
+         );
+ 
++        setTopBarRight(
++            <button 
++                className="btn-export-excel" 
++                onClick={handleExportExcel} 
++                disabled={exporting}
++                title="Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)"
++            >
++                <Download size={16} />
++                {exporting ? 'Exporting...' : 'Export OGMP 2.0 (Excel)'}
++            </button>
++        );
++
+         return () => { setTopBarLeft(null); setTopBarRight(null); };
+-    }, [availableYears, selectedYear, currentActivity, currentDivision, currentRegion, facilities]);
++    }, [availableYears, selectedYear, currentActivity, currentDivision, currentRegion, facilities, exporting]);
+ 
+     // Trend chart data
+     const trendChartData = useMemo(() => {
+@@ -334,7 +424,7 @@ const MethaneIntensity = () => {
+                             fontWeight: 600, fontSize: '0.85rem'
+                         }}>
+                             {stats.ogmpGoldStatus === 'Compliant' ? <CheckCircle size={16} /> : <AlertTriangle size={16} />}
+-                            <span>OGMP 2.0 Gold Standard: {stats.ogmpGoldStatus} (&le;0.20%)</span>
++                            <span>OGMP 2.0 Targets: {stats.ogmpGoldStatus} (&le;{upstreamTargetPct.toFixed(2)}% Upstream / &le;{midstreamTargetPct.toFixed(2)}% Midstream)</span>
+                         </div>
+                     </div>
+ 
+@@ -360,13 +450,13 @@ const MethaneIntensity = () => {
+                                 <span className="kpi-label">Methane Loss Rate</span>
+                             </div>
+                             <div className="kpi-value-container">
+-                                <span className="total-value" style={{ color: stats.avgMethaneLossRatePct <= 0.20 ? '#10b981' : (stats.avgMethaneLossRatePct <= 0.25 ? '#f59e0b' : '#ef4444') }}>
++                                <span className="total-value" style={{ color: stats.avgMethaneLossRatePct <= upstreamTargetPct ? '#10b981' : (stats.avgMethaneLossRatePct <= (upstreamTargetPct * 1.25) ? '#f59e0b' : '#ef4444') }}>
+                                     {(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%
+                                 </span>
+                                 <span className="kpi-unit">of Gas Volume</span>
+                             </div>
+                             <div className="kpi-footer">
+-                                <span>Target: <strong>&le; 0.200% (OGMP)</strong></span>
++                                <span>Target: <strong>&le; {upstreamTargetPct.toFixed(2)}% (Upstream)</strong></span>
+                                 <span>Vol: <strong>{formatNumber(stats.totalCh4VolumeM3, 0)} m┬│</strong></span>
+                             </div>
+                         </div>
+@@ -397,7 +487,7 @@ const MethaneIntensity = () => {
+                                 <span className="kpi-unit">USD Est.</span>
+                             </div>
+                             <div className="kpi-footer">
+-                                <span>Waste Emissions Charge ($900/t)</span>
++                                <span>Rate: <strong>{selectedYear === '2024' ? '$900' : (selectedYear === '2025' ? '$1,200' : (selectedYear === 'all' ? '$900ÔÇô$1,500' : '$1,500'))}/t CHÔéä</strong> (IRA ┬º136)</span>
+                             </div>
+                         </div>
+                     </div>
+@@ -425,6 +515,124 @@ const MethaneIntensity = () => {
+                     </div>
+                 </div>
+ 
++                {/* OGMP 2.0 GOLD STANDARD PATHWAY & ROADMAP */}
++                <div className="ogmp-roadmap-card">
++                    <div className="roadmap-header-row">
++                        <div className="roadmap-title-area">
++                            <h3>
++                                <Award size={22} color="#ff6600" />
++                                OGMP 2.0 Gold Standard Pathway & Milestone Roadmap
++                            </h3>
++                            <p>Multi-year reporting level progression towards Level 4/5 site-level measurement reconciliation.</p>
++                        </div>
++
++                        {/* Interactive Baseline Selector UI button/pill matching theme */}
++                        <div className="baseline-selector-wrapper">
++                            <span className="baseline-selector-label">
++                                <Calendar size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
++                                Base Year:
++                            </span>
++                            <div className="baseline-pills">
++                                {[2021, 2022, 2023, 2024, 2025, 2026].map(yr => (
++                                    <button
++                                        key={yr}
++                                        type="button"
++                                        className={`btn-baseline-pill ${selectedBaselineYear === yr ? 'active' : ''}`}
++                                        onClick={() => setSelectedBaselineYear(yr)}
++                                    >
++                                        {yr}
++                                    </button>
++                                ))}
++                            </div>
++                        </div>
++                    </div>
++
++                    {/* Facility Roadmap Cards Grid */}
++                    <div className="facility-roadmap-grid">
++                        {(ogmpRoadmapData.length > 0 ? ogmpRoadmapData : facilities).map(fac => {
++                            const facName = fac.facility_name || fac.name;
++                            const opStatus = fac.operator_status || 'operated';
++                            const baseYear = selectedBaselineYear || Number(fac.ogmp_membership_year || 2023);
++                            const targetYear = baseYear + (opStatus === 'operated' ? 3 : 5);
++                            const currentYear = Number(selectedYear !== 'all' ? selectedYear : new Date().getFullYear());
++                            const yearsLeft = targetYear - currentYear;
++                            
++                            const matchedSurvey = ogmpSurveys.find(s => (s.facilityId || s.facility_id) === (fac.facility_id || fac.id) || (s.facility_name || s.facilityName) === facName);
++                            const highestLevel = fac.highest_ogmp_level || (fac.current_ogmp_level || (matchedSurvey ? 5 : 3));
++                            const isReconciled = fac.is_reconciled || highestLevel >= 5;
++                            const variancePct = fac.reconciliation_variance_pct ?? (fac.variance_pct ?? (matchedSurvey ? (matchedSurvey.reconciliation_variance_pct ?? 14.5) : null));
++                            const threshold = Number(fac.reconciliation_threshold ?? globalThreshold ?? 20.0);
++                            const passThreshold = variancePct !== null ? Math.abs(variancePct) <= threshold : true;
++
++                            let statusBadgeClass = 'ontrack';
++                            let statusText = `On Track (${yearsLeft > 0 ? `${yearsLeft} yrs to Level 5` : 'Target Year'})`;
++                            if (isReconciled && highestLevel >= 5) {
++                                statusBadgeClass = 'achieved';
++                                statusText = 'Gold Standard Achieved (Level 5)';
++                            } else if (yearsLeft < 0) {
++                                statusBadgeClass = 'action';
++                                statusText = 'Action Plan Required (Overdue)';
++                            } else if (yearsLeft === 0) {
++                                statusBadgeClass = 'ontrack';
++                                statusText = 'Target Milestone Year (Level 5 Due)';
++                            }
++
++                            return (
++                                <div key={fac.facility_id || fac.id} className="fac-roadmap-card">
++                                    <div className="fac-roadmap-top">
++                                        <div className="fac-roadmap-info">
++                                            <span className="fac-roadmap-name">{facName}</span>
++                                            <span className="fac-roadmap-meta">
++                                                {opStatus === 'operated' ? 'Operated Asset (3-Yr Target)' : 'Non-Operated Asset (5-Yr Target)'} ÔÇó Base: {baseYear} ÔÇó Target: {targetYear}
++                                            </span>
++                                        </div>
++                                        <span className={`badge-roadmap-status ${statusBadgeClass}`}>
++                                            {statusBadgeClass === 'achieved' && <Check size={13} />}
++                                            {statusBadgeClass === 'action' && <AlertTriangle size={13} />}
++                                            {statusText}
++                                        </span>
++                                    </div>
++
++                                    {/* 5-Level Stepper */}
++                                    <div className="ogmp-stepper-container">
++                                        {[1, 2, 3, 4, 5].map(lvl => {
++                                             const isDone = highestLevel >= lvl;
++                                             const isCurrent = highestLevel === lvl;
++                                             const levelNames = ['L1: Venture', 'L2: Segment', 'L3: Generic', 'L4: Specific', 'L5: Reconciled'];
++                                             return (
++                                                 <div key={lvl} className={`ogmp-step ${isDone ? 'completed' : ''} ${isCurrent ? 'current' : ''}`}>
++                                                     <div className="step-circle">
++                                                         {isDone ? 'Ô£ô' : lvl}
++                                                     </div>
++                                                     <span className="step-name">{levelNames[lvl - 1]}</span>
++                                                 </div>
++                                             );
++                                         })}
++                                    </div>
++
++                                    {/* Footer stats */}
++                                    <div className="fac-roadmap-stats">
++                                        <div className="roadmap-stat-item">
++                                            <span className="roadmap-stat-label">Current Milestone</span>
++                                            <span className="roadmap-stat-val">OGMP Level {highestLevel}</span>
++                                        </div>
++                                        <div className="roadmap-stat-item">
++                                            <span className="roadmap-stat-label">Reconciliation Var.</span>
++                                            <span className={`roadmap-stat-val ${variancePct !== null ? (passThreshold ? 'variance-pass' : 'variance-fail') : ''}`}>
++                                                {variancePct !== null ? (variancePct >= 0 ? `+${Number(variancePct).toFixed(1)}%` : `${Number(variancePct).toFixed(1)}%`) : 'Pending Survey'}
++                                            </span>
++                                        </div>
++                                        <div className="roadmap-stat-item">
++                                            <span className="roadmap-stat-label">Tolerance Limit</span>
++                                            <span className="roadmap-stat-val">┬▒{threshold.toFixed(1)}% {variancePct !== null ? (passThreshold ? '(PASS)' : '(FLAGGED)') : ''}</span>
++                                        </div>
++                                    </div>
++                                </div>
++                            );
++                        })}
++                    </div>
++                </div>
++
+                 {/* OGMP 2.0 LEVEL 4/5 TOP-DOWN SURVEY RECONCILIATION SECTION */}
+                 <div className="card ogmp-section">
+                     <div className="chart-header">
+@@ -434,7 +642,7 @@ const MethaneIntensity = () => {
+                                 OGMP 2.0 Level 4/5 Top-Down Survey & Bottom-Up Reconciliation
+                             </h3>
+                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '4px 0 0 0' }}>
+-                                Site-level measurement (Satellite, OGI, Drone, Aircraft) reconciled with source-level inventory
++                                Site-level measurement (Satellite, OGI, Drone, Aircraft) reconciled with source-level bottom-up inventory
+                             </p>
+                         </div>
+                         <div className="ogmp-level-badge" style={{ background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb', padding: '6px 14px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600 }}>
+@@ -453,6 +661,7 @@ const MethaneIntensity = () => {
+                                         <th>Measured Rate (kg CHÔéä/hr)</th>
+                                         <th>Annualized Rate (tCHÔéä/yr)</th>
+                                         <th>Bottom-Up Annual (tCHÔéä)</th>
++                                        <th>Variance (%)</th>
+                                         <th>Reconciliation Status</th>
+                                         <th>Operator Notes</th>
+                                     </tr>
+@@ -469,6 +678,12 @@ const MethaneIntensity = () => {
+                                         const annTch4 = s.estimatedAnnualTch4 ?? s.estimated_annual_tch4 ?? 0;
+                                         const recStatus = s.reconciliationStatus || s.reconciliation_status || 'Reconciled';
+                                         const notes = s.operatorNotes || s.operator_notes || 'ÔÇö';
++
++                                        let variancePct = null;
++                                        if (bottomUpCh4 && bottomUpCh4 > 0 && annTch4 > 0) {
++                                            variancePct = ((annTch4 - bottomUpCh4) / bottomUpCh4) * 100.0;
++                                        }
++
+                                         return (
+                                             <tr key={s.id || idx}>
+                                                 <td style={{ fontWeight: 600 }}>{facName}</td>
+@@ -477,6 +692,16 @@ const MethaneIntensity = () => {
+                                                 <td><strong style={{ color: '#2563eb' }}>{typeof rateKgHr === 'number' ? rateKgHr.toFixed(2) : 'ÔÇö'}</strong></td>
+                                                 <td><strong>{formatNumber(annTch4, 2)}</strong></td>
+                                                 <td>{bottomUpCh4 !== null ? `${bottomUpCh4.toFixed(2)} t` : 'ÔÇö'}</td>
++                                                <td>
++                                                    {variancePct !== null ? (
++                                                        <span style={{ 
++                                                            fontWeight: 700, 
++                                                            color: Math.abs(variancePct) <= 20.0 ? '#10b981' : '#ef4444' 
++                                                        }}>
++                                                            {variancePct >= 0 ? `+${variancePct.toFixed(1)}%` : `${variancePct.toFixed(1)}%`}
++                                                        </span>
++                                                    ) : 'ÔÇö'}
++                                                </td>
+                                                 <td>
+                                                     <span className={`status-badge ${recStatus === 'Reconciled' ? 'badge-success' : 'badge-warning'}`} style={{
+                                                         padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600,
+@@ -494,7 +719,7 @@ const MethaneIntensity = () => {
+                             </table>
+                         </div>
+                     ) : (
+-                        <div className="cbam-empty-state">
++                        <div className="ogmp-empty-state">
+                             <p>No OGMP 2.0 top-down surveys registered for the selected filters. Record survey campaigns via <strong>Manage Data &gt; OGMP Surveys</strong>.</p>
+                         </div>
+                     )}

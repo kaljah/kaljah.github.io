@@ -1,0 +1,193 @@
+new/client/src/pages/CarbonIntensity.jsx b/new/client/src/pages/CarbonIntensity.jsx
+index 808804d..550b7ba 100644
+--- a/new/client/src/pages/CarbonIntensity.jsx
++++ b/new/client/src/pages/CarbonIntensity.jsx
+@@ -7,6 +7,7 @@ import { BarChart, LineChart } from '../components/charts';
+ import { useLayout } from '../context/LayoutContext';
+ import CustomDropdown from '../components/CustomDropdown';
+ import { formatNumber } from '../utils/formatters';
++import { getActiveGwpFactors } from '../constants';
+ import { Cloud, Flame, Activity, BarChart2, Grid, Layers, ShieldCheck, FileText, ToggleLeft, ToggleRight, ArrowUpRight } from 'lucide-react';
+ import './CarbonIntensity.css';
+ 
+@@ -23,8 +24,9 @@ const CarbonIntensity = () => {
+     const [facilities, setFacilities] = useState([]);
+     const [availableYears, setAvailableYears] = useState([]);
+ 
+-    // GWP Horizon State: '100' or '20'
++    // GWP Horizon State: '100' or '20' & Active Standard
+     const [gwpHorizon, setGwpHorizon] = useState('100');
++    const [activeGwpStandard, setActiveGwpStandard] = useState('AR5');
+ 
+     // View states
+     const [trendView, setTrendView] = useState('chart'); // 'chart' or 'heatmap'
+@@ -50,7 +52,6 @@ const CarbonIntensity = () => {
+     });
+ 
+     const [regionalData, setRegionalData] = useState([]);
+-    const [cbamProducts, setCbamProducts] = useState([]);
+     const [rawTrendData, setRawTrendData] = useState([]);
+     const [loading, setLoading] = useState(true);
+ 
+@@ -67,12 +68,17 @@ const CarbonIntensity = () => {
+     useEffect(() => {
+         const init = async () => {
+             try {
+-                const [facRes, filterRes] = await Promise.all([
++                const [facRes, filterRes, settingsRes] = await Promise.all([
+                     api.get('/facilities'),
+-                    api.get('/filters/available')
++                    api.get('/filters/available'),
++                    api.get('/auth/settings').catch(() => ({ data: {} }))
+                 ]);
+                 setFacilities(facRes.data);
+ 
++                if (settingsRes?.data?.gwp_standard) {
++                    setActiveGwpStandard(settingsRes.data.gwp_standard);
++                }
++
+                 if (filterRes.data && filterRes.data.years) {
+                     setAvailableYears(filterRes.data.years);
+                 } else {
+@@ -89,7 +95,6 @@ const CarbonIntensity = () => {
+     // Load data on filter changes
+     useEffect(() => {
+         loadIntensityData();
+-        loadCbamData();
+     }, [currentActivity, currentDivision, currentRegion, selectedYear]);
+ 
+     // Load trend data
+@@ -163,17 +168,6 @@ const CarbonIntensity = () => {
+         }
+     };
+ 
+-    const loadCbamData = async () => {
+-        try {
+-            const params = new URLSearchParams();
+-            if (selectedYear && selectedYear !== 'all') params.append('year', selectedYear);
+-            if (currentRegion && currentRegion !== 'all') params.append('facilityId', currentRegion);
+-            const res = await api.get(`/data/cbam-exports?${params}`).catch(() => ({ data: [] }));
+-            setCbamProducts(res.data || []);
+-        } catch (error) {
+-            console.error('CBAM load error:', error);
+-        }
+-    };
+ 
+     const loadTrendData = async (endYear) => {
+         const years = [];
+@@ -331,20 +325,28 @@ const CarbonIntensity = () => {
+                         <div className="gwp-toggle-container">
+                             <span className="gwp-toggle-label">GWP Horizon:</span>
+                             <div className="gwp-pill-group">
+-                                <button
+-                                    className={`gwp-pill ${gwpHorizon === '100' ? 'active' : ''}`}
+-                                    onClick={() => setGwpHorizon('100')}
+-                                    title="IPCC AR5 100-Year GWP (CH4: 28, N2O: 265)"
+-                                >
+-                                    AR5 100-Yr
+-                                </button>
+-                                <button
+-                                    className={`gwp-pill ${gwpHorizon === '20' ? 'active' : ''}`}
+-                                    onClick={() => setGwpHorizon('20')}
+-                                    title="IPCC AR5 20-Year GWP (CH4: 82.5, N2O: 273)"
+-                                >
+-                                    AR5 20-Yr
+-                                </button>
++                                {(() => {
++                                    const f100 = getActiveGwpFactors(activeGwpStandard, '100');
++                                    const f20 = getActiveGwpFactors(activeGwpStandard, '20');
++                                    return (
++                                        <>
++                                            <button
++                                                className={`gwp-pill ${gwpHorizon === '100' ? 'active' : ''}`}
++                                                onClick={() => setGwpHorizon('100')}
++                                                title={`IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})`}
++                                            >
++                                                {activeGwpStandard} 100-Yr
++                                            </button>
++                                            <button
++                                                className={`gwp-pill ${gwpHorizon === '20' ? 'active' : ''}`}
++                                                onClick={() => setGwpHorizon('20')}
++                                                title={`IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})`}
++                                            >
++                                                {activeGwpStandard} 20-Yr
++                                            </button>
++                                        </>
++                                    );
++                                })()}
+                             </div>
+                         </div>
+                     </div>
+@@ -433,72 +435,6 @@ const CarbonIntensity = () => {
+                     </div>
+                 </div>
+ 
+-                {/* EU CBAM COMPLIANCE & PRODUCT EMBODIMENT SECTION */}
+-                <div className="card cbam-section">
+-                    <div className="chart-header">
+-                        <div>
+-                            <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+-                                <FileText size={20} color="var(--accent-color)" />
+-                                EU CBAM Product Specific Embedded Emissions
+-                            </h3>
+-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '4px 0 0 0' }}>
+-                                Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)
+-                            </p>
+-                        </div>
+-                        <div className="cbam-benchmark-badge">
+-                            EU ETS Benchmark: ~25.5 kg COÔéée/BOE
+-                        </div>
+-                    </div>
+-
+-                    {cbamProducts.length > 0 ? (
+-                        <div className="table-responsive" style={{ marginTop: '16px' }}>
+-                            <table className="custom-table">
+-                                <thead>
+-                                    <tr>
+-                                        <th>Facility</th>
+-                                        <th>Product Name</th>
+-                                        <th>EU CN Code</th>
+-                                        <th>Period</th>
+-                                        <th>Export Qty (t)</th>
+-                                        <th>Destination</th>
+-                                        <th>Direct Intensity (tCOÔéée/t)</th>
+-                                        <th>Indirect Intensity (tCOÔéée/t)</th>
+-                                        <th>Total Embedded (tCOÔéée)</th>
+-                                    </tr>
+-                                </thead>
+-                                <tbody>
+-                                    {cbamProducts.map((p, idx) => {
+-                                        const facName = p.facilityName || p.facility_name || 'ÔÇö';
+-                                        const prodName = p.productName || p.product_name || 'ÔÇö';
+-                                        const cn = p.cnCode || p.cn_code || 'ÔÇö';
+-                                        const qty = p.quantityTonnes ?? p.quantity_tonnes ?? 0;
+-                                        const dest = p.exportDestination || p.export_destination || 'EU';
+-                                        const directInt = p.specificEmbeddedDirect ?? p.specific_embedded_direct;
+-                                        const indirInt = p.specificEmbeddedIndirect ?? p.specific_embedded_indirect;
+-                                        const totEmb = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * (directInt || 0));
+-                                        return (
+-                                            <tr key={p.id || idx}>
+-                                                <td style={{ fontWeight: 600 }}>{facName}</td>
+-                                                <td>{prodName}</td>
+-                                                <td><span className="code-pill">{cn}</span></td>
+-                                                <td>{p.year}-{String(p.month || 1).padStart(2, '0')}</td>
+-                                                <td>{formatNumber(qty, 0)}</td>
+-                                                <td>{dest}</td>
+-                                                <td><strong style={{ color: '#0d9488' }}>{typeof directInt === 'number' ? directInt.toFixed(4) : 'ÔÇö'}</strong></td>
+-                                                <td>{typeof indirInt === 'number' ? indirInt.toFixed(4) : 'ÔÇö'}</td>
+-                                                <td><strong>{formatNumber(totEmb, 1)}</strong></td>
+-                                            </tr>
+-                                        );
+-                                    })}
+-                                </tbody>
+-                            </table>
+-                        </div>
+-                    ) : (
+-                        <div className="cbam-empty-state">
+-                            <p>No CBAM product export records registered for the selected filters. Track exports via <strong>Manage Data &gt; CBAM Products</strong>.</p>
+-                        </div>
+-                    )}
+-                </div>
+ 
+                 {/* Regional Bar Charts */}
+                 <div className="chart-grid">

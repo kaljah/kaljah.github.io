@@ -1,0 +1,110 @@
+new/server/models.py b/new/server/models.py
+index 38ef4a0..f3f33aa 100644
+--- a/new/server/models.py
++++ b/new/server/models.py
+@@ -44,6 +44,10 @@ class Facility(db.Model):
+     code = db.Column(db.String(50), unique=True)
+     external_id = db.Column(db.String(50))
+     segment = db.Column(db.String(20))  # Upstream, Midstream, Downstream
++    operator_status = db.Column(db.String(20), default='operated')  # operated, non_operated
++    country = db.Column(db.String(100), default='Algeria')
++    ogmp_membership_year = db.Column(db.Integer, default=2023)
++    reconciliation_threshold = db.Column(db.Float, default=20.0)  # % threshold for variance flagging
+     latitude = db.Column(db.Float)
+     longitude = db.Column(db.Float)
+     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+@@ -57,7 +61,6 @@ class Facility(db.Model):
+     scope2_emissions = db.relationship('Scope2Emission', backref='facility_parent', cascade='all, delete-orphan', lazy=True)
+     scope3_emissions = db.relationship('Scope3Emission', backref='facility_parent', cascade='all, delete-orphan', lazy=True)
+     mitigation_projects = db.relationship('MitigationProject', backref='facility_parent', cascade='all, delete-orphan', lazy=True)
+-    cbam_exports = db.relationship('CbamProductExport', backref='facility_parent', cascade='all, delete-orphan', lazy=True)
+     ogmp_surveys = db.relationship('OgmpSurvey', backref='facility_parent', cascade='all, delete-orphan', lazy=True)
+ 
+ class Emission(db.Model):
+@@ -106,9 +109,12 @@ class Emission(db.Model):
+     region = db.Column(db.String(100))
+     field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P├®trochimie
+     
+-    calc_method = db.Column(db.String(50))
++    calc_method = db.Column(db.String(50))  # ef_generic, ef_facility_specific, direct_measurement, engineering_estimate
+     calc_version = db.Column(db.String(20))
+     factor_version = db.Column(db.String(50))
++    ogmp_level = db.Column(db.Integer, default=3)  # 1 to 5
++    source_type_code = db.Column(db.String(50))  # Link to MethaneSourceType code
++    data_source_ref = db.Column(db.String(120))  # Survey ID, sensor ID, or EF table ref
+     gwp_version = db.Column(db.String(20))
+     source_payload = db.Column(db.Text) # JSON string
+     
+@@ -357,22 +363,6 @@ class Notification(db.Model):
+         # transaction atomically: emission/data + activity log + notification.
+         return n
+ 
+-class CbamProductExport(db.Model):
+-    __tablename__ = 'cbam_product_exports'
+-    id = db.Column(db.Integer, primary_key=True)
+-    facility_id = db.Column(db.Integer, db.ForeignKey('facilities.id'), index=True, nullable=False)
+-    facility = db.relationship('Facility', overlaps="facility_parent,cbam_exports")
+-    year = db.Column(db.Integer, index=True, nullable=False)
+-    month = db.Column(db.Integer, nullable=False, default=1)
+-    product_name = db.Column(db.String(120), nullable=False)
+-    cn_code = db.Column(db.String(50), nullable=False, index=True) # e.g. '2814 10 00', '2804 10 00', '2710'
+-    quantity_tonnes = db.Column(db.Float, nullable=False, default=0.0)
+-    export_destination = db.Column(db.String(100), default='EU')
+-    specific_embedded_direct = db.Column(db.Float, default=0.0)   # tCO2e / t product
+-    specific_embedded_indirect = db.Column(db.Float, default=0.0) # tCO2e / t product
+-    notes = db.Column(db.Text)
+-    created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+ 
+ class OgmpSurvey(db.Model):
+     __tablename__ = 'ogmp_surveys'
+@@ -380,12 +370,46 @@ class OgmpSurvey(db.Model):
+     facility_id = db.Column(db.Integer, db.ForeignKey('facilities.id'), index=True, nullable=False)
+     facility = db.relationship('Facility', overlaps="facility_parent,ogmp_surveys")
+     year = db.Column(db.Integer, index=True, nullable=False)
+-    survey_date = db.Column(db.String(20), nullable=False) # YYYY-MM-DD
+-    survey_type = db.Column(db.String(50), nullable=False) # Satellite (Sentinel-5P/MethaneSAT), Flyover/Aerial, Drone OGI, Continuous Monitor
++    survey_date = db.Column(db.String(20), nullable=False)  # YYYY-MM-DD
++    survey_type = db.Column(db.String(50), nullable=False)  # Satellite (Sentinel-5P/MethaneSAT), Flyover/Aerial, Drone OGI, Continuous Monitor, Site Survey
+     measured_rate_kg_hr = db.Column(db.Float, nullable=False, default=0.0)
++    operating_hours_year = db.Column(db.Float, default=8760.0)
+     estimated_annual_tch4 = db.Column(db.Float, default=0.0)
+-    reconciliation_status = db.Column(db.String(50), default='Reconciled') # Reconciled, Discrepancy > 20%, Pending
++    detection_threshold = db.Column(db.Float)  # kg/hr
++    instrument_vendor = db.Column(db.String(100))  # FLIR GF320, Bridger LiDAR, GHGSat, etc.
++    raw_file_ref = db.Column(db.String(255))
++    bottom_up_tch4 = db.Column(db.Float, default=0.0)
++    variance_pct = db.Column(db.Float, default=0.0)
++    variance_flag = db.Column(db.Boolean, default=False)
++    reconciliation_status = db.Column(db.String(50), default='Reconciled')  # Reconciled, Discrepancy Flagged, Pending
++    status = db.Column(db.String(50), default='pending')  # pending, reviewed, reported
+     operator_notes = db.Column(db.Text)
+     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+ 
++
++class MethaneSourceType(db.Model):
++    __tablename__ = 'methane_source_types'
++    id = db.Column(db.Integer, primary_key=True)
++    code = db.Column(db.String(50), unique=True, index=True, nullable=False)
++    name = db.Column(db.String(120), nullable=False)
++    category = db.Column(db.String(50), nullable=False)  # fugitive / vented / combustion_slip / flaring
++    default_ef_reference = db.Column(db.String(150))
++    default_level = db.Column(db.Integer, default=3)
++    created_at = db.Column(db.DateTime, default=datetime.utcnow)
++
++
++class LevelUpgradeLog(db.Model):
++    __tablename__ = 'level_upgrade_logs'
++    id = db.Column(db.Integer, primary_key=True)
++    facility_id = db.Column(db.Integer, db.ForeignKey('facilities.id'), nullable=False, index=True)
++    facility = db.relationship('Facility')
++    source_type_code = db.Column(db.String(50))
++    old_level = db.Column(db.Integer, nullable=False)
++    new_level = db.Column(db.Integer, nullable=False)
++    target_date = db.Column(db.String(20))
++    justification = db.Column(db.Text)
++    changed_at = db.Column(db.DateTime, default=datetime.utcnow)
++    created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
++
++

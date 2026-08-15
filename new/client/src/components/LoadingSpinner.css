@@ -166,3 +166,36 @@
 .spinner-large {
   transform: scale(1.5);
 }
+
+.modern-loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.rotating-svg-loader {
+  animation: spin 2s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+}
+
+.loading-message-text {
+  font-family: "Orbitron", sans-serif;
+  color: #10B981;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  100% {
+    transform: rotate(-360deg);
+  }
+}

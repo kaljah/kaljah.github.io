@@ -358,49 +358,38 @@ const Reports = () => {
     subLabel: f.field,
   }));
 
-  const handleISOReportWrapper = async () => {
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [exclusionCriteria, setExclusionCriteria] = useState("Sources contributing less than 1% of the total footprint are excluded.");
+  const [verificationStatus, setVerificationStatus] = useState("Not externally verified");
+
+  const openConfigModal = () => {
+    console.log("openConfigModal called. reportSelectedRegions:", reportSelectedRegions);
     if (reportSelectedRegions.length === 0) {
       toast.error("Please select at least one region/facility.");
       return;
     }
+    setShowConfigModal(true);
+  };
 
+  const handleISOReportWrapper = async () => {
+    setShowConfigModal(false);
     setLoading(true);
     toast.info("Generating ISO 14064-1 Report...");
     try {
-      const { generateModernPDF } =
-        await import("../utils/ModernReportGenerator");
-
-      // Pass the specific report filters, not the grid filters
-      // If ALL regions selected, pass 'all'? Or pass the list?
-      // The API expects 'all' or a single ID usually, but for a REPORT we might need to filter client-side
-      // OR the backend needs to support list.
-      // Legacy logic: Checked "all" (or just selected year) -> fetch all -> filter client side.
-      // ModernReportGenerator sends params.
-
-      // STRATEGY:
-      // If reportSelectedRegions.length === facilities.length => regionId: 'all'
-      // Else => we need to handle multi-region.
-      // The current ModernReportGenerator logic: `regionId !== 'all' ? regionId : undefined`.
-      // It only handles ONE region or ALL.
-      // To support multi-select that isn't ALL, we might need to fetch ALL and filter in Generator?
-      // Yes, ModernReportGenerator fetches `limit: 'all'`.
-      // We can pass the `reportSelectedRegions` list to strict filter in JS.
+      const { generateModernPDF } = await import("../utils/ModernReportGenerator");
 
       const isAllRegions = reportSelectedRegions.length === facilities.length;
 
       const filters = {
         year: reportYear,
-        comparisonYear: comparisonYear !== "none" ? comparisonYear : undefined, // [NEW] Pass comparison year
-        scope: "all", // Fixed to Full Inventory for this specific report card? Or add scope selector? Legacy had just Year/Facilities.
-        regionId: isAllRegions ? "all" : reportSelectedRegions, // Pass array if subset
+        comparisonYear: comparisonYear !== "none" ? comparisonYear : undefined,
+        scope: "all",
+        regionId: isAllRegions ? "all" : reportSelectedRegions,
         processType: "all",
+        exclusionCriteria: exclusionCriteria,
+        verificationStatus: verificationStatus,
+        personResponsible: user || { username: "Logged In User" },
       };
-
-      // We need to update ModernReportGenerator to handle array of regionIds if we pass it.
-      // Or we just let it fetch 'all' and it filters?
-      // Let's rely on ModernReportGenerator to handle the data.
-      // Currently it uses params directly.
-      // We should modify ModernReportGenerator.js to filter by the list if provided.
 
       await generateModernPDF(api, filters);
       toast.success("Report generated successfully!");
@@ -419,6 +408,7 @@ const Reports = () => {
 
   return (
     <div className="reports-page">
+      {console.log("Rendering Reports. showConfigModal:", showConfigModal)}
       <header className="top-bar">
         <div className="breadcrumbs">
           <svg
@@ -640,7 +630,7 @@ const Reports = () => {
 
               <button
                 className="btn-create"
-                onClick={handleISOReportWrapper}
+                onClick={openConfigModal}
                 disabled={loading}
                 style={{
                   opacity: loading ? 0.7 : 1,
@@ -1027,6 +1017,52 @@ const Reports = () => {
           )}
         </div>
       </div>
+
+      {showConfigModal && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '500px' }}>
+            <div className="modal-header">
+              <h2>ISO 14064-1 Report Configuration</h2>
+              <button className="close-btn" onClick={() => setShowConfigModal(false)}>×</button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                To ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.
+              </p>
+              <div className="input-group">
+                <label>Exclusion Criteria (Significance)</label>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                  Document the criteria used to define which indirect emissions are significant and justify any exclusions.
+                </p>
+                <textarea
+                  value={exclusionCriteria}
+                  onChange={(e) => setExclusionCriteria(e.target.value)}
+                  rows={3}
+                  style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px', resize: 'vertical' }}
+                />
+              </div>
+              <div className="input-group">
+                <label>Verification Status</label>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                  State whether the report has been verified, the type of verification, and the level of assurance.
+                </p>
+                <input
+                  type="text"
+                  value={verificationStatus}
+                  onChange={(e) => setVerificationStatus(e.target.value)}
+                  style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+                />
+              </div>
+            </div>
+            <div className="modal-footer" style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button className="btn-secondary" onClick={() => setShowConfigModal(false)}>Cancel</button>
+              <button className="btn-primary" onClick={handleISOReportWrapper} disabled={loading}>
+                {loading ? "Generating..." : "Generate PDF"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

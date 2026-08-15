@@ -1,0 +1,471 @@
+new/client/src/pages/ManageData.jsx b/new/client/src/pages/ManageData.jsx
+index 096aafa..b2160e4 100644
+--- a/new/client/src/pages/ManageData.jsx
++++ b/new/client/src/pages/ManageData.jsx
+@@ -108,7 +108,6 @@ const ManageDataInner = () => {
+     const [importModal, setImportModal] = useState({ isOpen: false, type: 'sources' });
+     const [sources, setSources] = useState([]);
+     const [mitigations, setMitigations] = useState([]);
+-    const [cbamExports, setCbamExports] = useState([]);
+     const [ogmpSurveys, setOgmpSurveys] = useState([]);
+ 
+     // Forms State
+@@ -144,15 +143,6 @@ const ManageDataInner = () => {
+         quantity_tco2e: '', status: 'Active', reference_id: '', notes: ''
+     });
+ 
+-    const [cbamForm, setCbamForm] = useState({
+-        id: null, activity: '', division: '', facility_id: '',
+-        year: new Date().getFullYear(), month: 1,
+-        product_name: 'Crude Petroleum Oil', cn_code: '2709 00',
+-        quantity_tonnes: '', export_destination: 'EU',
+-        specific_embedded_direct: '', specific_embedded_indirect: '', notes: ''
+-    });
+-    const [editingCbamId, setEditingCbamId] = useState(null);
+-
+     const [ogmpForm, setOgmpForm] = useState({
+         id: null, activity: '', division: '', facility_id: '',
+         year: new Date().getFullYear(),
+@@ -173,7 +163,6 @@ const ManageDataInner = () => {
+         fetchProduction();
+         fetchSources();
+         fetchMitigations();
+-        fetchCbamExports();
+         fetchOgmpSurveys();
+     }, []);
+ 
+@@ -206,7 +195,6 @@ const ManageDataInner = () => {
+         setProdForm(prev => ({ ...prev, ...autoFill }));
+         setSourceForm(prev => ({ ...prev, ...autoFill }));
+         setMitigationForm(prev => ({ ...prev, ...autoFill }));
+-        setCbamForm(prev => ({ ...prev, ...autoFill }));
+         setOgmpForm(prev => ({ ...prev, ...autoFill }));
+     }, [facilities]);
+ 
+@@ -250,13 +238,6 @@ const ManageDataInner = () => {
+         } catch (err) { console.error(err); }
+     };
+ 
+-    const fetchCbamExports = async () => {
+-        try {
+-            const res = await api.get('/data/cbam-exports');
+-            setCbamExports(res.data || []);
+-        } catch (err) { console.error(err); }
+-    };
+-
+     const fetchOgmpSurveys = async () => {
+         try {
+             const res = await api.get('/data/ogmp-surveys');
+@@ -371,50 +352,6 @@ const ManageDataInner = () => {
+         } catch (err) { toast.error('Failed to save mitigation'); }
+     };
+ 
+-    const handleSaveCbamExport = async () => {
+-        if (!cbamForm.facility_id || !cbamForm.product_name || !cbamForm.quantity_tonnes) {
+-            return toast.error('Facility, Product Name, and Export Quantity are required');
+-        }
+-        try {
+-            await api.post('/data/cbam-exports', {
+-                id: editingCbamId || undefined,
+-                facility_id: parseInt(cbamForm.facility_id),
+-                year: parseInt(cbamForm.year),
+-                month: parseInt(cbamForm.month),
+-                product_name: cbamForm.product_name,
+-                cn_code: cbamForm.cn_code,
+-                quantity_tonnes: parseFloat(cbamForm.quantity_tonnes),
+-                export_destination: cbamForm.export_destination,
+-                specific_embedded_direct: cbamForm.specific_embedded_direct ? parseFloat(cbamForm.specific_embedded_direct) : 0.0,
+-                specific_embedded_indirect: cbamForm.specific_embedded_indirect ? parseFloat(cbamForm.specific_embedded_indirect) : 0.0,
+-                notes: cbamForm.notes
+-            });
+-            toast.success(editingCbamId ? 'CBAM export record updated!' : 'CBAM export record saved!');
+-            setEditingCbamId(null);
+-            setCbamForm({
+-                id: null, activity: cbamForm.activity, division: cbamForm.division, facility_id: cbamForm.facility_id,
+-                year: new Date().getFullYear(), month: 1,
+-                product_name: 'Crude Petroleum Oil', cn_code: '2709 00',
+-                quantity_tonnes: '', export_destination: 'EU',
+-                specific_embedded_direct: '', specific_embedded_indirect: '', notes: ''
+-            });
+-            fetchCbamExports();
+-        } catch (err) {
+-            toast.error(err.response?.data?.error || 'Failed to save CBAM record');
+-        }
+-    };
+-
+-    const handleDeleteCbamExport = async (id) => {
+-        if (!confirm('Delete this CBAM export record?')) return;
+-        try {
+-            await api.delete(`/data/cbam-exports/${id}`);
+-            toast.success('CBAM export record deleted');
+-            fetchCbamExports();
+-        } catch (err) {
+-            toast.error('Failed to delete CBAM record');
+-        }
+-    };
+-
+     const handleSaveOgmpSurvey = async () => {
+         if (!ogmpForm.facility_id || !ogmpForm.survey_date || ogmpForm.measured_rate_kg_hr === '') {
+             return toast.error('Facility, Survey Date, and Measured Rate are required');
+@@ -544,27 +481,6 @@ const ManageDataInner = () => {
+         return matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
+     });
+ 
+-    const getFilteredCbam = () => cbamExports.filter(c => {
+-        const fid = c.facility_id || c.facilityId;
+-        const fac = facilities.find(f => f.id === fid);
+-        const pName = c.product_name || c.productName || '';
+-        const cn = c.cn_code || c.cnCode || '';
+-        const dest = c.export_destination || c.exportDestination || '';
+-        const fName = c.facility_name || c.facilityName || fac?.name || '';
+-        const yr = (c.year || '').toString();
+-
+-        const matchesSearch = pName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+-            cn.toLowerCase().includes(searchTerm.toLowerCase()) ||
+-            dest.toLowerCase().includes(searchTerm.toLowerCase()) ||
+-            fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+-            yr.includes(searchTerm);
+-        const matchesActivity = filterActivity ? (fac && fac.activity === filterActivity) : true;
+-        const matchesDivision = filterDivision ? (fac && fac.division === filterDivision) : true;
+-        const matchesRegion = filterRegion ? (fac && fac.location === filterRegion) : true;
+-        const matchesYear = filterYear ? yr === filterYear.toString() : true;
+-        return matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
+-    });
+-
+     const getFilteredOgmp = () => ogmpSurveys.filter(o => {
+         const fid = o.facility_id || o.facilityId;
+         const fac = facilities.find(f => f.id === fid);
+@@ -589,7 +505,6 @@ const ManageDataInner = () => {
+     const filteredProduction = getFilteredProduction();
+     const filteredSources = getFilteredSources();
+     const filteredMitigations = getFilteredMitigations();
+-    const filteredCbam = getFilteredCbam();
+     const filteredOgmp = getFilteredOgmp();
+ 
+     return (
+@@ -636,9 +551,6 @@ const ManageDataInner = () => {
+                         <div className={`manage-nav-item ${activeTab === 'mitigation' ? 'active' : ''}`} onClick={() => handleTabChange('mitigation')}>
+                             <span>Mitigation Projects</span>
+                         </div>
+-                        <div className={`manage-nav-item ${activeTab === 'cbam' ? 'active' : ''}`} onClick={() => handleTabChange('cbam')}>
+-                            <span>CBAM Export Products</span>
+-                        </div>
+                         <div className={`manage-nav-item ${activeTab === 'ogmp' ? 'active' : ''}`} onClick={() => handleTabChange('ogmp')}>
+                             <span>OGMP 2.0 Surveys</span>
+                         </div>
+@@ -1561,315 +1473,6 @@ const ManageDataInner = () => {
+                             </div>
+                         )}
+ 
+-                        {activeTab === 'cbam' && (
+-                            <div className="tab-pane active">
+-                                <div className="section-header" style={{ marginBottom: '24px' }}>
+-                                    <h2>EU CBAM Export & Embedded Emission Tracking</h2>
+-                                    <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
+-                                        Record product exports subject to EU Carbon Border Adjustment Mechanism (CBAM) with direct and indirect embedded emissions under EU Regulation (EU) 2023/956.
+-                                    </p>
+-                                </div>
+-
+-                                <div className="form-grid-3">
+-                                    <div className="input-group">
+-                                        <label>Activity</label>
+-                                        <select
+-                                            value={cbamForm.activity}
+-                                            onChange={(e) => {
+-                                                const act = e.target.value;
+-                                                const divs = getAvailableDivisions(act);
+-                                                const autoDiv = divs.length === 1 ? divs[0] : '';
+-                                                const facs = facilities.filter(f => (!act || f.activity === act) && (!autoDiv || f.division === autoDiv));
+-                                                const autoFac = facs.length === 1 ? facs[0].id.toString() : '';
+-                                                setCbamForm({ ...cbamForm, activity: act, division: autoDiv, facility_id: autoFac });
+-                                            }}
+-                                            className="component-select"
+-                                        >
+-                                            <option value="">-- Select Activity --</option>
+-                                            {getAvailableActivities().map(a => (
+-                                                <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>
+-                                            ))}
+-                                        </select>
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Division</label>
+-                                        <select
+-                                            value={cbamForm.division}
+-                                            onChange={(e) => {
+-                                                const div = e.target.value;
+-                                                const facs = facilities.filter(f => (!cbamForm.activity || f.activity === cbamForm.activity) && (!div || f.division === div));
+-                                                const autoFac = facs.length === 1 ? facs[0].id.toString() : '';
+-                                                setCbamForm({ ...cbamForm, division: div, facility_id: autoFac });
+-                                            }}
+-                                            className="component-select"
+-                                            disabled={!cbamForm.activity}
+-                                        >
+-                                            <option value="">-- Select Division --</option>
+-                                            {getAvailableDivisions(cbamForm.activity).map(d => (
+-                                                <option key={d} value={d}>{d}</option>
+-                                            ))}
+-                                        </select>
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Facility / Region *</label>
+-                                        <select
+-                                            value={cbamForm.facility_id}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, facility_id: e.target.value })}
+-                                            className="component-select"
+-                                        >
+-                                            <option value="">-- Select Facility --</option>
+-                                            {facilities
+-                                                .filter(f => (!cbamForm.activity || f.activity === cbamForm.activity) && (!cbamForm.division || f.division === cbamForm.division))
+-                                                .map(f => (
+-                                                    <option key={f.id} value={f.id}>{f.name} ({f.location || f.field || 'General'})</option>
+-                                                ))
+-                                            }
+-                                        </select>
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Product Name *</label>
+-                                        <input
+-                                            type="text"
+-                                            value={cbamForm.product_name}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, product_name: e.target.value })}
+-                                            className="mole-input"
+-                                            placeholder="e.g. Export Blend Crude Oil"
+-                                        />
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>EU CN Code *</label>
+-                                        <select
+-                                            value={cbamForm.cn_code}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, cn_code: e.target.value })}
+-                                            className="component-select"
+-                                        >
+-                                            <option value="2709 00">2709 00 - Crude Petroleum Oil</option>
+-                                            <option value="2711 11">2711 11 - Natural Gas (Liquefied / LNG)</option>
+-                                            <option value="2711 21">2711 21 - Natural Gas (Gaseous / Pipeline)</option>
+-                                            <option value="2710 12">2710 12 - Light Oils & Preparations</option>
+-                                            <option value="2710 19">2710 19 - Heavy Oils / Diesel / Gas Oil</option>
+-                                            <option value="2814 10">2814 10 - Anhydrous Ammonia</option>
+-                                            <option value="2901 21">2901 21 - Ethylene / Petrochemicals</option>
+-                                            <option value="3102 10">3102 10 - Urea & Nitrogenous Fertilizers</option>
+-                                            <option value="Custom">Custom / Other CN Code</option>
+-                                        </select>
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Export Destination</label>
+-                                        <select
+-                                            value={cbamForm.export_destination}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, export_destination: e.target.value })}
+-                                            className="component-select"
+-                                        >
+-                                            <option value="EU">European Union (EU-27)</option>
+-                                            <option value="UK">United Kingdom</option>
+-                                            <option value="US">United States</option>
+-                                            <option value="APAC">Asia-Pacific</option>
+-                                            <option value="Non-EU">Other Non-EU</option>
+-                                        </select>
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Reporting Year</label>
+-                                        <input
+-                                            type="number"
+-                                            value={cbamForm.year}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, year: e.target.value })}
+-                                            className="mole-input"
+-                                        />
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Reporting Month</label>
+-                                        <select
+-                                            value={cbamForm.month}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, month: e.target.value })}
+-                                            className="component-select"
+-                                        >
+-                                            {Array.from({ length: 12 }, (_, i) => (
+-                                                <option key={i + 1} value={i + 1}>
+-                                                    {new Date(2000, i).toLocaleString('default', { month: 'long' })}
+-                                                </option>
+-                                            ))}
+-                                        </select>
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Export Quantity (Metric Tonnes) *</label>
+-                                        <input
+-                                            type="number"
+-                                            value={cbamForm.quantity_tonnes}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, quantity_tonnes: e.target.value })}
+-                                            className="mole-input"
+-                                            placeholder="0.00"
+-                                        />
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Direct Specific Embedded (tCOÔéée / t)</label>
+-                                        <input
+-                                            type="number"
+-                                            step="0.001"
+-                                            value={cbamForm.specific_embedded_direct}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, specific_embedded_direct: e.target.value })}
+-                                            className="mole-input"
+-                                            placeholder="0.000"
+-                                        />
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Indirect Specific Embedded (tCOÔéée / t)</label>
+-                                        <input
+-                                            type="number"
+-                                            step="0.001"
+-                                            value={cbamForm.specific_embedded_indirect}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, specific_embedded_indirect: e.target.value })}
+-                                            className="mole-input"
+-                                            placeholder="0.000"
+-                                        />
+-                                    </div>
+-
+-                                    <div className="input-group">
+-                                        <label>Notes & Verification References</label>
+-                                        <input
+-                                            type="text"
+-                                            value={cbamForm.notes}
+-                                            onChange={(e) => setCbamForm({ ...cbamForm, notes: e.target.value })}
+-                                            className="mole-input"
+-                                            placeholder="Accredited Verifier / Certificate ID"
+-                                        />
+-                                    </div>
+-                                </div>
+-
+-                                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+-                                    <button className="action-btn" onClick={handleSaveCbamExport}>
+-                                        {editingCbamId ? 'Update CBAM Record' : 'Save CBAM Record'}
+-                                    </button>
+-                                    {editingCbamId && (
+-                                        <button
+-                                            className="action-btn"
+-                                            style={{ background: 'var(--text-secondary)' }}
+-                                            onClick={() => {
+-                                                setEditingCbamId(null);
+-                                                setCbamForm({
+-                                                    id: null, activity: '', division: '', facility_id: '',
+-                                                    year: new Date().getFullYear(), month: 1,
+-                                                    product_name: 'Crude Petroleum Oil', cn_code: '2709 00',
+-                                                    quantity_tonnes: '', export_destination: 'EU',
+-                                                    specific_embedded_direct: '', specific_embedded_indirect: '', notes: ''
+-                                                });
+-                                            }}
+-                                        >
+-                                            Cancel Edit
+-                                        </button>
+-                                    )}
+-                                </div>
+-
+-                                <div className="table-container" style={{ marginTop: '40px' }}>
+-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+-                                        <h3>CBAM Product Export Records</h3>
+-                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+-                                            Total Records: {filteredCbam.length}
+-                                        </span>
+-                                    </div>
+-                                    <table className="data-table">
+-                                        <thead>
+-                                            <tr>
+-                                                <th>Facility</th>
+-                                                <th>Product</th>
+-                                                <th>EU CN Code</th>
+-                                                <th>Period</th>
+-                                                <th>Destination</th>
+-                                                <th style={{ textAlign: 'right' }}>Quantity (t)</th>
+-                                                <th style={{ textAlign: 'right' }}>Direct (tCOÔéée/t)</th>
+-                                                <th style={{ textAlign: 'right' }}>Indirect (tCOÔéée/t)</th>
+-                                                <th style={{ textAlign: 'right' }}>Total Embedded (tCOÔéée)</th>
+-                                                <th style={{ textAlign: 'center' }}>Actions</th>
+-                                            </tr>
+-                                        </thead>
+-                                        <tbody>
+-                                            {filteredCbam.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(c => {
+-                                                const fid = c.facility_id || c.facilityId;
+-                                                const fac = facilities.find(f => f.id === fid);
+-                                                const fName = c.facility_name || c.facilityName || fac?.name || `Facility #${fid}`;
+-                                                const pName = c.product_name || c.productName || 'Product';
+-                                                const cn = c.cn_code || c.cnCode || '-';
+-                                                const dest = c.export_destination || c.exportDestination || 'EU';
+-                                                const qTonnes = parseFloat(c.quantity_tonnes ?? c.quantityTonnes ?? 0);
+-                                                const direct = parseFloat(c.specific_embedded_direct ?? c.specificEmbeddedDirect ?? 0);
+-                                                const indirect = parseFloat(c.specific_embedded_indirect ?? c.specificEmbeddedIndirect ?? 0);
+-                                                const totalEmbedded = (direct + indirect) * qTonnes;
+-                                                return (
+-                                                    <tr key={c.id}>
+-                                                        <td><strong>{fName}</strong></td>
+-                                                        <td>{pName}</td>
+-                                                        <td><span style={{ fontFamily: 'monospace', background: 'var(--bg-card)', padding: '2px 6px', borderRadius: '4px' }}>{cn}</span></td>
+-                                                        <td>{c.year} - M{c.month || '1'}</td>
+-                                                        <td><span className="status-badge active">{dest}</span></td>
+-                                                        <td style={{ textAlign: 'right', fontWeight: 600 }}>{qTonnes.toLocaleString()}</td>
+-                                                        <td style={{ textAlign: 'right' }}>{direct.toFixed(3)}</td>
+-                                                        <td style={{ textAlign: 'right' }}>{indirect.toFixed(3)}</td>
+-                                                        <td style={{ textAlign: 'right', color: '#3b82f6', fontWeight: 700 }}>
+-                                                            {totalEmbedded.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+-                                                        </td>
+-                                                        <td style={{ textAlign: 'center' }}>
+-                                                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+-                                                                <button
+-                                                                    className="action-btn"
+-                                                                    style={{ padding: '4px 8px', fontSize: '0.75rem', background: '#3b82f6' }}
+-                                                                    onClick={() => {
+-                                                                        setEditingCbamId(c.id);
+-                                                                        setCbamForm({
+-                                                                            id: c.id,
+-                                                                            activity: fac?.activity || '',
+-                                                                            division: fac?.division || '',
+-                                                                            facility_id: fid ? fid.toString() : '',
+-                                                                            year: c.year,
+-                                                                            month: c.month || 1,
+-                                                                            product_name: pName,
+-                                                                            cn_code: cn,
+-                                                                            quantity_tonnes: qTonnes.toString(),
+-                                                                            export_destination: dest,
+-                                                                            specific_embedded_direct: direct ? direct.toString() : '',
+-                                                                            specific_embedded_indirect: indirect ? indirect.toString() : '',
+-                                                                            notes: c.notes || ''
+-                                                                        });
+-                                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+-                                                                    }}
+-                                                                >
+-                                                                    Edit
+-                                                                </button>
+-                                                                <button
+-                                                                    className="btn-delete"
+-                                                                    style={{ padding: '4px 8px', fontSize: '0.75rem' }}
+-                                                                    onClick={() => handleDeleteCbamExport(c.id)}
+-                                                                >
+-                                                                    Delete
+-                                                                </button>
+-                                                            </div>
+-                                                        </td>
+-                                                    </tr>
+-                                                );
+-                                            })}
+-                                            {filteredCbam.length === 0 && (
+-                                                <tr>
+-                                                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+-                                                        No CBAM product export records found.
+-                                                    </td>
+-                                                </tr>
+-                                            )}
+-                                        </tbody>
+-                                    </table>
+-                                    <PaginationControls currentPage={currentPage} totalItems={filteredCbam.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />
+-                                </div>
+-                            </div>
+-                        )}
+-
+                         {activeTab === 'ogmp' && (
+                             <div className="tab-pane active">
+                                 <div className="section-header" style={{ marginBottom: '24px' }}>

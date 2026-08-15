@@ -77,8 +77,8 @@
       "new_server_routes_dashboard_get_base_year",
       "new_server_routes_dashboard_get_batch_dashboard_data",
       "new_server_routes_dashboard_get_categorical_breakdown",
+      "new_server_routes_dashboard_get_dashboard_summary",
       "new_server_routes_dashboard_get_goal",
-      "new_server_routes_dashboard_get_intensity_stats",
       "new_server_routes_dashboard_get_intensity_trend",
       "new_server_routes_dashboard_get_mitigation",
       "new_server_routes_dashboard_get_ogmp_metrics",
@@ -89,19 +89,21 @@
       "new_server_routes_dashboard_py_route",
       "new_server_routes_dashboard_query_available_years",
       "new_server_routes_dashboard_query_categorical_breakdown",
-      "new_server_routes_dashboard_query_intensity_stats",
       "new_server_routes_dashboard_query_intensity_trend_bulk",
       "new_server_routes_dashboard_query_mitigation",
       "new_server_routes_dashboard_query_scope3_summary",
+      "new_server_routes_dashboard_query_summary",
       "new_server_routes_dashboard_query_uncertainty",
       "new_server_routes_dashboard_rationale_1422",
       "new_server_routes_dashboard_rationale_1432",
       "new_server_routes_dashboard_rationale_1596",
+      "new_server_routes_dashboard_rationale_160",
       "new_server_routes_dashboard_rationale_291",
       "new_server_routes_dashboard_rationale_32",
       "new_server_routes_dashboard_rationale_331",
       "new_server_routes_dashboard_rationale_355",
       "new_server_routes_dashboard_rationale_441",
+      "new_server_routes_dashboard_rationale_453",
       "new_server_routes_dashboard_rationale_46",
       "new_server_routes_dashboard_rationale_474",
       "new_server_routes_dashboard_rationale_481",
@@ -112,9 +114,7 @@
       "new_server_routes_dashboard_rationale_568",
       "new_server_routes_dashboard_rationale_584",
       "new_server_routes_dashboard_rationale_612",
-      "new_server_routes_dashboard_rationale_727",
       "new_server_routes_dashboard_rationale_748",
-      "new_server_routes_dashboard_rationale_989",
       "new_server_routes_dashboard_run_in_app_ctx",
       "new_server_routes_managedata_add_or_update_goal"
     ],
@@ -387,6 +387,10 @@
       "new_client_src_app_itroute",
       "new_client_src_app_nonitroute",
       "new_client_src_app_privateroute",
+      "new_client_src_components_layout_layout",
+      "new_client_src_components_layout_layout_layout",
+      "new_client_src_components_layout_sidebar",
+      "new_client_src_components_layout_sidebar_sidebar",
       "new_client_src_components_loadingspinner",
       "new_client_src_components_loadingspinner_loadingspinner",
       "new_client_src_components_multiselectdropdown",
@@ -396,20 +400,18 @@
       "new_client_src_context_authcontext_authprovider",
       "new_client_src_context_authcontext_useauth",
       "new_client_src_main",
-      "new_client_src_pages_audittrail",
-      "new_client_src_pages_audittrail_audittrail",
-      "new_client_src_pages_carbonintensity_carbonintensity",
       "new_client_src_pages_diagnostics",
       "new_client_src_pages_diagnostics_diagnostics",
-      "new_client_src_pages_emissions_emissions",
       "new_client_src_pages_login",
       "new_client_src_pages_login_login",
-      "new_client_src_pages_methaneintensity_methaneintensity",
+      "new_client_src_pages_referencedata_referencedata",
       "new_client_src_pages_reports",
       "new_client_src_pages_reports_reports",
       "new_client_src_pages_settings",
       "new_client_src_pages_settings_gwp_data",
-      "new_client_src_pages_settings_settings"
+      "new_client_src_pages_settings_settings",
+      "new_client_src_pages_uncertaintyassessment",
+      "new_client_src_pages_uncertaintyassessment_uncertaintyassessment"
     ],
     "9": [
       "new_server_background_processor",
@@ -498,30 +500,15 @@
       "new_server_utils_get_current_user"
     ],
     "12": [
-      "new_client_src_components_bulkimportmodal_bulkimportmodal",
-      "new_client_src_components_gascompositioncalculator_gascompositioncalculator",
-      "new_client_src_components_scope2form",
-      "new_client_src_components_scope2form_scope2form",
-      "new_client_src_components_scope3form",
-      "new_client_src_components_scope3form_scope3form",
-      "new_client_src_components_toast",
-      "new_client_src_components_toast_toast",
-      "new_client_src_components_toast_toastcontainer",
-      "new_client_src_components_toast_toastcontext",
-      "new_client_src_components_toast_toastprovider",
-      "new_client_src_components_toast_usetoast",
       "new_client_src_pages_emissions",
-      "new_client_src_pages_methaneexplorer",
-      "new_client_src_pages_methaneexplorer_emissionsmap",
-      "new_client_src_pages_methaneexplorer_mapcontroller",
+      "new_client_src_pages_emissions_emissions",
       "new_client_src_utils_constants",
       "new_client_src_utils_constants_stage_emission_calculator",
       "new_client_src_utils_constants_stage_factor_calculator",
       "new_client_src_utils_constants_stage_scope1_sub_selection",
       "new_client_src_utils_constants_stage_scope2",
       "new_client_src_utils_constants_stage_scope3",
-      "new_client_src_utils_constants_stage_scope_selection",
-      "new_client_src_utils_formatters_formatnumber"
+      "new_client_src_utils_constants_stage_scope_selection"
     ],
     "13": [
       "fixture",
@@ -582,19 +569,23 @@
       "new_client_src_components_charts_piechart",
       "new_client_src_components_charts_piechart_default_colors",
       "new_client_src_components_charts_piechart_piechart",
+      "new_client_src_components_scope2form_scope2form",
       "new_client_src_components_skeletonloader",
       "new_client_src_components_skeletonloader_skeletoncard",
       "new_client_src_components_skeletonloader_skeletonrow",
       "new_client_src_components_skeletonloader_skeletontable",
       "new_client_src_pages_carbonintensity",
+      "new_client_src_pages_carbonintensity_carbonintensity",
       "new_client_src_pages_dashboardenhanced",
       "new_client_src_pages_dashboardenhanced_calculateforecast",
       "new_client_src_pages_dashboardenhanced_dashboardenhanced",
       "new_client_src_pages_methaneintensity",
+      "new_client_src_pages_methaneintensity_methaneintensity",
       "new_client_src_utils_formatters",
       "new_client_src_utils_formatters_calculatetrend",
       "new_client_src_utils_formatters_formatcompactnumber",
-      "new_client_src_utils_formatters_formatdate"
+      "new_client_src_utils_formatters_formatdate",
+      "new_client_src_utils_formatters_formatnumber"
     ],
     "16": [
       "new_client_src_components_columnmappingwizard",
@@ -687,10 +678,6 @@
       "new_server_tests_test_dispatcher_test_tier3_strict_validation_unloading_missing_fields"
     ],
     "20": [
-      "new_client_src_components_layout_layout",
-      "new_client_src_components_layout_layout_layout",
-      "new_client_src_components_layout_sidebar",
-      "new_client_src_components_layout_sidebar_sidebar",
       "new_client_src_components_layout_topbar",
       "new_client_src_components_layout_topbar_topbar",
       "new_client_src_components_notificationcenter",
@@ -705,7 +692,9 @@
       "new_client_src_context_layoutcontext",
       "new_client_src_context_layoutcontext_layoutcontext",
       "new_client_src_context_layoutcontext_layoutprovider",
-      "new_client_src_context_layoutcontext_uselayout"
+      "new_client_src_context_layoutcontext_uselayout",
+      "new_client_src_pages_audittrail",
+      "new_client_src_pages_audittrail_audittrail"
     ],
     "21": [
       "any",
@@ -731,16 +720,27 @@
       "new_client_src_api",
       "new_client_src_api_api",
       "new_client_src_components_bulkimportmodal",
+      "new_client_src_components_bulkimportmodal_bulkimportmodal",
       "new_client_src_components_csvuploader",
       "new_client_src_components_csvuploader_csvuploader",
       "new_client_src_components_gascompositioncalculator",
       "new_client_src_components_gascompositioncalculator_component_data",
+      "new_client_src_components_gascompositioncalculator_gascompositioncalculator",
       "new_client_src_components_modal",
       "new_client_src_components_modal_modal",
+      "new_client_src_components_scope2form",
+      "new_client_src_components_scope3form",
+      "new_client_src_components_scope3form_scope3form",
+      "new_client_src_components_toast",
+      "new_client_src_components_toast_toast",
+      "new_client_src_components_toast_toastcontainer",
+      "new_client_src_components_toast_toastcontext",
+      "new_client_src_components_toast_toastprovider",
+      "new_client_src_components_toast_usetoast",
+      "new_client_src_pages_methaneexplorer",
+      "new_client_src_pages_methaneexplorer_emissionsmap",
+      "new_client_src_pages_methaneexplorer_mapcontroller",
       "new_client_src_pages_referencedata",
-      "new_client_src_pages_referencedata_referencedata",
-      "new_client_src_pages_uncertaintyassessment",
-      "new_client_src_pages_uncertaintyassessment_uncertaintyassessment",
       "new_client_src_pages_usermanagement",
       "new_client_src_pages_usermanagement_getrolemeta",
       "new_client_src_pages_usermanagement_role_meta",
@@ -1175,10 +1175,10 @@
       "agents_workflows_graphify"
     ],
     "59": [
-      "new_server_routes_dashboard_get_dashboard_summary",
-      "new_server_routes_dashboard_query_summary",
-      "new_server_routes_dashboard_rationale_160",
-      "new_server_routes_dashboard_rationale_453"
+      "new_server_routes_dashboard_get_intensity_stats",
+      "new_server_routes_dashboard_query_intensity_stats",
+      "new_server_routes_dashboard_rationale_727",
+      "new_server_routes_dashboard_rationale_989"
     ],
     "60": [
       "new_server_test_emission_calculations_rationale_310",
@@ -1303,21 +1303,21 @@
     "5": 0.09291521486643438,
     "6": 0.05128205128205128,
     "7": 0.05714285714285714,
-    "8": 0.15698924731182795,
+    "8": 0.13636363636363635,
     "9": 0.14532019704433496,
     "10": 0.11076923076923077,
     "11": 0.17333333333333334,
-    "12": 0.15579710144927536,
+    "12": 0.3333333333333333,
     "13": 0.1383399209486166,
     "14": 0.11857707509881422,
-    "15": 0.18095238095238095,
+    "15": 0.15666666666666668,
     "16": 0.10952380952380952,
     "17": 0.1380952380952381,
     "18": 0.11578947368421053,
     "19": 0.1631578947368421,
-    "20": 0.14619883040935672,
+    "20": 0.16911764705882354,
     "21": 0.1503267973856209,
-    "22": 0.1895424836601307,
+    "22": 0.15270935960591134,
     "23": 0.16176470588235295,
     "24": 0.125,
     "25": 0.19166666666666668,
@@ -1449,7 +1449,7 @@
       ],
       "confidence": "INFERRED",
       "relation": "conceptually_related_to",
-      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 image); connects across different repos/directories"
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc ↔ image); connects across different repos/directories"
     },
     {
       "source": "seed_data()",
@@ -1496,8 +1496,41 @@
       "why": "inferred connection - not explicitly stated in source; bridges separate communities"
     }
   ],
-  "tokens": {
-    "input": 2334,
-    "output": 656
-  }
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `login_required()` connect `Production and OGMP Data` to `User and Auth Management`, `Dashboard and Goals API`, `Reporting and Export Services`, `Emission Factor Database`, `Notification Services`, `Scope 3 Management`, `Data Management Services`, `Scope 2 Management`, `Satellite and OGMP Integration`, `Intensity Metrics API`, `Custom Factor Management`, `Database Models and Audit`?",
+      "why": "High betweenness centrality (0.110) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `calculate_co2e()` connect `Emission Calculation Logic` to `User and Auth Management`, `Combustion and Flaring Modules`, `Fugitive and Tiered Tests`, `Calculation Base Classes`, `Calculation Input Normalization`, `Background Processing Engine`, `Midstream Calculation Modules`, `Flaring and Pressure Conversion`?",
+      "why": "High betweenness centrality (0.067) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `sqlite3` connect `API Middleware and Health` to `Backend Dependencies`, `Database Models and Audit`?",
+      "why": "High betweenness centrality (0.051) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 34 inferred relationships involving `CalculationDispatcher` (e.g. with `CombustionCalculator` and `FlaringCalculator`) actually correct?",
+      "why": "`CalculationDispatcher` has 34 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 7 inferred relationships involving `User` (e.g. with `TestCSVUploaderE2E` and `TestCalculationIntegrity`) actually correct?",
+      "why": "`User` has 7 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `name`, `private`, `version` to the rest of the system?",
+      "why": "113 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `User and Auth Management` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07787698412698413 - nodes in this community are weakly interconnected."
+    }
+  ]
 }

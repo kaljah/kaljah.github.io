@@ -283,6 +283,18 @@ const TEMPLATES = {
     { id: "investment_amount", label: "Investment", required: false },
     { id: "description", label: "Description", required: false },
   ],
+  facilities: [
+    { id: "name", label: "Region Name", required: true },
+    { id: "activity", label: "Activity", required: true },
+    { id: "division", label: "Division", required: true },
+    { id: "field", label: "Field / Block", required: false },
+    { id: "location", label: "Location (Wilaya)", required: true },
+    { id: "boundary_type", label: "Consolidation Approach", required: true },
+    { id: "boundary_detail", label: "Boundary Details", required: true },
+    { id: "segment", label: "Supply Chain Segment", required: true },
+    { id: "latitude", label: "Latitude", required: true },
+    { id: "longitude", label: "Longitude", required: true },
+  ],
 };
 
 // Auto-detect: tries to match a column header to a system field key/label
@@ -523,6 +535,7 @@ export default function ColumnMappingWizard({
   const [selectedTier, setSelectedTier] = useState("3");
   const [selectedProcessScope, setSelectedProcessScope] = useState("all");
   const [selectedProcess, setSelectedProcess] = useState("flaring");
+  const [overwriteDuplicates, setOverwriteDuplicates] = useState(false);
 
   // ── File handling ──────────────────────────────────────────────────────────
   const processFile = useCallback((f) => {
@@ -598,6 +611,10 @@ export default function ColumnMappingWizard({
     if (type === "activity_scope2") scopeStr = "2";
     if (type === "activity_scope3") scopeStr = "3";
     form.append("scope", scopeStr);
+    
+    if (type === "facilities") {
+        form.append("overwrite_duplicates", overwriteDuplicates);
+    }
 
     // Pass the column mapping so the server can use correct column names
     form.append("column_mapping", JSON.stringify(mapping));
@@ -659,6 +676,8 @@ export default function ColumnMappingWizard({
       csvContent = `${headers}\nHassi Messaoud,2024,1,National Grid,500,MWh`;
     } else if (type === "activity_scope3") {
       csvContent = `${headers}\nHassi Messaoud,2024,1,1,Purchased Goods,500,tonnes`;
+    } else if (type === "facilities") {
+      csvContent = `${headers}\nHassi R'Mel,Exploration & Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
     }
 
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -1269,6 +1288,20 @@ export default function ColumnMappingWizard({
         {/* ── STEP 2: File Select ── */}
         {step === 2 && (
           <div className="cmw-body">
+            {type === "facilities" && (
+              <div className="cmw-config-section" style={{ marginBottom: '20px', padding: '16px', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}>
+                <h3 style={{ marginBottom: '8px', fontSize: '1rem', color: 'var(--text-primary)' }}>Import Settings</h3>
+                <label className="cmw-config-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={overwriteDuplicates} 
+                    onChange={(e) => setOverwriteDuplicates(e.target.checked)}
+                  />
+                  Overwrite existing Regions with the same name
+                </label>
+                <p className="cmw-hint" style={{ marginTop: '4px', marginLeft: '24px' }}>If unchecked, duplicates will be skipped with an error.</p>
+              </div>
+            )}
             {/* Drop zone */}
             <div
               className={`cmw-dropzone ${isDragging ? "dragging" : ""}`}
@@ -1490,7 +1523,7 @@ export default function ColumnMappingWizard({
         )}
 
         {/* Footer actions */}
-        {step !== 3 && step !== 4 && (
+        {step !== 4 && (
           <div className="cmw-footer">
             <button
               className="cmw-btn-ghost"

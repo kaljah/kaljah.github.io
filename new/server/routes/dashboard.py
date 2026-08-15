@@ -1650,7 +1650,7 @@ def _query_intensity_stats(
             co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe
             scope1_int = ((ed["total_co2e"] - s2_val) * 1000.0) / boe
             scope2_int = (s2_val * 1000.0) / boe
-            scope3_int = (scope3_co2e * 1000.0) / boe
+            scope3_int = (s3_map.get(fid, 0) * 1000.0) / boe
             ch4_int = (ed["total_ch4"] * 1000.0) / boe
             flare_int = (ed["total_flaring"] * 1000.0) / boe
             biogenic_int = (ed["total_biogenic"] * 1000.0) / boe

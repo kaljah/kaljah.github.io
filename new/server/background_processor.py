@@ -17,6 +17,7 @@ def start_background_upload(
     global_factor_type,
     provided_mapping=None,
     scope=1,
+    overwrite_duplicates=False,
 ):
     job_id = str(uuid.uuid4())
     upload_jobs[job_id] = {
@@ -41,6 +42,7 @@ def start_background_upload(
             global_factor_type,
             provided_mapping,
             scope,
+            overwrite_duplicates,
         ),
     )
     thread.daemon = True
@@ -75,6 +77,7 @@ def _process_file_thread(
     global_factor_type,
     provided_mapping,
     scope=1,
+    overwrite_duplicates=False,
 ):
     with app.app_context():
         try:
@@ -224,6 +227,7 @@ def _process_file_thread(
                     if header_name:
                         mapped_data[sys_key] = row_dict.get(header_name)
 
+
                 # Merge Tier 3 / Gas Composition if present
                 eq_id_raw = str(mapped_data.get("equipment") or "").strip()
                 if eq_id_raw and eq_id_raw in tier3_data_map:
@@ -256,7 +260,7 @@ def _process_file_thread(
                     )
                 elif str(scope) == "facilities":
                     emission_obj, row_errors = _process_row_facilities(
-                        mapped_data, user_id
+                        mapped_data, user_id, overwrite_duplicates
                     )
                 elif str(scope) == "1":
                     emission_obj, row_errors = _process_row(
@@ -282,6 +286,8 @@ def _process_file_thread(
                         "row": processed,
                         "reason": "; ".join(row_errors),
                         "date": mapped_data.get("date", ""),
+                        "year": str(mapped_data.get("year") or ""),
+                        "month": str(mapped_data.get("month") or ""),
                         "facility": mapped_data.get("facility_name", ""),
                         "process": mapped_data.get("process", ""),
                         "fuel": mapped_data.get("fuel", ""),
@@ -303,6 +309,8 @@ def _process_file_thread(
 
                 # Update progress every 100 rows
                 if processed % 100 == 0:
+                    import time
+                    time.sleep(0)  # Yield the GIL so the main Flask thread can handle /status polling API calls
                     upload_jobs[job_id]["processed"] = processed
                     if total_rows > 0:
                         upload_jobs[job_id]["progress"] = min(
@@ -349,6 +357,8 @@ def _process_file_thread(
 def _build_mapping(headers):
     # Matches the exact UI table headers to backend keys
     EXPECTED_FIELDS = [
+        ("name", "name"),
+        ("name", "region name"),
         ("date", "date"),
         ("activity", "activity"),
         ("division", "division"),
@@ -363,6 +373,10 @@ def _build_mapping(headers):
         ("quantity", "quantity"),
         ("unit", "unit"),
         ("year", "year"),
+        ("ch4_content", "ch4 content"),
+        ("ch4_content", "ch4_content"),
+        ("co2_content", "co2 content"),
+        ("co2_content", "co2_content"),
         ("month", "month"),
         ("combustion_efficiency", "combustion eff"),
         ("flare_type", "flare type"),
@@ -453,6 +467,15 @@ def _build_mapping(headers):
         ("co2_uncertainty", "co2 uncertainty"),
         ("ch4_uncertainty", "ch4 uncertainty"),
         ("n2o_uncertainty", "n2o uncertainty"),
+        # Facility fields
+        ("name", "region name"),
+        ("boundary_type", "consolidation approach"),
+        ("boundary_detail", "boundary details"),
+        ("segment", "supply chain segment"),
+        ("latitude", "latitude"),
+        ("longitude", "longitude"),
+        ("location", "wilaya"),
+        ("location", "location"),
     ]
 
     mapping = {}
@@ -486,7 +509,7 @@ def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS):
 
     # 2. Resolve Facility
     facility = None
-    fac_input = row.get("facility_name") or row.get("facility")
+    fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
     if fac_input:
         fac_str = str(fac_input).strip().lower()
         if fac_str in fac_name_map:
@@ -508,20 +531,49 @@ def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS):
     val = float(row.get("consumption") or 0)
     unit = str(row.get("unit") or "kWh").strip()
 
-    kwh = val
-    if unit.lower() == "mwh":
-        kwh = val * 1000
-    elif unit.lower() == "gwh":
-        kwh = val * 1000000
+    # Default to electricity
+    source_type = str(row.get("source_type") or "electricity").strip().lower()
+    
+    kwh = 0.0
+    heat_mmbtu = 0.0
+    
+    # Map 'consumption' alias to specific fields based on source_type
+    if source_type in ["indirect_steam", "steam", "heat"]:
+        source_type = "indirect_steam"
+        # Steam usually MMBtu or Tonnes. Let's assume MMBtu by default for heat.
+        heat_mmbtu = val
+        if unit.lower() == "ton":
+            heat_mmbtu = val * 1.194  # very rough approx, normally we'd do a proper conversion
+    elif source_type in ["cogen_allocation", "cogen"]:
+        source_type = "cogen_allocation"
+        # For cogen, val might be the allocated tCO2e directly, or we calculate it.
+        # If they provided an EF, we do `val * ef / 1000`. If EF is missing, they might just provide `co2e` directly.
+    else:
+        source_type = "electricity"
+        if unit.lower() == "mwh":
+            kwh = val * 1000
+        elif unit.lower() == "gwh":
+            kwh = val * 1000000
+        else:
+            kwh = val
 
-    co2e = (kwh * ef) / 1000
+    # Calculate CO2e
+    # If source_type is cogen, we might not have an EF in grid factors, but if provided we use it.
+    co2e = 0.0
+    if source_type == "electricity":
+        co2e = (kwh * ef) / 1000
+    elif source_type == "indirect_steam":
+        co2e = (heat_mmbtu * ef) / 1000
+    elif source_type == "cogen_allocation":
+        co2e = float(row.get("co2e") or ((val * ef) / 1000 if ef else val))
 
     emission = Scope2Emission(
         facility_id=facility.id,
         year=year,
         month=month,
-        source_type="electricity",
+        source_type=source_type,
         electricity_kwh=kwh,
+        heat_mmbtu=heat_mmbtu,
         emission_factor=ef,
         co2e=co2e,
         grid_region=grid_region,
@@ -554,7 +606,7 @@ def _process_row_scope3(row, user_id, fac_name_map, fac_id_map):
 
     # 2. Resolve Facility
     facility = None
-    fac_input = row.get("facility_name") or row.get("facility")
+    fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
     if fac_input:
         fac_str = str(fac_input).strip().lower()
         if fac_str in fac_name_map:
@@ -612,8 +664,14 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map):
 
     errors = []
 
+    # Validate required name field
+    name = str(row.get("name") or "").strip()
+    if not name:
+        errors.append("Equipment Name is required for emission source")
+        return None, errors
+
     facility = None
-    fac_input = row.get("facility_name") or row.get("facility")
+    fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
     if fac_input:
         fac_str = str(fac_input).strip().lower()
         if fac_str in fac_name_map:
@@ -627,7 +685,7 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map):
 
     source = EmissionSource(
         facility_id=facility.id,
-        name=row.get("name"),
+        name=name,
         equipment_id=row.get("equipment_id"),
         type=row.get("type") or row.get("process_type"),
         fuel_type=row.get("fuel_type") or row.get("fuel"),
@@ -638,17 +696,19 @@ def _process_row_sources(row, user_id, fac_name_map, fac_id_map):
         activity=row.get("activity") or facility.activity,
         division=row.get("division") or facility.division,
         field=row.get("field") or facility.field,
+        created_by=user_id,
     )
     return source, errors
 
 
 def _process_row_production(row, user_id, fac_name_map, fac_id_map):
     from models import ProductionData
+    from extensions import db
 
     errors = []
 
     facility = None
-    fac_input = row.get("facility_name") or row.get("facility")
+    fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
     if fac_input:
         fac_str = str(fac_input).strip().lower()
         if fac_str in fac_name_map:
@@ -669,28 +729,59 @@ def _process_row_production(row, user_id, fac_name_map, fac_id_map):
     try:
         year = int(year)
         month = int(month)
-    except ValueError:
+    except (ValueError, TypeError):
         errors.append("Invalid year or month format")
         return None, errors
 
     try:
-        oil_vol = float(row.get("production_volume") or row.get("oil_volume") or 0)
-    except ValueError:
+        oil_vol = float(row.get("production_volume") or row.get("oil_volume") or row.get("oil_amount") or 0)
+    except (ValueError, TypeError):
         oil_vol = 0
 
     try:
-        gas_vol = float(row.get("energy_consumption") or row.get("gas_volume") or 0)
-    except ValueError:
+        gas_vol = float(row.get("energy_consumption") or row.get("gas_volume") or row.get("gas_amount") or 0)
+    except (ValueError, TypeError):
         gas_vol = 0
+
+    oil_unit = row.get("production_unit") or row.get("oil_unit") or "bbl"
+    gas_unit = row.get("energy_unit") or row.get("gas_unit") or "mscf"
+    activity = row.get("activity") or facility.activity
+    division = row.get("division") or facility.division
+    field = row.get("field") or facility.field
+
+    # Upsert: respect the (facility_id, month, year) UniqueConstraint
+    existing = ProductionData.query.filter_by(
+        facility_id=facility.id,
+        year=year,
+        month=month,
+    ).first()
+
+    if existing:
+        existing.oil_amount = oil_vol
+        existing.gas_amount = gas_vol
+        existing.oil_unit = oil_unit
+        existing.gas_unit = gas_unit
+        if activity:
+            existing.activity = activity
+        if division:
+            existing.division = division
+        if field:
+            existing.field = field
+        # Return None — session already tracks existing; no need to bulk_save_objects it
+        return None, errors
 
     prod = ProductionData(
         facility_id=facility.id,
         year=year,
         month=month,
         oil_amount=oil_vol,
-        oil_unit=row.get("production_unit") or row.get("oil_unit", "bbl"),
+        oil_unit=oil_unit,
         gas_amount=gas_vol,
-        gas_unit=row.get("energy_unit") or row.get("gas_unit", "mscf"),
+        gas_unit=gas_unit,
+        activity=activity,
+        division=division,
+        field=field,
+        created_by=user_id,
     )
     return prod, errors
 
@@ -701,8 +792,14 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
 
     errors = []
 
+    # Validate required project name
+    project_name = str(row.get("name") or "").strip()
+    if not project_name:
+        errors.append("Project Name is required for mitigation project")
+        return None, errors
+
     facility = None
-    fac_input = row.get("facility_name") or row.get("facility")
+    fac_input = row.get("facility_name") or row.get("facility") or row.get("facility_id")
     if fac_input:
         fac_str = str(fac_input).strip().lower()
         if fac_str in fac_name_map:
@@ -749,7 +846,7 @@ def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
 
     proj = MitigationProject(
         facility_id=facility.id,
-        name=row.get("name"),
+        name=project_name,
         project_type=row.get("project_type") or row.get("type"),
         year=year,
         quantity_tco2e=qty,
@@ -793,30 +890,76 @@ def _process_row_custom_factors(row, user_id):
     return factor, errors
 
 
-def _process_row_facilities(row, user_id):
+def _process_row_facilities(row, user_id, overwrite_duplicates):
     from models import Facility
 
     errors = []
 
-    if not row.get("name"):
-        errors.append("Name is required for facility")
+    name = row.get("name")
+    if not name:
+        errors.append("Region Name is required")
         return None, errors
+        
+    for req in ["activity", "division", "location", "boundary_type", "boundary_detail", "segment", "latitude", "longitude"]:
+        if not row.get(req) and str(row.get(req)) != "0":
+            errors.append(f"{req} is required")
+            return None, errors
 
-    facility = Facility(
-        name=row.get("name"),
-        location=row.get("location"),
-        description=row.get("description"),
-        boundary_notes=row.get("boundary_notes"),
-        activity=row.get("activity"),
-        division=row.get("division"),
-        region=row.get("region"),
-        field=row.get("field"),
-        code=row.get("code"),
-        external_id=row.get("external_id"),
-        segment=row.get("segment"),
-        created_by=user_id,
-    )
-    return facility, errors
+    existing = Facility.query.filter_by(name=name).first()
+    if existing:
+        if not overwrite_duplicates:
+            errors.append(f"Region '{name}' already exists. Choose 'Overwrite' to update it.")
+            return None, errors
+        
+        # Overwrite mode
+        existing.location = row.get("location")
+        existing.description = row.get("description")
+        existing.boundary_notes = row.get("boundary_notes")
+        existing.boundary_type = row.get("boundary_type")
+        existing.boundary_detail = row.get("boundary_detail")
+        existing.activity = row.get("activity")
+        existing.division = row.get("division")
+        existing.region = row.get("region")
+        existing.field = row.get("field")
+        existing.code = row.get("code")
+        existing.external_id = row.get("external_id")
+        existing.segment = row.get("segment")
+        try:
+            existing.latitude = float(row.get("latitude"))
+        except:
+            pass
+        try:
+            existing.longitude = float(row.get("longitude"))
+        except:
+            pass
+        return existing, errors
+    else:
+        lat, lon = None, None
+        try:
+            lat = float(row.get("latitude"))
+            lon = float(row.get("longitude"))
+        except:
+            pass
+        
+        facility = Facility(
+            name=name,
+            location=row.get("location"),
+            description=row.get("description"),
+            boundary_notes=row.get("boundary_notes"),
+            boundary_type=row.get("boundary_type"),
+            boundary_detail=row.get("boundary_detail"),
+            activity=row.get("activity"),
+            division=row.get("division"),
+            region=row.get("region"),
+            field=row.get("field"),
+            code=row.get("code"),
+            external_id=row.get("external_id"),
+            segment=row.get("segment"),
+            latitude=lat,
+            longitude=lon,
+            created_by=user_id,
+        )
+        return facility, errors
 
 
 def _process_row(
@@ -850,25 +993,34 @@ def _process_row(
         try:
             parts = date_str.split("-")
             year = int(parts[0])
-            month = int(parts[1]) if len(parts) > 1 else 1
+            month = int(parts[1]) if len(parts) > 1 else None
         except:
             pass
 
     if not year:
         try:
-            year = int(row.get("year") or 0)
-            month = int(row.get("month") or 1)
+            year = int(row.get("year") or 0) or None
+            raw_month = row.get("month")
+            month = int(raw_month) if raw_month and str(raw_month).strip().isdigit() else None
         except:
             pass
 
     if not year:
-        return None, ["Missing valid date or year."]
+        return None, ["Missing valid date or year. Provide a date (YYYY-MM) or separate year and month columns."]
+
+    if not month:
+        return None, ["Missing month. Provide a date (YYYY-MM) or a separate month column (1-12)"]
 
     # 2. Resolve Facility
     fac_raw = str(row.get("facility_name") or "").strip()
     facility = fac_id_map.get(fac_raw) or fac_name_map.get(fac_raw.lower())
     if not facility:
-        return None, [f"Facility '{fac_raw}' not found."]
+        from models import Facility as _FacCheck
+        from extensions import db as _db
+        global_match = _FacCheck.query.filter(_FacCheck.name.ilike(fac_raw)).first()
+        if global_match:
+            return None, [f"Access denied: Region '{fac_raw}' exists but your account does not have permission to upload data for it."]
+        return None, [f"Region '{fac_raw}' not found. Check that the region name matches exactly a region in the system."]
 
     # 3. Quantity
     try:
@@ -1017,9 +1169,10 @@ def _process_row(
             facility_id=facility.id,
             activity=row.get("activity", facility.activity),
             division=row.get("division", facility.division),
+            region=row.get("region", facility.region),
             field=row.get("field", facility.field),
             group_name=row.get("group", ""),
-            equipment_id=row.get("equipment", ""),
+            equipment_id=row.get("equipment_id") or row.get("equipment", ""),
             process_type=process_type,
             fuel_type=fuel,
             quantity=amount,

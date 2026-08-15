@@ -1,0 +1,346 @@
+new/client/src/pages/CarbonIntensity.css b/new/client/src/pages/CarbonIntensity.css
+index 3bd1021..79a871e 100644
+--- a/new/client/src/pages/CarbonIntensity.css
++++ b/new/client/src/pages/CarbonIntensity.css
+@@ -438,8 +438,8 @@
+ .heat-high { background: #ea580c; } /* Orange */
+ .heat-crit { background: #dc2626; } /* Red */
+ 
+-/* CBAM and OGMP Sections */
+-.cbam-section, .ogmp-section {
++/* OGMP Section */
++.ogmp-section {
+     background: var(--bg-card);
+     border-radius: 16px;
+     padding: 24px 32px;
+@@ -447,17 +447,7 @@
+     box-shadow: var(--card-shadow);
+ }
+ 
+-.cbam-benchmark-badge {
+-    background: rgba(13, 148, 136, 0.1);
+-    color: var(--accent-color);
+-    padding: 6px 14px;
+-    border-radius: 8px;
+-    font-size: 0.8125rem;
+-    font-weight: 600;
+-    border: 1px solid rgba(13, 148, 136, 0.2);
+-}
+-
+-.cbam-empty-state {
++.ogmp-empty-state {
+     padding: 32px;
+     text-align: center;
+     background: var(--bg-app);
+@@ -536,4 +526,310 @@
+     .chart-grid {
+         grid-template-columns: 1fr;
+     }
++}
++
++/* ============================================================
++   OGMP 2.0 GOLD STANDARD PATHWAY & ROADMAP STYLES
++   ============================================================ */
++.ogmp-roadmap-card {
++    background: var(--bg-card);
++    border: 1px solid var(--border-color);
++    border-radius: 16px;
++    padding: 28px;
++    box-shadow: var(--card-shadow);
++    display: flex;
++    flex-direction: column;
++    gap: 22px;
++}
++
++.roadmap-header-row {
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++    flex-wrap: wrap;
++    gap: 16px;
++    padding-bottom: 18px;
++    border-bottom: 1px solid var(--border-color);
++}
++
++.roadmap-title-area {
++    display: flex;
++    flex-direction: column;
++    gap: 4px;
++}
++
++.roadmap-title-area h3 {
++    font-size: 1.25rem;
++    font-weight: 700;
++    color: var(--text-primary);
++    margin: 0;
++    display: flex;
++    align-items: center;
++    gap: 10px;
++}
++
++.roadmap-title-area p {
++    font-size: 0.86rem;
++    color: var(--text-secondary);
++    margin: 0;
++}
++
++.baseline-selector-wrapper {
++    display: flex;
++    align-items: center;
++    gap: 10px;
++    background: var(--bg-app);
++    padding: 6px 12px;
++    border-radius: 10px;
++    border: 1px solid var(--border-color);
++}
++
++.baseline-selector-label {
++    font-size: 0.8rem;
++    font-weight: 600;
++    color: var(--text-secondary);
++}
++
++.baseline-pills {
++    display: flex;
++    gap: 6px;
++}
++
++.btn-baseline-pill {
++    background: var(--bg-card);
++    border: 1px solid var(--border-color);
++    color: var(--text-primary);
++    font-size: 0.8rem;
++    font-weight: 600;
++    padding: 4px 10px;
++    border-radius: 6px;
++    cursor: pointer;
++    transition: all 0.2s ease;
++}
++
++.btn-baseline-pill:hover {
++    border-color: var(--accent-secondary);
++    color: var(--accent-secondary);
++}
++
++.btn-baseline-pill.active {
++    background: var(--accent-secondary);
++    color: #ffffff;
++    border-color: var(--accent-secondary);
++    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
++}
++
++/* Facility Roadmap Cards Grid */
++.facility-roadmap-grid {
++    display: grid;
++    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
++    gap: 20px;
++}
++
++.fac-roadmap-card {
++    background: var(--bg-app);
++    border: 1px solid var(--border-color);
++    border-radius: 12px;
++    padding: 20px;
++    display: flex;
++    flex-direction: column;
++    gap: 16px;
++    transition: transform 0.2s, box-shadow 0.2s;
++}
++
++.fac-roadmap-card:hover {
++    transform: translateY(-2px);
++    box-shadow: var(--card-shadow-hover);
++}
++
++.fac-roadmap-top {
++    display: flex;
++    justify-content: space-between;
++    align-items: flex-start;
++    gap: 12px;
++}
++
++.fac-roadmap-info {
++    display: flex;
++    flex-direction: column;
++    gap: 2px;
++}
++
++.fac-roadmap-name {
++    font-size: 1.05rem;
++    font-weight: 700;
++    color: var(--text-primary);
++}
++
++.fac-roadmap-meta {
++    font-size: 0.78rem;
++    color: var(--text-secondary);
++}
++
++.badge-roadmap-status {
++    display: inline-flex;
++    align-items: center;
++    gap: 6px;
++    font-size: 0.78rem;
++    font-weight: 700;
++    padding: 4px 10px;
++    border-radius: 20px;
++}
++
++.badge-roadmap-status.achieved {
++    background: rgba(16, 185, 129, 0.12);
++    color: #10b981;
++    border: 1px solid rgba(16, 185, 129, 0.3);
++}
++
++.badge-roadmap-status.ontrack {
++    background: rgba(37, 99, 235, 0.12);
++    color: #2563eb;
++    border: 1px solid rgba(37, 99, 235, 0.3);
++}
++
++.badge-roadmap-status.action {
++    background: rgba(245, 158, 11, 0.12);
++    color: #f59e0b;
++    border: 1px solid rgba(245, 158, 11, 0.3);
++}
++
++/* 5-Level OGMP Stepper */
++.ogmp-stepper-container {
++    display: flex;
++    justify-content: space-between;
++    position: relative;
++    padding: 10px 0;
++}
++
++.ogmp-stepper-container::before {
++    content: '';
++    position: absolute;
++    top: 24px;
++    left: 20px;
++    right: 20px;
++    height: 3px;
++    background: var(--border-color);
++    z-index: 1;
++}
++
++.ogmp-step {
++    position: relative;
++    z-index: 2;
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++    gap: 6px;
++    text-align: center;
++    width: 70px;
++}
++
++.step-circle {
++    width: 28px;
++    height: 28px;
++    border-radius: 50%;
++    background: var(--bg-card);
++    border: 2px solid var(--border-color);
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    font-size: 0.78rem;
++    font-weight: 700;
++    color: var(--text-secondary);
++    transition: all 0.25s ease;
++}
++
++.ogmp-step.completed .step-circle {
++    background: #10b981;
++    border-color: #10b981;
++    color: #ffffff;
++    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
++}
++
++.ogmp-step.current .step-circle {
++    background: var(--accent-secondary);
++    border-color: var(--accent-secondary);
++    color: #ffffff;
++    box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
++    transform: scale(1.15);
++}
++
++.step-name {
++    font-size: 0.68rem;
++    font-weight: 600;
++    color: var(--text-secondary);
++    line-height: 1.2;
++}
++
++.ogmp-step.current .step-name {
++    color: var(--accent-secondary);
++    font-weight: 700;
++}
++
++.ogmp-step.completed .step-name {
++    color: #10b981;
++}
++
++/* Roadmap Footer Stats */
++.fac-roadmap-stats {
++    display: grid;
++    grid-template-columns: repeat(3, 1fr);
++    gap: 10px;
++    background: var(--bg-card);
++    border: 1px solid var(--border-color);
++    border-radius: 8px;
++    padding: 10px 12px;
++}
++
++.roadmap-stat-item {
++    display: flex;
++    flex-direction: column;
++    gap: 2px;
++}
++
++.roadmap-stat-label {
++    font-size: 0.7rem;
++    color: var(--text-secondary);
++    font-weight: 500;
++}
++
++.roadmap-stat-val {
++    font-size: 0.88rem;
++    font-weight: 700;
++    color: var(--text-primary);
++}
++
++.roadmap-stat-val.variance-pass {
++    color: #10b981;
++}
++
++.roadmap-stat-val.variance-fail {
++    color: #ef4444;
++}
++
++/* Excel Export Button */
++.btn-export-excel {
++    display: inline-flex;
++    align-items: center;
++    gap: 8px;
++    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
++    color: #ffffff;
++    font-size: 0.86rem;
++    font-weight: 600;
++    padding: 8px 16px;
++    border-radius: 8px;
++    border: none;
++    cursor: pointer;
++    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
++    transition: all 0.2s ease;
++}
++
++.btn-export-excel:hover:not(:disabled) {
++    transform: translateY(-1px);
++    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
++}
++
++.btn-export-excel:disabled {
++    opacity: 0.6;
++    cursor: not-allowed;
+ }
+\ No newline at end of file

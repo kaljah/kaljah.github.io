@@ -7,7 +7,7 @@ import "./ScopeTables.css";
 import "./Scope1Form.css";
 
 // Sub-components
-import ColumnMappingWizard from "./ColumnMappingWizard";
+import Scope1ImportWizard from "./Scope1ImportWizard";
 import { Upload, Trash2 } from "lucide-react";
 import CombustionForm from "./scope1/CombustionForm";
 import DrillingForm from "./scope1/DrillingForm";
@@ -1938,13 +1938,12 @@ const Scope1Form = () => {
       </div>
 
       {importModal.isOpen && (
-        <ColumnMappingWizard
+        <Scope1ImportWizard
           onClose={() => setImportModal({ ...importModal, isOpen: false })}
           onUploadSuccess={() => {
             loadEntries();
             toast.success("Records imported and calculated successfully!");
           }}
-          type={importModal.type}
         />
       )}
 
@@ -2183,7 +2182,7 @@ const Scope1Form = () => {
                     <tr key={entry.id}>
                       <td>{entry.year}</td>
                       <td>{entry.activity || "-"}</td>
-                      <td>{entry.region || "-"}</td>
+                      <td>{entry.facility_name || entry.region || "-"}</td>
                       <td>{entry.division || "-"}</td>
                       <td>{entry.field || "-"}</td>
                       <td>{entry.group_name || entry.group || "-"}</td>

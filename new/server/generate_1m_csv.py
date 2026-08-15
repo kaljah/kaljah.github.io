@@ -76,12 +76,12 @@ def generate_1m_csv(filepath, num_rows=1000000):
     processes = [
         {
             "process": "Combustion",
-            "fuels": ["Natural Gas", "Diesel", "Propane"],
+            "fuels": ["Natural Gas", "Diesel (No. 2 Fuel Oil)", "Propane (Gas)"],
             "units": ["scf", "m3", "gal"],
         },
         {
             "process": "Flaring",
-            "fuels": ["Associated Gas", "Natural Gas"],
+            "fuels": ["Refinery Fuel Gas", "Natural Gas"],
             "units": ["scf", "m3"],
         },
         {"process": "Venting", "fuels": ["Natural Gas"], "units": ["scf", "m3"]},
@@ -183,7 +183,7 @@ def generate_1m_csv(filepath, num_rows=1000000):
                 eq_id,
                 process_name,
                 fuel,
-                "default",
+                random.choice(["default", "custom"]),
                 quantity,
                 unit,
                 ch4_content,

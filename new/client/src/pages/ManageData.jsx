@@ -1161,6 +1161,9 @@ const ManageDataInner = () => {
 
                                         <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
                                             <button className="action-btn" onClick={handleAddFacility}>Add Region</button>
+                                            <button className="action-btn" onClick={() => setImportModal({ isOpen: true, type: 'facilities' })} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', fontSize: '0.9rem', width: 'auto' }}>
+                                                <Upload size={16} /> Bulk Import (CSV)
+                                            </button>
                                             <button className="action-btn" onClick={() => exportToCSV(facilities, 'regions_export.csv')} style={{ background: 'var(--text-secondary)' }}>Export CSV</button>
                                             <label className="action-btn" style={{ background: 'var(--text-secondary)', cursor: 'pointer' }}>
                                                 Import CSV

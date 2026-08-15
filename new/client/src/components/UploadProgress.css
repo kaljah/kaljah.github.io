@@ -57,7 +57,7 @@
 .up-spinner {
   width: 32px;
   height: 32px;
-  color: #2563eb;
+  color: #ff6600;
   animation: up-spin 1s linear infinite;
 }
 @keyframes up-spin {
@@ -77,9 +77,10 @@
 
 .up-bar-fill {
   height: 100%;
-  background: #2563eb;
+  background: linear-gradient(90deg, #ff6600 0%, #ff8533 100%);
   border-radius: 4px;
-  transition: width 0.3s ease-out;
+  transition: width 0.4s ease-out;
+  box-shadow: 0 0 8px rgba(255, 102, 0, 0.35);
 }
 
 .up-bar-stats {
@@ -90,7 +91,7 @@
   font-weight: 500;
 }
 .up-pct {
-  color: #2563eb;
+  color: #ff6600;
   font-weight: 600;
 }
 
@@ -153,8 +154,8 @@
   color: #d97706;
 }
 .up-card--neutral .up-card-icon {
-  background: #e0eaff;
-  color: #2563eb;
+  background: #fff7ed;
+  color: #ff6600;
 }
 
 .up-card-num {
@@ -180,15 +181,22 @@
   overflow: hidden;
 }
 
-.up-skip-toggle {
+.up-skip-toggle-row {
+  display: flex;
+  align-items: center;
   width: 100%;
+  background: #f8fafc;
+  border-bottom: 1px solid transparent;
+}
+
+.up-skip-toggle {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 16px 20px;
-  background: #f8fafc;
+  background: transparent;
   border: none;
-  border-bottom: 1px solid transparent;
   cursor: pointer;
   font-size: 0.9375rem;
   font-weight: 600;
@@ -314,6 +322,20 @@
   font-weight: 500;
   width: 60px;
 }
+.up-td-year {
+  font-family: monospace;
+  font-weight: 600;
+  color: #374151;
+  width: 52px;
+  text-align: center;
+}
+.up-td-month {
+  font-family: monospace;
+  font-weight: 600;
+  color: #374151;
+  width: 52px;
+  text-align: center;
+}
 .up-td-reason {
   font-weight: 500;
   color: #b91c1c;
@@ -372,6 +394,11 @@
   background: #f1f5f9;
   color: #475569;
 }
+.tag-access {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
 
 /* ─── Footer Actions ──────────────────────────────────────────────────────── */
 .up-footer-actions {
@@ -382,17 +409,21 @@
 
 .up-btn-primary {
   padding: 10px 20px;
-  background: #2563eb;
+  background: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.18s;
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.25);
+  font-family: inherit;
 }
 .up-btn-primary:hover {
-  background: #1d4ed8;
+  background: linear-gradient(135deg, #e65c00 0%, #ff6600 100%);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.35);
+  transform: translateY(-1px);
 }
 
 .up-btn-ghost {

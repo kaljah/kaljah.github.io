@@ -1,0 +1,310 @@
+new/server/routes/data.py b/new/server/routes/data.py
+index b9a391c..c91ea0d 100644
+--- a/new/server/routes/data.py
++++ b/new/server/routes/data.py
+@@ -4,7 +4,7 @@ import json
+ from . import data_bp
+ from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
+ from sqlalchemy import func
+-from models import ProductionData, ActivityLog, User, Facility, CbamProductExport, OgmpSurvey
++from models import ProductionData, ActivityLog, User, Facility, OgmpSurvey, MethaneSourceType, LevelUpgradeLog, Emission
+ from extensions import db
+ 
+ @data_bp.route('/production', methods=['GET'])
+@@ -191,146 +191,25 @@ def bulk_import_production():
+     return jsonify({'message': f'{imported_count} production records imported'}), 201
+ 
+ 
+-# ==========================================
+-# CBAM PRODUCT EXPORTS
+-# ==========================================
+-@data_bp.route('/cbam-exports', methods=['GET'])
+-@login_required
+-def get_cbam_exports():
+-    query = CbamProductExport.query
+-    allowed_fids = get_allowed_facility_ids(get_current_user())
+-    if allowed_fids is not None:
+-        query = query.filter(CbamProductExport.facility_id.in_(allowed_fids))
+-    if request.args.get('facilityId'):
+-        query = query.filter_by(facility_id=request.args.get('facilityId'))
+-    if request.args.get('year'):
+-        query = query.filter_by(year=request.args.get('year'))
+-    if request.args.get('cn_code'):
+-        query = query.filter_by(cn_code=request.args.get('cn_code'))
+-        
+-    data = query.order_by(CbamProductExport.year.desc(), CbamProductExport.month.desc()).all()
+-    return jsonify([{
+-        'id': d.id,
+-        'facility_id': d.facility_id,
+-        'facilityId': d.facility_id,
+-        'facility_name': d.facility.name if d.facility else 'Unknown',
+-        'facilityName': d.facility.name if d.facility else 'Unknown',
+-        'year': d.year,
+-        'month': d.month,
+-        'product_name': d.product_name,
+-        'productName': d.product_name,
+-        'cn_code': d.cn_code,
+-        'cnCode': d.cn_code,
+-        'quantity_tonnes': d.quantity_tonnes,
+-        'quantityTonnes': d.quantity_tonnes,
+-        'export_destination': d.export_destination or 'EU',
+-        'exportDestination': d.export_destination or 'EU',
+-        'specific_embedded_direct': d.specific_embedded_direct or 0.0,
+-        'specificEmbeddedDirect': d.specific_embedded_direct or 0.0,
+-        'specific_embedded_indirect': d.specific_embedded_indirect or 0.0,
+-        'specificEmbeddedIndirect': d.specific_embedded_indirect or 0.0,
+-        'notes': d.notes or ''
+-    } for d in data])
+-
+-@data_bp.route('/cbam-exports', methods=['POST'])
+-@login_required
+-def save_cbam_export():
+-    data = request.get_json() or {}
+-    record_id = data.get('id')
+-    facility_id = data.get('facility_id') or data.get('facilityId')
+-    year = int(data.get('year', 2026))
+-    month = int(data.get('month', 1))
+-    product_name = (data.get('product_name') or data.get('productName') or '').strip()
+-    cn_code = (data.get('cn_code') or data.get('cnCode') or '').strip()
+-    quantity_tonnes = float(data.get('quantity_tonnes') or data.get('quantityTonnes') or 0.0)
+-    export_destination = (data.get('export_destination') or data.get('exportDestination') or 'EU').strip()
+-    specific_embedded_direct = float(data.get('specific_embedded_direct') or data.get('specificEmbeddedDirect') or 0.0)
+-    specific_embedded_indirect = float(data.get('specific_embedded_indirect') or data.get('specificEmbeddedIndirect') or 0.0)
+-    notes = data.get('notes') or ''
+-
+-    if not facility_id or not product_name or not cn_code or quantity_tonnes <= 0:
+-        return jsonify({'error': 'Facility, product name, valid CN code, and positive tonnage are required'}), 400
+-
+-    # Auto-calculate specific embedded emissions if available
+-    # Direct = Scope 1 tCO2e / product tonnes (if product matches facility production)
+-    from models import Emission, Scope2Emission
+-    total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter(
+-        Emission.facility_id == facility_id,
+-        Emission.year == year
+-    ).scalar()
+-
+-    total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter(
+-        Scope2Emission.facility_id == facility_id,
+-        Scope2Emission.year == year
+-    ).scalar()
+-
+-    se_dir = round(total_direct_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+-    se_indir = round(total_indirect_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+-
+-    if record_id:
+-        record = CbamProductExport.query.get(record_id)
+-        if not record:
+-            return jsonify({'error': 'Record not found'}), 404
+-        record.facility_id = facility_id
+-        record.year = year
+-        record.month = month
+-        record.product_name = product_name
+-        record.cn_code = cn_code
+-        record.quantity_tonnes = quantity_tonnes
+-        record.export_destination = export_destination
+-        record.specific_embedded_direct = se_dir
+-        record.specific_embedded_indirect = se_indir
+-        record.notes = notes
+-        action = 'UPDATE'
+-    else:
+-        record = CbamProductExport(
+-            facility_id=facility_id,
+-            year=year,
+-            month=month,
+-            product_name=product_name,
+-            cn_code=cn_code,
+-            quantity_tonnes=quantity_tonnes,
+-            export_destination=export_destination,
+-            specific_embedded_direct=se_dir,
+-            specific_embedded_indirect=se_indir,
+-            notes=notes,
+-            created_by=session.get('user_id')
+-        )
+-        db.session.add(record)
+-        action = 'CREATE'
+-
+-    try:
+-        user_id = session.get('user_id')
+-        user = User.query.get(user_id) if user_id else None
+-        log_activity_and_notify(
+-            action=action,
+-            record_id=str(record.id or 'new'),
+-            user=user,
+-            request=request,
+-            entity='CbamProductExport',
+-            details=f"{action.title()} CBAM export: {quantity_tonnes} tonnes of {product_name} (CN {cn_code}) to {export_destination}"
+-        )
+-        db.session.commit()
+-    except Exception as e:
+-        db.session.rollback()
+-        return jsonify({'error': str(e)}), 500
+-
+-    return jsonify({'message': 'CBAM export record saved', 'id': record.id}), 201
+ 
+-@data_bp.route('/cbam-exports/<int:record_id>', methods=['DELETE'])
+-@login_required
+-def delete_cbam_export(record_id):
+-    record = CbamProductExport.query.get(record_id)
+-    if not record:
+-        return jsonify({'error': 'Record not found'}), 404
+-    db.session.delete(record)
+-    db.session.commit()
+-    return jsonify({'message': 'CBAM export record deleted'})
+ 
+ 
+ # ==========================================
+-# OGMP 2.0 TOP-DOWN SURVEYS
++# OGMP 2.0 TOP-DOWN SURVEYS & TAXONOMY
+ # ==========================================
++@data_bp.route('/methane-sources', methods=['GET'])
++@login_required
++def get_methane_sources():
++    sources = MethaneSourceType.query.order_by(MethaneSourceType.id.asc()).all()
++    return jsonify([{
++        'id': s.id,
++        'code': s.code,
++        'name': s.name,
++        'category': s.category,
++        'default_ef_reference': s.default_ef_reference,
++        'default_level': s.default_level
++    } for s in sources])
++
+ @data_bp.route('/ogmp-surveys', methods=['GET'])
+ @login_required
+ def get_ogmp_surveys():
+@@ -359,10 +238,21 @@ def get_ogmp_surveys():
+         'surveyType': d.survey_type,
+         'measured_rate_kg_hr': d.measured_rate_kg_hr,
+         'measuredRateKgHr': d.measured_rate_kg_hr,
+-        'estimated_annual_tch4': d.estimated_annual_tch4 or round(d.measured_rate_kg_hr * 8760 / 1000.0, 2),
+-        'estimatedAnnualTch4': d.estimated_annual_tch4 or round(d.measured_rate_kg_hr * 8760 / 1000.0, 2),
++        'operating_hours_year': d.operating_hours_year or 8760.0,
++        'operatingHoursYear': d.operating_hours_year or 8760.0,
++        'estimated_annual_tch4': d.estimated_annual_tch4 or round(d.measured_rate_kg_hr * (d.operating_hours_year or 8760) / 1000.0, 2),
++        'estimatedAnnualTch4': d.estimated_annual_tch4 or round(d.measured_rate_kg_hr * (d.operating_hours_year or 8760) / 1000.0, 2),
++        'detection_threshold': d.detection_threshold,
++        'detectionThreshold': d.detection_threshold,
++        'instrument_vendor': d.instrument_vendor or '',
++        'instrumentVendor': d.instrument_vendor or '',
++        'raw_file_ref': d.raw_file_ref or '',
++        'bottom_up_tch4': d.bottom_up_tch4 or 0.0,
++        'variance_pct': d.variance_pct or 0.0,
++        'variance_flag': bool(d.variance_flag),
+         'reconciliation_status': d.reconciliation_status or 'Reconciled',
+         'reconciliationStatus': d.reconciliation_status or 'Reconciled',
++        'status': d.status or 'pending',
+         'operator_notes': d.operator_notes or '',
+         'operatorNotes': d.operator_notes or ''
+     } for d in data])
+@@ -377,13 +267,30 @@ def save_ogmp_survey():
+     survey_date = (data.get('survey_date') or data.get('surveyDate') or '').strip()
+     survey_type = (data.get('survey_type') or data.get('surveyType') or 'Satellite (Sentinel-5P/MethaneSAT)').strip()
+     measured_rate_kg_hr = float(data.get('measured_rate_kg_hr') or data.get('measuredRateKgHr') or 0.0)
++    operating_hours = float(data.get('operating_hours_year') or data.get('operatingHoursYear') or 8760.0)
++    detection_threshold = float(data.get('detection_threshold') or data.get('detectionThreshold')) if data.get('detection_threshold') is not None or data.get('detectionThreshold') is not None else None
++    instrument_vendor = (data.get('instrument_vendor') or data.get('instrumentVendor') or '').strip()
+     reconciliation_status = (data.get('reconciliation_status') or data.get('reconciliationStatus') or 'Reconciled').strip()
+     operator_notes = data.get('operator_notes') or data.get('operatorNotes') or ''
+ 
+     if not facility_id or not survey_date or measured_rate_kg_hr < 0:
+         return jsonify({'error': 'Facility, survey date, and measured emission rate are required'}), 400
+ 
+-    estimated_annual_tch4 = round(measured_rate_kg_hr * 8760 / 1000.0, 2) # kg/hr * 8760 hr/yr / 1000 kg/t
++    estimated_annual_tch4 = round(measured_rate_kg_hr * operating_hours / 1000.0, 2)
++
++    # Compute bottom-up methane total for facility & year to compute variance
++    fac = Facility.query.get(facility_id)
++    bottom_up_sum = db.session.query(func.sum(Emission.ch4_emissions)).filter(
++        Emission.facility_id == facility_id,
++        Emission.year == year,
++        Emission.status != 'Draft'
++    ).scalar() or 0.0
++    bottom_up_tch4 = round(float(bottom_up_sum), 2)
++
++    # Compute variance %
++    variance_pct = round(((estimated_annual_tch4 - bottom_up_tch4) / bottom_up_tch4 * 100.0), 2) if bottom_up_tch4 > 0 else 0.0
++    threshold = (fac.reconciliation_threshold if fac and fac.reconciliation_threshold else 20.0)
++    variance_flag = abs(variance_pct) > threshold
+ 
+     if record_id:
+         record = OgmpSurvey.query.get(record_id)
+@@ -394,7 +301,13 @@ def save_ogmp_survey():
+         record.survey_date = survey_date
+         record.survey_type = survey_type
+         record.measured_rate_kg_hr = measured_rate_kg_hr
++        record.operating_hours_year = operating_hours
+         record.estimated_annual_tch4 = estimated_annual_tch4
++        record.detection_threshold = detection_threshold
++        record.instrument_vendor = instrument_vendor
++        record.bottom_up_tch4 = bottom_up_tch4
++        record.variance_pct = variance_pct
++        record.variance_flag = variance_flag
+         record.reconciliation_status = reconciliation_status
+         record.operator_notes = operator_notes
+         action = 'UPDATE'
+@@ -405,7 +318,13 @@ def save_ogmp_survey():
+             survey_date=survey_date,
+             survey_type=survey_type,
+             measured_rate_kg_hr=measured_rate_kg_hr,
++            operating_hours_year=operating_hours,
+             estimated_annual_tch4=estimated_annual_tch4,
++            detection_threshold=detection_threshold,
++            instrument_vendor=instrument_vendor,
++            bottom_up_tch4=bottom_up_tch4,
++            variance_pct=variance_pct,
++            variance_flag=variance_flag,
+             reconciliation_status=reconciliation_status,
+             operator_notes=operator_notes,
+             created_by=session.get('user_id')
+@@ -440,3 +359,51 @@ def delete_ogmp_survey(record_id):
+     db.session.delete(record)
+     db.session.commit()
+     return jsonify({'message': 'OGMP survey record deleted'})
++
++@data_bp.route('/ogmp/level-upgrade', methods=['POST'])
++@login_required
++def log_level_upgrade():
++    data = request.get_json() or {}
++    facility_id = data.get('facility_id')
++    old_level = int(data.get('old_level', 3))
++    new_level = int(data.get('new_level', 4))
++    source_type_code = data.get('source_type_code', 'ALL')
++    justification = data.get('justification', '')
++    target_date = data.get('target_date', '')
++
++    if not facility_id or new_level < 1 or new_level > 5:
++        return jsonify({'error': 'Valid facility ID and level (1-5) required'}), 400
++
++    log = LevelUpgradeLog(
++        facility_id=facility_id,
++        source_type_code=source_type_code,
++        old_level=old_level,
++        new_level=new_level,
++        target_date=target_date,
++        justification=justification,
++        created_by=session.get('user_id')
++    )
++    db.session.add(log)
++    db.session.commit()
++    return jsonify({'message': 'Level upgrade logged successfully', 'id': log.id}), 201
++
++@data_bp.route('/ogmp/level-logs', methods=['GET'])
++@login_required
++def get_level_logs():
++    facility_id = request.args.get('facility_id')
++    query = LevelUpgradeLog.query
++    if facility_id:
++        query = query.filter_by(facility_id=facility_id)
++    logs = query.order_by(LevelUpgradeLog.changed_at.desc()).all()
++    return jsonify([{
++        'id': l.id,
++        'facility_id': l.facility_id,
++        'facility_name': l.facility.name if l.facility else 'Unknown',
++        'source_type_code': l.source_type_code,
++        'old_level': l.old_level,
++        'new_level': l.new_level,
++        'target_date': l.target_date,
++        'justification': l.justification,
++        'changed_at': l.changed_at.isoformat() if l.changed_at else None
++    } for l in logs])
++

@@ -59,7 +59,8 @@ class Config:
     WTF_CSRF_TIME_LIMIT = 86400
 
     # API-03 FIX: Hard limit on all incoming request bodies — prevents large-payload DoS
-    MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50 MB
+    # Temporarily increased to 1000 MB for 1-million row bulk upload stress testing
+    MAX_CONTENT_LENGTH = 1000 * 1024 * 1024  # 1000 MB
 
     # Rate Limiting Backend (Memory default, Redis in multi-worker production)
     RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")

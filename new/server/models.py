@@ -45,6 +45,8 @@ class Facility(db.Model):
     location = db.Column(db.String(120))
     description = db.Column(db.Text)
     boundary_notes = db.Column(db.Text)
+    boundary_type = db.Column(db.String(100), default="Operational Control")
+    boundary_detail = db.Column(db.Text)
     activity = db.Column(db.String(100))
     division = db.Column(db.String(100))
     region = db.Column(db.String(100))
