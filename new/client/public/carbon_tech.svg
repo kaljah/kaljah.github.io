@@ -1,0 +1,17 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="c-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#005288" />
+            <stop offset="50%" stop-color="#009E90" />
+            <stop offset="100%" stop-color="#28C76F" />
+        </linearGradient>
+    </defs>
+    
+    <path 
+        d="M 85 35 L 65 15 L 35 15 L 15 35 L 15 65 L 35 85 L 65 85 L 85 65" 
+        stroke="url(#c-gradient)" 
+        stroke-width="18" 
+        stroke-linejoin="round" 
+        stroke-linecap="butt" 
+    />
+</svg>

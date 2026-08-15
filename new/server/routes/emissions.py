@@ -2857,8 +2857,9 @@ def upload_start():
         return jsonify({"error": "No selected file"}), 400
 
     global_factor_type = request.form.get("global_factor_type", "auto")
-    mapping_str = request.form.get("mapping")
+    mapping_str = request.form.get("column_mapping")
     scope = request.form.get("scope", "1")
+    overwrite_duplicates = request.form.get("overwrite_duplicates") == "true"
 
     import json
 
@@ -2882,6 +2883,7 @@ def upload_start():
         global_factor_type,
         provided_mapping=provided_mapping,
         scope=scope,
+        overwrite_duplicates=overwrite_duplicates,
     )
 
     return jsonify({"job_id": job_id})
