@@ -548,3 +548,15 @@ class LevelUpgradeLog(db.Model):
     justification = db.Column(db.Text)
     changed_at = db.Column(db.DateTime, default=utc_now)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+
+class SbtiTarget(db.Model):
+    __tablename__ = "sbti_targets"
+    id = db.Column(db.Integer, primary_key=True)
+    base_year = db.Column(db.Integer, nullable=False)
+    base_year_emissions = db.Column(db.Float, nullable=False)
+    target_year = db.Column(db.Integer, default=2050)
+    reduction_rate_pct = db.Column(db.Float, default=4.2)
+    pathway_type = db.Column(db.String(20), default="1.5C")  # 1.5C, WB2C
+    created_at = db.Column(db.DateTime, default=utc_now)
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
