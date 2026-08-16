@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import DashboardEnhanced from "./pages/DashboardEnhanced";
 import Emissions from "./pages/Emissions";
 import ManageData from "./pages/ManageData";
+import QADashboard from "./pages/QADashboard";
 import ReportsSync from "./pages/Reports";
 import CarbonIntensity from "./pages/CarbonIntensity";
 import MethaneIntensity from "./pages/MethaneIntensity";
@@ -19,9 +20,7 @@ import Diagnostics from "./pages/Diagnostics";
 import AuditTrail from "./pages/AuditTrail";
 import UserManagement from "./pages/UserManagement";
 import Settings from "./pages/Settings";
-import ErpSync from "./pages/ErpSync";
 import LoadingSpinner from "./components/LoadingSpinner";
-
 // --- Lazy loaded heavy components ---
 const EmissionsMap = React.lazy(() => import("./pages/MethaneExplorer"));
 const Reports = React.lazy(() => import("./pages/Reports"));
@@ -97,10 +96,10 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="erp-sync"
+          path="qa-dashboard"
           element={
             <AdminRoute>
-              <ErpSync />
+              <QADashboard />
             </AdminRoute>
           }
         />

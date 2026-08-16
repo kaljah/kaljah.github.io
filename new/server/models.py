@@ -149,6 +149,8 @@ class Emission(db.Model):
     uncertainty = db.Column(db.Float, nullable=True)  # CO₂ uncertainty
     uncertainty_ch4 = db.Column(db.Float, nullable=True)  # CH₄ uncertainty
     uncertainty_n2o = db.Column(db.Float, nullable=True)  # N₂O uncertainty
+    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+    qa_flag = db.Column(db.String(255), nullable=True)
     status = db.Column(db.String(20), default="Verified", index=True)
 
     facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
@@ -257,6 +259,7 @@ class CustomFactor(db.Model):
     co2_uncertainty = db.Column(db.Float)
     ch4_uncertainty = db.Column(db.Float)
     n2o_uncertainty = db.Column(db.Float)
+    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
     updated_at = db.Column(db.DateTime, onupdate=utc_now)
     created_at = db.Column(db.DateTime, default=utc_now)
@@ -341,6 +344,8 @@ class Scope2Emission(db.Model):
     emission_factor = db.Column(db.Float)
     co2e = db.Column(db.Float)
     uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+    qa_flag = db.Column(db.String(255), nullable=True)
     location = db.Column(db.String(100))
     grid_region = db.Column(db.String(100))
 
@@ -376,6 +381,8 @@ class Scope3Emission(db.Model):
     emission_factor = db.Column(db.Float)
     co2e = db.Column(db.Float)
     uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+    qa_flag = db.Column(db.String(255), nullable=True)
     calculation_method = db.Column(db.String(50))
     data_quality = db.Column(db.String(50))
     notes = db.Column(db.Text)

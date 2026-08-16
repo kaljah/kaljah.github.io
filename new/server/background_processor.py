@@ -245,15 +245,15 @@ def _process_file_thread(
                 # Process Row based on scope
                 if str(scope) == "2":
                     emission_obj, row_errors = _process_row_scope2(
-                        mapped_data, user_id, fac_name_map, fac_id_map, GRID_FACTORS
+                        mapped_data, user_id, fac_name_map, fac_id_map, GRID_FACTORS, job_id, processed
                     )
                 elif str(scope) == "3_eeio":
                     emission_obj, row_errors = _process_row_scope3_eeio(
-                        mapped_data, user_id, fac_name_map, fac_id_map
+                        mapped_data, user_id, fac_name_map, fac_id_map, job_id, processed
                     )
                 elif str(scope) == "3":
                     emission_obj, row_errors = _process_row_scope3(
-                        mapped_data, user_id, fac_name_map, fac_id_map
+                        mapped_data, user_id, fac_name_map, fac_id_map, job_id, processed
                     )
                 elif str(scope) == "sources":
                     emission_obj, row_errors = _process_row_sources(
@@ -287,6 +287,8 @@ def _process_file_thread(
                         global_factor_type,
                         gwp_dict=gwp_dict,
                         gwp_std=gwp_std,
+                        job_id=job_id,
+                        row_idx=processed
                     )
                 else:
                     emission_obj = None
@@ -537,9 +539,9 @@ def _build_mapping(headers):
         # Custom factors fields
         ("co2_factor", "co2 factor"),
         ("ch4_factor", "ch4 factor"),
-        ("n2o_factor", "n2o factor"),
+        ("n2o_factor", "n2o_factor"),
         ("co_factor", "co factor"),
-        ("hhv_factor", "hhv factor"),
+        ("hhv_factor", "hhv_factor"),
         ("usage", "usage"),
         ("parent_fuel", "parent fuel"),
         ("source", "source"),
@@ -570,7 +572,7 @@ def _build_mapping(headers):
     return mapping
 
 
-def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS):
+def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS, job_id, row_idx):
     from models import Scope2Emission
 
     errors = []
@@ -665,10 +667,21 @@ def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS):
         created_by=user_id,
         status="Pending",  # Maker-Checker: awaits reviewer approval
     )
+    
+    # QA/QC Anomaly Detection
+    amount = max(kwh, heat_mmbtu)
+    if amount > 10000000:
+        emission.qa_flag = f"Outlier detected: usage {amount} exceeds 10,000,000 threshold"
+        upload_jobs[job_id]["anomalies"].append({
+            "row": row_idx,
+            "reason": emission.qa_flag,
+            "amount": amount
+        })
+
     return emission, errors
 
 
-def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map):
+def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):
     from models import Scope3Emission
     from emission_factors.eeio_factors import get_eeio_factor
 
@@ -728,9 +741,19 @@ def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map):
         created_by=user_id,
         status="Pending",
     )
+    
+    # QA/QC Anomaly Detection
+    if spend_usd > 10000000:
+        emission.qa_flag = f"Outlier detected: activity data {spend_usd} exceeds 10,000,000 threshold"
+        upload_jobs[job_id]["anomalies"].append({
+            "row": row_idx,
+            "reason": emission.qa_flag,
+            "amount": spend_usd
+        })
+
     return emission, errors
 
-def _process_row_scope3(row, user_id, fac_name_map, fac_id_map):
+def _process_row_scope3(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):
     from models import Scope3Emission
 
     errors = []
@@ -801,6 +824,16 @@ def _process_row_scope3(row, user_id, fac_name_map, fac_id_map):
         created_by=user_id,
         status="Pending",  # Maker-Checker: awaits reviewer approval
     )
+
+    # QA/QC Anomaly Detection
+    if amt > 10000000:
+        emission.qa_flag = f"Outlier detected: activity data {amt} exceeds 10,000,000 threshold"
+        upload_jobs[job_id]["anomalies"].append({
+            "row": row_idx,
+            "reason": emission.qa_flag,
+            "amount": amt
+        })
+
     return emission, errors
 
 
@@ -1118,6 +1151,8 @@ def _process_row(
     global_factor_type,
     gwp_dict=None,
     gwp_std="AR5",
+    job_id=None,
+    row_idx=None
 ):
     """
     Validates a single mapped row and runs calculation via compute_emissions.

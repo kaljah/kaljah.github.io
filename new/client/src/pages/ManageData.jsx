@@ -130,6 +130,23 @@ const ManageDataInner = () => {
 
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [pendingEmissions, setPendingEmissions] = useState({ scope1: [], scope2: [], scope3: [] });
+    const [isProcessingBatch, setIsProcessingBatch] = useState(false);
+
+    const fetchPendingEmissions = async () => {
+        if (user?.role !== 'admin' && user?.role !== 'superuser') return;
+        try {
+            const res = await api.get('/emissions/pending');
+            setPendingEmissions({
+                scope1: res.data.scope1 || [],
+                scope2: res.data.scope2 || [],
+                scope3: res.data.scope3 || []
+            });
+        } catch (e) {
+            console.error("Failed to fetch pending emissions", e);
+        }
+    };
+
 
     // Auto-switch to goals tab when navigated from Dashboard with state
     useEffect(() => {
@@ -804,6 +821,20 @@ const ManageDataInner = () => {
                         <h3 style={{ margin: '0 0 16px 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>
                             Management
                         </h3>
+                                                {(user?.role === 'admin' || user?.role === 'superuser') && (
+                            <div className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => handleTabChange('pending')}>
+                                <span style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                                    Pending Review
+                                    {pendingEmissions && (pendingEmissions.scope1.length > 0 || pendingEmissions.scope2.length > 0 || pendingEmissions.scope3.length > 0) && (
+                                        <span style={{
+                                            background: '#ef4444', color: 'white', borderRadius: '12px', padding: '2px 8px', fontSize: '0.75rem', fontWeight: 600
+                                        }}>
+                                            {pendingEmissions.scope1.length + pendingEmissions.scope2.length + pendingEmissions.scope3.length}
+                                        </span>
+                                    )}
+                                </span>
+                            </div>
+                        )}
                         <div className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} onClick={() => handleTabChange('factors')}>
                             <span>Emission Factors</span>
                         </div>
@@ -881,6 +912,9 @@ const ManageDataInner = () => {
                             )}
                         </div>
 
+                        {/* Pending Tab */}
+
+
                         {/* Factors Tab */}
                         {activeTab === 'pending' && (user?.role === 'admin' || user?.role === 'superuser') && (
                             <div className="manage-tab-content">
@@ -911,33 +945,47 @@ const ManageDataInner = () => {
                                                     <button 
                                                         className="btn-primary" 
                                                         style={{ background: '#10b981' }}
+                                                        disabled={isProcessingBatch}
                                                         onClick={async () => {
                                                             if (!window.confirm(`Approve all ${records.length} pending Scope ${scopeNumber} records?`)) return;
+                                                            setIsProcessingBatch(true);
                                                             try {
-                                                                await api.post('/emissions/approve/batch', { ids: records.map(r => r.id), scope: scopeNumber });
+                                                                await api.post('/emissions/approve/batch', { approve_all: true, scope: scopeNumber });
                                                                 toast.success(`Approved ${records.length} records`);
-                                                                fetchPendingEmissions();
+                                                                setPendingEmissions(prev => ({
+                                                                    ...prev,
+                                                                    [scopeKey]: []
+                                                                }));
                                                             } catch (err) {
                                                                 toast.error("Failed to approve batch");
+                                                            } finally {
+                                                                setIsProcessingBatch(false);
                                                             }
                                                         }}
                                                     >
-                                                        Approve All
+                                                        {isProcessingBatch ? 'Processing...' : 'Approve All'}
                                                     </button>
                                                     <button 
                                                         className="btn-delete"
+                                                        disabled={isProcessingBatch}
                                                         onClick={async () => {
                                                             if (!window.confirm(`Reject all ${records.length} pending Scope ${scopeNumber} records? This will delete them permanently.`)) return;
+                                                            setIsProcessingBatch(true);
                                                             try {
-                                                                await api.post('/emissions/reject/batch', { ids: records.map(r => r.id), scope: scopeNumber });
+                                                                await api.post('/emissions/reject/batch', { reject_all: true, scope: scopeNumber });
                                                                 toast.success(`Rejected ${records.length} records`);
-                                                                fetchPendingEmissions();
+                                                                setPendingEmissions(prev => ({
+                                                                    ...prev,
+                                                                    [scopeKey]: []
+                                                                }));
                                                             } catch (err) {
                                                                 toast.error("Failed to reject batch");
+                                                            } finally {
+                                                                setIsProcessingBatch(false);
                                                             }
                                                         }}
                                                     >
-                                                        Reject All
+                                                        {isProcessingBatch ? 'Processing...' : 'Reject All'}
                                                     </button>
                                                 </div>
                                             </div>
@@ -952,6 +1000,7 @@ const ManageDataInner = () => {
                                                             {scopeNumber === '2' && <><th>Source Type</th><th>kWh</th></>}
                                                             {scopeNumber === '3' && <><th>Category</th></>}
                                                             <th>tCO2e</th>
+                                                            <th>QA Flag</th>
                                                             <th style={{ width: '120px' }}>Actions</th>
                                                         </tr>
                                                     </thead>
@@ -965,6 +1014,16 @@ const ManageDataInner = () => {
                                                                 {scopeNumber === '2' && <><td>{r.source_type}</td><td>{r.electricity_kwh}</td></>}
                                                                 {scopeNumber === '3' && <><td>{r.category}</td></>}
                                                                 <td style={{ fontWeight: 600 }}>{(r.co2e_total || r.co2e || 0).toFixed(2)}</td>
+                                                                <td>
+                                                                    {r.qa_flag ? (
+                                                                        <span style={{ color: '#d97706', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem' }} title={r.qa_flag}>
+                                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                                                            Flagged
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span style={{ color: '#10b981', fontSize: '0.85rem' }}>✓ Clean</span>
+                                                                    )}
+                                                                </td>
                                                                 <td>
                                                                     <div style={{ display: 'flex', gap: '8px' }}>
                                                                         <button 
