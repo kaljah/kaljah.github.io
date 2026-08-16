@@ -3253,6 +3253,19 @@ def update_emission(id):
     if allowed_fids is not None and record.facility_id not in allowed_fids:
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
         # EXTRA-03 FIX: removed second data = request.get_json() (double-read, second returns None)
+    import json
+    
+    before_state = {
+        "year": record.year,
+        "month": record.month,
+        "facility_id": record.facility_id,
+        "process_type": record.process_type,
+        "fuel_type": record.fuel_type,
+        "quantity": record.quantity,
+        "unit": record.unit,
+        "status": record.status,
+        "co2e_total": record.co2e_total,
+    }
 
     # Update fields
     if "year" in data:
@@ -3397,6 +3410,18 @@ def update_emission(id):
             f"Updated emission record {id}. Changed fields: {', '.join(changes)}"
         )
 
+        after_state = {
+            "year": record.year,
+            "month": record.month,
+            "facility_id": record.facility_id,
+            "process_type": record.process_type,
+            "fuel_type": record.fuel_type,
+            "quantity": record.quantity,
+            "unit": record.unit,
+            "status": record.status,
+            "co2e_total": record.co2e_total,
+        }
+
         log_activity_and_notify(
             action="UPDATE",
             record_id=str(id),
@@ -3404,6 +3429,7 @@ def update_emission(id):
             request=request,
             entity="Emission",
             details=log_details,
+            metadata_json=json.dumps({"before": before_state, "after": after_state})
         )
         db.session.commit()
     except Exception as e:
@@ -3816,7 +3842,8 @@ def reject_emission(emission_id):
     if not emission:
         return jsonify({"error": "Record not found"}), 404
 
-    reason = request.json.get("reason", "Rejected by reviewer") if request.json else "Rejected"
+    req_data = request.get_json(silent=True) or {}
+    reason = req_data.get("reason", "Rejected by reviewer")
     log_activity_and_notify(
         action="DELETE",
         record_id=emission.record_id,
@@ -3834,42 +3861,46 @@ def reject_emission(emission_id):
 @login_required
 def approve_batch_emissions():
     """Approve multiple pending emission records in one request.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3" }
+    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3", "approve_all": bool }
     """
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Insufficient permissions"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     ids = data.get("ids", [])
     scope = str(data.get("scope", "1"))
+    approve_all = data.get("approve_all", False)
 
-    if not ids:
+    if not ids and not approve_all:
         return jsonify({"error": "No IDs provided"}), 400
 
     now = datetime.datetime.utcnow()
-    approved_ids = []
+    approved_count = 0
 
     if scope == "1":
-        records = Emission.query.filter(Emission.id.in_(ids), Emission.status == "Pending").all()
+        query = Emission.query.filter_by(status="Pending")
+        if not approve_all:
+            query = query.filter(Emission.id.in_(ids))
+        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now})
     elif scope == "2":
-        records = Scope2Emission.query.filter(Scope2Emission.id.in_(ids), Scope2Emission.status == "Pending").all()
+        query = Scope2Emission.query.filter_by(status="Pending")
+        if not approve_all:
+            query = query.filter(Scope2Emission.id.in_(ids))
+        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now})
     elif scope == "3":
-        records = Scope3Emission.query.filter(Scope3Emission.id.in_(ids), Scope3Emission.status == "Pending").all()
+        query = Scope3Emission.query.filter_by(status="Pending")
+        if not approve_all:
+            query = query.filter(Scope3Emission.id.in_(ids))
+        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now})
     else:
         return jsonify({"error": f"Invalid scope: {scope}"}), 400
-
-    for record in records:
-        record.status = "Verified"
-        record.approved_by = user.id
-        record.approved_at = now
-        approved_ids.append(record.id)
 
     db.session.commit()
     return jsonify({
         "success": True,
-        "approved_count": len(approved_ids),
-        "approved_ids": approved_ids,
+        "approved_count": approved_count,
+        "approved_ids": ids if not approve_all else [],
     })
 
 
@@ -3877,33 +3908,40 @@ def approve_batch_emissions():
 @login_required
 def reject_batch_emissions():
     """Reject (delete) multiple pending emission records.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3", "reason": "..." }
+    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3", "reason": "...", "reject_all": bool }
     """
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Insufficient permissions"}), 403
 
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     ids = data.get("ids", [])
     scope = str(data.get("scope", "1"))
     reason = data.get("reason", "Batch rejected by reviewer")
+    reject_all = data.get("reject_all", False)
 
-    if not ids:
+    if not ids and not reject_all:
         return jsonify({"error": "No IDs provided"}), 400
 
+    deleted_count = 0
+
     if scope == "1":
-        records = Emission.query.filter(Emission.id.in_(ids), Emission.status == "Pending").all()
+        query = Emission.query.filter_by(status="Pending")
+        if not reject_all:
+            query = query.filter(Emission.id.in_(ids))
+        deleted_count = query.delete()
     elif scope == "2":
-        records = Scope2Emission.query.filter(Scope2Emission.id.in_(ids), Scope2Emission.status == "Pending").all()
+        query = Scope2Emission.query.filter_by(status="Pending")
+        if not reject_all:
+            query = query.filter(Scope2Emission.id.in_(ids))
+        deleted_count = query.delete()
     elif scope == "3":
-        records = Scope3Emission.query.filter(Scope3Emission.id.in_(ids), Scope3Emission.status == "Pending").all()
+        query = Scope3Emission.query.filter_by(status="Pending")
+        if not reject_all:
+            query = query.filter(Scope3Emission.id.in_(ids))
+        deleted_count = query.delete()
     else:
         return jsonify({"error": f"Invalid scope: {scope}"}), 400
-
-    deleted_count = 0
-    for record in records:
-        db.session.delete(record)
-        deleted_count += 1
 
     log_activity_and_notify(
         action="DELETE",

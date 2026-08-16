@@ -79,6 +79,9 @@ const IconChevron = ({ open }) => (
     strokeLinecap="round"
     strokeLinejoin="round"
     style={{
+      width: 16,
+      height: 16,
+      flexShrink: 0,
       transform: open ? "rotate(90deg)" : "none",
       transition: "transform 0.2s",
     }}

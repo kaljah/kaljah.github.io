@@ -167,35 +167,73 @@
   transform: scale(1.5);
 }
 
-.modern-loader-container {
+.stylish-theme-spinner {
+  position: relative;
+  width: 56px;
+  height: 56px;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
 }
 
-.rotating-svg-loader {
-  animation: spin 2s linear infinite;
-  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+.stylish-theme-spinner .spinner-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top-color: var(--accent-color);
+  border-right-color: rgba(255, 102, 0, 0.2);
+  border-radius: 50%;
+  animation: stylish-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 102, 0, 0.4));
+}
+
+.stylish-theme-spinner .spinner-ring::before {
+  content: "";
+  position: absolute;
+  top: 4px; left: 4px; right: 4px; bottom: 4px;
+  border: 3px solid transparent;
+  border-bottom-color: var(--accent-color);
+  border-left-color: rgba(255, 102, 0, 0.2);
+  border-radius: 50%;
+  animation: stylish-spin-reverse 2s linear infinite;
+}
+
+.stylish-theme-spinner .spinner-core {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  animation: stylish-pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 12px 2px rgba(255, 102, 0, 0.6);
 }
 
 .loading-message-text {
-  font-family: "Orbitron", sans-serif;
-  color: #10B981;
-  font-size: 0.9rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  animation: pulse-glow 2s infinite ease-in-out;
+  font-family: var(--font-family, "Outfit", sans-serif);
+  color: var(--text-primary, #0f172a);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  animation: pulse-opacity 2s infinite ease-in-out;
 }
 
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
+@keyframes stylish-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-@keyframes spin-reverse {
-  100% {
-    transform: rotate(-360deg);
-  }
+@keyframes stylish-spin-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes stylish-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.6; box-shadow: 0 0 20px 4px rgba(255, 102, 0, 0.8); }
+}
+
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }

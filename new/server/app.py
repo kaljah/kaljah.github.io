@@ -168,7 +168,7 @@ from routes.emission_factors_routes import factors_bp
 from routes.notifications import notifications_bp
 from routes.audit import audit_bp
 from routes.satellite import satellite_bp
-
+from routes.qaqc import qaqc_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
@@ -184,6 +184,7 @@ app.register_blueprint(factors_bp)
 app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
 app.register_blueprint(audit_bp, url_prefix="/api/audit")
 app.register_blueprint(satellite_bp, url_prefix="/api/satellite")
+app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
 
 # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
 if (
