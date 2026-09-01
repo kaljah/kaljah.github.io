@@ -14,23 +14,41 @@ import "./ChartWrappers.css";
 export const BarChart = ({
   data,
   dataKey,
-  key: barKey, // Support key as alias
+  key: barKey,
+  bars = [],
   xKey = "name",
+  xAxisKey,
   title,
   color = "#10b981",
   height = 300,
-  showLegend = false,
-  formatValue = (val) => val,
+  showLegend = true,
+  formatValue = (val) => {
+    if (val === null || val === undefined) return "0";
+    if (Math.abs(val) >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+    if (Math.abs(val) >= 1000) return `${(val / 1000).toFixed(1)}k`;
+    return Number(val).toLocaleString();
+  },
 }) => {
+  const finalXKey = xAxisKey || xKey || "name";
   const finalDataKey = dataKey || barKey || "value";
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
+      const label = payload[0].payload && payload[0].payload[finalXKey]
+        ? payload[0].payload[finalXKey]
+        : "";
       return (
         <div className="custom-tooltip">
-          <p className="tooltip-label">{payload[0].payload[xKey]}</p>
-          <p className="tooltip-value" style={{ color }}>
-            {formatValue(payload[0].value)}
-          </p>
+          <p className="tooltip-label">{label}</p>
+          {payload.map((entry, idx) => (
+            <p
+              key={idx}
+              className="tooltip-value"
+              style={{ color: entry.color || entry.fill }}
+            >
+              {entry.name || entry.dataKey}: {formatValue(entry.value)}
+            </p>
+          ))}
         </div>
       );
     }
@@ -41,14 +59,14 @@ export const BarChart = ({
     <div className="chart-wrapper">
       {title && <h3 className="chart-title">{title}</h3>}
       <ResponsiveContainer width="100%" height={height}>
-        <RechartsBar data={data}>
+        <RechartsBar data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid
             strokeDasharray="3 3"
             stroke="#e2e8f0"
             vertical={false}
           />
           <XAxis
-            dataKey={xKey}
+            dataKey={finalXKey}
             stroke="#94a3b8"
             tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
             axisLine={false}
@@ -59,10 +77,24 @@ export const BarChart = ({
             tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
             axisLine={false}
             tickLine={false}
+            tickFormatter={formatValue}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "#f1f5f9" }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(241, 245, 249, 0.6)" }} />
           {showLegend && <Legend />}
-          <Bar dataKey={finalDataKey} fill={color} radius={[8, 8, 0, 0]} />
+          {bars && bars.length > 0 ? (
+            bars.map((b, idx) => (
+              <Bar
+                key={idx}
+                dataKey={b.dataKey}
+                name={b.name || b.dataKey}
+                fill={b.color || color}
+                stackId={b.stackId}
+                radius={b.stackId ? [0, 0, 0, 0] : [6, 6, 0, 0]}
+              />
+            ))
+          ) : (
+            <Bar dataKey={finalDataKey} fill={color} radius={[6, 6, 0, 0]} />
+          )}
         </RechartsBar>
       </ResponsiveContainer>
     </div>
@@ -70,3 +102,4 @@ export const BarChart = ({
 };
 
 export default BarChart;
+

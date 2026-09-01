@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import api from "../api";
 import "./Login.css";
 
 const GhgCloud = () => {
@@ -71,6 +72,12 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // Forgot password modal state
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMsg, setForgotMsg] = useState({ text: "", type: "" });
+
   // Intro video state
   const [showIntro, setShowIntro] = useState(true);
   const [introFading, setIntroFading] = useState(false);
@@ -91,6 +98,34 @@ const Login = () => {
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Invalid credentials");
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!forgotEmail.trim()) {
+      setForgotMsg({ text: "Please enter your email address.", type: "error" });
+      return;
+    }
+    setForgotLoading(true);
+    setForgotMsg({ text: "", type: "" });
+    try {
+      const res = await api.post("/auth/forgot-password", { email: forgotEmail.trim() });
+      setForgotMsg({
+        text: res.data.message || "Password reset request submitted. Your IT Administrator has been notified.",
+        type: "success",
+      });
+      setTimeout(() => {
+        // Clear input on success
+        setForgotEmail("");
+      }, 1000);
+    } catch (err) {
+      setForgotMsg({
+        text: err.response?.data?.error || "Failed to submit request. Please try again later.",
+        type: "error",
+      });
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -238,6 +273,20 @@ const Login = () => {
             </div>
           </motion.div>
 
+          <div className="login-actions-row">
+            <button
+              type="button"
+              className="forgot-password-link"
+              onClick={() => {
+                setForgotEmail(email || "");
+                setForgotMsg({ text: "", type: "" });
+                setShowForgotModal(true);
+              }}
+            >
+              Forgot password?
+            </button>
+          </div>
+
           <motion.button
             type="submit"
             className="btn-primary"
@@ -262,6 +311,84 @@ const Login = () => {
           <p>© {new Date().getFullYear()} Carbon Tech. All rights reserved.</p>
         </div>
       </motion.div>
+
+      {/* Forgot Password Modal */}
+      <AnimatePresence>
+        {showForgotModal && (
+          <div className="forgot-modal-overlay" onClick={() => setShowForgotModal(false)}>
+            <motion.div
+              className="forgot-modal-content"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="forgot-modal-header">
+                <h3>Reset Your Password</h3>
+                <p>
+                  Enter your account email. A notification will be dispatched to your IT Administrator to reset your credentials.
+                </p>
+              </div>
+
+              {forgotMsg.text && (
+                <div className={`forgot-status-msg ${forgotMsg.type}`}>
+                  {forgotMsg.text}
+                </div>
+              )}
+
+              <form onSubmit={handleForgotPassword}>
+                <div className="form-group" style={{ marginBottom: '16px' }}>
+                  <div className="input-wrapper">
+                    <span className="input-icon">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                    </span>
+                    <input
+                      type="email"
+                      className="form-control"
+                      required
+                      placeholder="Enter registered email"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                <div className="forgot-modal-actions">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setShowForgotModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    style={{ margin: 0, flex: 1.2 }}
+                    disabled={forgotLoading}
+                  >
+                    {forgotLoading ? "Sending..." : "Notify IT Admin"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

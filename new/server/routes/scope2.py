@@ -5,6 +5,8 @@ from sqlalchemy import func
 from electricity_factors import GRID_FACTORS
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
+from utils import get_current_user, get_allowed_facility_ids
+import datetime
 
 scope2_bp = Blueprint("scope2", __name__)
 
@@ -69,16 +71,31 @@ def _calc_cogen_allocation(data):
 @scope2_bp.route("", methods=["GET"])
 @login_required
 def get_scope2_emissions():
-    """Get all Scope 2 emissions"""
-    # Standard error handling
+    """Get all Scope 2 emissions, scoped to the requesting user's allowed facilities."""
     try:
-        user = User.query.get(session.get("user_id"))
-        if user and user.role != "admin":
-            emissions = Scope2Emission.query.filter(
-                Scope2Emission.created_by == user.id
-            ).all()
-        else:
-            emissions = Scope2Emission.query.all()
+        user = get_current_user()
+        allowed_fids = get_allowed_facility_ids(user)
+
+        query = Scope2Emission.query
+        # Apply facility-based RLS (same pattern as Scope 1 / Dashboard)
+        if allowed_fids is not None:
+            query = query.filter(Scope2Emission.facility_id.in_(allowed_fids))
+
+        # Optional query-string filters
+        year_arg = request.args.get("year")
+        facility_arg = request.args.get("facilityId") or request.args.get("facility_id")
+        if year_arg and year_arg != "all":
+            try:
+                query = query.filter(Scope2Emission.year == int(year_arg))
+            except ValueError:
+                pass
+        if facility_arg and facility_arg != "all":
+            try:
+                query = query.filter(Scope2Emission.facility_id == int(facility_arg))
+            except ValueError:
+                pass
+
+        emissions = query.order_by(Scope2Emission.created_at.desc()).all()
         return jsonify(
             [
                 {
@@ -155,6 +172,9 @@ def create_scope2_emission():
         )
         final_uncertainty = u_res["relative_uncertainty"]
 
+    user = get_current_user()
+    initial_status = "Verified" if user and user.role in ["superuser", "admin", "it_admin"] else data.get("status", "Pending")
+
     emission = Scope2Emission(
         facility_id=data.get("facility_id"),
         year=data.get("year"),
@@ -173,14 +193,29 @@ def create_scope2_emission():
         division=data.get("division"),
         field=data.get("field"),
         created_by=user_id,
+        status=initial_status,
+        approved_by=user.id if initial_status == "Verified" and user else None,
+        approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
     )
 
     db.session.add(emission)
     db.session.commit()
 
+    if user:
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="CREATE",
+            record_id=str(emission.id),
+            user=user,
+            request=request,
+            entity="Scope2Emission",
+            details=f"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})",
+        )
+        db.session.commit()
+
     return (
         jsonify(
-            {"message": "Scope 2 emission created", "id": emission.id, "co2e": co2e}
+            {"message": "Scope 2 emission created", "id": emission.id, "co2e": co2e, "status": initial_status}
         ),
         201,
     )

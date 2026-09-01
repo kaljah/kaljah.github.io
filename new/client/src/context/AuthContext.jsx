@@ -1,12 +1,18 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import api, { fetchCsrfToken } from "../api";
 
 const AuthContext = createContext(null);
+
+// 10-minute idle session timeout
+const IDLE_TIMEOUT_MS = 10 * 60 * 1000;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [preferences, setPreferences] = useState({});
   const [loading, setLoading] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const idleTimerRef = useRef(null);
+  const lastActivityRef = useRef(Date.now());
 
   // Register global logout hook for API interceptor
   useEffect(() => {
@@ -23,6 +29,76 @@ export const AuthProvider = ({ children }) => {
     // Enforce light theme only by removing data-theme attribute
     document.documentElement.removeAttribute("data-theme");
   };
+
+  const logout = useCallback(async (isTimeout = false) => {
+    try {
+      await api.post("/auth/logout");
+    } catch (e) {
+      // Ignore network errors on logout
+    }
+    setUser(null);
+    setPreferences({});
+    applyTheme("light");
+    if (isTimeout) {
+      setSessionExpired(true);
+    }
+    try {
+      await fetchCsrfToken();
+    } catch (e) {}
+  }, []);
+
+  // ── 10-Minute Idle Session Timeout ─────────────────────────────────────────
+  useEffect(() => {
+    if (!user) {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
+      return;
+    }
+
+    const resetIdleTimer = () => {
+      lastActivityRef.current = Date.now();
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      idleTimerRef.current = setTimeout(() => {
+        console.warn("[Auth] 10-minute idle session timeout reached. Logging out.");
+        logout(true);
+      }, IDLE_TIMEOUT_MS);
+    };
+
+    // Throttle user activity events (only reset once per 5 seconds on continuous mouse movements)
+    let throttleTimeout = null;
+    const handleUserActivity = () => {
+      if (!throttleTimeout) {
+        resetIdleTimer();
+        throttleTimeout = setTimeout(() => {
+          throttleTimeout = null;
+        }, 5000);
+      }
+    };
+
+    const activityEvents = ["mousemove", "mousedown", "keydown", "touchstart", "scroll", "click"];
+    activityEvents.forEach((event) => {
+      window.addEventListener(event, handleUserActivity, { passive: true });
+    });
+
+    // Initialize timer
+    resetIdleTimer();
+
+    return () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      if (throttleTimeout) {
+        clearTimeout(throttleTimeout);
+      }
+      activityEvents.forEach((event) => {
+        window.removeEventListener(event, handleUserActivity);
+      });
+    };
+  }, [user, logout]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -51,6 +127,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
+    setSessionExpired(false);
     const { data } = await api.post("/auth/login", { email, password });
     setUser(data.user);
 
@@ -76,15 +153,6 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  const logout = async () => {
-    await api.post("/auth/logout");
-    setUser(null);
-    setPreferences({});
-    applyTheme("light"); // Default reset to light
-    // Refresh CSRF token after logout to sync session
-    await fetchCsrfToken();
-  };
-
   const updatePreferences = async (newPrefs) => {
     setPreferences((prev) => ({ ...prev, ...newPrefs }));
     applyTheme(newPrefs.theme);
@@ -93,7 +161,6 @@ export const AuthProvider = ({ children }) => {
       await api.put("/auth/settings", newPrefs);
     } catch (e) {
       console.error("Failed to persist settings", e);
-      // Revert? For now, assume success or user sees toast in Settings page
     }
   };
 
@@ -107,6 +174,8 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         loading,
+        sessionExpired,
+        setSessionExpired,
       }}
     >
       {children}

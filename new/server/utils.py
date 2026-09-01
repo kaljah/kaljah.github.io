@@ -43,7 +43,10 @@ def log_activity_and_notify(
     entity=None,
     entity_id=None,
     metadata_json=None,
+    old_values=None,
+    new_values=None,
 ):
+    import json
     from models import ActivityLog, Notification, User
     from extensions import db
     from flask import current_app
@@ -52,11 +55,17 @@ def log_activity_and_notify(
     user_name = user.fullName if user else "System"
     user_id = user.id if user else None
 
+    # Serialize before/after state diffs if provided as dicts
+    old_val_str = json.dumps(old_values, default=str) if isinstance(old_values, dict) else (str(old_values) if old_values is not None else None)
+    new_val_str = json.dumps(new_values, default=str) if isinstance(new_values, dict) else (str(new_values) if new_values is not None else None)
+
     log = ActivityLog(
         action=action,
         record_id=str(record_id),
         user_name=user_name,
         details=details,
+        old_values=old_val_str,
+        new_values=new_val_str,
         ip_address=ip_address,
         user_id=user_id,
         entity=entity,

@@ -7,12 +7,29 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 import uuid
 import time
 import traceback
+import logging
+from logging.handlers import RotatingFileHandler
 
 from extensions import db, limiter  # SEC-08 FIX: import limiter
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config.from_object(Config)
+
+# ── Rotating log handler (50 MB max, 3 backups) ────────────────────────────
+# Replaces unbounded trace.log writes. All unhandled exceptions and warnings
+# route through app.logger which writes to this rotating file.
+_log_dir = os.path.dirname(os.path.abspath(__file__))
+_log_path = os.path.join(_log_dir, "trace.log")
+_rotating_handler = RotatingFileHandler(
+    _log_path, maxBytes=50 * 1024 * 1024, backupCount=3, encoding="utf-8"
+)
+_rotating_handler.setFormatter(
+    logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+)
+_rotating_handler.setLevel(logging.WARNING)
+app.logger.addHandler(_rotating_handler)
+app.logger.setLevel(logging.INFO)
 
 
 # Enable CORS
@@ -28,6 +45,11 @@ from sqlalchemy.engine import Engine
 import sqlite3
 from routes.dashboard import clear_dashboard_cache
 
+# WAL checkpoint counter — runs PRAGMA wal_checkpoint(TRUNCATE) every 500 commits
+# to prevent the SQLite WAL file from growing unboundedly.
+_wal_commit_counter = 0
+_WAL_CHECKPOINT_INTERVAL = 500
+
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragmas(dbapi_conn, _):
@@ -39,12 +61,21 @@ def set_sqlite_pragmas(dbapi_conn, _):
         cursor.close()
 
 
-from routes.dashboard import clear_dashboard_cache
-
-
 @event.listens_for(db.session, "after_commit")
 def receive_after_commit(session):
+    global _wal_commit_counter
     clear_dashboard_cache()
+
+    # Periodic WAL checkpoint to truncate the WAL file
+    _wal_commit_counter += 1
+    if _wal_commit_counter % _WAL_CHECKPOINT_INTERVAL == 0:
+        try:
+            conn = db.engine.raw_connection()
+            if isinstance(conn.connection, sqlite3.Connection):
+                conn.connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            conn.close()
+        except Exception as _wal_err:
+            app.logger.warning(f"WAL checkpoint failed: {_wal_err}")
 
 
 # CSRF Protection
@@ -112,10 +143,7 @@ def not_found_error(error):
 
 @app.errorhandler(Exception)
 def internal_error(error):
-    import traceback
-    with open('trace.log', 'a') as f:
-        f.write(f"Unhandled Exception: {str(error)}\n{traceback.format_exc()}\n\n")
-    # Log the traceback
+    # Route all unhandled exceptions to the rotating logger (no unbounded file write)
     app.logger.error(f"Unhandled Exception: {str(error)}\n{traceback.format_exc()}")
 
     # Return 422 for unprocessable entity to match standard
@@ -220,6 +248,11 @@ def health_check():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        try:
+            from routes.auth import load_settings_from_db
+            load_settings_from_db()
+        except Exception:
+            pass
 
     # SEC-05 FIX: never run debug=True in production; bind to localhost only
     is_debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"

@@ -26,12 +26,6 @@ import json
 from sqlalchemy import cast, String, literal, Float, union_all
 
 
-def get_current_user():
-    user_id = session.get("user_id")
-    return (
-        db.session.get(User, user_id) if user_id else None
-    )  # EXTRA-02 FIX: replaced deprecated query.get
-
 
 def _escape_like(val: str) -> str:
     """NEW-07 FIX: Escape SQL LIKE wildcards in user-supplied search strings."""
@@ -3080,7 +3074,9 @@ def add_emission():
             if isinstance(uncertainty, dict)
             else (uncertainty or None)
         ),
-        status=data.get("status", "Verified"),
+        status="Verified" if user.role in ["superuser", "admin", "it_admin"] else data.get("status", "Pending"),
+        approved_by=user.id if user.role in ["superuser", "admin", "it_admin"] else None,
+        approved_at=datetime.datetime.now(datetime.timezone.utc) if user.role in ["superuser", "admin", "it_admin"] else None,
     )
 
     db.session.add(record)
@@ -3812,12 +3808,12 @@ def approve_emission(emission_id):
     emission = db.session.get(Emission, emission_id)
     if not emission:
         return jsonify({"error": "Record not found"}), 404
-    if emission.status != "Pending":
+    if emission.status not in ["Pending", "Draft", "Pending Approval"]:
         return jsonify({"error": "Record is not pending approval"}), 400
 
     emission.status = "Verified"
     emission.approved_by = user.id
-    emission.approved_at = datetime.datetime.utcnow()
+    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
     log_activity_and_notify(
         action="UPDATE",
         record_id=emission.record_id,
@@ -3833,7 +3829,7 @@ def approve_emission(emission_id):
 @emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
 @login_required
 def reject_emission(emission_id):
-    """Reject (delete) a single pending Scope 1 emission record."""
+    """Reject a single pending Scope 1 emission record (marks status as Rejected)."""
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Insufficient permissions"}), 403
@@ -3844,17 +3840,19 @@ def reject_emission(emission_id):
 
     req_data = request.get_json(silent=True) or {}
     reason = req_data.get("reason", "Rejected by reviewer")
+    emission.status = "Rejected"
+    emission.approved_by = user.id
+    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
     log_activity_and_notify(
-        action="DELETE",
+        action="UPDATE",
         record_id=emission.record_id,
         details=f"Scope 1 emission rejected by {user.fullName}: {reason}",
         user=user,
         entity="emission",
         entity_id=emission.id,
     )
-    db.session.delete(emission)
     db.session.commit()
-    return jsonify({"success": True, "id": emission_id})
+    return jsonify({"success": True, "id": emission_id, "status": "Rejected"})
 
 
 @emissions_bp.route("/approve/batch", methods=["POST"])
@@ -3875,24 +3873,25 @@ def approve_batch_emissions():
     if not ids and not approve_all:
         return jsonify({"error": "No IDs provided"}), 400
 
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.timezone.utc)
     approved_count = 0
 
+    pending_statuses = ["Pending", "Draft", "Pending Approval"]
     if scope == "1":
-        query = Emission.query.filter_by(status="Pending")
+        query = Emission.query.filter(Emission.status.in_(pending_statuses))
         if not approve_all:
             query = query.filter(Emission.id.in_(ids))
-        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now})
+        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
     elif scope == "2":
-        query = Scope2Emission.query.filter_by(status="Pending")
+        query = Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses))
         if not approve_all:
             query = query.filter(Scope2Emission.id.in_(ids))
-        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now})
+        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
     elif scope == "3":
-        query = Scope3Emission.query.filter_by(status="Pending")
+        query = Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses))
         if not approve_all:
             query = query.filter(Scope3Emission.id.in_(ids))
-        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now})
+        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
     else:
         return jsonify({"error": f"Invalid scope: {scope}"}), 400
 
@@ -3979,9 +3978,10 @@ def get_pending_emissions():
         return jsonify({"error": "Insufficient permissions"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)
+    pending_statuses = ["Pending", "Draft", "Pending Approval"]
 
     def q_scope1():
-        q = Emission.query.filter_by(status="Pending")
+        q = Emission.query.filter(Emission.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(Emission.facility_id.in_(allowed_fids))
         return [
@@ -3989,34 +3989,34 @@ def get_pending_emissions():
                 "id": e.id, "scope": "1", "facility_id": e.facility_id,
                 "year": e.year, "month": e.month, "process_type": e.process_type,
                 "fuel_type": e.fuel_type, "quantity": e.quantity, "unit": e.unit,
-                "co2e_total": e.co2e_total, "created_at": e.timestamp.isoformat() if e.timestamp else None,
+                "co2e_total": e.co2e_total, "status": e.status, "created_at": e.timestamp.isoformat() if e.timestamp else None,
             }
             for e in q.order_by(Emission.timestamp.desc()).limit(200).all()
         ]
 
     def q_scope2():
-        q = Scope2Emission.query.filter_by(status="Pending")
+        q = Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(Scope2Emission.facility_id.in_(allowed_fids))
         return [
             {
                 "id": e.id, "scope": "2", "facility_id": e.facility_id,
                 "year": e.year, "month": e.month, "source_type": e.source_type,
-                "electricity_kwh": e.electricity_kwh, "co2e": e.co2e,
+                "electricity_kwh": e.electricity_kwh, "co2e": e.co2e, "status": e.status,
                 "created_at": e.created_at.isoformat() if e.created_at else None,
             }
             for e in q.order_by(Scope2Emission.created_at.desc()).limit(200).all()
         ]
 
     def q_scope3():
-        q = Scope3Emission.query.filter_by(status="Pending")
+        q = Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(Scope3Emission.facility_id.in_(allowed_fids))
         return [
             {
                 "id": e.id, "scope": "3", "facility_id": e.facility_id,
                 "year": e.year, "month": e.month, "category": e.category,
-                "co2e": e.co2e, "created_at": e.created_at.isoformat() if e.created_at else None,
+                "co2e": e.co2e, "status": e.status, "created_at": e.created_at.isoformat() if e.created_at else None,
             }
             for e in q.order_by(Scope3Emission.created_at.desc()).limit(200).all()
         ]
@@ -4026,9 +4026,9 @@ def get_pending_emissions():
         "scope2": q_scope2(),
         "scope3": q_scope3(),
         "total_pending": (
-            Emission.query.filter_by(status="Pending").count()
-            + Scope2Emission.query.filter_by(status="Pending").count()
-            + Scope3Emission.query.filter_by(status="Pending").count()
+            Emission.query.filter(Emission.status.in_(pending_statuses)).count()
+            + Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses)).count()
+            + Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses)).count()
         ),
     })
 

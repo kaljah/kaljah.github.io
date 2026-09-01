@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -47,11 +48,13 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Session Configuration
+    # Session Configuration (10-minute idle session timeout)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     # Only set Secure in production to allow localhost testing
     SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=10)
+    SESSION_REFRESH_EACH_REQUEST = True
 
     # CSRF Configuration
     # Set CSRF time limit to None so it lives as long as the session
@@ -59,8 +62,15 @@ class Config:
     WTF_CSRF_TIME_LIMIT = 86400
 
     # API-03 FIX: Hard limit on all incoming request bodies — prevents large-payload DoS
-    # Temporarily increased to 1000 MB for 1-million row bulk upload stress testing
-    MAX_CONTENT_LENGTH = 1000 * 1024 * 1024  # 1000 MB
+    # NOTE: 50 MB covers any realistic single-month CSV upload.
+    # If you need bulk testing with million-row files, set MAX_CONTENT_LENGTH=1073741824 in .env temporarily.
+    MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH", 50 * 1024 * 1024))  # 50 MB default
 
-    # Rate Limiting Backend (Memory default, Redis in multi-worker production)
+    # Rate Limiting Backend
+    # Currently uses memory:// (in-process) — limits v5.x does not support SQLite.
+    # This is correct for single-process (dev / single gunicorn worker) deployments.
+    # To scale to multi-worker production, install Redis and set:
+    #   RATELIMIT_STORAGE_URI=redis://localhost:6379/0  in your .env file
     RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")
+    # Expose X-RateLimit-* response headers so clients can self-throttle
+    RATELIMIT_HEADERS_ENABLED = True

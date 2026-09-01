@@ -16,6 +16,7 @@ export const LineChart = ({
   lines = [],
   series = [], // Alias for lines
   xKey = "name",
+  xAxisKey,
   title,
   height = 300,
   showLegend = true,
@@ -30,12 +31,13 @@ export const LineChart = ({
     setIsMounted(true);
   }, []);
 
+  const finalXKey = xAxisKey || xKey || "name";
   const chartLines = lines.length > 0 ? lines : series;
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const label =
-        payload[0].payload && payload[0].payload[xKey]
-          ? payload[0].payload[xKey]
+        payload[0].payload && payload[0].payload[finalXKey]
+          ? payload[0].payload[finalXKey]
           : "";
       return (
         <div className="custom-tooltip">
@@ -119,7 +121,7 @@ export const LineChart = ({
             vertical={false}
           />
           <XAxis
-            dataKey={xKey}
+            dataKey={finalXKey}
             type="category"
             stroke="#94a3b8"
             tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
