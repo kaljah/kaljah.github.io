@@ -2100,22 +2100,32 @@ def get_sbti_trajectory():
         
     # Get actuals per year (Scope 1+2+3 verified only)
     actuals = {}
+    scope1_actuals = {}
+    scope2_actuals = {}
+    scope3_actuals = {}
     
     for em in Emission.query.filter_by(status="Verified").all():
-        actuals[em.year] = actuals.get(em.year, 0) + (em.co2e or 0)
+        val = float(em.co2e_total or em.co2_emissions or 0)
+        actuals[em.year] = actuals.get(em.year, 0) + val
+        scope1_actuals[em.year] = scope1_actuals.get(em.year, 0) + val
+
     for em in Scope2Emission.query.filter_by(status="Verified").all():
-        actuals[em.year] = actuals.get(em.year, 0) + (em.co2e or 0)
+        val = float(em.co2e or 0)
+        actuals[em.year] = actuals.get(em.year, 0) + val
+        scope2_actuals[em.year] = scope2_actuals.get(em.year, 0) + val
+
     for em in Scope3Emission.query.filter_by(status="Verified").all():
-        actuals[em.year] = actuals.get(em.year, 0) + (em.co2e or 0)
+        val = float(em.co2e or 0)
+        actuals[em.year] = actuals.get(em.year, 0) + val
+        scope3_actuals[em.year] = scope3_actuals.get(em.year, 0) + val
         
     trajectory = []
     base_year = target.base_year
     target_year = target.target_year
     rate = target.reduction_rate_pct / 100.0
     
-    # Calculate for years from base_year to target_year (or up to 10 years out from current)
     current_year = datetime.now().year
-    end_year = min(target_year, current_year + 10)
+    end_year = min(target_year, max(current_year + 10, target_year))
     
     for yr in range(base_year, end_year + 1):
         years_diff = yr - base_year
@@ -2124,20 +2134,45 @@ def get_sbti_trajectory():
         if sbti_emissions < 0:
             sbti_emissions = 0
             
-        # Business As Usual (Assume 2% growth if no action taken)
-        bau_emissions = target.base_year_emissions * (1 + (0.02 * years_diff))
+        # Business As Usual (Assume 1.5% growth if no action taken)
+        bau_emissions = target.base_year_emissions * (1 + (0.015 * years_diff))
+
+        has_actual_data = yr in actuals and actuals[yr] > 0
         
         trajectory.append({
-            "year": yr,
+            "year": str(yr),
             "sbti_target": round(sbti_emissions, 2),
             "bau_projection": round(bau_emissions, 2),
-            "actual": round(actuals.get(yr, 0), 2) if yr <= current_year else None
+            "actual": round(actuals[yr], 2) if has_actual_data else None,
+            "scope1": round(scope1_actuals.get(yr, 0), 2) if has_actual_data else 0,
+            "scope2": round(scope2_actuals.get(yr, 0), 2) if has_actual_data else 0,
+            "scope3": round(scope3_actuals.get(yr, 0), 2) if has_actual_data else 0,
         })
-        
+
+    # Summary metrics for latest year with actual data or current year
+    latest_actual_year = max([y for y, v in actuals.items() if v > 0], default=base_year)
+    current_actual = actuals.get(latest_actual_year, actuals.get(current_year, 0))
+    current_target = target.base_year_emissions * (1 - (rate * (latest_actual_year - base_year)))
+    reduction_achieved_pct = (
+        ((target.base_year_emissions - current_actual) / target.base_year_emissions) * 100
+        if target.base_year_emissions > 0
+        else 0
+    )
+    on_track = current_actual <= current_target if current_actual > 0 else True
+    target_emissions_final = target.base_year_emissions * (1 - (rate * (target_year - base_year)))
+
     return jsonify({
         "has_target": True,
         "base_year": base_year,
+        "base_year_emissions": round(target.base_year_emissions, 2),
         "target_year": target_year,
+        "target_emissions_final": round(max(target_emissions_final, 0), 2),
+        "reduction_rate_pct": target.reduction_rate_pct,
         "pathway_type": target.pathway_type,
+        "current_year": latest_actual_year,
+        "current_actual": round(current_actual, 2),
+        "current_target": round(max(current_target, 0), 2),
+        "reduction_achieved_pct": round(reduction_achieved_pct, 1),
+        "on_track": on_track,
         "trajectory": trajectory
     })

@@ -272,6 +272,8 @@ class ActivityLog(db.Model):
     record_id = db.Column(db.String(50))
     user_name = db.Column(db.String(120))
     details = db.Column(db.Text)
+    old_values = db.Column(db.Text, nullable=True)  # JSON before-state diff
+    new_values = db.Column(db.Text, nullable=True)  # JSON after-state diff
     ip_address = db.Column(db.String(50))
     user_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), index=True
@@ -280,6 +282,7 @@ class ActivityLog(db.Model):
     entity_id = db.Column(db.String(50))
     metadata_json = db.Column("metadata", db.Text)
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+
 
 
 class Goal(db.Model):
@@ -567,3 +570,16 @@ class SbtiTarget(db.Model):
     pathway_type = db.Column(db.String(20), default="1.5C")  # 1.5C, WB2C
     created_at = db.Column(db.DateTime, default=utc_now)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+
+class SystemSetting(db.Model):
+    """
+    Persistent key-value store for application-wide settings
+    (GWP standard, OGMP parameters, WEC fees, Copernicus credentials, etc.)
+    Survives server restarts and multi-worker deployments.
+    """
+    __tablename__ = "system_settings"
+    key = db.Column(db.String(100), primary_key=True)
+    value = db.Column(db.Text, nullable=False)  # JSON-encoded value
+    updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+

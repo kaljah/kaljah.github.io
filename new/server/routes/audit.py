@@ -27,22 +27,40 @@ def get_audit_logs():
 
     logs = query.order_by(ActivityLog.timestamp.desc()).limit(limit).all()
 
-    return jsonify(
-        [
+    import json
+    result = []
+    for log in logs:
+        old_val = None
+        new_val = None
+        if log.old_values:
+            try:
+                old_val = json.loads(log.old_values)
+            except Exception:
+                old_val = log.old_values
+        if log.new_values:
+            try:
+                new_val = json.loads(log.new_values)
+            except Exception:
+                new_val = log.new_values
+
+        result.append(
             {
                 "id": log.id,
                 "action": log.action,
                 "recordId": log.record_id,
                 "user": log.user_name,
                 "details": log.details,
+                "description": log.details,  # Compatibility with AuditTrail.jsx
+                "old_values": old_val,
+                "new_values": new_val,
                 "ipAddress": log.ip_address,
                 "entity": log.entity,
                 "entityId": log.entity_id,
-                "timestamp": log.timestamp.isoformat(),
+                "timestamp": log.timestamp.isoformat() if log.timestamp else None,
             }
-            for log in logs
-        ]
-    )
+        )
+
+    return jsonify(result)
 
 
 @audit_bp.route("/filters", methods=["GET"])

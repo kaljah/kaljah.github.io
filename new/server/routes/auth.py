@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from functools import wraps
 from flask import request, jsonify, session, current_app
 from . import auth_bp
-from models import User
+from models import User, Notification
 from extensions import db, limiter
 from utils import log_activity_and_notify
 
@@ -224,6 +224,7 @@ def login():
         if user.status != "active":
             return jsonify({"error": "Account disabled"}), 403
 
+        session.permanent = True
         session["user_id"] = user.id
         current_app.logger.debug(f"Session set for user_id={user.id}")
         user.last_login = datetime.datetime.now(datetime.timezone.utc)
@@ -257,6 +258,61 @@ def login():
         )
 
     return jsonify({"error": "Invalid credentials"}), 401
+
+
+@auth_bp.route("/forgot-password", methods=["POST"])
+@limiter.limit("5 per 15 minutes")
+def forgot_password():
+    """
+    User triggers a password reset request.
+    Creates a notification for the IT Role / Admin to reset their credentials.
+    """
+    data = request.get_json(silent=True) or {}
+    email_input = str(data.get("email", "")).strip().lower()
+
+    if not email_input:
+        return jsonify({"error": "Email is required"}), 400
+
+    user = User.query.filter(db.func.lower(User.email) == email_input).first()
+
+    if user:
+        # Find IT Admins or Admins to notify
+        it_admins = User.query.filter(User.role.in_(["it_admin", "admin"]), User.status == "active").all()
+
+        notification_title = f"Password Reset Request: {user.fullName or user.email}"
+        notification_msg = (
+            f"User {user.fullName} ({user.email}) requested a password reset at "
+            f"{datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}. "
+            f"Please review and reset their password in User Management."
+        )
+
+        for admin in it_admins:
+            Notification.create(
+                title=notification_title,
+                message=notification_msg,
+                type="security",
+                user_id=admin.id,
+                metadata={"requester_id": user.id, "requester_email": user.email, "request_type": "forgot_password"}
+            )
+
+        try:
+            log_activity_and_notify(
+                action="SECURITY",
+                record_id=str(user.id),
+                user=user,
+                request=request,
+                entity="User",
+                details=f"Password reset requested for: {user.email}",
+            )
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error logging forgot password request: {e}")
+
+    # Standard security practice: always return a uniform success response to prevent email enumeration
+    return jsonify({
+        "message": "If your email is registered in the system, a password reset request has been forwarded to the IT Administrator."
+    }), 200
 
 
 # Audit Login (Success)
@@ -433,8 +489,8 @@ def upload_avatar():
     return jsonify({"message": "Avatar updated successfully", "avatarUrl": avatar_url})
 
 
-# Global Application & User Preferences Store
-_app_settings = {
+# Global Application & User Preferences Store (with DB persistence via SystemSetting)
+_DEFAULT_APP_SETTINGS = {
     "gwp_standard": "AR5",
     "ogmp_default_base_year": 2023,
     "reconciliation_threshold": 20.0,
@@ -456,6 +512,43 @@ _app_settings = {
         "AR4": {"ch4_100": 25.0, "ch4_20": 72.0, "n2o_100": 298.0, "co2": 1.0},
     },
 }
+
+_app_settings = dict(_DEFAULT_APP_SETTINGS)
+
+
+def load_settings_from_db():
+    """Loads all system settings from SystemSetting table in DB into _app_settings."""
+    import json
+    try:
+        from models import SystemSetting
+        settings = SystemSetting.query.all()
+        for s in settings:
+            try:
+                _app_settings[s.key] = json.loads(s.value)
+            except Exception:
+                _app_settings[s.key] = s.value
+    except Exception as e:
+        # Table might not exist yet during migration
+        pass
+    return _app_settings
+
+
+def save_setting_to_db(key: str, val):
+    """Saves a setting to the SystemSetting table and syncs _app_settings."""
+    import json
+    from models import SystemSetting
+    _app_settings[key] = val
+    try:
+        row = db.session.get(SystemSetting, key)
+        if not row:
+            row = SystemSetting(key=key, value=json.dumps(val))
+            db.session.add(row)
+        else:
+            row.value = json.dumps(val)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to persist system setting '{key}': {e}")
 
 
 def recalculate_all_emissions_gwp(standard):
@@ -482,7 +575,7 @@ def recalculate_all_emissions_gwp(standard):
                 + func.coalesce(Emission.n2o_emissions, 0.0) * n2o_factor
             ),
             Emission.gwp_version: standard,
-            Emission.updated_at: datetime.datetime.utcnow(),
+            Emission.updated_at: datetime.datetime.now(datetime.timezone.utc),
         },
         synchronize_session=False,
     )
@@ -504,7 +597,10 @@ def get_settings():
     import json
 
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
+
+    # Load fresh persistent settings from DB
+    load_settings_from_db()
 
     # Merge global settings with user preferences
     resp = dict(_app_settings)
@@ -522,10 +618,13 @@ def get_settings():
 @login_required
 def update_settings():
     import json
+    from models import SystemSetting
 
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     data = request.get_json() or {}
+
+    load_settings_from_db()
 
     # Global system & GWP standards updates
     gwp_changed = False
@@ -533,32 +632,42 @@ def update_settings():
         new_gwp = data["gwp_standard"]
         if _app_settings.get("gwp_standard") != new_gwp:
             _app_settings["gwp_standard"] = new_gwp
+            save_setting_to_db("gwp_standard", new_gwp)
             gwp_changed = True
 
-    if "ogmp_default_base_year" in data:
-        _app_settings["ogmp_default_base_year"] = int(data["ogmp_default_base_year"])
-    if "reconciliation_threshold" in data:
-        _app_settings["reconciliation_threshold"] = float(
-            data["reconciliation_threshold"]
-        )
-    if "ogmp_upstream_target_pct" in data:
-        _app_settings["ogmp_upstream_target_pct"] = float(
-            data["ogmp_upstream_target_pct"]
-        )
-    if "ogmp_midstream_target_pct" in data:
-        _app_settings["ogmp_midstream_target_pct"] = float(
-            data["ogmp_midstream_target_pct"]
-        )
+    system_setting_keys = [
+        "ogmp_default_base_year",
+        "reconciliation_threshold",
+        "ogmp_upstream_target_pct",
+        "ogmp_midstream_target_pct",
+        "copernicus_username",
+        "copernicus_password",
+        "copernicus_client_id",
+        "copernicus_client_secret",
+        "copernicus_qa_threshold",
+        "copernicus_enabled",
+        "theme",
+        "unit_system",
+        "auto_flag_discrepancy",
+    ]
+
+    for k in system_setting_keys:
+        if k in data:
+            val = data[k]
+            if k == "ogmp_default_base_year":
+                val = int(val)
+            elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "copernicus_qa_threshold"]:
+                val = float(val)
+            elif k in ["copernicus_enabled", "auto_flag_discrepancy"]:
+                val = bool(val)
+            _app_settings[k] = val
+            save_setting_to_db(k, val)
+
     if "wec_fee_rates" in data and isinstance(data["wec_fee_rates"], dict):
-        _app_settings["wec_fee_rates"].update(
-            {str(k): float(v) for k, v in data["wec_fee_rates"].items()}
-        )
-    if "theme" in data and data["theme"] in ["dark", "light"]:
-        _app_settings["theme"] = data["theme"]
-    if "unit_system" in data and data["unit_system"] in ["metric", "imperial"]:
-        _app_settings["unit_system"] = data["unit_system"]
-    if "auto_flag_discrepancy" in data:
-        _app_settings["auto_flag_discrepancy"] = bool(data["auto_flag_discrepancy"])
+        rates = _app_settings.get("wec_fee_rates", {})
+        rates.update({str(k): float(v) for k, v in data["wec_fee_rates"].items()})
+        _app_settings["wec_fee_rates"] = rates
+        save_setting_to_db("wec_fee_rates", rates)
 
     # If GWP standard was changed or set, recalculate existing emissions
     if gwp_changed:
@@ -594,7 +703,6 @@ def update_settings():
 
     try:
         from routes.dashboard import clear_dashboard_cache
-
         clear_dashboard_cache()
     except Exception:
         pass
@@ -749,3 +857,60 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully"})
+
+
+@auth_bp.route("/users/<int:id>/reset-password", methods=["POST"])
+@admin_required
+def admin_reset_password(id):
+    """
+    IT Admin / Admin resets a user's password directly.
+    """
+    db.session.expire_all()
+    user = db.session.get(User, id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    current_admin_id = session.get("user_id")
+    admin_user = db.session.get(User, current_admin_id) if current_admin_id else None
+
+    # IT Admin regional boundary check for regular users
+    if admin_user and admin_user.role == "it_admin" and admin_user.location and user.role == "user":
+        if user.location != admin_user.location:
+            return jsonify({"error": "Unauthorized: User is outside your region"}), 403
+
+    data = request.get_json(silent=True) or {}
+    new_password = data.get("newPassword", "").strip()
+
+    if not new_password:
+        return jsonify({"error": "New password is required"}), 400
+
+    valid, err_msg = validate_password_complexity(new_password)
+    if not valid:
+        return jsonify({"error": err_msg}), 400
+
+    user.set_password(new_password)
+    user.password_updated_at = datetime.datetime.now(datetime.timezone.utc)
+
+    # Create notification for the user whose password was reset
+    Notification.create(
+        title="Your Password Has Been Reset",
+        message=f"Your account password was reset by IT Administrator ({admin_user.fullName if admin_user else 'IT Admin'}) on {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}.",
+        type="security",
+        user_id=user.id,
+    )
+
+    try:
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(user.id),
+            user=admin_user or user,
+            request=request,
+            entity="User",
+            details=f"Password reset for {user.email} by IT Admin {admin_user.email if admin_user else 'system'}",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error logging admin password reset: {e}")
+
+    return jsonify({"message": f"Password for {user.fullName} ({user.email}) has been successfully reset."}), 200
