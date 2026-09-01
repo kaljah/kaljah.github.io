@@ -1,21 +1,41 @@
 :root {
-  /* Default to Light Theme */
-  --bg-body: #f1f5f9; /* Softer, slightly darker for glass contrast */
-  --bg-card: rgba(255, 255, 255, 0.7); /* Glass base */
-  --bg-hover: rgba(255, 247, 237, 0.8);
+  /* Core Theme Tokens - Preserved & Polished */
+  --bg-body: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-card-elevated: rgba(255, 255, 255, 0.9);
+  --bg-hover: rgba(255, 247, 237, 0.85);
   --text-primary: #0f172a;
   --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  /* Brand Accents */
   --accent-color: #ff6600;
   --accent-hover: #e65c00;
+  --accent-subtle: rgba(255, 102, 0, 0.1);
   --accent-gradient: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
+  
+  /* Semantic Colors */
   --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.1);
   --success: #10b981;
-  --border-color: rgba(226, 232, 240, 0.6);
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --info: #3b82f6;
+  --info-bg: rgba(59, 130, 246, 0.1);
+  
+  /* Borders & Shadows */
+  --border-color: rgba(226, 232, 240, 0.8);
+  --border-light: rgba(241, 245, 249, 0.9);
   --border-focus: #ff6600;
-  --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  --shadow-hover: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+  --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  --shadow-card-elevated: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  --shadow-hover: 0 16px 36px -4px rgba(255, 102, 0, 0.12), 0 6px 16px -2px rgba(15, 23, 42, 0.04);
+  
+  /* Dimensions & Typography */
   --sidebar-width: 260px;
-  font-family: "Outfit", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Outfit", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 @tailwind base;
@@ -26,19 +46,21 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  background-color: var(--bg-body);
-  /* A subtle geometric/mesh gradient for the background to make glass pop */
-  background-image:
-    radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.05) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.05) 0, transparent 50%);
-  color: var(--text-primary);
   width: 100%;
   height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-image:
+    radial-gradient(at 0% 0%, hsla(28, 100%, 74%, 0.08) 0, transparent 45%),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.04) 0, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(339, 49%, 30%, 0.03) 0, transparent 40%);
 }
 
 #root {
@@ -49,7 +71,7 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Custom Scrollbar for modern feel */
+/* Modern Minimal Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -59,23 +81,89 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 10px;
+  border-radius: 999px;
+  transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-color);
+  background: #94a3b8;
 }
 
-/* Glassmorphism utility class */
+/* Enhanced Glassmorphism Utilities */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow: var(--shadow-card);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
 }
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+.glass-panel-elevated {
+  background: var(--bg-card-elevated);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: var(--shadow-card-elevated);
+}
+
 .glass-panel-dark {
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Tabular Numerals for Data Integrity */
+.num-tabular, .kpi-number, .stat-value {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Universal Status Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.status-pill.verified, .status-pill.approved, .status-pill.achieved, .status-pill.active, .status-pill.on-track {
+  background: var(--success-bg);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-pill.pending, .status-pill.draft, .status-pill.warning {
+  background: var(--warning-bg);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-pill.rejected, .status-pill.off-track, .status-pill.danger {
+  background: var(--danger-bg);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-pill.info, .status-pill.projected {
+  background: var(--info-bg);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Reusable Interactive Focus Ring */
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.18);
 }
