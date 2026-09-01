@@ -289,7 +289,32 @@ const AuditTrail = () => {
                     {formatTimestamp(log.timestamp)}
                   </span>
                 </div>
-                <p className="entry-description">{log.description}</p>
+                <p className="entry-description">{log.description || log.details}</p>
+                {/* Field-level Before/After Changes */}
+                {(log.old_values || log.new_values) && (
+                  <div style={{ marginTop: "10px", marginBottom: "10px", background: "rgba(241,245,249,0.7)", borderRadius: "6px", padding: "8px 12px", border: "1px solid #e2e8f0" }}>
+                    <div style={{ fontSize: "0.75rem", fontWeight: "600", color: "#475569", marginBottom: "4px" }}>
+                      Field Changes:
+                    </div>
+                    {typeof log.old_values === "object" && typeof log.new_values === "object" ? (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        {Array.from(new Set([...Object.keys(log.old_values || {}), ...Object.keys(log.new_values || {})])).map((k) => (
+                          <div key={k} style={{ fontSize: "0.75rem", display: "flex", alignItems: "center", gap: "6px" }}>
+                            <span style={{ fontWeight: "600", color: "#334155" }}>{k}:</span>
+                            <span style={{ color: "#ef4444", textDecoration: "line-through" }}>{String(log.old_values?.[k] ?? "—")}</span>
+                            <ArrowRight size={10} style={{ color: "#94a3b8" }} />
+                            <span style={{ color: "#10b981", fontWeight: "600" }}>{String(log.new_values?.[k] ?? "—")}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                        {log.old_values && <div><b>Before:</b> {typeof log.old_values === "string" ? log.old_values : JSON.stringify(log.old_values)}</div>}
+                        {log.new_values && <div><b>After:</b> {typeof log.new_values === "string" ? log.new_values : JSON.stringify(log.new_values)}</div>}
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div className="entry-meta">
                   <span>
                     <Database size={12} />

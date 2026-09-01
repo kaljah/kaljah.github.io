@@ -20,6 +20,7 @@ import Diagnostics from "./pages/Diagnostics";
 import AuditTrail from "./pages/AuditTrail";
 import UserManagement from "./pages/UserManagement";
 import Settings from "./pages/Settings";
+import SbtiDashboard from "./pages/SbtiDashboard";
 import LoadingSpinner from "./components/LoadingSpinner";
 // --- Lazy loaded heavy components ---
 const EmissionsMap = React.lazy(() => import("./pages/MethaneExplorer"));
@@ -132,6 +133,14 @@ const AppRoutes = () => {
           element={
             <NonITRoute>
               <EmissionsMap />
+            </NonITRoute>
+          }
+        />
+        <Route
+          path="sbti"
+          element={
+            <NonITRoute>
+              <SbtiDashboard />
             </NonITRoute>
           }
         />

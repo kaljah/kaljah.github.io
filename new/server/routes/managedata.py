@@ -805,6 +805,7 @@ def delete_base_year_recalculation(rec_id):
         return jsonify({"error": str(e)}), 500
 
 @managedata_bp.route("/sbti", methods=["GET", "POST"])
+@managedata_bp.route("/manage/sbti", methods=["GET", "POST"])
 @login_required
 def manage_sbti():
     from models import SbtiTarget

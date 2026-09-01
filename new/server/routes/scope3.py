@@ -4,6 +4,8 @@ from extensions import db
 from sqlalchemy import func
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
+from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
+import datetime
 
 scope3_bp = Blueprint("scope3", __name__)
 
@@ -11,19 +13,36 @@ scope3_bp = Blueprint("scope3", __name__)
 @scope3_bp.route("", methods=["GET"])
 @login_required
 def get_scope3_emissions():
-    """Get all Scope 3 emissions"""
-    user = User.query.get(session.get("user_id"))
-    if user and user.role != "admin":
-        emissions = Scope3Emission.query.filter(
-            Scope3Emission.created_by == user.id
-        ).all()
-    else:
-        emissions = Scope3Emission.query.all()
+    """Get all Scope 3 emissions scoped to user's allowed facilities"""
+    user = get_current_user()
+    allowed_fids = get_allowed_facility_ids(user)
+
+    query = Scope3Emission.query
+    if allowed_fids is not None:
+        query = query.filter(Scope3Emission.facility_id.in_(allowed_fids))
+
+    # Optional query filters
+    year_arg = request.args.get("year")
+    fac_arg = request.args.get("facilityId") or request.args.get("facility_id")
+    if year_arg and year_arg != "all":
+        try:
+            query = query.filter(Scope3Emission.year == int(year_arg))
+        except ValueError:
+            pass
+    if fac_arg and fac_arg != "all":
+        try:
+            query = query.filter(Scope3Emission.facility_id == int(fac_arg))
+        except ValueError:
+            pass
+
+    emissions = query.order_by(Scope3Emission.created_at.desc()).all()
     return jsonify(
         [
             {
                 "id": e.id,
+                "facility_id": e.facility_id,
                 "year": e.year,
+                "month": e.month,
                 "category": e.category,
                 "sub_category": e.sub_category,
                 "activity_data": float(e.activity_data or 0),
@@ -34,6 +53,9 @@ def get_scope3_emissions():
                 "calculation_method": e.calculation_method,
                 "data_quality": e.data_quality,
                 "notes": e.notes,
+                "status": e.status or "Verified",
+                "approved_by": e.approved_by,
+                "approved_at": e.approved_at.isoformat() if e.approved_at else None,
                 "created_at": e.created_at.isoformat() if e.created_at else None,
             }
             for e in emissions
@@ -44,12 +66,15 @@ def get_scope3_emissions():
 @scope3_bp.route("", methods=["POST"])
 @login_required
 def create_scope3_emission():
-    """Create a new Scope 3 emission record"""
-    user_id = session.get("user_id")
-    if not user_id:
+    """Create a new Scope 3 emission record with Maker-Checker status"""
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    data = request.get_json()
+    data = request.get_json() or {}
+
+    # Maker-Checker: regular 'user' creates as 'Pending' (or 'Draft'), superusers/admins can verify directly
+    initial_status = "Verified" if user.role in ["superuser", "admin", "it_admin"] else data.get("status", "Pending")
 
     emission = Scope3Emission(
         facility_id=data.get("facility_id"),
@@ -64,6 +89,9 @@ def create_scope3_emission():
         emission_factor=data.get("emission_factor", 0),
         co2e=data.get("co2e")
         or data.get("emissions_tco2e", 0),  # Fallback to emissions_tco2e
+        status=initial_status,
+        approved_by=user.id if initial_status == "Verified" else None,
+        approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
     )
     co2e_val = float(emission.co2e or 0)
 
@@ -87,12 +115,22 @@ def create_scope3_emission():
     emission.calculation_method = data.get("calculation_method")
     emission.data_quality = data.get("data_quality")
     emission.notes = data.get("notes")
-    emission.created_by = user_id
+    emission.created_by = user.id
 
     db.session.add(emission)
     db.session.commit()
 
-    return jsonify({"message": "Scope 3 emission created", "id": emission.id}), 201
+    log_activity_and_notify(
+        action="CREATE",
+        record_id=str(emission.id),
+        user=user,
+        request=request,
+        entity="Scope3Emission",
+        details=f"Created Scope 3 emission: {emission.category} ({emission.co2e} tCO2e, Status: {initial_status})",
+    )
+    db.session.commit()
+
+    return jsonify({"message": "Scope 3 emission created", "id": emission.id, "status": initial_status}), 201
 
 
 @scope3_bp.route("/<int:emission_id>", methods=["PUT"])

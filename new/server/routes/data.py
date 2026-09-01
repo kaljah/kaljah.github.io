@@ -547,8 +547,8 @@ def save_cbam_export():
         return jsonify({'message': 'CBAM Export saved successfully', 'id': record.id})
     except Exception as e:
         import traceback
-        with open('trace.log', 'a') as f:
-            f.write(traceback.format_exc() + '\n')
+        from flask import current_app
+        current_app.logger.error(f"CBAM Export save error: {traceback.format_exc()}")
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
@@ -574,7 +574,7 @@ def delete_cbam_export(record_id):
         return jsonify({'message': 'CBAM export deleted successfully'})
     except Exception as e:
         import traceback
-        with open('trace.log', 'a') as f:
-            f.write(traceback.format_exc() + '\n')
+        from flask import current_app
+        current_app.logger.error(f"CBAM Export delete error: {traceback.format_exc()}")
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

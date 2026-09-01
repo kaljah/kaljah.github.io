@@ -1195,11 +1195,12 @@ def _process_row(
     fac_raw = str(row.get("facility_name") or "").strip()
     facility = fac_id_map.get(fac_raw) or fac_name_map.get(fac_raw.lower())
     if not facility:
-        from models import Facility as _FacCheck
-        from extensions import db as _db
-        global_match = _FacCheck.query.filter(_FacCheck.name.ilike(fac_raw)).first()
-        if global_match:
-            return None, [f"Access denied: Region '{fac_raw}' exists but your account does not have permission to upload data for it."]
+        from flask import has_app_context
+        if has_app_context():
+            from models import Facility as _FacCheck
+            global_match = _FacCheck.query.filter(_FacCheck.name.ilike(fac_raw)).first()
+            if global_match:
+                return None, [f"Access denied: Region '{fac_raw}' exists but your account does not have permission to upload data for it."]
         return None, [f"Region '{fac_raw}' not found. Check that the region name matches exactly a region in the system."]
 
     # 3. Quantity
@@ -1347,10 +1348,10 @@ def _process_row(
             record_id=str(uuid.uuid4()),
             created_by=user_id,
             facility_id=facility.id,
-            activity=row.get("activity", facility.activity),
-            division=row.get("division", facility.division),
-            region=row.get("region", facility.region),
-            field=row.get("field", facility.field),
+            activity=row.get("activity", getattr(facility, "activity", None)),
+            division=row.get("division", getattr(facility, "division", None)),
+            region=row.get("region", getattr(facility, "region", None)),
+            field=row.get("field", getattr(facility, "field", None)),
             group_name=row.get("group", ""),
             equipment_id=row.get("equipment_id") or row.get("equipment", ""),
             process_type=process_type,
