@@ -932,15 +932,27 @@
 }
 /* CBAM and OGMP Sections */
 .cbam-section, .ogmp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .cbam-benchmark-badge {
-    background: rgba(13, 148, 136, 0.1);
-    color: var(--accent-color);
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    border: 1px solid rgba(13, 148, 136, 0.2);
+  background: rgba(13, 148, 136, 0.1);
+  color: var(--accent-color);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid rgba(13, 148, 136, 0.2);
 }
 
 .cbam-empty-state {
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}

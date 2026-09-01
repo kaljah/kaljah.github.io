@@ -531,57 +531,74 @@
 .action-row {
   display: flex;
   justify-content: flex-end;
-  gap: 15px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-color, rgba(226, 232, 240, 0.6));
 }
 
 .action-btn {
-  padding: 12px 30px;
-  border-radius: 8px;
+  padding: 10px 24px;
+  border-radius: 10px;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   border: none;
   font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .action-btn.primary {
-  background: var(--accent-color);
+  background: var(--accent-gradient, linear-gradient(135deg, #ff6600 0%, #ff8533 100%));
   color: white;
+  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
 }
 
-.action-btn.primary:hover {
-  background: #059669;
-  /* Or adjust to hover color var */
+.action-btn.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e65c00 0%, #ff7519 100%);
   transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 102, 0, 0.35);
+}
+
+.action-btn.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .action-btn.secondary {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-primary, #0f172a);
 }
 
 .action-btn.secondary:hover {
-  background: var(--bg-hover);
+  background: var(--bg-hover, rgba(255, 247, 237, 0.85));
+  border-color: var(--accent-color, #ff6600);
   transform: translateY(-1px);
 }
 
 .form-section {
   background: var(--bg-card);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 25px;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--accent-color);
-  margin-bottom: 20px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin-bottom: 18px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

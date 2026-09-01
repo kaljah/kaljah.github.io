@@ -276,7 +276,9 @@
 .sbti-table-container {
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid var(--border-light, #e2e8f0);
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
 }
 
 .sbti-table {
@@ -287,18 +289,23 @@
 }
 
 .sbti-table th {
-  background: #f8fafc;
+  background: rgba(248, 250, 252, 0.85);
   padding: 12px 16px;
   font-weight: 600;
   color: var(--text-secondary, #64748b);
-  border-bottom: 1px solid var(--border-light, #e2e8f0);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
   white-space: nowrap;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .sbti-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid var(--border-light, #e2e8f0);
-  color: var(--text-main, #0f172a);
+  border-bottom: 1px solid rgba(241, 245, 249, 0.9);
+  color: var(--text-primary, #0f172a);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 .sbti-table tr:last-child td {
@@ -306,28 +313,34 @@
 }
 
 .sbti-table tr:hover td {
-  background: rgba(248, 250, 252, 0.8);
+  background: rgba(255, 247, 237, 0.5);
 }
 
 .badge-status {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .badge-status.achieved {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(16, 185, 129, 0.12);
   color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-status.off-track {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.12);
   color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .badge-status.projected {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(59, 130, 246, 0.12);
   color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
