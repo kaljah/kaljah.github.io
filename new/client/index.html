@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/carbon_tech.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Carbon Tech</title>
+    <script>
+      // Suppress React DevTools download console hint in development
+      if (typeof window !== "undefined") {
+        const _origInfo = console.info;
+        console.info = function (...args) {
+          if (typeof args[0] === "string" && args[0].includes("React DevTools")) return;
+          _origInfo.apply(console, args);
+        };
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

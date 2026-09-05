@@ -38,13 +38,78 @@
   }
 }
 
+/* TopBar Filters Horizontal Row */
+.dashboard-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.dashboard-filters .filter-wrapper {
+  min-width: 105px;
+  max-width: 140px;
+  flex: 1;
+}
+
+.dashboard-filters .custom-dropdown-btn,
+.dashboard-filters .custom-dropdown-button {
+  padding: 5px 10px !important;
+  font-size: 0.8rem !important;
+  height: 34px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid var(--border-color, #e2e8f0) !important;
+  border-radius: 8px !important;
+  white-space: nowrap;
+}
+
+.topbar-goal-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  font-size: 0.8rem;
+}
+
 /* Header Row */
 .dashboard-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 20px;
 }
+
+
+.target-goal-text {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.target-goal-text strong {
+  color: var(--text-primary);
+}
+
+.btn-target-action {
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-target-action:hover {
+  border-color: var(--accent-color, #ff6600);
+  color: var(--accent-color, #ff6600);
+}
+
 
 .grid-title {
   font-size: 1.65rem;
@@ -91,6 +156,15 @@
   100% { transform: scale(2.8); opacity: 0; }
 }
 
+.pulse-dot.updating {
+  background: var(--accent-color, #ff6600);
+}
+
+.pulse-dot.updating::after {
+  background: var(--accent-color, #ff6600);
+  animation: pulse 0.8s infinite;
+}
+
 /* Hero Card - Modern Glass */
 .hero-card {
   padding: 28px 32px;
@@ -116,12 +190,29 @@
   gap: 24px;
 }
 
+@media (max-width: 1024px) {
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+}
+
 .trend-card-enhanced {
-  border-radius: 24px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.trend-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-elevated);
+  border-color: rgba(255, 255, 255, 0.95);
 }
 
 .donuts-row {
@@ -132,9 +223,20 @@
 }
 
 .donut-card-enhanced {
-  border-radius: 24px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 24px;
   flex: 1;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.donut-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-elevated);
+  border-color: rgba(255, 255, 255, 0.95);
 }
 
 /* Goal Progress Badge */
@@ -338,7 +440,12 @@
 
 /* Categorical Card */
 .categorical-card {
-  padding: 20px;
+  padding: 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
 }
 
 .card-header-row {
@@ -349,9 +456,9 @@
 }
 
 .card-subtitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1e293b;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
   margin: 0;
 }
 
@@ -361,16 +468,22 @@
   gap: 6px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
-  background: #f1f5f9;
-  padding: 4px 10px;
-  border-radius: 6px;
+  color: var(--text-secondary, #64748b);
+  background: var(--bg-hover, #f1f5f9);
+  padding: 4px 12px;
+  border-radius: 999px;
 }
 
 .categorical-hierarchy-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+}
+
+@media (max-width: 1200px) {
+  .categorical-hierarchy-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .activity-group {
@@ -382,25 +495,27 @@
 .activity-group-header {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0f172a;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #ff6600;
+  color: var(--text-primary, #0f172a);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent-color, #ff6600);
   width: fit-content;
   padding-right: 12px;
 }
 
 .division-group {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  padding: 14px;
 }
 
 .division-group-header {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   text-transform: uppercase;
   margin-bottom: 12px;
+  letter-spacing: 0.05em;
 }
 
 .region-cards-grid {
@@ -410,22 +525,24 @@
 }
 
 .region-compact-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 10px;
-  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .region-compact-card:hover {
-  border-color: #ff6600;
+  border-color: var(--accent-color, #ff6600);
   transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.1);
 }
 
 .region-name {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-primary, #0f172a);
   margin-bottom: 4px;
 }
 
@@ -638,7 +755,6 @@
 }
 
 .manage-factors-btn {
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -652,12 +768,44 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
 }
 
 .manage-factors-btn:hover {
   border-color: #ff6600;
   color: #ff6600;
-  background: #fff7ed;
+}
+
+/* Print Styles for Multi-Page Executive Brief Export */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    overflow: visible !important;
+  }
+  #root {
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .sidebar, .top-bar, .card-header-actions, .compare-toggle-btn, .collapse-toggle-icon, button {
+    display: none !important;
+  }
+  .dashboard-content {
+    padding: 20px !important;
+    max-width: 100% !important;
+  }
+  .card, .glass-panel, .hero-card, .trend-card-enhanced, .donut-card-enhanced, .categorical-card, .detailed-table-card {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    page-break-inside: avoid;
+    margin-bottom: 24px !important;
+  }
+  .collapsible-body-wrapper.collapsed {
+    display: block !important;
+    max-height: none !important;
+    opacity: 1 !important;
+  }
 }
 
 /* Donut Chart Headers */

@@ -2091,8 +2091,10 @@ def get_report_exclusions():
 @dashboard_bp.route("/sbti-trajectory", methods=["GET"])
 @login_required
 def get_sbti_trajectory():
-    from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission
+    from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission, Facility
     from datetime import datetime
+    
+    facility_id = request.args.get("facility_id") or request.args.get("facilityId")
     
     target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
     if not target:
@@ -2104,17 +2106,30 @@ def get_sbti_trajectory():
     scope2_actuals = {}
     scope3_actuals = {}
     
-    for em in Emission.query.filter_by(status="Verified").all():
+    q_s1 = Emission.query.filter_by(status="Verified")
+    q_s2 = Scope2Emission.query.filter_by(status="Verified")
+    q_s3 = Scope3Emission.query.filter_by(status="Verified")
+    
+    if facility_id and facility_id != "all":
+        try:
+            fid = int(facility_id)
+            q_s1 = q_s1.filter_by(facility_id=fid)
+            q_s2 = q_s2.filter_by(facility_id=fid)
+            q_s3 = q_s3.filter_by(facility_id=fid)
+        except ValueError:
+            pass
+            
+    for em in q_s1.all():
         val = float(em.co2e_total or em.co2_emissions or 0)
         actuals[em.year] = actuals.get(em.year, 0) + val
         scope1_actuals[em.year] = scope1_actuals.get(em.year, 0) + val
 
-    for em in Scope2Emission.query.filter_by(status="Verified").all():
+    for em in q_s2.all():
         val = float(em.co2e or 0)
         actuals[em.year] = actuals.get(em.year, 0) + val
         scope2_actuals[em.year] = scope2_actuals.get(em.year, 0) + val
 
-    for em in Scope3Emission.query.filter_by(status="Verified").all():
+    for em in q_s3.all():
         val = float(em.co2e or 0)
         actuals[em.year] = actuals.get(em.year, 0) + val
         scope3_actuals[em.year] = scope3_actuals.get(em.year, 0) + val
@@ -2123,17 +2138,19 @@ def get_sbti_trajectory():
     base_year = target.base_year
     target_year = target.target_year
     rate = target.reduction_rate_pct / 100.0
+    rate_15c = 0.042  # 4.2% annual linear reduction for 1.5°C
+    rate_wb2c = 0.025 # 2.5% annual linear reduction for Well-Below 2°C
     
     current_year = datetime.now().year
     end_year = min(target_year, max(current_year + 10, target_year))
     
     for yr in range(base_year, end_year + 1):
         years_diff = yr - base_year
-        # SBTi Target line
+        # Target lines
         sbti_emissions = target.base_year_emissions * (1 - (rate * years_diff))
-        if sbti_emissions < 0:
-            sbti_emissions = 0
-            
+        sbti_15c_emissions = target.base_year_emissions * (1 - (rate_15c * years_diff))
+        sbti_wb2c_emissions = target.base_year_emissions * (1 - (rate_wb2c * years_diff))
+        
         # Business As Usual (Assume 1.5% growth if no action taken)
         bau_emissions = target.base_year_emissions * (1 + (0.015 * years_diff))
 
@@ -2141,7 +2158,9 @@ def get_sbti_trajectory():
         
         trajectory.append({
             "year": str(yr),
-            "sbti_target": round(sbti_emissions, 2),
+            "sbti_target": round(max(sbti_emissions, 0), 2),
+            "sbti_15c": round(max(sbti_15c_emissions, 0), 2),
+            "sbti_wb2c": round(max(sbti_wb2c_emissions, 0), 2),
             "bau_projection": round(bau_emissions, 2),
             "actual": round(actuals[yr], 2) if has_actual_data else None,
             "scope1": round(scope1_actuals.get(yr, 0), 2) if has_actual_data else 0,
@@ -2170,9 +2189,10 @@ def get_sbti_trajectory():
         "reduction_rate_pct": target.reduction_rate_pct,
         "pathway_type": target.pathway_type,
         "current_year": latest_actual_year,
-        "current_actual": round(current_actual, 2),
-        "current_target": round(max(current_target, 0), 2),
-        "reduction_achieved_pct": round(reduction_achieved_pct, 1),
+        "current_actual_emissions": round(current_actual, 2),
+        "current_target_emissions": round(current_target, 2),
+        "reduction_achieved_pct": round(reduction_achieved_pct, 2),
         "on_track": on_track,
         "trajectory": trajectory
     })
+
