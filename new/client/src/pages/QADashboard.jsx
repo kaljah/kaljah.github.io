@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../api';
 import { useToast } from '../components/Toast';
 import { Download, AlertTriangle, CheckCircle, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -11,6 +11,8 @@ const PAGE_SIZE = 100;
 export default function QADashboard() {
     const toast = useToast();
     const [loading, setLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const isFirstLoadRef = useRef(true);
     const [data, setData] = useState(null);
     const [scopeFilter, setScopeFilter] = useState('all');
     const [yearFilter, setYearFilter] = useState('all');
@@ -20,7 +22,11 @@ export default function QADashboard() {
     const [exporting, setExporting] = useState(false);
 
     const fetchDashboard = useCallback(async () => {
-        setLoading(true);
+        if (isFirstLoadRef.current) {
+            setLoading(true);
+        } else {
+            setIsUpdating(true);
+        }
         setSelectedIds(new Set());
         try {
             const params = { limit: PAGE_SIZE, offset };
@@ -32,6 +38,8 @@ export default function QADashboard() {
             toast.error(err.response?.data?.error || 'Failed to load QA/QC data');
         } finally {
             setLoading(false);
+            setIsUpdating(false);
+            isFirstLoadRef.current = false;
         }
     }, [scopeFilter, yearFilter, offset]);
 
@@ -106,7 +114,7 @@ export default function QADashboard() {
         }
     };
 
-    if (loading) return <LoadingSpinner />;
+    if (loading && !data) return <LoadingSpinner />;
     if (!data) return <div className="dashboard-content">No Data Available</div>;
 
     const { tier1_uncertainty, flagged_records, total_flagged_count, returned_count } = data;
@@ -115,7 +123,7 @@ export default function QADashboard() {
 
     return (
         <ErrorBoundary>
-            <div className="dashboard-content">
+            <div className="dashboard-content" style={{ opacity: isUpdating ? 0.75 : 1, transition: 'opacity 0.2s ease' }}>
                 <div className="dashboard-grid">
 
                     {/* Header row */}

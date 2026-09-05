@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -101,9 +101,9 @@ const DashboardEnhanced = () => {
   const [lastUpdated, setLastUpdated] = useState(
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   );
-  const [categoricalCollapsed, setCategoricalCollapsed] = useState(true);
+  const [categoricalCollapsed, setCategoricalCollapsed] = useState(false);
   const [detailedBreakdownCollapsed, setDetailedBreakdownCollapsed] =
-    useState(true);
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -130,17 +130,15 @@ const DashboardEnhanced = () => {
             ? filterRes.data.segments
             : [],
         });
-
-        // Set default year to 'all' (explicitly, though it initializes to 'all')
-        // if (filterRes.data.years?.length > 0) {
-        //     setCurrentYear(filterRes.data.years[0].toString());
-        // }
       } catch (error) {
         console.error("Failed to load initial data:", error);
       }
     };
     loadInitialData();
   }, []);
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const isFirstLoadRef = useRef(true);
 
   // Load dashboard data
   useEffect(() => {
@@ -156,7 +154,11 @@ const DashboardEnhanced = () => {
 
   const loadDashboardData = async () => {
     try {
-      setLoading(true);
+      if (isFirstLoadRef.current) {
+        setLoading(true);
+      } else {
+        setIsUpdating(true);
+      }
       const queryParams = {
         facilityId: currentRegion,
         activity: currentActivity,
@@ -419,6 +421,8 @@ const DashboardEnhanced = () => {
       toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
+      setIsUpdating(false);
+      isFirstLoadRef.current = false;
     }
   };
 
@@ -629,48 +633,32 @@ const DashboardEnhanced = () => {
             placeholder="Region"
           />
         </div>
-      </div>,
+      </div>
     );
 
     setTopBarRight(
       goal ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span
-            style={{
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              color: "#6b7280",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            Target {goal.year}:
-            <strong style={{ color: "#111827" }}>
-              {Number(goal.target_amount).toLocaleString()} tCO₂e
-            </strong>
+        <div className="topbar-goal-badge">
+          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+            Target {goal.year}: <strong style={{ color: "var(--text-primary)" }}>{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
           </span>
           <button
-            className="action-button secondary"
-            style={{ padding: "5px 12px", fontSize: "0.78rem" }}
-            onClick={() =>
-              navigate("/manage-data", { state: { tab: "goals" } })
-            }
+            className="btn-target-action"
+            onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
             title="Manage emission goals and base years in Manage Data"
           >
-            Edit Goals
+            Edit Target
           </button>
         </div>
       ) : (
         <button
-          className="action-button secondary"
-          style={{ padding: "5px 12px", fontSize: "0.78rem" }}
+          className="btn-target-action"
           onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
           title="Set emission targets in Manage Data"
         >
-          + Set Emission Target
+          + Set Target
         </button>
-      ),
+      )
     );
 
     return () => {
@@ -718,13 +706,19 @@ const DashboardEnhanced = () => {
   }
 
   return (
-    <div className="dashboard-content">
+    <div
+      className="dashboard-content"
+      style={{
+        opacity: isUpdating ? 0.8 : 1,
+        transition: "opacity 0.15s ease",
+      }}
+    >
       <div className="dashboard-grid">
         <div className="dashboard-header-row">
           <h1 className="grid-title">GHG Emissions Dashboard</h1>
           <div className="live-badge">
-            <div className="pulse-dot"></div>
-            Live Content • Updated {lastUpdated}
+            <div className={`pulse-dot ${isUpdating ? "updating" : ""}`}></div>
+            {isUpdating ? "Syncing filters..." : `Live Content • Updated ${lastUpdated}`}
           </div>
         </div>
 
@@ -755,17 +749,43 @@ const DashboardEnhanced = () => {
 
         {/* Hero Overview Card */}
         <div className="card hero-card glass-panel">
-          <div className="hero-header">
+          <div className="hero-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 className="hero-title">Emissions Overview</h2>
-            <div className="location-badge">
-              {currentRegion !== "all"
-                ? facilities.find((f) => f.id.toString() === currentRegion)
-                    ?.name || "Region"
-                : currentDivision !== "all"
-                  ? currentDivision
-                  : currentActivity !== "all"
-                    ? currentActivity
-                    : "All Regions"}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="location-badge">
+                {currentRegion !== "all"
+                  ? facilities.find((f) => f.id.toString() === currentRegion)
+                      ?.name || "Region"
+                  : currentDivision !== "all"
+                    ? currentDivision
+                    : currentActivity !== "all"
+                      ? currentActivity
+                      : "All Regions"}
+              </div>
+              <button
+                onClick={() => window.print()}
+                className="btn-secondary-unified"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  border: '1px solid var(--border-color)',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  color: 'var(--text-primary)'
+                }}
+                title="Export multi-page executive summary PDF"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                  <path d="M6 14h12v8H6z" />
+                </svg>
+                Export Executive Brief (PDF)
+              </button>
             </div>
           </div>
 
@@ -867,16 +887,18 @@ const DashboardEnhanced = () => {
           </div>
         </div>
 
-        {/* --- NEW SECTION: Charts (Trend & Donut) --- */}
+        {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
         <div className="charts-section">
-          {/* Trend Chart - Full Width or large */}
+          {/* Trend Chart */}
           <div className="card trend-card-enhanced glass-panel">
             <div className="card-header-row">
-              <h3 className="card-title">Emissions Trend</h3>
+              <div>
+                <h3 className="card-title">Emissions Trend & Projection</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                  Historical inventory trajectory with 5-year predictive forecast
+                </p>
+              </div>
               <div className="card-header-actions">
-                {!isCompareMode && (
-                  <div className="card-info-badge">Over Time</div>
-                )}
                 <button
                   className={`compare-toggle-btn ${isCompareMode ? "active" : ""}`}
                   onClick={() => setIsCompareMode(!isCompareMode)}
@@ -898,7 +920,7 @@ const DashboardEnhanced = () => {
             <div
               className="chart-container"
               style={{
-                height: "600px",
+                height: "360px",
                 width: "100%",
                 minWidth: 0,
                 position: "relative",
@@ -941,56 +963,12 @@ const DashboardEnhanced = () => {
                         },
                       ]
                 }
-                height={600}
+                height={360}
               />
             </div>
           </div>
 
-
-          {/* SBTi Trajectory Chart */}
-          {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
-            <div className="card full-width-card glass-panel" style={{ marginTop: '24px' }}>
-              <div className="card-header-row">
-                <div>
-                  <h3 className="card-subtitle">SBTi Trajectory Pathway ({sbtiData.pathway_type})</h3>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                    Tracking emissions against Science Based Targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
-                  </p>
-                </div>
-              </div>
-              <div className="chart-container" style={{ height: "400px", width: "100%" }}>
-                <LineChartWrapper
-                  data={sbtiData.trajectory}
-                  xAxisKey="year"
-                  series={[
-                    {
-                      dataKey: "actual",
-                      name: "Actual Emissions (Verified)",
-                      color: "#3b82f6",
-                      strokeWidth: 3
-                    },
-                    {
-                      dataKey: "sbti_target",
-                      name: "SBTi Target Pathway",
-                      color: "#10b981",
-                      strokeDasharray: "5 5",
-                      strokeWidth: 2
-                    },
-                    {
-                      dataKey: "bau_projection",
-                      name: "Business as Usual",
-                      color: "#ef4444",
-                      strokeDasharray: "3 3",
-                      strokeWidth: 2
-                    }
-                  ]}
-                  height={400}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Donut Charts - Side by Side */}
+          {/* Donut Charts Column (1fr) */}
           <div className="donuts-row">
             <div className="card donut-card-enhanced glass-panel">
               <div className="donut-header">
@@ -999,7 +977,7 @@ const DashboardEnhanced = () => {
               <div
                 className="chart-container"
                 style={{
-                  height: "300px",
+                  height: "170px",
                   width: "100%",
                   minWidth: 0,
                   position: "relative",
@@ -1007,9 +985,9 @@ const DashboardEnhanced = () => {
               >
                 <PieChartWrapper
                   data={activityChartData}
-                  height={300}
-                  innerRadius={80}
-                  outerRadius={110}
+                  height={170}
+                  innerRadius={50}
+                  outerRadius={75}
                 />
               </div>
             </div>
@@ -1020,7 +998,7 @@ const DashboardEnhanced = () => {
               <div
                 className="chart-container"
                 style={{
-                  height: "300px",
+                  height: "170px",
                   width: "100%",
                   minWidth: 0,
                   position: "relative",
@@ -1028,14 +1006,78 @@ const DashboardEnhanced = () => {
               >
                 <PieChartWrapper
                   data={sourceChartData}
-                  height={300}
-                  innerRadius={80}
-                  outerRadius={110}
+                  height={170}
+                  innerRadius={50}
+                  outerRadius={75}
                 />
               </div>
             </div>
           </div>
         </div>
+
+        {/* SBTi Trajectory Pathway - Full Width Banner */}
+        {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
+          <div className="card full-width-card glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
+            <div className="card-header-row" style={{ marginBottom: '16px' }}>
+              <div>
+                <h3 className="card-subtitle" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
+                  SBTi Decarbonization Trajectory ({sbtiData.pathway_type || "1.5°C"})
+                </h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                  Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
+                </p>
+              </div>
+              <button
+                className="btn-secondary-unified"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 16px",
+                  borderRadius: "10px",
+                  background: "rgba(255, 255, 255, 0.8)",
+                  border: "1px solid var(--border-color)",
+                  cursor: "pointer",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  color: "var(--text-primary)"
+                }}
+                onClick={() => navigate("/sbti")}
+              >
+                View Full SBTi Dashboard →
+              </button>
+            </div>
+            <div className="chart-container" style={{ height: "320px", width: "100%" }}>
+              <LineChartWrapper
+                data={sbtiData.trajectory}
+                xAxisKey="year"
+                series={[
+                  {
+                    dataKey: "actual",
+                    name: "Actual Verified Emissions",
+                    color: "#3b82f6",
+                    strokeWidth: 3
+                  },
+                  {
+                    dataKey: "sbti_target",
+                    name: "SBTi 1.5°C Linear Target",
+                    color: "#10b981",
+                    strokeDasharray: "5 5",
+                    strokeWidth: 2
+                  },
+                  {
+                    dataKey: "bau_projection",
+                    name: "Business as Usual (+1.5%/yr)",
+                    color: "#ef4444",
+                    strokeDasharray: "3 3",
+                    strokeWidth: 2
+                  }
+                ]}
+                height={320}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Categorical Breakdown Cards */}
 

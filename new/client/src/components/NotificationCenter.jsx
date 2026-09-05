@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import api from "../api";
 import { useToast } from "./Toast";
+import { useAuth } from "../context/AuthContext";
 
 // ─── Type → icon + colour map ─────────────────────────────────────────────────
 const TYPE_CONFIG = {
@@ -262,6 +263,7 @@ const iconBtnStyle = {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const NotificationCenter = () => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -274,6 +276,7 @@ const NotificationCenter = () => {
 
   // ── Fetch history ─────────────────────────────────────────────────────
   const fetchNotifications = useCallback(async () => {
+    if (!user) return;
     try {
       const res = await api.get("/notifications");
       if (res.status === 200) {
@@ -287,10 +290,11 @@ const NotificationCenter = () => {
     } catch (err) {
       console.error("Failed to fetch notifications", err);
     }
-  }, []);
+  }, [user]);
 
   // ── SSE connection ────────────────────────────────────────────────────
   const connectSSE = useCallback(() => {
+    if (!user) return;
     if (esRef.current) esRef.current.close();
 
     const base = import.meta.env.VITE_API_URL || "/api";
@@ -317,14 +321,27 @@ const NotificationCenter = () => {
     es.onerror = () => {
       es.close();
       esRef.current = null;
+      if (!user) return;
       const delay = retryDelayRef.current;
       retryDelayRef.current = Math.min(delay * 2, 30_000);
-      setTimeout(connectSSE, delay);
+      setTimeout(() => {
+        if (user) connectSSE();
+      }, delay);
     };
-  }, [toast]);
+  }, [user, toast]);
 
   // ── Mount / unmount ───────────────────────────────────────────────────
   useEffect(() => {
+    if (!user) {
+      if (esRef.current) {
+        esRef.current.close();
+        esRef.current = null;
+      }
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     fetchNotifications().then(() => connectSSE());
     return () => {
       if (esRef.current) {
@@ -332,7 +349,7 @@ const NotificationCenter = () => {
         esRef.current = null;
       }
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, fetchNotifications, connectSSE]);
 
   // ── Click-outside ─────────────────────────────────────────────────────
   useEffect(() => {

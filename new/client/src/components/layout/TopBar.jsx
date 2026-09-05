@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Bell, User, ChevronDown } from "lucide-react";
+import { User, Building } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLayout } from "../../context/LayoutContext";
 import NotificationCenter from "../NotificationCenter";
@@ -25,22 +25,10 @@ const TopBar = () => {
     <header className="top-bar">
       <div className="top-bar-left-section">
         <div className="breadcrumbs">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-          <span>Dashboard</span>
+          <Building size={16} style={{ color: "var(--accent-color, #ff6600)" }} />
+          <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>Corporate ESG</span>
         </div>
+
         {topBarLeft && (
           <div className="top-bar-injected-left">{topBarLeft}</div>
         )}
@@ -55,13 +43,21 @@ const TopBar = () => {
           <button
             className="icon-button"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
+            title="User Profile"
           >
-            <User size={20} />
+            <User size={18} />
           </button>
           {isProfileOpen && (
             <div className="top-profile-dropdown">
-              <div className="dropdown-divider-top"></div>
-              <button className="top-drop-item logout-btn-top" onClick={logout}>
+              <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--border-color)" }}>
+                <div style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--text-primary)" }}>
+                  {user?.fullName || user?.email}
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", textTransform: "uppercase", marginTop: "2px" }}>
+                  Role: {user?.role}
+                </div>
+              </div>
+              <button className="top-drop-item logout-btn-top" onClick={logout} style={{ width: "100%", textAlign: "left", padding: "10px 14px" }}>
                 Sign Out
               </button>
             </div>
@@ -76,3 +72,6 @@ const TopBar = () => {
 };
 
 export default TopBar;
+
+
+

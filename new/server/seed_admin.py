@@ -49,6 +49,20 @@ def seed_admin():
                 "fullName": "System Administrator",
                 "jobTitle": "IT Administrator",
             },
+            {
+                "email": "admin@test.com",
+                "password": "Admin@123!",
+                "role": "admin",
+                "fullName": "Admin User",
+                "jobTitle": "Sustainability Lead",
+            },
+            {
+                "email": "user@test.com",
+                "password": "User@123!",
+                "role": "user",
+                "fullName": "Regular User",
+                "jobTitle": "Data Specialist",
+            },
         ]
 
         for u_data in users_to_seed:

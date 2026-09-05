@@ -1926,13 +1926,88 @@ const Scope1Form = () => {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div
+          className="formula-inspector-card"
+          style={{
+            background: "rgba(255, 247, 237, 0.7)",
+            border: "1px solid rgba(255, 102, 0, 0.25)",
+            borderRadius: "14px",
+            padding: "16px 20px",
+            marginBottom: "24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--accent-color, #ff6600)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                📐 Live Equation Inspector (Tier 2/3 GHG Protocol)
+              </span>
+            </div>
+            <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600 }}>
+              GWP Standard: IPCC AR6 (CO₂:1, CH₄:28, N₂O:265)
+            </span>
+          </div>
+
+          <div
+            style={{
+              fontFamily: "monospace",
+              fontSize: "0.88rem",
+              background: "#ffffff",
+              padding: "10px 14px",
+              borderRadius: "8px",
+              border: "1px solid #fed7aa",
+              color: "#0f172a",
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "6px",
+            }}
+          >
+            <span style={{ color: "#ea580c", fontWeight: 700 }}>
+              {formData.amount || formData.quantity ? `${formData.amount || formData.quantity} ${formData.unit || "units"}` : "[Activity Data]"}
+            </span>
+            <span style={{ color: "#94a3b8" }}>×</span>
+            <span style={{ color: "#2563eb", fontWeight: 600 }}>
+              {formData.fuel ? `${formData.fuel} Factor` : "[Emission Factor]"}
+            </span>
+            <span style={{ color: "#94a3b8" }}>×</span>
+            <span style={{ color: "#16a34a", fontWeight: 600 }}>
+              {formData.hhv ? `${formData.hhv} HHV` : "1.0 HHV"}
+            </span>
+            <span style={{ color: "#94a3b8" }}>×</span>
+            <span style={{ color: "#9333ea", fontWeight: 600 }}>GWP</span>
+            <span style={{ color: "#94a3b8" }}>=</span>
+            <span style={{ color: "#0f172a", fontWeight: 800, background: "#fef08a", padding: "2px 6px", borderRadius: "4px" }}>
+              CO₂e Total (tCO₂e)
+            </span>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            className="btn-add-draft"
+            onClick={() => handleAddEntry("Pending")}
+            style={{
+              flex: 1,
+              background: "rgba(255, 255, 255, 0.9)",
+              border: "1px solid var(--border-color)",
+              color: "var(--text-primary)",
+              fontWeight: 600,
+              padding: "10px 16px",
+              borderRadius: "10px",
+              cursor: "pointer",
+            }}
+          >
+            Save as Draft (Maker Mode)
+          </button>
           <button
             className="btn-add-activity"
             onClick={() => handleAddEntry("Verified")}
-            style={{ flex: 1 }}
+            style={{ flex: 1.5 }}
           >
-            + Add Activity
+            + Calculate & Submit for Review
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "../components/Toast";
@@ -27,6 +27,8 @@ const SbtiDashboard = () => {
   const toast = useToast();
 
   const [loading, setLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const isFirstLoadRef = useRef(true);
   const [sbtiData, setSbtiData] = useState(null);
   const [showConfig, setShowConfig] = useState(false);
   const [savingTarget, setSavingTarget] = useState(false);
@@ -41,7 +43,11 @@ const SbtiDashboard = () => {
   });
 
   const fetchData = async () => {
-    setLoading(true);
+    if (isFirstLoadRef.current) {
+      setLoading(true);
+    } else {
+      setIsUpdating(true);
+    }
     try {
       const [trajRes, manageRes] = await Promise.all([
         api.get("/dashboard/sbti-trajectory"),
@@ -68,6 +74,8 @@ const SbtiDashboard = () => {
       toast.show("Error loading SBTi progress data", "error");
     } finally {
       setLoading(false);
+      setIsUpdating(false);
+      isFirstLoadRef.current = false;
     }
   };
 
@@ -155,23 +163,31 @@ const SbtiDashboard = () => {
     document.body.removeChild(link);
   };
 
-  // Trajectory chart lines
+  // Trajectory chart lines (Multi-scenario 1.5C + WB2C + BAU + Actual)
   const trajectoryLines = useMemo(() => [
-    {
-      dataKey: "sbti_target",
-      name: `SBTi Target (${sbtiData?.pathway_type || "1.5°C"})`,
-      color: "#10b981",
-      strokeWidth: 3,
-    },
     {
       dataKey: "actual",
       name: "Actual Verified Emissions",
-      color: "#f97316",
+      color: "#ff6600",
       strokeWidth: 3,
     },
     {
+      dataKey: "sbti_15c",
+      name: "1.5°C Pathway (-4.2%/yr)",
+      color: "#10b981",
+      strokeWidth: 2.5,
+      strokeDasharray: "4 4",
+    },
+    {
+      dataKey: "sbti_wb2c",
+      name: "Well-Below 2°C (-2.5%/yr)",
+      color: "#3b82f6",
+      strokeWidth: 2,
+      strokeDasharray: "3 3",
+    },
+    {
       dataKey: "bau_projection",
-      name: "Business As Usual (BAU)",
+      name: "Business As Usual (+1.5%/yr)",
       color: "#94a3b8",
       strokeWidth: 2,
       strokeDasharray: "5 5",
@@ -180,12 +196,13 @@ const SbtiDashboard = () => {
 
   // Scope breakdown bars
   const scopeBars = useMemo(() => [
-    { dataKey: "scope1", name: "Scope 1 (Direct)", color: "#f97316", stackId: "a" },
+    { dataKey: "scope1", name: "Scope 1 (Direct)", color: "#ff6600", stackId: "a" },
     { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#3b82f6", stackId: "a" },
     { dataKey: "scope3", name: "Scope 3 (Value Chain)", color: "#8b5cf6", stackId: "a" },
   ], []);
 
-  if (loading) {
+
+  if (loading && !sbtiData) {
     return <LoadingSpinner fullScreen message="Loading SBTi Net-Zero Trajectory..." />;
   }
 
@@ -195,7 +212,7 @@ const SbtiDashboard = () => {
   const isOnTrack = sbtiData?.on_track ?? true;
 
   return (
-    <div className="sbti-container">
+    <div className="sbti-container" style={{ opacity: isUpdating ? 0.8 : 1, transition: "opacity 0.2s ease" }}>
       {/* Top Header */}
       <div className="sbti-header">
         <div className="sbti-title-group">

@@ -7,24 +7,24 @@ import { ToastProvider } from "./components/Toast";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/layout/Layout";
 import Login from "./pages/Login";
-import DashboardEnhanced from "./pages/DashboardEnhanced";
-import Emissions from "./pages/Emissions";
-import ManageData from "./pages/ManageData";
-import QADashboard from "./pages/QADashboard";
-import ReportsSync from "./pages/Reports";
-import CarbonIntensity from "./pages/CarbonIntensity";
-import MethaneIntensity from "./pages/MethaneIntensity";
-import UncertaintyAssessment from "./pages/UncertaintyAssessment";
-import ReferenceData from "./pages/ReferenceData";
-import Diagnostics from "./pages/Diagnostics";
-import AuditTrail from "./pages/AuditTrail";
-import UserManagement from "./pages/UserManagement";
-import Settings from "./pages/Settings";
-import SbtiDashboard from "./pages/SbtiDashboard";
 import LoadingSpinner from "./components/LoadingSpinner";
-// --- Lazy loaded heavy components ---
-const EmissionsMap = React.lazy(() => import("./pages/MethaneExplorer"));
+
+// Lazy loaded page components for optimal bundle splitting and fast load times
+const DashboardEnhanced = React.lazy(() => import("./pages/DashboardEnhanced"));
+const Emissions = React.lazy(() => import("./pages/Emissions"));
+const ManageData = React.lazy(() => import("./pages/ManageData"));
+const QADashboard = React.lazy(() => import("./pages/QADashboard"));
 const Reports = React.lazy(() => import("./pages/Reports"));
+const CarbonIntensity = React.lazy(() => import("./pages/CarbonIntensity"));
+const MethaneIntensity = React.lazy(() => import("./pages/MethaneIntensity"));
+const UncertaintyAssessment = React.lazy(() => import("./pages/UncertaintyAssessment"));
+const ReferenceData = React.lazy(() => import("./pages/ReferenceData"));
+const Diagnostics = React.lazy(() => import("./pages/Diagnostics"));
+const AuditTrail = React.lazy(() => import("./pages/AuditTrail"));
+const UserManagement = React.lazy(() => import("./pages/UserManagement"));
+const Settings = React.lazy(() => import("./pages/Settings"));
+const SbtiDashboard = React.lazy(() => import("./pages/SbtiDashboard"));
+const EmissionsMap = React.lazy(() => import("./pages/MethaneExplorer"));
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -66,9 +66,7 @@ const AppRoutes = () => {
         path="/"
         element={
           <PrivateRoute>
-            <React.Suspense fallback={<LoadingSpinner fullScreen message="Loading Component..." />}>
-              <Layout />
-            </React.Suspense>
+            <Layout />
           </PrivateRoute>
         }
       >
@@ -207,13 +205,13 @@ const App = () => {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <LayoutProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <LayoutProvider>
             <ToastProvider>
               <AppRoutes />
             </ToastProvider>
-          </AuthProvider>
-        </LayoutProvider>
+          </LayoutProvider>
+        </AuthProvider>
       </BrowserRouter>
     </ErrorBoundary>
   );
