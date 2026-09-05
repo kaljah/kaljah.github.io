@@ -8,7 +8,12 @@ export const LayoutProvider = ({ children }) => {
 
   return (
     <LayoutContext.Provider
-      value={{ topBarLeft, setTopBarLeft, topBarRight, setTopBarRight }}
+      value={{
+        topBarLeft,
+        setTopBarLeft,
+        topBarRight,
+        setTopBarRight,
+      }}
     >
       {children}
     </LayoutContext.Provider>
@@ -22,3 +27,4 @@ export const useLayout = () => {
   }
   return context;
 };
+

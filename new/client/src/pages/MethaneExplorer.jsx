@@ -79,6 +79,8 @@ const EmissionsMap = () => {
   const [viewMode, setViewMode] = useState("total"); // 'total' (GHG) or 'methane'
   const [availableYears, setAvailableYears] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const isFirstLoadRef = useRef(true);
   const [availableActivities, setAvailableActivities] = useState([]);
 
   // Copernicus Sentinel-5P Satellite States
@@ -96,7 +98,11 @@ const EmissionsMap = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
+      if (isFirstLoadRef.current) {
+        setLoading(true);
+      } else {
+        setIsUpdating(true);
+      }
       const params = new URLSearchParams({
         year: filters.year,
       });
@@ -122,10 +128,12 @@ const EmissionsMap = () => {
         ...new Set((facRes.data || []).map((f) => f.activity).filter(Boolean)),
       ].sort();
       setAvailableActivities(acts);
-      setLoading(false);
     } catch (error) {
       console.error("Failed to load explorer data:", error);
+    } finally {
       setLoading(false);
+      setIsUpdating(false);
+      isFirstLoadRef.current = false;
     }
   };
 
@@ -346,7 +354,13 @@ const EmissionsMap = () => {
   const isSatelliteConnected = satelliteConfig && satelliteConfig.connected;
 
   return (
-    <div className="methane-explorer">
+    <div
+      className="methane-explorer"
+      style={{
+        opacity: isUpdating ? 0.88 : 1,
+        transition: "opacity 0.2s ease",
+      }}
+    >
       {/* Satellite new-pass floating alert toast */}
       {satelliteAlert && (
         <div

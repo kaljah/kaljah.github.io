@@ -345,22 +345,19 @@ def logout():
 
 
 @auth_bp.route("/me", methods=["GET"])
-@login_required
 def me():
     user_id = session.get("user_id")
-    current_app.logger.debug(
-        f"/me check session user_id={user_id}"
-    )  # SEC-12 FIX: replaced DEBUG print
     if not user_id:
-        return jsonify({"error": "Not authenticated"}), 401
+        return jsonify({"authenticated": False, "user": None}), 200
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         session.pop("user_id", None)
-        return jsonify({"error": "User not found"}), 401
+        return jsonify({"authenticated": False, "user": None}), 200
 
     return jsonify(
         {
+            "authenticated": True,
             "id": user.id,
             "fullName": user.fullName,
             "email": user.email,

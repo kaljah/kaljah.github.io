@@ -1075,13 +1075,8 @@ def _process_row_facilities(row, user_id, overwrite_duplicates):
 
     name = row.get("name")
     if not name:
-        errors.append("Region Name is required")
+        errors.append("Facility Name is required")
         return None, errors
-        
-    for req in ["activity", "division", "location", "boundary_type", "boundary_detail", "segment", "latitude", "longitude"]:
-        if not row.get(req) and str(row.get(req)) != "0":
-            errors.append(f"{req} is required")
-            return None, errors
 
     existing = Facility.query.filter_by(name=name).first()
     if existing:

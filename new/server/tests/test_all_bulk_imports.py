@@ -24,9 +24,9 @@ from datetime import datetime
 def app():
     from app import app as flask_app
     flask_app.config["TESTING"] = True
-    flask_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
     flask_app.config["WTF_CSRF_ENABLED"] = False
     with flask_app.app_context():
+        db.create_all()
         yield flask_app
         db.session.remove()
 
@@ -62,11 +62,21 @@ def wait_for_job(client, job_id, timeout=10):
 
 def test_bulk_import_facilities(logged_client, app):
     client = logged_client
+    with app.app_context():
+        from models import Scope2Emission, Scope3Emission
+        facs = Facility.query.filter(Facility.name.like("Imported Facility%")).all()
+        fac_ids = [f.id for f in facs]
+        if fac_ids:
+            Emission.query.filter(Emission.facility_id.in_(fac_ids)).delete(synchronize_session=False)
+            Scope2Emission.query.filter(Scope2Emission.facility_id.in_(fac_ids)).delete(synchronize_session=False)
+            Scope3Emission.query.filter(Scope3Emission.facility_id.in_(fac_ids)).delete(synchronize_session=False)
+        Facility.query.filter(Facility.name.like("Imported Facility%")).delete(synchronize_session=False)
+        db.session.commit()
     # Prepare CSV payload
     csv_data = (
         "name,location,description,activity,division,region,field,segment,code,external_id\n"
-        "Test Facility A,Location A,Desc A,Upstream,Prod,North,Field 1,Seg 1,C001,EXT-01\n"
-        "Test Facility B,Location B,Desc B,Upstream,Prod,South,Field 2,Seg 2,C002,EXT-02\n"
+        "Imported Facility A,Location A,Desc A,Upstream,Prod,North,Field 1,Seg 1,C001,EXT-01\n"
+        "Imported Facility B,Location B,Desc B,Upstream,Prod,South,Field 2,Seg 2,C002,EXT-02\n"
     )
     
     mapping = {
@@ -97,13 +107,16 @@ def test_bulk_import_facilities(logged_client, app):
     assert status["status"] == "completed"
     
     with app.app_context():
-        facs = Facility.query.filter(Facility.name.like("Test Facility%")).all()
+        facs = Facility.query.filter(Facility.name.like("Imported Facility%")).all()
         assert len(facs) == 2
         assert facs[0].location == "Location A"
         assert facs[1].region == "South"
 
 def test_bulk_import_custom_factors(logged_client, app):
     client = logged_client
+    with app.app_context():
+        CustomFactor.query.filter_by(name="My Factor").delete()
+        db.session.commit()
     csv_data = (
         "name,co2_factor,ch4_factor,n2o_factor,co_factor,unit,hhv_factor,usage,parent_fuel,source,version,uncertainty\n"
         "My Factor,10.5,0.1,0.01,0.5,kg,40,test,Gas,EPA,v1,5\n"

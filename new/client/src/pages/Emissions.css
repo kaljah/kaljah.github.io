@@ -57,23 +57,25 @@
 .scope-card {
   display: flex;
   flex-direction: column;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 18px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-radius: 20px;
   padding: 0;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
   transition:
-    border-color 0.22s,
-    box-shadow 0.22s,
-    transform 0.2s;
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   min-height: 280px;
 }
 
 .scope-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-elevated);
 }
 
 /* Top accent bar */
@@ -84,8 +86,8 @@
   left: 0;
   right: 0;
   height: 4px;
-  border-radius: 18px 18px 0 0;
-  transition: height 0.22s;
+  border-radius: 20px 20px 0 0;
+  transition: height 0.22s ease;
 }
 
 .scope-card:hover::before {
@@ -94,11 +96,11 @@
 
 /* Per-scope accent colours */
 .scope-1-card::before {
-  background: #10b981;
+  background: var(--accent-color, #ff6600);
 }
 .scope-1-card:hover {
-  border-color: #10b981;
-  box-shadow: 0 8px 28px rgba(16, 185, 129, 0.12);
+  border-color: var(--accent-color, #ff6600);
+  box-shadow: 0 12px 32px rgba(255, 102, 0, 0.15);
 }
 
 .scope-2-card::before {
@@ -106,7 +108,7 @@
 }
 .scope-2-card:hover {
   border-color: #3b82f6;
-  box-shadow: 0 8px 28px rgba(59, 130, 246, 0.12);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
 }
 
 .scope-3-card::before {
@@ -114,7 +116,7 @@
 }
 .scope-3-card:hover {
   border-color: #8b5cf6;
-  box-shadow: 0 8px 28px rgba(139, 92, 246, 0.12);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.15);
 }
 
 /* CARD CONTENT — vertical layout */

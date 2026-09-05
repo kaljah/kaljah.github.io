@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import { useToast } from "../components/Toast";
@@ -69,6 +69,8 @@ const CarbonIntensity = () => {
   const [rawTrendData, setRawTrendData] = useState([]);
   const [cbamProducts, setCbamProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const isFirstLoadRef = useRef(true);
 
   const GAS_TO_BOE = 0.178;
 
@@ -149,7 +151,11 @@ const CarbonIntensity = () => {
 
   const loadIntensityData = async () => {
     try {
-      setLoading(true);
+      if (isFirstLoadRef.current) {
+        setLoading(true);
+      } else {
+        setIsUpdating(true);
+      }
       const params = new URLSearchParams({
         year: selectedYear,
         facilityId: currentRegion,
@@ -221,6 +227,8 @@ const CarbonIntensity = () => {
       toast.error("Failed to load carbon intensity metrics");
     } finally {
       setLoading(false);
+      setIsUpdating(false);
+      isFirstLoadRef.current = false;
     }
   };
 
@@ -443,7 +451,13 @@ const CarbonIntensity = () => {
     );
 
   return (
-    <div className="intensity-content">
+    <div
+      className="intensity-content"
+      style={{
+        opacity: isUpdating ? 0.82 : 1,
+        transition: "opacity 0.2s ease",
+      }}
+    >
       <div className="intensity-grid">
         {/* KPI HERO CARD */}
         <div className="hero-card">

@@ -44,22 +44,24 @@
 }
 
 .sbti-kpi-card {
-  padding: 20px;
-  border-radius: 16px;
-  background: var(--card-bg, #ffffff);
-  border: 1px solid var(--border-light, #e2e8f0);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 22px 24px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.7) 100%);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .sbti-kpi-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card-elevated);
+  border-color: rgba(255, 255, 255, 0.95);
 }
 
 .sbti-kpi-card::before {
@@ -69,7 +71,7 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: var(--primary, #f97316);
+  background: var(--accent-color, #ff6600);
   border-radius: 4px 0 0 4px;
 }
 
@@ -246,11 +248,17 @@
 }
 
 .sbti-card {
-  background: var(--card-bg, #ffffff);
-  border: 1px solid var(--border-light, #e2e8f0);
-  border-radius: 16px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.sbti-card:hover {
+  border-color: rgba(255, 255, 255, 0.95);
 }
 
 .sbti-card-header {

@@ -1,16 +1,16 @@
 # Graph Report - H2  (2026-09-01)
 
 ## Corpus Check
-- 256 files · ~656,947 words
+- 257 files · ~658,808 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1826 nodes · 3390 edges · 195 communities (152 shown, 43 thin omitted)
+- 1828 nodes · 3416 edges · 194 communities (152 shown, 42 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 110 edges (avg confidence: 0.57)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7d83ef96`
+- Built from commit: `d0cf8a4d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,46 +19,46 @@
 - dashboard.py
 - Scope1Form.jsx
 - emission_factors_routes.py
-- emissionFactorsAPI.js
+- propagate_uncertainty
 - calculate_co2e
 - dependencies
 - devDependencies
 - App.jsx
 - test_emission_calculations.py
 - QADashboard.jsx
-- get_current_user
-- Emissions.jsx
+- login_required
+- useToast
 - User
-- extract_val
+- TestTier1Combustion
 - DashboardEnhanced.jsx
-- Scope1ImportWizard.jsx
-- create_scope2_emission
+- ColumnMappingWizard.jsx
+- to_psia
 - pages/ManageData.jsx
 - CalculationDispatcher
 - NotificationCenter.jsx
 - Sentinel5PService
-- useToast
+- Toast.jsx
 - models.py
 - dependencies
-- login
-- _get_user_copernicus_credentials
+- Emission
+- satellite.py
 - GHGCalculator
 - Backend (Server)
 - auth.py
-- login_required
+- routes/data.py
 - combustion.py
 - export_emissions
-- get_scope3_emissions
+- Scope3ImportWizard.jsx
 - Frontend (Client)
 - TestTier1FugitiveAverage
 - Tasks: [FEATURE NAME]
-- .dispatch
+- extract_val
 - TestEdgeCases
 - dispatcher.py
 - ModernReportGenerator.js
-- TestCO2ECalculation
+- login
 - Project Metadata
-- win
+- build
 - env.py
 - TestUnitConversions
 - Desktop App Dev Tools
@@ -103,19 +103,19 @@
 - AnomalyDetector
 - Implementation Tasks: QA/QC Module (IPCC & ISO 14064)
 - notifications.py
-- bulk_resolve
+- log_activity_and_notify
 - Core Principles
 - Core Principles
 - Core Principles
 - Core Principles
 - client/package.json
-- emission_factors.py
+- TestTier1Venting
 - TestUnauthenticatedAccess
 - Implementation Tasks: Batch Approve/Reject Pending Records
 - Implementation Plan: [FEATURE]
 - Implementation Plan: [FEATURE]
 - Existing Entities to Modify
-- Emission
+- class-variance-authority
 - test_runner.py
 - test_final.py
 - test_final_v3.py
@@ -130,7 +130,6 @@
 - Research & Design Decisions: Batch Approve/Reject
 - Research & Design Decisions: QA/QC Module (IPCC & ISO 14064)
 - analyze_all.py
-- lucide-react
 - chart.js
 - formik
 - framer-motion
@@ -155,20 +154,20 @@
 6. `log_activity_and_notify()` - 46 edges
 7. `calculate_co2e()` - 44 edges
 8. `useToast()` - 40 edges
-9. `get_allowed_facility_ids()` - 39 edges
-10. `Facility` - 38 edges
+9. `Facility` - 40 edges
+10. `get_allowed_facility_ids()` - 39 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Methane Intensity Analytics UI` --conceptually_related_to--> `Emission Calculation Engines`  [INFERRED]
   deck_assets/ui_methane.png → README.md
+- `seed_data()` --calls--> `User`  [INFERRED]
+  seed_demo_data.py → new/server/models.py
 - `seed_data()` --calls--> `Facility`  [INFERRED]
   seed_demo_data.py → new/server/models.py
 - `seed_data()` --calls--> `Emission`  [INFERRED]
   seed_demo_data.py → new/server/models.py
-- `seed_data()` --calls--> `User`  [INFERRED]
-  seed_demo_data.py → new/server/models.py
-- `_process_file_thread()` --indirect_call--> `compute_emissions()`  [INFERRED]
-  new/server/background_processor.py → new/server/calculations/legacy_engine.py
+- `BulkImportModal()` --calls--> `useToast()`  [EXTRACTED]
+  new/client/src/components/BulkImportModal.jsx → new/client/src/components/Toast.jsx
 
 ## Import Cycles
 - None detected.
@@ -177,35 +176,35 @@
 - **Graphify Tooling and Documentation** — agents_rules_graphify, agents_workflows_graphify, agents_rules_graphify_cli, agents_rules_graphify_mcp [EXTRACTED 1.00]
 - **Emission Calculation & Visualization Flow** — new_server_calculations, deck_assets_ui_dashboard, deck_assets_chart_industry_emissions [INFERRED 0.80]
 
-## Communities (195 total, 43 thin omitted)
+## Communities (194 total, 42 thin omitted)
 
 ### Community 0 - "emissions.py"
-Cohesion: 0.08
-Nodes (37): get_job_status(), approve_batch_emissions(), approve_emission(), bulk_delete_emissions(), delete_emission(), _escape_like(), export_emissions(), get_csv_template() (+29 more)
+Cohesion: 0.12
+Nodes (35): get_job_status(), add_bulk_upload(), add_emission(), approve_batch_emissions(), approve_emission(), bulk_delete_emissions(), delete_emission(), _escape_like() (+27 more)
 
 ### Community 1 - "dashboard.py"
-Cohesion: 0.06
-Nodes (52): cached, BaseYearRecalculation, Goal, create_base_year_recalculation(), create_goal(), get_available_years(), get_base_year(), get_batch_dashboard_data() (+44 more)
+Cohesion: 0.07
+Nodes (49): cached, BaseYearRecalculation, create_base_year_recalculation(), get_available_years(), get_base_year(), get_batch_dashboard_data(), get_categorical_breakdown(), get_dashboard_summary() (+41 more)
 
 ### Community 2 - "Scope1Form.jsx"
-Cohesion: 0.18
-Nodes (12): CustomDropdown(), AGRForm(), BlowdownForm(), CombustionForm(), HHV_REQUIRED_PROCESSES, CompletionsForm(), DehydratorForm(), DrillingForm() (+4 more)
+Cohesion: 0.07
+Nodes (28): CustomDropdown(), EmissionFactorOption(), AGRForm(), BlowdownForm(), CombustionForm(), HHV_REQUIRED_PROCESSES, CompletionsForm(), DehydratorForm() (+20 more)
 
 ### Community 3 - "emission_factors_routes.py"
-Cohesion: 0.09
-Nodes (31): get_factor_by_process_category(), get_factor_by_segment(), get_factors_by_segment_and_category(), Emission Factors Database - API Compendium 2021 Complete catalog from Sections…, Returns all emission factors applicable to the given segment. Args: segment…, Returns all emission factors for the given process category. Args:…, Returns all emission factors for a specific segment and process category. Args:…, get_all_emission_factors() (+23 more)
+Cohesion: 0.07
+Nodes (39): get_factor_by_process_category(), get_factor_by_segment(), get_factors_by_segment_and_category(), Emission Factors Database - API Compendium 2021 Complete catalog from Sections…, Returns all emission factors applicable to the given segment. Args: segment…, Returns all emission factors for the given process category. Args:…, Returns all emission factors for a specific segment and process category. Args:…, Emission Factors Database - API Compendium 2021 Comprehensive emission factors… (+31 more)
 
-### Community 4 - "emissionFactorsAPI.js"
-Cohesion: 0.17
-Nodes (9): EmissionFactorOption(), Scope1Form(), API_FACTORS, convertActivityData(), formatUncertainty(), getFactorUncertainty(), getProcessTypesForSegment(), getSegmentBgColor() (+1 more)
+### Community 4 - "propagate_uncertainty"
+Cohesion: 0.10
+Nodes (20): API Compendium 2021 - Section 7: Fugitive Emissions Implementation of equations…, API Compendium 2021 - Section 8: Indirect Emissions Implementation of indirect…, DehydratorCalculator, API Compendium 2021 - Section 6: Midstream & Process Emissions Implementation…, API Compendium 2021 §6.6 & GRI-GLYCalc Parametric Solubility Model (CALC-02…, API Compendium 2021 - Section 4: Calculation Fundamentals Implementation of…, combine_uncertainties_product(), combine_uncertainties_sum() (+12 more)
 
 ### Community 5 - "calculate_co2e"
-Cohesion: 0.08
-Nodes (36): Dual-efficiency flaring model (API 5-3, 5-4) with API §4.2.1 thermodynamic…, Standard fuel-based combustion calculation with API §4.2.1 thermodynamic…, Standard Quantity * EF fallback with unit handling and tier-aware uncertainty., API Section 7.2.3 - Compressor seals, Average Factor Method - counts * EF component_counts: dict of {type: count}, Average Factor Method for equipment - count * EF, API Equation 8-2: Indirect emissions from steam/heat Emissions = Energy /…, API Section 8.3 - Allocation of Cogeneration Emissions Methods: wri_efficiency,… (+28 more)
+Cohesion: 0.09
+Nodes (21): Dual-efficiency flaring model (API 5-3, 5-4) with API §4.2.1 thermodynamic…, Standard fuel-based combustion calculation with API §4.2.1 thermodynamic…, API Section 7.2.3 - Compressor seals, Average Factor Method - counts * EF component_counts: dict of {type: count}, Average Factor Method for equipment - count * EF, API Equation 8-2: Indirect emissions from steam/heat Emissions = Energy /…, API Section 8.3 - Allocation of Cogeneration Emissions Methods: wri_efficiency,…, API Compendium 2021 §6.5 & Table 6-5: - CO2 mass balance from amine sweetening… (+13 more)
 
 ### Community 6 - "dependencies"
 Cohesion: 0.09
-Nodes (23): axios, class-variance-authority, clsx, jspdf, leaflet, dependencies, axios, class-variance-authority (+15 more)
+Nodes (23): axios, clsx, jspdf, leaflet, lucide-react, dependencies, axios, clsx (+15 more)
 
 ### Community 7 - "devDependencies"
 Cohesion: 0.07
@@ -223,81 +222,81 @@ Nodes (17): _process_row(), Validates a single mapped row and runs calculation v
 Cohesion: 0.18
 Nodes (5): ErrorBoundary, paginationBtnStyle(), QADashboard(), tdStyle, thStyle
 
-### Community 11 - "get_current_user"
+### Community 11 - "login_required"
 Cohesion: 0.16
-Nodes (27): BaseYear, EmissionSource, MitigationProject, MitigationRecord, ReportingMetadata, SbtiTarget, add_base_year_recalculation(), add_mitigation() (+19 more)
+Nodes (30): EmissionSource, Goal, MitigationRecord, ReportingMetadata, get_audit_filters(), get_audit_logs(), route, login_required() (+22 more)
 
-### Community 12 - "Emissions.jsx"
-Cohesion: 0.33
-Nodes (7): Emissions(), STAGE_EMISSION_CALCULATOR, STAGE_FACTOR_CALCULATOR, STAGE_SCOPE1_SUB_SELECTION, STAGE_SCOPE2, STAGE_SCOPE3, STAGE_SCOPE_SELECTION
+### Community 12 - "useToast"
+Cohesion: 0.16
+Nodes (16): EmissionsMap, Scope2Form(), Scope3Form(), useToast(), CarbonIntensity(), Emissions(), EmissionsMap(), MethaneIntensity() (+8 more)
 
 ### Community 13 - "User"
-Cohesion: 0.15
-Nodes (13): User, seed_admin(), admin_user(), app(), client(), fixture, Security and integration tests for GHG Dashboard API. These test the HTTP layer…, 6th failed login attempt within the window must be rate-limited. (+5 more)
+Cohesion: 0.20
+Nodes (10): User, seed_admin(), admin_user(), app(), client(), fixture, Security and integration tests for GHG Dashboard API. These test the HTTP layer…, 6th failed login attempt within the window must be rate-limited. (+2 more)
 
-### Community 14 - "extract_val"
-Cohesion: 0.12
-Nodes (9): extract_val(), Same calculation using m3 input — should produce same result after conversion., Diesel Tier 1: quantity = 500 gal HHV = 138,700 Btu/gal → 500 × 138,700 /…, Blowdown Tier 1 (default): vessel volume = 5 m3 physical pressure = 100 psig →…, Extract the central value from a propagated uncertainty dict or bare float., Hand-calc for Natural Gas Tier 1: quantity = 10,000 scf HHV = 1,020 Btu/scf →…, TestTier1Combustion, TestTier1CombustionDiesel (+1 more)
+### Community 14 - "TestTier1Combustion"
+Cohesion: 0.20
+Nodes (3): Same calculation using m3 input — should produce same result after conversion., Hand-calc for Natural Gas Tier 1: quantity = 10,000 scf HHV = 1,020 Btu/scf →…, TestTier1Combustion
 
 ### Community 15 - "DashboardEnhanced.jsx"
-Cohesion: 0.14
-Nodes (15): BarChart(), LineChart(), DEFAULT_COLORS, PieChart(), TopBar(), LoadingSpinner(), SkeletonCard(), LayoutContext (+7 more)
+Cohesion: 0.17
+Nodes (12): BarChart(), LineChart(), DEFAULT_COLORS, PieChart(), LoadingSpinner(), SkeletonCard(), useLayout(), AuditTrail() (+4 more)
 
-### Community 16 - "Scope1ImportWizard.jsx"
-Cohesion: 0.06
-Nodes (19): autoDetect(), FIELD_GROUPS, Icon, PROCESS_CATALOGUE, Scope1ImportWizard(), STEPS, autoDetect(), FIELD_GROUPS (+11 more)
+### Community 16 - "ColumnMappingWizard.jsx"
+Cohesion: 0.09
+Nodes (12): autoDetectMapping(), ColumnMappingWizard(), Icons, STEPS, TEMPLATES, autoDetect(), FIELD_GROUPS, Icon (+4 more)
 
-### Community 17 - "create_scope2_emission"
-Cohesion: 0.15
-Nodes (13): _calc_cogen_allocation(), _calc_indirect_steam(), create_scope2_emission(), delete_scope2_emission(), get_emission_factors(), route, Create a new Scope 2 emission record, Calculate tCO2e for indirect steam / heat entry. (+5 more)
+### Community 17 - "to_psia"
+Cohesion: 0.25
+Nodes (7): normalize_gas_volume_to_standard(), API Compendium 2021 §4.2.1: Converts gas volume measured at actual/operating…, Converts temperature value to Kelvin., Converts gauge or metric pressure to absolute pressure in psia., to_kelvin(), to_psia(), API Equation 6-3 - Volume per unloading event with temperature correction:…
 
 ### Community 18 - "pages/ManageData.jsx"
-Cohesion: 0.10
-Nodes (17): autoDetectMapping(), ColumnMappingWizard(), Icons, STEPS, TEMPLATES, BOUNDARY_OPTIONS, DEFAULT_GWP, getActiveGwpFactors() (+9 more)
+Cohesion: 0.16
+Nodes (10): BOUNDARY_OPTIONS, DEFAULT_GWP, getActiveGwpFactors(), GWP_AR4, GWP_AR5, GWP_AR6, GWP_STANDARDS, ManageData() (+2 more)
 
 ### Community 19 - "CalculationDispatcher"
-Cohesion: 0.16
-Nodes (18): CalculationDispatcher, Routes a calculation request to the appropriate API 2021 calculator., CALC-03: Verify AGR calculates both CO2 mass balance and CH4 slip per API Table…, CALC-02: Verify Glycol Dehydrator parametric TEG solubility model, CALC-06: Verify Blowdown calculator applies thermodynamic T-correction, CALC-07: Verify completions multi-method calculation (rate/duration & GOR), test_agr_methane_slip_calculation(), test_blowdown_temperature_correction() (+10 more)
+Cohesion: 0.10
+Nodes (24): CalculationDispatcher, Strictly extracts a required float parameter without falling back to defaults., Extracts a percentage (0-100) or fraction (0-1) strictly and converts to 0-1., Extracts an optional percentage (0-100) or fraction (0-1) converted to 0-1., Executes the calculation for the given process type. - Tier 1 (default /…, Routes a calculation request to the appropriate API 2021 calculator., Normalizes a volume value to the specified target unit., Standard Quantity * EF fallback with unit handling and tier-aware uncertainty. (+16 more)
 
 ### Community 20 - "NotificationCenter.jsx"
-Cohesion: 0.28
-Nodes (7): getTypeConfig(), headerActionBtn, iconBtnStyle, NotificationCenter(), NotifRow(), relativeTime(), TYPE_CONFIG
+Cohesion: 0.18
+Nodes (10): Layout(), Sidebar(), TopBar(), getTypeConfig(), headerActionBtn, iconBtnStyle, NotificationCenter(), NotifRow() (+2 more)
 
 ### Community 21 - "Sentinel5PService"
 Cohesion: 0.10
 Nodes (19): Any, Sentinel-5P (TROPOMI) Satellite Methane Service Connects to ESA Copernicus Data…, Retrieves a valid JWT access token from Copernicus CDSE with caching., Returns tile layer configuration, color ramps, and metadata for Leaflet., Queries Copernicus STAC/OData API for real Sentinel-5P methane data around…, Service for querying ESA Copernicus Sentinel-5P TROPOMI methane measurements., Estimates methane mass emission rate (kg CH4/hr) from a Sentinel-5P column…, Tests authentication against Copernicus Data Space Ecosystem Keycloak endpoint.… (+11 more)
 
-### Community 22 - "useToast"
-Cohesion: 0.12
-Nodes (19): EmissionsMap, BulkImportModal(), COMPONENT_DATA, GasCompositionCalculator(), Modal(), Scope2Form(), Scope3Form(), ToastContext (+11 more)
+### Community 22 - "Toast.jsx"
+Cohesion: 0.15
+Nodes (11): BulkImportModal(), COMPONENT_DATA, GasCompositionCalculator(), Modal(), ToastContext, ToastProvider(), getRoleMeta(), ROLE_META (+3 more)
 
 ### Community 23 - "models.py"
-Cohesion: 0.06
-Nodes (47): errorhandler, listens_for, after_request(), before_request(), get_csrf_token(), health_check(), internal_error(), not_found_error() (+39 more)
+Cohesion: 0.09
+Nodes (32): Calculation tier following IPCC 2006 GL Vol.1 §2.4 hierarchy., Tier, migrate_database(), BaseYear, MethaneSourceType, MitigationProject, ProductionData, # NOTE: Do NOT call db.session.commit() here. (+24 more)
 
 ### Community 24 - "dependencies"
 Cohesion: 0.12
 Nodes (16): bcryptjs, body-parser, cors, express, express-rate-limit, dependencies, bcryptjs, body-parser (+8 more)
 
-### Community 25 - "login"
-Cohesion: 0.27
-Nodes (5): login(), User should not be able to delete an emission record created by another user…, User should be able to delete their own emission record., TestIDOR, TestInputLimits
+### Community 25 - "Emission"
+Cohesion: 0.31
+Nodes (6): run_all_scenarios(), Emission, User should not be able to delete an emission record created by another user…, User should be able to delete their own emission record., TestIDOR, seed_data()
 
-### Community 26 - "_get_user_copernicus_credentials"
-Cohesion: 0.24
-Nodes (11): get_facility_satellite_data(), get_satellite_layer_config(), _get_user_copernicus_credentials(), poll_new_satellite_passes(), route, Returns layer metadata, color scale intervals, and connection status for the…, Queries real Sentinel-5P observations for a facility or bounding box. Supports…, Extracts Copernicus credentials from current user preferences or system-… (+3 more)
+### Community 26 - "satellite.py"
+Cohesion: 0.23
+Nodes (13): export_satellite_to_ogmp(), get_facility_satellite_data(), get_satellite_layer_config(), _get_user_copernicus_credentials(), poll_new_satellite_passes(), route, Returns layer metadata, color scale intervals, and connection status for the…, Queries real Sentinel-5P observations for a facility or bounding box. Supports… (+5 more)
 
 ### Community 28 - "Backend (Server)"
 Cohesion: 0.03
 Nodes (74): `add_indexes.py`, `app.py`, Backend (Server), `background_processor.py`, `benchmark_db.py`, `calculations\base.py`, `calculations\combustion.py`, `calculations\constants.py` (+66 more)
 
 ### Community 29 - "auth.py"
-Cohesion: 0.08
-Nodes (47): limit, CustomFactor, Notification, Persistent key-value store for application-wide settings (GWP standard, OGMP…, SystemSetting, admin_required(), admin_reset_password(), change_password() (+39 more)
+Cohesion: 0.06
+Nodes (59): errorhandler, limit, listens_for, after_request(), before_request(), get_csrf_token(), health_check(), internal_error() (+51 more)
 
-### Community 30 - "login_required"
-Cohesion: 0.22
-Nodes (21): CbamProductExport, LevelUpgradeLog, ProductionData, get_audit_filters(), get_audit_logs(), route, login_required(), add_production() (+13 more)
+### Community 30 - "routes/data.py"
+Cohesion: 0.19
+Nodes (17): CbamProductExport, LevelUpgradeLog, OgmpSurvey, add_production(), bulk_import_production(), delete_cbam_export(), delete_ogmp_survey(), delete_production() (+9 more)
 
 ### Community 31 - "combustion.py"
 Cohesion: 0.33
@@ -307,6 +306,10 @@ Nodes (6): CombustionCalculator, FlaringCalculator, API Compendium 2021 - Sectio
 Cohesion: 0.20
 Nodes (11): create_pdf_report(), export_emissions(), export_ogmp_excel(), generate_report(), route, Generate PDF report based on filters, Prevent formula injection (DDE/CSV injection) in Excel cells., Export emissions data as PDF - GET version for frontend integration (+3 more)
 
+### Community 33 - "Scope3ImportWizard.jsx"
+Cohesion: 0.22
+Nodes (6): autoDetect(), FIELD_GROUPS_ACTIVITY, FIELD_GROUPS_EEIO, Icon, Scope3ImportWizard(), STEPS
+
 ### Community 34 - "Frontend (Client)"
 Cohesion: 0.03
 Nodes (66): `api.js`, `App.jsx`, `components\BulkImportModal.jsx`, `components\CalculationDetails.jsx`, `components\charts\BarChart.jsx`, `components\charts\index.js`, `components\charts\LineChart.jsx`, `components\charts\PieChart.jsx` (+58 more)
@@ -315,29 +318,33 @@ Nodes (66): `api.js`, `App.jsx`, `components\BulkImportModal.jsx`, `components\C
 Cohesion: 0.07
 Nodes (26): Dependencies & Execution Order, Format: `[ID] [P?] [Story] Description`, Implementation for User Story 1, Implementation for User Story 2, Implementation for User Story 3, Implementation Strategy, Incremental Delivery, MVP First (User Story 1 Only) (+18 more)
 
-### Community 37 - ".dispatch"
-Cohesion: 0.22
-Nodes (5): Strictly extracts a required float parameter without falling back to defaults., Extracts a percentage (0-100) or fraction (0-1) strictly and converts to 0-1., Extracts an optional percentage (0-100) or fraction (0-1) converted to 0-1., Executes the calculation for the given process type. - Tier 1 (default /…, Normalizes a volume value to the specified target unit.
+### Community 37 - "extract_val"
+Cohesion: 0.31
+Nodes (4): extract_val(), Diesel Tier 1: quantity = 500 gal HHV = 138,700 Btu/gal → 500 × 138,700 /…, Extract the central value from a propagated uncertainty dict or bare float., TestTier1CombustionDiesel
 
 ### Community 38 - "TestEdgeCases"
 Cohesion: 0.20
 Nodes (5): Zero quantity should produce zero emissions without crash., Negative quantity must raise ValueError., 1 MMscf = 1,000,000 scf — result should match 1M scf calculation., If GOR=0 and EF=0, result should be zero (no flash gas)., TestEdgeCases
 
 ### Community 39 - "dispatcher.py"
-Cohesion: 0.07
-Nodes (34): BaseCalculator, Validates that all required inputs are present and non-negative., Calculates absolute uncertainty and non-negative bounds at 95% CI., Formats the final calculation result into a standard structure., Base class for all API Compendium 2021 calculation modules. Provides common…, ComponentFugitiveCalculator, CompressorSealCalculator, EquipmentFugitiveCalculator (+26 more)
+Cohesion: 0.10
+Nodes (23): BaseCalculator, Validates that all required inputs are present and non-negative., Calculates absolute uncertainty and non-negative bounds at 95% CI., Formats the final calculation result into a standard structure., Base class for all API Compendium 2021 calculation modules. Provides common…, ComponentFugitiveCalculator, CompressorSealCalculator, EquipmentFugitiveCalculator (+15 more)
 
 ### Community 40 - "ModernReportGenerator.js"
 Cohesion: 0.36
 Nodes (8): createChartImage(), fetchAllReportData(), generateModernPDF(), generateReportCharts(), loadImage(), NOTE: When regionId is an array (multi-select), do NOT send facility_id param —, THEME, toRgba()
 
+### Community 41 - "login"
+Cohesion: 0.32
+Nodes (4): login(), A bad calculation input must return 422, not silently save 0.000 tCO2e., TestCalculationIntegrity, TestInputLimits
+
 ### Community 42 - "Project Metadata"
 Cohesion: 0.22
 Nodes (8): author, description, keywords, license, main, name, type, version
 
-### Community 43 - "win"
-Cohesion: 0.50
-Nodes (4): win, asar, icon, target
+### Community 43 - "build"
+Cohesion: 0.22
+Nodes (9): build, appId, directories, productName, win, output, asar, icon (+1 more)
 
 ### Community 44 - "env.py"
 Cohesion: 0.39
@@ -352,8 +359,8 @@ Cohesion: 0.29
 Nodes (3): Mud Degassing Tier 1 (water-based mud): mud_volume = 500 m3 EF (water-based) =…, Oil-based mud uses EF=0.35 kg/m3., TestTier1DrillingMud
 
 ### Community 49 - "files"
-Cohesion: 0.17
-Nodes (11): build, appId, directories, files, productName, output, main.js, node_modules/**/* (+3 more)
+Cohesion: 0.29
+Nodes (6): files, main.js, node_modules/**/*, public/**/*, server.js, users_v2.db
 
 ### Community 51 - "TestTier1Flaring"
 Cohesion: 0.33
@@ -420,8 +427,8 @@ Cohesion: 0.15
 Nodes (12): Assumptions, Edge Cases, Feature Specification: [FEATURE NAME], Functional Requirements, Key Entities *(include if feature involves data)*, Measurable Outcomes, Requirements *(mandatory)*, Success Criteria *(mandatory)* (+4 more)
 
 ### Community 118 - "AnomalyDetector"
-Cohesion: 0.26
-Nodes (6): AnomalyDetector, Check a Scope 1 CO2e value against the trailing 12 months for the same facility…, Checks a new emission value against historical data for the same facility and…, Check a Scope 2 CO2e value against the trailing 12 months for the same facility…, Check a Scope 3 CO2e value against the trailing 12 months for the same facility…, Compute Z-score of a value against a list of historical values. Returns…
+Cohesion: 0.21
+Nodes (7): AnomalyDetector, Anomaly Detection for GHG Emissions Data. Uses Z-score (against 12-month…, Check a Scope 1 CO2e value against the trailing 12 months for the same facility…, Checks a new emission value against historical data for the same facility and…, Check a Scope 2 CO2e value against the trailing 12 months for the same facility…, Check a Scope 3 CO2e value against the trailing 12 months for the same facility…, Compute Z-score of a value against a list of historical values. Returns…
 
 ### Community 119 - "Implementation Tasks: QA/QC Module (IPCC & ISO 14064)"
 Cohesion: 0.17
@@ -431,9 +438,9 @@ Nodes (11): Dependencies & Execution Order, Implementation for User Story 1, Imp
 Cohesion: 0.27
 Nodes (10): delete_all_notifications(), delete_notification(), dismiss_all(), get_notifications(), mark_read(), route, Permanently delete a single notification., Permanently delete all notifications for the current user. (+2 more)
 
-### Community 121 - "bulk_resolve"
-Cohesion: 0.24
-Nodes (11): bulk_resolve(), export_qaqc_report(), get_qaqc_dashboard(), _is_admin_or_superuser(), route, Returns True if the user has QA/QC viewing rights (admin or superuser roles)., Exports QA/QC anomaly data as a CSV file. Access: admin, superuser, it_admin…, Returns aggregated uncertainty (IPCC SRSS) and flagged anomaly records. Scoped… (+3 more)
+### Community 121 - "log_activity_and_notify"
+Cohesion: 0.09
+Nodes (38): ActivityLog, Notification, add_facility(), delete_facility(), get_all_regions(), get_facilities(), import_facilities(), route (+30 more)
 
 ### Community 122 - "Core Principles"
 Cohesion: 0.18
@@ -455,10 +462,6 @@ Nodes (10): Core Principles, Governance, [PRINCIPLE_1_NAME], [PRINCIPLE_2_NAME],
 Cohesion: 0.20
 Nodes (9): name, private, scripts, build, dev, lint, preview, type (+1 more)
 
-### Community 127 - "emission_factors.py"
-Cohesion: 0.29
-Nodes (8): Emission Factors Database - API Compendium 2021 Comprehensive emission factors…, get_process_types_by_category(), get_process_types_for_segment(), get_segments_for_process(), Process Categories and Segment Classification API Compendium 2021 - Organized…, Returns all process types applicable to the given segment. Args: segment (str):…, Returns all segments where the given process type is applicable. Args:…, Returns process types organized by category, optionally filtered by segment.…
-
 ### Community 129 - "Implementation Tasks: Batch Approve/Reject Pending Records"
 Cohesion: 0.20
 Nodes (9): Dependencies & Execution Order, Implementation for User Story 1, Implementation for User Story 2, Implementation Tasks: Batch Approve/Reject Pending Records, Phase 1: Setup (Shared Infrastructure), Phase 2: Foundational (Blocking Prerequisites), Phase 3: User Story 1 - Bulk Approving Records (Priority: P1) ⭐ MVP, Phase 4: User Story 2 - Bulk Rejecting Records (Priority: P2) (+1 more)
@@ -474,10 +477,6 @@ Nodes (8): Complexity Tracking, Constitution Check, Documentation (this feature)
 ### Community 132 - "Existing Entities to Modify"
 Cohesion: 0.22
 Nodes (8): 1. `Emission` (Scope 1), 2. `Scope2Emission`, 3. `Scope3Emission`, 4. `CustomFactor`, `ActivityLog`, Data Model: QA/QC Module, Existing Entities to Modify, Existing Entities to Utilize
-
-### Community 133 - "Emission"
-Cohesion: 0.43
-Nodes (7): run_all_scenarios(), Emission, add_bulk_upload(), add_emission(), import_emissions(), resolve_gwp_dict(), resolve_gwp_standard()
 
 ### Community 134 - "test_runner.py"
 Cohesion: 0.29
@@ -530,22 +529,22 @@ Nodes (3): analyze_directory(), analyze_js_file(), analyze_python_file()
 ## Knowledge Gaps
 - **435 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+430 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **43 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **42 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `login_required()` connect `login_required` to `emissions.py`, `dashboard.py`, `export_emissions`, `emission_factors_routes.py`, `get_scope3_emissions`, `Emission`, `get_current_user`, `create_scope2_emission`, `models.py`, `notifications.py`, `bulk_resolve`, `_get_user_copernicus_credentials`, `auth.py`?**
-  _High betweenness centrality (0.038) - this node is a cross-community bridge._
-- **Why does `sqlite3` connect `sqlite3` to `test_runner.py`, `test_final.py`, `test_final_v3.py`, `test_pipeline.py`, `test_pipeline_robust.py`, `models.py`, `dependencies`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
-- **Why does `calculate_co2e()` connect `calculate_co2e` to `emissions.py`, `.dispatch`, `Emission`, `dispatcher.py`, `test_emission_calculations.py`, `TestCO2ECalculation`, `background_processor.py`, `combustion.py`?**
+- **Why does `sqlite3` connect `sqlite3` to `test_runner.py`, `test_final.py`, `test_final_v3.py`, `test_pipeline.py`, `test_pipeline_robust.py`, `models.py`, `dependencies`, `auth.py`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Why does `login_required()` connect `login_required` to `emissions.py`, `dashboard.py`, `export_emissions`, `emission_factors_routes.py`, `models.py`, `notifications.py`, `log_activity_and_notify`, `satellite.py`, `auth.py`, `routes/data.py`?**
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+- **Why does `calculate_co2e()` connect `calculate_co2e` to `emissions.py`, `propagate_uncertainty`, `dispatcher.py`, `test_emission_calculations.py`, `background_processor.py`, `to_psia`, `CalculationDispatcher`, `combustion.py`?**
   _High betweenness centrality (0.032) - this node is a cross-community bridge._
 - **Are the 33 inferred relationships involving `CalculationDispatcher` (e.g. with `CombustionCalculator` and `FlaringCalculator`) actually correct?**
   _`CalculationDispatcher` has 33 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `private`, `version` to the rest of the system?**
   _435 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `emissions.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.08097165991902834 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12380952380952381 - nodes in this community are weakly interconnected._
 - **Should `dashboard.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.0649895178197065 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06901960784313725 - nodes in this community are weakly interconnected._

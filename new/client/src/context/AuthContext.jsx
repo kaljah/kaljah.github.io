@@ -104,17 +104,22 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         const { data } = await api.get("/auth/me");
-        setUser(data);
+        if (data && data.authenticated !== false && data.id) {
+          setUser(data);
 
-        // Fetch settings as well
-        try {
-          const settingsRes = await api.get("/auth/settings");
-          if (settingsRes.data) {
-            setPreferences(settingsRes.data);
-            applyTheme("light");
+          // Fetch settings as well
+          try {
+            const settingsRes = await api.get("/auth/settings");
+            if (settingsRes.data) {
+              setPreferences(settingsRes.data);
+              applyTheme("light");
+            }
+          } catch (e) {
+            console.error("Failed to fetch settings on auth check", e);
           }
-        } catch (e) {
-          console.error("Failed to fetch settings on auth check", e);
+        } else {
+          setUser(null);
+          setPreferences({});
         }
       } catch (err) {
         setUser(null);

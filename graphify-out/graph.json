@@ -824,7 +824,7 @@
       "norm_label": "new/.specify/scripts/powershell/setup-tasks.ps1"
     },
     {
-      "label": "new/ManageData_old.jsx",
+      "label": "ManageData_old.jsx",
       "file_type": "code",
       "source_file": "new/ManageData_old.jsx",
       "source_location": "L1",
@@ -832,7 +832,7 @@
       "id": "new_managedata_old",
       "community": 189,
       "community_name": "new/ManageData_old.jsx",
-      "norm_label": "new/managedata_old.jsx"
+      "norm_label": "managedata_old.jsx"
     },
     {
       "label": "analyze_all.py",
@@ -1097,7 +1097,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "new_client_package_dependencies_chart_js",
-      "community": 150,
+      "community": 149,
       "community_name": "chart.js",
       "norm_label": "chart.js"
     },
@@ -1108,7 +1108,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "chart_js",
-      "community": 150,
+      "community": 149,
       "community_name": "chart.js",
       "norm_label": "chart.js"
     },
@@ -1795,26 +1795,169 @@
       "norm_label": "app.jsx"
     },
     {
-      "label": "EmissionsMap",
+      "label": "DashboardEnhanced",
       "file_type": "code",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L26",
+      "source_location": "L13",
       "_origin": "ast",
-      "id": "new_client_src_app_emissionsmap",
-      "community": 16,
-      "community_name": "api.js",
-      "norm_label": "emissionsmap"
+      "id": "new_client_src_app_dashboardenhanced",
+      "community": 139,
+      "community_name": "DashboardEnhanced.jsx",
+      "norm_label": "dashboardenhanced"
+    },
+    {
+      "label": "Emissions",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "new_client_src_app_emissions",
+      "community": 12,
+      "community_name": "Emissions.jsx",
+      "norm_label": "emissions"
+    },
+    {
+      "label": "ManageData",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "new_client_src_app_managedata",
+      "community": 18,
+      "community_name": "pages/ManageData.jsx",
+      "norm_label": "managedata"
+    },
+    {
+      "label": "QADashboard",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "new_client_src_app_qadashboard",
+      "community": 10,
+      "community_name": "QADashboard.jsx",
+      "norm_label": "qadashboard"
     },
     {
       "label": "Reports",
       "file_type": "code",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L27",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "new_client_src_app_reports",
       "community": 8,
       "community_name": "App.jsx",
       "norm_label": "reports"
+    },
+    {
+      "label": "CarbonIntensity",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "new_client_src_app_carbonintensity",
+      "community": 15,
+      "community_name": "pages/CarbonIntensity.jsx",
+      "norm_label": "carbonintensity"
+    },
+    {
+      "label": "MethaneIntensity",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "new_client_src_app_methaneintensity",
+      "community": 15,
+      "community_name": "pages/CarbonIntensity.jsx",
+      "norm_label": "methaneintensity"
+    },
+    {
+      "label": "UncertaintyAssessment",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "new_client_src_app_uncertaintyassessment",
+      "community": 33,
+      "community_name": "api.js",
+      "norm_label": "uncertaintyassessment"
+    },
+    {
+      "label": "ReferenceData",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "new_client_src_app_referencedata",
+      "community": 33,
+      "community_name": "api.js",
+      "norm_label": "referencedata"
+    },
+    {
+      "label": "Diagnostics",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "new_client_src_app_diagnostics",
+      "community": 8,
+      "community_name": "App.jsx",
+      "norm_label": "diagnostics"
+    },
+    {
+      "label": "AuditTrail",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "new_client_src_app_audittrail",
+      "community": 8,
+      "community_name": "App.jsx",
+      "norm_label": "audittrail"
+    },
+    {
+      "label": "UserManagement",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "new_client_src_app_usermanagement",
+      "community": 22,
+      "community_name": "useToast",
+      "norm_label": "usermanagement"
+    },
+    {
+      "label": "Settings",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "new_client_src_app_settings",
+      "community": 8,
+      "community_name": "App.jsx",
+      "norm_label": "settings"
+    },
+    {
+      "label": "SbtiDashboard",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "new_client_src_app_sbtidashboard",
+      "community": 15,
+      "community_name": "pages/CarbonIntensity.jsx",
+      "norm_label": "sbtidashboard"
+    },
+    {
+      "label": "EmissionsMap",
+      "file_type": "code",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "new_client_src_app_emissionsmap",
+      "community": 22,
+      "community_name": "useToast",
+      "norm_label": "emissionsmap"
     },
     {
       "label": "PrivateRoute()",
@@ -1880,7 +2023,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L202",
+      "source_location": "L200",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_app_app",
@@ -1895,7 +2038,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_api",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "api.js"
     },
@@ -1906,7 +2049,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "new_client_src_api_api",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "api"
     },
@@ -1929,8 +2072,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_bulkimportmodal",
-      "community": 22,
-      "community_name": "Toast.jsx",
+      "community": 33,
+      "community_name": "api.js",
       "norm_label": "bulkimportmodal.jsx"
     },
     {
@@ -1942,7 +2085,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_bulkimportmodal_bulkimportmodal",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "bulkimportmodal()"
     },
     {
@@ -1975,7 +2118,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "columnmappingwizard.jsx"
     },
@@ -1986,7 +2129,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_templates",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "templates"
     },
@@ -1998,7 +2141,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_autodetectmapping",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "autodetectmapping()"
     },
@@ -2009,7 +2152,7 @@
       "source_location": "L319",
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_icons",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "icons"
     },
@@ -2021,7 +2164,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_iconssettings",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "iconssettings()"
     },
@@ -2032,7 +2175,7 @@
       "source_location": "L485",
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_steps",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "steps"
     },
@@ -2044,7 +2187,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_stepindicator",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "stepindicator()"
     },
@@ -2056,7 +2199,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_columnmappingwizard",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "columnmappingwizard()"
     },
@@ -2068,7 +2211,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_columnmappingwizard_mappingrow",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "mappingrow()"
     },
@@ -2079,7 +2222,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_csvuploader",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "csvuploader.jsx"
     },
@@ -2091,7 +2234,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_csvuploader_csvuploader",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "csvuploader()"
     },
@@ -2350,8 +2493,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_gascompositioncalculator",
-      "community": 22,
-      "community_name": "Toast.jsx",
+      "community": 33,
+      "community_name": "api.js",
       "norm_label": "gascompositioncalculator.jsx"
     },
     {
@@ -2361,8 +2504,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "new_client_src_components_gascompositioncalculator_component_data",
-      "community": 22,
-      "community_name": "Toast.jsx",
+      "community": 33,
+      "community_name": "api.js",
       "norm_label": "component_data"
     },
     {
@@ -2374,7 +2517,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_gascompositioncalculator_gascompositioncalculator",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "gascompositioncalculator()"
     },
     {
@@ -2384,8 +2527,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_loadingspinner",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "loadingspinner.jsx"
     },
     {
@@ -2396,8 +2539,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_loadingspinner_loadingspinner",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "loadingspinner()"
     },
     {
@@ -2407,8 +2550,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_modal",
-      "community": 22,
-      "community_name": "Toast.jsx",
+      "community": 33,
+      "community_name": "api.js",
       "norm_label": "modal.jsx"
     },
     {
@@ -2419,8 +2562,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_modal_modal",
-      "community": 22,
-      "community_name": "Toast.jsx",
+      "community": 33,
+      "community_name": "api.js",
       "norm_label": "modal()"
     },
     {
@@ -2461,7 +2604,7 @@
       "label": "TYPE_CONFIG",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_type_config",
       "community": 20,
@@ -2472,7 +2615,7 @@
       "label": "getTypeConfig()",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L41",
+      "source_location": "L42",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_gettypeconfig",
@@ -2484,7 +2627,7 @@
       "label": "relativeTime()",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_relativetime",
@@ -2496,7 +2639,7 @@
       "label": "BellButton()",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L61",
+      "source_location": "L62",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_bellbutton",
@@ -2508,7 +2651,7 @@
       "label": "NotifRow()",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L118",
+      "source_location": "L119",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_notifrow",
@@ -2520,7 +2663,7 @@
       "label": "iconBtnStyle",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L251",
+      "source_location": "L252",
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_iconbtnstyle",
       "community": 20,
@@ -2531,7 +2674,7 @@
       "label": "NotificationCenter()",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L264",
+      "source_location": "L265",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_notificationcenter",
@@ -2543,7 +2686,7 @@
       "label": "headerActionBtn",
       "file_type": "code",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L627",
+      "source_location": "L644",
       "_origin": "ast",
       "id": "new_client_src_components_notificationcenter_headeractionbtn",
       "community": 20,
@@ -2580,8 +2723,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "scope1importwizard.jsx"
     },
     {
@@ -2591,8 +2734,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_icon",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "icon"
     },
     {
@@ -2602,8 +2745,8 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_process_catalogue",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "process_catalogue"
     },
     {
@@ -2613,8 +2756,8 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_field_groups",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "field_groups"
     },
     {
@@ -2624,8 +2767,8 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_steps",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "steps"
     },
     {
@@ -2636,8 +2779,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_stepbar",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "stepbar()"
     },
     {
@@ -2648,8 +2791,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_modecard",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "modecard()"
     },
     {
@@ -2660,8 +2803,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_processtile",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "processtile()"
     },
     {
@@ -2672,8 +2815,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_mappingrow",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "mappingrow()"
     },
     {
@@ -2684,8 +2827,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_fieldgroup",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "fieldgroup()"
     },
     {
@@ -2696,8 +2839,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_autodetect",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "autodetect()"
     },
     {
@@ -2708,8 +2851,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope1importwizard_scope1importwizard",
-      "community": 2,
-      "community_name": "Scope1Form.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "scope1importwizard()"
     },
     {
@@ -2719,8 +2862,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_scope2form",
-      "community": 12,
-      "community_name": "useToast",
+      "community": 33,
+      "community_name": "api.js",
       "norm_label": "scope2form.jsx"
     },
     {
@@ -2732,7 +2875,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2form_scope2form",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "scope2form()"
     },
     {
@@ -2743,7 +2886,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "scope2importwizard.jsx"
     },
     {
@@ -2754,7 +2897,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_icon",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "icon"
     },
     {
@@ -2765,7 +2908,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_field_groups",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "field_groups"
     },
     {
@@ -2776,7 +2919,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_steps",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "steps"
     },
     {
@@ -2788,7 +2931,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_stepbar",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "stepbar()"
     },
     {
@@ -2800,7 +2943,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_mappingrow",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "mappingrow()"
     },
     {
@@ -2812,7 +2955,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_fieldgroup",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "fieldgroup()"
     },
     {
@@ -2824,7 +2967,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_autodetect",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "autodetect()"
     },
     {
@@ -2836,7 +2979,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope2importwizard_scope2importwizard",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "scope2importwizard()"
     },
     {
@@ -2847,7 +2990,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope3form",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "scope3form.jsx"
     },
     {
@@ -2859,7 +3002,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_scope3form_scope3form",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "scope3form()"
     },
     {
@@ -2869,8 +3012,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "scope3importwizard.jsx"
     },
     {
@@ -2880,8 +3023,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_icon",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "icon"
     },
     {
@@ -2891,8 +3034,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_field_groups_activity",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "field_groups_activity"
     },
     {
@@ -2902,8 +3045,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_field_groups_eeio",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "field_groups_eeio"
     },
     {
@@ -2913,8 +3056,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_steps",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "steps"
     },
     {
@@ -2925,8 +3068,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_stepbar",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "stepbar()"
     },
     {
@@ -2937,8 +3080,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_mappingrow",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "mappingrow()"
     },
     {
@@ -2949,8 +3092,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_fieldgroup",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "fieldgroup()"
     },
     {
@@ -2961,8 +3104,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_autodetect",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "autodetect()"
     },
     {
@@ -2973,8 +3116,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_scope3importwizard_scope3importwizard",
-      "community": 33,
-      "community_name": "Scope3ImportWizard.jsx",
+      "community": 16,
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "scope3importwizard()"
     },
     {
@@ -2984,7 +3127,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_skeletonloader",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "skeletonloader.jsx"
     },
@@ -2996,7 +3139,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_skeletonloader_skeletonrow",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "skeletonrow()"
     },
@@ -3008,7 +3151,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_skeletonloader_skeletontable",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "skeletontable()"
     },
@@ -3020,7 +3163,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_skeletonloader_skeletoncard",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "skeletoncard()"
     },
@@ -3032,7 +3175,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_toast",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "toast.jsx"
     },
     {
@@ -3043,7 +3186,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_toast_toastcontext",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "toastcontext"
     },
     {
@@ -3054,7 +3197,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_toast_usetoast",
-      "community": 12,
+      "community": 22,
       "community_name": "useToast",
       "norm_label": "usetoast()"
     },
@@ -3067,7 +3210,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_toast_toastprovider",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "toastprovider()"
     },
     {
@@ -3079,7 +3222,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_toast_toastcontainer",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "toastcontainer()"
     },
     {
@@ -3091,7 +3234,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_toast_toast",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "toast()"
     },
     {
@@ -3102,7 +3245,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "uploadprogress.jsx"
     },
     {
@@ -3114,7 +3257,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_spinner",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "spinner()"
     },
     {
@@ -3126,7 +3269,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_iconcheck",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "iconcheck()"
     },
     {
@@ -3138,7 +3281,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_iconwarn",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "iconwarn()"
     },
     {
@@ -3150,7 +3293,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_iconx",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "iconx()"
     },
     {
@@ -3162,7 +3305,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_icondownload",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "icondownload()"
     },
     {
@@ -3174,7 +3317,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_iconchevron",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "iconchevron()"
     },
     {
@@ -3186,7 +3329,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_categoryfromreason",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "categoryfromreason()"
     },
     {
@@ -3198,7 +3341,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_uploadprogress_uploadprogress",
       "community": 16,
-      "community_name": "api.js",
+      "community_name": "Scope1ImportWizard.jsx",
       "norm_label": "uploadprogress()"
     },
     {
@@ -3209,7 +3352,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_barchart",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "barchart.jsx"
     },
     {
@@ -3221,7 +3364,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_barchart_barchart",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "barchart()"
     },
     {
@@ -3232,7 +3375,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_linechart",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "linechart.jsx"
     },
     {
@@ -3244,7 +3387,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_linechart_linechart",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "linechart()"
     },
     {
@@ -3255,7 +3398,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_piechart",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "piechart.jsx"
     },
     {
@@ -3266,7 +3409,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_piechart_default_colors",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "default_colors"
     },
     {
@@ -3278,7 +3421,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_piechart_piechart",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "piechart()"
     },
     {
@@ -3289,7 +3432,7 @@
       "_origin": "ast",
       "id": "new_client_src_components_charts_index",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "index.js"
     },
     {
@@ -3299,20 +3442,20 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_layout_layout",
-      "community": 20,
-      "community_name": "NotificationCenter.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "layout.jsx"
     },
     {
       "label": "Layout()",
       "file_type": "code",
       "source_file": "new/client/src/components/layout/Layout.jsx",
-      "source_location": "L8",
+      "source_location": "L9",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_layout_layout_layout",
-      "community": 20,
-      "community_name": "NotificationCenter.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "layout()"
     },
     {
@@ -3322,8 +3465,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_components_layout_sidebar",
-      "community": 20,
-      "community_name": "NotificationCenter.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "sidebar.jsx"
     },
     {
@@ -3334,8 +3477,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_components_layout_sidebar_sidebar",
-      "community": 20,
-      "community_name": "NotificationCenter.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "sidebar()"
     },
     {
@@ -3709,8 +3852,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_constants_getactivegwpfactors",
-      "community": 18,
-      "community_name": "pages/ManageData.jsx",
+      "community": 15,
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "getactivegwpfactors()"
     },
     {
@@ -3762,7 +3905,7 @@
       "label": "useAuth()",
       "file_type": "code",
       "source_file": "new/client/src/context/AuthContext.jsx",
-      "source_location": "L186",
+      "source_location": "L191",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_context_authcontext_useauth",
@@ -3777,8 +3920,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_context_layoutcontext",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 20,
+      "community_name": "NotificationCenter.jsx",
       "norm_label": "layoutcontext.jsx"
     },
     {
@@ -3788,8 +3931,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "new_client_src_context_layoutcontext_layoutcontext",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 20,
+      "community_name": "NotificationCenter.jsx",
       "norm_label": "layoutcontext"
     },
     {
@@ -3800,20 +3943,20 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_context_layoutcontext_layoutprovider",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 20,
+      "community_name": "NotificationCenter.jsx",
       "norm_label": "layoutprovider()"
     },
     {
       "label": "useLayout()",
       "file_type": "code",
       "source_file": "new/client/src/context/LayoutContext.jsx",
-      "source_location": "L18",
+      "source_location": "L23",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_context_layoutcontext_uselayout",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 20,
+      "community_name": "NotificationCenter.jsx",
       "norm_label": "uselayout()"
     },
     {
@@ -3845,8 +3988,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_pages_audittrail",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "audittrail.jsx"
     },
     {
@@ -3857,8 +4000,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_audittrail_audittrail",
-      "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community": 8,
+      "community_name": "App.jsx",
       "norm_label": "audittrail()"
     },
     {
@@ -3869,7 +4012,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_carbonintensity",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "pages/carbonintensity.jsx"
     },
     {
@@ -3880,8 +4023,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_carbonintensity_carbonintensity",
-      "community": 12,
-      "community_name": "useToast",
+      "community": 15,
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "carbonintensity()"
     },
     {
@@ -3891,7 +4034,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_pages_dashboardenhanced",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "dashboardenhanced.jsx"
     },
@@ -3903,7 +4046,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_dashboardenhanced_calculateforecast",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "calculateforecast()"
     },
@@ -3915,7 +4058,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_dashboardenhanced_dashboardenhanced",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "dashboardenhanced()"
     },
@@ -3950,7 +4093,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_emissions",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "emissions.jsx"
     },
     {
@@ -3962,7 +4105,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_emissions_emissions",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "emissions()"
     },
     {
@@ -3972,8 +4115,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_pages_erpsync",
-      "community": 8,
-      "community_name": "App.jsx",
+      "community": 22,
+      "community_name": "useToast",
       "norm_label": "erpsync.jsx"
     },
     {
@@ -3984,8 +4127,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_erpsync_erpsync",
-      "community": 8,
-      "community_name": "App.jsx",
+      "community": 22,
+      "community_name": "useToast",
       "norm_label": "erpsync()"
     },
     {
@@ -4071,37 +4214,14 @@
       "norm_label": "managedata()"
     },
     {
-      "label": "pages/ManageData_old.jsx",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/ManageData_old.jsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_managedata_old",
-      "community": 18,
-      "community_name": "pages/ManageData.jsx",
-      "norm_label": "pages/managedata_old.jsx"
-    },
-    {
-      "label": "f()",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/ManageData_old.jsx",
-      "source_location": "L101",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "new_client_src_pages_managedata_old_f",
-      "community": 18,
-      "community_name": "pages/ManageData.jsx",
-      "norm_label": "f()"
-    },
-    {
       "label": "MethaneExplorer.jsx",
       "file_type": "code",
       "source_file": "new/client/src/pages/MethaneExplorer.jsx",
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_pages_methaneexplorer",
-      "community": 16,
-      "community_name": "api.js",
+      "community": 22,
+      "community_name": "useToast",
       "norm_label": "methaneexplorer.jsx"
     },
     {
@@ -4112,8 +4232,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_methaneexplorer_mapcontroller",
-      "community": 16,
-      "community_name": "api.js",
+      "community": 22,
+      "community_name": "useToast",
       "norm_label": "mapcontroller()"
     },
     {
@@ -4124,8 +4244,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_methaneexplorer_emissionsmap",
-      "community": 16,
-      "community_name": "api.js",
+      "community": 22,
+      "community_name": "useToast",
       "norm_label": "emissionsmap()"
     },
     {
@@ -4136,7 +4256,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_methaneintensity",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "methaneintensity.jsx"
     },
     {
@@ -4147,8 +4267,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_methaneintensity_methaneintensity",
-      "community": 12,
-      "community_name": "useToast",
+      "community": 20,
+      "community_name": "NotificationCenter.jsx",
       "norm_label": "methaneintensity()"
     },
     {
@@ -4178,7 +4298,7 @@
       "label": "thStyle",
       "file_type": "code",
       "source_file": "new/client/src/pages/QADashboard.jsx",
-      "source_location": "L371",
+      "source_location": "L379",
       "_origin": "ast",
       "id": "new_client_src_pages_qadashboard_thstyle",
       "community": 10,
@@ -4189,7 +4309,7 @@
       "label": "tdStyle",
       "file_type": "code",
       "source_file": "new/client/src/pages/QADashboard.jsx",
-      "source_location": "L384",
+      "source_location": "L392",
       "_origin": "ast",
       "id": "new_client_src_pages_qadashboard_tdstyle",
       "community": 10,
@@ -4200,7 +4320,7 @@
       "label": "paginationBtnStyle()",
       "file_type": "code",
       "source_file": "new/client/src/pages/QADashboard.jsx",
-      "source_location": "L389",
+      "source_location": "L397",
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_qadashboard_paginationbtnstyle",
@@ -4215,7 +4335,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_pages_referencedata",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "referencedata.jsx"
     },
@@ -4227,7 +4347,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_referencedata_referencedata",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "referencedata()"
     },
@@ -4262,7 +4382,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_sbtidashboard",
       "community": 15,
-      "community_name": "DashboardEnhanced.jsx",
+      "community_name": "pages/CarbonIntensity.jsx",
       "norm_label": "sbtidashboard.jsx"
     },
     {
@@ -4274,7 +4394,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_sbtidashboard_sbtidashboard",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "sbtidashboard()"
     },
     {
@@ -4318,7 +4438,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_pages_uncertaintyassessment",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "uncertaintyassessment.jsx"
     },
@@ -4330,7 +4450,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_pages_uncertaintyassessment_uncertaintyassessment",
-      "community": 16,
+      "community": 33,
       "community_name": "api.js",
       "norm_label": "uncertaintyassessment()"
     },
@@ -4342,7 +4462,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_usermanagement",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "usermanagement.jsx"
     },
     {
@@ -4353,7 +4473,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_usermanagement_role_meta",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "role_meta"
     },
     {
@@ -4365,7 +4485,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_usermanagement_getrolemeta",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "getrolemeta()"
     },
     {
@@ -4376,7 +4496,7 @@
       "_origin": "ast",
       "id": "new_client_src_pages_usermanagement_s",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "s"
     },
     {
@@ -4388,85 +4508,8 @@
       "_origin": "ast",
       "id": "new_client_src_pages_usermanagement_usermanagement",
       "community": 22,
-      "community_name": "Toast.jsx",
+      "community_name": "useToast",
       "norm_label": "usermanagement()"
-    },
-    {
-      "label": "dash_patch.py",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/dash_patch.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_dash_patch",
-      "community": 181,
-      "community_name": "dash_patch.py",
-      "norm_label": "dash_patch.py"
-    },
-    {
-      "label": "manage_data_pending_nav.py",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/manage_data_pending_nav.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_manage_data_pending_nav",
-      "community": 182,
-      "community_name": "manage_data_pending_nav.py",
-      "norm_label": "manage_data_pending_nav.py"
-    },
-    {
-      "label": "manage_data_pending_ui.py",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/manage_data_pending_ui.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_manage_data_pending_ui",
-      "community": 183,
-      "community_name": "manage_data_pending_ui.py",
-      "norm_label": "manage_data_pending_ui.py"
-    },
-    {
-      "label": "patch_dashboard.py",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/patch_dashboard.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_patch_dashboard",
-      "community": 184,
-      "community_name": "patch_dashboard.py",
-      "norm_label": "patch_dashboard.py"
-    },
-    {
-      "label": "patch_md.py",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/patch_md.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_patch_md",
-      "community": 185,
-      "community_name": "patch_md.py",
-      "norm_label": "patch_md.py"
-    },
-    {
-      "label": "patch_pending.py",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/patch_pending.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_patch_pending",
-      "community": 186,
-      "community_name": "patch_pending.py",
-      "norm_label": "patch_pending.py"
-    },
-    {
-      "label": "restore_pending_ui.py",
-      "file_type": "code",
-      "source_file": "new/client/src/pages/restore_pending_ui.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "new_client_src_pages_restore_pending_ui",
-      "community": 187,
-      "community_name": "restore_pending_ui.py",
-      "norm_label": "restore_pending_ui.py"
     },
     {
       "label": "patch_app.py",
@@ -4508,8 +4551,8 @@
       "source_location": "L1195",
       "_origin": "ast",
       "id": "new_client_src_utils_emissionfactors_process_types",
-      "community": 22,
-      "community_name": "Toast.jsx",
+      "community": 33,
+      "community_name": "api.js",
       "norm_label": "process_types"
     },
     {
@@ -4636,7 +4679,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_constants",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "utils/constants.js"
     },
     {
@@ -4647,7 +4690,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_constants_stage_scope_selection",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "stage_scope_selection"
     },
     {
@@ -4658,7 +4701,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_constants_stage_scope1_sub_selection",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "stage_scope1_sub_selection"
     },
     {
@@ -4669,7 +4712,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_constants_stage_factor_calculator",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "stage_factor_calculator"
     },
     {
@@ -4680,7 +4723,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_constants_stage_emission_calculator",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "stage_emission_calculator"
     },
     {
@@ -4691,7 +4734,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_constants_stage_scope2",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "stage_scope2"
     },
     {
@@ -4702,7 +4745,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_constants_stage_scope3",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "stage_scope3"
     },
     {
@@ -4891,7 +4934,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_client_src_utils_formatters",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "formatters.js"
     },
@@ -4903,7 +4946,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_utils_formatters_formatcompactnumber",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "formatcompactnumber()"
     },
@@ -4916,7 +4959,7 @@
       "_origin": "ast",
       "id": "new_client_src_utils_formatters_formatnumber",
       "community": 12,
-      "community_name": "useToast",
+      "community_name": "Emissions.jsx",
       "norm_label": "formatnumber()"
     },
     {
@@ -4927,7 +4970,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_utils_formatters_calculatetrend",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "calculatetrend()"
     },
@@ -4939,7 +4982,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_client_src_utils_formatters_formatdate",
-      "community": 15,
+      "community": 139,
       "community_name": "DashboardEnhanced.jsx",
       "norm_label": "formatdate()"
     },
@@ -5006,7 +5049,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_add_indexes",
-      "community": 91,
+      "community": 136,
       "community_name": "sqlite3",
       "norm_label": "add_indexes.py"
     },
@@ -5018,7 +5061,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_add_indexes_create_indexes",
-      "community": 91,
+      "community": 136,
       "community_name": "sqlite3",
       "norm_label": "create_indexes()"
     },
@@ -5029,8 +5072,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_app",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "app.py"
     },
     {
@@ -5040,8 +5083,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "listens_for",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "listens_for"
     },
     {
@@ -5052,8 +5095,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_set_sqlite_pragmas",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "set_sqlite_pragmas()"
     },
     {
@@ -5064,8 +5107,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_receive_after_commit",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "receive_after_commit()"
     },
     {
@@ -5076,8 +5119,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_before_request",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "before_request()"
     },
     {
@@ -5088,8 +5131,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_after_request",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "after_request()"
     },
     {
@@ -5099,8 +5142,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "errorhandler",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "errorhandler"
     },
     {
@@ -5111,8 +5154,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_not_found_error",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "not_found_error()"
     },
     {
@@ -5123,8 +5166,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_internal_error",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "internal_error()"
     },
     {
@@ -5134,8 +5177,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "new_server_app_py_route",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "route"
     },
     {
@@ -5146,8 +5189,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_get_csrf_token",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "get_csrf_token()"
     },
     {
@@ -5158,8 +5201,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_app_health_check",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "health_check()"
     },
     {
@@ -5321,7 +5364,7 @@
       "label": "_process_row()",
       "file_type": "code",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1143",
+      "source_location": "L1138",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_background_processor_process_row",
@@ -5333,9 +5376,9 @@
       "label": "Validates a single mapped row and runs calculation via compute_emissions.\u2026",
       "file_type": "rationale",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1157",
+      "source_location": "L1152",
       "_origin": "ast",
-      "id": "new_server_background_processor_rationale_1157",
+      "id": "new_server_background_processor_rationale_1152",
       "community": 9,
       "community_name": "test_emission_calculations.py",
       "norm_label": "validates a single mapped row and runs calculation via compute_emissions...."
@@ -5347,7 +5390,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_benchmark_db",
-      "community": 91,
+      "community": 136,
       "community_name": "sqlite3",
       "norm_label": "benchmark_db.py"
     },
@@ -5359,7 +5402,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_benchmark_db_benchmark_queries",
-      "community": 91,
+      "community": 136,
       "community_name": "sqlite3",
       "norm_label": "benchmark_queries()"
     },
@@ -5381,8 +5424,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_calculations_anomaly",
-      "community": 118,
-      "community_name": "AnomalyDetector",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "anomaly.py"
     },
     {
@@ -5477,8 +5520,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_calculations_anomaly_rationale_1",
-      "community": 118,
-      "community_name": "AnomalyDetector",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "anomaly detection for ghg emissions data. uses z-score (against 12-month..."
     },
     {
@@ -6707,8 +6750,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_calculations_uncertainty_tier",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "tier"
     },
     {
@@ -6801,8 +6844,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "new_server_calculations_uncertainty_rationale_31",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "calculation tier following ipcc 2006 gl vol.1 \u00a72.4 hierarchy."
     },
     {
@@ -7348,8 +7391,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_config",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "config.py"
     },
     {
@@ -7361,8 +7404,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_config_config",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "config"
     },
     {
@@ -7372,8 +7415,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "new_server_config_rationale_65",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "# note: 50 mb covers any realistic single-month csv upload."
     },
     {
@@ -7406,8 +7449,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_electricity_factors",
-      "community": 112,
-      "community_name": "background_processor.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "electricity_factors.py"
     },
     {
@@ -7417,8 +7460,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_electricity_factors_rationale_1",
-      "community": 112,
-      "community_name": "background_processor.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "grid emission factors - electricity_factors.py central registry for indirect..."
     },
     {
@@ -7815,8 +7858,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_generate_scenarios",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "generate_scenarios.py"
     },
     {
@@ -7827,8 +7870,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_generate_scenarios_run_all_scenarios",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "run_all_scenarios()"
     },
     {
@@ -8332,8 +8375,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_emission",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "emission"
     },
     {
@@ -8345,8 +8388,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_productiondata",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 30,
+      "community_name": "routes/data.py",
       "norm_label": "productiondata"
     },
     {
@@ -8371,8 +8414,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_customfactor",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "customfactor"
     },
     {
@@ -8384,8 +8427,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_activitylog",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 26,
+      "community_name": "satellite.py",
       "norm_label": "activitylog"
     },
     {
@@ -8397,8 +8440,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_goal",
-      "community": 11,
-      "community_name": "login_required",
+      "community": 1,
+      "community_name": "dashboard.py",
       "norm_label": "goal"
     },
     {
@@ -8410,8 +8453,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_baseyear",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 11,
+      "community_name": "login_required",
       "norm_label": "baseyear"
     },
     {
@@ -8475,8 +8518,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_mitigationproject",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 11,
+      "community_name": "login_required",
       "norm_label": "mitigationproject"
     },
     {
@@ -8514,8 +8557,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_notification",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 26,
+      "community_name": "satellite.py",
       "norm_label": "notification"
     },
     {
@@ -8526,8 +8569,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_models_notification_create",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 26,
+      "community_name": "satellite.py",
       "norm_label": ".create()"
     },
     {
@@ -8591,8 +8634,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_sbtitarget",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 11,
+      "community_name": "login_required",
       "norm_label": "sbtitarget"
     },
     {
@@ -8604,8 +8647,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_models_systemsetting",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "systemsetting"
     },
     {
@@ -8615,8 +8658,8 @@
       "source_location": "L576",
       "_origin": "ast",
       "id": "new_server_models_rationale_576",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "persistent key-value store for application-wide settings (gwp standard, ogmp..."
     },
     {
@@ -8762,8 +8805,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_routes_init",
-      "community": 30,
-      "community_name": "routes/data.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "routes/__init__.py"
     },
     {
@@ -8773,8 +8816,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_routes_audit",
-      "community": 11,
-      "community_name": "login_required",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "audit.py"
     },
     {
@@ -8879,8 +8922,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_superuser_required",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "superuser_required()"
     },
     {
@@ -8957,7 +9000,7 @@
       "label": "me()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L349",
+      "source_location": "L348",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_me",
@@ -8969,7 +9012,7 @@
       "label": "update_profile()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L383",
+      "source_location": "L380",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_update_profile",
@@ -8981,7 +9024,7 @@
       "label": "change_password()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L417",
+      "source_location": "L414",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_change_password",
@@ -8993,7 +9036,7 @@
       "label": "upload_avatar()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L464",
+      "source_location": "L461",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_upload_avatar",
@@ -9005,7 +9048,7 @@
       "label": "load_settings_from_db()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L519",
+      "source_location": "L516",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_load_settings_from_db",
@@ -9017,7 +9060,7 @@
       "label": "save_setting_to_db()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L536",
+      "source_location": "L533",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_save_setting_to_db",
@@ -9029,7 +9072,7 @@
       "label": "recalculate_all_emissions_gwp()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L554",
+      "source_location": "L551",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_recalculate_all_emissions_gwp",
@@ -9041,7 +9084,7 @@
       "label": "get_settings()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L596",
+      "source_location": "L593",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_get_settings",
@@ -9053,7 +9096,7 @@
       "label": "update_settings()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L619",
+      "source_location": "L616",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_update_settings",
@@ -9065,7 +9108,7 @@
       "label": "get_users()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L717",
+      "source_location": "L714",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_get_users",
@@ -9077,7 +9120,7 @@
       "label": "update_user()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L759",
+      "source_location": "L756",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_update_user",
@@ -9089,7 +9132,7 @@
       "label": "delete_user()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L808",
+      "source_location": "L805",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_delete_user",
@@ -9101,7 +9144,7 @@
       "label": "admin_reset_password()",
       "file_type": "code",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L864",
+      "source_location": "L861",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_auth_admin_reset_password",
@@ -9138,8 +9181,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "new_server_routes_auth_rationale_120",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "permits superuser, admin, and it_admin roles"
     },
     {
@@ -9157,9 +9200,9 @@
       "label": "Loads all system settings from SystemSetting table in DB into _app_settings.",
       "file_type": "rationale",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L520",
+      "source_location": "L517",
       "_origin": "ast",
-      "id": "new_server_routes_auth_rationale_520",
+      "id": "new_server_routes_auth_rationale_517",
       "community": 29,
       "community_name": "auth.py",
       "norm_label": "loads all system settings from systemsetting table in db into _app_settings."
@@ -9168,9 +9211,9 @@
       "label": "Saves a setting to the SystemSetting table and syncs _app_settings.",
       "file_type": "rationale",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L537",
+      "source_location": "L534",
       "_origin": "ast",
-      "id": "new_server_routes_auth_rationale_537",
+      "id": "new_server_routes_auth_rationale_534",
       "community": 29,
       "community_name": "auth.py",
       "norm_label": "saves a setting to the systemsetting table and syncs _app_settings."
@@ -9179,9 +9222,9 @@
       "label": "Recalculates co2e_total for all stored Emission records in the database using\u2026",
       "file_type": "rationale",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L555",
+      "source_location": "L552",
       "_origin": "ast",
-      "id": "new_server_routes_auth_rationale_555",
+      "id": "new_server_routes_auth_rationale_552",
       "community": 29,
       "community_name": "auth.py",
       "norm_label": "recalculates co2e_total for all stored emission records in the database using..."
@@ -9190,9 +9233,9 @@
       "label": "IT Admin / Admin resets a user's password directly.",
       "file_type": "rationale",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L865",
+      "source_location": "L862",
       "_origin": "ast",
-      "id": "new_server_routes_auth_rationale_865",
+      "id": "new_server_routes_auth_rationale_862",
       "community": 29,
       "community_name": "auth.py",
       "norm_label": "it admin / admin resets a user's password directly."
@@ -9204,8 +9247,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_routes_custom_factors",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "custom_factors.py"
     },
     {
@@ -9215,8 +9258,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_py_route",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "route"
     },
     {
@@ -9227,8 +9270,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_get_custom_factors",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "get_custom_factors()"
     },
     {
@@ -9239,8 +9282,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_create_custom_factor",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "create_custom_factor()"
     },
     {
@@ -9251,8 +9294,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_update_custom_factor",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "update_custom_factor()"
     },
     {
@@ -9263,8 +9306,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_delete_custom_factor",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "delete_custom_factor()"
     },
     {
@@ -9275,8 +9318,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_import_custom_factors",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "import_custom_factors()"
     },
     {
@@ -9286,8 +9329,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_rationale_14",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "get all custom emission factors"
     },
     {
@@ -9297,8 +9340,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_rationale_39",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "create a new custom emission factor (super user / admin only)"
     },
     {
@@ -9308,8 +9351,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_rationale_83",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "update a custom emission factor (super user / admin only)"
     },
     {
@@ -9319,8 +9362,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_rationale_150",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "delete a custom emission factor (super user / admin only)"
     },
     {
@@ -9330,8 +9373,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "new_server_routes_custom_factors_rationale_181",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 94,
+      "community_name": "log_activity_and_notify",
       "norm_label": "bulk import custom factors from csv/excel (super user / admin only)"
     },
     {
@@ -9353,8 +9396,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_dashboard_clear_dashboard_cache",
-      "community": 29,
-      "community_name": "auth.py",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "clear_dashboard_cache()"
     },
     {
@@ -9555,8 +9598,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_dashboard_create_goal",
-      "community": 11,
-      "community_name": "login_required",
+      "community": 1,
+      "community_name": "dashboard.py",
       "norm_label": "create_goal()"
     },
     {
@@ -9603,8 +9646,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_dashboard_get_ogmp_metrics",
-      "community": 1,
-      "community_name": "dashboard.py",
+      "community": 121,
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_ogmp_metrics()"
     },
     {
@@ -9830,8 +9873,8 @@
       "source_location": "L714",
       "_origin": "ast",
       "id": "new_server_routes_dashboard_rationale_714",
-      "community": 11,
-      "community_name": "login_required",
+      "community": 1,
+      "community_name": "dashboard.py",
       "norm_label": "create or update a goal"
     },
     {
@@ -9874,8 +9917,8 @@
       "source_location": "L807",
       "_origin": "ast",
       "id": "new_server_routes_dashboard_rationale_807",
-      "community": 1,
-      "community_name": "dashboard.py",
+      "community": 121,
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "ogmp 2.0 gold standard roadmap & milestone progress per facility. returns..."
     },
     {
@@ -9974,8 +10017,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_data_get_production",
-      "community": 30,
-      "community_name": "routes/data.py",
+      "community": 121,
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_production()"
     },
     {
@@ -10034,8 +10077,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_data_get_ogmp_surveys",
-      "community": 30,
-      "community_name": "routes/data.py",
+      "community": 121,
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_ogmp_surveys()"
     },
     {
@@ -10094,8 +10137,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_data_get_cbam_exports",
-      "community": 30,
-      "community_name": "routes/data.py",
+      "community": 121,
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_cbam_exports()"
     },
     {
@@ -10811,8 +10854,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_routes_facilities",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "facilities.py"
     },
     {
@@ -10822,8 +10865,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "new_server_routes_facilities_py_route",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "route"
     },
     {
@@ -10835,7 +10878,7 @@
       "_origin": "ast",
       "id": "new_server_routes_facilities_get_facilities",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_facilities()"
     },
     {
@@ -10846,8 +10889,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_facilities_get_all_regions",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "get_all_regions()"
     },
     {
@@ -10858,8 +10901,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_facilities_add_facility",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "add_facility()"
     },
     {
@@ -10870,8 +10913,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_facilities_update_facility",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "update_facility()"
     },
     {
@@ -10882,8 +10925,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_facilities_delete_facility",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "delete_facility()"
     },
     {
@@ -10894,8 +10937,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_facilities_import_facilities",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "import_facilities()"
     },
     {
@@ -10905,8 +10948,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "new_server_routes_facilities_rationale_55",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "return all unique region identifiers \u2014 it admin only, no access filtering...."
     },
     {
@@ -10916,8 +10959,8 @@
       "source_location": "L324",
       "_origin": "ast",
       "id": "new_server_routes_facilities_rationale_324",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 25,
+      "community_name": "app.py",
       "norm_label": "bulk import facilities"
     },
     {
@@ -11304,8 +11347,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_routes_qaqc",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "qaqc.py"
     },
     {
@@ -11317,7 +11360,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_is_admin_or_superuser",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "_is_admin_or_superuser()"
     },
     {
@@ -11328,7 +11371,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_py_route",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "route"
     },
     {
@@ -11340,7 +11383,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_get_qaqc_dashboard",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_qaqc_dashboard()"
     },
     {
@@ -11352,7 +11395,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_export_qaqc_report",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "export_qaqc_report()"
     },
     {
@@ -11364,7 +11407,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_resolve_flagged_record",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "resolve_flagged_record()"
     },
     {
@@ -11376,7 +11419,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_bulk_resolve",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "bulk_resolve()"
     },
     {
@@ -11387,7 +11430,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_rationale_17",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "returns true if the user has qa/qc viewing rights (admin or superuser roles)."
     },
     {
@@ -11398,7 +11441,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_rationale_24",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "returns aggregated uncertainty (ipcc srss) and flagged anomaly records. scoped..."
     },
     {
@@ -11409,7 +11452,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_rationale_187",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "exports qa/qc anomaly data as a csv file. access: admin, superuser, it_admin..."
     },
     {
@@ -11420,7 +11463,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_rationale_252",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "marks a flagged scope 1 record as reviewed by clearing its qa_flag and updating..."
     },
     {
@@ -11431,7 +11474,7 @@
       "_origin": "ast",
       "id": "new_server_routes_qaqc_rationale_309",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "bulk approve or reject a list of flagged records. payload: { \"records\": [{\"id\":..."
     },
     {
@@ -11738,8 +11781,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_routes_scope2",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "scope2.py"
     },
     {
@@ -11750,8 +11793,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_calc_indirect_steam",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "_calc_indirect_steam()"
     },
     {
@@ -11762,8 +11805,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_calc_cogen_allocation",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "_calc_cogen_allocation()"
     },
     {
@@ -11773,8 +11816,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "new_server_routes_scope2_py_route",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "route"
     },
     {
@@ -11785,8 +11828,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_get_scope2_emissions",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 121,
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_scope2_emissions()"
     },
     {
@@ -11797,8 +11840,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_create_scope2_emission",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "create_scope2_emission()"
     },
     {
@@ -11809,8 +11852,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_update_scope2_emission",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "update_scope2_emission()"
     },
     {
@@ -11821,8 +11864,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_delete_scope2_emission",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "delete_scope2_emission()"
     },
     {
@@ -11833,8 +11876,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_bulk_import_scope2",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "bulk_import_scope2()"
     },
     {
@@ -11845,8 +11888,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope2_get_emission_factors",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "get_emission_factors()"
     },
     {
@@ -11856,8 +11899,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_19",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "calculate tco2e for indirect steam / heat entry."
     },
     {
@@ -11867,8 +11910,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_53",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "calculate heat-allocated tco2e for chp / cogeneration entry."
     },
     {
@@ -11878,8 +11921,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_74",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 121,
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get all scope 2 emissions, scoped to the requesting user's allowed facilities."
     },
     {
@@ -11889,8 +11932,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_133",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "create a new scope 2 emission record"
     },
     {
@@ -11900,8 +11943,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_227",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "update a scope 2 emission record"
     },
     {
@@ -11911,8 +11954,8 @@
       "source_location": "L276",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_276",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "delete a scope 2 emission record"
     },
     {
@@ -11922,8 +11965,8 @@
       "source_location": "L297",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_297",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "import scope 2 emissions from csv data"
     },
     {
@@ -11933,8 +11976,8 @@
       "source_location": "L401",
       "_origin": "ast",
       "id": "new_server_routes_scope2_rationale_401",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 41,
+      "community_name": "scope2.py",
       "norm_label": "get emission factors by grid region"
     },
     {
@@ -11944,8 +11987,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_routes_scope3",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "scope3.py"
     },
     {
@@ -11955,8 +11998,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "new_server_routes_scope3_py_route",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "route"
     },
     {
@@ -11968,7 +12011,7 @@
       "_origin": "ast",
       "id": "new_server_routes_scope3_get_scope3_emissions",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_scope3_emissions()"
     },
     {
@@ -11979,8 +12022,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope3_create_scope3_emission",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "create_scope3_emission()"
     },
     {
@@ -11991,8 +12034,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope3_update_scope3_emission",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "update_scope3_emission()"
     },
     {
@@ -12003,8 +12046,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope3_delete_scope3_emission",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "delete_scope3_emission()"
     },
     {
@@ -12015,8 +12058,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope3_bulk_import_scope3",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "bulk_import_scope3()"
     },
     {
@@ -12027,8 +12070,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_routes_scope3_calculate_eeio",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "calculate_eeio()"
     },
     {
@@ -12039,7 +12082,7 @@
       "_origin": "ast",
       "id": "new_server_routes_scope3_rationale_16",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get all scope 3 emissions scoped to user's allowed facilities"
     },
     {
@@ -12049,8 +12092,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "new_server_routes_scope3_rationale_69",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "create a new scope 3 emission record with maker-checker status"
     },
     {
@@ -12060,8 +12103,8 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "new_server_routes_scope3_rationale_139",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "update a scope 3 emission record"
     },
     {
@@ -12071,8 +12114,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "new_server_routes_scope3_rationale_184",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "delete a scope 3 emission record"
     },
     {
@@ -12082,8 +12125,8 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "new_server_routes_scope3_rationale_205",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "import scope 3 emissions from csv data"
     },
     {
@@ -12093,8 +12136,8 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "new_server_routes_scope3_rationale_295",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 150,
+      "community_name": "scope3.py",
       "norm_label": "calculate scope 3 category 1 emissions based on spend and naics code"
     },
     {
@@ -12150,8 +12193,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_services_erp_integration_sync_erp_data",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 0,
+      "community_name": "emissions.py",
       "norm_label": "sync_erp_data()"
     },
     {
@@ -12161,8 +12204,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "new_server_services_erp_integration_rationale_8",
-      "community": 23,
-      "community_name": "models.py",
+      "community": 0,
+      "community_name": "emissions.py",
       "norm_label": "mock erp synchronization service. in a real scenario, this would call..."
     },
     {
@@ -12356,8 +12399,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_test_csv_uploader",
-      "community": 139,
-      "community_name": "TestCSVUploaderE2E",
+      "community": 115,
+      "community_name": "Facility",
       "norm_label": "test_csv_uploader.py"
     },
     {
@@ -12369,8 +12412,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_test_csv_uploader_testcsvuploadere2e",
-      "community": 139,
-      "community_name": "TestCSVUploaderE2E",
+      "community": 115,
+      "community_name": "Facility",
       "norm_label": "testcsvuploadere2e"
     },
     {
@@ -12381,32 +12424,32 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_test_csv_uploader_testcsvuploadere2e_setupclass",
-      "community": 139,
-      "community_name": "TestCSVUploaderE2E",
+      "community": 115,
+      "community_name": "Facility",
       "norm_label": ".setupclass()"
     },
     {
       "label": ".tearDownClass()",
       "file_type": "code",
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L66",
+      "source_location": "L74",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_test_csv_uploader_testcsvuploadere2e_teardownclass",
-      "community": 139,
-      "community_name": "TestCSVUploaderE2E",
+      "community": 115,
+      "community_name": "Facility",
       "norm_label": ".teardownclass()"
     },
     {
       "label": ".test_upload_csv_end_to_end()",
       "file_type": "code",
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L76",
+      "source_location": "L92",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_test_csv_uploader_testcsvuploadere2e_test_upload_csv_end_to_end",
-      "community": 139,
-      "community_name": "TestCSVUploaderE2E",
+      "community": 115,
+      "community_name": "Facility",
       "norm_label": ".test_upload_csv_end_to_end()"
     },
     {
@@ -12416,19 +12459,19 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_test_csv_uploader_rationale_1",
-      "community": 139,
-      "community_name": "TestCSVUploaderE2E",
+      "community": 115,
+      "community_name": "Facility",
       "norm_label": "end-to-end test for the csv uploader (import emissions data wizard) tests the..."
     },
     {
       "label": "Tests the CSV upload endpoint with a mock CSV containing mixed scenarios.\u2026",
       "file_type": "rationale",
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L77",
+      "source_location": "L93",
       "_origin": "ast",
-      "id": "new_server_test_csv_uploader_rationale_77",
-      "community": 139,
-      "community_name": "TestCSVUploaderE2E",
+      "id": "new_server_test_csv_uploader_rationale_93",
+      "community": 115,
+      "community_name": "Facility",
       "norm_label": "tests the csv upload endpoint with a mock csv containing mixed scenarios...."
     },
     {
@@ -13451,8 +13494,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_test_emission_calculations_summaryresult",
-      "community": 170,
-      "community_name": "SummaryResult",
+      "community": 9,
+      "community_name": "test_emission_calculations.py",
       "norm_label": "summaryresult"
     },
     {
@@ -13781,8 +13824,8 @@
       "source_location": "L1223",
       "_origin": "ast",
       "id": "new_server_test_emission_calculations_rationale_1223",
-      "community": 170,
-      "community_name": "SummaryResult",
+      "community": 9,
+      "community_name": "test_emission_calculations.py",
       "norm_label": "aggregates test results for a final summary table."
     },
     {
@@ -14003,7 +14046,7 @@
       "label": "test_bulk_import_custom_factors()",
       "file_type": "code",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L105",
+      "source_location": "L115",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_all_bulk_imports_test_bulk_import_custom_factors",
@@ -14015,7 +14058,7 @@
       "label": "test_bulk_import_production()",
       "file_type": "code",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L147",
+      "source_location": "L160",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_all_bulk_imports_test_bulk_import_production",
@@ -14027,7 +14070,7 @@
       "label": "test_bulk_import_sources()",
       "file_type": "code",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L193",
+      "source_location": "L206",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_all_bulk_imports_test_bulk_import_sources",
@@ -14039,7 +14082,7 @@
       "label": "test_bulk_import_mitigation()",
       "file_type": "code",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L237",
+      "source_location": "L250",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_all_bulk_imports_test_bulk_import_mitigation",
@@ -14051,7 +14094,7 @@
       "label": "test_bulk_import_scope2()",
       "file_type": "code",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L281",
+      "source_location": "L294",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope2",
@@ -14063,7 +14106,7 @@
       "label": "test_bulk_import_scope3()",
       "file_type": "code",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L324",
+      "source_location": "L337",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope3",
@@ -14075,7 +14118,7 @@
       "label": "test_bulk_import_scope1()",
       "file_type": "code",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L369",
+      "source_location": "L382",
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope1",
@@ -14161,8 +14204,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_login",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": "login()"
     },
     {
@@ -14283,8 +14326,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testidor",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 13,
+      "community_name": "User",
       "norm_label": "testidor"
     },
     {
@@ -14295,8 +14338,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testidor_test_user_cannot_delete_other_users_emission",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 13,
+      "community_name": "User",
       "norm_label": ".test_user_cannot_delete_other_users_emission()"
     },
     {
@@ -14307,8 +14350,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testidor_test_user_can_delete_own_emission",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 13,
+      "community_name": "User",
       "norm_label": ".test_user_can_delete_own_emission()"
     },
     {
@@ -14320,8 +14363,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testinputlimits",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": "testinputlimits"
     },
     {
@@ -14332,8 +14375,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testinputlimits_test_limit_all_capped_at_5000",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": ".test_limit_all_capped_at_5000()"
     },
     {
@@ -14344,8 +14387,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testinputlimits_test_large_payload_rejected",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": ".test_large_payload_rejected()"
     },
     {
@@ -14356,8 +14399,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testinputlimits_test_wildcard_search_does_not_crash",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": ".test_wildcard_search_does_not_crash()"
     },
     {
@@ -14394,8 +14437,8 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testcalculationintegrity",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": "testcalculationintegrity"
     },
     {
@@ -14406,8 +14449,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_testcalculationintegrity_test_calculation_error_returns_422_not_zero",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": ".test_calculation_error_returns_422_not_zero()"
     },
     {
@@ -14439,8 +14482,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_rationale_148",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 13,
+      "community_name": "User",
       "norm_label": "user should not be able to delete an emission record created by another user..."
     },
     {
@@ -14450,8 +14493,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_rationale_184",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 13,
+      "community_name": "User",
       "norm_label": "user should be able to delete their own emission record."
     },
     {
@@ -14472,8 +14515,8 @@
       "source_location": "L277",
       "_origin": "ast",
       "id": "new_server_tests_test_api_security_rationale_277",
-      "community": 41,
-      "community_name": "login",
+      "community": 13,
+      "community_name": "User",
       "norm_label": "a bad calculation input must return 422, not silently save 0.000 tco2e."
     },
     {
@@ -14949,8 +14992,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_upload_test_s2_s3",
-      "community": 112,
-      "community_name": "background_processor.py",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "upload_test_s2_s3.py"
     },
     {
@@ -14961,8 +15004,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_upload_test_s2_s3_test_upload",
-      "community": 112,
-      "community_name": "background_processor.py",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "test_upload()"
     },
     {
@@ -14972,8 +15015,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "new_server_utils",
-      "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community": 26,
+      "community_name": "satellite.py",
       "norm_label": "utils.py"
     },
     {
@@ -14997,7 +15040,7 @@
       "_origin": "ast",
       "id": "new_server_utils_get_allowed_facility_ids",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "get_allowed_facility_ids()"
     },
     {
@@ -15008,7 +15051,7 @@
       "_callable": true,
       "_origin": "ast",
       "id": "new_server_utils_log_activity_and_notify",
-      "community": 121,
+      "community": 94,
       "community_name": "log_activity_and_notify",
       "norm_label": "log_activity_and_notify()"
     },
@@ -15020,7 +15063,7 @@
       "_origin": "ast",
       "id": "new_server_utils_rationale_13",
       "community": 121,
-      "community_name": "log_activity_and_notify",
+      "community_name": "get_allowed_facility_ids",
       "norm_label": "returns none if user is admin/it_admin/superuser (allowed all). returns a list..."
     },
     {
@@ -15129,7 +15172,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": "test_final_v2.py"
     },
     {
@@ -15142,7 +15185,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2_mocksession",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": "mocksession"
     },
     {
@@ -15154,7 +15197,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2_mocksession_bulk_save_objects",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": ".bulk_save_objects()"
     },
     {
@@ -15166,7 +15209,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2_mocksession_commit",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": ".commit()"
     },
     {
@@ -15179,7 +15222,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2_mockdb",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": "mockdb"
     },
     {
@@ -15191,7 +15234,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2_mockdb_init",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": ".__init__()"
     },
     {
@@ -15204,7 +15247,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2_dummyfacility",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": "dummyfacility"
     },
     {
@@ -15216,7 +15259,7 @@
       "_origin": "ast",
       "id": "new_test_final_v2_dummyfacility_init",
       "community": 91,
-      "community_name": "sqlite3",
+      "community_name": "test_final_v2.py",
       "norm_label": ".__init__()"
     },
     {
@@ -15227,7 +15270,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": "test_final_v3.py"
     },
     {
@@ -15240,7 +15283,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3_mocksession",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": "mocksession"
     },
     {
@@ -15252,7 +15295,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3_mocksession_bulk_save_objects",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": ".bulk_save_objects()"
     },
     {
@@ -15264,7 +15307,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3_mocksession_commit",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": ".commit()"
     },
     {
@@ -15277,7 +15320,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3_mockdb",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": "mockdb"
     },
     {
@@ -15289,7 +15332,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3_mockdb_init",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": ".__init__()"
     },
     {
@@ -15302,7 +15345,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3_dummyfacility",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": "dummyfacility"
     },
     {
@@ -15314,7 +15357,7 @@
       "_origin": "ast",
       "id": "new_test_final_v3_dummyfacility_init",
       "community": 136,
-      "community_name": "test_final_v3.py",
+      "community_name": "sqlite3",
       "norm_label": ".__init__()"
     },
     {
@@ -15613,8 +15656,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "old_managedata",
-      "community": 197,
-      "community_name": "old_ManageData.jsx",
+      "community": 18,
+      "community_name": "pages/ManageData.jsx",
       "norm_label": "old_managedata.jsx"
     },
     {
@@ -15745,8 +15788,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "package_build",
-      "community": 49,
-      "community_name": "files",
+      "community": 43,
+      "community_name": "build",
       "norm_label": "build"
     },
     {
@@ -15756,8 +15799,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "package_build_appid",
-      "community": 49,
-      "community_name": "files",
+      "community": 43,
+      "community_name": "build",
       "norm_label": "appid"
     },
     {
@@ -15767,8 +15810,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "package_build_productname",
-      "community": 49,
-      "community_name": "files",
+      "community": 43,
+      "community_name": "build",
       "norm_label": "productname"
     },
     {
@@ -15778,8 +15821,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "package_build_directories",
-      "community": 49,
-      "community_name": "files",
+      "community": 43,
+      "community_name": "build",
       "norm_label": "directories"
     },
     {
@@ -15789,8 +15832,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "package_directories_output",
-      "community": 49,
-      "community_name": "files",
+      "community": 43,
+      "community_name": "build",
       "norm_label": "output"
     },
     {
@@ -15801,7 +15844,7 @@
       "_origin": "ast",
       "id": "package_build_win",
       "community": 43,
-      "community_name": "win",
+      "community_name": "build",
       "norm_label": "win"
     },
     {
@@ -15812,7 +15855,7 @@
       "_origin": "ast",
       "id": "package_win_icon",
       "community": 43,
-      "community_name": "win",
+      "community_name": "build",
       "norm_label": "icon"
     },
     {
@@ -15823,7 +15866,7 @@
       "_origin": "ast",
       "id": "package_win_target",
       "community": 43,
-      "community_name": "win",
+      "community_name": "build",
       "norm_label": "target"
     },
     {
@@ -15834,7 +15877,7 @@
       "_origin": "ast",
       "id": "package_win_asar",
       "community": 43,
-      "community_name": "win",
+      "community_name": "build",
       "norm_label": "asar"
     },
     {
@@ -16141,7 +16184,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "sqlite3",
-      "community": 91,
+      "community": 136,
       "community_name": "sqlite3",
       "norm_label": "sqlite3"
     },
@@ -16340,8 +16383,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "seed_demo_data_seed_data",
-      "community": 25,
-      "community_name": "Emission",
+      "community": 23,
+      "community_name": "models.py",
       "norm_label": "seed_data()"
     },
     {
@@ -16351,8 +16394,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "temp_old_carbonintensity",
-      "community": 94,
-      "community_name": "f",
+      "community": 18,
+      "community_name": "pages/ManageData.jsx",
       "norm_label": "temp_old/carbonintensity.jsx"
     },
     {
@@ -16363,8 +16406,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "temp_old_carbonintensity_f",
-      "community": 94,
-      "community_name": "f",
+      "community": 18,
+      "community_name": "pages/ManageData.jsx",
       "norm_label": "f()"
     },
     {
@@ -16374,8 +16417,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "temp_old_managedata",
-      "community": 94,
-      "community_name": "f",
+      "community": 18,
+      "community_name": "pages/ManageData.jsx",
       "norm_label": "temp_old/managedata.jsx"
     },
     {
@@ -22820,7 +22863,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L202",
+      "source_location": "L200",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
@@ -22842,7 +22885,62 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L26",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_audittrail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_carbonintensity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_dashboardenhanced",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_diagnostics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_emissions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
@@ -22858,6 +22956,28 @@
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_app_itroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_managedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_methaneintensity",
       "confidence_score": 1.0
     },
     {
@@ -22886,11 +23006,77 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L27",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_qadashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_referencedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_app_reports",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_sbtidashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_settings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_uncertaintyassessment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app",
+      "target": "new_client_src_app_usermanagement",
       "confidence_score": 1.0
     },
     {
@@ -22946,7 +23132,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L24",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
@@ -22958,7 +23144,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L24",
+      "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
@@ -23050,123 +23236,48 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L20",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_audittrail",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L20",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_audittrail_audittrail",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L15",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_carbonintensity",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_carbonintensity_carbonintensity",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_dashboardenhanced",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_dashboardenhanced_dashboardenhanced",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L19",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_diagnostics",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L19",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_diagnostics_diagnostics",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L11",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_emissions",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_emissions_emissions",
       "confidence_score": 1.0
     },
     {
@@ -23194,27 +23305,12 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_managedata",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_managedata_managedata",
       "confidence_score": 1.0
     },
     {
@@ -23227,195 +23323,75 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L16",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_methaneintensity",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_methaneintensity_methaneintensity",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_qadashboard",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_qadashboard_qadashboard",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L18",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_referencedata",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L18",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_referencedata_referencedata",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
       "_origin": "ast",
-      "context": "import",
-      "source_location": "L14",
-      "weight": 1.0,
       "source": "new_client_src_app",
       "target": "new_client_src_pages_reports",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_reports_reports",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L23",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_sbtidashboard",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L23",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_sbtidashboard_sbtidashboard",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L22",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_settings",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L22",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_settings_settings",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L17",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_uncertaintyassessment",
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "dynamic_import",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_uncertaintyassessment_uncertaintyassessment",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L21",
-      "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app",
       "target": "new_client_src_pages_usermanagement",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "new/client/src/App.jsx",
-      "source_location": "L21",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "new_client_src_app",
-      "target": "new_client_src_pages_usermanagement_usermanagement",
       "confidence_score": 1.0
     },
     {
@@ -23436,11 +23412,180 @@
       "deferred": true,
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_dashboardenhanced",
+      "target": "new_client_src_pages_dashboardenhanced",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_emissions",
+      "target": "new_client_src_pages_emissions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_managedata",
+      "target": "new_client_src_pages_managedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_qadashboard",
+      "target": "new_client_src_pages_qadashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_reports",
+      "target": "new_client_src_pages_reports",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_carbonintensity",
+      "target": "new_client_src_pages_carbonintensity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_methaneintensity",
+      "target": "new_client_src_pages_methaneintensity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_uncertaintyassessment",
+      "target": "new_client_src_pages_uncertaintyassessment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_referencedata",
+      "target": "new_client_src_pages_referencedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_diagnostics",
+      "target": "new_client_src_pages_diagnostics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_audittrail",
+      "target": "new_client_src_pages_audittrail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_usermanagement",
+      "target": "new_client_src_pages_usermanagement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_app_settings",
+      "target": "new_client_src_pages_settings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "deferred": true,
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/App.jsx",
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_client_src_app_emissionsmap",
-      "target": "new_client_src_pages_methaneexplorer",
+      "source": "new_client_src_app_sbtidashboard",
+      "target": "new_client_src_pages_sbtidashboard",
       "confidence_score": 1.0
     },
     {
@@ -23452,8 +23597,8 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_client_src_app_reports",
-      "target": "new_client_src_pages_reports",
+      "source": "new_client_src_app_emissionsmap",
+      "target": "new_client_src_pages_methaneexplorer",
       "confidence_score": 1.0
     },
     {
@@ -23509,7 +23654,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/App.jsx",
-      "source_location": "L204",
+      "source_location": "L202",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_app_app",
@@ -25496,6 +25641,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/components/layout/Layout.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_components_layout_layout",
+      "target": "new_client_src_components_loadingspinner",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/LoadingSpinner.jsx",
@@ -25636,6 +25793,18 @@
       "_origin": "ast",
       "source": "new_client_src_pages_settings",
       "target": "new_client_src_components_loadingspinner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/components/layout/Layout.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_components_layout_layout",
+      "target": "new_client_src_components_loadingspinner_loadingspinner",
       "confidence_score": 1.0
     },
     {
@@ -25856,7 +26025,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L61",
+      "source_location": "L62",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25867,7 +26036,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25878,7 +26047,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L627",
+      "source_location": "L644",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25889,7 +26058,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L251",
+      "source_location": "L252",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25900,7 +26069,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L264",
+      "source_location": "L265",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25911,7 +26080,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L118",
+      "source_location": "L119",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25922,7 +26091,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25933,7 +26102,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter",
@@ -25965,11 +26134,35 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/components/NotificationCenter.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_components_notificationcenter",
+      "target": "new_client_src_context_authcontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/components/NotificationCenter.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_components_notificationcenter",
+      "target": "new_client_src_context_authcontext_useauth",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L119",
+      "source_location": "L120",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter_notifrow",
@@ -25981,7 +26174,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L204",
+      "source_location": "L205",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter_notifrow",
@@ -26005,11 +26198,23 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/NotificationCenter.jsx",
-      "source_location": "L273",
+      "source_location": "L275",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_notificationcenter_notificationcenter",
       "target": "new_client_src_components_toast_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "new/client/src/components/NotificationCenter.jsx",
+      "source_location": "L266",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "new_client_src_components_notificationcenter_notificationcenter",
+      "target": "new_client_src_context_authcontext_useauth",
       "confidence_score": 1.0
     },
     {
@@ -26544,7 +26749,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/Scope1Form.jsx",
-      "source_location": "L2213",
+      "source_location": "L2288",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_scope1form_scope1form",
@@ -28257,7 +28462,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/components/layout/Layout.jsx",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_components_layout_layout",
@@ -28717,7 +28922,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/CarbonIntensity.jsx",
-      "source_location": "L464",
+      "source_location": "L478",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_carbonintensity_carbonintensity",
@@ -28762,7 +28967,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/context/AuthContext.jsx",
-      "source_location": "L186",
+      "source_location": "L191",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_context_authcontext",
@@ -29263,7 +29468,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/context/LayoutContext.jsx",
-      "source_location": "L18",
+      "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_context_layoutcontext",
@@ -29477,7 +29682,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/CarbonIntensity.jsx",
-      "source_location": "L510",
+      "source_location": "L524",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_carbonintensity_carbonintensity",
@@ -29559,7 +29764,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/DashboardEnhanced.jsx",
-      "source_location": "L391",
+      "source_location": "L393",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_dashboardenhanced_dashboardenhanced",
@@ -29571,7 +29776,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/DashboardEnhanced.jsx",
-      "source_location": "L332",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_dashboardenhanced_dashboardenhanced",
@@ -29583,7 +29788,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/DashboardEnhanced.jsx",
-      "source_location": "L777",
+      "source_location": "L797",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_dashboardenhanced_dashboardenhanced",
@@ -29784,19 +29989,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_managedata_managedatainner",
-      "target": "new_client_src_pages_managedata_old_f"
-    },
-    {
-      "relation": "indirect_call",
-      "confidence": "INFERRED",
-      "source_file": "new/client/src/pages/ManageData_old.jsx",
-      "source_location": "L619",
-      "weight": 1.0,
-      "_origin": "ast",
-      "context": "collection",
-      "source": "new_client_src_pages_managedata_old",
-      "target": "new_client_src_pages_managedata_old_f",
-      "confidence_score": 0.5
+      "target": "temp_old_carbonintensity_f"
     },
     {
       "relation": "contains",
@@ -29860,7 +30053,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/MethaneIntensity.jsx",
-      "source_location": "L633",
+      "source_location": "L647",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_methaneintensity_methaneintensity",
@@ -29871,7 +30064,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/QADashboard.jsx",
-      "source_location": "L389",
+      "source_location": "L397",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_qadashboard",
@@ -29893,7 +30086,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/QADashboard.jsx",
-      "source_location": "L384",
+      "source_location": "L392",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_qadashboard",
@@ -29904,7 +30097,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/QADashboard.jsx",
-      "source_location": "L371",
+      "source_location": "L379",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_qadashboard",
@@ -29916,7 +30109,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/QADashboard.jsx",
-      "source_location": "L344",
+      "source_location": "L352",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_qadashboard_qadashboard",
@@ -30007,7 +30200,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/client/src/pages/SbtiDashboard.jsx",
-      "source_location": "L360",
+      "source_location": "L377",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_client_src_pages_sbtidashboard_sbtidashboard",
@@ -31079,7 +31272,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1143",
+      "source_location": "L1138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_background_processor",
@@ -31226,7 +31419,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1162",
+      "source_location": "L1157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_background_processor",
@@ -31262,7 +31455,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1161",
+      "source_location": "L1156",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_background_processor",
@@ -31850,7 +32043,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1122",
+      "source_location": "L1117",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_background_processor_process_row_facilities",
@@ -31862,7 +32055,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1300",
+      "source_location": "L1295",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_background_processor_process_row",
@@ -31874,7 +32067,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1347",
+      "source_location": "L1342",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_background_processor_process_row",
@@ -31885,10 +32078,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "new/server/background_processor.py",
-      "source_location": "L1157",
+      "source_location": "L1152",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_server_background_processor_rationale_1157",
+      "source": "new_server_background_processor_rationale_1152",
       "target": "new_server_background_processor_process_row",
       "confidence_score": 1.0
     },
@@ -40515,7 +40708,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/seed_admin.py",
-      "source_location": "L67",
+      "source_location": "L81",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_seed_admin_seed_admin",
@@ -40551,7 +40744,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_test_csv_uploader_testcsvuploadere2e_setupclass",
@@ -40905,7 +41098,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L48",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_test_csv_uploader_testcsvuploadere2e_setupclass",
@@ -40928,7 +41121,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L242",
+      "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_mitigation",
@@ -40940,7 +41133,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L152",
+      "source_location": "L165",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_production",
@@ -40952,7 +41145,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L374",
+      "source_location": "L387",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope1",
@@ -40964,7 +41157,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L286",
+      "source_location": "L299",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope2",
@@ -40976,7 +41169,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L329",
+      "source_location": "L342",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope3",
@@ -40988,7 +41181,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L198",
+      "source_location": "L211",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_sources",
@@ -41151,7 +41344,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L560",
+      "source_location": "L557",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -42466,7 +42659,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L895",
+      "source_location": "L892",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_admin_reset_password",
@@ -42776,7 +42969,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L523",
+      "source_location": "L520",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -42788,7 +42981,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L544",
+      "source_location": "L541",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_save_setting_to_db",
@@ -43064,7 +43257,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L864",
+      "source_location": "L861",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43075,7 +43268,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L417",
+      "source_location": "L414",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43086,7 +43279,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L808",
+      "source_location": "L805",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43108,7 +43301,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L596",
+      "source_location": "L593",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43119,7 +43312,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L717",
+      "source_location": "L714",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43141,7 +43334,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L519",
+      "source_location": "L516",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43185,7 +43378,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L349",
+      "source_location": "L348",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43196,7 +43389,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L554",
+      "source_location": "L551",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43218,7 +43411,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L536",
+      "source_location": "L533",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43240,7 +43433,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L383",
+      "source_location": "L380",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43251,7 +43444,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L619",
+      "source_location": "L616",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43262,7 +43455,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L759",
+      "source_location": "L756",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43273,7 +43466,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L464",
+      "source_location": "L461",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43296,7 +43489,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L705",
+      "source_location": "L702",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth",
@@ -43488,7 +43681,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L887",
+      "source_location": "L884",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_admin_reset_password",
@@ -43500,7 +43693,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L437",
+      "source_location": "L434",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_change_password",
@@ -43546,7 +43739,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L482",
+      "source_location": "L479",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_upload_avatar",
@@ -43557,7 +43750,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L416",
+      "source_location": "L413",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -43569,7 +43762,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L595",
+      "source_location": "L592",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -43581,19 +43774,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L348",
-      "weight": 1.0,
-      "context": "decorator",
-      "_origin": "ast",
-      "source": "new_server_routes_auth_me",
-      "target": "new_server_routes_auth_login_required",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "new/server/routes/auth.py",
-      "source_location": "L382",
+      "source_location": "L379",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -43605,7 +43786,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L618",
+      "source_location": "L615",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -43617,7 +43798,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L463",
+      "source_location": "L460",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45117,7 +45298,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L863",
+      "source_location": "L860",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45129,7 +45310,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L807",
+      "source_location": "L804",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45141,7 +45322,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L716",
+      "source_location": "L713",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45165,7 +45346,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L758",
+      "source_location": "L755",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45260,7 +45441,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L862",
+      "source_location": "L859",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45272,7 +45453,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L415",
+      "source_location": "L412",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45284,7 +45465,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L806",
+      "source_location": "L803",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45308,7 +45489,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L594",
+      "source_location": "L591",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45320,7 +45501,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L715",
+      "source_location": "L712",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45380,7 +45561,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L381",
+      "source_location": "L378",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45392,7 +45573,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L617",
+      "source_location": "L614",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45404,7 +45585,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L757",
+      "source_location": "L754",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45416,7 +45597,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L462",
+      "source_location": "L459",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -45513,7 +45694,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L446",
+      "source_location": "L443",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_change_password",
@@ -45524,7 +45705,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L603",
+      "source_location": "L600",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_get_settings",
@@ -45535,10 +45716,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L520",
+      "source_location": "L517",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_server_routes_auth_rationale_520",
+      "source": "new_server_routes_auth_rationale_517",
       "target": "new_server_routes_auth_load_settings_from_db",
       "confidence_score": 1.0
     },
@@ -45547,7 +45728,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L627",
+      "source_location": "L624",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_update_settings",
@@ -45558,10 +45739,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L537",
+      "source_location": "L534",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_server_routes_auth_rationale_537",
+      "source": "new_server_routes_auth_rationale_534",
       "target": "new_server_routes_auth_save_setting_to_db",
       "confidence_score": 1.0
     },
@@ -45570,7 +45751,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L635",
+      "source_location": "L632",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_update_settings",
@@ -45581,10 +45762,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L555",
+      "source_location": "L552",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_server_routes_auth_rationale_555",
+      "source": "new_server_routes_auth_rationale_552",
       "target": "new_server_routes_auth_recalculate_all_emissions_gwp",
       "confidence_score": 1.0
     },
@@ -45593,7 +45774,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L675",
+      "source_location": "L672",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_update_settings",
@@ -45606,7 +45787,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L706",
+      "source_location": "L703",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_update_settings",
@@ -45618,7 +45799,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L691",
+      "source_location": "L688",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_update_settings",
@@ -45630,7 +45811,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L903",
+      "source_location": "L900",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_routes_auth_admin_reset_password",
@@ -45640,10 +45821,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "new/server/routes/auth.py",
-      "source_location": "L865",
+      "source_location": "L862",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_server_routes_auth_rationale_865",
+      "source": "new_server_routes_auth_rationale_862",
       "target": "new_server_routes_auth_admin_reset_password",
       "confidence_score": 1.0
     },
@@ -52007,7 +52188,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L66",
+      "source_location": "L74",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_test_csv_uploader_testcsvuploadere2e",
@@ -52018,7 +52199,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L76",
+      "source_location": "L92",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_test_csv_uploader_testcsvuploadere2e",
@@ -52029,10 +52210,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "new/server/test_csv_uploader.py",
-      "source_location": "L77",
+      "source_location": "L93",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "new_server_test_csv_uploader_rationale_77",
+      "source": "new_server_test_csv_uploader_rationale_93",
       "target": "new_server_test_csv_uploader_testcsvuploadere2e_test_upload_csv_end_to_end",
       "confidence_score": 1.0
     },
@@ -53848,7 +54029,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L105",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports",
@@ -53870,7 +54051,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L237",
+      "source_location": "L250",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports",
@@ -53881,7 +54062,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L147",
+      "source_location": "L160",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports",
@@ -53892,7 +54073,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L369",
+      "source_location": "L382",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports",
@@ -53903,7 +54084,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L281",
+      "source_location": "L294",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports",
@@ -53914,7 +54095,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L324",
+      "source_location": "L337",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports",
@@ -53925,7 +54106,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L193",
+      "source_location": "L206",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports",
@@ -53984,7 +54165,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L138",
+      "source_location": "L151",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_custom_factors",
@@ -53996,7 +54177,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L96",
+      "source_location": "L106",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_facilities",
@@ -54008,7 +54189,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L273",
+      "source_location": "L286",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_mitigation",
@@ -54020,7 +54201,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L185",
+      "source_location": "L198",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_production",
@@ -54032,7 +54213,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L403",
+      "source_location": "L416",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope1",
@@ -54044,7 +54225,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L315",
+      "source_location": "L328",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope2",
@@ -54056,7 +54237,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L360",
+      "source_location": "L373",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_scope3",
@@ -54068,7 +54249,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "new/server/tests/test_all_bulk_imports.py",
-      "source_location": "L229",
+      "source_location": "L242",
       "weight": 1.0,
       "_origin": "ast",
       "source": "new_server_tests_test_all_bulk_imports_test_bulk_import_sources",
@@ -55535,6 +55716,18 @@
       "source": "new_update_logs_part3",
       "target": "new_update_logs_part3_add_logs_to_file",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "collection",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "old_ManageData.jsx",
+      "source_location": "L472",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "old_managedata",
+      "target": "temp_old_carbonintensity_f"
     },
     {
       "relation": "contains",
@@ -60362,5 +60555,5 @@
       "confidence_score": 0.8
     }
   ],
-  "built_at_commit": "7d83ef96ecde5068754efc02eadc0fb75e614de0"
+  "built_at_commit": "d0cf8a4df6ebc95300f26a20d6a8add23078456e"
 }
