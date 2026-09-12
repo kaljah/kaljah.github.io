@@ -5,7 +5,7 @@ from sqlalchemy import func
 from electricity_factors import GRID_FACTORS
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
-from utils import get_current_user, get_allowed_facility_ids
+from utils import get_current_user, get_allowed_facility_ids, require_facility_access
 import datetime
 
 scope2_bp = Blueprint("scope2", __name__)
@@ -41,10 +41,28 @@ def _calc_indirect_steam(data):
         energy_mmbtu = amount * 0.003412142
     elif unit in ["mwh", "mw-hr"]:
         energy_mmbtu = amount * 3.412142
+    elif unit in ["ton", "us_ton", "short_ton"]:
+        # Saturated steam: 1 US ton (~2000 lb) = 2.0 MMBtu
+        energy_mmbtu = amount * 2.0
+    elif unit in ["tonne", "metric_ton", "mt"]:
+        # 1 metric tonne = 2.20462 MMBtu
+        energy_mmbtu = amount * 2.20462
+    elif unit in ["mlb", "klb", "thousand_lbs"]:
+        # 1,000 lbs steam = 1.0 MMBtu
+        energy_mmbtu = amount * 1.0
+    elif unit in ["lb", "lbs", "pound", "pounds"]:
+        energy_mmbtu = amount * 0.001
+    elif unit in ["kg", "kilogram"]:
+        energy_mmbtu = amount * 0.00220462
     else:  # assume already in MMBtu
         energy_mmbtu = amount
 
-    net_eff = (boiler_eff - trans_loss) if (boiler_eff - trans_loss) > 0 else 0.80
+    net_eff = boiler_eff * (1.0 - trans_loss)
+    if net_eff <= 0:
+        raise ValueError(
+            f"Net efficiency must be greater than 0 (got {net_eff:.4f}). "
+            f"Check boiler efficiency ({boiler_eff}) and transmission loss ({trans_loss})."
+        )
     co2_kg = (energy_mmbtu * ef_co2) / net_eff
     return co2_kg / 1000.0, energy_mmbtu, ef_co2
 
@@ -74,6 +92,9 @@ def get_scope2_emissions():
     """Get all Scope 2 emissions, scoped to the requesting user's allowed facilities."""
     try:
         user = get_current_user()
+        if user and user.role == "it_admin":
+            return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+
         allowed_fids = get_allowed_facility_ids(user)
 
         query = Scope2Emission.query
@@ -130,21 +151,52 @@ def get_scope2_emissions():
 @scope2_bp.route("", methods=["POST"])
 @login_required
 def create_scope2_emission():
-    """Create a new Scope 2 emission record"""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
-    data = request.get_json()
+    data = request.get_json() or {}
+    facility_id = data.get("facility_id")
+    if not facility_id:
+        return jsonify({"error": "Missing facility_id"}), 422
+
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None and int(facility_id) not in allowed_fids:
+        return jsonify({"error": "Unauthorized for this facility"}), 403
+
+    user_id = user.id
     source_type = data.get("source_type", "electricity")
 
-    # --- Run calculation for non-electricity types ---
+    # --- Run calculation for source types ---
     co2e = float(data.get("co2e", 0))
     emission_factor = float(data.get("emission_factor", 0))
     electricity_kwh = float(data.get("electricity_kwh", 0))
     heat_mmbtu = 0.0
 
-    if source_type == "indirect_steam":
+    if source_type == "electricity":
+        # Authoritative server-side electricity calculation
+        if electricity_kwh == 0 and data.get("amount"):
+            raw_amt = float(data.get("amount", 0))
+            raw_unit = str(data.get("unit") or "kwh").lower().strip()
+            if raw_unit in ["mwh", "mw-hr", "megawatthour"]:
+                electricity_kwh = raw_amt * 1000.0
+            elif raw_unit in ["gwh", "gw-hr", "gigawatthour"]:
+                electricity_kwh = raw_amt * 1_000_000.0
+            else:
+                electricity_kwh = raw_amt
+
+        grid_region = data.get("grid_region") or data.get("location")
+        grid_entry = GRID_FACTORS.get(grid_region, {})
+        resolved_ef = grid_entry.get("factor") if grid_entry else None
+        if resolved_ef is not None:
+            emission_factor = float(resolved_ef)
+
+        if co2e == 0 and emission_factor > 0:
+            co2e = (electricity_kwh * emission_factor) / 1000.0
+
+    elif source_type == "indirect_steam":
         try:
             co2e, heat_mmbtu, emission_factor = _calc_indirect_steam(data)
         except Exception as exc:
@@ -173,7 +225,12 @@ def create_scope2_emission():
         final_uncertainty = u_res["relative_uncertainty"]
 
     user = get_current_user()
-    initial_status = "Verified" if user and user.role in ["superuser", "admin", "it_admin"] else data.get("status", "Pending")
+    req_status = data.get("status")
+    if req_status == "Draft":
+        initial_status = "Draft"
+    else:
+        # Maker-Checker (D-04): admin and superuser manual entries are auto-Verified
+        initial_status = "Verified" if user and user.role in ["admin", "superuser"] else "Pending"
 
     emission = Scope2Emission(
         facility_id=data.get("facility_id"),
@@ -187,8 +244,8 @@ def create_scope2_emission():
         emission_factor=emission_factor,
         co2e=co2e,
         uncertainty=final_uncertainty,
-        location=data.get("location"),
-        grid_region=data.get("grid_region"),
+        location=data.get("location") or data.get("grid_region"),
+        grid_region=data.get("grid_region") or data.get("location"),
         activity=data.get("activity"),
         division=data.get("division"),
         field=data.get("field"),
@@ -211,11 +268,49 @@ def create_scope2_emission():
             entity="Scope2Emission",
             details=f"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})",
         )
-        db.session.commit()
+        if initial_status == "Pending Approval":
+            from models import Notification, User
+            admins = User.query.filter_by(role="admin", status="active").all()
+            for admin in admins:
+                Notification.create(
+                    user_id=admin.id,
+                    type="audit",
+                    title="New Scope 2 Emission Pending Review",
+                    message=f"A new Scope 2 emission record ({source_type}) was submitted by {user.fullName} and is awaiting your approval.",
+                )
+            db.session.commit()
+
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
 
     return (
         jsonify(
-            {"message": "Scope 2 emission created", "id": emission.id, "co2e": co2e, "status": initial_status}
+            {
+                "message": "Scope 2 emission created",
+                "id": emission.id,
+                "co2e": co2e,
+                "status": initial_status,
+                "emissions": {
+                    "totalCo2e": co2e,
+                    "co2": co2e,
+                    "ch4": 0.0,
+                    "n2o": 0.0,
+                    "uncertainty": final_uncertainty,
+                },
+                "record": {
+                    "id": emission.id,
+                    "year": emission.year,
+                    "month": emission.month,
+                    "facility_id": emission.facility_id,
+                    "source_type": emission.source_type,
+                    "amount": electricity_kwh if source_type == "electricity" else (heat_mmbtu or emission.steam_ton or emission.cooling_ton),
+                    "unit": "kWh" if source_type == "electricity" else (data.get("unit") or "MMBtu"),
+                    "emission_factor": emission.emission_factor,
+                    "location": emission.location or emission.grid_region,
+                    "status": emission.status,
+                },
+                "calculation_method": f"Scope 2 {source_type.replace('_', ' ').title()}",
+            }
         ),
         201,
     )
@@ -225,47 +320,88 @@ def create_scope2_emission():
 @login_required
 def update_scope2_emission(emission_id):
     """Update a Scope 2 emission record"""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
-    emission = Scope2Emission.query.get(emission_id)
-    user = User.query.get(session.get("user_id"))
-    if user and user.role != "admin" and emission and emission.created_by != user.id:
-        return jsonify({"error": "Unauthorized"}), 403
+    emission = db.session.get(Scope2Emission, emission_id)
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
-    data = request.get_json()
+    if not require_facility_access(user, emission.facility_id):
+        return jsonify({"error": "Unauthorized: Outside your region"}), 403
+
+    data = request.get_json() or {}
+
+    # Strip status and co2e from direct client overwrite
+    data.pop("status", None)
+    data.pop("approved_by", None)
+    data.pop("approved_at", None)
+    data.pop("co2e", None)
 
     if "facility_id" in data:
-        emission.facility_id = data["facility_id"]
+        new_fid = int(data["facility_id"])
+        if not require_facility_access(user, new_fid):
+            return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
+        emission.facility_id = new_fid
     if "year" in data:
-        emission.year = data["year"]
+        emission.year = int(data["year"])
     if "month" in data:
-        emission.month = data["month"]
+        emission.month = int(data["month"])
     if "source_type" in data:
         emission.source_type = data["source_type"]
+
+    # Check for recalculation trigger (L9)
+    activity_changed = any(
+        k in data
+        for k in [
+            "electricity_kwh",
+            "steam_ton",
+            "heat_mmbtu",
+            "cooling_ton",
+            "emission_factor",
+        ]
+    )
     if "electricity_kwh" in data:
-        emission.electricity_kwh = data["electricity_kwh"]
+        emission.electricity_kwh = float(data["electricity_kwh"] or 0)
     if "steam_ton" in data:
-        emission.steam_ton = data["steam_ton"]
+        emission.steam_ton = float(data["steam_ton"] or 0)
     if "heat_mmbtu" in data:
-        emission.heat_mmbtu = data["heat_mmbtu"]
+        emission.heat_mmbtu = float(data["heat_mmbtu"] or 0)
     if "cooling_ton" in data:
-        emission.cooling_ton = data["cooling_ton"]
+        emission.cooling_ton = float(data["cooling_ton"] or 0)
     if "emission_factor" in data:
-        emission.emission_factor = data["emission_factor"]
-    if "co2e" in data:
-        emission.co2e = data["co2e"]
+        emission.emission_factor = float(data["emission_factor"] or 0)
+
+    if activity_changed:
+        factor = emission.emission_factor or 0.0
+        if emission.source_type == "Electricity":
+            emission.co2e = round((emission.electricity_kwh * factor) / 1000.0, 4)
+        elif emission.source_type == "Steam":
+            emission.co2e = round((emission.steam_ton * factor) / 1000.0, 4)
+        elif emission.source_type == "Heat":
+            emission.co2e = round((emission.heat_mmbtu * factor) / 1000.0, 4)
+        elif emission.source_type == "Cooling":
+            emission.co2e = round((emission.cooling_ton * factor) / 1000.0, 4)
+
+        if emission.status == "Verified" and user.role != "admin":
+            emission.status = "Pending"
+            emission.approved_by = None
+            emission.approved_at = None
+
     if "uncertainty" in data:
-        emission.uncertainty = data["uncertainty"]
+        emission.uncertainty = float(data["uncertainty"] or 0)
     if "location" in data:
         emission.location = data["location"]
     if "grid_region" in data:
         emission.grid_region = data["grid_region"]
 
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
 
     return jsonify({"message": "Scope 2 emission updated"})
 
@@ -274,19 +410,24 @@ def update_scope2_emission(emission_id):
 @login_required
 def delete_scope2_emission(emission_id):
     """Delete a Scope 2 emission record"""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
-    emission = Scope2Emission.query.get(emission_id)
-    user = User.query.get(session.get("user_id"))
-    if user and user.role != "admin" and emission and emission.created_by != user.id:
-        return jsonify({"error": "Unauthorized"}), 403
+    emission = db.session.get(Scope2Emission, emission_id)
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
+    if not require_facility_access(user, emission.facility_id):
+        return jsonify({"error": "Unauthorized: Outside your region"}), 403
+
     db.session.delete(emission)
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
 
     return jsonify({"message": "Scope 2 emission deleted"})
 
@@ -347,13 +488,15 @@ def bulk_import_scope2():
             ef = factor_info["factor"]
             # consumption in payload might be kwh, mwh, gwh. BulkImportModal uses 'consumption' and 'unit'
             val = float(rec.get("consumption") or 0)
-            unit = rec.get("unit", "kWh")
+            unit = str(rec.get("unit") or "kwh").lower().strip()
 
             kwh = val
-            if unit == "MWh":
-                kwh = val * 1000
-            elif unit == "GWh":
-                kwh = val * 1000000
+            if unit in ["mwh", "mw-hr", "megawatthour"]:
+                kwh = val * 1000.0
+            elif unit in ["gwh", "gw-hr", "gigawatthour"]:
+                kwh = val * 1_000_000.0
+            else:
+                kwh = val
 
             co2e_val = (kwh * ef) / 1000
 
@@ -383,6 +526,7 @@ def bulk_import_scope2():
                 division=rec.get("division") or facility.division,
                 field=rec.get("field") or facility.field,
                 created_by=user_id,
+                status="Pending",
             )
             db.session.add(emission)
             imported_count += 1
@@ -390,6 +534,9 @@ def bulk_import_scope2():
             errors.append(f"Row {i}: {str(e)}")
 
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
     return jsonify(
         {"message": f"Successfully imported {imported_count} records", "errors": errors}
     ), (200 if not errors else 207)

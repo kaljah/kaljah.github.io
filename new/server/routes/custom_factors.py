@@ -3,26 +3,37 @@ from flask import Blueprint, request, jsonify, session, current_app
 from models import CustomFactor, User
 from extensions import db
 from routes.auth import superuser_required, login_required
-from utils import log_activity_and_notify
+from utils import log_activity_and_notify, get_current_user
 
 custom_factors_bp = Blueprint("custom_factors", __name__)
 
 
 @custom_factors_bp.route("", methods=["GET"])
+@custom_factors_bp.route("/", methods=["GET"])
 @login_required
 def get_custom_factors():
     """Get all custom emission factors"""
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to operational factor data"}), 403
+
     factors = CustomFactor.query.all()
     return jsonify(
         [
             {
                 "id": f.id,
+                "name": f.name,
                 "factor_name": f.name,
                 "co2_factor": float(f.co2_factor or 0),
                 "ch4_factor": float(f.ch4_factor or 0),
                 "n2o_factor": float(f.n2o_factor or 0),
+                "co_factor": float(f.co_factor or 0),
                 "unit": f.unit,
+                "hhv_factor": float(f.hhv_factor or 0),
+                "usage": f.usage or "Custom",
                 "parent_fuel": f.parent_fuel,
+                "source": f.source or "",
+                "version": f.version or "",
                 "uncertainty": float(f.uncertainty or 0),
                 "co2_uncertainty": float(f.co2_uncertainty or 0),
                 "ch4_uncertainty": float(f.ch4_uncertainty or 0),
@@ -33,7 +44,20 @@ def get_custom_factors():
     )
 
 
+def _parse_non_negative_float(val, field_name, default=0.0):
+    if val is None or val == "":
+        return default
+    try:
+        f = float(val)
+        if f < 0:
+            raise ValueError(f"{field_name} must be non-negative")
+        return f
+    except (ValueError, TypeError):
+        raise ValueError(f"{field_name} must be a non-negative number")
+
+
 @custom_factors_bp.route("", methods=["POST"])
+@custom_factors_bp.route("/", methods=["POST"])
 @superuser_required
 def create_custom_factor():
     """Create a new custom emission factor (Super User / Admin only)"""
@@ -41,25 +65,53 @@ def create_custom_factor():
     user = User.query.get(user_id)
 
     data = request.get_json()
-    if not data or not data.get("factor_name"):
+    factor_name = (data.get("factor_name") or data.get("name") or "").strip() if data else ""
+    if not factor_name:
         return jsonify({"error": "Factor name is required"}), 400
 
+    unit = (data.get("unit") or "scf").strip()
+    if not unit:
+        return jsonify({"error": "Unit is required"}), 400
+
+    try:
+        co2_factor = _parse_non_negative_float(data.get("co2_factor"), "co2_factor")
+        ch4_factor = _parse_non_negative_float(data.get("ch4_factor"), "ch4_factor")
+        n2o_factor = _parse_non_negative_float(data.get("n2o_factor"), "n2o_factor")
+        co_factor = _parse_non_negative_float(data.get("co_factor"), "co_factor")
+        hhv_factor = _parse_non_negative_float(data.get("hhv_factor"), "hhv_factor")
+        uncertainty = _parse_non_negative_float(data.get("uncertainty"), "uncertainty")
+        co2_uncertainty = _parse_non_negative_float(data.get("co2_uncertainty"), "co2_uncertainty")
+        ch4_uncertainty = _parse_non_negative_float(data.get("ch4_uncertainty"), "ch4_uncertainty")
+        n2o_uncertainty = _parse_non_negative_float(data.get("n2o_uncertainty"), "n2o_uncertainty")
+    except ValueError as err:
+        return jsonify({"error": str(err)}), 400
+
     factor = CustomFactor(
-        name=data.get("factor_name"),
-        co2_factor=data.get("co2_factor", 0),
-        ch4_factor=data.get("ch4_factor", 0),
-        n2o_factor=data.get("n2o_factor", 0),
-        unit=data.get("unit", "scf"),
+        name=factor_name,
+        co2_factor=co2_factor,
+        ch4_factor=ch4_factor,
+        n2o_factor=n2o_factor,
+        co_factor=co_factor,
+        unit=unit,
+        hhv_factor=hhv_factor,
+        usage=data.get("usage", "Custom"),
         parent_fuel=data.get("parent_fuel"),
-        uncertainty=data.get("uncertainty", 0),
-        co2_uncertainty=data.get("co2_uncertainty", 0),
-        ch4_uncertainty=data.get("ch4_uncertainty", 0),
-        n2o_uncertainty=data.get("n2o_uncertainty", 0),
+        source=data.get("source"),
+        version=data.get("version"),
+        uncertainty=uncertainty,
+        co2_uncertainty=co2_uncertainty,
+        ch4_uncertainty=ch4_uncertainty,
+        n2o_uncertainty=n2o_uncertainty,
         created_by=user_id,
     )
 
-    db.session.add(factor)
-    db.session.commit()
+    try:
+        db.session.add(factor)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error creating custom factor: {e}")
+        return jsonify({"error": "Failed to create custom factor"}), 500
 
     try:
         log_activity_and_notify(
@@ -92,20 +144,40 @@ def update_custom_factor(factor_id):
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    if "factor_name" in data:
-        factor.name = data["factor_name"]
-    if "co2_factor" in data:
-        factor.co2_factor = data["co2_factor"]
-    if "ch4_factor" in data:
-        factor.ch4_factor = data["ch4_factor"]
-    if "n2o_factor" in data:
-        factor.n2o_factor = data["n2o_factor"]
-    if "co_factor" in data:
-        factor.co_factor = data["co_factor"]
+    if "factor_name" in data or "name" in data:
+        fn = (data.get("factor_name") or data.get("name") or "").strip()
+        if not fn:
+            return jsonify({"error": "Factor name cannot be empty"}), 400
+        factor.name = fn
+
     if "unit" in data:
-        factor.unit = data["unit"]
-    if "hhv_factor" in data:
-        factor.hhv_factor = data["hhv_factor"]
+        u = (data.get("unit") or "").strip()
+        if not u:
+            return jsonify({"error": "Unit cannot be empty"}), 400
+        factor.unit = u
+
+    try:
+        if "co2_factor" in data:
+            factor.co2_factor = _parse_non_negative_float(data["co2_factor"], "co2_factor")
+        if "ch4_factor" in data:
+            factor.ch4_factor = _parse_non_negative_float(data["ch4_factor"], "ch4_factor")
+        if "n2o_factor" in data:
+            factor.n2o_factor = _parse_non_negative_float(data["n2o_factor"], "n2o_factor")
+        if "co_factor" in data:
+            factor.co_factor = _parse_non_negative_float(data["co_factor"], "co_factor")
+        if "hhv_factor" in data:
+            factor.hhv_factor = _parse_non_negative_float(data["hhv_factor"], "hhv_factor")
+        if "uncertainty" in data:
+            factor.uncertainty = _parse_non_negative_float(data["uncertainty"], "uncertainty")
+        if "co2_uncertainty" in data:
+            factor.co2_uncertainty = _parse_non_negative_float(data["co2_uncertainty"], "co2_uncertainty")
+        if "ch4_uncertainty" in data:
+            factor.ch4_uncertainty = _parse_non_negative_float(data["ch4_uncertainty"], "ch4_uncertainty")
+        if "n2o_uncertainty" in data:
+            factor.n2o_uncertainty = _parse_non_negative_float(data["n2o_uncertainty"], "n2o_uncertainty")
+    except ValueError as err:
+        return jsonify({"error": str(err)}), 400
+
     if "usage" in data:
         factor.usage = data["usage"]
     if "parent_fuel" in data:
@@ -114,19 +186,16 @@ def update_custom_factor(factor_id):
         factor.source = data["source"]
     if "version" in data:
         factor.version = data["version"]
-    if "uncertainty" in data:
-        factor.uncertainty = data["uncertainty"]
-    if "co2_uncertainty" in data:
-        factor.co2_uncertainty = data["co2_uncertainty"]
-    if "ch4_uncertainty" in data:
-        factor.ch4_uncertainty = data["ch4_uncertainty"]
-    if "n2o_uncertainty" in data:
-        factor.n2o_uncertainty = data["n2o_uncertainty"]
 
     factor.updated_by = user_id
     factor.updated_at = datetime.datetime.utcnow()
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error updating custom factor: {e}")
+        return jsonify({"error": "Failed to update custom factor"}), 500
 
     try:
         log_activity_and_notify(
@@ -156,8 +225,13 @@ def delete_custom_factor(factor_id):
         return jsonify({"error": "Factor not found"}), 404
 
     factor_name = factor.name
-    db.session.delete(factor)
-    db.session.commit()
+    try:
+        db.session.delete(factor)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting custom factor: {e}")
+        return jsonify({"error": "Failed to delete custom factor"}), 500
 
     try:
         log_activity_and_notify(
@@ -190,28 +264,51 @@ def import_custom_factors():
 
     imported_count = 0
     for factor_data in factors_data:
+        name = (factor_data.get("name") or factor_data.get("factor_name") or "").strip()
+        unit = (factor_data.get("unit") or "scf").strip()
+        if not name or not unit:
+            continue
+
+        try:
+            co2_factor = _parse_non_negative_float(factor_data.get("co2_factor"), "co2_factor")
+            ch4_factor = _parse_non_negative_float(factor_data.get("ch4_factor"), "ch4_factor")
+            n2o_factor = _parse_non_negative_float(factor_data.get("n2o_factor"), "n2o_factor")
+            co_factor = _parse_non_negative_float(factor_data.get("co_factor"), "co_factor")
+            hhv_factor = _parse_non_negative_float(factor_data.get("hhv_factor"), "hhv_factor")
+            uncertainty = _parse_non_negative_float(factor_data.get("uncertainty"), "uncertainty")
+            co2_uncertainty = _parse_non_negative_float(factor_data.get("co2_uncertainty"), "co2_uncertainty")
+            ch4_uncertainty = _parse_non_negative_float(factor_data.get("ch4_uncertainty"), "ch4_uncertainty")
+            n2o_uncertainty = _parse_non_negative_float(factor_data.get("n2o_uncertainty"), "n2o_uncertainty")
+        except ValueError:
+            continue
+
         factor = CustomFactor(
-            name=factor_data.get("name"),
-            co2_factor=factor_data.get("co2_factor", 0),
-            ch4_factor=factor_data.get("ch4_factor", 0),
-            n2o_factor=factor_data.get("n2o_factor", 0),
-            co_factor=factor_data.get("co_factor", 0),
-            unit=factor_data.get("unit"),
-            hhv_factor=factor_data.get("hhv_factor", 0),
-            usage=factor_data.get("usage"),
+            name=name,
+            co2_factor=co2_factor,
+            ch4_factor=ch4_factor,
+            n2o_factor=n2o_factor,
+            co_factor=co_factor,
+            unit=unit,
+            hhv_factor=hhv_factor,
+            usage=factor_data.get("usage", "Custom"),
             parent_fuel=factor_data.get("parent_fuel"),
             source=factor_data.get("source"),
             version=factor_data.get("version"),
-            uncertainty=factor_data.get("uncertainty", 0),
-            co2_uncertainty=factor_data.get("co2_uncertainty", 0),
-            ch4_uncertainty=factor_data.get("ch4_uncertainty", 0),
-            n2o_uncertainty=factor_data.get("n2o_uncertainty", 0),
+            uncertainty=uncertainty,
+            co2_uncertainty=co2_uncertainty,
+            ch4_uncertainty=ch4_uncertainty,
+            n2o_uncertainty=n2o_uncertainty,
             created_by=user_id,
         )
         db.session.add(factor)
         imported_count += 1
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error importing custom factors: {e}")
+        return jsonify({"error": "Failed to import custom factors"}), 500
 
     try:
         log_activity_and_notify(

@@ -128,33 +128,47 @@ def stream_notifications():
     )
 
 
+from utils import get_current_user
+
+
 @notifications_bp.route("/<int:id>/read", methods=["PUT"])
 @login_required
 def mark_read(id):
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
     n = Notification.query.get_or_404(id)
-    if n.user_id is not None and n.user_id != user_id:
+    if n.user_id is None:
+        if user.role != "admin":
+            return jsonify({"error": "Only administrators can modify system notifications"}), 403
+    elif n.user_id != user.id:
         return jsonify({"error": "Unauthorized"}), 403
 
     n.is_read = True
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update notification"}), 500
     return jsonify({"success": True})
 
 
 @notifications_bp.route("/dismiss-all", methods=["POST"])
 @login_required
 def dismiss_all():
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    Notification.query.filter_by(user_id=user_id, is_read=False).update(
+    Notification.query.filter_by(user_id=user.id, is_read=False).update(
         {"is_read": True}
     )
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to dismiss notifications"}), 500
     return jsonify({"success": True})
 
 
@@ -162,16 +176,23 @@ def dismiss_all():
 @login_required
 def delete_notification(id):
     """Permanently delete a single notification."""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
     n = Notification.query.get_or_404(id)
-    if n.user_id is not None and n.user_id != user_id:
+    if n.user_id is None:
+        if user.role != "admin":
+            return jsonify({"error": "Only administrators can delete system notifications"}), 403
+    elif n.user_id != user.id:
         return jsonify({"error": "Unauthorized"}), 403
 
-    db.session.delete(n)
-    db.session.commit()
+    try:
+        db.session.delete(n)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete notification"}), 500
     return jsonify({"success": True})
 
 
@@ -179,10 +200,14 @@ def delete_notification(id):
 @login_required
 def delete_all_notifications():
     """Permanently delete all notifications for the current user."""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    deleted = Notification.query.filter_by(user_id=user_id).delete()
-    db.session.commit()
+    try:
+        deleted = Notification.query.filter_by(user_id=user.id).delete()
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete notifications"}), 500
     return jsonify({"success": True, "deleted": deleted})

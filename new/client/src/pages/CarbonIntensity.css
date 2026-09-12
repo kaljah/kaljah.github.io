@@ -227,6 +227,7 @@
   font-size: 2.25rem;
   letter-spacing: -0.04em;
   line-height: 1;
+  color: var(--text-primary, #0f172a);
 }
 
 .total-value.co2 {

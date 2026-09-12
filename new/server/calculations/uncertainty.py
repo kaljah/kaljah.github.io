@@ -83,6 +83,18 @@ DEFAULT_EF_UNCERTAINTY = {
         "ch4": {"T1": 0.25, "T2": 0.15, "T3": 0.07},
         "n2o": {"T1": 0.50, "T2": 0.40, "T3": 0.20},
     },
+    # Indirect (Steam, Cogen, Electricity)
+    "indirect": {
+        "co2": {"T1": 0.10, "T2": 0.05, "T3": 0.02},
+        "ch4": {"T1": 0.20, "T2": 0.10, "T3": 0.05},
+        "n2o": {"T1": 0.25, "T2": 0.15, "T3": 0.08},
+    },
+    # Stoichiometric (Chemical reactions, sulfur recovery)
+    "stoichiometric": {
+        "co2": {"T1": 0.05, "T2": 0.03, "T3": 0.01},
+        "ch4": {"T1": 0.10, "T2": 0.05, "T3": 0.02},
+        "n2o": {"T1": 0.15, "T2": 0.10, "T3": 0.05},
+    },
 }
 
 # Process-to-source-category mapping for looking up defaults above
@@ -108,6 +120,14 @@ PROCESS_CATEGORY = {
     "pneumatic_devices": "vented",
     "agr": "midstream",
     "dehydrator": "midstream",
+    "indirect": "indirect",
+    "indirect_steam": "indirect",
+    "steam": "indirect",
+    "cogen": "indirect",
+    "cogen_allocation": "indirect",
+    "scope2": "indirect",
+    "stoichiometric": "stoichiometric",
+    "stoichiometry": "stoichiometric",
 }
 
 # ---------------------------------------------------------------------------
@@ -268,23 +288,28 @@ def propagate_uncertainty(
     except (ValueError, TypeError):
         act_float = 0.05
 
-    # --- SRSS combination (relative standard uncertainty, 1σ) ---
-    u_components = [ef_float, act_float]
-    
+    # --- Convert 95% CI table inputs to 1-sigma standard uncertainty (GUM §4.3.7) ---
+    # Published IPCC / API uncertainty tables report 95% confidence bounds (U95 = k * u, k=2).
+    # Converting to standard uncertainty (1σ) ensures rigorous propagation per GUM & IPCC Eq 3.1.
+    u_ef_1sigma = ef_float / COVERAGE_FACTOR_95
+    u_act_1sigma = act_float / COVERAGE_FACTOR_95
+    u_components = [u_ef_1sigma, u_act_1sigma]
+
     if composition_uncertainty is not None:
         try:
             comp_float = float(composition_uncertainty)
             if comp_float > 0:
-                u_components.append(comp_float)
+                u_components.append(comp_float / COVERAGE_FACTOR_95)
         except (ValueError, TypeError):
             pass
 
+    # --- SRSS combination (relative standard uncertainty, 1σ) ---
     u_combined_1sigma = math.sqrt(sum(u**2 for u in u_components))
 
-    # --- Absolute values ---
+    # --- Absolute standard uncertainty (1σ) ---
     abs_unc_1sigma = value * u_combined_1sigma
 
-    # --- Expanded uncertainty at 95% CI (GUM §6.2, k=2) ---
+    # --- Expanded uncertainty at 95% CI (GUM §6.2, k=2) -> exact match with IPCC Eq. 3.1 ---
     ci_95 = COVERAGE_FACTOR_95 * abs_unc_1sigma
     ci_95_pct = COVERAGE_FACTOR_95 * u_combined_1sigma * 100.0
 
@@ -298,16 +323,18 @@ def propagate_uncertainty(
         # Core values
         "value": value,
         # Component uncertainties (1σ, relative)
-        "ef_uncertainty_1sigma": ef_uncertainty,
-        "ad_uncertainty_1sigma": activity_uncertainty,
+        "ef_uncertainty_1sigma": u_ef_1sigma,
+        "ad_uncertainty_1sigma": u_act_1sigma,
         "comp_uncertainty_1sigma": (
-            float(composition_uncertainty) if composition_uncertainty else 0.0
+            (float(composition_uncertainty) / COVERAGE_FACTOR_95) if composition_uncertainty else 0.0
         ),
         # Combined standard uncertainty (1σ)
+        "relative_uncertainty_1sigma": u_combined_1sigma,
         "relative_uncertainty": u_combined_1sigma,
         "uncertainty": u_combined_1sigma,  # Alias for backend DB saver
         "absolute_uncertainty": abs_unc_1sigma,
-        # Expanded 95% CI (k=2)
+        # Expanded 95% CI (k=2, IPCC Approach 1)
+        "relative_uncertainty_95pct": ci_95_pct / 100.0,
         "ci_95_abs": ci_95,
         "ci_95_pct": ci_95_pct,
         "lower_bound_95": lower_95,
@@ -329,14 +356,23 @@ def propagate_uncertainty(
 def resolve_tier(factor_source: str) -> int:
     """
     Map factor_source string to a Tier integer.
-    factor_source values: 'default' | 'custom' | 'specific'
+    factor_source values: 'default' | 'custom' | 'specific' | 'site_specific'
     """
     if not factor_source:
         return Tier.T1
     fs = str(factor_source).lower().strip()
-    if fs == "specific":
+    if fs in [
+        "specific",
+        "site_specific",
+        "site-specific",
+        "engineering",
+        "cems",
+        "tier3",
+        "tier_3",
+        "t3",
+    ]:
         return Tier.T3
-    if fs == "custom":
+    if fs in ["custom", "regional", "tier2", "tier_2", "t2"]:
         return Tier.T2
     return Tier.T1  # 'default' or unknown → Tier 1
 

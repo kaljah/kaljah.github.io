@@ -48,12 +48,12 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Session Configuration (10-minute idle session timeout)
+    # Session Configuration (8-hour session lifetime)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     # Only set Secure in production to allow localhost testing
     SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"
-    PERMANENT_SESSION_LIFETIME = timedelta(minutes=10)
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     SESSION_REFRESH_EACH_REQUEST = True
 
     # CSRF Configuration

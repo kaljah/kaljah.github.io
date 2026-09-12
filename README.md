@@ -84,10 +84,15 @@ ew/start_all.bat or run:
    - **Backend API**: http://localhost:5000
    - **Frontend UI**: http://localhost:5173
 
-3. **Default Admin Login**:
-   - **Email**: `admin@ghg.com`
-   - **Password**: `Admin12345!`
-   *(To seed or reset admin credentials anytime: `python seed_admin.py` in `new/server`)*
+3. **Admin Account Setup**:
+   - Initial administrative accounts are configured via environment variables `ADMIN_EMAIL` and `ADMIN_PASSWORD` (defaults to `admin@ghg.com` with initial dev credentials).
+   - In production, ensure `ADMIN_PASSWORD` and `IT_ADMIN_PASSWORD` are set in `.env` before running setup.
+   - To seed or update admin credentials at any time:
+     ```bash
+     cd new/server
+     python seed_admin.py
+     ```
+     *(To overwrite existing passwords, pass `--force-reset-password`)*
 
 ---
 

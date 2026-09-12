@@ -29,7 +29,7 @@ class IndirectSteamCalculator(BaseCalculator):
         """
         self.validate_inputs({"energy": heat_energy}, ["energy"])
 
-        # CALC-02 FIX: normalize input energy to BTU first
+        # Normalize input energy or steam mass to BTU
         u = str(heat_unit or "btu").lower().replace(" ", "")
         if u in ["kwh", "kw-hr", "kilowatthour"]:
             energy_btu = heat_energy * 3412.142  # 1 kWh = 3412.142 BTU
@@ -37,20 +37,36 @@ class IndirectSteamCalculator(BaseCalculator):
             energy_btu = heat_energy * 1_000_000.0
         elif u in ["gj", "gigajoule"]:
             energy_btu = heat_energy * 947817.12  # 1 GJ = 947,817 BTU
+        elif u in ["mj", "megajoule"]:
+            energy_btu = heat_energy * 947.817
         elif u in ["mwh", "mw-hr"]:
             energy_btu = heat_energy * 3_412_142.0
+        elif u in ["ton", "us_ton", "short_ton"]:
+            # Standard saturated steam (~1000 BTU/lb): 1 US ton = 2,000,000 BTU
+            energy_btu = heat_energy * 2_000_000.0
+        elif u in ["tonne", "metric_ton", "mt"]:
+            # 1 metric tonne = 2204.62 lb -> 2,204,620 BTU
+            energy_btu = heat_energy * 2_204_620.0
+        elif u in ["mlb", "klb", "thousand_lbs"]:
+            # 1,000 lbs steam -> 1,000,000 BTU
+            energy_btu = heat_energy * 1_000_000.0
+        elif u in ["lb", "lbs", "pound", "pounds"]:
+            energy_btu = heat_energy * 1000.0
+        elif u in ["kg", "kilogram"]:
+            energy_btu = heat_energy * 2204.62
         else:  # assume BTU
             energy_btu = heat_energy
 
-        # Efficiencies are in fractions (e.g. 0.80)
-        # CALC-09 FORMULA NOTE: Using additive loss (boiler_eff - trans_loss) as per API Eq 8-2
-        # interpretation where both are absolute fractions.
-        # Example: boiler_eff=0.85, trans_loss=0.03 → net=0.82
-        # Alternative multiplicative form (0.85 × 0.97 = 0.8245) differs by ~0.5%.
-        # Ensure UI labels transmission_loss as "absolute fraction lost" not "% of output".
-        net_efficiency = boiler_efficiency - transmission_loss
+        # GHG Protocol Scope 2 & API Eq 8-2: Multiplicative net efficiency
+        # Net efficiency = Boiler Efficiency * (1 - Transmission Loss)
+        b_eff = float(boiler_efficiency or 0.80)
+        t_loss = float(transmission_loss or 0.0)
+        net_efficiency = b_eff * (1.0 - t_loss)
         if net_efficiency <= 0:
-            net_efficiency = 0.80  # Default fallback
+            raise ValueError(
+                f"Net efficiency must be greater than 0 (got {net_efficiency:.4f}). "
+                f"Check boiler efficiency ({b_eff}) and transmission loss ({t_loss})."
+            )
 
         # ef_co2 is expected in kg/MMBtu
         co2_kg = (energy_btu / 1_000_000.0) * ef_co2 / net_efficiency

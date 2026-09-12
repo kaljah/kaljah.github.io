@@ -191,8 +191,8 @@ def test_dehydrator_parametric_solubility():
     assert res is not None
     assert res["results"]["ch4"]["value"] > 0
     assert (
-        res["inputs"]["solubility_scf_gal"] > 10.0
-    )  # High pressure yields >10 scf/gal
+        1.0 < res["inputs"]["solubility_scf_gal"] < 5.0
+    )  # Calibrated Henry's Law solubility per API Table 6-5 (1.5 - 2.8 scf/gal)
 
 
 def test_blowdown_temperature_correction():

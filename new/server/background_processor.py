@@ -1,3 +1,5 @@
+import os
+import time
 import threading
 import uuid
 import csv
@@ -5,8 +7,26 @@ import traceback
 from openpyxl import load_workbook
 
 # Global in-memory job tracker
-# Structure: { job_id: { 'status', 'progress', 'processed', 'total', 'skipped': [{row, reason, ...}], 'error_csv_path' } }
+# Structure: { job_id: { 'status', 'progress', 'processed', 'total', 'skipped': [{row, reason, ...}], 'error_csv_path', 'created_at' } }
 upload_jobs = {}
+
+
+def _prune_old_jobs(max_age_seconds=86400):
+    """Prunes job entries older than max_age_seconds (default 24h) and removes orphan error CSV files."""
+    now = time.time()
+    to_delete = []
+    for jid, job in list(upload_jobs.items()):
+        created_at = job.get("created_at", 0)
+        if now - created_at > max_age_seconds:
+            to_delete.append(jid)
+            csv_path = job.get("error_csv_path")
+            if csv_path and os.path.exists(csv_path):
+                try:
+                    os.remove(csv_path)
+                except Exception:
+                    pass
+    for jid in to_delete:
+        upload_jobs.pop(jid, None)
 
 
 def start_background_upload(
@@ -19,6 +39,7 @@ def start_background_upload(
     scope=1,
     overwrite_duplicates=False,
 ):
+    _prune_old_jobs()
     job_id = str(uuid.uuid4())
     upload_jobs[job_id] = {
         "status": "processing",
@@ -29,6 +50,7 @@ def start_background_upload(
         "skipped": [],  # per-row skip reasons [{row, reason, date, facility, ...}]
         "error_csv_path": None,
         "anomalies": [],  # anomaly-flagged rows
+        "created_at": time.time(),
     }
 
     # Spawn the background thread
@@ -362,7 +384,7 @@ def _process_file_thread(
             # Final chunk commit
             if chunk:
                 db.session.bulk_save_objects(chunk)
-                db.session.commit()
+            db.session.commit()
 
             upload_jobs[job_id]["processed"] = processed
             upload_jobs[job_id]["progress"] = 100
@@ -380,10 +402,10 @@ def _process_file_thread(
                         if fac.location:
                             uploaded_regions.add(fac.location)
 
-                    # Build reviewer list: superusers in matching regions + all admins
-                    reviewers = User.query.filter(
-                        User.status == "active",
-                        User.role.in_(["superuser", "admin"])
+                    # Build reviewer list: all active admins (Maker-Checker: only admin approves)
+                    reviewers = User.query.filter_by(
+                        role="admin",
+                        status="active"
                     ).all()
 
                     skipped_count = len(upload_jobs[job_id].get("skipped", []))
@@ -391,18 +413,16 @@ def _process_file_thread(
                     scope_label = f"Scope {scope}"
 
                     for reviewer in reviewers:
-                        # Admin gets all notifications; superuser gets notifications for their region
-                        if reviewer.role == "admin" or not reviewer.location or reviewer.location == "all" or reviewer.location in uploaded_regions:
-                            Notification.create(
-                                user_id=reviewer.id,
-                                type="audit",
-                                title=f"{scope_label} Bulk Upload Pending Review",
-                                message=(
-                                    f"{success_count} new {scope_label} emission records were imported "
-                                    f"by {user_obj.fullName if user_obj else 'a user'} and are "
-                                    f"awaiting your approval."
-                                ),
-                            )
+                        Notification.create(
+                            user_id=reviewer.id,
+                            type="audit",
+                            title=f"{scope_label} Bulk Upload Pending Review",
+                            message=(
+                                f"{success_count} new {scope_label} emission records were imported "
+                                f"by {user_obj.fullName if user_obj else 'a user'} and are "
+                                f"awaiting your approval."
+                            ),
+                        )
                     db.session.commit()
                 except Exception as notif_err:
                     import traceback as _tb
@@ -562,13 +582,33 @@ def _build_mapping(headers):
     ]
 
     mapping = {}
-    for h in headers:
-        h_lower = str(h).lower()
-        for sys_key, search_term in EXPECTED_FIELDS:
-            if sys_key not in mapping:
-                if search_term in h_lower:
+    import re
+    normalized_headers = {h: re.sub(r'[^a-z0-9]+', ' ', str(h).lower()).strip() for h in headers}
+
+    # Sort EXPECTED_FIELDS by search_term length descending so longer/more specific terms take priority
+    sorted_expected = sorted(EXPECTED_FIELDS, key=lambda x: len(x[1]), reverse=True)
+
+    # Pass 1: Exact / normalized full match
+    for h, h_norm in normalized_headers.items():
+        for sys_key, search_term in sorted_expected:
+            st_norm = re.sub(r'[^a-z0-9]+', ' ', search_term.lower()).strip()
+            if sys_key not in mapping and h not in mapping.values():
+                if h_norm == st_norm:
                     mapping[sys_key] = h
                     break
+
+    # Pass 2: Word-boundary match for remaining unmapped keys
+    for h, h_norm in normalized_headers.items():
+        if h in mapping.values():
+            continue
+        for sys_key, search_term in sorted_expected:
+            if sys_key not in mapping:
+                st_norm = re.sub(r'[^a-z0-9]+', ' ', search_term.lower()).strip()
+                pattern = r'(?:\b|_)' + re.escape(st_norm) + r'(?:\b|_)'
+                if re.search(pattern, h_norm):
+                    mapping[sys_key] = h
+                    break
+
     return mapping
 
 
@@ -623,32 +663,62 @@ def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS, jo
     # Map 'consumption' alias to specific fields based on source_type
     if source_type in ["indirect_steam", "steam", "heat"]:
         source_type = "indirect_steam"
-        # Steam usually MMBtu or Tonnes. Let's assume MMBtu by default for heat.
-        heat_mmbtu = val
-        if unit.lower() == "ton":
-            heat_mmbtu = val * 1.194  # very rough approx, normally we'd do a proper conversion
+        u = unit.lower().replace(" ", "")
+        known_steam_units = {
+            "mmbtu": 1.0,
+            "mm_btu": 1.0,
+            "btu": 1e-6,
+            "mj": 0.000947817,
+            "megajoule": 0.000947817,
+            "gj": 0.947817,
+            "gigajoule": 0.947817,
+            "kwh": 0.003412142,
+            "mwh": 3.412142,
+            "ton": 2.0,  # 1 US short ton saturated steam = 2.0 MMBtu
+            "us_ton": 2.0,
+            "short_ton": 2.0,
+            "tonne": 2.20462,  # 1 metric tonne = 2.20462 MMBtu
+            "metric_ton": 2.20462,
+            "mt": 2.20462,
+            "mlb": 1.0,
+            "klb": 1.0,
+            "thousand_lbs": 1.0,
+            "lb": 0.001,
+            "lbs": 0.001,
+            "kg": 0.00220462,
+        }
+        if u not in known_steam_units:
+            errors.append(f"Row {row_idx}: Unknown unit '{unit}' for indirect steam")
+            return None, errors
+
+        heat_mmbtu = val * known_steam_units[u]
+        boiler_eff = float(row.get("boiler_eff") or 0.80)
+        trans_loss = float(row.get("trans_loss") or 0.0)
+        net_eff = boiler_eff * (1.0 - trans_loss)
+        if net_eff <= 0:
+            errors.append(f"Row {row_idx}: Net efficiency must be greater than 0 (got {net_eff:.4f})")
+            return None, errors
+
+        boiler_ef = float(row.get("emission_factor") or row.get("ef_co2") or 53.06)
+        co2_kg = (heat_mmbtu * boiler_ef) / net_eff
+        co2e = co2_kg / 1000.0
+        ef = boiler_ef
     elif source_type in ["cogen_allocation", "cogen"]:
         source_type = "cogen_allocation"
-        # For cogen, val might be the allocated tCO2e directly, or we calculate it.
-        # If they provided an EF, we do `val * ef / 1000`. If EF is missing, they might just provide `co2e` directly.
+        co2e = float(row.get("co2e") or ((val * ef) / 1000 if ef else val))
     else:
         source_type = "electricity"
-        if unit.lower() == "mwh":
-            kwh = val * 1000
-        elif unit.lower() == "gwh":
-            kwh = val * 1000000
-        else:
+        u = unit.lower().replace(" ", "")
+        if u in ["kwh", "kw-hr", "kilowatthour"]:
             kwh = val
-
-    # Calculate CO2e
-    # If source_type is cogen, we might not have an EF in grid factors, but if provided we use it.
-    co2e = 0.0
-    if source_type == "electricity":
-        co2e = (kwh * ef) / 1000
-    elif source_type == "indirect_steam":
-        co2e = (heat_mmbtu * ef) / 1000
-    elif source_type == "cogen_allocation":
-        co2e = float(row.get("co2e") or ((val * ef) / 1000 if ef else val))
+        elif u in ["mwh", "mw-hr", "megawatthour"]:
+            kwh = val * 1000.0
+        elif u in ["gwh", "gw-hr", "gigawatthour"]:
+            kwh = val * 1_000_000.0
+        else:
+            errors.append(f"Row {row_idx}: Unknown unit '{unit}' for electricity. Must be kWh, MWh, or GWh.")
+            return None, errors
+        co2e = (kwh * ef) / 1000.0
 
     emission = Scope2Emission(
         facility_id=facility.id,
@@ -1084,28 +1154,37 @@ def _process_row_facilities(row, user_id, overwrite_duplicates):
             errors.append(f"Region '{name}' already exists. Choose 'Overwrite' to update it.")
             return None, errors
         
-        # Overwrite mode
-        existing.location = row.get("location")
-        existing.description = row.get("description")
-        existing.boundary_notes = row.get("boundary_notes")
-        existing.boundary_type = row.get("boundary_type")
-        existing.boundary_detail = row.get("boundary_detail")
-        existing.activity = row.get("activity")
-        existing.division = row.get("division")
-        existing.region = row.get("region")
-        existing.field = row.get("field")
-        existing.code = row.get("code")
-        existing.external_id = row.get("external_id")
-        existing.segment = row.get("segment")
-        try:
-            existing.latitude = float(row.get("latitude"))
-        except:
-            pass
-        try:
-            existing.longitude = float(row.get("longitude"))
-        except:
-            pass
-        return existing, errors
+        # Overwrite mode - only overwrite fields that are present and non-empty in row
+        facility_fields = [
+            "location",
+            "description",
+            "boundary_notes",
+            "boundary_type",
+            "boundary_detail",
+            "activity",
+            "division",
+            "region",
+            "field",
+            "code",
+            "external_id",
+            "segment",
+        ]
+        for fld in facility_fields:
+            if fld in row and row[fld] is not None and str(row[fld]).strip() != "":
+                setattr(existing, fld, row[fld])
+
+        if "latitude" in row and row["latitude"] is not None and str(row["latitude"]).strip() != "":
+            try:
+                existing.latitude = float(row["latitude"])
+            except (ValueError, TypeError):
+                pass
+        if "longitude" in row and row["longitude"] is not None and str(row["longitude"]).strip() != "":
+            try:
+                existing.longitude = float(row["longitude"])
+            except (ValueError, TypeError):
+                pass
+        # Return None — session already tracks existing; no need to bulk_save_objects it
+        return None, errors
     else:
         lat, lon = None, None
         try:
