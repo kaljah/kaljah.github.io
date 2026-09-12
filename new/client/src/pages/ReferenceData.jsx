@@ -114,7 +114,7 @@ const ReferenceData = () => {
       items: [
         { gas: "Carbon Dioxide (CO₂)", ar4: "1", ar5: "1", ar6: "1" },
         { gas: "Methane (CH₄)", ar4: "25", ar5: "28", ar6: "27.9" },
-        { gas: "Nitrous Oxide (N₂O)", ar4: "298", ar5: "264", ar6: "273" },
+        { gas: "Nitrous Oxide (N₂O)", ar4: "298", ar5: "265", ar6: "273" },
       ],
     },
     conversions: {

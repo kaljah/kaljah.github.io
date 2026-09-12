@@ -113,6 +113,20 @@ def get_qaqc_dashboard():
         flagged_records.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
 
         # ── Uncertainty aggregation (IPCC SRSS — scoped to allowed facilities) ──
+        def _norm_unc(pct_val, frac_val, default_val=0.05):
+            if pct_val is not None:
+                try:
+                    return float(pct_val) / 100.0
+                except (ValueError, TypeError):
+                    pass
+            if frac_val is not None:
+                try:
+                    fval = float(frac_val)
+                    return (fval / 100.0) if fval > 1.0 else fval
+                except (ValueError, TypeError):
+                    pass
+            return default_val
+
         # Scope 1
         s1_q = _fac_filter(Emission.query, Emission)
         s1_rows = s1_q.with_entities(
@@ -122,7 +136,7 @@ def get_qaqc_dashboard():
         ).all()
         s1_total = sum((r[0] or 0) for r in s1_rows)
         s1_unc_var = sum(
-            (((r[1] or r[2] or 0.05) * (r[0] or 0)) ** 2) for r in s1_rows
+            ((_norm_unc(r[1], r[2], 0.05) * (r[0] or 0)) ** 2) for r in s1_rows
         )
 
         # Scope 2
@@ -134,7 +148,7 @@ def get_qaqc_dashboard():
         ).all()
         s2_total = sum((r[0] or 0) for r in s2_rows)
         s2_unc_var = sum(
-            (((r[1] or r[2] or 0.05) * (r[0] or 0)) ** 2) for r in s2_rows
+            ((_norm_unc(r[1], r[2], 0.05) * (r[0] or 0)) ** 2) for r in s2_rows
         )
 
         # Scope 3
@@ -146,7 +160,7 @@ def get_qaqc_dashboard():
         ).all()
         s3_total = sum((r[0] or 0) for r in s3_rows)
         s3_unc_var = sum(
-            (((r[1] or r[2] or 0.10) * (r[0] or 0)) ** 2) for r in s3_rows
+            ((_norm_unc(r[1], r[2], 0.10) * (r[0] or 0)) ** 2) for r in s3_rows
         )
 
         total_inventory = s1_total + s2_total + s3_total

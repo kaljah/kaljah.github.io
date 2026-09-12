@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request, send_file, current_app
 from datetime import datetime
 from io import BytesIO
 import html
+from utils import get_current_user, get_allowed_facility_ids
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -24,6 +25,7 @@ from models import (
     Goal,
     BaseYearRecalculation,
 )
+from services.ogmp import ogmp_level_for, compute_facility_ogmp_level, ogmp_level_label
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -95,11 +97,22 @@ def create_pdf_report(emissions_data, filters):
     if filters.get("month"):
         filter_text += f"Month: {html.escape(str(filters['month']))}<br/>"
     if filters.get("facility_id"):
-        facility = Facility.query.get(filters["facility_id"])
-        if facility:
-            filter_text += f"Facility: {html.escape(str(facility.name))}<br/>"
+        try:
+            facility = db.session.get(Facility, int(filters["facility_id"]))
+            if facility:
+                filter_text += f"Facility: {html.escape(str(facility.name))}<br/>"
+        except (ValueError, TypeError):
+            pass
+    if filters.get("division"):
+        filter_text += f"Division: {html.escape(str(filters['division']))}<br/>"
+    if filters.get("field"):
+        filter_text += f"Field: {html.escape(str(filters['field']))}<br/>"
     if filters.get("process_type"):
         filter_text += f"Process Type: {html.escape(str(filters['process_type']))}<br/>"
+    if filters.get("method"):
+        filter_text += f"Method: {html.escape(str(filters['method']))}<br/>"
+    if filters.get("search"):
+        filter_text += f"Search: {html.escape(str(filters['search']))}<br/>"
 
     elements.append(Paragraph(filter_text, styles["Normal"]))
     elements.append(Spacer(1, 0.3 * inch))
@@ -122,14 +135,14 @@ def create_pdf_report(emissions_data, filters):
     elements.append(Paragraph("Emission Summary", heading_style))
 
     summary_data = [
-        ["Metric", "Value (tonnes CO₂e)"],
-        ["Scope 1 — Direct Emissions", f"{scope1_total:,.2f}"],
-        ["Scope 2 — Indirect Electricity", f"{scope2_total:,.2f}"],
-        ["Scope 3 — Value Chain", f"{scope3_total:,.2f}"],
-        ["Total CO₂ Gas", f"{total_co2:,.2f}"],
-        ["Total CH₄ Gas", f"{total_ch4:,.2f}"],
-        ["Total N₂O Gas", f"{total_n2o:,.2f}"],
-        ["Total CO₂e (Grand Total)", f"{total_co2e:,.2f}"],
+        ["Metric", "Quantity"],
+        ["Scope 1 — Direct Emissions", f"{scope1_total:,.2f} tCO₂e"],
+        ["Scope 2 — Indirect Electricity", f"{scope2_total:,.2f} tCO₂e"],
+        ["Scope 3 — Value Chain", f"{scope3_total:,.2f} tCO₂e"],
+        ["Total CO₂ Gas Mass", f"{total_co2:,.2f} tonnes CO₂"],
+        ["Total CH₄ Gas Mass", f"{total_ch4:,.2f} tonnes CH₄"],
+        ["Total N₂O Gas Mass", f"{total_n2o:,.2f} tonnes N₂O"],
+        ["Total CO₂e (Grand Total)", f"{total_co2e:,.2f} tCO₂e"],
     ]
 
     summary_table = Table(summary_data, colWidths=[3 * inch, 2 * inch])
@@ -165,22 +178,23 @@ def create_pdf_report(emissions_data, filters):
             "Process",
             "Fuel/Source",
             "Amount",
-            "CO₂",
-            "CH₄",
-            "N₂O",
-            "Total CO₂e",
+            "CO₂ (t)",
+            "CH₄ (t)",
+            "N₂O (t)",
+            "Total CO₂e (t)",
         ]
     ]
 
     # Table rows (support up to 500 records in PDF cleanly)
     for emission in emissions_data[:500]:
+        unit_str = f" {emission.get('unit')}" if emission.get('unit') else ""
         table_data.append(
             [
                 str(emission.get("date", "N/A")),
                 str(emission.get("facility_name", "N/A"))[:15],
                 str(emission.get("process_type", "N/A"))[:12],
                 str(emission.get("fuel_type", "N/A"))[:12],
-                f"{emission.get('amount', 0):,.1f}",
+                f"{emission.get('amount', 0):,.1f}{unit_str}",
                 f"{emission.get('co2_emissions', 0):,.2f}",
                 f"{emission.get('ch4_emissions', 0):,.2f}",
                 f"{emission.get('n2o_emissions', 0):,.2f}",
@@ -238,12 +252,25 @@ def create_pdf_report(emissions_data, filters):
 @login_required
 def generate_report():
     """Generate PDF report based on filters"""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
+            ),
+            403,
+        )
+
     try:
         from models import Scope2Emission, Scope3Emission
 
-        data = request.get_json()
+        data = request.get_json() or {}
         filters = data.get("filters", {})
         scope = filters.get("scope", "all")
+
+        allowed_fids = get_allowed_facility_ids(user)
 
         # Determine years/months/facilities
         try:
@@ -271,6 +298,13 @@ def generate_report():
             except (ValueError, TypeError):
                 facility_id = None
 
+        if (
+            facility_id is not None
+            and allowed_fids is not None
+            and facility_id not in allowed_fids
+        ):
+            return jsonify({"error": "Unauthorized facility"}), 403
+
         process_type = (
             filters.get("process_type")
             if filters.get("process_type") and filters["process_type"] != "all"
@@ -278,6 +312,9 @@ def generate_report():
         )
 
         emissions_data = []
+
+        # Batch facility lookup to prevent N+1 queries
+        fac_map = {f.id: f.name for f in Facility.query.all()}
 
         # 1. SCOPE 1
         if scope in ["all", "1"]:
@@ -288,21 +325,23 @@ def generate_report():
                 q = q.filter_by(month=month)
             if facility_id:
                 q = q.filter_by(facility_id=facility_id)
+            elif allowed_fids is not None:
+                q = q.filter(Emission.facility_id.in_(allowed_fids))
             if process_type:
                 q = q.filter_by(process_type=process_type)
-            q = q.filter(Emission.status != "Draft")
+            q = q.filter(Emission.status == "Verified")
 
             for e in q.all():
-                fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(
                     {
                         "scope": 1,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
-                        "facility_name": fac.name if fac else "Unknown",
+                        "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": e.process_type or "N/A",
                         "fuel_type": e.fuel_type or "N/A",
                         "amount": e.quantity or 0,
+                        "unit": e.unit or "",
                         "co2_emissions": e.co2_emissions or 0,
                         "ch4_emissions": e.ch4_emissions or 0,
                         "n2o_emissions": e.n2o_emissions or 0,
@@ -319,18 +358,20 @@ def generate_report():
                 q2 = q2.filter_by(month=month)
             if facility_id:
                 q2 = q2.filter_by(facility_id=facility_id)
-            q2 = q2.filter(Scope2Emission.status != "Draft")
+            elif allowed_fids is not None:
+                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+            q2 = q2.filter(Scope2Emission.status == "Verified")
             for e in q2.all():
-                fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(
                     {
                         "scope": 2,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
-                        "facility_name": fac.name if fac else "Unknown",
+                        "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": f"Scope 2: {e.source_type or 'Electricity'}",
                         "fuel_type": e.grid_region or "Grid",
                         "amount": e.electricity_kwh or 0,
+                        "unit": "kWh",
                         "co2_emissions": 0,
                         "ch4_emissions": 0,
                         "n2o_emissions": 0,
@@ -347,18 +388,20 @@ def generate_report():
                 q3 = q3.filter_by(month=month)
             if facility_id:
                 q3 = q3.filter_by(facility_id=facility_id)
-            q3 = q3.filter(Scope3Emission.status != "Draft")
+            elif allowed_fids is not None:
+                q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids))
+            q3 = q3.filter(Scope3Emission.status == "Verified")
             for e in q3.all():
-                fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(
                     {
                         "scope": 3,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
-                        "facility_name": fac.name if fac else "Unknown",
+                        "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": e.category or "Scope 3",
                         "fuel_type": e.sub_category or "Value Chain",
                         "amount": e.activity_data or 0,
+                        "unit": e.unit or "",
                         "co2_emissions": 0,
                         "ch4_emissions": 0,
                         "n2o_emissions": 0,
@@ -397,14 +440,32 @@ def generate_report():
 @login_required
 def export_emissions():
     """Export emissions data as PDF - GET version for frontend integration"""
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
+            ),
+            403,
+        )
+
     try:
         from models import Scope2Emission, Scope3Emission
+        from sqlalchemy import or_
+
+        allowed_fids = get_allowed_facility_ids(user)
 
         # Get query parameters
         year = request.args.get("year")
         month = request.args.get("month")
-        facility_id = request.args.get("facility_id")
-        process_type = request.args.get("process_type")
+        facility_id = request.args.get("facility_id") or request.args.get("facilityId")
+        process_type = request.args.get("process_type") or request.args.get("process")
+        division = request.args.get("division")
+        field = request.args.get("field")
+        method = request.args.get("method")
+        search = request.args.get("search")
         scope = request.args.get("scope", "all")
 
         filters = {
@@ -412,6 +473,10 @@ def export_emissions():
             "month": month,
             "facility_id": facility_id,
             "process_type": process_type,
+            "division": division,
+            "field": field,
+            "method": method,
+            "search": search,
             "scope": scope,
         }
 
@@ -439,8 +504,14 @@ def export_emissions():
             except:
                 pass
 
+        if f_int is not None and allowed_fids is not None and f_int not in allowed_fids:
+            return jsonify({"error": "Unauthorized facility"}), 403
+
+        # Batch facility lookup to prevent N+1 queries
+        fac_map = {f.id: f.name for f in Facility.query.all()}
+
         # 1. SCOPE 1
-        if scope in ["all", "1"]:
+        if scope in ["all", "1", "scope1"]:
             q1 = Emission.query
             if y_int:
                 q1 = q1.filter_by(year=y_int)
@@ -448,20 +519,38 @@ def export_emissions():
                 q1 = q1.filter_by(month=m_int)
             if f_int:
                 q1 = q1.filter_by(facility_id=f_int)
+            elif allowed_fids is not None:
+                q1 = q1.filter(Emission.facility_id.in_(allowed_fids))
             if process_type and process_type != "all":
                 q1 = q1.filter_by(process_type=process_type)
-            q1 = q1.filter(Emission.status != "Draft")
+            if division and division != "all":
+                q1 = q1.filter(Emission.division.ilike(f"%{division.strip()}%"))
+            if field and field != "all":
+                q1 = q1.filter(Emission.field.ilike(f"%{field.strip()}%"))
+            if method and method != "all":
+                q1 = q1.filter(Emission.calc_method.ilike(f"%{method.strip()}%"))
+            if search:
+                s_term = search.strip()
+                q1 = q1.filter(
+                    or_(
+                        Emission.process_type.ilike(f"%{s_term}%"),
+                        Emission.fuel_type.ilike(f"%{s_term}%"),
+                        Emission.equipment_id.ilike(f"%{s_term}%"),
+                        Emission.group_name.ilike(f"%{s_term}%"),
+                    )
+                )
+            q1 = q1.filter(Emission.status == "Verified")
             for e in q1.all():
-                fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(
                     {
                         "scope": 1,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
-                        "facility_name": fac.name if fac else "Unknown",
+                        "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": e.process_type or "N/A",
                         "fuel_type": e.fuel_type or "N/A",
                         "amount": e.quantity or 0,
+                        "unit": e.unit or "",
                         "co2_emissions": e.co2_emissions or 0,
                         "ch4_emissions": e.ch4_emissions or 0,
                         "n2o_emissions": e.n2o_emissions or 0,
@@ -470,7 +559,7 @@ def export_emissions():
                 )
 
         # 2. SCOPE 2
-        if scope in ["all", "2"]:
+        if scope in ["all", "2", "scope2"]:
             q2 = Scope2Emission.query
             if y_int:
                 q2 = q2.filter_by(year=y_int)
@@ -478,18 +567,32 @@ def export_emissions():
                 q2 = q2.filter_by(month=m_int)
             if f_int:
                 q2 = q2.filter_by(facility_id=f_int)
-            q2 = q2.filter(Scope2Emission.status != "Draft")
+            elif allowed_fids is not None:
+                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+            if division and division != "all":
+                q2 = q2.filter(Scope2Emission.division.ilike(f"%{division.strip()}%"))
+            if field and field != "all":
+                q2 = q2.filter(Scope2Emission.field.ilike(f"%{field.strip()}%"))
+            if search:
+                s_term = search.strip()
+                q2 = q2.filter(
+                    or_(
+                        Scope2Emission.activity.ilike(f"%{s_term}%"),
+                        Scope2Emission.grid_region.ilike(f"%{s_term}%"),
+                    )
+                )
+            q2 = q2.filter(Scope2Emission.status == "Verified")
             for e in q2.all():
-                fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(
                     {
                         "scope": 2,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
-                        "facility_name": fac.name if fac else "Unknown",
+                        "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": "Indirect Electricity",
                         "fuel_type": e.source_type or "Electricity",
                         "amount": e.electricity_kwh or 0,
+                        "unit": "kWh",
                         "co2_emissions": 0,
                         "ch4_emissions": 0,
                         "n2o_emissions": 0,
@@ -498,7 +601,7 @@ def export_emissions():
                 )
 
         # 3. SCOPE 3
-        if scope in ["all", "3"]:
+        if scope in ["all", "3", "scope3"]:
             q3 = Scope3Emission.query
             if y_int:
                 q3 = q3.filter_by(year=y_int)
@@ -506,18 +609,28 @@ def export_emissions():
                 q3 = q3.filter_by(month=m_int)
             if f_int:
                 q3 = q3.filter_by(facility_id=f_int)
-            q3 = q3.filter(Scope3Emission.status != "Draft")
+            elif allowed_fids is not None:
+                q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_fids))
+            if search:
+                s_term = search.strip()
+                q3 = q3.filter(
+                    or_(
+                        Scope3Emission.category.ilike(f"%{s_term}%"),
+                        Scope3Emission.sub_category.ilike(f"%{s_term}%"),
+                    )
+                )
+            q3 = q3.filter(Scope3Emission.status == "Verified")
             for e in q3.all():
-                fac = Facility.query.get(e.facility_id) if e.facility_id else None
                 m_val = e.month if e.month is not None else 1
                 emissions_data.append(
                     {
                         "scope": 3,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
-                        "facility_name": fac.name if fac else "Unknown",
+                        "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": e.category or "Value Chain",
                         "fuel_type": e.sub_category or "Scope 3",
                         "amount": e.activity_data or 0,
+                        "unit": e.unit or "",
                         "co2_emissions": 0,
                         "ch4_emissions": 0,
                         "n2o_emissions": 0,
@@ -563,13 +676,33 @@ def export_ogmp_excel():
     4. Reconciliation Matrix
     5. Gold Standard Progression Roadmap
     """
-    try:
-        year = request.args.get("year", "all")
-        year_filter = int(year) if year and year.isdigit() else None
-        facility_id = request.args.get("facility_id")
-        facility_filter = (
-            int(facility_id) if facility_id and facility_id.isdigit() else None
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
+            ),
+            403,
         )
+
+    try:
+        allowed_fids = get_allowed_facility_ids(user)
+
+        year = request.args.get("year", "all")
+        year_filter = int(year) if year and year.isdigit() and year != "all" else None
+        facility_id = request.args.get("facility_id") or request.args.get("facilityId")
+        facility_filter = (
+            int(facility_id) if facility_id and facility_id.isdigit() and facility_id != "all" else None
+        )
+
+        if (
+            facility_filter is not None
+            and allowed_fids is not None
+            and facility_filter not in allowed_fids
+        ):
+            return jsonify({"error": "Unauthorized facility"}), 403
 
         # Prepare workbook
         wb = openpyxl.Workbook()
@@ -680,8 +813,19 @@ def export_ogmp_excel():
         style_header_row(ws1, 4, header_fill)
 
         fac_q = Facility.query
+        if allowed_fids is not None:
+            fac_q = fac_q.filter(Facility.id.in_(allowed_fids))
         if facility_filter:
             fac_q = fac_q.filter_by(id=facility_filter)
+        activity = request.args.get("activity")
+        division = request.args.get("division")
+        segment = request.args.get("segment")
+        if activity and activity != "all":
+            fac_q = fac_q.filter(Facility.activity == activity)
+        if division and division != "all":
+            fac_q = fac_q.filter(Facility.division == division)
+        if segment and segment != "all":
+            fac_q = fac_q.filter(Facility.segment == segment)
         facilities = fac_q.all()
 
         row_curr = 5
@@ -692,7 +836,7 @@ def export_ogmp_excel():
 
             # Aggregate CH4
             em_q = db.session.query(db.func.sum(Emission.ch4_emissions)).filter(
-                Emission.facility_id == f.id, Emission.status != "Draft"
+                Emission.facility_id == f.id, Emission.status == "Verified"
             )
             if year_filter:
                 em_q = em_q.filter(Emission.year == year_filter)
@@ -709,9 +853,9 @@ def export_ogmp_excel():
                 for p in prod_records
             )
 
-            # Top Down
+            # Top Down (D-02: mean of surveys per facility-year)
             td_q = db.session.query(
-                db.func.sum(OgmpSurvey.estimated_annual_tch4)
+                db.func.avg(OgmpSurvey.estimated_annual_tch4)
             ).filter(OgmpSurvey.facility_id == f.id)
             if year_filter:
                 td_q = td_q.filter(OgmpSurvey.year == year_filter)
@@ -727,23 +871,9 @@ def export_ogmp_excel():
                 "Compliant" if loss_rate_pct <= target_rate else "Non-Compliant"
             )
 
-            # Level 5 requires top-down AND bottom-up in the same reporting year with reconciled variance
-            curr_lvl = (
-                5
-                if (
-                    td_ch4 > 0
-                    and bu_ch4 > 0
-                    and abs(td_ch4 - bu_ch4) / bu_ch4
-                    <= (f.reconciliation_threshold or 20.0) / 100.0
-                    and (
-                        year_filter is None
-                        or OgmpSurvey.query.filter_by(
-                            facility_id=f.id, year=year_filter
-                        ).first()
-                        is not None
-                    )
-                )
-                else (4 if td_ch4 > 0 else 3)
+            # Canonical OGMP Level calculation
+            curr_lvl = compute_facility_ogmp_level(
+                f, year=year_filter, top_down_tch4=td_ch4, bottom_up_tch4=bu_ch4
             )
             pathway = (
                 "Gold Standard Achieved"
@@ -826,7 +956,9 @@ def export_ogmp_excel():
             "dehydrator": "Process",
         }
 
-        em_list_q = Emission.query.filter(Emission.status != "Draft")
+        em_list_q = Emission.query.filter(Emission.status == "Verified")
+        if allowed_fids is not None:
+            em_list_q = em_list_q.filter(Emission.facility_id.in_(allowed_fids))
         if year_filter:
             em_list_q = em_list_q.filter_by(year=year_filter)
         if facility_filter:
@@ -850,25 +982,12 @@ def export_ogmp_excel():
                 em.facility.name
                 if em.facility
                 else (
-                    Facility.query.get(em.facility_id).name
-                    if em.facility_id
+                    db.session.get(Facility, em.facility_id).name
+                    if em.facility_id and db.session.get(Facility, em.facility_id)
                     else "Unknown"
                 )
             )
-            lvl = em.ogmp_level or (
-                4
-                if em.factor_source == "specific"
-                and (
-                    em.calc_method
-                    in ["direct_measurement", "tier3", "engineering", "specific"]
-                    or em.c1 is not None
-                )
-                else (
-                    3
-                    if em.factor_source in ["specific", "custom", "api_table"]
-                    else 2 if em.factor_source == "custom" else 1
-                )
-            )
+            lvl = ogmp_level_for(em)
             ogmp_cat = OGMP_SOURCE_MAP.get((em.process_type or "").lower(), "Other")
             ws2.cell(
                 row=row_curr,
@@ -940,6 +1059,8 @@ def export_ogmp_excel():
         style_header_row(ws3, 3, accent_fill)
 
         surv_q = OgmpSurvey.query
+        if allowed_fids is not None:
+            surv_q = surv_q.filter(OgmpSurvey.facility_id.in_(allowed_fids))
         if year_filter:
             surv_q = surv_q.filter_by(year=year_filter)
         if facility_filter:
@@ -952,8 +1073,8 @@ def export_ogmp_excel():
                 s.facility.name
                 if s.facility
                 else (
-                    Facility.query.get(s.facility_id).name
-                    if s.facility_id
+                    db.session.get(Facility, s.facility_id).name
+                    if s.facility_id and db.session.get(Facility, s.facility_id)
                     else "Unknown"
                 )
             )
@@ -1017,15 +1138,15 @@ def export_ogmp_excel():
         for f in facilities:
             # Bottom-Up
             bu_q = db.session.query(db.func.sum(Emission.ch4_emissions)).filter(
-                Emission.facility_id == f.id, Emission.status != "Draft"
+                Emission.facility_id == f.id, Emission.status == "Verified"
             )
             if year_filter:
                 bu_q = bu_q.filter(Emission.year == year_filter)
             bu_total = bu_q.scalar() or 0.0
 
-            # Top-Down
+            # Top-Down (D-02: mean of surveys)
             td_q = db.session.query(
-                db.func.sum(OgmpSurvey.estimated_annual_tch4)
+                db.func.avg(OgmpSurvey.estimated_annual_tch4)
             ).filter(OgmpSurvey.facility_id == f.id)
             if year_filter:
                 td_q = td_q.filter(OgmpSurvey.year == year_filter)

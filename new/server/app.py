@@ -45,6 +45,13 @@ from sqlalchemy.engine import Engine
 import sqlite3
 from routes.dashboard import clear_dashboard_cache
 
+import re
+from werkzeug.exceptions import HTTPException
+
+if os.environ.get("USE_PROXY_FIX", "false").lower() == "true":
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
 # WAL checkpoint counter — runs PRAGMA wal_checkpoint(TRUNCATE) every 500 commits
 # to prevent the SQLite WAL file from growing unboundedly.
 _wal_commit_counter = 0
@@ -61,10 +68,30 @@ def set_sqlite_pragmas(dbapi_conn, _):
         cursor.close()
 
 
+@event.listens_for(db.session, "before_commit")
+def track_modified_entities(session):
+    relevant_entities = (
+        "Emission",
+        "Scope2Emission",
+        "Scope3Emission",
+        "ProductionData",
+        "Facility",
+        "CustomFactor",
+        "OgmpSurvey",
+    )
+    has_relevant = False
+    for obj in session.new | session.dirty | session.deleted:
+        if obj.__class__.__name__ in relevant_entities:
+            has_relevant = True
+            break
+    session.info["has_relevant_changes"] = has_relevant
+
+
 @event.listens_for(db.session, "after_commit")
 def receive_after_commit(session):
     global _wal_commit_counter
-    clear_dashboard_cache()
+    if session.info.get("has_relevant_changes", True):
+        clear_dashboard_cache()
 
     # Periodic WAL checkpoint to truncate the WAL file
     _wal_commit_counter += 1
@@ -86,7 +113,10 @@ csrf = CSRFProtect(app)
 @app.before_request
 def before_request():
     request.start_time = time.time()
-    request.id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+    req_id = request.headers.get("X-Request-ID", "")
+    if not req_id or not re.match(r"^[A-Za-z0-9\-]{1,64}$", req_id):
+        req_id = str(uuid.uuid4())
+    request.id = req_id
 
 
 @app.after_request
@@ -95,7 +125,7 @@ def after_request(response):
 
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline'; "
+        "script-src 'self'; "
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
         "font-src 'self' https://fonts.gstatic.com; "
         "img-src 'self' data: https:; "
@@ -143,20 +173,16 @@ def not_found_error(error):
 
 @app.errorhandler(Exception)
 def internal_error(error):
-    # Route all unhandled exceptions to the rotating logger (no unbounded file write)
-    app.logger.error(f"Unhandled Exception: {str(error)}\n{traceback.format_exc()}")
-
-    # Return 422 for unprocessable entity to match standard
-    if hasattr(error, "code") and error.code == 422:
+    if isinstance(error, HTTPException):
         return (
             jsonify(
                 {
-                    "error": str(error),
-                    "code": 422,
+                    "error": error.description,
+                    "code": error.code,
                     "request_id": getattr(request, "id", ""),
                 }
             ),
-            422,
+            error.code,
         )
 
     # Prevent masking of CSRF errors
@@ -172,13 +198,19 @@ def internal_error(error):
             400,
         )
 
-    return jsonify(
-        {
-            "error": "Internal server error",
-            "code": getattr(error, "code", 500),
-            "request_id": getattr(request, "id", ""),
-        }
-    ), getattr(error, "code", 500)
+    # Route all unhandled exceptions to the rotating logger (no unbounded file write)
+    app.logger.error(f"Unhandled Exception: {str(error)}\n{traceback.format_exc()}")
+
+    return (
+        jsonify(
+            {
+                "error": "Internal server error",
+                "code": 500,
+                "request_id": getattr(request, "id", ""),
+            }
+        ),
+        500,
+    )
 
 
 # Register Blueprints

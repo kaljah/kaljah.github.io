@@ -291,9 +291,12 @@ class CalculationDispatcher:
 
                 def safe_frac(key):
                     val = flat_inputs.get(key)
+                    if val in [None, "", "-"]:
+                        return 0.0
                     try:
-                        return float(val) / 100.0 if val not in [None, "", "-"] else 0.0
-                    except:
+                        num = float(val)
+                        return num / 100.0 if num > 1.0 else num
+                    except (ValueError, TypeError):
                         return 0.0
 
                 comps = {
@@ -353,9 +356,12 @@ class CalculationDispatcher:
 
                 def safe_frac(key):
                     val = flat_inputs.get(key)
+                    if val in [None, "", "-"]:
+                        return 0.0
                     try:
-                        return float(val) / 100.0 if val not in [None, "", "-"] else 0.0
-                    except:
+                        num = float(val)
+                        return num / 100.0 if num > 1.0 else num
+                    except (ValueError, TypeError):
                         return 0.0
 
                 comps = {
@@ -465,6 +471,7 @@ class CalculationDispatcher:
                     or flat_inputs.get("gas_oil_ratio"),
                     choke_size_in=flat_inputs.get("comp_choke_size"),
                     well_head_pressure=flat_inputs.get("comp_whp"),
+                    hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                     gwp_dict=gwp_dict,
                 )
 
@@ -503,6 +510,19 @@ class CalculationDispatcher:
                 ef_ch4 = emission_factors.get("ch4")
                 ef_n2o = emission_factors.get("n2o")
 
+                depth_unit = (
+                    flat_inputs.get("unload_depth_unit")
+                    or flat_inputs.get("depth_unit", "ft")
+                )
+                diam_unit = (
+                    flat_inputs.get("unload_diam_unit")
+                    or flat_inputs.get("diameter_unit", "in")
+                )
+                press_unit = (
+                    flat_inputs.get("unload_press_unit")
+                    or flat_inputs.get("press_unit", "psig")
+                )
+
                 return calculator.calculate(
                     well_depth=depth,
                     diameter=diam,
@@ -518,6 +538,10 @@ class CalculationDispatcher:
                     operating_temperature=flat_inputs.get("unload_temp")
                     or flat_inputs.get("operating_temperature", 60.0),
                     temp_unit=flat_inputs.get("temp_unit", "F"),
+                    depth_unit=depth_unit,
+                    diameter_unit=diam_unit,
+                    press_unit=press_unit,
+                    hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                     gwp_dict=gwp_dict,
                 )
 
@@ -573,6 +597,7 @@ class CalculationDispatcher:
                     press_unit=flat_inputs.get("press_unit")
                     or flat_inputs.get("blowdown_press_unit", "psig"),
                     z_factor=flat_inputs.get("z_factor", 1.0),
+                    hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                     gwp_dict=gwp_dict,
                 )
 
@@ -618,6 +643,9 @@ class CalculationDispatcher:
                 tank_eff = self._optional_fraction(
                     flat_inputs, ["tank_control_eff", "control_efficiency"], 0.0
                 )
+                co2_content = self._optional_fraction(
+                    flat_inputs, ["tank_co2_content", "co2_content", "co2_mol"], 0.0
+                )
 
                 ef_ch4_val = emission_factors.get("ch4", 0)
                 if not ef_ch4_val and gor == 0:
@@ -636,6 +664,8 @@ class CalculationDispatcher:
                     uncertainties=uncertainties,
                     process_type="tank_flashing",
                     ef_ch4=ef_ch4_val,
+                    co2_content=co2_content,
+                    hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                     gwp_dict=gwp_dict,
                 )
 
@@ -662,25 +692,39 @@ class CalculationDispatcher:
                     "gas CH4 content %",
                 )
 
+                actuations = flat_inputs.get("pneu_actuations") or flat_inputs.get("actuations")
+                actuations_val = float(actuations) if actuations not in [None, "", "-"] else None
+
                 return calculator.calculate(
                     count=count,
                     hours=hours,
                     bleed_rate=bleed_rate,
                     ch4_content=ch4_content,
                     uncertainties=uncertainties,
+                    actuations=actuations_val,
                     gwp_dict=gwp_dict,
                 )
 
             elif process_type == "fugitive":
                 fugitive_method = flat_inputs.get("fugitive_method", "average")
                 if fugitive_method == "screening":
-                    count = quantity
                     ppm = self._require_float(
-                        flat_inputs, ["fugitive_ppm"], "screening concentration (PPM)"
+                        flat_inputs,
+                        ["fugitive_ppm", "ppm", "screening_ppm"],
+                        "screening concentration (PPM)",
                     )
-                    ef_base = emission_factors.get("ch4", 0)
+                    ef_base = float(
+                        emission_factors.get("ch4")
+                        or emission_factors.get("factor")
+                        or 0.0
+                    )
+                    hours = float(
+                        flat_inputs.get("hours")
+                        or flat_inputs.get("hours_operating")
+                        or 8760.0
+                    )
                     screening_mult = 2.5 if ppm >= 10000 else 1.0
-                    ch4_kg = count * ef_base * screening_mult * 8760
+                    ch4_kg = count * ef_base * screening_mult * hours
                     ch4_tonnes = ch4_kg / 1000.0
 
                     def _wrap_unc(val, gas):
@@ -762,6 +806,11 @@ class CalculationDispatcher:
                 ctrl_eff = self._optional_fraction(
                     flat_inputs, ["agr_control_eff", "control_efficiency"], 0.0
                 )
+                ctrl_type = (
+                    flat_inputs.get("agr_control_type")
+                    or flat_inputs.get("acid_gas_control_type")
+                    or flat_inputs.get("control_type", "vent")
+                )
 
                 return calculator.calculate(
                     throughput=vol_mmscf,
@@ -771,6 +820,7 @@ class CalculationDispatcher:
                     ch4_in=ch4_in,
                     ch4_slip_fraction=ch4_slip,
                     acid_gas_control_eff=ctrl_eff,
+                    acid_gas_control_type=ctrl_type,
                     gwp_dict=gwp_dict,
                 )
 
@@ -926,12 +976,25 @@ class CalculationDispatcher:
                 quantity *= CONVERSIONS["bbl_to_m3"]
         # Energy-based normalization (Standard EFs are usually kg/MMBtu)
         elif "mmbtu" in f_unit:
-            hhv = float(inputs.get("hhv") or emission_factors.get("hhv") or 1.0)
-            if unit in ["m3", "m³"]:
-                quantity *= CONVERSIONS["m3_to_scf"]
-            if unit == "mmscf":
-                quantity *= 1000000.0
-            energy_mmbtu = (quantity * hhv) / 1_000_000.0
+            if unit in ["mmbtu", "mm_btu"]:
+                energy_mmbtu = quantity
+            elif unit in ["gj", "gigajoule", "gigajoules"]:
+                energy_mmbtu = quantity * 0.947817
+            elif unit in ["therm", "therms"]:
+                energy_mmbtu = quantity * 0.1
+            else:
+                hhv = float(inputs.get("hhv") or emission_factors.get("hhv") or 1020.0)
+                if unit in ["m3", "m³"]:
+                    quantity *= CONVERSIONS["m3_to_scf"]
+                elif unit == "mmscf":
+                    quantity *= 1000000.0
+                elif unit in ["mcf", "mscf"]:
+                    quantity *= 1000.0
+                elif unit in ["l", "liter", "liters"]:
+                    quantity *= CONVERSIONS.get("l_to_gal", 0.264172)
+                elif unit == "bbl":
+                    quantity *= 42.0
+                energy_mmbtu = (quantity * hhv) / 1_000_000.0
             quantity = energy_mmbtu
 
         # Calculate raw values (Usually EF is kg/unit)

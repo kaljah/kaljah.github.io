@@ -604,3 +604,73 @@
   align-items: center;
   gap: 8px;
 }
+
+/* ============================================================
+   SCOPE SWITCHER TABS (In-form Quick Switcher)
+   ============================================================ */
+.scope-switcher-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 4px;
+  background: var(--bg-hover, #f1f5f9);
+  border-radius: 12px;
+  width: fit-content;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.scope-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.scope-tab-btn:hover {
+  color: var(--text-primary, #0f172a);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.scope-tab-btn.active {
+  background: #ffffff;
+  color: var(--text-primary, #0f172a);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.scope-tab-btn.active.s1 {
+  border-left: 3px solid #10b981;
+}
+
+.scope-tab-btn.active.s2 {
+  border-left: 3px solid #3b82f6;
+}
+
+.scope-tab-btn.active.s3 {
+  border-left: 3px solid #8b5cf6;
+}
+
+.scope-tab-btn .tab-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.scope-tab-btn.back-btn {
+  margin-left: 8px;
+  border-left: 1px solid var(--border-color, #cbd5e1);
+  border-radius: 0 8px 8px 0;
+  color: var(--accent-color, #ff6600);
+}
+

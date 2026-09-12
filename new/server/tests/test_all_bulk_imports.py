@@ -28,6 +28,22 @@ def app():
     with flask_app.app_context():
         db.create_all()
         yield flask_app
+        # Teardown: Clean up test created records
+        try:
+            Emission.query.filter_by(process_type="combustion", fuel_type="Natural Gas", year=2024, month=8).delete()
+            Scope2Emission.query.filter_by(electricity_kwh=5000, year=2024, month=6).delete()
+            Scope3Emission.query.filter_by(category="Category 1", year=2024, month=7).delete()
+            ProductionData.query.filter_by(production_type="oil", year=2024, month=5).delete()
+            EmissionSource.query.filter_by(source_name="Test Flare Stack 1").delete()
+            MitigationProject.query.filter_by(project_name="Test Flare Reduction Project").delete()
+            CustomFactor.query.filter_by(fuel_type="Special Test Fuel").delete()
+            Facility.query.filter_by(name="Test Facility A").delete()
+            Facility.query.filter_by(name="Test New Facility 1").delete()
+            Facility.query.filter_by(name="Test New Facility 2").delete()
+            User.query.filter_by(email="test@example.com").delete()
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
         db.session.remove()
 
 @pytest.fixture(scope="module")
@@ -111,6 +127,30 @@ def test_bulk_import_facilities(logged_client, app):
         assert len(facs) == 2
         assert facs[0].location == "Location A"
         assert facs[1].region == "South"
+
+    # Test overwrite mode on existing facilities (Bug 1 & Bug 2 fix verification)
+    csv_overwrite = (
+        "name,location,description,activity,division,region,field,segment,code,external_id\n"
+        "Imported Facility A,Updated Location A,Desc A Updated,Upstream,Prod,North,Field 1,Seg 1,C001,EXT-01\n"
+    )
+    data_overwrite = {
+        "scope": "facilities",
+        "global_factor_type": "default",
+        "overwrite_duplicates": "true",
+        "mapping": json.dumps(mapping),
+        "file": (io.BytesIO(csv_overwrite.encode("utf-8")), "facilities_ov.csv")
+    }
+    res_ov = client.post("/api/emissions/upload/start", data=data_overwrite, content_type="multipart/form-data")
+    assert res_ov.status_code == 200
+    job_id_ov = res_ov.get_json().get("job_id")
+    status_ov = wait_for_job(client, job_id_ov)
+    assert status_ov["status"] == "completed"
+
+    with app.app_context():
+        fac_updated = Facility.query.filter_by(name="Imported Facility A").first()
+        assert fac_updated is not None
+        assert fac_updated.location == "Updated Location A"
+        assert fac_updated.description == "Desc A Updated"
 
 def test_bulk_import_custom_factors(logged_client, app):
     client = logged_client

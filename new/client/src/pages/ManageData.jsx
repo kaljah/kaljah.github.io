@@ -1,22 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
 import CustomDropdown from '../components/CustomDropdown';
 
 import ColumnMappingWizard from '../components/ColumnMappingWizard';
+import BatchReviewWizard from '../components/BatchReviewWizard';
 import { PROCESS_TYPES } from '../utils/EmissionFactors';
 import { GWP_AR5, BOUNDARY_OPTIONS } from '../constants';
 import { useToast } from '../components/Toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBoundary from '../components/ErrorBoundary'; // FE-03 FIX
 import { useAuth } from '../context/AuthContext';
-import { ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, Database, Shield, Zap, Upload, Target, Calendar, Edit2, Trash2, CheckCircle, AlertCircle, History } from 'lucide-react';
+import { useLayout } from '../context/LayoutContext';
+import { 
+  ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, 
+  Database, Shield, Zap, Upload, Target, Calendar, Edit2, Trash2, CheckCircle, 
+  AlertCircle, History, Check, X, AlertTriangle, Clock, Flame, Filter, RefreshCw, 
+  CheckSquare, Square, Sparkles 
+} from 'lucide-react';
 import './ManageData.css';
 import '../pages/Dashboard.css';
 
 
 const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
-    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage) || 1);
+
+    useEffect(() => {
+        if (currentPage > totalPages && totalPages > 0) {
+            onPageChange(totalPages);
+        }
+    }, [currentPage, totalPages, onPageChange]);
+
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', padding: '16px 0', borderTop: '1px solid #e5e7eb' }}>
             <button 
@@ -44,13 +58,31 @@ const PaginationControls = ({ currentPage, totalItems, itemsPerPage, onPageChang
 
 const ManageDataInner = () => {
     const { user } = useAuth();
+    const isPrivileged = ['admin', 'superuser'].includes(user?.role);
+    const { setTopBarLeft } = useLayout();
+
+    useEffect(() => {
+        if (setTopBarLeft) {
+            setTopBarLeft(
+                <div className="breadcrumbs" style={{ borderRight: 'none', paddingRight: 0 }}>
+                    <Database size={16} style={{ color: 'var(--accent-color, #ff6600)' }} />
+                    <span>Dashboard</span>
+                    <span style={{ margin: '0 8px', color: 'var(--text-secondary)' }}>/</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Manage Data</span>
+                </div>
+            );
+        }
+        return () => {
+            if (setTopBarLeft) setTopBarLeft(null);
+        };
+    }, [setTopBarLeft]);
 
 
     const HIERARCHY = {
         'EP': ['Production', 'Association'],
-        'LQS': ['LNG', 'LPG'],
-        'RPC': ['Refining', 'Petrochemicals'],
-        'TRC': ['TRC']
+        'LQS': ['LNG', 'LPG', 'LSH'],
+        'RPC': ['Refining', 'Petrochemicals', 'Raffinage', 'Petrochimie'],
+        'TRC': ['TRC', 'Make']
     };
 
     // Activities that are NOT oil & gas — excluded from OGMP 2.0 scope
@@ -93,6 +125,19 @@ const ManageDataInner = () => {
     const toast = useToast();
     const location = useLocation();
     const [activeTab, setActiveTab] = useState('factors');
+
+    // Core Data State
+    const [facilities, setFacilities] = useState([]);
+    const [customFactors, setCustomFactors] = useState([]);
+    const [productionData, setProductionData] = useState([]);
+    const [availableFilters, setAvailableFilters] = useState({ years: [], regions: [] });
+    const [importModal, setImportModal] = useState({ isOpen: false, type: 'sources' });
+    const [sources, setSources] = useState([]);
+    const [mitigations, setMitigations] = useState([]);
+    const [cbamExports, setCbamExports] = useState([]);
+    const [ogmpSurveys, setOgmpSurveys] = useState([]);
+    const [goals, setGoals] = useState([]);
+    const [baseYearsData, setBaseYearsData] = useState({ active_year: null, active_record: null, history: [] });
     const [sbtiConfig, setSbtiConfig] = useState({
         base_year: 2024,
         base_year_emissions: 0,
@@ -121,43 +166,347 @@ const ManageDataInner = () => {
     const handleSaveSbti = async () => {
         try {
             await api.post('/manage/sbti', sbtiConfig);
-            toast.show('SBTi Target saved successfully', 'success');
+            toast.success('SBTi Target saved successfully');
             setHasSbti(true);
         } catch (e) {
-            toast.show('Failed to save SBTi Target', 'error');
+            toast.error('Failed to save SBTi Target');
         }
     };
 
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [pendingEmissions, setPendingEmissions] = useState({ scope1: [], scope2: [], scope3: [] });
+    const [pendingEmissions, setPendingEmissions] = useState({ scope1: [], scope2: [], scope3: [], total_pending: 0 });
     const [isProcessingBatch, setIsProcessingBatch] = useState(false);
+    const [isRefreshingPending, setIsRefreshingPending] = useState(false);
+    const [pendingScopeFilter, setPendingScopeFilter] = useState('all');
+    const [pendingSearch, setPendingSearch] = useState('');
+    const [pendingQaFilter, setPendingQaFilter] = useState('all');
+    const [selectedPendingKeys, setSelectedPendingKeys] = useState(new Set());
+    const [isBatchWizardOpen, setIsBatchWizardOpen] = useState(false);
+    const [rejectionModal, setRejectionModal] = useState({
+        isOpen: false,
+        isBatch: false,
+        scope: '1',
+        recordId: null,
+        recordIds: [],
+        reason: ''
+    });
 
-    const fetchPendingEmissions = async () => {
-        if (user?.role !== 'admin' && user?.role !== 'superuser') return;
+    const QUICK_REJECTION_REASONS = [
+        "Incorrect Emission Factor Applied",
+        "Facility Allocation Mismatch",
+        "Missing Activity Documentation",
+        "Value Exceeds Operational Threshold",
+        "Duplicate Batch Entry Detected",
+        "Incomplete Activity Metric"
+    ];
+
+    const fetchPendingEmissions = async (force = false) => {
+        // Only admin / superuser roles can see and action pending records
+        if (!isPrivileged) return;
+        // Don't repopulate the list while the reviewer is mid-review inside the wizard
+        if (!force && isBatchWizardOpen) return;
+        setIsRefreshingPending(true);
         try {
             const res = await api.get('/emissions/pending');
             setPendingEmissions({
                 scope1: res.data.scope1 || [],
                 scope2: res.data.scope2 || [],
-                scope3: res.data.scope3 || []
+                scope3: res.data.scope3 || [],
+                total_pending: res.data.total_pending || 0
             });
         } catch (e) {
             console.error("Failed to fetch pending emissions", e);
+        } finally {
+            setIsRefreshingPending(false);
+        }
+    };
+
+    const pendingMetrics = useMemo(() => {
+        const s1 = pendingEmissions?.scope1 || [];
+        const s2 = pendingEmissions?.scope2 || [];
+        const s3 = pendingEmissions?.scope3 || [];
+
+        const count1 = s1.length;
+        const count2 = s2.length;
+        const count3 = s3.length;
+        const totalCount = count1 + count2 + count3;
+
+        const tco2e1 = s1.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
+        const tco2e2 = s2.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
+        const tco2e3 = s3.reduce((acc, r) => acc + (Number(r.co2e_total || r.co2e) || 0), 0);
+        const totalTco2e = tco2e1 + tco2e2 + tco2e3;
+
+        let flaggedCount = 0;
+        let cleanCount = 0;
+        [...s1, ...s2, ...s3].forEach(r => {
+            if (r.qa_flag) flaggedCount++;
+            else cleanCount++;
+        });
+
+        return {
+            count1, count2, count3, totalCount,
+            tco2e1, tco2e2, tco2e3, totalTco2e,
+            flaggedCount, cleanCount
+        };
+    }, [pendingEmissions]);
+
+    const allPendingRecords = useMemo(() => {
+        const list = [];
+        (pendingEmissions?.scope1 || []).forEach(r => {
+            list.push({
+                key: `1-${r.id}`,
+                id: r.id,
+                scope: '1',
+                scopeKey: 'scope1',
+                year: r.year,
+                month: r.month,
+                date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
+                facility_id: r.facility_id,
+                created_by: r.created_by,
+                raw: r,
+                desc: `${r.process_type || 'General'} · ${r.fuel_type || ''} (${Number(r.quantity || 0).toLocaleString()} ${r.unit || ''})`,
+                tco2e: Number(r.co2e_total || r.co2e || 0),
+                qa_flag: r.qa_flag
+            });
+        });
+        (pendingEmissions?.scope2 || []).forEach(r => {
+            list.push({
+                key: `2-${r.id}`,
+                id: r.id,
+                scope: '2',
+                scopeKey: 'scope2',
+                year: r.year,
+                month: r.month,
+                date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
+                facility_id: r.facility_id,
+                created_by: r.created_by,
+                raw: r,
+                desc: `${r.source_type || 'Electricity'} (${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,
+                tco2e: Number(r.co2e_total || r.co2e || 0),
+                qa_flag: r.qa_flag
+            });
+        });
+        (pendingEmissions?.scope3 || []).forEach(r => {
+            list.push({
+                key: `3-${r.id}`,
+                id: r.id,
+                scope: '3',
+                scopeKey: 'scope3',
+                year: r.year,
+                month: r.month,
+                date: `${r.year}-${String(r.month || 1).padStart(2, '0')}`,
+                facility_id: r.facility_id,
+                created_by: r.created_by,
+                raw: r,
+                desc: `${r.category || 'Scope 3 Category'}`,
+                tco2e: Number(r.co2e_total || r.co2e || 0),
+                qa_flag: r.qa_flag
+            });
+        });
+        return list;
+    }, [pendingEmissions]);
+
+    const filteredPendingRecords = useMemo(() => {
+        return allPendingRecords.filter(item => {
+            if (pendingScopeFilter !== 'all' && item.scope !== pendingScopeFilter) return false;
+            if (pendingQaFilter === 'flagged' && !item.qa_flag) return false;
+            if (pendingQaFilter === 'clean' && item.qa_flag) return false;
+            if (pendingSearch.trim()) {
+                const q = pendingSearch.toLowerCase().trim();
+                const facilityName = facilities.find(f => f.id === item.facility_id)?.name?.toLowerCase() || '';
+                const matchId = String(item.id).toLowerCase().includes(q);
+                const matchDate = item.date.toLowerCase().includes(q);
+                const matchDesc = item.desc.toLowerCase().includes(q);
+                const matchFacility = facilityName.includes(q) || String(item.facility_id).toLowerCase().includes(q);
+                const matchQa = (item.qa_flag || '').toLowerCase().includes(q);
+                if (!matchId && !matchDate && !matchDesc && !matchFacility && !matchQa) return false;
+            }
+            return true;
+        });
+    }, [allPendingRecords, pendingScopeFilter, pendingQaFilter, pendingSearch, facilities]);
+
+    const selectedPendingImpactTco2e = useMemo(() => {
+        let total = 0;
+        allPendingRecords.forEach(item => {
+            if (selectedPendingKeys.has(item.key)) {
+                total += item.tco2e;
+            }
+        });
+        return total;
+    }, [allPendingRecords, selectedPendingKeys]);
+
+    const handleToggleSelectPending = (key) => {
+        setSelectedPendingKeys(prev => {
+            const next = new Set(prev);
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
+            return next;
+        });
+    };
+
+    const handleSelectAllPendingToggle = () => {
+        const allVisibleKeys = filteredPendingRecords.map(r => r.key);
+        const isAllSelected = allVisibleKeys.length > 0 && allVisibleKeys.every(k => selectedPendingKeys.has(k));
+        if (isAllSelected) {
+            setSelectedPendingKeys(prev => {
+                const next = new Set(prev);
+                allVisibleKeys.forEach(k => next.delete(k));
+                return next;
+            });
+        } else {
+            setSelectedPendingKeys(prev => {
+                const next = new Set(prev);
+                allVisibleKeys.forEach(k => next.add(k));
+                return next;
+            });
+        }
+    };
+
+    const handleApproveSingle = async (scope, id) => {
+        try {
+            await api.post(`/emissions/approve/${id}`, { scope: String(scope) });
+            toast.success('Record approved successfully');
+            setSelectedPendingKeys(prev => {
+                const next = new Set(prev);
+                next.delete(`${scope}-${id}`);
+                return next;
+            });
+            fetchPendingEmissions();
+        } catch (e) {
+            toast.error(e.response?.data?.error || 'Failed to approve record');
+        }
+    };
+
+    const handleOpenRejectModal = (scope, id) => {
+        setRejectionModal({
+            isOpen: true,
+            isBatch: false,
+            scope: String(scope),
+            recordId: id,
+            recordIds: [`${scope}-${id}`],
+            reason: ''
+        });
+    };
+
+    const handleOpenBatchRejectModal = () => {
+        if (selectedPendingKeys.size === 0) return;
+        setRejectionModal({
+            isOpen: true,
+            isBatch: true,
+            scope: pendingScopeFilter !== 'all' ? pendingScopeFilter : 'all',
+            recordId: null,
+            recordIds: Array.from(selectedPendingKeys),
+            reason: ''
+        });
+    };
+
+    const handleBatchApproveSelected = async () => {
+        if (selectedPendingKeys.size === 0) return;
+        setIsProcessingBatch(true);
+        try {
+            const byScope = { '1': [], '2': [], '3': [] };
+            const ids = [];
+            selectedPendingKeys.forEach(key => {
+                const [scope, id] = key.split('-');
+                if (byScope[scope]) byScope[scope].push(Number(id));
+                ids.push(Number(id));
+            });
+
+            const res = await api.post('/emissions/approve/batch', {
+                scope: 'all',
+                ids,
+                by_scope: byScope,
+                approve_all: false
+            });
+
+            toast.success(`Successfully approved ${res.data?.approved_count || selectedPendingKeys.size} record${selectedPendingKeys.size > 1 ? 's' : ''}`);
+            setSelectedPendingKeys(new Set());
+            fetchPendingEmissions();
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to approve selected records');
+        } finally {
+            setIsProcessingBatch(false);
+        }
+    };
+
+    const handleConfirmReject = async () => {
+        if (!rejectionModal.reason.trim()) {
+            toast.warning('Please specify or select a rejection reason');
+            return;
+        }
+        setIsProcessingBatch(true);
+        try {
+            if (!rejectionModal.isBatch && rejectionModal.recordId) {
+                await api.post(`/emissions/reject/${rejectionModal.recordId}`, {
+                    scope: rejectionModal.scope,
+                    reason: rejectionModal.reason.trim()
+                });
+                toast.success('Record rejected');
+            } else {
+                const byScope = { '1': [], '2': [], '3': [] };
+                const ids = [];
+                rejectionModal.recordIds.forEach(key => {
+                    const [scope, id] = key.split('-');
+                    if (byScope[scope]) byScope[scope].push(Number(id));
+                    ids.push(Number(id));
+                });
+
+                const res = await api.post('/emissions/reject/batch', {
+                    scope: 'all',
+                    ids,
+                    by_scope: byScope,
+                    reason: rejectionModal.reason.trim(),
+                    reject_all: false
+                });
+                toast.success(`Rejected ${res.data?.deleted_count || rejectionModal.recordIds.length} record${rejectionModal.recordIds.length > 1 ? 's' : ''}`);
+            }
+            setRejectionModal({ isOpen: false, isBatch: false, scope: '1', recordId: null, recordIds: [], reason: '' });
+            setSelectedPendingKeys(new Set());
+            fetchPendingEmissions();
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to reject record(s)');
+        } finally {
+            setIsProcessingBatch(false);
+        }
+    };
+
+    const handleApproveAllInScope = async (scopeNum) => {
+        const count = pendingMetrics[`count${scopeNum}`];
+        if (!count) return;
+        if (!window.confirm(`Approve all ${count} pending Scope ${scopeNum} records?`)) return;
+        setIsProcessingBatch(true);
+        try {
+            await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
+            toast.success(`Approved all Scope ${scopeNum} records`);
+            setSelectedPendingKeys(prev => {
+                const next = new Set(prev);
+                Array.from(next).forEach(k => {
+                    if (k.startsWith(`${scopeNum}-`)) next.delete(k);
+                });
+                return next;
+            });
+            fetchPendingEmissions();
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to approve batch');
+        } finally {
+            setIsProcessingBatch(false);
         }
     };
 
 
-    // Auto-switch to goals tab when navigated from Dashboard with state
+    // Auto-switch tab when navigated from Dashboard with state or query param
     useEffect(() => {
-        if (location.state?.tab) {
-            setActiveTab(location.state.tab);
+        const queryTab = new URLSearchParams(location.search).get('tab');
+        const targetTab = location.state?.tab || queryTab;
+        if (targetTab) {
+            setActiveTab(targetTab);
             // Scroll into view smoothly
             setTimeout(() => {
                 document.querySelector('.manage-nav-item.active')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 100);
         }
-    }, [location.state]);
+    }, [location.state, location.search]);
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -179,18 +528,7 @@ const ManageDataInner = () => {
     }, [activeTab, searchTerm, filterActivity, filterDivision, filterRegion, filterYear]);
 
 
-    // Data State
-    const [facilities, setFacilities] = useState([]);
-    const [customFactors, setCustomFactors] = useState([]);
-    const [productionData, setProductionData] = useState([]);
-    const [availableFilters, setAvailableFilters] = useState({ years: [], regions: [] });
-    const [importModal, setImportModal] = useState({ isOpen: false, type: 'sources' });
-    const [sources, setSources] = useState([]);
-    const [mitigations, setMitigations] = useState([]);
-  const [cbamExports, setCbamExports] = useState([]);
-    const [ogmpSurveys, setOgmpSurveys] = useState([]);
-    const [goals, setGoals] = useState([]);
-    const [baseYearsData, setBaseYearsData] = useState({ active_year: null, active_record: null, history: [] });
+
 
     // Forms State
     const [facilityForm, setFacilityForm] = useState({
@@ -280,6 +618,7 @@ const ManageDataInner = () => {
         fetchGoals();
         fetchBaseYears();
         fetchPendingEmissions();
+        fetchSbti();
     }, []);
 
     // Auto-populate forms based on user's accessible facilities
@@ -287,7 +626,7 @@ const ManageDataInner = () => {
     // Non-admin users: cascade-fill activity → division → region when unambiguous
     useEffect(() => {
         if (facilities.length === 0) return;
-        if (user?.role === 'admin') return;
+        if (isPrivileged) return;
 
         // Step 1: unique activities the user can see
         const availableActivities = [...new Set(facilities.map(f => f.activity).filter(Boolean))];
@@ -318,7 +657,7 @@ const ManageDataInner = () => {
     // API Calls
     const fetchFacilities = async () => {
         try {
-            const res = await api.get('/facilities/');
+            const res = await api.get('/facilities');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setFacilities(data);
             const regions = [...new Set(data.map(f => f.location))].filter(Boolean);
@@ -328,7 +667,7 @@ const ManageDataInner = () => {
 
     const fetchCustomFactors = async () => {
         try {
-            const res = await api.get('/custom-factors/');
+            const res = await api.get('/custom-factors');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setCustomFactors(data);
         } catch (err) { console.error(err); }
@@ -336,7 +675,7 @@ const ManageDataInner = () => {
 
     const fetchProduction = async () => {
         try {
-            const res = await api.get('/data/production/');
+            const res = await api.get('/data/production');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setProductionData(data);
             const years = [...new Set(data.map(d => d.year))].sort((a, b) => b - a);
@@ -346,7 +685,7 @@ const ManageDataInner = () => {
 
     const fetchSources = async () => {
         try {
-            const res = await api.get('/sources/');
+            const res = await api.get('/sources');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setSources(data);
         } catch (err) { console.error(err); }
@@ -354,7 +693,7 @@ const ManageDataInner = () => {
 
     const fetchMitigations = async () => {
         try {
-            const res = await api.get('/mitigation/');
+            const res = await api.get('/mitigation');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setMitigations(data);
         } catch (err) { console.error(err); }
@@ -480,7 +819,7 @@ const ManageDataInner = () => {
                 ? `${facilityForm.boundary_type} - ${facilityForm.boundary_detail}`
                 : facilityForm.boundary_type;
 
-            await api.post('/facilities/', {
+            await api.post('/facilities', {
                 ...facilityForm,
                 boundary_notes: fullBoundary // Map back to API field
             });
@@ -501,7 +840,7 @@ const ManageDataInner = () => {
                 await api.put(`/custom-factors/${editingFactorId}`, factorForm);
                 toast.success('Factor updated!');
             } else {
-                await api.post('/custom-factors/', factorForm);
+                await api.post('/custom-factors', factorForm);
                 toast.success('Factor added!');
             }
             setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '' });
@@ -540,30 +879,31 @@ const ManageDataInner = () => {
             return toast.error('Region, Year and Month are required');
         }
         try {
-            await api.post('/data/production/', {
+            await api.post('/data/production', {
                 ...prodForm,
                 oil_amount: parseFloat(prodForm.oil_amount) || 0,
                 gas_amount: parseFloat(prodForm.gas_amount) || 0
             });
             toast.success('Production record saved!');
             fetchProduction();
+            setProdForm(prev => ({ ...prev, oil_amount: '', gas_amount: '' }));
         } catch (err) { toast.error('Failed to save production'); }
     };
 
     const handleSaveSource = async () => {
         if (!sourceForm.facility_id || !sourceForm.name) return toast.error('Name and Region required');
         try {
-            await api.post('/sources/', sourceForm);
+            await api.post('/sources', sourceForm);
             toast.success('Source added!');
             fetchSources();
-            setSourceForm({ ...sourceForm, name: '', fuel_type: '', design_capacity: '', description: '' });
+            setSourceForm({ ...sourceForm, name: '', equipment_id: '', fuel_type: '', design_capacity: '', description: '' });
         } catch (err) { toast.error('Failed to add source'); }
     };
 
     const handleSaveMitigation = async () => {
         if (!mitigationForm.quantity_tco2e) return toast.error('Quantity required');
         try {
-            await api.post('/mitigation/', mitigationForm);
+            await api.post('/mitigation', mitigationForm);
             toast.success('Mitigation record saved!');
             fetchMitigations();
             setMitigationForm({ ...mitigationForm, quantity_tco2e: '', notes: '', reference_id: '', name: '' });
@@ -655,6 +995,50 @@ const ManageDataInner = () => {
         }
     };
 
+    const handleDeleteFacility = async (id) => {
+        if (!window.confirm('Delete this region?')) return;
+        try {
+            await api.delete(`/facilities/${id}`);
+            toast.success('Region deleted');
+            fetchFacilities();
+        } catch (err) {
+            toast.error(err?.response?.data?.error || 'Failed to delete region');
+        }
+    };
+
+    const handleDeleteProduction = async (id) => {
+        if (!window.confirm('Delete this production record?')) return;
+        try {
+            await api.delete(`/data/production/${id}`);
+            toast.success('Production record deleted');
+            fetchProduction();
+        } catch (err) {
+            toast.error(err?.response?.data?.error || 'Failed to delete production record');
+        }
+    };
+
+    const handleDeleteSource = async (id) => {
+        if (!window.confirm('Delete this emission source?')) return;
+        try {
+            await api.delete(`/sources/${id}`);
+            toast.success('Emission source deleted');
+            fetchSources();
+        } catch (err) {
+            toast.error(err?.response?.data?.error || 'Failed to delete emission source');
+        }
+    };
+
+    const handleDeleteMitigation = async (id) => {
+        if (!window.confirm('Delete this mitigation project?')) return;
+        try {
+            await api.delete(`/mitigation/${id}`);
+            toast.success('Mitigation project deleted');
+            fetchMitigations();
+        } catch (err) {
+            toast.error(err?.response?.data?.error || 'Failed to delete mitigation project');
+        }
+    };
+
     const handleFactorChange = (e) => {
         setFactorForm({ ...factorForm, [e.target.name]: e.target.value });
     };
@@ -668,7 +1052,7 @@ const ManageDataInner = () => {
         const value = prompt("Enter Gas amount in m³ to convert to mcf (x 0.0353147):");
         if (value && !isNaN(value)) {
             const mcf = (parseFloat(value) * 0.0353147).toFixed(2);
-            setProdForm({ ...prodForm, gas_amount: mcf });
+            setProdForm(prev => ({ ...prev, gas_amount: mcf, gas_unit: 'mscf' }));
             toast.success(`Converted ${value} m³ to ${mcf} mcf`);
         }
     };
@@ -677,24 +1061,35 @@ const ManageDataInner = () => {
         const value = prompt("Enter Oil amount in m³ to convert to bbl (x 6.28981):");
         if (value && !isNaN(value)) {
             const bbl = (parseFloat(value) * 6.28981).toFixed(2);
-            setProdForm({ ...prodForm, oil_amount: bbl });
+            setProdForm(prev => ({ ...prev, oil_amount: bbl, oil_unit: 'bbl' }));
             toast.success(`Converted ${value} m³ to ${bbl} bbl`);
         }
     };
 
-    // CSV Logic
+    // CSV Logic with RFC 4180 Escaping and Blob Download
     const exportToCSV = (data, filename) => {
         if (!data || data.length === 0) return toast.info('No data to export');
-        const headers = Object.keys(data[0]).join(',');
-        const rows = data.map(obj => Object.values(obj).join(',')).join('\n');
-        const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + rows;
-        const encodedUri = encodeURI(csvContent);
+        const keys = Object.keys(data[0]);
+        const escapeCell = (val) => {
+            if (val === null || val === undefined) return '';
+            const str = String(val);
+            if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+        const headers = keys.map(escapeCell).join(',');
+        const rows = data.map(obj => keys.map(k => escapeCell(obj[k])).join(',')).join('\r\n');
+        const csvContent = "\uFEFF" + headers + "\r\n" + rows;
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
+        link.setAttribute("href", url);
         link.setAttribute("download", filename);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     };
 
     const handleImportCSV = async (file, type) => {
@@ -735,11 +1130,14 @@ const ManageDataInner = () => {
 
     const getFilteredMitigations = () => mitigations.filter(m => {
         const fac = facilities.find(f => f.id === m.facility_id);
-        const matchesSearch = (m.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || m.type.toLowerCase().includes(searchTerm.toLowerCase()) || (m.notes?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || m.year.toString().includes(searchTerm);
-        const matchesActivity = filterActivity ? m.activity === filterActivity : true;
-        const matchesDivision = filterDivision ? m.division === filterDivision : true;
-        const matchesRegion = filterRegion ? m.region === filterRegion : true;
-        const matchesYear = filterYear ? m.year.toString() === filterYear.toString() : true;
+        const matchesSearch = (m.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+                              (m.mitigation_type?.toLowerCase() || m.type?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+                              (m.notes?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+                              m.year?.toString().includes(searchTerm);
+        const matchesActivity = filterActivity ? (m.activity === filterActivity || fac?.activity === filterActivity) : true;
+        const matchesDivision = filterDivision ? (m.division === filterDivision || fac?.division === filterDivision) : true;
+        const matchesRegion = filterRegion ? (m.region === filterRegion || fac?.location === filterRegion) : true;
+        const matchesYear = filterYear ? m.year?.toString() === filterYear.toString() : true;
         return matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
     });
 
@@ -778,8 +1176,11 @@ const ManageDataInner = () => {
     });
 
     const getFilteredCbam = () => cbamExports.filter(item => {
-        if (filterRegion && filterRegion !== 'all' && item.facility_id?.toString() !== filterRegion) return false;
-        if (filterYear && filterYear !== 'all' && item.year?.toString() !== filterYear) return false;
+        const fac = facilities.find(f => f.id === item.facility_id);
+        if (filterActivity && (!fac || fac.activity !== filterActivity)) return false;
+        if (filterDivision && (!fac || fac.division !== filterDivision)) return false;
+        if (filterRegion && filterRegion !== 'all' && (!fac || fac.location !== filterRegion)) return false;
+        if (filterYear && filterYear !== 'all' && item.year?.toString() !== filterYear.toString()) return false;
         if (searchTerm && !item.product_name?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
         return true;
     });
@@ -797,23 +1198,6 @@ const ManageDataInner = () => {
     return (
         <div className="manage-data-page" >
             {loading && <LoadingSpinner message="Loading Data..." fullScreen />}
-            < header className="top-bar" >
-                <div className="breadcrumbs">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-                        <rect x="3" y="3" width="7" height="7" />
-                        <rect x="14" y="3" width="7" height="7" />
-                        <rect x="14" y="14" width="7" height="7" />
-                        <rect x="3" y="14" width="7" height="7" />
-                    </svg>
-                    <span>Dashboard</span>
-                    <span style={{ margin: '0 8px', color: 'var(--text-secondary)' }}>/</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Manage Data</span>
-                </div>
-                <div className="top-actions">
-                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user?.fullName || 'User'}</span>
-                </div>
-            </header >
-
             <div className="manage-container">
                 <div className="manage-layout">
                     {/* Sidebar Navigation */}
@@ -821,15 +1205,16 @@ const ManageDataInner = () => {
                         <h3 style={{ margin: '0 0 16px 12px', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-secondary)' }}>
                             Management
                         </h3>
-                                                {(user?.role === 'admin' || user?.role === 'superuser') && (
+                                                {['admin', 'superuser'].includes(user?.role) && (
                             <div className={`manage-nav-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => handleTabChange('pending')}>
-                                <span style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
-                                    Pending Review
-                                    {pendingEmissions && (pendingEmissions.scope1.length > 0 || pendingEmissions.scope2.length > 0 || pendingEmissions.scope3.length > 0) && (
-                                        <span style={{
-                                            background: '#ef4444', color: 'white', borderRadius: '12px', padding: '2px 8px', fontSize: '0.75rem', fontWeight: 600
-                                        }}>
-                                            {pendingEmissions.scope1.length + pendingEmissions.scope2.length + pendingEmissions.scope3.length}
+                                <span style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                        <Clock size={16} />
+                                        Pending Review
+                                    </span>
+                                    {pendingMetrics.totalCount > 0 && (
+                                        <span className="pending-badge-pulse">
+                                            {pendingMetrics.totalCount}
                                         </span>
                                     )}
                                 </span>
@@ -838,7 +1223,7 @@ const ManageDataInner = () => {
                         <div className={`manage-nav-item ${activeTab === 'factors' ? 'active' : ''}`} onClick={() => handleTabChange('factors')}>
                             <span>Emission Factors</span>
                         </div>
-                        {user?.role === 'admin' && (
+                        {['admin', 'superuser'].includes(user?.role) && (
                             <div className={`manage-nav-item ${activeTab === 'facilities' ? 'active' : ''}`} onClick={() => handleTabChange('facilities')}>
                                 <span>Regions</span>
                             </div>
@@ -915,164 +1300,643 @@ const ManageDataInner = () => {
                         {/* Pending Tab */}
 
 
-                        {/* Factors Tab */}
-                        {activeTab === 'pending' && (user?.role === 'admin' || user?.role === 'superuser') && (
-                            <div className="manage-tab-content">
-                                <div className="manage-tab-header">
-                                    <div>
-                                        <h2>Pending Review</h2>
-                                        <p>Review and approve emission records uploaded via bulk import.</p>
+                        {/* Pending Review Tab */}
+                        {activeTab === 'pending' && isPrivileged && (
+                            <div className="manage-tab-content pending-review-panel">
+                                {/* Rejection Modal */}
+                                {rejectionModal.isOpen && (
+                                    <div 
+                                        className="rejection-modal-backdrop" 
+                                        onClick={() => !isProcessingBatch && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
+                                    >
+                                        <div className="rejection-modal" onClick={e => e.stopPropagation()}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <div style={{ 
+                                                        width: 42, 
+                                                        height: 42, 
+                                                        borderRadius: '12px', 
+                                                        background: 'rgba(239, 68, 68, 0.12)', 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center', 
+                                                        color: '#dc2626' 
+                                                    }}>
+                                                        <AlertTriangle size={22} />
+                                                    </div>
+                                                    <div>
+                                                        <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700 }}>
+                                                            {rejectionModal.isBatch 
+                                                                ? `Reject ${rejectionModal.recordIds.length} Selected Record${rejectionModal.recordIds.length > 1 ? 's' : ''}` 
+                                                                : 'Reject Emission Record'}
+                                                        </h3>
+                                                        <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                                            Maker-Checker Audit Trail & Reason
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <button 
+                                                    className="btn-ghost" 
+                                                    style={{ padding: '6px', borderRadius: '8px' }}
+                                                    onClick={() => !isProcessingBatch && setRejectionModal(prev => ({ ...prev, isOpen: false }))}
+                                                >
+                                                    <X size={18} />
+                                                </button>
+                                            </div>
+
+                                            <div style={{ 
+                                                background: 'rgba(239, 68, 68, 0.06)', 
+                                                border: '1px solid rgba(239, 68, 68, 0.2)', 
+                                                borderRadius: '12px', 
+                                                padding: '12px 14px', 
+                                                fontSize: '0.84rem', 
+                                                color: '#b91c1c', 
+                                                display: 'flex', 
+                                                gap: '10px', 
+                                                alignItems: 'flex-start' 
+                                            }}>
+                                                <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+                                                <span>
+                                                    Rejecting will permanently delete the staged record from the pending queue. The reason will be recorded for audit and compliance.
+                                                </span>
+                                            </div>
+
+                                            <div>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    fontSize: '0.78rem', 
+                                                    fontWeight: 600, 
+                                                    color: 'var(--text-secondary)', 
+                                                    marginBottom: '10px', 
+                                                    textTransform: 'uppercase', 
+                                                    letterSpacing: '0.05em' 
+                                                }}>
+                                                    Quick Rejection Reason Presets
+                                                </label>
+                                                <div className="rejection-quick-chips">
+                                                    {QUICK_REJECTION_REASONS.map(reason => (
+                                                        <button
+                                                            key={reason}
+                                                            type="button"
+                                                            className={`rejection-chip ${rejectionModal.reason === reason ? 'selected' : ''}`}
+                                                            onClick={() => setRejectionModal(prev => ({ ...prev, reason }))}
+                                                        >
+                                                            {reason}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label style={{ 
+                                                    display: 'block', 
+                                                    fontSize: '0.78rem', 
+                                                    fontWeight: 600, 
+                                                    color: 'var(--text-secondary)', 
+                                                    marginBottom: '8px', 
+                                                    textTransform: 'uppercase', 
+                                                    letterSpacing: '0.05em' 
+                                                }}>
+                                                    Audit Reason / Justification <span style={{ color: '#ef4444' }}>*</span>
+                                                </label>
+                                                <textarea
+                                                    className="custom-input"
+                                                    rows={3}
+                                                    style={{ width: '100%', resize: 'vertical', fontSize: '0.88rem', padding: '10px 12px', borderRadius: '10px' }}
+                                                    placeholder="Specify the detailed reason for rejection..."
+                                                    value={rejectionModal.reason}
+                                                    onChange={e => setRejectionModal(prev => ({ ...prev, reason: e.target.value }))}
+                                                />
+                                            </div>
+
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '4px' }}>
+                                                <button
+                                                    type="button"
+                                                    className="btn-ghost"
+                                                    disabled={isProcessingBatch}
+                                                    onClick={() => setRejectionModal(prev => ({ ...prev, isOpen: false }))}
+                                                    style={{ padding: '8px 16px', borderRadius: '8px' }}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn-delete"
+                                                    disabled={isProcessingBatch || !rejectionModal.reason.trim()}
+                                                    style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 18px', borderRadius: '8px' }}
+                                                    onClick={handleConfirmReject}
+                                                >
+                                                    <X size={16} />
+                                                    {isProcessingBatch ? 'Rejecting...' : 'Confirm Rejection'}
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{ display: 'flex', gap: '12px' }}>
-                                        <button className="btn-primary" onClick={fetchPendingEmissions}>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16, marginRight: 8 }}><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 2v6h6"/></svg>
-                                            Refresh
+                                )}
+
+                                {/* Top Header */}
+                                <div className="manage-tab-header" style={{ marginBottom: 0 }}>
+                                    <div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>
+                                            <h2 style={{ margin: 0, fontWeight: 700, letterSpacing: '-0.02em' }}>Pending Review & Approvals</h2>
+                                            {pendingMetrics.totalCount > 0 && (
+                                                <span style={{ 
+                                                    background: 'rgba(255, 102, 0, 0.1)', 
+                                                    color: 'var(--accent-color)', 
+                                                    border: '1px solid rgba(255, 102, 0, 0.25)',
+                                                    fontSize: '0.75rem', 
+                                                    fontWeight: 700, 
+                                                    padding: '3px 10px', 
+                                                    borderRadius: '12px' 
+                                                }}>
+                                                    {pendingMetrics.totalCount} Awaiting Review
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                            Maker-Checker Segregation: Audit and approve bulk-imported emissions data prior to greenhouse gas inventory inclusion.
+                                        </p>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        <button 
+                                            className="btn-ghost" 
+                                            style={{ 
+                                                display: 'inline-flex', 
+                                                alignItems: 'center', 
+                                                gap: '8px', 
+                                                border: '1px solid var(--border-color)', 
+                                                borderRadius: '10px', 
+                                                padding: '8px 16px',
+                                                background: 'var(--bg-card)',
+                                                fontWeight: 500,
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={fetchPendingEmissions}
+                                            disabled={isRefreshingPending}
+                                        >
+                                            <RefreshCw size={15} style={{ animation: isRefreshingPending ? 'spin 1s linear infinite' : 'none' }} />
+                                            {isRefreshingPending ? 'Refreshing...' : 'Refresh Queue'}
+                                        </button>
+                                        <button
+                                            className="btn-primary"
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                borderRadius: '10px',
+                                                padding: '8px 18px',
+                                                background: 'linear-gradient(135deg, #ff6600, #ea580c)',
+                                                color: '#ffffff',
+                                                fontWeight: 600,
+                                                border: 'none',
+                                                boxShadow: '0 4px 14px rgba(255, 102, 0, 0.35)',
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => setIsBatchWizardOpen(true)}
+                                        >
+                                            <Sparkles size={16} />
+                                            Launch Review Wizard
                                         </button>
                                     </div>
                                 </div>
-                                
-                                {['scope1', 'scope2', 'scope3'].map(scopeKey => {
-                                    const records = pendingEmissions[scopeKey] || [];
-                                    if (records.length === 0) return null;
-                                    
-                                    const scopeNumber = scopeKey.replace('scope', '');
-                                    
-                                    return (
-                                        <div key={scopeKey} className="manage-card" style={{ marginBottom: '24px' }}>
-                                            <div className="manage-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <h3>Scope {scopeNumber} Pending Imports ({records.length})</h3>
-                                                <div style={{ display: 'flex', gap: '8px' }}>
-                                                    <button 
-                                                        className="btn-primary" 
-                                                        style={{ background: '#10b981' }}
-                                                        disabled={isProcessingBatch}
-                                                        onClick={async () => {
-                                                            if (!window.confirm(`Approve all ${records.length} pending Scope ${scopeNumber} records?`)) return;
-                                                            setIsProcessingBatch(true);
-                                                            try {
-                                                                await api.post('/emissions/approve/batch', { approve_all: true, scope: scopeNumber });
-                                                                toast.success(`Approved ${records.length} records`);
-                                                                setPendingEmissions(prev => ({
-                                                                    ...prev,
-                                                                    [scopeKey]: []
-                                                                }));
-                                                            } catch (err) {
-                                                                toast.error("Failed to approve batch");
-                                                            } finally {
-                                                                setIsProcessingBatch(false);
-                                                            }
-                                                        }}
-                                                    >
-                                                        {isProcessingBatch ? 'Processing...' : 'Approve All'}
-                                                    </button>
-                                                    <button 
-                                                        className="btn-delete"
-                                                        disabled={isProcessingBatch}
-                                                        onClick={async () => {
-                                                            if (!window.confirm(`Reject all ${records.length} pending Scope ${scopeNumber} records? This will delete them permanently.`)) return;
-                                                            setIsProcessingBatch(true);
-                                                            try {
-                                                                await api.post('/emissions/reject/batch', { reject_all: true, scope: scopeNumber });
-                                                                toast.success(`Rejected ${records.length} records`);
-                                                                setPendingEmissions(prev => ({
-                                                                    ...prev,
-                                                                    [scopeKey]: []
-                                                                }));
-                                                            } catch (err) {
-                                                                toast.error("Failed to reject batch");
-                                                            } finally {
-                                                                setIsProcessingBatch(false);
-                                                            }
-                                                        }}
-                                                    >
-                                                        {isProcessingBatch ? 'Processing...' : 'Reject All'}
-                                                    </button>
-                                                </div>
+
+                                {/* Top Hero KPI Metrics Strip */}
+                                <div className="pending-kpi-grid">
+                                    <div className="pending-kpi-card">
+                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(255, 102, 0, 0.1)', color: 'var(--accent-color)' }}>
+                                            <Clock size={22} />
+                                        </div>
+                                        <div className="pending-kpi-info">
+                                            <span className="pending-kpi-label">Pending Records</span>
+                                            <span className="pending-kpi-val">{pendingMetrics.totalCount}</span>
+                                            <span className="pending-kpi-sub">
+                                                S1: {pendingMetrics.count1} · S2: {pendingMetrics.count2} · S3: {pendingMetrics.count3}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="pending-kpi-card">
+                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+                                            <Flame size={22} />
+                                        </div>
+                                        <div className="pending-kpi-info">
+                                            <span className="pending-kpi-label">Pending Impact</span>
+                                            <span className="pending-kpi-val">
+                                                {pendingMetrics.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                                                <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', marginLeft: '4px' }}>tCO₂e</span>
+                                            </span>
+                                            <span className="pending-kpi-sub">Awaiting inventory commit</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="pending-kpi-card">
+                                        <div className="pending-kpi-icon-wrap" style={{ 
+                                            background: pendingMetrics.flaggedCount > 0 ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)', 
+                                            color: pendingMetrics.flaggedCount > 0 ? '#d97706' : '#059669' 
+                                        }}>
+                                            {pendingMetrics.flaggedCount > 0 ? <AlertTriangle size={22} /> : <CheckCircle size={22} />}
+                                        </div>
+                                        <div className="pending-kpi-info">
+                                            <span className="pending-kpi-label">Quality Audit</span>
+                                            <span className="pending-kpi-val" style={{ color: pendingMetrics.flaggedCount > 0 ? '#d97706' : 'inherit' }}>
+                                                {pendingMetrics.flaggedCount} Flagged
+                                            </span>
+                                            <span className="pending-kpi-sub">{pendingMetrics.cleanCount} clean records verified</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="pending-kpi-card">
+                                        <div className="pending-kpi-icon-wrap" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#2563eb' }}>
+                                            <Shield size={22} />
+                                        </div>
+                                        <div className="pending-kpi-info">
+                                            <span className="pending-kpi-label">Scope Segregation</span>
+                                            <span className="pending-kpi-val" style={{ fontSize: '1.15rem' }}>
+                                                {pendingMetrics.totalCount > 0 ? (
+                                                    `S1(${pendingMetrics.count1}) S2(${pendingMetrics.count2}) S3(${pendingMetrics.count3})`
+                                                ) : 'Queue Clear'}
+                                            </span>
+                                            <span className="pending-kpi-sub">Maker-Checker active</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Filter & Controls Toolbar */}
+                                <div className="pending-toolbar">
+                                    <div className="pending-segmented-tabs">
+                                        <button 
+                                            className={`pending-tab-btn ${pendingScopeFilter === 'all' ? 'active' : ''}`}
+                                            onClick={() => setPendingScopeFilter('all')}
+                                        >
+                                            <span>All Scopes</span>
+                                            <span className="pending-count-chip">{pendingMetrics.totalCount}</span>
+                                        </button>
+                                        <button 
+                                            className={`pending-tab-btn ${pendingScopeFilter === '1' ? 'active' : ''}`}
+                                            onClick={() => setPendingScopeFilter('1')}
+                                        >
+                                            <span className="scope-tag scope-tag-1" style={{ padding: '1px 6px', fontSize: '0.7rem' }}>S1</span>
+                                            <span>Scope 1</span>
+                                            <span className="pending-count-chip">{pendingMetrics.count1}</span>
+                                        </button>
+                                        <button 
+                                            className={`pending-tab-btn ${pendingScopeFilter === '2' ? 'active' : ''}`}
+                                            onClick={() => setPendingScopeFilter('2')}
+                                        >
+                                            <span className="scope-tag scope-tag-2" style={{ padding: '1px 6px', fontSize: '0.7rem' }}>S2</span>
+                                            <span>Scope 2</span>
+                                            <span className="pending-count-chip">{pendingMetrics.count2}</span>
+                                        </button>
+                                        <button 
+                                            className={`pending-tab-btn ${pendingScopeFilter === '3' ? 'active' : ''}`}
+                                            onClick={() => setPendingScopeFilter('3')}
+                                        >
+                                            <span className="scope-tag scope-tag-3" style={{ padding: '1px 6px', fontSize: '0.7rem' }}>S3</span>
+                                            <span>Scope 3</span>
+                                            <span className="pending-count-chip">{pendingMetrics.count3}</span>
+                                        </button>
+                                    </div>
+
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                                        {/* QA Filter Pills */}
+                                        <div style={{ display: 'inline-flex', background: 'rgba(15, 23, 42, 0.05)', borderRadius: '10px', padding: '3px', gap: '3px' }}>
+                                            <button
+                                                className={`pending-tab-btn ${pendingQaFilter === 'all' ? 'active' : ''}`}
+                                                style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                                                onClick={() => setPendingQaFilter('all')}
+                                            >
+                                                All QA
+                                            </button>
+                                            <button
+                                                className={`pending-tab-btn ${pendingQaFilter === 'clean' ? 'active' : ''}`}
+                                                style={{ padding: '6px 12px', fontSize: '0.78rem', color: pendingQaFilter === 'clean' ? '#059669' : 'inherit' }}
+                                                onClick={() => setPendingQaFilter('clean')}
+                                            >
+                                                Clean Only
+                                            </button>
+                                            <button
+                                                className={`pending-tab-btn ${pendingQaFilter === 'flagged' ? 'active' : ''}`}
+                                                style={{ padding: '6px 12px', fontSize: '0.78rem', color: pendingQaFilter === 'flagged' ? '#d97706' : 'inherit' }}
+                                                onClick={() => setPendingQaFilter('flagged')}
+                                            >
+                                                Flagged Only
+                                            </button>
+                                        </div>
+
+                                        {/* Search Box */}
+                                        <div className="pending-search-box">
+                                            <Search size={16} color="var(--text-secondary)" />
+                                            <input
+                                                type="text"
+                                                className="pending-search-input"
+                                                placeholder="Search by facility, fuel, category..."
+                                                value={pendingSearch}
+                                                onChange={e => setPendingSearch(e.target.value)}
+                                            />
+                                            {pendingSearch && (
+                                                <button 
+                                                    className="btn-ghost" 
+                                                    style={{ padding: '2px', color: 'var(--text-secondary)' }}
+                                                    onClick={() => setPendingSearch('')}
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Scope-level Bulk Action when Scoped */}
+                                        {pendingScopeFilter !== 'all' && pendingMetrics[`count${pendingScopeFilter}`] > 0 && (
+                                            <button
+                                                className="btn-primary"
+                                                style={{ 
+                                                    background: '#10b981', 
+                                                    fontSize: '0.82rem', 
+                                                    padding: '8px 14px',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '6px'
+                                                }}
+                                                disabled={isProcessingBatch}
+                                                onClick={() => handleApproveAllInScope(pendingScopeFilter)}
+                                            >
+                                                <Check size={14} />
+                                                Approve All Scope {pendingScopeFilter} ({pendingMetrics[`count${pendingScopeFilter}`]})
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Floating Sticky Batch Action Bar */}
+                                {selectedPendingKeys.size > 0 && (
+                                    <div className="pending-batch-bar">
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                                            <span style={{ fontWeight: 700, fontSize: '0.94rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                                <CheckSquare size={18} color="#38bdf8" />
+                                                {selectedPendingKeys.size} record{selectedPendingKeys.size > 1 ? 's' : ''} selected
+                                            </span>
+                                            <span style={{ color: 'rgba(255,255,255,0.3)' }}>•</span>
+                                            <span style={{ fontSize: '0.84rem', color: '#cbd5e1' }}>
+                                                Cumulative: <strong style={{ color: '#ffffff' }}>{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> tCO₂e
+                                            </span>
+                                        </div>
+                                        <div className="batch-action-buttons">
+                                            <button
+                                                className="btn-batch-approve"
+                                                disabled={isProcessingBatch}
+                                                onClick={handleBatchApproveSelected}
+                                            >
+                                                <Check size={16} />
+                                                Approve Selected
+                                            </button>
+                                            <button
+                                                className="btn-batch-reject"
+                                                disabled={isProcessingBatch}
+                                                onClick={handleOpenBatchRejectModal}
+                                            >
+                                                <X size={16} />
+                                                Reject Selected
+                                            </button>
+                                            <button
+                                                className="btn-batch-clear"
+                                                onClick={() => setSelectedPendingKeys(new Set())}
+                                            >
+                                                Deselect
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Main Content: Queue Empty vs Table Card */}
+                                {pendingMetrics.totalCount === 0 ? (
+                                    <div className="pending-empty-hero">
+                                        <div className="pending-empty-glow-icon">
+                                            <CheckCircle size={36} />
+                                        </div>
+                                        <div style={{ maxWidth: 440 }}>
+                                            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                                All Caught Up & Verified!
+                                            </h3>
+                                            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                                                There are currently no bulk import records awaiting Maker-Checker approval. Staged emissions records will appear here as soon as files are imported.
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : filteredPendingRecords.length === 0 ? (
+                                    <div className="pending-empty-hero" style={{ padding: '48px 24px' }}>
+                                        <div className="pending-empty-glow-icon" style={{ background: 'rgba(148, 163, 184, 0.1)', color: 'var(--text-secondary)', borderColor: 'rgba(148, 163, 184, 0.3)' }}>
+                                            <Filter size={32} />
+                                        </div>
+                                        <div>
+                                            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.15rem', fontWeight: 700 }}>
+                                                No Matching Records Found
+                                            </h3>
+                                            <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+                                                No pending records match your active search and filter settings.
+                                            </p>
+                                            <button
+                                                className="btn-primary"
+                                                style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+                                                onClick={() => {
+                                                    setPendingScopeFilter('all');
+                                                    setPendingQaFilter('all');
+                                                    setPendingSearch('');
+                                                }}
+                                            >
+                                                Clear Filters
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="pending-table-card">
+                                        <div className="pending-table-header">
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                <h3 style={{ margin: 0, fontSize: '1.02rem', fontWeight: 700 }}>
+                                                    {pendingScopeFilter === 'all' 
+                                                        ? 'All Pending Import Records' 
+                                                        : `Scope ${pendingScopeFilter} Pending Records`}
+                                                </h3>
+                                                <span style={{ 
+                                                    background: 'rgba(15, 23, 42, 0.06)', 
+                                                    color: 'var(--text-secondary)', 
+                                                    fontSize: '0.78rem', 
+                                                    fontWeight: 600, 
+                                                    padding: '2px 8px', 
+                                                    borderRadius: '8px' 
+                                                }}>
+                                                    Showing {filteredPendingRecords.length} of {pendingMetrics.totalCount}
+                                                </span>
                                             </div>
-                                            <div className="manage-card-body" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                                                <table className="manage-table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Date</th>
-                                                            <th>Facility</th>
-                                                            {scopeNumber === '1' && <><th>Process</th><th>Fuel</th><th>Qty</th></>}
-                                                            {scopeNumber === '2' && <><th>Source Type</th><th>kWh</th></>}
-                                                            {scopeNumber === '3' && <><th>Category</th></>}
-                                                            <th>tCO2e</th>
-                                                            <th>QA Flag</th>
-                                                            <th style={{ width: '120px' }}>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {records.map(r => (
-                                                            <tr key={r.id}>
-                                                                <td><span style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{String(r.id).slice(-6)}</span></td>
-                                                                <td>{r.year}-{String(r.month).padStart(2, '0')}</td>
-                                                                <td>{facilities.find(f => f.id === r.facility_id)?.name || r.facility_id}</td>
-                                                                {scopeNumber === '1' && <><td>{r.process_type}</td><td>{r.fuel_type}</td><td>{r.quantity} {r.unit}</td></>}
-                                                                {scopeNumber === '2' && <><td>{r.source_type}</td><td>{r.electricity_kwh}</td></>}
-                                                                {scopeNumber === '3' && <><td>{r.category}</td></>}
-                                                                <td style={{ fontWeight: 600 }}>{(r.co2e_total || r.co2e || 0).toFixed(2)}</td>
+
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <button
+                                                    className="btn-ghost"
+                                                    style={{ 
+                                                        fontSize: '0.8rem', 
+                                                        display: 'inline-flex', 
+                                                        alignItems: 'center', 
+                                                        gap: '6px', 
+                                                        padding: '6px 12px',
+                                                        border: '1px solid var(--border-color)',
+                                                        borderRadius: '8px'
+                                                    }}
+                                                    onClick={handleSelectAllPendingToggle}
+                                                >
+                                                    {filteredPendingRecords.every(r => selectedPendingKeys.has(r.key)) ? (
+                                                        <>
+                                                            <CheckSquare size={14} color="var(--accent-color)" />
+                                                            Deselect All in View
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Square size={14} />
+                                                            Select All in View
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div style={{ overflowX: 'auto' }}>
+                                            <table className="pending-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{ width: 44, textAlign: 'center' }}>
+                                                            <input
+                                                                type="checkbox"
+                                                                style={{ cursor: 'pointer' }}
+                                                                checked={filteredPendingRecords.length > 0 && filteredPendingRecords.every(r => selectedPendingKeys.has(r.key))}
+                                                                onChange={handleSelectAllPendingToggle}
+                                                            />
+                                                        </th>
+                                                        <th style={{ width: 80 }}>Ref ID</th>
+                                                        <th style={{ width: 90 }}>Scope</th>
+                                                        <th style={{ width: 100 }}>Period</th>
+                                                        <th style={{ minWidth: 150 }}>Facility</th>
+                                                        <th style={{ minWidth: 220 }}>Activity & Fuel / Category</th>
+                                                        <th style={{ width: 120, textAlign: 'right' }}>Emissions</th>
+                                                        <th style={{ width: 120 }}>QA Status</th>
+                                                        <th style={{ width: 110, textAlign: 'center' }}>Review Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredPendingRecords.map(item => {
+                                                        const isSelected = selectedPendingKeys.has(item.key);
+                                                        const facName = facilities.find(f => f.id === item.facility_id)?.name || item.facility_id;
+
+                                                        return (
+                                                            <tr key={item.key} className={isSelected ? 'row-selected' : ''}>
+                                                                <td style={{ textAlign: 'center' }}>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        style={{ cursor: 'pointer' }}
+                                                                        checked={isSelected}
+                                                                        onChange={() => handleToggleSelectPending(item.key)}
+                                                                    />
+                                                                </td>
                                                                 <td>
-                                                                    {r.qa_flag ? (
-                                                                        <span style={{ color: '#d97706', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem' }} title={r.qa_flag}>
-                                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                                                    <span style={{ fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                                                        #{String(item.id).slice(-5)}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span className={`scope-tag scope-tag-${item.scope}`}>
+                                                                        Scope {item.scope}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span style={{ fontWeight: 500 }}>
+                                                                        {item.date}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                                                                        {facName}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                                                                        {item.desc}
+                                                                    </span>
+                                                                </td>
+                                                                <td style={{ textAlign: 'right' }}>
+                                                                    <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-primary)' }}>
+                                                                        {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                                    </span>
+                                                                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginLeft: '4px' }}>tCO₂e</span>
+                                                                </td>
+                                                                <td>
+                                                                    {item.qa_flag ? (
+                                                                        <span 
+                                                                            className="qa-badge-flagged" 
+                                                                            title={item.qa_flag}
+                                                                        >
+                                                                            <AlertTriangle size={12} />
                                                                             Flagged
                                                                         </span>
                                                                     ) : (
-                                                                        <span style={{ color: '#10b981', fontSize: '0.85rem' }}>✓ Clean</span>
+                                                                        <span className="qa-badge-clean">
+                                                                            <Check size={12} />
+                                                                            Clean
+                                                                        </span>
                                                                     )}
                                                                 </td>
-                                                                <td>
-                                                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                                                        <button 
-                                                                            className="action-btn" 
-                                                                            style={{ color: '#10b981', border: '1px solid #10b981', padding: '2px 8px' }}
-                                                                            onClick={async () => {
-                                                                                try {
-                                                                                    await api.post(`/emissions/approve/${r.id}`);
-                                                                                    toast.success('Record approved');
-                                                                                    fetchPendingEmissions();
-                                                                                } catch (e) {
-                                                                                    toast.error('Failed to approve');
-                                                                                }
-                                                                            }}
+                                                                <td style={{ textAlign: 'center' }}>
+                                                                    <div className="review-actions-group" style={{ justifyContent: 'center' }}>
+                                                                        {item.created_by && String(item.created_by) === String(user?.id) ? (
+                                                                            <span 
+                                                                                className="badge-maker"
+                                                                                style={{ 
+                                                                                    fontSize: '0.7rem', 
+                                                                                    padding: '4px 8px', 
+                                                                                    borderRadius: '6px', 
+                                                                                    background: 'rgba(239, 68, 68, 0.1)', 
+                                                                                    color: '#ef4444', 
+                                                                                    border: '1px solid rgba(239, 68, 68, 0.25)', 
+                                                                                    fontWeight: 600, 
+                                                                                    whiteSpace: 'nowrap' 
+                                                                                }}
+                                                                                title="Maker-Checker: You created this record and cannot self-approve."
+                                                                            >
+                                                                                Self-Submitted
+                                                                            </span>
+                                                                        ) : (
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn-review-action approve"
+                                                                                title="Approve Record"
+                                                                                onClick={() => handleApproveSingle(item.scope, item.id)}
+                                                                            >
+                                                                                <Check size={16} />
+                                                                            </button>
+                                                                        )}
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn-review-action reject"
+                                                                            title="Reject Record (specify reason)"
+                                                                            onClick={() => handleOpenRejectModal(item.scope, item.id)}
                                                                         >
-                                                                            ✓
-                                                                        </button>
-                                                                        <button 
-                                                                            className="action-btn" 
-                                                                            style={{ color: '#ef4444', border: '1px solid #ef4444', padding: '2px 8px' }}
-                                                                            onClick={async () => {
-                                                                                try {
-                                                                                    await api.post(`/emissions/reject/${r.id}`);
-                                                                                    toast.success('Record rejected');
-                                                                                    fetchPendingEmissions();
-                                                                                } catch (e) {
-                                                                                    toast.error('Failed to reject');
-                                                                                }
-                                                                            }}
-                                                                        >
-                                                                            ✕
+                                                                            <X size={16} />
                                                                         </button>
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    );
-                                })}
-                                
-                                {pendingEmissions.total_pending === 0 && (
-                                    <div style={{ textAlign: 'center', padding: '64px', background: '#f9fafb', borderRadius: '12px', border: '1px dashed #e5e7eb' }}>
-                                        <CheckCircle size={48} color="#10b981" style={{ margin: '0 auto 16px auto', opacity: 0.5 }} />
-                                        <h3 style={{ margin: '0 0 8px 0', color: '#374151' }}>All caught up!</h3>
-                                        <p style={{ color: '#6b7280', margin: 0 }}>There are no emission records pending review.</p>
                                     </div>
+                                )}
+
+                                {isBatchWizardOpen && (
+                                    <BatchReviewWizard
+                                        isOpen={isBatchWizardOpen}
+                                        onClose={() => {
+                                            setIsBatchWizardOpen(false);
+                                            fetchPendingEmissions(true);
+                                        }}
+                                        facilities={facilities}
+                                    />
                                 )}
                             </div>
                         )}
@@ -1252,7 +2116,7 @@ const ManageDataInner = () => {
                                                 setEditingFactorId(null);
                                                 setFactorForm({
                                                     factor_name: '', parent_fuel: '', unit: 'scf',
-                                                    co2_factor: '', ch4_factor: '', n2o_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: ''
+                                                    co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: ''
                                                 });
                                             }}
                                         >
@@ -1295,6 +2159,13 @@ const ManageDataInner = () => {
                                                     </td>
                                                 </tr>
                                             ))}
+                                            {filteredFactors.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                        No custom emission factors found.
+                                                    </td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                     <PaginationControls currentPage={currentPage} totalItems={filteredFactors.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />
@@ -1302,15 +2173,15 @@ const ManageDataInner = () => {
                             </div>
                         )}
 
-                        {/* Regions Tab — Admin only */}
-                        {activeTab === 'facilities' && user?.role === 'admin' && (
+                        {/* Regions Tab — Admin and Superuser */}
+                        {activeTab === 'facilities' && ['admin', 'superuser'].includes(user?.role) && (
                             <div className="manage-card glass-panel">
                                 <h2 style={{ marginBottom: '8px', fontWeight: 700 }}>Active Regions</h2>
                                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Manage operational regions and their boundaries.</p>
 
 
-                                {/* Add Region form — Admin only */}
-                                {user?.role === 'admin' && (
+                                {/* Add Region form */}
+                                {['admin', 'superuser'].includes(user?.role) && (
                                     <>
                                         <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                                             <div className="input-group">
@@ -1396,10 +2267,6 @@ const ManageDataInner = () => {
                                                 <Upload size={16} /> Bulk Import (CSV)
                                             </button>
                                             <button className="action-btn" onClick={() => exportToCSV(facilities, 'regions_export.csv')} style={{ background: 'var(--text-secondary)' }}>Export CSV</button>
-                                            <label className="action-btn" style={{ background: 'var(--text-secondary)', cursor: 'pointer' }}>
-                                                Import CSV
-                                                <input type="file" style={{ display: 'none' }} onChange={(e) => handleImportCSV(e.target.files[0], 'Regions')} />
-                                            </label>
                                         </div>
                                     </>
                                 )}
@@ -1416,7 +2283,7 @@ const ManageDataInner = () => {
                                                 <th>Boundary</th>
                                                 <th>Segment</th>
                                                 <th>Coordinates</th>
-                                                {user?.role === 'admin' && <th style={{ textAlign: 'center' }}>Actions</th>}
+                                                {['admin', 'superuser'].includes(user?.role) && <th style={{ textAlign: 'center' }}>Actions</th>}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1429,22 +2296,12 @@ const ManageDataInner = () => {
                                                     <td>{f.boundary_notes || '-'}</td>
                                                     <td>{f.segment || '-'}</td>
                                                     <td style={{ fontSize: '0.8rem' }}>{f.latitude ? `${f.latitude}, ${f.longitude}` : 'Not Set'}</td>
-                                                    {user?.role === 'admin' && (
+                                                    {['admin', 'superuser'].includes(user?.role) && (
                                                         <td style={{ textAlign: 'center' }}>
                                                             <button
                                                                 className="btn-delete"
                                                                 style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                                                                onClick={async () => {
-                                                                    if (confirm('Delete this region?')) {
-                                                                        try {
-                                                                            await api.delete(`/facilities/${f.id}`);
-                                                                            toast.success('Region deleted!');
-                                                                            fetchFacilities();
-                                                                        } catch (err) {
-                                                                            toast.error('Failed to delete region');
-                                                                        }
-                                                                    }
-                                                                }}
+                                                                onClick={() => handleDeleteFacility(f.id)}
                                                             >
                                                                 Delete
                                                             </button>
@@ -1487,7 +2344,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Activity
-                                            {user?.role !== 'admin' && getAvailableActivities().length === 1 && (
+                                            {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -1495,7 +2352,7 @@ const ManageDataInner = () => {
                                             value={prodForm.activity}
                                             onChange={(e) => setProdForm({ ...prodForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
-                                            disabled={user?.role !== 'admin' && getAvailableActivities().length === 1}
+                                            disabled={!isPrivileged && getAvailableActivities().length === 1}
                                         >
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
@@ -1504,7 +2361,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Division
-                                            {user?.role !== 'admin' && getAvailableDivisions(prodForm.activity).length === 1 && (
+                                            {!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -1512,7 +2369,7 @@ const ManageDataInner = () => {
                                             value={prodForm.division}
                                             onChange={(e) => setProdForm({ ...prodForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
-                                            disabled={!prodForm.activity || (user?.role !== 'admin' && getAvailableDivisions(prodForm.activity).length === 1)}
+                                            disabled={!prodForm.activity || (!isPrivileged && getAvailableDivisions(prodForm.activity).length === 1)}
                                         >
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(prodForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
@@ -1522,7 +2379,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Region
-                                            {user?.role !== 'admin' && facilities.filter(f => f.activity === prodForm.activity && f.division === prodForm.division).length === 1 && (
+                                            {!isPrivileged && facilities.filter(f => f.activity === prodForm.activity && f.division === prodForm.division).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -1536,7 +2393,7 @@ const ManageDataInner = () => {
                                             value={prodForm.facility_id}
                                             onChange={(val) => setProdForm({ ...prodForm, facility_id: val })}
                                             placeholder="Select Region"
-                                            disabled={!prodForm.division || (user?.role !== 'admin' && facilities.filter(f => f.activity === prodForm.activity && f.division === prodForm.division).length === 1)}
+                                            disabled={!prodForm.division || (!isPrivileged && facilities.filter(f => f.activity === prodForm.activity && f.division === prodForm.division).length === 1)}
                                         />
                                     </div>
                                     <div className="input-group">
@@ -1618,23 +2475,20 @@ const ManageDataInner = () => {
                                                         <button
                                                             className="btn-delete"
                                                             style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                                                            onClick={async () => {
-                                                                if (confirm('Delete this production record?')) {
-                                                                    try {
-                                                                        await api.delete(`/data/production/${d.id}`);
-                                                                        toast.success('Production record deleted!');
-                                                                        fetchProduction();
-                                                                    } catch (err) {
-                                                                        toast.error('Failed to delete production record');
-                                                                    }
-                                                                }
-                                                            }}
+                                                            onClick={() => handleDeleteProduction(d.id)}
                                                         >
                                                             Delete
                                                         </button>
                                                     </td>
                                                 </tr>
                                             ))}
+                                            {filteredProduction.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                        No production records found.
+                                                    </td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                     <PaginationControls currentPage={currentPage} totalItems={filteredProduction.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />
@@ -1652,7 +2506,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Activity
-                                            {user?.role !== 'admin' && getAvailableActivities().length === 1 && (
+                                            {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -1660,7 +2514,7 @@ const ManageDataInner = () => {
                                             value={sourceForm.activity}
                                             onChange={(e) => setSourceForm({ ...sourceForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
-                                            disabled={user?.role !== 'admin' && getAvailableActivities().length === 1}
+                                            disabled={!isPrivileged && getAvailableActivities().length === 1}
                                         >
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
@@ -1669,7 +2523,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Division
-                                            {user?.role !== 'admin' && getAvailableDivisions(sourceForm.activity).length === 1 && (
+                                            {!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -1677,7 +2531,7 @@ const ManageDataInner = () => {
                                             value={sourceForm.division}
                                             onChange={(e) => setSourceForm({ ...sourceForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
-                                            disabled={!sourceForm.activity || (user?.role !== 'admin' && getAvailableDivisions(sourceForm.activity).length === 1)}
+                                            disabled={!sourceForm.activity || (!isPrivileged && getAvailableDivisions(sourceForm.activity).length === 1)}
                                         >
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(sourceForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
@@ -1687,7 +2541,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Region
-                                            {user?.role !== 'admin' && facilities.filter(f => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
+                                            {!isPrivileged && facilities.filter(f => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -1701,7 +2555,7 @@ const ManageDataInner = () => {
                                             value={sourceForm.facility_id}
                                             onChange={(val) => setSourceForm({ ...sourceForm, facility_id: val })}
                                             placeholder="Select Region"
-                                            disabled={!sourceForm.division || (user?.role !== 'admin' && facilities.filter(f => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1)}
+                                            disabled={!sourceForm.division || (!isPrivileged && facilities.filter(f => f.activity === sourceForm.activity && f.division === sourceForm.division).length === 1)}
                                         />
                                     </div>
                                     <div className="input-group">
@@ -1762,12 +2616,17 @@ const ManageDataInner = () => {
                                                     </td>
                                                     <td>{s.status}</td>
                                                     <td>
-                                                        <button className="btn-delete" style={{ padding: '4px 8px', fontSize: '0.75rem' }} onClick={async () => {
-                                                            if (confirm('Delete?')) { await api.delete(`/sources/${s.id}`); fetchSources(); }
-                                                        }}>Delete</button>
+                                                        <button className="btn-delete" style={{ padding: '4px 8px', fontSize: '0.75rem' }} onClick={() => handleDeleteSource(s.id)}>Delete</button>
                                                     </td>
                                                 </tr>
                                             ))}
+                                            {filteredSources.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                        No emission sources found.
+                                                    </td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                     <PaginationControls currentPage={currentPage} totalItems={filteredSources.length} itemsPerPage={ITEMS_PER_PAGE} onPageChange={setCurrentPage} />
@@ -2096,6 +2955,84 @@ const ManageDataInner = () => {
                                         </table>
                                     </div>
                                 </div>
+
+                                {/* Section 3: SBTi Science-Based Net-Zero Targets */}
+                                <div style={{ borderTop: '2px dashed var(--border-color)', paddingTop: '32px', marginTop: '32px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                                        <div>
+                                            <h2 style={{ marginBottom: '6px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <Target size={22} color="var(--accent-color, #ff6600)" /> Science-Based Targets (SBTi 1.5°C Trajectory)
+                                            </h2>
+                                            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
+                                                Configure enterprise decarbonization targets aligned with SBTi Net-Zero and Paris Agreement 1.5°C pathways.
+                                            </p>
+                                        </div>
+                                        {hasSbti && (
+                                            <span className="goal-badge goal-badge-active" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', padding: '6px 14px' }}>
+                                                <CheckCircle size={14} /> SBTi Target Active
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <div className="grid-forms" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                                        <div className="input-group">
+                                            <label>Base Year</label>
+                                            <input
+                                                type="number"
+                                                value={sbtiConfig.base_year}
+                                                onChange={e => setSbtiConfig({ ...sbtiConfig, base_year: parseInt(e.target.value) || 2024 })}
+                                                className="mole-input"
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Base Year Verified Emissions (tCO₂e)</label>
+                                            <input
+                                                type="number"
+                                                value={sbtiConfig.base_year_emissions}
+                                                onChange={e => setSbtiConfig({ ...sbtiConfig, base_year_emissions: parseFloat(e.target.value) || 0 })}
+                                                className="mole-input"
+                                                placeholder="Auto-calculated or manual override"
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Target Year (Net-Zero)</label>
+                                            <input
+                                                type="number"
+                                                value={sbtiConfig.target_year}
+                                                onChange={e => setSbtiConfig({ ...sbtiConfig, target_year: parseInt(e.target.value) || 2050 })}
+                                                className="mole-input"
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Annual Reduction Rate (%)</label>
+                                            <input
+                                                type="number"
+                                                step="0.1"
+                                                value={sbtiConfig.reduction_rate_pct}
+                                                onChange={e => setSbtiConfig({ ...sbtiConfig, reduction_rate_pct: parseFloat(e.target.value) || 4.2 })}
+                                                className="mole-input"
+                                                placeholder="4.2% for 1.5°C"
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Climate Pathway Standard</label>
+                                            <select
+                                                value={sbtiConfig.pathway_type}
+                                                onChange={e => setSbtiConfig({ ...sbtiConfig, pathway_type: e.target.value })}
+                                                className="component-select"
+                                            >
+                                                <option value="1.5C">SBTi 1.5°C Aligned (Recommended, 4.2%/yr linear)</option>
+                                                <option value="well-below 2C">Well-Below 2°C (2.5%/yr linear)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
+                                        <button className="action-btn" onClick={handleSaveSbti} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                            <Check size={16} /> Save SBTi Target Configuration
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         )}
 
@@ -2120,7 +3057,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Activity
-                                            {user?.role !== 'admin' && getAvailableActivities().length === 1 && (
+                                            {!isPrivileged && getAvailableActivities().length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -2128,7 +3065,7 @@ const ManageDataInner = () => {
                                             value={mitigationForm.activity}
                                             onChange={(e) => setMitigationForm({ ...mitigationForm, activity: e.target.value, division: '', facility_id: '' })}
                                             className="component-select"
-                                            disabled={user?.role !== 'admin' && getAvailableActivities().length === 1}
+                                            disabled={!isPrivileged && getAvailableActivities().length === 1}
                                         >
                                             <option value="">Select Activity</option>
                                             {getAvailableActivities().map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a] || a}</option>)}
@@ -2137,7 +3074,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Division
-                                            {user?.role !== 'admin' && getAvailableDivisions(mitigationForm.activity).length === 1 && (
+                                            {!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -2145,7 +3082,7 @@ const ManageDataInner = () => {
                                             value={mitigationForm.division}
                                             onChange={(e) => setMitigationForm({ ...mitigationForm, division: e.target.value, facility_id: '' })}
                                             className="component-select"
-                                            disabled={!mitigationForm.activity || (user?.role !== 'admin' && getAvailableDivisions(mitigationForm.activity).length === 1)}
+                                            disabled={!mitigationForm.activity || (!isPrivileged && getAvailableDivisions(mitigationForm.activity).length === 1)}
                                         >
                                             <option value="">Select Division</option>
                                             {getAvailableDivisions(mitigationForm.activity).map(d => <option key={d} value={d}>{d}</option>)}
@@ -2155,7 +3092,7 @@ const ManageDataInner = () => {
                                     <div className="input-group">
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             Region
-                                            {user?.role !== 'admin' && facilities.filter(f => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1 && (
+                                            {!isPrivileged && facilities.filter(f => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1 && (
                                                 <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', padding: '1px 5px', fontWeight: 600 }}>Auto</span>
                                             )}
                                         </label>
@@ -2169,7 +3106,7 @@ const ManageDataInner = () => {
                                             value={mitigationForm.facility_id}
                                             onChange={(val) => setMitigationForm({ ...mitigationForm, facility_id: val })}
                                             placeholder="Select Region"
-                                            disabled={!mitigationForm.division || (user?.role !== 'admin' && facilities.filter(f => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1)}
+                                            disabled={!mitigationForm.division || (!isPrivileged && facilities.filter(f => f.activity === mitigationForm.activity && f.division === mitigationForm.division).length === 1)}
                                         />
                                     </div>
 
@@ -2250,22 +3187,17 @@ const ManageDataInner = () => {
                                                         <button
                                                             className="btn-delete"
                                                             style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                                                            onClick={async () => {
-                                                                if (confirm('Delete?')) {
-                                                                    await api.delete(`/mitigation/${m.id}`);
-                                                                    fetchMitigations();
-                                                                }
-                                                            }}
+                                                            onClick={() => handleDeleteMitigation(m.id)}
                                                         >
                                                             Delete
                                                         </button>
                                                     </td>
                                                 </tr>
                                             ))}
-                                            {mitigations.length === 0 && (
+                                            {filteredMitigations.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                                                        No mitigation projects recorded yet.
+                                                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                        {mitigations.length === 0 ? 'No mitigation projects recorded yet.' : 'No mitigation projects found matching active filters.'}
                                                     </td>
                                                 </tr>
                                             )}
@@ -2887,6 +3819,7 @@ const ManageDataInner = () => {
                         if (importModal.type === 'custom_factors') fetchCustomFactors();
                         if (importModal.type === 'production') fetchProduction();
                         if (importModal.type === 'mitigation') fetchMitigations();
+                        if (importModal.type === 'facilities') fetchFacilities();
                         if (importModal.type === 'activity') {
                             fetchProduction();
                             toast.success('Activity data imported and emissions calculated!');

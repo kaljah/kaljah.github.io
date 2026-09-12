@@ -306,13 +306,13 @@
 }
 
 .stat-item.border-left {
-  border-left: 1px solid #f1f5f9;
+  border-left: 1px solid var(--border-color, #e2e8f0);
 }
 
 .stat-label {
   font-size: 0.85rem;
-  font-weight: 500;
-  color: #94a3b8;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
   margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -321,9 +321,8 @@
 .stat-value {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text-primary, #0f172a);
   line-height: 1;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .stat-value.success {
@@ -341,7 +340,7 @@
 .stat-unit {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-secondary, #64748b);
 }
 
 .trend-badge {
@@ -433,9 +432,11 @@
 }
 
 .pill-value {
-  background: rgba(255, 255, 255, 0.4);
-  padding: 2px 8px;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 /* Categorical Card */
@@ -559,7 +560,8 @@
 
 .region-value .unit {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-secondary, #64748b);
+  font-weight: 600;
 }
 
 .no-data-msg {
@@ -667,7 +669,14 @@
 }
 
 .div-row {
-  color: #64748b !important;
+  color: #475569 !important;
+}
+
+.data-table td.text-right {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  font-weight: 600;
+  color: var(--text-primary, #0f172a) !important;
 }
 
 .reg-row {

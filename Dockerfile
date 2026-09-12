@@ -1,21 +1,44 @@
-# Use Node.js 20 slim as base image
-FROM node:20-slim
+# Stage 1: Build React Frontend
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app/client
 
-# Create and change to the app directory
-WORKDIR /usr/src/app
+# Install frontend dependencies
+COPY new/client/package*.json ./
+RUN npm ci --prefer-offline --no-audit || npm install
 
-# Copy package.json
-COPY package.json ./
+# Build production frontend bundle
+COPY new/client/ ./
+RUN npm run build
 
-# Install only production dependencies
-# Note: we don't copy package-lock.json to avoid platform-specific issues with sqlite3 if it was installed on Windows
-RUN npm install --omit=dev
+# Stage 2: Production Python Backend
+FROM python:3.11-slim
+WORKDIR /app
 
-# Copy application source code
-COPY . .
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    FLASK_ENV=production \
+    PORT=5000
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Install system dependencies (including libpq for PostgreSQL)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Start the server using the web script
-CMD [ "npm", "run", "start:web" ]
+# Install python dependencies
+COPY new/server/requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend source code
+COPY new/server /app
+
+# Copy built frontend assets from stage 1
+COPY --from=frontend-builder /app/client/dist /app/static/dist
+
+# Expose production port
+EXPOSE 5000
+
+# Run with Gunicorn WSGI production server
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "app:app"]

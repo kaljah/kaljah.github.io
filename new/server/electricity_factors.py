@@ -23,6 +23,12 @@ GRID_FACTORS = {
         "description": "Isolated Southern grids (Diesel/Gas backup)",
         "source": "Estimated local mix",
     },
+    "US Average": {
+        "factor": 0.385,
+        "unit": "kg CO2e/kWh",
+        "description": "eGRID US Average grid mix",
+        "source": "eGRID",
+    },
     "US-WECC": {
         "factor": 0.3132,
         "unit": "kg CO2e/kWh",

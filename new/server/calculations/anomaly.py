@@ -102,21 +102,31 @@ class AnomalyDetector:
         month: int,
     ) -> dict:
         """
-        Check a Scope 1 CO2e value against the trailing 12 months for the
-        same facility and process type.
+        Check a Scope 1 CO2e value against the trailing 12 months strictly prior to
+        the target (year, month) for the same facility and process type.
         """
         try:
             from models import Emission
+            from sqlalchemy import or_, and_
             db = self._get_db()
 
-            # Fetch trailing 12 months of co2e for this facility+process
-            historical_raw = db.session.query(Emission.co2e_total).filter(
+            q = db.session.query(Emission.co2e_total).filter(
                 Emission.facility_id == facility_id,
                 Emission.process_type == process_type,
                 Emission.status == "Verified",
                 Emission.co2e_total.isnot(None),
-            ).order_by(Emission.year.desc(), Emission.month.desc()).limit(12).all()
+            )
+            if year is not None and month is not None:
+                q = q.filter(
+                    or_(
+                        Emission.year < year,
+                        and_(Emission.year == year, Emission.month < month),
+                    )
+                )
+            elif year is not None:
+                q = q.filter(Emission.year < year)
 
+            historical_raw = q.order_by(Emission.year.desc(), Emission.month.desc()).limit(12).all()
             historical = [float(r[0]) for r in historical_raw if r[0] is not None]
             result = self._z_score_check(co2e, historical)
             result["scope"] = "1"
@@ -138,20 +148,31 @@ class AnomalyDetector:
         month: int,
     ) -> dict:
         """
-        Check a Scope 2 CO2e value against the trailing 12 months for the
-        same facility and source type.
+        Check a Scope 2 CO2e value against the trailing 12 months strictly prior to
+        the target (year, month) for the same facility and source type.
         """
         try:
             from models import Scope2Emission
+            from sqlalchemy import or_, and_
             db = self._get_db()
 
-            historical_raw = db.session.query(Scope2Emission.co2e).filter(
+            q = db.session.query(Scope2Emission.co2e).filter(
                 Scope2Emission.facility_id == facility_id,
                 Scope2Emission.source_type == source_type,
                 Scope2Emission.status == "Verified",
                 Scope2Emission.co2e.isnot(None),
-            ).order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc()).limit(12).all()
+            )
+            if year is not None and month is not None:
+                q = q.filter(
+                    or_(
+                        Scope2Emission.year < year,
+                        and_(Scope2Emission.year == year, Scope2Emission.month < month),
+                    )
+                )
+            elif year is not None:
+                q = q.filter(Scope2Emission.year < year)
 
+            historical_raw = q.order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc()).limit(12).all()
             historical = [float(r[0]) for r in historical_raw if r[0] is not None]
             result = self._z_score_check(co2e, historical)
             result["scope"] = "2"
@@ -173,20 +194,31 @@ class AnomalyDetector:
         month: int,
     ) -> dict:
         """
-        Check a Scope 3 CO2e value against the trailing 12 months for the
-        same facility and category.
+        Check a Scope 3 CO2e value against the trailing 12 months strictly prior to
+        the target (year, month) for the same facility and category.
         """
         try:
             from models import Scope3Emission
+            from sqlalchemy import or_, and_
             db = self._get_db()
 
-            historical_raw = db.session.query(Scope3Emission.co2e).filter(
+            q = db.session.query(Scope3Emission.co2e).filter(
                 Scope3Emission.facility_id == facility_id,
                 Scope3Emission.category == category,
                 Scope3Emission.status == "Verified",
                 Scope3Emission.co2e.isnot(None),
-            ).order_by(Scope3Emission.year.desc(), Scope3Emission.month.desc()).limit(12).all()
+            )
+            if year is not None and month is not None:
+                q = q.filter(
+                    or_(
+                        Scope3Emission.year < year,
+                        and_(Scope3Emission.year == year, Scope3Emission.month < month),
+                    )
+                )
+            elif year is not None:
+                q = q.filter(Scope3Emission.year < year)
 
+            historical_raw = q.order_by(Scope3Emission.year.desc(), Scope3Emission.month.desc()).limit(12).all()
             historical = [float(r[0]) for r in historical_raw if r[0] is not None]
             result = self._z_score_check(co2e, historical)
             result["scope"] = "3"

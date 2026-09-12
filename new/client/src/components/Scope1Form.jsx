@@ -8,7 +8,9 @@ import "./Scope1Form.css";
 
 // Sub-components
 import Scope1ImportWizard from "./Scope1ImportWizard";
-import { Upload, Trash2 } from "lucide-react";
+import { Upload, Trash2, Eye } from "lucide-react";
+import EmissionResult from "./EmissionResult";
+import CalculationDetails from "./CalculationDetails";
 import CombustionForm from "./scope1/CombustionForm";
 import DrillingForm from "./scope1/DrillingForm";
 import CompletionsForm from "./scope1/CompletionsForm";
@@ -94,6 +96,8 @@ const Scope1Form = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [showGasCalc, setShowGasCalc] = useState(false);
+  const [calculationResult, setCalculationResult] = useState(null);
+  const [inspectRecord, setInspectRecord] = useState(null);
   const [processTypesAvailable, setProcessTypesAvailable] = useState([]); // API 2021: Dynamic process types
   const [importModal, setImportModal] = useState({
     isOpen: false,
@@ -984,12 +988,15 @@ const Scope1Form = () => {
 
       // payload logging removed — do not log emission data in production
 
-      await api.post("/emissions", finalPayload);
+      const res = await api.post("/emissions", finalPayload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
           : "Scope 1 entry added successfully",
       );
+      if (res.data?.emissions) {
+        setCalculationResult(res.data);
+      }
 
       // Reset Form (keep identity)
       setFormData({});
@@ -1016,6 +1023,46 @@ const Scope1Form = () => {
       const msg = error.response?.data?.error || "Failed to add entry";
       toast.error(msg);
     }
+  };
+
+  const handleInspect = (entry) => {
+    const pType = entry.process || entry.process_type || "Scope 1";
+    const fuelVal = entry.fuel || entry.fuel_type || "N/A";
+    const qty = entry.amount || entry.quantity || 0;
+    const unitVal = entry.unit || "unit";
+
+    setInspectRecord({
+      process_type: `Scope 1 - ${pType}`,
+      fuel: fuelVal,
+      amount: qty,
+      unit: unitVal,
+      emissions: {
+        totalCo2e: entry.co2e_total || 0,
+        co2: entry.co2_emissions || 0,
+        ch4: entry.ch4_emissions || 0,
+        n2o: entry.n2o_emissions || 0,
+      },
+      factors: {
+        co2: entry.factor_co2 || null,
+        ch4: entry.factor_ch4 || null,
+        n2o: entry.factor_n2o || null,
+      },
+      method: entry.calculation_method || "API Compendium / Tier 3 Rigorous",
+      steps: [
+        {
+          name: "Activity Input",
+          desc: `${formatNumber(qty, 2)} ${unitVal} of ${fuelVal} for facility ID ${entry.facility_id}`,
+        },
+        {
+          name: "GHG Species Calculation",
+          desc: `CO₂: ${formatNumber(entry.co2_emissions || 0, 3)} t | CH₄: ${formatNumber(entry.ch4_emissions || 0, 5)} t | N₂O: ${formatNumber(entry.n2o_emissions || 0, 5)} t`,
+        },
+        {
+          name: "GWP Weighted Total",
+          desc: `Total CO₂e: ${formatNumber(entry.co2e_total || 0, 3)} tCO₂e`,
+        },
+      ],
+    });
   };
 
   const handleDelete = async (id) => {
@@ -1988,7 +2035,7 @@ const Scope1Form = () => {
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             className="btn-add-draft"
-            onClick={() => handleAddEntry("Pending")}
+            onClick={() => handleAddEntry("Draft")}
             style={{
               flex: 1,
               background: "rgba(255, 255, 255, 0.9)",
@@ -2403,7 +2450,15 @@ const Scope1Form = () => {
                           ? `±${(entry.uncertainty_n2o * 200).toFixed(0)}%`
                           : "—"}
                       </td>
-                      <td style={{ textAlign: "center" }}>
+                      <td style={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                        <button
+                          className="icon-button"
+                          onClick={() => handleInspect(entry)}
+                          style={{ color: "#3b82f6", marginRight: "6px" }}
+                          title="Inspect Calculation Details"
+                        >
+                          <Eye size={16} />
+                        </button>
                         <button
                           className="icon-button"
                           onClick={() => handleDelete(entry.id)}
@@ -2491,6 +2546,20 @@ const Scope1Form = () => {
         onApply={handleGasApply}
         processType={processType}
       />
+
+      {calculationResult && (
+        <EmissionResult
+          result={calculationResult}
+          onClose={() => setCalculationResult(null)}
+        />
+      )}
+
+      {inspectRecord && (
+        <CalculationDetails
+          calculation={inspectRecord}
+          onClose={() => setInspectRecord(null)}
+        />
+      )}
     </div>
   );
 };

@@ -13,55 +13,49 @@ def seed_admin():
     with app.app_context():
         db.create_all()
 
+        # Remove legacy insecure/trivial test accounts if present
+        trivial_emails = ["a@a", "z@z", "a", "z"]
+        purged = User.query.filter(User.email.in_(trivial_emails)).delete(synchronize_session=False)
+        if purged > 0:
+            db.session.commit()
+            print(f"[SECURITY] Purged {purged} legacy trivial accounts from database.")
+
+        force_reset = "--force-reset-password" in sys.argv
+
+        admin_email = os.environ.get("ADMIN_EMAIL", "admin@ghg.com").strip().lower()
+        admin_password = os.environ.get("ADMIN_PASSWORD")
+
+        it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "itadmin@ghg.com").strip().lower()
+        it_admin_password = os.environ.get("IT_ADMIN_PASSWORD")
+
+        is_production = os.environ.get("FLASK_ENV") == "production"
+        if is_production and (not admin_password or not it_admin_password):
+            raise ValueError(
+                "FATAL: ADMIN_PASSWORD and IT_ADMIN_PASSWORD must be explicitly set via environment variables in production."
+            )
+
+        # Fallback for dev local setup only
+        if not admin_password:
+            admin_password = "ChangeMeAdmin2026!"
+            print("[WARNING] ADMIN_PASSWORD not set in env; using temporary dev password. Set ADMIN_PASSWORD in production!")
+        if not it_admin_password:
+            it_admin_password = "ChangeMeITAdmin2026!"
+            print("[WARNING] IT_ADMIN_PASSWORD not set in env; using temporary dev password. Set IT_ADMIN_PASSWORD in production!")
+
         users_to_seed = [
             {
-                "email": "a@a",
-                "password": "a",
+                "email": admin_email,
+                "password": admin_password,
                 "role": "admin",
-                "fullName": "Admin User",
-                "jobTitle": "Sustainability Administrator",
-            },
-            {
-                "email": "z@z",
-                "password": "z",
-                "role": "it_admin",
-                "fullName": "IT Admin User",
-                "jobTitle": "IT Administrator",
-            },
-            {
-                "email": "a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Admin User",
-                "jobTitle": "Sustainability Administrator",
-            },
-            {
-                "email": "z",
-                "password": "z",
-                "role": "it_admin",
-                "fullName": "IT Admin User",
-                "jobTitle": "IT Administrator",
-            },
-            {
-                "email": "admin@ghg.com",
-                "password": "Admin12345!",
-                "role": "it_admin",
-                "fullName": "System Administrator",
-                "jobTitle": "IT Administrator",
-            },
-            {
-                "email": "admin@test.com",
-                "password": "Admin@123!",
-                "role": "admin",
-                "fullName": "Admin User",
+                "fullName": "Administrator",
                 "jobTitle": "Sustainability Lead",
             },
             {
-                "email": "user@test.com",
-                "password": "User@123!",
-                "role": "user",
-                "fullName": "Regular User",
-                "jobTitle": "Data Specialist",
+                "email": it_admin_email,
+                "password": it_admin_password,
+                "role": "it_admin",
+                "fullName": "IT Administrator",
+                "jobTitle": "Systems Administrator",
             },
         ]
 
@@ -69,14 +63,16 @@ def seed_admin():
             email = u_data["email"]
             user = User.query.filter_by(email=email).first()
             if user:
-                print(
-                    f"User with email '{email}' already exists. Updating password and role..."
-                )
-                user.set_password(u_data["password"])
-                user.role = u_data["role"]
-                user.fullName = u_data["fullName"]
-                user.jobTitle = u_data["jobTitle"]
-                user.status = "active"
+                if force_reset:
+                    user.set_password(u_data["password"])
+                    user.role = u_data["role"]
+                    user.fullName = u_data["fullName"]
+                    user.jobTitle = u_data["jobTitle"]
+                    user.status = "active"
+                    db.session.commit()
+                    print(f"  [OK] User '{email}' already existed. Password reset due to --force-reset-password flag.")
+                else:
+                    print(f"  [INFO] User '{email}' already exists. Password preserved (pass --force-reset-password to overwrite).")
             else:
                 new_user = User(
                     fullName=u_data["fullName"],
@@ -91,10 +87,8 @@ def seed_admin():
                 )
                 new_user.set_password(u_data["password"])
                 db.session.add(new_user)
-            db.session.commit()
-            print(
-                f"  [OK] User '{email}' (role: {u_data['role']}) seeded successfully."
-            )
+                db.session.commit()
+                print(f"  [OK] User '{email}' (role: {u_data['role']}) seeded successfully.")
 
 
 if __name__ == "__main__":

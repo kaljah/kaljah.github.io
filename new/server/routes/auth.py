@@ -92,12 +92,16 @@ def login_required(f):
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
         return f(*args, **kwargs)
 
     return decorated_function
 
 
-def admin_required(f):
+def it_admin_required(f):
+    """Restricts access to IT Admin role only — for user account management routes."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
@@ -109,6 +113,9 @@ def admin_required(f):
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
         if user.role != "it_admin":
             return jsonify({"error": "IT Admin privileges required"}), 403
         return f(*args, **kwargs)
@@ -116,8 +123,33 @@ def admin_required(f):
     return decorated_function
 
 
+def admin_required(f):
+    """Restricts access to business/data Admin role only."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if request.method == "OPTIONS":
+            return ("", 204)
+        user_id = session.get("user_id")
+        if not user_id:
+            return jsonify({"error": "Not authenticated"}), 401
+        user = User.query.get(user_id)
+        if not user:
+            session.pop("user_id", None)
+            return jsonify({"error": "User not found"}), 401
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
+        if user.role != "admin":
+            return jsonify({"error": "Admin privileges required"}), 403
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 def superuser_required(f):
-    """Permits superuser, admin, and it_admin roles"""
+    """Permits superuser and admin roles for data management operations.
+    NOTE: it_admin is intentionally excluded — they manage accounts only, not data.
+    """
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -130,7 +162,10 @@ def superuser_required(f):
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
-        if user.role not in ["superuser", "admin", "it_admin"]:
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
+        if user.role not in ["superuser", "admin"]:
             return jsonify({"error": "Super User or Admin privileges required"}), 403
         return f(*args, **kwargs)
 
@@ -138,7 +173,7 @@ def superuser_required(f):
 
 
 @auth_bp.route("/register", methods=["POST"])
-@admin_required
+@it_admin_required
 def register():
     data = request.get_json()
 
@@ -147,7 +182,8 @@ def register():
         if not data or not data.get(field):
             return jsonify({"error": f"Missing required field: {field}"}), 400
 
-    if User.query.filter_by(email=data.get("email")).first():
+    email_clean = str(data.get("email", "")).strip().lower()
+    if User.query.filter(db.func.lower(User.email) == email_clean).first():
         return jsonify({"error": "Email already registered"}), 400
 
     password = data.get("password")
@@ -158,7 +194,7 @@ def register():
     user = User(
         fullName=data.get("fullName"),
         orgName=data.get("orgName"),
-        email=data.get("email"),
+        email=email_clean,
         sector=data.get("sector"),
         department=data.get("department"),
         jobTitle=data.get("jobTitle"),
@@ -224,6 +260,7 @@ def login():
         if user.status != "active":
             return jsonify({"error": "Account disabled"}), 403
 
+        session.clear()
         session.permanent = True
         session["user_id"] = user.id
         current_app.logger.debug(f"Session set for user_id={user.id}")
@@ -277,7 +314,7 @@ def forgot_password():
 
     if user:
         # Find IT Admins or Admins to notify
-        it_admins = User.query.filter(User.role.in_(["it_admin", "admin"]), User.status == "active").all()
+        it_admins = User.query.filter(User.role == "it_admin", User.status == "active").all()
 
         notification_title = f"Password Reset Request: {user.fullName or user.email}"
         notification_msg = (
@@ -452,6 +489,7 @@ def change_password():
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Audit Log Error on change_password: {e}")
+        return jsonify({"error": "Failed to update password"}), 500
 
     return jsonify({"message": "Password changed successfully"})
 
@@ -608,6 +646,13 @@ def get_settings():
                 resp.update(prefs)
         except Exception:
             pass
+
+    # Mask secrets before returning
+    if resp.get("copernicus_password"):
+        resp["copernicus_password"] = "********"
+    if resp.get("copernicus_client_secret"):
+        resp["copernicus_client_secret"] = "********"
+
     return jsonify(resp)
 
 
@@ -623,16 +668,8 @@ def update_settings():
 
     load_settings_from_db()
 
-    # Global system & GWP standards updates
-    gwp_changed = False
-    if "gwp_standard" in data and data["gwp_standard"] in ["AR4", "AR5", "AR6"]:
-        new_gwp = data["gwp_standard"]
-        if _app_settings.get("gwp_standard") != new_gwp:
-            _app_settings["gwp_standard"] = new_gwp
-            save_setting_to_db("gwp_standard", new_gwp)
-            gwp_changed = True
-
-    system_setting_keys = [
+    operational_keys = {
+        "gwp_standard",
         "ogmp_default_base_year",
         "reconciliation_threshold",
         "ogmp_upstream_target_pct",
@@ -643,42 +680,82 @@ def update_settings():
         "copernicus_client_secret",
         "copernicus_qa_threshold",
         "copernicus_enabled",
-        "theme",
-        "unit_system",
         "auto_flag_discrepancy",
-    ]
+        "wec_fee_rates",
+    }
+    has_operational_keys = any(k in data for k in operational_keys)
 
-    for k in system_setting_keys:
-        if k in data:
-            val = data[k]
-            if k == "ogmp_default_base_year":
-                val = int(val)
-            elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "copernicus_qa_threshold"]:
-                val = float(val)
-            elif k in ["copernicus_enabled", "auto_flag_discrepancy"]:
-                val = bool(val)
-            _app_settings[k] = val
-            save_setting_to_db(k, val)
+    if user and user.role == "it_admin" and has_operational_keys:
+        return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
 
-    if "wec_fee_rates" in data and isinstance(data["wec_fee_rates"], dict):
-        rates = _app_settings.get("wec_fee_rates", {})
-        rates.update({str(k): float(v) for k, v in data["wec_fee_rates"].items()})
-        _app_settings["wec_fee_rates"] = rates
-        save_setting_to_db("wec_fee_rates", rates)
+    is_admin = user and user.role in ["admin", "superuser"]
+    if has_operational_keys and not is_admin:
+        return jsonify({"error": "Administrator privileges are required to modify system-wide calculation standards."}), 403
 
-    # If GWP standard was changed or set, recalculate existing emissions
-    if gwp_changed:
-        try:
-            recalculate_all_emissions_gwp(_app_settings["gwp_standard"])
-        except Exception as e:
-            current_app.logger.error(f"Error recalculating emissions with new GWP: {e}")
+    # Global system & GWP standards updates
+    gwp_changed = False
+    if is_admin:
+        if "gwp_standard" in data and data["gwp_standard"] in ["AR4", "AR5", "AR6"]:
+            new_gwp = data["gwp_standard"]
+            if _app_settings.get("gwp_standard") != new_gwp:
+                _app_settings["gwp_standard"] = new_gwp
+                save_setting_to_db("gwp_standard", new_gwp)
+                gwp_changed = True
+
+        system_setting_keys = [
+            "ogmp_default_base_year",
+            "reconciliation_threshold",
+            "ogmp_upstream_target_pct",
+            "ogmp_midstream_target_pct",
+            "copernicus_username",
+            "copernicus_password",
+            "copernicus_client_id",
+            "copernicus_client_secret",
+            "copernicus_qa_threshold",
+            "copernicus_enabled",
+            "theme",
+            "unit_system",
+            "auto_flag_discrepancy",
+        ]
+
+        for k in system_setting_keys:
+            if k in data:
+                val = data[k]
+                if k in ["copernicus_password", "copernicus_client_secret"] and str(val).strip() in ["********", ""]:
+                    continue  # Do not overwrite existing secret with mask or empty string
+                if k == "ogmp_default_base_year":
+                    val = int(val)
+                elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "copernicus_qa_threshold"]:
+                    val = float(val)
+                elif k in ["copernicus_enabled", "auto_flag_discrepancy"]:
+                    val = bool(val)
+                _app_settings[k] = val
+                save_setting_to_db(k, val)
+
+        if "wec_fee_rates" in data and isinstance(data["wec_fee_rates"], dict):
+            rates = _app_settings.get("wec_fee_rates", {})
+            rates.update({str(k): float(v) for k, v in data["wec_fee_rates"].items()})
+            _app_settings["wec_fee_rates"] = rates
+            save_setting_to_db("wec_fee_rates", rates)
+
+        # If GWP standard was changed or set, recalculate existing emissions
+        if gwp_changed:
+            try:
+                recalculate_all_emissions_gwp(_app_settings["gwp_standard"])
+            except Exception as e:
+                current_app.logger.error(f"Error recalculating emissions with new GWP: {e}")
 
     if user:
         try:
             existing = json.loads(user.preferences) if user.preferences else {}
         except Exception:
             existing = {}
-        existing.update(data)
+        user_pref_keys = ["theme", "unit_system", "consolidation", "notifications", "language"]
+        for k, v in data.items():
+            if is_admin or k in user_pref_keys or k not in operational_keys:
+                if k in ["copernicus_password", "copernicus_client_secret"] and str(v).strip() in ["********", ""]:
+                    continue
+                existing[k] = v
         user.preferences = json.dumps(existing)
 
         if "consolidation" in data:
@@ -691,12 +768,13 @@ def update_settings():
                 user=user,
                 request=request,
                 entity="User",
-                details=f"Updated settings for user: {user.email} (GWP: {_app_settings['gwp_standard']})",
+                details=f"Updated settings for user: {user.email} (GWP: {_app_settings.get('gwp_standard', 'AR4')})",
             )
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"Audit Log Error: {e}")
+            current_app.logger.error(f"Audit Log Error on update_settings: {e}")
+            return jsonify({"error": "Failed to update settings"}), 500
 
     try:
         from routes.dashboard import clear_dashboard_cache
@@ -704,33 +782,25 @@ def update_settings():
     except Exception:
         pass
 
+    out_settings = dict(_app_settings)
+    if out_settings.get("copernicus_password"):
+        out_settings["copernicus_password"] = "********"
+    if out_settings.get("copernicus_client_secret"):
+        out_settings["copernicus_client_secret"] = "********"
+
     return jsonify(
-        {"message": "Settings saved successfully", "settings": _app_settings}
+        {"message": "Settings saved successfully", "settings": out_settings}
     )
 
 
 @auth_bp.route("/users", methods=["GET"])
-@admin_required
+@it_admin_required
 def get_users():
     # Force expire session cache so we always read fresh data from DB
     db.session.expire_all()
 
-    it_admin_id = session.get("user_id")
-    it_admin = User.query.get(it_admin_id)
-    admin_region = it_admin.location if it_admin else None
-
-    # Treat null / empty / "Global" as "no restriction" — see all users
-    SENTINEL_VALUES = {None, "", "Global", "global"}
-    region_restricted = admin_region not in SENTINEL_VALUES
-
-    query = User.query
-    if region_restricted:
-        # Scope to users in the same region; always include admins/it_admins
-        query = query.filter(
-            db.or_(User.location == admin_region, User.role.in_(["admin", "it_admin"]))
-        )
-
-    users = query.order_by(User.created_at.desc()).all()
+    # IT Admins have global authority over all accounts — no regional restriction
+    users = User.query.order_by(User.created_at.desc()).all()
     result = []
     for u in users:
         result.append(
@@ -752,19 +822,16 @@ def get_users():
 
 
 @auth_bp.route("/users/<int:id>", methods=["PUT"])
-@admin_required
+@it_admin_required
 def update_user(id):
     db.session.expire_all()
     user = db.session.get(User, id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # IT admin can only modify users within their own region
+    # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
     it_admin = User.query.get(it_admin_id)
-    if it_admin and it_admin.location and user.role == "user":
-        if user.location != it_admin.location:
-            return jsonify({"error": "Unauthorized: User is outside your region"}), 403
 
     data = request.get_json()
 
@@ -801,7 +868,7 @@ def update_user(id):
 
 
 @auth_bp.route("/users/<int:id>", methods=["DELETE"])
-@admin_required
+@it_admin_required
 def delete_user(id):
     if id == session.get("user_id"):
         return jsonify({"error": "Cannot delete your own account"}), 400
@@ -811,24 +878,21 @@ def delete_user(id):
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # IT admin can only delete users within their own region
+    # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
     it_admin = User.query.get(it_admin_id)
-    if it_admin and it_admin.location and user.role == "user":
-        if user.location != it_admin.location:
-            return jsonify({"error": "Unauthorized: User is outside your region"}), 403
 
-    # Nullify FK references before deleting to avoid constraint violations
+    # Clean up and nullify FK references before deleting
     from sqlalchemy import text
 
-    # Nullify activity_log.user_id references
+    # Delete notifications belonging to the user
+    db.session.execute(
+        text("DELETE FROM notifications WHERE user_id = :uid"),
+        {"uid": id},
+    )
+    # Nullify activity_log.user_id references (user_name is already preserved)
     db.session.execute(
         text("UPDATE activity_log SET user_id = NULL WHERE user_id = :uid"), {"uid": id}
-    )
-    # Nullify notifications.user_id references
-    db.session.execute(
-        text("UPDATE notifications SET user_id = NULL WHERE user_id = :uid"),
-        {"uid": id},
     )
     # Nullify created_by on facilities
     db.session.execute(
@@ -857,10 +921,10 @@ def delete_user(id):
 
 
 @auth_bp.route("/users/<int:id>/reset-password", methods=["POST"])
-@admin_required
+@it_admin_required
 def admin_reset_password(id):
     """
-    IT Admin / Admin resets a user's password directly.
+    IT Admin resets a user's password directly (global authority).
     """
     db.session.expire_all()
     user = db.session.get(User, id)
@@ -869,11 +933,6 @@ def admin_reset_password(id):
 
     current_admin_id = session.get("user_id")
     admin_user = db.session.get(User, current_admin_id) if current_admin_id else None
-
-    # IT Admin regional boundary check for regular users
-    if admin_user and admin_user.role == "it_admin" and admin_user.location and user.role == "user":
-        if user.location != admin_user.location:
-            return jsonify({"error": "Unauthorized: User is outside your region"}), 403
 
     data = request.get_json(silent=True) or {}
     new_password = data.get("newPassword", "").strip()

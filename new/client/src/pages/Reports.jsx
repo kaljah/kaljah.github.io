@@ -19,7 +19,7 @@ const Reports = () => {
   const [loading, setLoading] = useState(false);
 
   // Filters
-  const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [year, setYear] = useState("all");
   const [month, setMonth] = useState("all");
   const [division, setDivision] = useState("all");
   const [field, setField] = useState("all");
@@ -75,22 +75,12 @@ const Reports = () => {
             : [],
         });
 
-        // Sync BOTH year pickers to the most recent year that has actual data
+        // Sync year picker to the most recent year that has actual data
         if (filterRes.data.years?.length > 0) {
           const mostRecentYear = filterRes.data.years[0].toString();
-          // If the most recent year is far in the future or has very few records,
-          // we might want to default to 'all' or 2024.
-          // For now, let's keep the user's latest data as default.
           setYear(mostRecentYear);
-          setReportYear(mostRecentYear);
         } else {
           setYear("all");
-          setReportYear("all");
-        }
-
-        // Pre-select all facilities so the first report click works out-of-the-box
-        if (facRes.data?.length > 0) {
-          setReportSelectedRegions(facRes.data.map((f) => f.id.toString()));
         }
       } catch (err) {
         console.error("Error fetching initial data", err);

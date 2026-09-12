@@ -67,14 +67,14 @@ export const BarChart = ({
           />
           <XAxis
             dataKey={finalXKey}
-            stroke="#94a3b8"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
+            stroke="#cbd5e1"
+            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            stroke="#94a3b8"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
+            stroke="#cbd5e1"
+            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={formatValue}
