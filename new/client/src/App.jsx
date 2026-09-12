@@ -57,6 +57,15 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+const AuditRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner fullScreen />;
+  if (!user) return <Navigate to="/login" />;
+  if (!["admin", "superuser", "it_admin"].includes(user.role))
+    return <Navigate to="/" />;
+  return children;
+};
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -153,9 +162,9 @@ const AppRoutes = () => {
         <Route
           path="reference-data"
           element={
-            <AdminRoute>
+            <NonITRoute>
               <ReferenceData />
-            </AdminRoute>
+            </NonITRoute>
           }
         />
         {/* NEW-01 FIX */}
@@ -171,9 +180,9 @@ const AppRoutes = () => {
         <Route
           path="audit-trail"
           element={
-            <AdminRoute>
+            <AuditRoute>
               <AuditTrail />
-            </AdminRoute>
+            </AuditRoute>
           }
         />
         <Route

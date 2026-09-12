@@ -180,7 +180,7 @@ const DashboardEnhanced = () => {
       const batchRes = await api.get(`/dashboard/batch-all?${filterParams}`);
       const batch = batchRes.data;
 
-      if (user?.role === 'admin' || user?.role === 'superuser') {
+      if (user?.role === 'admin') {
         try {
           const pRes = await api.get('/emissions/pending');
           setPendingCount(pRes.data.total_pending || 0);
@@ -223,9 +223,10 @@ const DashboardEnhanced = () => {
         scope3:
           currentYear === "all"
             ? s3Data.total || 0
-            : s3Data.by_year?.[currentYear] ||
-              s3Data.by_year?.[parseInt(currentYear)] ||
-              0,
+            : (s3Data.by_year?.[currentYear] ??
+              s3Data.by_year?.[parseInt(currentYear)] ??
+              s3Data.total ??
+              0),
         mitigation: 0,
         methaneEmissions: 0,
         purchasedEnergy: 0,
@@ -722,7 +723,7 @@ const DashboardEnhanced = () => {
           </div>
         </div>
 
-        {pendingCount > 0 && (
+        {user?.role === 'admin' && pendingCount > 0 && (
           <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ background: '#eab308', color: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1261,9 +1262,13 @@ const DashboardEnhanced = () => {
                         </td>
                       </tr>
                       <tr className="total-row">
-                        <td>Total Footprint</td>
+                        <td>Total Footprint (Scopes 1+2+3)</td>
                         <td className="text-right">
-                          {formatCompactNumber(stats.totalEmissions)}
+                          {formatCompactNumber(
+                            (stats.scope1 || 0) +
+                              (stats.scope2 || 0) +
+                              (stats.scope3 || 0)
+                          )}
                         </td>
                       </tr>
                       <tr
@@ -1272,7 +1277,12 @@ const DashboardEnhanced = () => {
                       >
                         <td>Net Footprint</td>
                         <td className="text-right">
-                          {formatCompactNumber(stats.netEmissions)}
+                          {formatCompactNumber(
+                            (stats.scope1 || 0) +
+                              (stats.scope2 || 0) +
+                              (stats.scope3 || 0) -
+                              (stats.mitigation || 0)
+                          )}
                         </td>
                       </tr>
 
@@ -1409,7 +1419,7 @@ const DashboardEnhanced = () => {
               <button
                 className="manage-factors-btn"
                 onClick={() =>
-                  (window.location.href = "/manage-data?tab=factors")
+                  navigate("/manage-data", { state: { tab: "factors" } })
                 }
               >
                 <svg

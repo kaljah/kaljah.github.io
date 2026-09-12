@@ -74,13 +74,6 @@ const CarbonIntensity = () => {
 
   const GAS_TO_BOE = 0.178;
 
-  const HIERARCHY = {
-    EP: ["Production", "Association"],
-    LQS: ["LSH"],
-    RPC: ["Raffinage", "Petrochimie"],
-    TRC: ["Make"],
-  };
-
   // Initial load
   useEffect(() => {
     const init = async () => {
@@ -131,17 +124,20 @@ const CarbonIntensity = () => {
     if (selectedYear) {
       loadTrendData(selectedYear);
     }
-  }, [selectedYear, currentActivity, currentDivision, currentSegment]);
+  }, [selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);
 
   useEffect(() => {
     loadCbamData();
-  }, [selectedYear, currentRegion, currentActivity, currentDivision]);
+  }, [selectedYear, currentRegion, currentActivity, currentDivision, currentSegment]);
 
   const loadCbamData = async () => {
     try {
       const params = new URLSearchParams();
       if (selectedYear && selectedYear !== 'all') params.append('year', selectedYear);
       if (currentRegion && currentRegion !== 'all') params.append('facilityId', currentRegion);
+      if (currentActivity && currentActivity !== 'all') params.append('activity', currentActivity);
+      if (currentDivision && currentDivision !== 'all') params.append('division', currentDivision);
+      if (currentSegment && currentSegment !== 'all') params.append('segment', currentSegment);
       const res = await api.get(`/data/cbam-exports?${params.toString()}`);
       setCbamProducts(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
@@ -179,10 +175,13 @@ const CarbonIntensity = () => {
         wCo2Gwp20Sum = 0,
         wS1Sum = 0,
         wS2Sum = 0,
-        wS3Sum = 0;
+        wS3Sum = 0,
+        wFlaringSum = 0;
       let tScope1 = 0,
         tScope2 = 0,
-        tScope3 = 0;
+        tScope3 = 0,
+        tCo2e = 0,
+        tCo2eGwp20 = 0;
 
       data.forEach((d) => {
         const boe = d.total_boe || 0;
@@ -193,6 +192,8 @@ const CarbonIntensity = () => {
         tScope1 += d.total_scope1 || 0;
         tScope2 += d.total_scope2 || 0;
         tScope3 += d.total_scope3 || 0;
+        tCo2e += d.total_co2e || 0;
+        tCo2eGwp20 += d.total_co2e_gwp20 || d.total_co2e || 0;
 
         if (boe > 0) {
           wCo2Sum += (d.co2_intensity || 0) * boe;
@@ -200,6 +201,7 @@ const CarbonIntensity = () => {
           wS1Sum += (d.scope1_intensity || 0) * boe;
           wS2Sum += (d.scope2_intensity || 0) * boe;
           wS3Sum += (d.scope3_intensity || 0) * boe;
+          wFlaringSum += (d.api_flaring_intensity || 0) * boe;
           tBoe += boe;
         }
       });
@@ -210,9 +212,9 @@ const CarbonIntensity = () => {
         avgScope1Intensity: tBoe > 0 ? wS1Sum / tBoe : 0,
         avgScope2Intensity: tBoe > 0 ? wS2Sum / tBoe : 0,
         avgScope3Intensity: tBoe > 0 ? wS3Sum / tBoe : 0,
-        avgFlaringIntensity: tBoe > 0 ? (tFlaringEm * 1000) / tBoe : 0,
-        totalCo2Emissions: wCo2Sum / 1000,
-        totalCo2EmissionsGwp20: wCo2Gwp20Sum / 1000,
+        avgFlaringIntensity: tBoe > 0 ? wFlaringSum / tBoe : 0,
+        totalCo2Emissions: tCo2e,
+        totalCo2EmissionsGwp20: tCo2eGwp20,
         totalScope1: tScope1,
         totalScope2: tScope2,
         totalScope3: tScope3,
@@ -246,6 +248,9 @@ const CarbonIntensity = () => {
       });
       if (currentSegment !== "all") {
         params.append("segment", currentSegment);
+      }
+      if (currentRegion && currentRegion !== "all") {
+        params.append("facilityId", currentRegion);
       }
       params.append("years", years.join(","));
       const res = await api
@@ -467,7 +472,9 @@ const CarbonIntensity = () => {
                 <Activity size={24} color="var(--accent-color)" />
                 Carbon Intensity & Product Embodiment
               </h2>
-              <div className="year-badge">{selectedYear} Performance</div>
+              <div className="year-badge">
+                {selectedYear === "all" ? "All-Time" : selectedYear} Performance
+              </div>
             </div>
 
             {/* GWP Time Horizon Toggle */}
@@ -642,7 +649,7 @@ const CarbonIntensity = () => {
                             </p>
                         </div>
                         <div className="cbam-benchmark-badge">
-                            EU ETS Benchmark: ~25.5 kg CO₂e/BOE
+                            EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t
                         </div>
                     </div>
 
@@ -664,7 +671,7 @@ const CarbonIntensity = () => {
                                 </thead>
                                 <tbody>
                                     {cbamProducts.map((p, idx) => {
-                                        const fac = facilities.find(f => f.id === p.facility_id);
+                                        const fac = facilities.find(f => String(f.id) === String(p.facility_id));
                                         const facName = fac ? fac.name : (p.facilityName || p.facility_name || '—');
                                         const prodName = p.productName || p.product_name || '—';
                                         const cn = p.cnCode || p.cn_code || '—';
@@ -672,7 +679,7 @@ const CarbonIntensity = () => {
                                         const dest = p.exportDestination || p.export_destination || 'EU';
                                         const directInt = p.specificEmbeddedDirect ?? p.specific_embedded_direct;
                                         const indirInt = p.specificEmbeddedIndirect ?? p.specific_embedded_indirect;
-                                        const totEmb = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * (directInt || 0));
+                                        const totEmb = p.totalEmbeddedEmissions ?? p.total_embedded_emissions ?? (qty * ((directInt || 0) + (indirInt || 0)));
                                         return (
                                             <tr key={p.id || idx}>
                                                 <td style={{ fontWeight: 600 }}>{facName}</td>
@@ -739,11 +746,14 @@ const CarbonIntensity = () => {
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
-                  value: d.scope1_intensity || 0,
+                  scope1: Number((d.scope1_intensity || 0).toFixed(2)),
+                  scope2: Number((d.scope2_intensity || 0).toFixed(2)),
                 }))}
-                dataKey="value"
+                bars={[
+                  { dataKey: "scope1", name: "Scope 1 (Direct)", color: "#2563eb" },
+                  { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#0ea5e9" },
+                ]}
                 xKey="name"
-                color="#2563eb"
               />
             </div>
           </div>
@@ -839,12 +849,12 @@ const CarbonIntensity = () => {
                   {
                     key: "co2_100",
                     color: "#0d9488",
-                    name: "GHG Intensity (AR5 100-Yr GWP)",
+                    name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)`,
                   },
                   {
                     key: "co2_20",
                     color: "#ea580c",
-                    name: "GHG Intensity (AR5 20-Yr GWP)",
+                    name: `GHG Intensity (${activeGwpStandard} 20-Yr GWP)`,
                     dash: "5 5",
                   },
                 ]}

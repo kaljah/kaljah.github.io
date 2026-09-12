@@ -77,7 +77,7 @@ export const LineChart = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "rgba(255,255,255,0.3)",
+            color: "var(--text-muted, #94a3b8)",
           }}
         >
           No trend data available
@@ -123,15 +123,15 @@ export const LineChart = ({
           <XAxis
             dataKey={finalXKey}
             type="category"
-            stroke="#94a3b8"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
+            stroke="#cbd5e1"
+            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             padding={{ left: 20, right: 20 }}
           />
           <YAxis
-            stroke="#94a3b8"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
+            stroke="#cbd5e1"
+            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={formatValue}

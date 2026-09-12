@@ -374,6 +374,13 @@ const UserManagement = () => {
   });
   const [focusedField, setFocusedField] = useState(null);
 
+  // ── Reset password modal state ───────────────────────────────────────────
+  const [resetTarget, setResetTarget] = useState(null); // { id, fullName, email }
+  const [resetPwd, setResetPwd] = useState("");
+  const [resetPwdConfirm, setResetPwdConfirm] = useState("");
+  const [resetPwdShow, setResetPwdShow] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+
 
 
   const fetchData = async (silent = false, keepOptimistic = false) => {
@@ -566,10 +573,48 @@ const UserManagement = () => {
     }
   };
 
+  const handleOpenResetPassword = (u) => {
+    setResetTarget({ id: u.id, fullName: u.fullName, email: u.email });
+    setResetPwd("");
+    setResetPwdConfirm("");
+    setResetPwdShow(false);
+  };
+
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!resetPwd || resetPwd.length < 10) {
+      toast.error("Password must be at least 10 characters.");
+      return;
+    }
+    // Basic complexity
+    if (!/[A-Z]/.test(resetPwd)) { toast.error("Password needs an uppercase letter."); return; }
+    if (!/[a-z]/.test(resetPwd)) { toast.error("Password needs a lowercase letter."); return; }
+    if (!/[0-9]/.test(resetPwd)) { toast.error("Password needs a digit."); return; }
+    if (!/[!@#$%^&*(),.?":{}<>\-_+=\[\]\\/~`]/.test(resetPwd)) {
+      toast.error("Password needs a special character."); return;
+    }
+    if (resetPwd !== resetPwdConfirm) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+    try {
+      setResetLoading(true);
+      await api.post(`/auth/users/${resetTarget.id}/reset-password`, { newPassword: resetPwd });
+      toast.success(`Password for ${resetTarget.fullName} has been reset successfully.`);
+      setResetTarget(null);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to reset password.");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   if (user?.role !== "it_admin") {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔒</div>
+        <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
         <h2 style={{ color: "var(--text-primary)", margin: "0 0 8px" }}>
           Unauthorized
         </h2>
@@ -716,8 +761,9 @@ const UserManagement = () => {
             textTransform: "uppercase",
           }}
         >
-          <span>
-            🔧 API Debugger — click to{" "}
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            API Debugger — click to{" "}
             {showDebug ? "hide" : "inspect live API calls"}
           </span>
           <span
@@ -870,7 +916,8 @@ const UserManagement = () => {
                 fontStyle: "italic",
               }}
             >
-              💡 If /facilities/all-regions returns 404 → server needs restart.
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: "4px" }}><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+              If /facilities/all-regions returns 404 → server needs restart.
               If 403 → auth issue. If 200 but empty → no region values in DB.
             </p>
           </div>
@@ -884,35 +931,35 @@ const UserManagement = () => {
           {
             label: "Total Users",
             value: totalUsers,
-            icon: "👥",
+            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
             color: "#6366f1",
             bg: "#eef2ff",
           },
           {
             label: "Standard Users",
             value: standardCount,
-            icon: "👤",
+            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
             color: "#3b82f6",
             bg: "#eff6ff",
           },
           {
             label: "Admins",
             value: adminCount,
-            icon: "🛡️",
+            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
             color: "#10b981",
             bg: "#ecfdf5",
           },
           {
             label: "IT Admins",
             value: itAdminCount,
-            icon: "🔧",
+            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
             color: "#f59e0b",
             bg: "#fffbeb",
           },
           {
             label: "Regions",
             value: regions.length,
-            icon: "🌍",
+            icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
             color: "#ff6600",
             bg: "#fff7ed",
           },
@@ -1010,7 +1057,7 @@ const UserManagement = () => {
                         gap: "8px",
                       }}
                     >
-                      <span style={{ fontSize: "2rem" }}>🔍</span>
+                      <span style={{ color: "var(--text-secondary)" }}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
                       No users match the current filters.
                     </div>
                   </td>
@@ -1143,7 +1190,8 @@ const UserManagement = () => {
                               "rgba(16,185,129,.25)",
                             )}
                           >
-                            🌐 All Regions
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            All Regions
                           </span>
                         ) : u.role === "it_admin" ? (
                           <span
@@ -1153,7 +1201,8 @@ const UserManagement = () => {
                               "rgba(239,68,68,.25)",
                             )}
                           >
-                            🔒 No Data Access
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            No Data Access
                           </span>
                         ) : u.location ? (
                           <span
@@ -1163,7 +1212,8 @@ const UserManagement = () => {
                               "rgba(255,102,0,.25)",
                             )}
                           >
-                            📍 {u.location}
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            {u.location}
                           </span>
                         ) : (
                           <span
@@ -1210,7 +1260,21 @@ const UserManagement = () => {
                             (e.currentTarget.style.background = "none")
                           }
                         >
-                          ✏️
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button
+                          id={`um-reset-pwd-btn-${u.id}`}
+                          style={S.iconBtn("#f59e0b")}
+                          onClick={() => handleOpenResetPassword(u)}
+                          title="Reset Password"
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background = "#fffbeb")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.background = "none")
+                          }
+                        >
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
                         </button>
                         <button
                           id={`um-delete-btn-${u.id}`}
@@ -1224,7 +1288,7 @@ const UserManagement = () => {
                             (e.currentTarget.style.background = "none")
                           }
                         >
-                          🗑️
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         </button>
                       </td>
                     </tr>
@@ -1241,7 +1305,7 @@ const UserManagement = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={
-          editingUser ? "✏️ Edit User Permissions" : "👤 Register New User"
+          editingUser ? "Edit User Permissions" : "Register New User"
         }
         maxWidth="540px"
       >
@@ -1481,10 +1545,237 @@ const UserManagement = () => {
                   "0 4px 12px rgba(255,102,0,.25)";
               }}
             >
-              {editingUser ? "💾 Save Changes" : "✅ Create User"}
+              {editingUser ? (
+                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  Save Changes
+                </span>
+              ) : (
+                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Create User
+                </span>
+              )}
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* ── Reset Password Modal ── */}
+      <Modal
+        isOpen={!!resetTarget}
+        onClose={() => setResetTarget(null)}
+        title="Reset User Password"
+        maxWidth="480px"
+      >
+        {resetTarget && (
+          <form onSubmit={handleResetPasswordSubmit}>
+            {/* Target user info */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "12px 14px",
+                borderRadius: "12px",
+                background: "rgba(245,158,11,.08)",
+                border: "1px solid rgba(245,158,11,.25)",
+                marginBottom: "20px",
+              }}
+            >
+              <span style={{ color: "#f59e0b" }}><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <div>
+                <div style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "0.95rem" }}>
+                  {resetTarget.fullName}
+                </div>
+                <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", fontFamily: "monospace" }}>
+                  {resetTarget.email}
+                </div>
+              </div>
+            </div>
+
+            {/* Security warning */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "8px",
+                padding: "10px 14px",
+                borderRadius: "10px",
+                background: "rgba(239,68,68,.06)",
+                border: "1px solid rgba(239,68,68,.2)",
+                marginBottom: "20px",
+                fontSize: "0.8rem",
+                color: "#dc2626",
+              }}
+            >
+              <span style={{ flexShrink: 0 }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+              <span>
+                You are about to reset this user's password. They will receive a security notification
+                and must use the new password immediately.
+              </span>
+            </div>
+
+            {/* New password */}
+            <div style={S.formGroup}>
+              <label style={S.label}>New Password</label>
+              <div style={{ position: "relative" }}>
+                <input
+                  id="um-reset-pwd-input"
+                  type={resetPwdShow ? "text" : "password"}
+                  value={resetPwd}
+                  onChange={(e) => setResetPwd(e.target.value)}
+                  style={{
+                    ...S.input,
+                    paddingRight: "44px",
+                    borderColor:
+                      resetPwd && resetPwd.length < 10
+                        ? "#ef4444"
+                        : focusedField === "resetPwd"
+                        ? "#f59e0b"
+                        : "var(--border-color)",
+                    boxShadow:
+                      resetPwd && resetPwd.length < 10
+                        ? "0 0 0 3px rgba(239,68,68,.1)"
+                        : focusedField === "resetPwd"
+                        ? "0 0 0 3px rgba(245,158,11,.15)"
+                        : "none",
+                  }}
+                  onFocus={() => setFocusedField("resetPwd")}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="Min 10 chars · Aa1!..."
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setResetPwdShow((s) => !s)}
+                  style={{
+                    position: "absolute",
+                    right: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "var(--text-secondary)",
+                    fontSize: "1rem",
+                    lineHeight: 1,
+                    padding: 0,
+                  }}
+                  title={resetPwdShow ? "Hide" : "Show"}
+                >
+                  {resetPwdShow ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  )}
+                </button>
+              </div>
+              {/* Strength indicator */}
+              {resetPwd && (
+                <div style={{ marginTop: "6px", display: "flex", gap: "4px" }}>
+                  {[
+                    resetPwd.length >= 10,
+                    /[A-Z]/.test(resetPwd),
+                    /[a-z]/.test(resetPwd),
+                    /[0-9]/.test(resetPwd),
+                    /[!@#$%^&*(),.?":{}<>\-_]/.test(resetPwd),
+                  ].map((ok, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        flex: 1,
+                        height: "4px",
+                        borderRadius: "2px",
+                        background: ok ? "#10b981" : "var(--border-color)",
+                        transition: "background .2s",
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {resetPwd && (
+                <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+                  Requirements: 10+ chars · Uppercase · Lowercase · Digit · Special char
+                </p>
+              )}
+            </div>
+
+            {/* Confirm password */}
+            <div style={S.formGroup}>
+              <label style={S.label}>Confirm New Password</label>
+              <input
+                id="um-reset-pwd-confirm"
+                type={resetPwdShow ? "text" : "password"}
+                value={resetPwdConfirm}
+                onChange={(e) => setResetPwdConfirm(e.target.value)}
+                style={{
+                  ...S.input,
+                  borderColor:
+                    resetPwdConfirm && resetPwdConfirm !== resetPwd
+                      ? "#ef4444"
+                      : focusedField === "resetPwdConfirm"
+                      ? "#f59e0b"
+                      : "var(--border-color)",
+                  boxShadow:
+                    resetPwdConfirm && resetPwdConfirm !== resetPwd
+                      ? "0 0 0 3px rgba(239,68,68,.1)"
+                      : "none",
+                }}
+                onFocus={() => setFocusedField("resetPwdConfirm")}
+                onBlur={() => setFocusedField(null)}
+                placeholder="Re-enter the password"
+                autoComplete="new-password"
+              />
+              {resetPwdConfirm && resetPwdConfirm !== resetPwd && (
+                <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "4px" }}>
+                  ✗ Passwords do not match
+                </p>
+              )}
+              {resetPwdConfirm && resetPwdConfirm === resetPwd && resetPwd.length >= 10 && (
+                <p style={{ fontSize: "0.75rem", color: "#10b981", marginTop: "4px" }}>
+                  ✓ Passwords match
+                </p>
+              )}
+            </div>
+
+            <div style={S.modalActions}>
+              <button
+                id="um-reset-pwd-cancel"
+                type="button"
+                style={S.btnSecondary}
+                onClick={() => setResetTarget(null)}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "var(--bg-hover)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+              >
+                Cancel
+              </button>
+              <button
+                id="um-reset-pwd-submit"
+                type="submit"
+                disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
+                style={{
+                  ...S.btnPrimary,
+                  background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
+                  boxShadow: "0 4px 12px rgba(245,158,11,.3)",
+                  opacity: (resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10) ? 0.6 : 1,
+                  cursor: (resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10) ? "not-allowed" : "pointer",
+                }}
+              >
+                {resetLoading ? "Resetting…" : (
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    Reset Password
+                  </span>
+                )}
+              </button>
+            </div>
+          </form>
+        )}
       </Modal>
     </div>
   );

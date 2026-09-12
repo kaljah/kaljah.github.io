@@ -5,7 +5,9 @@ import { useToast } from "./Toast";
 import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
 import Scope3ImportWizard from "./Scope3ImportWizard";
-import { Upload, Trash2 } from "lucide-react";
+import { Upload, Trash2, Eye } from "lucide-react";
+import EmissionResult from "./EmissionResult";
+import CalculationDetails from "./CalculationDetails";
 import "./ScopeTables.css";
 
 const Scope3Form = () => {
@@ -22,6 +24,10 @@ const Scope3Form = () => {
   const [emissionFactor, setEmissionFactor] = useState("");
   const [baseUnit, setBaseUnit] = useState("");
   const [baseFactor, setBaseFactor] = useState(0);
+
+  // Result and Inspect Modals
+  const [calculationResult, setCalculationResult] = useState(null);
+  const [inspectRecord, setInspectRecord] = useState(null);
 
   // EEIO Quick Calculator State
   const [showEeioCalc, setShowEeioCalc] = useState(false);
@@ -42,7 +48,11 @@ const Scope3Form = () => {
       setActivityType(`Spend: ${res.data.industry_name}`);
       setAmount(eeioSpend);
       setUnit("USD");
-      setEmissionFactor(res.data.emission_factor);
+      // res.data.emission_factor is per $1000 spend; convert to per $1 spend to prevent 1000x overstatement
+      const normalizedEf = (parseFloat(res.data.emission_factor) / 1000.0).toFixed(6);
+      setEmissionFactor(normalizedEf);
+      setBaseFactor(parseFloat(normalizedEf));
+      setBaseUnit("USD");
     } catch (err) {
       toast.show("Error calculating EEIO emissions", "error");
     }
@@ -280,12 +290,15 @@ const Scope3Form = () => {
         status: status,
       };
 
-      await api.post("/scope3", payload);
+      const res = await api.post("/scope3", payload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
           : "Scope 3 entry added successfully",
       );
+      if (res.data && res.data.emissions) {
+        setCalculationResult(res.data);
+      }
       setAmount("");
       setCurrentPage(1);
       loadEntries();
@@ -293,6 +306,41 @@ const Scope3Form = () => {
       console.error("Failed to add entry:", error);
       toast.error("Failed to add entry");
     }
+  };
+
+  const handleInspect = (entry) => {
+    setInspectRecord({
+      process_type: `Scope 3 - Category ${entry.category}`,
+      fuel: entry.sub_category || entry.product_type || "N/A",
+      amount: entry.activity_data || entry.volume || 0,
+      unit: entry.unit || "unit",
+      emissions: {
+        totalCo2e: entry.co2e || entry.emissions_tco2e || 0,
+        co2: entry.co2e || entry.emissions_tco2e || 0,
+        ch4: 0,
+        n2o: 0,
+      },
+      factors: {
+        co2: entry.emission_factor || 0,
+        ch4: 0,
+        n2o: 0,
+      },
+      method: entry.calculation_method || "Activity Data × Emission Factor",
+      steps: [
+        {
+          name: "Activity Normalization",
+          desc: `Recorded activity quantity: ${entry.activity_data || entry.volume || 0} ${entry.unit}`,
+        },
+        {
+          name: "Emission Factor Application",
+          desc: `Applied factor: ${entry.emission_factor} kg CO₂e / ${entry.unit}`,
+        },
+        {
+          name: "CO₂e Calculation",
+          desc: `(${entry.activity_data || entry.volume || 0} × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e || entry.emissions_tco2e, 3)} tCO₂e`,
+        },
+      ],
+    });
   };
 
   const handleImportSuccess = () => {
@@ -599,11 +647,18 @@ const Scope3Form = () => {
           }}
         >
           <button
+            className="action-btn secondary"
+            onClick={() => handleAddEntry("Draft")}
+            style={{ padding: "12px 20px" }}
+          >
+            Save as Draft (Maker Mode)
+          </button>
+          <button
             className="btn-add-activity"
             onClick={() => handleAddEntry("Verified")}
-            style={{ flex: 2, padding: "12px" }}
+            style={{ flex: 1.5, padding: "12px" }}
           >
-            + Add Scope 3 Entry
+            + Calculate & Submit for Review
           </button>
         </div>
 
@@ -721,7 +776,15 @@ const Scope3Form = () => {
                         </span>
                       )}
                     </td>
-                    <td style={{ textAlign: "center" }}>
+                    <td style={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                      <button
+                        className="icon-button"
+                        onClick={() => handleInspect(entry)}
+                        style={{ color: "#3b82f6", marginRight: "8px" }}
+                        title="Inspect Calculation Details"
+                      >
+                        <Eye size={16} />
+                      </button>
                       <button
                         className="icon-button"
                         onClick={() => handleDelete(entry.id)}
@@ -788,6 +851,20 @@ const Scope3Form = () => {
             loadEntries();
             toast.success("Bulk import completed successfully");
           }}
+        />
+      )}
+
+      {calculationResult && (
+        <EmissionResult
+          result={calculationResult}
+          onClose={() => setCalculationResult(null)}
+        />
+      )}
+
+      {inspectRecord && (
+        <CalculationDetails
+          calculation={inspectRecord}
+          onClose={() => setInspectRecord(null)}
         />
       )}
     </div>

@@ -18,6 +18,7 @@ from sqlalchemy import func
 from datetime import datetime
 from cachetools import TTLCache, cached, keys
 from calculations.constants import get_active_gwp
+from services.ogmp import compute_facility_ogmp_level, ogmp_level_for
 import threading
 import concurrent.futures
 
@@ -69,6 +70,13 @@ def get_batch_dashboard_data():
     group_by = request.args.get("groupBy")
 
     user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     allowed_fids = get_allowed_facility_ids(user)
 
     # Capture app reference NOW (inside the request context) so worker
@@ -87,7 +95,7 @@ def get_batch_dashboard_data():
                 app,
                 _query_summary,
                 facility_id=facility_id,
-                year=year,
+                year=None,
                 activity=activity,
                 division=division,
                 group_by=group_by,
@@ -202,19 +210,24 @@ def get_batch_dashboard_data():
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-@cached(
-    cache=DASHBOARD_CACHE, key=make_cache_key("get_intensity_trend"), lock=CACHE_LOCK
-)
 @dashboard_bp.route("/intensity-trend", methods=["GET"])
 @login_required
 def get_intensity_trend():
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     facility_id = request.args.get("facilityId")
     activity = request.args.get("activity")
     division = request.args.get("division")
     segment = request.args.get("segment")
     years_str = request.args.get("years", "")
 
-    allowed_fids = get_allowed_facility_ids(get_current_user())
+    allowed_fids = get_allowed_facility_ids(user)
 
     if years_str:
         years = [int(y.strip()) for y in years_str.split(",") if y.strip()]
@@ -461,30 +474,40 @@ def _query_scope3_summary(
     allowed_fids=None,
     segment=None,
 ):
-    """Pure query logic for /scope3/summary — returns a plain Python dict."""
-    query = db.session.query(func.sum(Scope3Emission.co2e))
-    if allowed_fids is not None:
-        query = query.filter(Scope3Emission.facility_id.in_(allowed_fids))
-    if year and year != "all":
-        query = query.filter(Scope3Emission.year == int(year))
-    if facility_id and facility_id != "all":
-        query = query.filter(Scope3Emission.facility_id == int(facility_id))
+    """Pure query logic for /scope3/summary — returns a plain Python dict with total and by_year."""
     need_join = (
         (activity and activity != "all")
         or (division and division != "all")
         or (segment and segment != "all")
     )
+
+    by_year_query = db.session.query(Scope3Emission.year, func.sum(Scope3Emission.co2e))
+    if allowed_fids is not None:
+        by_year_query = by_year_query.filter(Scope3Emission.facility_id.in_(allowed_fids))
+    if facility_id and facility_id != "all":
+        by_year_query = by_year_query.filter(Scope3Emission.facility_id == int(facility_id))
     if need_join:
-        query = query.join(Facility, Facility.id == Scope3Emission.facility_id)
+        by_year_query = by_year_query.join(Facility, Facility.id == Scope3Emission.facility_id)
         if activity and activity != "all":
-            query = query.filter(Facility.activity == activity)
+            by_year_query = by_year_query.filter(Facility.activity == activity)
         if division and division != "all":
-            query = query.filter(Facility.division == division)
+            by_year_query = by_year_query.filter(Facility.division == division)
         if segment and segment != "all":
-            query = query.filter(Facility.segment == segment)
-    query = query.filter(Scope3Emission.status == "Verified")
-    total = query.scalar() or 0
-    return {"total": float(total)}
+            by_year_query = by_year_query.filter(Facility.segment == segment)
+    by_year_query = by_year_query.filter(Scope3Emission.status == "Verified")
+    by_year_rows = by_year_query.group_by(Scope3Emission.year).all()
+
+    by_year = {}
+    for y, val in by_year_rows:
+        if y is not None:
+            by_year[str(y)] = float(val or 0)
+
+    if year and year != "all":
+        total = by_year.get(str(year), 0.0)
+    else:
+        total = sum(float(val or 0) for _, val in by_year_rows)
+
+    return {"total": float(total), "by_year": by_year}
 
 
 @cached(
@@ -637,6 +660,13 @@ def get_dashboard_summary():
     Delegates to _query_summary() for thread-safe reuse.
     """
     user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_summary(
@@ -655,6 +685,14 @@ def get_dashboard_summary():
 @login_required
 def get_available_years():
     """Get list of all years present in the emissions and production data"""
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     return jsonify(_query_available_years())
 
 
@@ -664,9 +702,21 @@ def get_mitigation():
     """Get all mitigation projects and records with filtering.
     Delegates to _query_mitigation() for thread-safe reuse.
     """
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
+    allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_mitigation(
-            facility_id=request.args.get("facilityId"), year=request.args.get("year")
+            facility_id=request.args.get("facilityId"),
+            year=request.args.get("year"),
+            allowed_fids=allowed_fids,
+            segment=request.args.get("segment"),
         )
     )
 
@@ -677,12 +727,23 @@ def get_scope3_summary():
     """Get Scope 3 emissions summary with filtering.
     Delegates to _query_scope3_summary() for thread-safe reuse.
     """
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
+    allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_scope3_summary(
             facility_id=request.args.get("facilityId"),
             year=request.args.get("year"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
+            allowed_fids=allowed_fids,
+            segment=request.args.get("segment"),
         )
     )
 
@@ -705,30 +766,6 @@ def get_goal(year):
         )
     except Exception as e:
         print(f"Error fetching goal for {year}: {e}")
-        return jsonify({"error": str(e)}), 500
-
-
-@dashboard_bp.route("/goals", methods=["POST"])
-@login_required
-def create_goal():
-    """Create or update a goal"""
-    try:
-        data = request.get_json()
-        year = data.get("year")
-        target = data.get("target_amount")
-
-        existing = Goal.query.filter_by(year=year).first()
-        if existing:
-            existing.target_amount = target
-        else:
-            goal = Goal(year=year, target_amount=target)
-            db.session.add(goal)
-
-        db.session.commit()
-        return jsonify({"message": "Goal saved successfully"})
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error saving goal: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -762,12 +799,23 @@ def get_categorical_breakdown():
     Get emissions breakdown by Activity -> Division -> Region.
     Delegates to _query_categorical_breakdown() for thread-safe reuse.
     """
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
+    allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_categorical_breakdown(
             facility_id=request.args.get("facilityId"),
             year=request.args.get("year"),
             activity=request.args.get("activity"),
             division=request.args.get("division"),
+            allowed_fids=allowed_fids,
+            segment=request.args.get("segment"),
         )
     )
 
@@ -808,12 +856,18 @@ def get_ogmp_metrics():
     OGMP 2.0 Gold Standard roadmap & milestone progress per facility.
     Returns compliance deadlines, current L1-L5 levels, and reconciliation status.
     """
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     from routes.auth import _app_settings
 
     default_base_year = _app_settings.get("ogmp_default_base_year", 2023)
     default_threshold = _app_settings.get("reconciliation_threshold", 20.0)
-
-    user = get_current_user()
     allowed_fids = get_allowed_facility_ids(user)
 
     fac_id = request.args.get("facilityId")
@@ -829,18 +883,26 @@ def get_ogmp_metrics():
         query = query.filter(Facility.id.in_(allowed_fids))
     if fac_id and fac_id != "all" and str(fac_id).isdigit():
         query = query.filter(Facility.id == int(fac_id))
-    if request.args.get("segment"):
+    if request.args.get("segment") and request.args.get("segment") != "all":
         query = query.filter(Facility.segment == request.args.get("segment"))
+    if request.args.get("activity") and request.args.get("activity") != "all":
+        query = query.filter(Facility.activity == request.args.get("activity"))
+    if request.args.get("division") and request.args.get("division") != "all":
+        query = query.filter(Facility.division == request.args.get("division"))
 
     facilities = query.all()
 
     # Query survey top-down sums & facility bottom-up CH4
     survey_query = db.session.query(
         OgmpSurvey.facility_id,
-        func.sum(OgmpSurvey.estimated_annual_tch4).label("total_td"),
+        func.avg(OgmpSurvey.estimated_annual_tch4).label("total_td"),
     )
     if allowed_fids is not None:
         survey_query = survey_query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
+    if fac_id and fac_id != "all" and str(fac_id).isdigit():
+        survey_query = survey_query.filter(OgmpSurvey.facility_id == int(fac_id))
+    if year and year != "all" and str(year).isdigit():
+        survey_query = survey_query.filter(OgmpSurvey.year == int(year))
     survey_map = {
         r.facility_id: float(r.total_td or 0)
         for r in survey_query.group_by(OgmpSurvey.facility_id).all()
@@ -887,12 +949,9 @@ def get_ogmp_metrics():
             else None
         )
 
-        if top_down > 0 and variance_pct is not None and abs(variance_pct) <= threshold:
-            highest_level = 5
-        elif top_down > 0:
-            highest_level = 4
-        else:
-            highest_level = 3
+        highest_level = compute_facility_ogmp_level(
+            f, year=current_year, top_down_tch4=top_down, bottom_up_tch4=bottom_up
+        )
 
         fac_list.append(
             {
@@ -949,7 +1008,15 @@ def get_intensity_stats():
     Get intensity metrics (kg/BOE) per facility.
     Delegates to _query_intensity_stats() for thread-safe reuse.
     """
-    allowed_fids = get_allowed_facility_ids(get_current_user())
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
+    allowed_fids = get_allowed_facility_ids(user)
     return jsonify(
         _query_intensity_stats(
             facility_id=request.args.get("facilityId"),
@@ -1032,6 +1099,8 @@ def _query_intensity_trend_bulk(
             gas *= 0.035315
         elif g_unit == "scf":
             gas *= 0.001
+        elif g_unit == "mmscf":
+            gas *= 1000.0
         prod_map[key]["total_oil"] += oil
         prod_map[key]["total_gas"] += gas
         prod_map[key]["total_boe"] += oil + (gas * GAS_TO_BOE)
@@ -1119,6 +1188,8 @@ def _query_intensity_trend_bulk(
             qty *= 0.028317
         elif unit == "mscf":
             qty *= 28.317
+        elif unit == "mmscf":
+            qty *= 28316.8
         elif unit in ("liters", "l", "liter"):
             qty *= 0.001
         elif unit == "bbl":
@@ -1191,7 +1262,7 @@ def _query_intensity_trend_bulk(
     # Resolve active 20-year GWP factors
     gwp20_factors = get_active_gwp(horizon="20")
     ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
-    n2o_gwp20 = float(gwp20_factors.get("N2O", 264.0))
+    n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
 
     for yr, fid in all_year_fid_keys:
         boe = prod_map.get((yr, fid), {}).get("total_boe", 0)
@@ -1246,6 +1317,9 @@ def _query_intensity_trend_bulk(
                 "facility_id": fid,
                 "facility_name": fac.name if fac else "Unknown",
                 "activity": fac.activity if fac else "N/A",
+                "division": fac.division if fac else "N/A",
+                "region": fac.region or (fac.name if fac else "N/A"),
+                "segment": fac.segment if fac else "Upstream",
                 "co2_intensity": co2_int,
                 "co2_intensity_gwp20": co2_int_gwp20,
                 "scope1_intensity": scope1_int,
@@ -1579,14 +1653,20 @@ def _query_intensity_stats(
     # Top-Down OGMP Surveys
     ogmp_query = db.session.query(
         OgmpSurvey.facility_id,
-        func.sum(OgmpSurvey.estimated_annual_tch4).label("total_top_down_tch4"),
-    )
+        func.avg(OgmpSurvey.estimated_annual_tch4).label("total_top_down_tch4"),
+    ).join(Facility, OgmpSurvey.facility_id == Facility.id)
+    if allowed_fids is not None:
+        ogmp_query = ogmp_query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
     if year and year != "all":
         ogmp_query = ogmp_query.filter(OgmpSurvey.year == int(year))
+    if facility_id and facility_id != "all":
+        ogmp_query = ogmp_query.filter(OgmpSurvey.facility_id == int(facility_id))
     if segment and segment != "all":
-        ogmp_query = ogmp_query.join(
-            Facility, OgmpSurvey.facility_id == Facility.id
-        ).filter(Facility.segment == segment)
+        ogmp_query = ogmp_query.filter(Facility.segment == segment)
+    if activity and activity != "all":
+        ogmp_query = ogmp_query.filter(Facility.activity == activity)
+    if division and division != "all":
+        ogmp_query = ogmp_query.filter(Facility.division == division)
     ogmp_surveys = {
         o.facility_id: float(o.total_top_down_tch4 or 0)
         for o in ogmp_query.group_by(OgmpSurvey.facility_id).all()
@@ -1671,20 +1751,40 @@ def _query_intensity_stats(
             if ("processing" in segment or "midstream" in segment or "lng" in segment)
             else up_target
         )
-        allowed_ch4_tonnes = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0
+        oil_bbl = prod_details.get("total_oil", 0)
+        if gas_m3 > 0:
+            allowed_ch4_tonnes = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0
+        elif oil_bbl > 0 and "upstream" in segment:
+            # 40 CFR 99.20(a)(2): 10 metric tons CH4 per million barrels of oil for assets with no gas sales
+            allowed_ch4_tonnes = (oil_bbl / 1_000_000.0) * 10.0
+        else:
+            allowed_ch4_tonnes = 0.0
         excess_ch4_tonnes = max(0.0, ed["total_ch4"] - allowed_ch4_tonnes)
 
-        # WEC Rate: $900/tonne in 2024, $1,200/tonne in 2025, $1,500/tonne in 2026+
+        # WEC Rate: $900/tonne in 2024, $1,200/tonne in 2025, $1,500/tonne in 2026+ (effective starting 2024)
         yr_str = str(year) if year and year != "all" else str(datetime.utcnow().year)
+        yr_int = int(yr_str) if yr_str.isdigit() else datetime.utcnow().year
         wec_fee_map = _app_settings.get("wec_fee_rates", {})
-        wec_rate = float(
-            wec_fee_map.get(
-                yr_str,
-                900.0 if yr_str == "2024" else (1200.0 if yr_str == "2025" else 1500.0),
+
+        if yr_int < 2024:
+            wec_rate = 0.0
+            excess_ch4_tonnes = 0.0
+            wec_fee_usd = 0.0
+            wec_status = "Not Applicable (Pre-2024)"
+        elif "downstream" in segment or "refining" in segment or "petrochem" in segment:
+            wec_rate = 0.0
+            excess_ch4_tonnes = 0.0
+            wec_fee_usd = 0.0
+            wec_status = "Exempt (Downstream)"
+        else:
+            wec_rate = float(
+                wec_fee_map.get(
+                    yr_str,
+                    900.0 if yr_int == 2024 else (1200.0 if yr_int == 2025 else 1500.0),
+                )
             )
-        )
-        wec_fee_usd = round(excess_ch4_tonnes * wec_rate, 2)
-        wec_status = "Compliant" if excess_ch4_tonnes <= 0 else "Taxable Liability"
+            wec_fee_usd = round(excess_ch4_tonnes * wec_rate, 2)
+            wec_status = "Compliant" if excess_ch4_tonnes <= 0 else "Taxable Liability"
 
         # OGMP Level Distribution & Level Progression
         total_s1 = ed["total_co2e"] - s2_val
@@ -1840,57 +1940,142 @@ def get_uncertainty_analysis():
     """
     Quantifies inventory uncertainty per ISO 14064-1 §4.6.5.
     Delegates to _query_uncertainty() for thread-safe reuse.
+
+    Query parameters:
+        year (int, optional): Reporting year. Defaults to latest available.
+        facility_id (int, optional): Filter to a single facility.
+        scope (str, optional): "1", "2", "3", or "all" (default).
+        export (str, optional): "csv" to download uncertainty breakdown as CSV.
     """
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     year = request.args.get("year", type=int)
-    return jsonify(_query_uncertainty(year=year))
+    facility_id = request.args.get("facility_id", type=int) or request.args.get("facilityId", type=int)
+    scope = (request.args.get("scope") or "all").strip().lower()
+    export_fmt = (request.args.get("export") or "").strip().lower()
+    allowed_fids = get_allowed_facility_ids(user)
+
+    # RBAC: if facility_id requested, verify it's within the user's allowed set
+    if facility_id and allowed_fids is not None and facility_id not in allowed_fids:
+        return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
+
+    result = _query_uncertainty(
+        year=year,
+        allowed_fids=allowed_fids,
+        facility_id=facility_id,
+        scope=scope,
+    )
+
+    # CSV export
+    if export_fmt == "csv":
+        import csv
+        import io
+
+        def _safe_csv(val):
+            """Prevent formula injection (DDE/CSV injection) in spreadsheet cells."""
+            if isinstance(val, str) and val and val[0] in ("=", "-", "+", "@", "\t", "\r"):
+                return "'" + val
+            return val
+
+        buf = io.StringIO()
+        writer = csv.writer(buf)
+        writer.writerow(["Category", "Total Emissions (tCO2e)", "Uncertainty (±%)", "Level"])
+        for cat in result.get("categories", []):
+            writer.writerow([
+                _safe_csv(cat["category"]),
+                round(cat["total_emissions"], 2),
+                _safe_csv(cat["uncertainty_pct"]),
+                _safe_csv(cat["level"]),
+            ])
+        writer.writerow([])
+        writer.writerow(["Overall Inventory Uncertainty", "", _safe_csv(result["inventory_uncertainty_pct"]), ""])
+        writer.writerow(["Confidence Level", "", f"{result['confidence_level_pct']}%", ""])
+        writer.writerow(["Coverage Factor (k)", "", result["coverage_factor"], ""])
+        csv_content = buf.getvalue()
+        from flask import Response
+        return Response(
+            csv_content,
+            mimetype="text/csv",
+            headers={"Content-Disposition": f"attachment; filename=uncertainty_{result['year']}.csv"},
+        )
+
+    return jsonify(result)
 
 
 @cached(
     cache=DASHBOARD_CACHE, key=make_cache_key("_query_uncertainty"), lock=CACHE_LOCK
 )
-def _query_uncertainty(year=None, allowed_fids=None):
+def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="all"):
     """
     Pure query logic for /uncertainty — returns a plain Python dict.
     Quantifies inventory uncertainty per ISO 14064-1 §4.6.5
     using SRSS (Square Root of Sum of Squares) propagation.
+
+    Now correctly applies the GUM §6.2 coverage factor k=2 for 95% CI
+    via calculations.uncertainty.srss_inventory().
+
     PERF: Uses with_entities() to fetch only required columns (avoids loading
     heavy ORM objects for potentially thousands of emission records).
     """
     from datetime import datetime
+    from calculations.uncertainty import srss_inventory, COVERAGE_FACTOR_95
 
     if not year:
         latest = db.session.query(func.max(Emission.year)).scalar()
         year = latest or datetime.utcnow().year
 
+    # Resolve facility filter — narrow allowed_fids to a single facility if requested
+    effective_fids = allowed_fids
+    if facility_id:
+        effective_fids = [facility_id]
+
+    include_s1 = scope in ("all", "1")
+    include_s2 = scope in ("all", "2")
+    include_s3 = scope in ("all", "3")
+
     # 1. SCOPE 1 — lightweight column projection
-    s1_q = db.session.query(
-        Emission.co2e_total,
-        Emission.uncertainty,
-        Emission.uncertainty_ch4,
-        Emission.uncertainty_n2o,
-        Emission.calc_method,
-        Emission.process_type,
-        Emission.fuel_type,
-    ).filter(Emission.year == year, Emission.status == "Verified")
-    if allowed_fids is not None:
-        s1_q = s1_q.filter(Emission.facility_id.in_(allowed_fids))
-    s1_emissions = s1_q.all()
+    s1_emissions = []
+    if include_s1:
+        s1_q = db.session.query(
+            Emission.co2e_total,
+            Emission.uncertainty,
+            Emission.uncertainty_ch4,
+            Emission.uncertainty_n2o,
+            Emission.calc_method,
+            Emission.process_type,
+            Emission.fuel_type,
+        ).filter(Emission.year == year, Emission.status == "Verified")
+        if effective_fids is not None:
+            s1_q = s1_q.filter(Emission.facility_id.in_(effective_fids))
+        s1_emissions = s1_q.all()
 
     # 2. SCOPE 2 — lightweight column projection
-    s2_q = db.session.query(Scope2Emission.co2e, Scope2Emission.source_type).filter(
-        Scope2Emission.year == year, Scope2Emission.status == "Verified"
-    )
-    if allowed_fids is not None:
-        s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
-    s2_emissions = s2_q.all()
+    s2_emissions = []
+    if include_s2:
+        s2_q = db.session.query(Scope2Emission.co2e, Scope2Emission.source_type).filter(
+            Scope2Emission.year == year, Scope2Emission.status == "Verified"
+        )
+        if effective_fids is not None:
+            s2_q = s2_q.filter(Scope2Emission.facility_id.in_(effective_fids))
+        s2_emissions = s2_q.all()
 
     # 3. SCOPE 3 — lightweight column projection
-    s3_q = db.session.query(Scope3Emission.co2e, Scope3Emission.category).filter(
-        Scope3Emission.year == year, Scope3Emission.status == "Verified"
-    )
-    if allowed_fids is not None:
-        s3_q = s3_q.filter(Scope3Emission.facility_id.in_(allowed_fids))
-    s3_emissions = s3_q.all()
+    s3_emissions = []
+    if include_s3:
+        s3_q = db.session.query(Scope3Emission.co2e, Scope3Emission.category).filter(
+            Scope3Emission.year == year, Scope3Emission.status == "Verified"
+        )
+        if effective_fids is not None:
+            s3_q = s3_q.filter(Scope3Emission.facility_id.in_(effective_fids))
+        s3_emissions = s3_q.all()
 
     def get_ef_uncertainty(em, scope=1):
         """
@@ -1995,16 +2180,27 @@ def _query_uncertainty(year=None, allowed_fids=None):
             groups["Scope 3 (Value Chain)"]["total_e"] += float(em.co2e or 0)
 
     results = []
-    total_inventory_e = 0
-    total_srss_sq = 0
+    all_source_items = []  # Collect all items for srss_inventory
     tier_counts = {"Tier 1": 0, "Tier 2": 0, "Tier 3": 0}
 
     for ptype, group in groups.items():
         if group["total_e"] <= 0:
             continue
 
-        sum_sq = sum((item["e"] * item["u"]) ** 2 for item in group["emissions"])
-        u_group = (sum_sq**0.5) / group["total_e"]
+        # Build source list for this group's SRSS
+        group_sources = [
+            {"value": item["e"], "relative_uncertainty": item["u"]}
+            for item in group["emissions"]
+            if item["e"] > 0
+        ]
+
+        # Use srss_inventory for per-group uncertainty (1σ), then apply k=2
+        group_srss = srss_inventory(group_sources)
+        u_group_1sigma = group_srss["relative_uncertainty_1sigma"]
+        u_group_95 = group_srss["relative_uncertainty_95pct"]
+
+        # Accumulate for inventory-level SRSS
+        all_source_items.extend(group_sources)
 
         # Determine group-level tier for breakdown
         for item in group["emissions"]:
@@ -2019,17 +2215,18 @@ def _query_uncertainty(year=None, allowed_fids=None):
             {
                 "category": ptype,
                 "total_emissions": group["total_e"],
-                "uncertainty_decimal": u_group,
-                "uncertainty_pct": f"±{round(u_group * 100, 1)}%",
+                "uncertainty_decimal": u_group_95,
+                "uncertainty_1sigma": u_group_1sigma,
+                "uncertainty_pct": f"±{round(u_group_95 * 100, 1)}%",
                 "level": (
                     "low"
-                    if u_group <= 0.05
-                    else ("medium" if u_group <= 0.15 else "high")
+                    if u_group_95 <= 0.10
+                    else ("medium" if u_group_95 <= 0.30 else "high")
                 ),
                 "top_contributors": [
                     {
                         "name": item["name"],
-                        "uncertainty": f"±{round(item['u'] * 100, 1)}%",
+                        "uncertainty": f"±{round(item['u'] * COVERAGE_FACTOR_95 * 100, 1)}%",
                         "contribution": (
                             round((item["e"] / group["total_e"]) * 100, 1)
                             if group["total_e"] > 0
@@ -2043,12 +2240,10 @@ def _query_uncertainty(year=None, allowed_fids=None):
             }
         )
 
-        total_inventory_e += group["total_e"]
-        total_srss_sq += sum_sq
-
-    inventory_uncertainty = (
-        (total_srss_sq**0.5) / total_inventory_e if total_inventory_e > 0 else 0
-    )
+    # Overall inventory uncertainty using srss_inventory (proper 95% CI, k=2)
+    inventory_srss = srss_inventory(all_source_items)
+    inventory_uncertainty_95 = inventory_srss["relative_uncertainty_95pct"]
+    total_inventory_e = inventory_srss["total_value"]
 
     tier_breakdown = {
         tier: round((val / total_inventory_e) * 100, 1) if total_inventory_e > 0 else 0
@@ -2057,10 +2252,16 @@ def _query_uncertainty(year=None, allowed_fids=None):
 
     return {
         "year": year,
-        "inventory_uncertainty_pct": f"±{round(inventory_uncertainty * 100, 2)}%",
-        "inventory_uncertainty_decimal": inventory_uncertainty,
+        "inventory_uncertainty_pct": f"±{round(inventory_uncertainty_95 * 100, 2)}%",
+        "inventory_uncertainty_decimal": inventory_uncertainty_95,
+        "inventory_uncertainty_1sigma": inventory_srss["relative_uncertainty_1sigma"],
+        "total_inventory_emissions": total_inventory_e,
         "tier_breakdown": tier_breakdown,
         "categories": results,
+        "confidence_level_pct": 95,
+        "coverage_factor": COVERAGE_FACTOR_95,
+        "scope": scope,
+        "facility_id": facility_id,
     }
 
 
@@ -2068,6 +2269,14 @@ def _query_uncertainty(year=None, allowed_fids=None):
 @login_required
 def get_report_exclusions():
     """Fetches items marked as exclusions for the report."""
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
     year = request.args.get("year")
     # activity = request.args.get('activity') # potential future filter
 
@@ -2093,8 +2302,21 @@ def get_report_exclusions():
 def get_sbti_trajectory():
     from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission, Facility
     from datetime import datetime
-    
+
+    user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+            ),
+            403,
+        )
+
+    allowed_fids = get_allowed_facility_ids(user)
     facility_id = request.args.get("facility_id") or request.args.get("facilityId")
+    scope = (request.args.get("scope") or "all").lower().strip()
     
     target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
     if not target:
@@ -2113,86 +2335,149 @@ def get_sbti_trajectory():
     if facility_id and facility_id != "all":
         try:
             fid = int(facility_id)
+            if allowed_fids is not None and fid not in allowed_fids:
+                return jsonify({"error": "Unauthorized facility"}), 403
             q_s1 = q_s1.filter_by(facility_id=fid)
             q_s2 = q_s2.filter_by(facility_id=fid)
             q_s3 = q_s3.filter_by(facility_id=fid)
         except ValueError:
             pass
+    elif allowed_fids is not None:
+        q_s1 = q_s1.filter(Emission.facility_id.in_(allowed_fids))
+        q_s2 = q_s2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+        q_s3 = q_s3.filter(Scope3Emission.facility_id.in_(allowed_fids))
             
-    for em in q_s1.all():
-        val = float(em.co2e_total or em.co2_emissions or 0)
-        actuals[em.year] = actuals.get(em.year, 0) + val
-        scope1_actuals[em.year] = scope1_actuals.get(em.year, 0) + val
+    s1_rows = (
+        q_s1.with_entities(
+            Emission.year,
+            func.sum(func.coalesce(Emission.co2e_total, Emission.co2_emissions, 0)),
+        )
+        .group_by(Emission.year)
+        .all()
+    )
+    for yr, val in s1_rows:
+        if yr is not None:
+            v = float(val or 0)
+            actuals[yr] = actuals.get(yr, 0) + v
+            scope1_actuals[yr] = scope1_actuals.get(yr, 0) + v
 
-    for em in q_s2.all():
-        val = float(em.co2e or 0)
-        actuals[em.year] = actuals.get(em.year, 0) + val
-        scope2_actuals[em.year] = scope2_actuals.get(em.year, 0) + val
+    s2_rows = (
+        q_s2.with_entities(
+            Scope2Emission.year,
+            func.sum(func.coalesce(Scope2Emission.co2e, 0)),
+        )
+        .group_by(Scope2Emission.year)
+        .all()
+    )
+    for yr, val in s2_rows:
+        if yr is not None:
+            v = float(val or 0)
+            actuals[yr] = actuals.get(yr, 0) + v
+            scope2_actuals[yr] = scope2_actuals.get(yr, 0) + v
 
-    for em in q_s3.all():
-        val = float(em.co2e or 0)
-        actuals[em.year] = actuals.get(em.year, 0) + val
-        scope3_actuals[em.year] = scope3_actuals.get(em.year, 0) + val
+    s3_rows = (
+        q_s3.with_entities(
+            Scope3Emission.year,
+            func.sum(func.coalesce(Scope3Emission.co2e, 0)),
+        )
+        .group_by(Scope3Emission.year)
+        .all()
+    )
+    for yr, val in s3_rows:
+        if yr is not None:
+            v = float(val or 0)
+            actuals[yr] = actuals.get(yr, 0) + v
+            scope3_actuals[yr] = scope3_actuals.get(yr, 0) + v
         
     trajectory = []
     base_year = target.base_year
     target_year = target.target_year
     rate = target.reduction_rate_pct / 100.0
-    rate_15c = 0.042  # 4.2% annual linear reduction for 1.5°C
+    rate_15c = 0.042  # 4.2% annual linear reduction for 1.5°C near-term
     rate_wb2c = 0.025 # 2.5% annual linear reduction for Well-Below 2°C
+    
+    # SBTi Corporate Net-Zero Standard (v1.2 Criterion NZ-C1):
+    # Long-term target requires at least 90% absolute reduction across scopes,
+    # with residual emissions capped at 10% (0.10 * E_base) for permanent neutralization.
+    residual_floor = target.base_year_emissions * 0.10
     
     current_year = datetime.now().year
     end_year = min(target_year, max(current_year + 10, target_year))
     
     for yr in range(base_year, end_year + 1):
         years_diff = yr - base_year
-        # Target lines
-        sbti_emissions = target.base_year_emissions * (1 - (rate * years_diff))
-        sbti_15c_emissions = target.base_year_emissions * (1 - (rate_15c * years_diff))
-        sbti_wb2c_emissions = target.base_year_emissions * (1 - (rate_wb2c * years_diff))
+        # Target lines bounded by SBTi 10% residual emissions floor
+        sbti_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate * years_diff)))
+        sbti_15c_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate_15c * years_diff)))
+        sbti_wb2c_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate_wb2c * years_diff)))
         
-        # Business As Usual (Assume 1.5% growth if no action taken)
-        bau_emissions = target.base_year_emissions * (1 + (0.015 * years_diff))
+        # Business As Usual compounding projection (+1.5% annual growth)
+        bau_emissions = target.base_year_emissions * ((1.0 + 0.015) ** years_diff)
+
+        s1 = round(scope1_actuals.get(yr, 0), 2)
+        s2 = round(scope2_actuals.get(yr, 0), 2)
+        s3 = round(scope3_actuals.get(yr, 0), 2)
+        s12 = round(s1 + s2, 2)
+        tot = round(s1 + s2 + s3, 2)
 
         has_actual_data = yr in actuals and actuals[yr] > 0
+        if scope == "s1_s2":
+            active_actual = s12 if (has_actual_data and s12 > 0) else None
+        elif scope == "s3":
+            active_actual = s3 if (has_actual_data and s3 > 0) else None
+        else:
+            active_actual = tot if has_actual_data else None
         
         trajectory.append({
             "year": str(yr),
-            "sbti_target": round(max(sbti_emissions, 0), 2),
-            "sbti_15c": round(max(sbti_15c_emissions, 0), 2),
-            "sbti_wb2c": round(max(sbti_wb2c_emissions, 0), 2),
+            "sbti_target": round(sbti_emissions, 2),
+            "sbti_15c": round(sbti_15c_emissions, 2),
+            "sbti_wb2c": round(sbti_wb2c_emissions, 2),
             "bau_projection": round(bau_emissions, 2),
-            "actual": round(actuals[yr], 2) if has_actual_data else None,
-            "scope1": round(scope1_actuals.get(yr, 0), 2) if has_actual_data else 0,
-            "scope2": round(scope2_actuals.get(yr, 0), 2) if has_actual_data else 0,
-            "scope3": round(scope3_actuals.get(yr, 0), 2) if has_actual_data else 0,
+            "actual": active_actual,
+            "scope1": s1 if has_actual_data else 0,
+            "scope2": s2 if has_actual_data else 0,
+            "scope3": s3 if has_actual_data else 0,
+            "scope12": s12 if has_actual_data else 0,
+            "total_emissions": tot if has_actual_data else 0,
         })
 
     # Summary metrics for latest year with actual data or current year
     latest_actual_year = max([y for y, v in actuals.items() if v > 0], default=base_year)
-    current_actual = actuals.get(latest_actual_year, actuals.get(current_year, 0))
-    current_target = target.base_year_emissions * (1 - (rate * (latest_actual_year - base_year)))
+    if scope == "s1_s2":
+        current_actual = scope1_actuals.get(latest_actual_year, 0) + scope2_actuals.get(latest_actual_year, 0)
+    elif scope == "s3":
+        current_actual = scope3_actuals.get(latest_actual_year, 0)
+    else:
+        current_actual = actuals.get(latest_actual_year, actuals.get(current_year, 0))
+
+    current_target = max(residual_floor, target.base_year_emissions * (1 - (rate * (latest_actual_year - base_year))))
     reduction_achieved_pct = (
         ((target.base_year_emissions - current_actual) / target.base_year_emissions) * 100
         if target.base_year_emissions > 0
         else 0
     )
     on_track = current_actual <= current_target if current_actual > 0 else True
-    target_emissions_final = target.base_year_emissions * (1 - (rate * (target_year - base_year)))
+    target_emissions_final = max(residual_floor, target.base_year_emissions * (1 - (rate * (target_year - base_year))))
 
     return jsonify({
         "has_target": True,
         "base_year": base_year,
         "base_year_emissions": round(target.base_year_emissions, 2),
         "target_year": target_year,
-        "target_emissions_final": round(max(target_emissions_final, 0), 2),
+        "target_emissions_final": round(target_emissions_final, 2),
         "reduction_rate_pct": target.reduction_rate_pct,
         "pathway_type": target.pathway_type,
         "current_year": latest_actual_year,
+        "latest_actual_year": latest_actual_year,
         "current_actual_emissions": round(current_actual, 2),
         "current_target_emissions": round(current_target, 2),
+        "current_actual": round(current_actual, 2),
+        "current_target": round(current_target, 2),
         "reduction_achieved_pct": round(reduction_achieved_pct, 2),
         "on_track": on_track,
+        "residual_floor": round(residual_floor, 2),
+        "scope": scope,
         "trajectory": trajectory
     })
 

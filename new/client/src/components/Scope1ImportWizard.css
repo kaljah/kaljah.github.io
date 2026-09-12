@@ -709,7 +709,7 @@
 }
 .s1w-group-badge--tier3 { background: #ecfdf5; color: #047857; }
 
-.s1w-group-count { font-size: 0.75rem; color: #94a3b8; font-weight: 500; }
+.s1w-group-count { font-size: 0.75rem; color: var(--text-secondary, #64748b); font-weight: 600; }
 
 .s1w-group-header svg { width: 16px; height: 16px; color: #94a3b8; }
 

@@ -18,6 +18,107 @@ from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncerta
 import math
 
 
+def _split_vented_and_flared(
+    total_gas_m3: float,
+    ch4_tonnes: float,
+    co2_tonnes: float,
+    ctrl_eff: float,
+    hhv: float = 1020.0,
+    ef_n2o: float = None,
+):
+    """
+    D-01 / API Compendium 2021 stoichiometric flaring partition helper.
+    Partitions total gas into vented (1 - ctrl_eff) and flared (ctrl_eff).
+    Flared combustion:
+      - 98% CH4 converted to CO2 stoichiometrically: CH4 * 0.98 * (44.01 / 16.04)
+      - Native CO2 in flared stream passes through unreacted
+      - 2% unburnt CH4 emitted
+      - N2O emitted = flared_mmbtu * (ef_n2o or 0.0001) where flared_scf = flared_m3 * (1 / scf_to_m3)
+        and flared_mmbtu = flared_scf * (hhv or 1020.0) / 1e6.
+        Catalog ef_n2o is in kg/MMBtu (default 0.0001 kg/MMBtu); convert to tonnes: / 1000.0.
+    """
+    ctrl = max(0.0, min(1.0, float(ctrl_eff or 0.0)))
+    vented_frac = 1.0 - ctrl
+
+    vented_ch4 = ch4_tonnes * vented_frac
+    vented_co2 = co2_tonnes * vented_frac
+
+    flared_co2 = 0.0
+    flared_unburnt_ch4 = 0.0
+    flared_n2o = 0.0
+
+    if ctrl > 0:
+        flared_ch4_mass = ch4_tonnes * ctrl
+        flared_native_co2 = co2_tonnes * ctrl
+
+        # 98% combustion of CH4 to CO2
+        flared_ch4_combusted = flared_ch4_mass * 0.98
+        flared_co2 = (flared_ch4_combusted * (44.01 / 16.04)) + flared_native_co2
+        flared_unburnt_ch4 = flared_ch4_mass * 0.02
+
+        # N2O from energy of flared gas
+        flared_m3 = total_gas_m3 * ctrl
+        flared_scf = convert(flared_m3, "m3", "scf")
+        hhv_val = float(hhv or 1020.0)
+        flared_mmbtu = (flared_scf * hhv_val) / 1_000_000.0
+        n2o_ef_kg = float(ef_n2o if ef_n2o is not None else 0.0001)
+        flared_n2o = (flared_mmbtu * n2o_ef_kg) / 1000.0
+
+    total_ch4 = vented_ch4 + flared_unburnt_ch4
+    total_co2 = vented_co2 + flared_co2
+
+    return {
+        "vented_ch4": vented_ch4,
+        "vented_co2": vented_co2,
+        "flared_co2": flared_co2,
+        "flared_unburnt_ch4": flared_unburnt_ch4,
+        "flared_n2o": flared_n2o,
+        "total_ch4": total_ch4,
+        "total_co2": total_co2,
+    }
+
+
+def _propagate_vented_results(
+    total_ch4: float,
+    total_co2: float,
+    flared_n2o: float,
+    uncertainties: dict,
+    factor_source: str = "specific",
+    process_category: str = "vented",
+):
+    _tier = resolve_tier(factor_source)
+    ch4_res = propagate_uncertainty(
+        total_ch4,
+        resolve_ef_uncertainty(process_category, "ch4", _tier, (uncertainties or {}).get("ch4")),
+        tier=_tier,
+        process_category=process_category,
+        gas="ch4",
+    )
+    co2_res = (
+        propagate_uncertainty(
+            total_co2,
+            resolve_ef_uncertainty(process_category, "co2", _tier, (uncertainties or {}).get("co2")),
+            tier=_tier,
+            process_category=process_category,
+            gas="co2",
+        )
+        if total_co2 > 0
+        else None
+    )
+    n2o_res = (
+        propagate_uncertainty(
+            flared_n2o,
+            resolve_ef_uncertainty(process_category, "n2o", _tier, (uncertainties or {}).get("n2o")),
+            tier=_tier,
+            process_category=process_category,
+            gas="n2o",
+        )
+        if flared_n2o > 0
+        else None
+    )
+    return ch4_res, co2_res, n2o_res
+
+
 class MudDegassingCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Drilling Mud Degassing", "Section 6.2")
@@ -80,6 +181,7 @@ class CompletionFlowbackCalculator(BaseCalculator):
         gas_oil_ratio=None,
         choke_size_in=None,
         well_head_pressure=None,
+        hhv=1020.0,
         gwp_dict=None,
     ):
         """
@@ -127,73 +229,28 @@ class CompletionFlowbackCalculator(BaseCalculator):
         co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
         co2_tonnes = co2_mass_kg / 1000.0
 
-        # Vented fraction goes straight to atmosphere
-        vented_ch4_tonnes = ch4_tonnes * (1.0 - ctrl_eff)
-        vented_co2_tonnes = co2_tonnes * (1.0 - ctrl_eff)
+        split = _split_vented_and_flared(
+            total_gas_m3=total_gas_m3,
+            ch4_tonnes=ch4_tonnes,
+            co2_tonnes=co2_tonnes,
+            ctrl_eff=ctrl_eff,
+            hhv=hhv,
+            ef_n2o=ef_n2o,
+        )
+        total_ch4 = split["total_ch4"]
+        total_co2 = split["total_co2"]
+        flared_n2o_tonnes = split["flared_n2o"]
 
-        flared_co2_tonnes = 0.0
-        flared_n2o_tonnes = 0.0
-        flared_unburnt_ch4_tonnes = 0.0
-
-        if ctrl_eff > 0:
-            if ef_co2 is not None and ef_ch4 is not None:
-                # TIER 3 FLARING using Gas Analysis Factors
-                flared_volume = total_gas_m3 * ctrl_eff
-                flared_co2_tonnes = (flared_volume * ef_co2) / 1000.0
-                flared_unburnt_ch4_tonnes = (flared_volume * ef_ch4) / 1000.0
-                flared_n2o_tonnes = (flared_volume * ef_n2o) / 1000.0 if ef_n2o else 0.0
-            else:
-                # TIER 1/2 FLARING (Dual Efficiency: 98% combustion of CH4 to CO2)
-                flared_ch4_combusted = (ch4_tonnes * ctrl_eff) * 0.98
-                flared_co2_tonnes = flared_ch4_combusted * (44.01 / 16.04) + (
-                    co2_tonnes * ctrl_eff
-                )
-                flared_unburnt_ch4_tonnes = (ch4_tonnes * ctrl_eff) * 0.02
-                flared_n2o_tonnes = (
-                    total_gas_m3 * ctrl_eff * (ef_n2o or 0.0001)
-                ) / 1000.0
-
-        total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4_tonnes
-        total_co2 = vented_co2_tonnes + flared_co2_tonnes
-
-        _tier = resolve_tier(
-            uncertainties.get(
+        ch4_res, co2_res, n2o_res = _propagate_vented_results(
+            total_ch4=total_ch4,
+            total_co2=total_co2,
+            flared_n2o=flared_n2o_tonnes,
+            uncertainties=uncertainties,
+            factor_source=uncertainties.get(
                 "_factor_source",
                 "site_specific" if method != "metered_volume" else "default",
-            )
-        )
-        ch4_res = propagate_uncertainty(
-            total_ch4,
-            resolve_ef_uncertainty("vented", "ch4", _tier, uncertainties.get("ch4")),
-            tier=_tier,
+            ),
             process_category="vented",
-            gas="ch4",
-        )
-        co2_res = (
-            propagate_uncertainty(
-                total_co2,
-                resolve_ef_uncertainty(
-                    "vented", "co2", _tier, uncertainties.get("co2")
-                ),
-                tier=_tier,
-                process_category="vented",
-                gas="co2",
-            )
-            if total_co2 > 0
-            else None
-        )
-        n2o_res = (
-            propagate_uncertainty(
-                flared_n2o_tonnes,
-                resolve_ef_uncertainty(
-                    "vented", "n2o", _tier, uncertainties.get("n2o")
-                ),
-                tier=_tier,
-                process_category="vented",
-                gas="n2o",
-            )
-            if flared_n2o_tonnes > 0
-            else None
         )
 
         total_co2e = calculate_co2e(
@@ -238,6 +295,10 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         ef_n2o=None,
         operating_temperature=60.0,
         temp_unit="F",
+        depth_unit="ft",
+        diameter_unit="in",
+        press_unit="psig",
+        hhv=1020.0,
         gwp_dict=None,
     ):
         """
@@ -254,17 +315,37 @@ class LiquidsUnloadingCalculator(BaseCalculator):
             ["depth", "diameter", "pressure", "events"],
         )
 
-        # Diameter in inches -> convert to meters
-        d_m = float(diameter) * 0.0254
+        # Diameter conversion to meters
+        d_val = float(diameter)
+        du = str(diameter_unit or "in").lower().strip()
+        if du in ["in", "inch", "inches"]:
+            d_m = d_val * 0.0254
+        elif du in ["mm", "millimeter", "millimeters"]:
+            d_m = d_val * 0.001
+        elif du in ["cm", "centimeter", "centimeters"]:
+            d_m = d_val * 0.01
+        elif du in ["m", "meter", "meters"]:
+            d_m = d_val
+        elif du in ["ft", "feet"]:
+            d_m = d_val * 0.3048
+        else:
+            d_m = d_val * 0.0254
 
-        # Depth in feet -> convert to meters (standard oilfield unit is feet)
-        depth_m = float(well_depth) * 0.3048
+        # Depth conversion to meters
+        depth_val = float(well_depth)
+        dep_u = str(depth_unit or "ft").lower().strip()
+        if dep_u in ["m", "meter", "meters"]:
+            depth_m = depth_val
+        elif dep_u in ["km", "kilometer"]:
+            depth_m = depth_val * 1000.0
+        else:  # 'ft', 'feet'
+            depth_m = depth_val * 0.3048
 
         # Volume at tubing conditions (m3)
         v_tubing = (math.pi / 4.0) * (d_m**2) * depth_m
 
         # Pressure and temperature correction (API Eq. 6-3 & §4.2.1)
-        p_abs = to_psia(pressure, "psig")
+        p_abs = to_psia(pressure, press_unit)
         p_factor = p_abs / STD_PRESSURE_PSIA
 
         t_abs_k = to_kelvin(operating_temperature, temp_unit)
@@ -282,65 +363,25 @@ class LiquidsUnloadingCalculator(BaseCalculator):
         co2_tonnes = co2_mass_kg / 1000.0
 
         ctrl_eff = float(control_efficiency or 0.0)
-        vented_ch4_tonnes = ch4_tonnes * (1.0 - ctrl_eff)
-        vented_co2_tonnes = co2_tonnes * (1.0 - ctrl_eff)
+        split = _split_vented_and_flared(
+            total_gas_m3=total_v_std,
+            ch4_tonnes=ch4_tonnes,
+            co2_tonnes=co2_tonnes,
+            ctrl_eff=ctrl_eff,
+            hhv=hhv,
+            ef_n2o=ef_n2o,
+        )
+        total_ch4 = split["total_ch4"]
+        total_co2 = split["total_co2"]
+        flared_n2o_tonnes = split["flared_n2o"]
 
-        flared_co2_tonnes = 0.0
-        flared_n2o_tonnes = 0.0
-        flared_unburnt_ch4_tonnes = 0.0
-
-        if ctrl_eff > 0:
-            if ef_co2 is not None and ef_ch4 is not None:
-                flared_volume = total_v_std * ctrl_eff
-                flared_co2_tonnes = (flared_volume * ef_co2) / 1000.0
-                flared_unburnt_ch4_tonnes = (flared_volume * ef_ch4) / 1000.0
-                flared_n2o_tonnes = (flared_volume * ef_n2o) / 1000.0 if ef_n2o else 0.0
-            else:
-                flared_ch4_combusted = (ch4_tonnes * ctrl_eff) * 0.98
-                flared_co2_tonnes = flared_ch4_combusted * (44.01 / 16.04) + (
-                    co2_tonnes * ctrl_eff
-                )
-                flared_unburnt_ch4_tonnes = (ch4_tonnes * ctrl_eff) * 0.02
-                flared_n2o_tonnes = (
-                    total_v_std * ctrl_eff * (ef_n2o or 0.0001)
-                ) / 1000.0
-
-        total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4_tonnes
-        total_co2 = vented_co2_tonnes + flared_co2_tonnes
-
-        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
-        ch4_res = propagate_uncertainty(
-            total_ch4,
-            resolve_ef_uncertainty("vented", "ch4", _tier, uncertainties.get("ch4")),
-            tier=_tier,
+        ch4_res, co2_res, n2o_res = _propagate_vented_results(
+            total_ch4=total_ch4,
+            total_co2=total_co2,
+            flared_n2o=flared_n2o_tonnes,
+            uncertainties=uncertainties,
+            factor_source=uncertainties.get("_factor_source", "default"),
             process_category="vented",
-            gas="ch4",
-        )
-        co2_res = (
-            propagate_uncertainty(
-                total_co2,
-                resolve_ef_uncertainty(
-                    "vented", "co2", _tier, uncertainties.get("co2")
-                ),
-                tier=_tier,
-                process_category="vented",
-                gas="co2",
-            )
-            if total_co2 > 0
-            else None
-        )
-        n2o_res = (
-            propagate_uncertainty(
-                flared_n2o_tonnes,
-                resolve_ef_uncertainty(
-                    "vented", "n2o", _tier, uncertainties.get("n2o")
-                ),
-                tier=_tier,
-                process_category="vented",
-                gas="n2o",
-            )
-            if flared_n2o_tonnes > 0
-            else None
         )
 
         total_co2e = calculate_co2e(
@@ -391,6 +432,7 @@ class BlowdownCalculator(BaseCalculator):
         temp_unit="F",
         press_unit="psig",
         z_factor=1.0,
+        hhv=1020.0,
         gwp_dict=None,
     ):
         self.validate_inputs(
@@ -423,66 +465,25 @@ class BlowdownCalculator(BaseCalculator):
         co2_tonnes = co2_mass_kg / 1000.0
 
         ctrl_eff = float(control_efficiency or 0.0)
-        vented_ch4_tonnes = ch4_tonnes * (1.0 - ctrl_eff)
-        vented_co2_tonnes = co2_tonnes * (1.0 - ctrl_eff)
+        split = _split_vented_and_flared(
+            total_gas_m3=total_v_std,
+            ch4_tonnes=ch4_tonnes,
+            co2_tonnes=co2_tonnes,
+            ctrl_eff=ctrl_eff,
+            hhv=hhv,
+            ef_n2o=ef_n2o,
+        )
+        total_ch4 = split["total_ch4"]
+        total_co2 = split["total_co2"]
+        flared_n2o_tonnes = split["flared_n2o"]
 
-        flared_co2_tonnes = 0.0
-        flared_n2o_tonnes = 0.0
-        flared_unburnt_ch4_tonnes = 0.0
-
-        if ctrl_eff > 0:
-            if ef_co2 is not None and ef_ch4 is not None:
-                # TIER 3 FLARING using Gas Analysis Factors!
-                flared_volume = total_v_std * ctrl_eff
-                flared_co2_tonnes = (flared_volume * ef_co2) / 1000.0
-                flared_unburnt_ch4_tonnes = (flared_volume * ef_ch4) / 1000.0
-                flared_n2o_tonnes = (flared_volume * ef_n2o) / 1000.0 if ef_n2o else 0.0
-            else:
-                flared_ch4_combusted = (ch4_tonnes * ctrl_eff) * 0.98
-                flared_co2_tonnes = flared_ch4_combusted * (44.01 / 16.04) + (
-                    co2_tonnes * ctrl_eff
-                )
-                flared_unburnt_ch4_tonnes = (ch4_tonnes * ctrl_eff) * 0.02
-                flared_n2o_tonnes = (
-                    total_v_std * ctrl_eff * (ef_n2o or 0.0001)
-                ) / 1000.0
-
-        total_ch4 = vented_ch4_tonnes + flared_unburnt_ch4_tonnes
-        total_co2 = vented_co2_tonnes + flared_co2_tonnes
-
-        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
-        ch4_res = propagate_uncertainty(
-            total_ch4,
-            resolve_ef_uncertainty("vented", "ch4", _tier, uncertainties.get("ch4")),
-            tier=_tier,
+        ch4_res, co2_res, n2o_res = _propagate_vented_results(
+            total_ch4=total_ch4,
+            total_co2=total_co2,
+            flared_n2o=flared_n2o_tonnes,
+            uncertainties=uncertainties,
+            factor_source=uncertainties.get("_factor_source", "default"),
             process_category="vented",
-            gas="ch4",
-        )
-        co2_res = (
-            propagate_uncertainty(
-                total_co2,
-                resolve_ef_uncertainty(
-                    "vented", "co2", _tier, uncertainties.get("co2")
-                ),
-                tier=_tier,
-                process_category="vented",
-                gas="co2",
-            )
-            if total_co2 > 0
-            else None
-        )
-        n2o_res = (
-            propagate_uncertainty(
-                flared_n2o_tonnes,
-                resolve_ef_uncertainty(
-                    "vented", "n2o", _tier, uncertainties.get("n2o")
-                ),
-                tier=_tier,
-                process_category="vented",
-                gas="n2o",
-            )
-            if flared_n2o_tonnes > 0
-            else None
         )
 
         total_co2e = calculate_co2e(
@@ -523,11 +524,15 @@ class TankFlashingCalculator(BaseCalculator):
         uncertainties,
         process_type="tank_flashing",
         ef_ch4=0,
+        co2_content=0.0,
+        ef_co2=None,
+        ef_n2o=None,
+        hhv=1020.0,
         gwp_dict=None,
     ):
         """
-        Calculates Tank Emissions.
-        If Flashing: Uses GOR method (Vasquez-Beggs or simple GOR * Throughput).
+        Calculates Tank Emissions (API Compendium Section 6.8 & EPA Subpart W §98.233(j)).
+        If Flashing: Uses GOR method with flared combustion products when control_efficiency > 0.
         If Working/Breathing: Uses simple Factor * Throughput.
         """
         self.validate_inputs({"throughput": throughput}, ["throughput"])
@@ -536,28 +541,45 @@ class TankFlashingCalculator(BaseCalculator):
 
         if is_flashing:
             total_gas_scf = float(throughput) * float(gas_oil_ratio)
-            ch4_vol_scf = total_gas_scf * float(ch4_content)
+            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
+            ch4_vol_scf = total_gas_scf * float(ch4_content)
             ch4_vol_m3 = convert(ch4_vol_scf, "scf", "m3")
             ch4_mass_kg = ch4_vol_m3 * CONVERSIONS["density_ch4"]
+            ch4_tonnes = ch4_mass_kg / 1000.0
+
+            co2_vol_scf = total_gas_scf * float(co2_content or 0.0)
+            co2_vol_m3 = convert(co2_vol_scf, "scf", "m3")
+            co2_mass_kg = co2_vol_m3 * CONVERSIONS["density_co2"]
+            co2_tonnes = co2_mass_kg / 1000.0
 
             ctrl_eff = float(control_efficiency or 0.0)
-            ch4_emitted_kg = ch4_mass_kg * (1.0 - ctrl_eff)
-            ch4_tonnes = ch4_emitted_kg / 1000.0
+            split = _split_vented_and_flared(
+                total_gas_m3=total_gas_m3,
+                ch4_tonnes=ch4_tonnes,
+                co2_tonnes=co2_tonnes,
+                ctrl_eff=ctrl_eff,
+                hhv=hhv,
+                ef_n2o=ef_n2o,
+            )
+            total_ch4 = split["total_ch4"]
+            total_co2 = split["total_co2"]
+            flared_n2o_tonnes = split["flared_n2o"]
 
-            _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
-            ch4_res = propagate_uncertainty(
-                ch4_tonnes,
-                resolve_ef_uncertainty(
-                    "tank_flashing", "ch4", _tier, uncertainties.get("ch4")
-                ),
-                tier=_tier,
+            ch4_res, co2_res, n2o_res = _propagate_vented_results(
+                total_ch4=total_ch4,
+                total_co2=total_co2,
+                flared_n2o=flared_n2o_tonnes,
+                uncertainties=uncertainties,
+                factor_source=uncertainties.get("_factor_source", "default"),
                 process_category="tank_flashing",
-                gas="ch4",
             )
         else:
             ch4_kg = float(throughput) * float(ef_ch4 or 0.0)
             ch4_tonnes = ch4_kg / 1000.0
+            total_ch4 = ch4_tonnes
+            total_co2 = 0.0
+            flared_n2o_tonnes = 0.0
 
             _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
             ch4_res = propagate_uncertainty(
@@ -567,17 +589,24 @@ class TankFlashingCalculator(BaseCalculator):
                 process_category="tank",
                 gas="ch4",
             )
+            co2_res = None
+            n2o_res = None
 
-        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
+        total_co2e = calculate_co2e(
+            ch4=total_ch4, co2=total_co2, n2o=flared_n2o_tonnes, gwp_dict=gwp_dict
+        )
 
         return self.format_result(
             ch4=ch4_res,
+            co2=co2_res,
+            n2o=n2o_res,
             total_co2e=total_co2e,
             inputs={
                 "throughput_bbl": throughput,
                 "gor": gas_oil_ratio if is_flashing else None,
                 "type": process_type,
                 "ef_used": ef_ch4 if not is_flashing else "GOR Calc",
+                "control_efficiency": control_efficiency,
             },
         )
 
@@ -587,20 +616,45 @@ class PneumaticDeviceCalculator(BaseCalculator):
         super().__init__("Pneumatic Devices", "Section 6.10")
 
     def calculate(
-        self, count, hours, bleed_rate, ch4_content, uncertainties, gwp_dict=None
+        self,
+        count,
+        hours=8760,
+        bleed_rate=None,
+        ch4_content=0.85,
+        uncertainties=None,
+        actuations=None,
+        gwp_dict=None,
     ):
         """
-        API Section 6.10 - Device count * Bleed rate
+        API Section 6.10 & EPA Subpart W §98.233(a):
+        - Continuous bleed: Device count * Hours * Bleed rate (scf/hr)
+        - Intermittent / actuation-based: Device count * Actuations * Bleed per event (scf/actuation)
         """
+        uncertainties = uncertainties or {}
         self.validate_inputs(
-            {"count": count, "hours": hours, "bleed_rate": bleed_rate},
-            ["count", "hours", "bleed_rate"],
+            {"count": count},
+            ["count"],
         )
 
-        # Bleed rate in scf/hr -> m3/hr
-        bleed_m3_hr = convert(float(bleed_rate), "scf", "m3")
+        is_intermittent = actuations is not None and float(actuations) > 0
+        if is_intermittent:
+            # Bleed rate is scf/event (default 13.5 scf/event per EPA Subpart W Table W-1 / API §6.10 if bleed_rate <= 0)
+            event_bleed_scf = float(bleed_rate) if (bleed_rate and float(bleed_rate) > 0) else 13.5
+            event_bleed_m3 = convert(event_bleed_scf, "scf", "m3")
+            total_ch4_vol = (
+                float(count) * float(actuations) * event_bleed_m3 * float(ch4_content)
+            )
+        else:
+            self.validate_inputs(
+                {"hours": hours, "bleed_rate": bleed_rate},
+                ["hours", "bleed_rate"],
+            )
+            # Bleed rate in scf/hr -> m3/hr
+            bleed_m3_hr = convert(float(bleed_rate), "scf", "m3")
+            total_ch4_vol = (
+                float(count) * float(hours) * bleed_m3_hr * float(ch4_content)
+            )
 
-        total_ch4_vol = float(count) * float(hours) * bleed_m3_hr * float(ch4_content)
         ch4_mass_kg = total_ch4_vol * CONVERSIONS["density_ch4"]
         ch4_tonnes = ch4_mass_kg / 1000.0
 
@@ -619,7 +673,9 @@ class PneumaticDeviceCalculator(BaseCalculator):
             total_co2e=total_co2e,
             inputs={
                 "device_count": count,
-                "hours_operating": hours,
-                "bleed_rate_scf_hr": bleed_rate,
+                "hours_operating": hours if not is_intermittent else None,
+                "actuations": actuations if is_intermittent else None,
+                "bleed_rate": bleed_rate,
+                "mode": "intermittent_actuation" if is_intermittent else "continuous_bleed",
             },
         )

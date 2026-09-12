@@ -116,6 +116,7 @@ LEGACY_FACTORS = {
     "Fugitive - Valve (Gas/Vapor)": {
         "code": "ValveGas",
         "type": "fugitive",
+        "ch4": 0.0045,
         "factor": 0.0045,
         "unit": "kg/hr",
         "description": "Valves in Gas Service",
@@ -124,6 +125,7 @@ LEGACY_FACTORS = {
     "Fugitive - Connector (Gas/Vapor)": {
         "code": "ConnGas",
         "type": "fugitive",
+        "ch4": 0.0002,
         "factor": 0.0002,
         "unit": "kg/hr",
         "description": "Connectors in Gas Service",
@@ -132,6 +134,7 @@ LEGACY_FACTORS = {
     "Fugitive - Flange (Gas/Vapor)": {
         "code": "FlangeGas",
         "type": "fugitive",
+        "ch4": 0.00039,
         "factor": 0.00039,
         "unit": "kg/hr",
         "description": "Flanges in Gas Service",

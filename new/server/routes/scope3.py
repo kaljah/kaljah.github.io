@@ -4,7 +4,7 @@ from extensions import db
 from sqlalchemy import func
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
+from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
 import datetime
 
 scope3_bp = Blueprint("scope3", __name__)
@@ -15,6 +15,9 @@ scope3_bp = Blueprint("scope3", __name__)
 def get_scope3_emissions():
     """Get all Scope 3 emissions scoped to user's allowed facilities"""
     user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+
     allowed_fids = get_allowed_facility_ids(user)
 
     query = Scope3Emission.query
@@ -70,11 +73,34 @@ def create_scope3_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
     data = request.get_json() or {}
+    facility_id = data.get("facility_id")
+    if not facility_id:
+        return jsonify({"error": "Missing facility_id"}), 422
 
-    # Maker-Checker: regular 'user' creates as 'Pending' (or 'Draft'), superusers/admins can verify directly
-    initial_status = "Verified" if user.role in ["superuser", "admin", "it_admin"] else data.get("status", "Pending")
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None and int(facility_id) not in allowed_fids:
+        return jsonify({"error": "Unauthorized for this facility"}), 403
+
+    req_status = data.get("status")
+    if req_status == "Draft":
+        initial_status = "Draft"
+    else:
+        # Maker-Checker: only admin role auto-verifies; all other roles (superuser, user) require admin approval
+        initial_status = "Verified" if user.role == "admin" else "Pending"
+
+    activity_data = float(data.get("activity_data") or data.get("amount", 0))
+    emission_factor = float(data.get("emission_factor", 0))
+    co2e_input = data.get("co2e") or data.get("emissions_tco2e")
+    if co2e_input not in [None, ""]:
+        co2e_val = float(co2e_input)
+    elif activity_data > 0 and emission_factor > 0:
+        co2e_val = (activity_data * emission_factor) / 1000.0
+    else:
+        co2e_val = 0.0
 
     emission = Scope3Emission(
         facility_id=data.get("facility_id"),
@@ -83,17 +109,14 @@ def create_scope3_emission():
         category=data.get("category", "Category 11"),
         sub_category=data.get("sub_category")
         or data.get("activity_type"),  # Fallback to activity_type
-        activity_data=data.get("activity_data")
-        or data.get("amount", 0),  # Fallback to amount
+        activity_data=activity_data,
         unit=data.get("unit"),
-        emission_factor=data.get("emission_factor", 0),
-        co2e=data.get("co2e")
-        or data.get("emissions_tco2e", 0),  # Fallback to emissions_tco2e
+        emission_factor=emission_factor,
+        co2e=co2e_val,
         status=initial_status,
         approved_by=user.id if initial_status == "Verified" else None,
         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
     )
-    co2e_val = float(emission.co2e or 0)
 
     # Calculate uncertainty
     provided_uncertainty = data.get("uncertainty")
@@ -112,7 +135,8 @@ def create_scope3_emission():
         final_uncertainty = u_res["relative_uncertainty"]
 
     emission.uncertainty = final_uncertainty
-    emission.calculation_method = data.get("calculation_method")
+    calc_method = data.get("calculation_method") or f"Scope 3 - Category {emission.category}"
+    emission.calculation_method = calc_method
     emission.data_quality = data.get("data_quality")
     emission.notes = data.get("notes")
     emission.created_by = user.id
@@ -126,46 +150,113 @@ def create_scope3_emission():
         user=user,
         request=request,
         entity="Scope3Emission",
-        details=f"Created Scope 3 emission: {emission.category} ({emission.co2e} tCO2e, Status: {initial_status})",
+        details=f"Created Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, Status: {initial_status})",
     )
     db.session.commit()
 
-    return jsonify({"message": "Scope 3 emission created", "id": emission.id, "status": initial_status}), 201
+    if initial_status in ("Pending", "Pending Approval"):
+        from models import Notification
+        admins = User.query.filter_by(role="admin", status="active").all()
+        for admin in admins:
+            Notification.create(
+                user_id=admin.id,
+                type="audit",
+                title="New Scope 3 Emission Pending Review",
+                message=f"A new Scope 3 emission record ({emission.category}) was submitted by {user.fullName} and is awaiting your approval.",
+            )
+        db.session.commit()
+
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
+
+    return jsonify({
+        "message": "Scope 3 emission created",
+        "id": emission.id,
+        "status": initial_status,
+        "co2e": co2e_val,
+        "emissions": {
+            "totalCo2e": co2e_val,
+            "co2": co2e_val,
+            "ch4": 0.0,
+            "n2o": 0.0,
+            "uncertainty": final_uncertainty,
+        },
+        "record": {
+            "id": emission.id,
+            "year": emission.year,
+            "month": emission.month,
+            "facility_id": emission.facility_id,
+            "category": emission.category,
+            "sub_category": emission.sub_category,
+            "amount": emission.activity_data,
+            "unit": emission.unit,
+            "emission_factor": emission.emission_factor,
+            "status": emission.status,
+        },
+        "calculation_method": calc_method,
+    }), 201
 
 
 @scope3_bp.route("/<int:emission_id>", methods=["PUT"])
 @login_required
 def update_scope3_emission(emission_id):
     """Update a Scope 3 emission record"""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
-    emission = Scope3Emission.query.get(emission_id)
-    user = User.query.get(session.get("user_id"))
-    if user and user.role != "admin" and emission and emission.created_by != user.id:
-        return jsonify({"error": "Unauthorized"}), 403
+    emission = db.session.get(Scope3Emission, emission_id)
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
-    data = request.get_json()
+    if not require_facility_access(user, emission.facility_id):
+        return jsonify({"error": "Unauthorized: Outside your region"}), 403
 
+    data = request.get_json() or {}
+
+    # Strip status and co2e from direct client overwrite (H2, L9)
+    data.pop("status", None)
+    data.pop("approved_by", None)
+    data.pop("approved_at", None)
+    data.pop("co2e", None)
+
+    if "facility_id" in data:
+        new_fid = int(data["facility_id"])
+        if not require_facility_access(user, new_fid):
+            return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
+        emission.facility_id = new_fid
     if "year" in data:
-        emission.year = data["year"]
+        emission.year = int(data["year"])
     if "category" in data:
         emission.category = data["category"]
     if "sub_category" in data:
         emission.sub_category = data["sub_category"]
+
+    recalc = False
     if "activity_data" in data:
-        emission.activity_data = data["activity_data"]
+        emission.activity_data = float(data["activity_data"] or 0)
+        recalc = True
     if "unit" in data:
         emission.unit = data["unit"]
     if "emission_factor" in data:
-        emission.emission_factor = data["emission_factor"]
-    if "co2e" in data:
-        emission.co2e = data["co2e"]
+        emission.emission_factor = float(data["emission_factor"] or 0)
+        recalc = True
+
+    if recalc:
+        # Recalculate co2e in tonnes: activity_data * emission_factor (if factor is kg/unit -> /1000)
+        ef = emission.emission_factor or 0.0
+        act = emission.activity_data or 0.0
+        emission.co2e = round((act * ef) / 1000.0, 4)
+
+        if emission.status == "Verified" and user.role != "admin":
+            emission.status = "Pending"
+            emission.approved_by = None
+            emission.approved_at = None
+
     if "uncertainty" in data:
-        emission.uncertainty = data["uncertainty"]
+        emission.uncertainty = float(data["uncertainty"] or 0)
     if "calculation_method" in data:
         emission.calculation_method = data["calculation_method"]
     if "data_quality" in data:
@@ -174,6 +265,9 @@ def update_scope3_emission(emission_id):
         emission.notes = data["notes"]
 
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
 
     return jsonify({"message": "Scope 3 emission updated"})
 
@@ -182,19 +276,24 @@ def update_scope3_emission(emission_id):
 @login_required
 def delete_scope3_emission(emission_id):
     """Delete a Scope 3 emission record"""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
-    emission = Scope3Emission.query.get(emission_id)
-    user = User.query.get(session.get("user_id"))
-    if user and user.role != "admin" and emission and emission.created_by != user.id:
-        return jsonify({"error": "Unauthorized"}), 403
+    emission = db.session.get(Scope3Emission, emission_id)
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
+    if not require_facility_access(user, emission.facility_id):
+        return jsonify({"error": "Unauthorized: Outside your region"}), 403
+
     db.session.delete(emission)
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
 
     return jsonify({"message": "Scope 3 emission deleted"})
 
@@ -203,14 +302,20 @@ def delete_scope3_emission(emission_id):
 @login_required
 def bulk_import_scope3():
     """Import Scope 3 emissions from CSV data"""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to upload emission data"}), 403
 
     data = request.get_json()
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
+
+    # Per D-04: bulk imports are Verified only if created by admin, otherwise Pending
+    bulk_status = "Verified" if user.role == "admin" else "Pending"
+    allowed_fids = get_allowed_facility_ids(user)
 
     imported_count = 0
     errors = []
@@ -277,7 +382,10 @@ def bulk_import_scope3():
                 emission_factor=ef,
                 co2e=co2e,
                 notes=rec.get("notes", "Bulk Imported"),
-                created_by=user_id,
+                created_by=user.id,
+                status=bulk_status,
+                approved_by=user.id if bulk_status == "Verified" else None,
+                approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
             )
             db.session.add(emission)
             imported_count += 1
@@ -285,6 +393,20 @@ def bulk_import_scope3():
             errors.append(f"Row {i}: {str(e)}")
 
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
+    if bulk_status in ("Pending", "Pending Approval") and imported_count > 0:
+        from models import Notification
+        admins = User.query.filter_by(role="admin", status="active").all()
+        for admin in admins:
+            Notification.create(
+                user_id=admin.id,
+                type="audit",
+                title="Scope 3 Bulk Upload Pending Review",
+                message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+            )
+        db.session.commit()
     return jsonify(
         {"message": f"Successfully imported {imported_count} records", "errors": errors}
     ), (200 if not errors else 207)

@@ -202,6 +202,23 @@ class TestCSVUploaderE2E(unittest.TestCase):
         self.assertEqual(row4.quantity, 12)
         self.assertEqual(row4.unit, "events")
 
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            Emission.query.filter(Emission.facility_id.in_([cls.fac_alpha.id, cls.fac_beta.id])).delete()
+            Facility.query.filter(Facility.id.in_([cls.fac_alpha.id, cls.fac_beta.id])).delete()
+            User.query.filter_by(email="uploader@test.com").delete()
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        cls.app_context.pop()
+        if os.path.exists(cls.db_file):
+            try:
+                os.remove(cls.db_file)
+            except Exception:
+                pass
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+

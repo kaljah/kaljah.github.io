@@ -17,6 +17,110 @@ from .uncertainty import (
 )
 
 
+def _normalize_unit_str(u):
+    if not u:
+        return ""
+    return (
+        str(u)
+        .replace("\u00c2", "")
+        .replace("\u00b3", "3")
+        .replace("^", "")
+        .replace(" ", "")
+        .lower()
+    )
+
+
+def convert_factor_to_kg_per_unit(
+    value, factor_unit, activity_unit, hhv=None, fuel_type=None
+):
+    if value is None:
+        return 0.0
+    try:
+        val = float(value)
+    except (ValueError, TypeError):
+        return 0.0
+    if val == 0:
+        return 0.0
+
+    f_unit = _normalize_unit_str(factor_unit or "")
+    a_unit = _normalize_unit_str(activity_unit or "")
+
+    if not f_unit or f_unit in [a_unit, "kg/unit", "unit"]:
+        return val
+
+    # Normalize numerator to kg
+    if f_unit.startswith("lb"):
+        val *= 0.453592
+    elif f_unit.startswith("tonne") or f_unit.startswith("metric_ton") or f_unit.startswith("t/"):
+        val *= 1000.0
+    elif f_unit.startswith("g/"):
+        val /= 1000.0
+
+    # Extract denominator
+    factor_denom = f_unit.split("/")[1] if "/" in f_unit else f_unit
+
+    # Handle Energy-based factor denominator (e.g. kg/MMBtu)
+    if "mmbtu" in factor_denom or "mm_btu" in factor_denom:
+        if a_unit in ["mmbtu", "mm_btu"]:
+            return val
+        if a_unit in ["gj", "gigajoule", "gigajoules"]:
+            return val * 0.947817
+        if a_unit in ["therm", "therms"]:
+            return val * 0.1
+        if a_unit in ["scf", "cf", "ft3"]:
+            return val * ((hhv or 1020.0) / 1_000_000.0)
+        if a_unit in ["m3", "cubic_meters", "m3"]:
+            if fuel_type == "liquids":
+                return val * (264.172 * (hhv or 138000.0) / 1_000_000.0)
+            else:
+                return val * (35.3147 * (hhv or 1020.0) / 1_000_000.0)
+        if a_unit in ["mscf", "mcf"]:
+            return val * (1000.0 * (hhv or 1020.0) / 1_000_000.0)
+        if a_unit in ["mmscf"]:
+            return val * (1_000_000.0 * (hhv or 1020.0) / 1_000_000.0)
+        if a_unit in ["gal", "gallon", "gallons"]:
+            return val * ((hhv or 138000.0) / 1_000_000.0)
+        if a_unit in ["bbl", "barrel", "barrels"]:
+            return val * (42.0 * (hhv or 138000.0) / 1_000_000.0)
+        if a_unit in ["l", "liter", "liters"]:
+            return val * (0.264172 * (hhv or 138000.0) / 1_000_000.0)
+        return val * ((hhv or 1020.0) / 1_000_000.0)
+
+    # Physical denominator conversions relative to standard reference volume (m3) or mass (kg)
+    conv = {
+        "m3": 1.0,
+        "cubic_meters": 1.0,
+        "scf": 35.3147,
+        "cf": 35.3147,
+        "ft3": 35.3147,
+        "mscf": 0.0353147,
+        "mcf": 0.0353147,
+        "mmscf": 3.53147e-5,
+        "gal": 264.172,
+        "gallon": 264.172,
+        "gallons": 264.172,
+        "l": 1000.0,
+        "liter": 1000.0,
+        "liters": 1000.0,
+        "bbl": 264.172 / 42.0,
+        "barrel": 264.172 / 42.0,
+        "barrels": 264.172 / 42.0,
+        "kg": 1.0,
+        "lb": 2.20462,
+        "tonne": 0.001,
+        "tonnes": 0.001,
+        "ton": 0.00110231,
+        "tons": 0.00110231,
+    }
+
+    f = conv.get(factor_denom)
+    a = conv.get(a_unit)
+    if f is not None and a is not None:
+        return val * (f / a)
+
+    return val
+
+
 class CombustionCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Stationary Combustion", "Section 5.1")
@@ -70,48 +174,22 @@ class CombustionCalculator(BaseCalculator):
             )
             raw_quantity = normalized_gas_vol
 
-        # Normalize quantity to the unit expected by HHV (usually scf for gas, gal for liquid)
-        normalized_quantity = raw_quantity
         u = str(fuel_unit).lower()
-        if u in ["m3", "cubic_meters", "m³"]:
-            if fuel_type == "liquids":
-                normalized_quantity = raw_quantity * CONVERSIONS.get(
-                    "m3_to_gal", 264.172
-                )
-            else:
-                normalized_quantity = raw_quantity * CONVERSIONS.get(
-                    "m3_to_scf", 35.3147
-                )
-        elif u in ["mmscf"]:
-            # 1 MMscf = 1,000,000 scf
-            normalized_quantity = raw_quantity * 1_000_000.0
-        elif u in ["mscf"]:
-            # 1 Mscf = 1,000 scf
-            normalized_quantity = raw_quantity * 1_000.0
-        elif u in ["l", "liter", "liters"]:
-            normalized_quantity = raw_quantity * CONVERSIONS.get("l_to_gal", 0.264172)
-        elif u in ["bbl", "barrel", "barrels"]:
-            normalized_quantity = raw_quantity * 42.0
-        elif u in ["ton", "short_ton", "tons"]:
-            normalized_quantity = raw_quantity * 2000.0  # lb
-        elif u in ["tonne", "metric_ton", "tonnes"]:
-            normalized_quantity = raw_quantity * 2204.62  # lb
-        elif u in ["kg", "kilogram"]:
-            normalized_quantity = raw_quantity * 2.20462  # lb
 
-        # Determine energy factor
-        # If EF is energy-based (MMBtu), we need to multiply by HHV (Btu/unit) and divide by 1e6
-        energy_factor = 1.0
-        ef_u_lower = str(ef_unit).lower()
+        # Convert EFs to kg per activity unit (unit-aware normalisation)
+        kg_per_unit_co2 = convert_factor_to_kg_per_unit(
+            ef_co2, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
+        )
+        kg_per_unit_ch4 = convert_factor_to_kg_per_unit(
+            ef_ch4, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
+        )
+        kg_per_unit_n2o = convert_factor_to_kg_per_unit(
+            ef_n2o, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
+        )
 
-        if "mmbtu" in ef_u_lower:
-            energy_factor = (hhv or 1020.0) / 1_000_000.0
-
-        # Calculate raw values in kg
-        # Note: In Tier 1/2 combustion, standard published EFs already incorporate unburned fractions.
-        co2_kg = normalized_quantity * energy_factor * ef_co2
-        ch4_kg = normalized_quantity * energy_factor * ef_ch4
-        n2o_kg = normalized_quantity * energy_factor * ef_n2o
+        co2_kg = raw_quantity * kg_per_unit_co2
+        ch4_kg = raw_quantity * kg_per_unit_ch4
+        n2o_kg = raw_quantity * kg_per_unit_n2o
 
         # Convert kg to tonnes
         co2_val = co2_kg / 1000.0
@@ -276,15 +354,19 @@ class FlaringCalculator(BaseCalculator):
         )
 
         # Determine efficiencies based on flare type
-        if flare_type == "enclosed_ground":
+        ft = str(flare_type or "elevated").lower().strip().replace("-", "_").replace(" ", "_")
+        if ft in ["enclosed", "enclosed_ground", "ground"]:
             eta_c = 0.996
             eta_d = 0.995  # Higher for enclosed
-        elif flare_type == "elevated":
+        elif ft in ["elevated", "steam_assisted", "air_assisted", "unassisted", "flare", "open"]:
             eta_c = 0.984
             eta_d = 0.98
-        else:  # pit/other
+        elif ft in ["pit", "open_pit", "other", "candle"]:
             eta_c = 0.920
             eta_d = 0.95
+        else:
+            eta_c = 0.984
+            eta_d = 0.98
 
         # Normalize gas volume if actual temperature/pressure supplied
         vol_std = gas_volume
@@ -335,9 +417,9 @@ class FlaringCalculator(BaseCalculator):
             + c_fractions["c10"] * 10
         )
 
-        # Calculate Combusted CO2
+        # Calculate Combusted CO2 per API Compendium (2021) Eq. 5-4
         density_co2 = CONVERSIONS.get("density_co2", 1.861)
-        co2_combusted_vol = vol_std * total_carbon_moles_per_mole_gas * eta_c * eta_d
+        co2_combusted_vol = vol_std * total_carbon_moles_per_mole_gas * eta_c
         co2_combusted_kg = co2_combusted_vol * density_co2
 
         # Add Native Uncombusted CO2 passing through the flare

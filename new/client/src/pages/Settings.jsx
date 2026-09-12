@@ -170,32 +170,46 @@ const Settings = () => {
     applyThemeLive("light");
   };
 
+  const isAdmin =
+    user?.role === "admin" ||
+    user?.role === "superuser" ||
+    user?.role === "it_admin";
+
   const handleSaveGlobal = async () => {
+    if (!isAdmin) {
+      toast.error("Administrator privileges required to modify system settings.");
+      return;
+    }
     try {
       setSaving(true);
-      await api.post("/auth/settings", {
+      const payload = {
         gwp_standard: gwpStandard,
         ogmp_default_base_year: Number(defaultBaseYear),
         reconciliation_threshold: Number(globalThreshold),
         ogmp_upstream_target_pct: Number(upstreamTarget),
         ogmp_midstream_target_pct: Number(midstreamTarget),
         copernicus_username: copernicusUsername,
-        copernicus_password: copernicusPassword,
         copernicus_client_id: copernicusClientId,
-        copernicus_client_secret: copernicusClientSecret,
         copernicus_qa_threshold: Number(copernicusQaThreshold),
         copernicus_enabled: Boolean(copernicusEnabled),
         theme: "light",
         unit_system: unitSystem,
         auto_flag_discrepancy: autoFlagDiscrepancy,
-      });
+      };
+      if (copernicusPassword && copernicusPassword !== "********") {
+        payload.copernicus_password = copernicusPassword;
+      }
+      if (copernicusClientSecret && copernicusClientSecret !== "********") {
+        payload.copernicus_client_secret = copernicusClientSecret;
+      }
+      await api.post("/auth/settings", payload);
       applyThemeLive("light");
       toast.success(
         "System settings and Copernicus credentials saved successfully!",
       );
     } catch (err) {
       console.error("Save failed:", err);
-      toast.error("Error saving settings");
+      toast.error(err?.response?.data?.message || err?.response?.data?.error || "Error saving settings");
     } finally {
       setSaving(false);
     }
@@ -209,11 +223,15 @@ const Settings = () => {
         authMode === "password"
           ? {
               copernicus_username: copernicusUsername,
-              copernicus_password: copernicusPassword,
+              ...(copernicusPassword && copernicusPassword !== "********"
+                ? { copernicus_password: copernicusPassword }
+                : {}),
             }
           : {
               copernicus_client_id: copernicusClientId,
-              copernicus_client_secret: copernicusClientSecret,
+              ...(copernicusClientSecret && copernicusClientSecret !== "********"
+                ? { copernicus_client_secret: copernicusClientSecret }
+                : {}),
             };
 
       const res = await api.post(
@@ -261,6 +279,10 @@ const Settings = () => {
   };
 
   const handleSaveFacility = async (facId) => {
+    if (user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser")) {
+      toast.error("Administrator privileges required to update facility settings.");
+      return;
+    }
     try {
       const data = facilityEdits[facId];
       await api.put(`/facilities/${facId}`, {
@@ -272,7 +294,7 @@ const Settings = () => {
       toast.success("Facility OGMP settings updated!");
     } catch (err) {
       console.error("Facility save failed:", err);
-      toast.error("Failed to update facility");
+      toast.error(err?.response?.data?.message || err?.response?.data?.error || "Failed to update facility");
     }
   };
 
@@ -307,7 +329,8 @@ const Settings = () => {
             <button
               className="btn-save-primary"
               onClick={handleSaveGlobal}
-              disabled={saving}
+              disabled={saving || !isAdmin}
+              title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
               id="save-settings-btn"
             >
               {saving ? (
@@ -361,6 +384,29 @@ const Settings = () => {
           </button>
         </div>
       </div>
+
+      {!isAdmin && (
+        <div
+          className="settings-readonly-alert"
+          style={{
+            background: "#eff6ff",
+            border: "1px solid #bfdbfe",
+            color: "#1e40af",
+            padding: "12px 18px",
+            borderRadius: "10px",
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            fontSize: "0.92rem",
+          }}
+        >
+          <AlertCircle size={20} color="#2563eb" style={{ flexShrink: 0 }} />
+          <span>
+            <strong>Read-Only Mode:</strong> System methodologies (IPCC GWP standards, OGMP reconciliation parameters, and Copernicus satellite credentials) are centrally managed. Updates require an Administrator account.
+          </span>
+        </div>
+      )}
 
       {/* TAB CONTENT: GWP Standards */}
       {activeTab === "gwp" && (
@@ -672,7 +718,8 @@ const Settings = () => {
             <button
               className="btn-primary"
               onClick={handleSaveGlobal}
-              disabled={saving}
+              disabled={saving || !isAdmin}
+              title={!isAdmin ? "Administrator privileges required to modify settings" : "Save changes"}
               id="save-ogmp-settings-btn"
               style={{
                 display: "flex",
@@ -814,7 +861,8 @@ const Settings = () => {
                         <button
                           className="btn-table-save"
                           onClick={() => handleSaveFacility(fac.id)}
-                          title="Save Facility Settings"
+                          disabled={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser")}
+                          title={user?.role === "it_admin" || (user?.role !== "admin" && user?.role !== "superuser") ? "Administrator privileges required to update facility" : "Save Facility Settings"}
                         >
                           <Save size={13} />
                           <span>Save</span>
@@ -1179,7 +1227,8 @@ const Settings = () => {
             <button
               className="btn-primary"
               onClick={handleSaveGlobal}
-              disabled={saving}
+              disabled={saving || !isAdmin}
+              title={!isAdmin ? "Administrator privileges required to modify settings" : "Save settings"}
               id="save-satellite-settings-btn"
               style={{
                 display: "flex",

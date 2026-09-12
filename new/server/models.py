@@ -151,7 +151,7 @@ class Emission(db.Model):
     uncertainty_n2o = db.Column(db.Float, nullable=True)  # N₂O uncertainty
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
     qa_flag = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(20), default="Verified", index=True)
+    status = db.Column(db.String(20), default="Pending", index=True)
 
     facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
     facility = db.relationship("Facility", overlaps="emissions,facility_parent")
@@ -359,7 +359,7 @@ class Scope2Emission(db.Model):
     field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / Pétrochimie
 
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    status = db.Column(db.String(20), default="Verified", index=True)
+    status = db.Column(db.String(20), default="Pending", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
@@ -390,7 +390,7 @@ class Scope3Emission(db.Model):
     data_quality = db.Column(db.String(50))
     notes = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    status = db.Column(db.String(20), default="Verified", index=True)
+    status = db.Column(db.String(20), default="Pending", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)

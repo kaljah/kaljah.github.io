@@ -5,8 +5,9 @@ import { useToast } from "./Toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
-import Scope2ImportWizard from "./Scope2ImportWizard";
-import { Upload, Copy, Trash2 } from "lucide-react";
+import { Upload, Copy, Trash2, Eye } from "lucide-react";
+import EmissionResult from "./EmissionResult";
+import CalculationDetails from "./CalculationDetails";
 import "./ScopeTables.css";
 
 const Scope2Form = () => {
@@ -37,6 +38,10 @@ const Scope2Form = () => {
   const [powerOutput, setPowerOutput] = useState("");
   const [allocationMethod, setAllocationMethod] = useState("wri_efficiency");
   const [cogenResults, setCogenResults] = useState(null);
+
+  // Result and Inspect Modals
+  const [calculationResult, setCalculationResult] = useState(null);
+  const [inspectRecord, setInspectRecord] = useState(null);
 
   const [facilities, setFacilities] = useState([]);
   const [gridFactors, setGridFactors] = useState([]);
@@ -193,12 +198,15 @@ const Scope2Form = () => {
         };
       }
 
-      await api.post("/scope2", payload);
+      const res = await api.post("/scope2", payload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
           : "Scope 2 entry added successfully",
       );
+      if (res.data?.emissions) {
+        setCalculationResult(res.data);
+      }
       setAmount("");
       setCurrentPage(1);
       loadEntries();
@@ -206,6 +214,61 @@ const Scope2Form = () => {
       console.error("Failed to add entry:", error);
       toast.error("Failed to add Scope 2 entry");
     }
+  };
+
+  const handleInspect = (entry) => {
+    const isElectricity = entry.source_type === "electricity";
+    const amountVal = isElectricity
+      ? entry.electricity_kwh
+      : entry.heat_mmbtu || entry.co2e || 0;
+    const unitVal = isElectricity
+      ? "kWh"
+      : entry.source_type === "indirect_steam"
+        ? "MMBtu"
+        : "tCO₂e";
+
+    setInspectRecord({
+      process_type: `Scope 2 - ${
+        entry.source_type === "electricity"
+          ? "Purchased Electricity"
+          : entry.source_type === "indirect_steam"
+            ? "Indirect Steam / Heat"
+            : "CHP / Cogen Allocation"
+      }`,
+      fuel: entry.grid_region || entry.source_type || "Grid Electricity",
+      amount: amountVal,
+      unit: unitVal,
+      emissions: {
+        totalCo2e: entry.co2e || 0,
+        co2: entry.co2e || 0,
+        ch4: 0,
+        n2o: 0,
+      },
+      factors: {
+        co2: entry.emission_factor || 0,
+        ch4: 0,
+        n2o: 0,
+      },
+      method:
+        entry.calculation_method ||
+        (isElectricity ? "Location-Based Grid EF" : "Energy Allocation"),
+      steps: [
+        {
+          name: "Activity Normalization",
+          desc: `Input: ${formatNumber(amountVal, 2)} ${unitVal} (${entry.grid_region || "Facility Level"})`,
+        },
+        {
+          name: "Grid / Steam Emission Factor",
+          desc: `Applied Factor: ${entry.emission_factor || 0} kg CO₂e / ${unitVal}`,
+        },
+        {
+          name: "Emissions Calculation",
+          desc: isElectricity
+            ? `(${formatNumber(amountVal, 2)} kWh × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e, 3)} tCO₂e`
+            : `Total Calculated Emissions = ${formatNumber(entry.co2e, 3)} tCO₂e`,
+        },
+      ],
+    });
   };
 
   const handleImportSuccess = () => {
@@ -228,10 +291,14 @@ const Scope2Form = () => {
   const handleDuplicate = (entry) => {
     setYear(entry.year);
     setMonth(entry.month);
-    setFacilityId(entry.facility_id.toString());
-    setGridRegion(entry.grid_region);
-    setAmount(entry.electricity_kwh.toString());
-    setUnit("kWh");
+    setFacilityId(entry.facility_id ? entry.facility_id.toString() : "");
+    setGridRegion(entry.grid_region || "");
+    const val = entry.electricity_kwh ?? entry.heat_mmbtu ?? entry.co2e ?? "";
+    setAmount(
+      val !== "" && val !== null && val !== undefined ? val.toString() : "",
+    );
+    setUnit(entry.source_type === "indirect_steam" ? "mmbtu" : "kWh");
+    setSourceType(entry.source_type || "electricity");
     // Scroll to top
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -434,7 +501,7 @@ const Scope2Form = () => {
         {/* 3. ACTIVITY DATA */}
         <div style={{ marginBottom: "10px" }}>
           <h4 className="section-title">3. ACTIVITY DATA</h4>
-          <div className="form-grid-3">
+          <div className="form-grid-2">
             <div className="input-group">
               <label>
                 {sourceType === "cogen_allocation"
@@ -471,24 +538,31 @@ const Scope2Form = () => {
                 onChange={setUnit}
               />
             </div>
-            <div className="input-group">
-              <label style={{ visibility: "hidden" }}>Align</label>
-              <button
-                className="btn-add-activity"
-                onClick={() => handleAddEntry("Verified")}
-                style={{
-                  width: "100%",
-                  height: "38px",
-                  borderRadius: "6px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Calculate
-              </button>
-            </div>
           </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            marginTop: "24px",
+            justifyContent: "flex-end",
+          }}
+        >
+          <button
+            className="action-btn secondary"
+            onClick={() => handleAddEntry("Draft")}
+            style={{ padding: "10px 20px" }}
+          >
+            Save as Draft (Maker Mode)
+          </button>
+          <button
+            className="btn-add-activity"
+            onClick={() => handleAddEntry("Verified")}
+            style={{ padding: "10px 24px" }}
+          >
+            + Calculate & Submit for Review
+          </button>
         </div>
       </div>
 
@@ -639,18 +713,47 @@ const Scope2Form = () => {
                         {entry.uncertainty != null
                           ? `${formatNumber(entry.uncertainty * 1.96 * 100, 1)}%`
                           : "—"}
-                        {entry.status === "Draft" && (
+                        {entry.status === "Draft" ? (
                           <span
                             style={{
                               marginLeft: "8px",
                               fontSize: "0.65rem",
                               background: "#fee2e2",
                               color: "#b91c1c",
-                              padding: "1px 5px",
+                              padding: "2px 6px",
                               borderRadius: "4px",
+                              fontWeight: 600,
                             }}
                           >
                             Draft
+                          </span>
+                        ) : (entry.status === "Pending Approval" || entry.status === "Pending") ? (
+                          <span
+                            style={{
+                              marginLeft: "8px",
+                              fontSize: "0.65rem",
+                              background: "#fef3c7",
+                              color: "#d97706",
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Pending
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              marginLeft: "8px",
+                              fontSize: "0.65rem",
+                              background: "#dcfce7",
+                              color: "#15803d",
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Verified
                           </span>
                         )}
                       </td>
@@ -662,6 +765,14 @@ const Scope2Form = () => {
                             gap: "8px",
                           }}
                         >
+                          <button
+                            className="icon-button"
+                            onClick={() => handleInspect(entry)}
+                            title="Inspect Calculation Details"
+                            style={{ color: "#3b82f6" }}
+                          >
+                            <Eye size={16} />
+                          </button>
                           <button
                             className="icon-button"
                             onClick={() => handleDuplicate(entry)}
@@ -741,6 +852,20 @@ const Scope2Form = () => {
             loadEntries();
             toast.success("Bulk import completed successfully");
           }}
+        />
+      )}
+
+      {calculationResult && (
+        <EmissionResult
+          result={calculationResult}
+          onClose={() => setCalculationResult(null)}
+        />
+      )}
+
+      {inspectRecord && (
+        <CalculationDetails
+          calculation={inspectRecord}
+          onClose={() => setInspectRecord(null)}
         />
       )}
     </div>

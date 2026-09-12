@@ -58,6 +58,8 @@ const MethaneIntensity = () => {
   const [stats, setStats] = useState({
     avgCh4Intensity: 0,
     avgMethaneLossRatePct: 0,
+    upstreamLossRatePct: 0,
+    midstreamLossRatePct: 0,
     avgFlaringRatePct: 0,
     totalCh4Emissions: 0,
     totalCh4VolumeM3: 0,
@@ -78,13 +80,6 @@ const MethaneIntensity = () => {
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const isFirstLoadRef = useRef(true);
-
-  const HIERARCHY = {
-    EP: ["Production", "Association"],
-    LQS: ["LSH"],
-    RPC: ["Raffinage", "Petrochimie"],
-    TRC: ["Make"],
-  };
 
   // Initial load
   useEffect(() => {
@@ -129,7 +124,11 @@ const MethaneIntensity = () => {
           setAvailableYears(["2023", "2024", "2025", "2026"]);
         }
         if (filterRes.data && filterRes.data.segments) {
-          setAvailableSegments(filterRes.data.segments);
+          const VALID_SUPPLY_CHAIN = ["upstream", "midstream", "downstream"];
+          const filteredSegments = filterRes.data.segments.filter(s =>
+            VALID_SUPPLY_CHAIN.includes(String(s).trim().toLowerCase())
+          );
+          setAvailableSegments(filteredSegments.length > 0 ? filteredSegments : ["Downstream", "Midstream", "Upstream"]);
         }
         setSelectedYear("all");
       } catch (error) {
@@ -157,7 +156,7 @@ const MethaneIntensity = () => {
     if (selectedYear) {
       loadTrendData(selectedYear);
     }
-  }, [selectedYear, currentActivity, currentDivision, currentSegment]);
+  }, [selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);
 
   const loadMethaneData = async () => {
     try {
@@ -190,15 +189,34 @@ const MethaneIntensity = () => {
         tCh4Tonnes = 0,
         tWecFee = 0;
 
+      let upGasM3 = 0,
+        upCh4Tonnes = 0;
+      let midGasM3 = 0,
+        midCh4Tonnes = 0;
+
       data.forEach((d) => {
         const boe = d.total_boe || 0;
+        const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
+        const ch4Tonnes = d.total_ch4 || 0;
+        // Use stored Facility.segment — exact match: "Upstream", "Midstream", or "Downstream".
+        const seg = (d.segment || "").trim().toLowerCase();
+
         tOil += d.total_oil || 0;
         tGasMscf += d.total_gas || 0;
-        tGasM3 += d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
+        tGasM3 += gasM3;
         tFlaringVol += d.flaring_volume || 0;
         tFlaringEm += d.flaring_emissions || 0;
-        tCh4Tonnes += d.total_ch4 || 0;
+        tCh4Tonnes += ch4Tonnes;
         tWecFee += d.wec_fee_usd || 0;
+        if (seg === "midstream") {
+          midGasM3 += gasM3;
+          midCh4Tonnes += ch4Tonnes;
+        } else if (seg === "upstream") {
+          upGasM3 += gasM3;
+          upCh4Tonnes += ch4Tonnes;
+        }
+        // "downstream" and unclassified records are intentionally excluded
+        // from methane loss rate calculations.
 
         if (boe > 0) {
           wCh4Sum += (d.ch4_intensity || 0) * boe;
@@ -210,16 +228,37 @@ const MethaneIntensity = () => {
       const totalCh4VolM3 = (tCh4Tonnes * 1000.0) / 0.6785;
       const avgLossRatePct =
         tGasM3 > 0 ? (totalCh4VolM3 / tGasM3) * 100.0 : 0.0;
+
+      const upCh4VolM3 = (upCh4Tonnes * 1000.0) / 0.6785;
+      const midCh4VolM3 = (midCh4Tonnes * 1000.0) / 0.6785;
+      const upstreamLossRatePct =
+        upGasM3 > 0 ? (upCh4VolM3 / upGasM3) * 100.0 : 0.0;
+      const midstreamLossRatePct =
+        midGasM3 > 0 ? (midCh4VolM3 / midGasM3) * 100.0 : 0.0;
+
       const avgFlaringRatePct =
         tGasM3 > 0 ? (tFlaringVol / tGasM3) * 100.0 : 0.0;
 
       let goldStatus = "Compliant";
-      if (avgLossRatePct > 0.25) goldStatus = "Non-Compliant";
-      else if (avgLossRatePct > 0.2) goldStatus = "Warning";
+      if (
+        (upGasM3 > 0 && upstreamLossRatePct > upstreamTargetPct * 1.25) ||
+        (midGasM3 > 0 && midstreamLossRatePct > midstreamTargetPct * 1.25) ||
+        (tGasM3 > 0 && avgLossRatePct > upstreamTargetPct * 1.25)
+      ) {
+        goldStatus = "Non-Compliant";
+      } else if (
+        (upGasM3 > 0 && upstreamLossRatePct > upstreamTargetPct) ||
+        (midGasM3 > 0 && midstreamLossRatePct > midstreamTargetPct) ||
+        (tGasM3 > 0 && avgLossRatePct > upstreamTargetPct)
+      ) {
+        goldStatus = "Warning";
+      }
 
       setStats({
         avgCh4Intensity: tBoe > 0 ? wCh4Sum / tBoe : 0,
         avgMethaneLossRatePct: avgLossRatePct,
+        upstreamLossRatePct: upstreamLossRatePct,
+        midstreamLossRatePct: midstreamLossRatePct,
         avgFlaringRatePct: avgFlaringRatePct,
         totalCh4Emissions: tCh4Tonnes,
         totalCh4VolumeM3: totalCh4VolM3,
@@ -251,6 +290,10 @@ const MethaneIntensity = () => {
         params.append("facilityId", currentRegion);
       if (currentSegment && currentSegment !== "all")
         params.append("segment", currentSegment);
+      if (currentActivity && currentActivity !== "all")
+        params.append("activity", currentActivity);
+      if (currentDivision && currentDivision !== "all")
+        params.append("division", currentDivision);
       const res = await api
         .get(`/data/ogmp-surveys?${params}`)
         .catch(() => ({ data: [] }));
@@ -270,6 +313,10 @@ const MethaneIntensity = () => {
         params.append("facilityId", currentRegion);
       if (currentSegment && currentSegment !== "all")
         params.append("segment", currentSegment);
+      if (currentActivity && currentActivity !== "all")
+        params.append("activity", currentActivity);
+      if (currentDivision && currentDivision !== "all")
+        params.append("division", currentDivision);
       const res = await api
         .get(`/dashboard/ogmp-metrics?${params}`)
         .catch(() => ({ data: {} }));
@@ -312,12 +359,18 @@ const MethaneIntensity = () => {
     for (let i = 4; i >= 0; i--) years.push(yearInt - i);
 
     try {
-      const params = new URLSearchParams({
-        activity: currentActivity,
-        division: currentDivision,
-      });
-      if (currentSegment !== "all") {
+      const params = new URLSearchParams();
+      if (currentActivity && currentActivity !== "all") {
+        params.append("activity", currentActivity);
+      }
+      if (currentDivision && currentDivision !== "all") {
+        params.append("division", currentDivision);
+      }
+      if (currentSegment && currentSegment !== "all") {
         params.append("segment", currentSegment);
+      }
+      if (currentRegion && currentRegion !== "all") {
+        params.append("facilityId", currentRegion);
       }
       params.append("years", years.join(","));
       const res = await api
@@ -336,7 +389,20 @@ const MethaneIntensity = () => {
     try {
       setExporting(true);
       const yr = selectedYear !== "all" ? selectedYear : "2024";
-      const res = await api.get(`/reports/ogmp-export?year=${yr}`, {
+      const params = new URLSearchParams({ year: yr });
+      if (currentRegion && currentRegion !== "all") {
+        params.append("facility_id", currentRegion);
+      }
+      if (currentSegment && currentSegment !== "all") {
+        params.append("segment", currentSegment);
+      }
+      if (currentActivity && currentActivity !== "all") {
+        params.append("activity", currentActivity);
+      }
+      if (currentDivision && currentDivision !== "all") {
+        params.append("division", currentDivision);
+      }
+      const res = await api.get(`/reports/ogmp-export?${params.toString()}`, {
         responseType: "blob",
       });
       const blob = new Blob([res.data], {
@@ -523,12 +589,41 @@ const MethaneIntensity = () => {
         tBoe = 0,
         tGasM3 = 0,
         tCh4VolM3 = 0;
+      let upGas = 0,
+        upCh4 = 0;
+      let midGas = 0,
+        midCh4 = 0;
+
       yearData.forEach((d) => {
         const boe = d.total_boe || 0;
         const gasM3 = d.total_gas_m3 || (d.total_gas || 0) * 28.3168;
         const ch4Tonnes = d.total_ch4 || 0;
+        const volM3 = (ch4Tonnes * 1000.0) / 0.6785;
+        const seg = (d.segment || "").trim().toLowerCase();
+
         tGasM3 += gasM3;
-        tCh4VolM3 += (ch4Tonnes * 1000.0) / 0.6785;
+        tCh4VolM3 += volM3;
+
+        if (
+          seg === "midstream" ||
+          seg.includes("midstream") ||
+          seg.includes("processing") ||
+          seg.includes("lng") ||
+          seg.includes("lsh") ||
+          seg.includes("gnl") ||
+          seg.includes("gpl")
+        ) {
+          midGas += gasM3;
+          midCh4 += volM3;
+        } else if (
+          seg === "upstream" ||
+          seg.includes("upstream") ||
+          seg.includes("production") ||
+          seg.includes("exploration")
+        ) {
+          upGas += gasM3;
+          upCh4 += volM3;
+        }
 
         if (boe > 0) {
           wCh4 += (d.ch4_intensity || 0) * boe;
@@ -537,15 +632,20 @@ const MethaneIntensity = () => {
       });
 
       const lossRate = tGasM3 > 0 ? (tCh4VolM3 / tGasM3) * 100.0 : 0.0;
+      const upLossRate = upGas > 0 ? (upCh4 / upGas) * 100.0 : 0.0;
+      const midLossRate = midGas > 0 ? (midCh4 / midGas) * 100.0 : 0.0;
 
       return {
         year: item.year,
         ch4_intensity: tBoe > 0 ? wCh4 / tBoe : 0,
         loss_rate_pct: lossRate,
-        target_020: 0.2,
+        loss_rate_upstream_pct: upLossRate,
+        loss_rate_midstream_pct: midLossRate,
+        target_020: upstreamTargetPct,
+        target_005: midstreamTargetPct,
       };
     });
-  }, [rawTrendData, currentRegion]);
+  }, [rawTrendData, currentRegion, upstreamTargetPct, midstreamTargetPct]);
 
   const getHeatmapClass = (val) => {
     if (val === null || val === 0) return "heat-null";
@@ -589,7 +689,7 @@ const MethaneIntensity = () => {
                   borderColor: "rgba(37, 99, 235, 0.2)",
                 }}
               >
-                {selectedYear} Performance
+                {selectedYear === "all" ? "All-Time" : selectedYear} Performance
               </div>
             </div>
 
@@ -605,10 +705,22 @@ const MethaneIntensity = () => {
                 background:
                   stats.ogmpGoldStatus === "Compliant"
                     ? "rgba(16, 185, 129, 0.1)"
+                    : stats.ogmpGoldStatus === "Warning"
+                    ? "rgba(245, 158, 11, 0.1)"
                     : "rgba(239, 68, 68, 0.1)",
-                border: `1px solid ${stats.ogmpGoldStatus === "Compliant" ? "#10b981" : "#ef4444"}`,
+                border: `1px solid ${
+                  stats.ogmpGoldStatus === "Compliant"
+                    ? "#10b981"
+                    : stats.ogmpGoldStatus === "Warning"
+                    ? "#f59e0b"
+                    : "#ef4444"
+                }`,
                 color:
-                  stats.ogmpGoldStatus === "Compliant" ? "#10b981" : "#ef4444",
+                  stats.ogmpGoldStatus === "Compliant"
+                    ? "#10b981"
+                    : stats.ogmpGoldStatus === "Warning"
+                    ? "#f59e0b"
+                    : "#ef4444",
                 fontWeight: 600,
                 fontSize: "0.85rem",
               }}
@@ -677,13 +789,101 @@ const MethaneIntensity = () => {
                 >
                   {(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%
                 </span>
-                <span className="kpi-unit">of Gas Volume</span>
+                <span className="kpi-unit">Overall Avg</span>
               </div>
+
+              {/* Upstream & Midstream Segment Loss Rates */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "6px",
+                  margin: "8px 0 6px 0",
+                  padding: "6px 8px",
+                  background: "var(--bg-secondary, rgba(255,255,255,0.03))",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border-color, #e5e7eb)",
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "var(--text-secondary)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Upstream
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.95rem",
+                      fontWeight: 700,
+                      color:
+                        stats.upstreamLossRatePct <= upstreamTargetPct
+                          ? "#10b981"
+                          : "#ef4444",
+                    }}
+                  >
+                    {(stats.upstreamLossRatePct ?? 0).toFixed(3)}%
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.68rem",
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    Target &le; {upstreamTargetPct.toFixed(2)}%
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    borderLeft: "1px solid var(--border-color, #e5e7eb)",
+                    paddingLeft: "8px",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "var(--text-secondary)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Midstream
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.95rem",
+                      fontWeight: 700,
+                      color:
+                        stats.midstreamLossRatePct <= midstreamTargetPct
+                          ? "#10b981"
+                          : "#ef4444",
+                    }}
+                  >
+                    {(stats.midstreamLossRatePct ?? 0).toFixed(3)}%
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.68rem",
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    Target &le; {midstreamTargetPct.toFixed(2)}%
+                  </div>
+                </div>
+              </div>
+
               <div className="kpi-footer">
                 <span>
-                  Target:{" "}
+                  OGMP 2.0:{" "}
                   <strong>
-                    &le; {upstreamTargetPct.toFixed(2)}% (Upstream)
+                    &le;{upstreamTargetPct.toFixed(2)}% Up / &le;{midstreamTargetPct.toFixed(2)}% Mid
                   </strong>
                 </span>
                 <span>
@@ -875,28 +1075,32 @@ const MethaneIntensity = () => {
 
                   const matchedSurvey = ogmpSurveys.find(
                     (s) =>
-                      (s.facilityId || s.facility_id) ===
-                        (fac.facility_id || fac.id) ||
+                      String(s.facilityId || s.facility_id) ===
+                        String(fac.facility_id || fac.id) ||
                       (s.facility_name || s.facilityName) === facName,
                   );
-                  const highestLevel =
-                    fac.highest_ogmp_level ||
-                    fac.current_ogmp_level ||
-                    (matchedSurvey ? 5 : 3);
-                  const isReconciled = fac.is_reconciled || highestLevel >= 5;
+                  const threshold = Number(
+                    fac.reconciliation_threshold ?? globalThreshold ?? 20.0,
+                  );
                   const variancePct =
                     fac.reconciliation_variance_pct ??
                     fac.variance_pct ??
                     (matchedSurvey
-                      ? (matchedSurvey.reconciliation_variance_pct ?? 14.5)
+                      ? (matchedSurvey.reconciliation_variance_pct ?? matchedSurvey.variance_pct ?? null)
                       : null);
-                  const threshold = Number(
-                    fac.reconciliation_threshold ?? globalThreshold ?? 20.0,
-                  );
                   const passThreshold =
                     variancePct !== null
                       ? Math.abs(variancePct) <= threshold
-                      : true;
+                      : false;
+
+                  const highestLevel =
+                    fac.highest_ogmp_level ||
+                    fac.current_ogmp_level ||
+                    (matchedSurvey && passThreshold ? 5 : matchedSurvey ? 4 : 3);
+                  const isReconciled =
+                    fac.is_reconciled !== undefined
+                      ? fac.is_reconciled
+                      : (highestLevel >= 5 && passThreshold);
 
                   let statusBadgeClass = "ontrack";
                   let statusText = `On Track (${yearsLeft > 0 ? `${yearsLeft} yrs to Level 5` : "Target Year"})`;
@@ -1081,7 +1285,7 @@ const MethaneIntensity = () => {
                     {ogmpSurveys.map((s, idx) => {
                       const fid = s.facilityId ?? s.facility_id;
                       const matchingFac = regionalData.find(
-                        (f) => f.facility_id === fid,
+                        (f) => String(f.facility_id) === String(fid),
                       );
                       const bottomUpCh4 = matchingFac
                         ? matchingFac.total_ch4
@@ -1102,8 +1306,9 @@ const MethaneIntensity = () => {
                         "Reconciled";
                       const notes = s.operatorNotes || s.operator_notes || "—";
 
-                      let variancePct = null;
-                      if (bottomUpCh4 && bottomUpCh4 > 0 && annTch4 > 0) {
+                      let variancePct =
+                        s.variance_pct ?? s.reconciliation_variance_pct ?? null;
+                      if (variancePct === null && bottomUpCh4 && bottomUpCh4 > 0 && annTch4 > 0) {
                         variancePct =
                           ((annTch4 - bottomUpCh4) / bottomUpCh4) * 100.0;
                       }
@@ -1136,7 +1341,7 @@ const MethaneIntensity = () => {
                                 style={{
                                   fontWeight: 700,
                                   color:
-                                    Math.abs(variancePct) <= 20.0
+                                    Math.abs(variancePct) <= (globalThreshold || 20.0)
                                       ? "#10b981"
                                       : "#ef4444",
                                 }}
@@ -1305,7 +1510,7 @@ const MethaneIntensity = () => {
                   margin: 0,
                 }}
               >
-                5-Year Methane Loss Rate (%) vs OGMP 2.0 Target (0.20%)
+                5-Year Methane Loss Rate (%) vs OGMP 2.0 Targets (&le;{upstreamTargetPct.toFixed(2)}% Upstream / &le;{midstreamTargetPct.toFixed(2)}% Midstream)
               </p>
             </div>
             <div className="trend-view-controls">
@@ -1335,13 +1540,29 @@ const MethaneIntensity = () => {
                   {
                     key: "loss_rate_pct",
                     color: "#2563eb",
-                    name: "Methane Loss Rate (%)",
+                    name: "Overall Loss Rate (%)",
+                  },
+                  {
+                    key: "loss_rate_upstream_pct",
+                    color: "#0d9488",
+                    name: "Upstream Loss Rate (%)",
+                  },
+                  {
+                    key: "loss_rate_midstream_pct",
+                    color: "#f59e0b",
+                    name: "Midstream Loss Rate (%)",
                   },
                   {
                     key: "target_020",
                     color: "#10b981",
-                    name: "OGMP Gold Target (0.20%)",
-                    dash: "4 4",
+                    name: `OGMP Upstream Target (≤${upstreamTargetPct.toFixed(2)}%)`,
+                    strokeDasharray: "4 4",
+                  },
+                  {
+                    key: "target_005",
+                    color: "#8b5cf6",
+                    name: `OGMP Midstream Target (≤${midstreamTargetPct.toFixed(2)}%)`,
+                    strokeDasharray: "2 2",
                   },
                 ]}
               />

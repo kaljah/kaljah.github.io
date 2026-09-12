@@ -23,7 +23,8 @@ from routes.auth import login_required
 import datetime
 import uuid
 import json
-from sqlalchemy import cast, String, literal, Float, union_all
+from sqlalchemy import cast, String, literal, Float, union_all, or_
+from services.ogmp import ogmp_level_for
 
 
 
@@ -38,35 +39,39 @@ def get_emissions():
     from flask import current_app
 
     user = get_current_user()
-    if user:
-        current_app.logger.info(f"[Emissions] Fetch requested by user_id: {user.id}")
-    else:
-        current_app.logger.info("[Emissions] Fetch requested by anonymous user")
-
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
+
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+
+    current_app.logger.info(f"[Emissions] Fetch requested by user_id: {user.id}")
 
     # Parameters from request
     limit_arg = request.args.get("limit", "50")
     offset_arg = request.args.get("offset", "0")
 
-    # Handle both 'page' and 'limit/offset' pagination
+    # Handle both 'page' and 'limit/offset' pagination with strict bounds
     if "limit" in request.args and "offset" in request.args:
         try:
             per_page = int(limit_arg)
-            offset = int(offset_arg)
+            offset = max(0, int(offset_arg))
+            per_page = max(1, min(5000, per_page))
             page = (offset // per_page) + 1
         except (ValueError, TypeError, ZeroDivisionError):
             per_page = 50
             page = 1
     else:
-        page = request.args.get("page", 1, type=int)
+        try:
+            page = max(1, request.args.get("page", 1, type=int))
+        except (ValueError, TypeError):
+            page = 1
         if limit_arg == "all":
-            per_page = 5000  # SEC-10 FIX: hard cap — was 1,000,000 (DoS vector)
+            per_page = 5000  # SEC-10 FIX: hard cap
         else:
             try:
-                per_page = int(limit_arg)
-            except ValueError:
+                per_page = max(1, min(5000, int(limit_arg)))
+            except (ValueError, TypeError):
                 per_page = 50
 
     scope = request.args.get("scope", "all")
@@ -406,41 +411,21 @@ def get_emissions():
     )
 
 
-# Helper: Get GWP based on user prefs and global settings
-def resolve_gwp_dict(user=None):
-    import json
-    from calculations.constants import get_active_gwp
-
-    try:
-        prefs = (
-            json.loads(user.preferences or "{}") if user and user.preferences else {}
-        )
-        model = prefs.get("gwp_standard") or prefs.get("gwpModel")
-        if model in ["AR4", "AR5", "AR6"]:
-            return get_active_gwp(standard=model)
-    except Exception:
-        pass
-    return get_active_gwp()
-
-
 def resolve_gwp_standard(user=None):
-    import json
-
+    """Returns the organization-wide GWP standard (AR4, AR5, AR6) per D-09."""
     try:
-        prefs = (
-            json.loads(user.preferences or "{}") if user and user.preferences else {}
-        )
-        model = prefs.get("gwp_standard") or prefs.get("gwpModel")
-        if model in ["AR4", "AR5", "AR6"]:
-            return model
-    except Exception:
-        pass
-    try:
-        from routes.auth import _app_settings
-
+        from routes.auth import _app_settings, load_settings_from_db
+        load_settings_from_db()
         return _app_settings.get("gwp_standard", "AR5")
     except Exception:
         return "AR5"
+
+
+def resolve_gwp_dict(user=None):
+    """Returns active GWP dictionary using global org-wide standard per D-09."""
+    from calculations.constants import get_active_gwp
+    std = resolve_gwp_standard()
+    return get_active_gwp(standard=std)
 
 
 @emissions_bp.route("/bulk-upload", methods=["POST"])
@@ -451,6 +436,8 @@ def add_bulk_upload():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to upload emission data"}), 403
 
     data = request.get_json()
     records = data.get("records", [])
@@ -823,8 +810,9 @@ def add_bulk_upload():
         else:
             uncertainty = factor_data.get("uncertainty", {})
 
-        # Prepare Record
+        # Prepare Record — all bulk upload paths queue as Pending per Decision D-04
         rec_id = str(uuid.uuid4())
+        bulk_status = "Pending"
         emission_obj = Emission(
             record_id=rec_id,
             year=year,
@@ -863,8 +851,13 @@ def add_bulk_upload():
                 if isinstance(uncertainty, dict)
                 else (uncertainty or None)
             ),
-            status="Verified",
+            status=bulk_status,
+            approved_by=user.id if bulk_status == "Verified" else None,
+            approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+            factor_source=calc_data.get("factor_source", "default"),
         )
+        emission_obj.ogmp_level = ogmp_level_for(emission_obj)
+
 
         # 7. Check for Duplicates
         duplicate = Emission.query.filter_by(
@@ -905,16 +898,17 @@ def add_bulk_upload():
             db.session.add_all(new_emissions)
             try:
                 db.session.commit()
-                # Create a single bulk audit log
-                log_activity_and_notify(
-                    action="CREATE",
-                    record_id="bulk",
-                    user=user,
-                    request=request,
-                    entity="Emission",
-                    details=f"Bulk imported {len(new_emissions)} emissions via CSV",
-                )
-                db.session.commit()
+                # If records are pending approval, notify all admins
+                if bulk_status in ("Pending", "Pending Approval"):
+                    admins = User.query.filter_by(role="admin", status="active").all()
+                    for admin in admins:
+                        Notification.create(
+                            user_id=admin.id,
+                            type="audit",
+                            title="Scope 1 Bulk Upload Pending Review",
+                            message=f"{len(new_emissions)} new Scope 1 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+                        )
+                    db.session.commit()
             except Exception as e:
                 db.session.rollback()
                 return (
@@ -2820,17 +2814,17 @@ def get_excel_template():
                     )
                 ws_t3.row_dimensions[r].height = 18
 
-    # ─── Save ──────────────────────────────────────────────────
+    # ─── Save to in-memory buffer (no leaking temp files on disk, M2) ───
     # Ensure exactly 3 sheets as requested (remove instructions)
     if "📋 Instructions" in wb.sheetnames:
         del wb["📋 Instructions"]
 
-    fd, path = tempfile.mkstemp(suffix=".xlsx")
-    with os.fdopen(fd, "w"):
-        pass
-    wb.save(path)
+    import io
+    bio = io.BytesIO()
+    wb.save(bio)
+    bio.seek(0)
     return send_file(
-        path,
+        bio,
         as_attachment=True,
         download_name="GHG_Emissions_Template_v2.xlsx",
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -2850,6 +2844,17 @@ def upload_start():
     if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in [".csv", ".xlsx", ".xls"]:
+        return (
+            jsonify(
+                {
+                    "error": "Invalid file type. Only .csv, .xlsx, and .xls files are allowed."
+                }
+            ),
+            400,
+        )
+
     global_factor_type = request.form.get("global_factor_type", "auto")
     mapping_str = request.form.get("column_mapping") or request.form.get("mapping")
     scope = request.form.get("scope", "1")
@@ -2864,8 +2869,23 @@ def upload_start():
         except json.JSONDecodeError:
             pass
 
-    fd, path = tempfile.mkstemp(suffix=os.path.splitext(file.filename)[1])
+    fd, path = tempfile.mkstemp(suffix=ext)
+    os.close(fd)  # H6: Close descriptor immediately to prevent leak
     file.save(path)
+
+    # Content sniffing check for Excel
+    if ext == ".xlsx":
+        try:
+            with open(path, "rb") as f_check:
+                header = f_check.read(4)
+                if header != b"PK\x03\x04":
+                    try:
+                        os.remove(path)
+                    except OSError:
+                        pass
+                    return jsonify({"error": "Invalid or corrupted XLSX file"}), 400
+        except Exception:
+            pass
 
     from flask import current_app
 
@@ -2913,6 +2933,8 @@ def add_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
     data = request.get_json()
 
@@ -3074,10 +3096,23 @@ def add_emission():
             if isinstance(uncertainty, dict)
             else (uncertainty or None)
         ),
-        status="Verified" if user.role in ["superuser", "admin", "it_admin"] else data.get("status", "Pending"),
-        approved_by=user.id if user.role in ["superuser", "admin", "it_admin"] else None,
-        approved_at=datetime.datetime.now(datetime.timezone.utc) if user.role in ["superuser", "admin", "it_admin"] else None,
+        status=(
+            "Draft"
+            if data.get("status") == "Draft"
+            else ("Verified" if user.role == "admin" else "Pending")
+        ),
+        approved_by=user.id if (data.get("status") != "Draft" and user.role == "admin") else None,
+        approved_at=(
+            datetime.datetime.now(datetime.timezone.utc)
+            if (data.get("status") != "Draft" and user.role == "admin")
+            else None
+        ),
+        factor_source=(
+            data.get("factor_source")
+            or ("custom" if data.get("factor_type") == "custom" else ("specific" if data.get("calc_method") in ("direct_measurement", "engineering", "specific", "tier3") else "default"))
+        ),
     )
+    record.ogmp_level = ogmp_level_for(record)
 
     db.session.add(record)
     db.session.flush()
@@ -3098,6 +3133,16 @@ def add_emission():
             details=log_details,
         )
         db.session.commit()
+        if record.status in ("Pending", "Pending Approval"):
+            admins = User.query.filter_by(role="admin", status="active").all()
+            for admin in admins:
+                Notification.create(
+                    user_id=admin.id,
+                    type="audit",
+                    title="New Scope 1 Emission Pending Review",
+                    message=f"A new Scope 1 emission record ({record.process_type}, {facility_name}) was submitted by {user.fullName} and is awaiting your approval.",
+                )
+            db.session.commit()
     except Exception as e:
         db.session.rollback()
         print(f"Audit Log Error: {e}")
@@ -3227,6 +3272,9 @@ def delete_emission(id):
             details=log_details,
         )
         db.session.commit()  # single atomic commit for delete + audit
+        from routes.dashboard import clear_dashboard_cache
+
+        clear_dashboard_cache()
     except Exception as e:
         db.session.rollback()
         raise e
@@ -3263,6 +3311,17 @@ def update_emission(id):
         "co2e_total": record.co2e_total,
     }
 
+    # Strip status from client update payload (H2: prevent maker-checker bypass)
+    data.pop("status", None)
+    data.pop("approved_by", None)
+    data.pop("approved_at", None)
+
+    # Disallow direct client overwrite of calculated totals without recalculation
+    data.pop("co2e_total", None)
+    data.pop("co2_emissions", None)
+    data.pop("ch4_emissions", None)
+    data.pop("n2o_emissions", None)
+
     # Update fields
     if "year" in data:
         record.year = data["year"]
@@ -3281,13 +3340,19 @@ def update_emission(id):
         record.quantity = data["quantity"]
     if "unit" in data:
         record.unit = data["unit"]
-    if "status" in data:
-        record.status = data["status"]
 
-    # Only recalculate emissions if explicitly requested
-    if data.get("recalculate"):
-        # BUG-18 FIX: initialize factor_data before the custom factor block
-        factor_data = API_FACTORS.get(data.get("fuel") or data.get("fuel_type"), {})
+    # Recalculate whenever physical activity or factor inputs are modified (L9)
+    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method", "process_type"}
+    should_recalc = data.get("recalculate") or any(k in data for k in recalc_keys)
+
+    if should_recalc:
+        # Physical edit moves record back to Pending if currently Verified (unless user is admin)
+        if record.status == "Verified" and user.role != "admin":
+            record.status = "Pending"
+            record.approved_by = None
+            record.approved_at = None
+
+        factor_data = API_FACTORS.get(data.get("fuel") or data.get("fuel_type") or record.fuel_type, {})
         # Handle Custom Factor in update
         cf_id = data.get("custom_factor_id")
         if cf_id:
@@ -3428,6 +3493,9 @@ def update_emission(id):
             metadata_json=json.dumps({"before": before_state, "after": after_state})
         )
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+
+        clear_dashboard_cache()
     except Exception as e:
         db.session.rollback()
         raise e
@@ -3467,6 +3535,9 @@ def bulk_delete_emissions():
             details=f"Bulk deleted {deleted_count} emission records",
         )
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+
+        clear_dashboard_cache()
     except Exception as e:
         db.session.rollback()
         raise e
@@ -3480,6 +3551,13 @@ def import_emissions():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational emission data"}
+            ),
+            403,
+        )
 
     data = request.get_json()
     records_data = data.get("records", [])
@@ -3720,8 +3798,11 @@ def import_emissions():
                     if isinstance(factor_data.get("uncertainty"), dict)
                     else (factor_data.get("uncertainty") or 0)
                 ),
-                status=rec_data.get("status", "Verified"),
+                status="Pending",  # D-04: all bulk imports queue as Pending
+                approved_by=None,
+                approved_at=None,
             )
+            record.ogmp_level = ogmp_level_for(record)
             db.session.add(record)
             imported_count += 1
         except Exception as e:
@@ -3740,56 +3821,478 @@ def import_emissions():
 
     db.session.commit()
 
-    return jsonify({"message": f"{imported_count} records imported"})
+    if imported_count > 0:
+        try:
+            log_activity_and_notify(
+                action="IMPORT",
+                record_id=f"BATCH-{imported_count}",
+                user=user,
+                request=request,
+                entity="Emission",
+                details=f"Bulk imported {imported_count} emission records (status: {'Verified' if user.role == 'admin' else 'Pending'})",
+            )
+            if user.role != "admin":
+                admins = User.query.filter_by(role="admin", status="active").all()
+                for admin in admins:
+                    Notification.create(
+                        user_id=admin.id,
+                        type="warning",
+                        title="Bulk Emission Records Awaiting Approval",
+                        message=f"{user.name or user.email} imported {imported_count} emission records that require verification.",
+                        metadata={"imported_count": imported_count, "uploader_id": user.id},
+                    )
+            db.session.commit()
+        except Exception as e:
+            current_app.logger.warning(f"Failed to create import notification: {e}")
+
+    return jsonify(
+        {
+            "message": f"{imported_count} records imported",
+            "imported": imported_count,
+            "status": "Verified" if user.role == "admin" else "Pending",
+            "errors": errors,
+        }
+    )
+
+
+def _safe_excel_value(val):
+    """Prevent formula injection (DDE/CSV injection) in Excel cells."""
+    if isinstance(val, str) and val and val[0] in ("=", "-", "+", "@", "\t", "\r"):
+        return "'" + val
+    return val
 
 
 @emissions_bp.route("/export", methods=["GET"])
 @login_required  # SEC-01 FIX: was missing
 def export_emissions():
-    """Export emissions to JSON format"""
+    """Export emissions data as Excel (.xlsx) or JSON format with full filter support."""
+    from flask import send_file
+    import io
+    import openpyxl
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational emission data"}
+            ),
+            403,
+        )
 
-    query = Emission.query
+    allowed_ids = get_allowed_facility_ids(user)
 
-    # BUG-09 FIX: cast query params to int before filtering integer columns
-    if request.args.get("facilityId"):
+    # Extract query parameters
+    scope = request.args.get("scope", "all")
+    year_arg = request.args.get("year")
+    month_arg = request.args.get("month")
+    facility_arg = request.args.get("facilityId") or request.args.get("facility_id")
+    process_arg = request.args.get("process") or request.args.get("process_type")
+    division_arg = request.args.get("division")
+    field_arg = request.args.get("field")
+    method_arg = request.args.get("method")
+    search_arg = request.args.get("search")
+    export_format = request.args.get("format", "json").lower()
+
+    # Parse numeric filters safely
+    year_int = None
+    if year_arg and year_arg != "all":
         try:
-            query = query.filter(
-                Emission.facility_id == int(request.args.get("facilityId"))
-            )
+            year_int = int(year_arg)
         except (ValueError, TypeError):
             pass
-    if request.args.get("year"):
+
+    month_int = None
+    if month_arg and month_arg != "all":
         try:
-            query = query.filter(Emission.year == int(request.args.get("year")))
+            month_int = int(month_arg)
         except (ValueError, TypeError):
             pass
-    if request.args.get("process"):
-        query = query.filter(Emission.process_type == request.args.get("process"))
 
-    emissions = query.all()
+    facility_int = None
+    if facility_arg and facility_arg != "all":
+        try:
+            facility_int = int(facility_arg)
+        except (ValueError, TypeError):
+            pass
+
+    if facility_int is not None and allowed_ids is not None and facility_int not in allowed_ids:
+        return jsonify({"error": "Unauthorized facility"}), 403
+
+    # Batch facility lookup to prevent N+1 queries
+    all_facs = {f.id: f for f in Facility.query.all()}
 
     export_data = []
-    for r in emissions:
-        export_data.append(
-            {
-                "record_id": r.record_id,
-                "year": r.year,
-                "month": r.month,
-                "facility": r.facility.name if r.facility else "",
-                "group": r.group_name,
-                "process": r.process_type,
-                "fuel": r.fuel_type,
-                "quantity": r.quantity,
-                "unit": r.unit,
-                "co2": r.co2_emissions,
-                "ch4": r.ch4_emissions,
-                "n2o": r.n2o_emissions,
-                "co2e_total": r.co2e_total,
-                "status": r.status,
-            }
+
+    # 1. SCOPE 1
+    if scope in ["all", "1", "scope1"]:
+        q1 = Emission.query.filter(Emission.status == "Verified")
+        if allowed_ids is not None:
+            q1 = q1.filter(Emission.facility_id.in_(allowed_ids))
+        if year_int:
+            q1 = q1.filter(Emission.year == year_int)
+        if month_int:
+            q1 = q1.filter(Emission.month == month_int)
+        if facility_int:
+            q1 = q1.filter(Emission.facility_id == facility_int)
+        if process_arg and process_arg != "all":
+            q1 = q1.filter(Emission.process_type == process_arg)
+        if division_arg and division_arg != "all":
+            q1 = q1.filter(Emission.division.ilike(f"%{_escape_like(division_arg.strip())}%", escape="\\"))
+        if field_arg and field_arg != "all":
+            q1 = q1.filter(Emission.field.ilike(f"%{_escape_like(field_arg.strip())}%", escape="\\"))
+        if method_arg and method_arg != "all":
+            q1 = q1.filter(Emission.calc_method.ilike(f"%{_escape_like(method_arg.strip())}%", escape="\\"))
+        if search_arg:
+            safe_s = _escape_like(search_arg.strip())
+            q1 = q1.filter(
+                or_(
+                    Emission.process_type.ilike(f"%{safe_s}%", escape="\\"),
+                    Emission.fuel_type.ilike(f"%{safe_s}%", escape="\\"),
+                    Emission.equipment_id.ilike(f"%{safe_s}%", escape="\\"),
+                    Emission.group_name.ilike(f"%{safe_s}%", escape="\\"),
+                )
+            )
+
+        for r in q1.order_by(Emission.year.desc(), Emission.month.desc()).all():
+            fac = all_facs.get(r.facility_id)
+            export_data.append(
+                {
+                    "record_id": r.record_id or f"S1-{r.id}",
+                    "scope": 1,
+                    "year": r.year,
+                    "month": r.month,
+                    "facility": fac.name if fac else (r.facility.name if r.facility else "Unknown"),
+                    "division": r.division or (fac.division if fac else ""),
+                    "field": r.field or (fac.field if fac else ""),
+                    "group": r.group_name or "N/A",
+                    "process": r.process_type or "N/A",
+                    "fuel": r.fuel_type or "N/A",
+                    "quantity": float(r.quantity or 0),
+                    "unit": r.unit or "",
+                    "co2": float(r.co2_emissions or 0),
+                    "ch4": float(r.ch4_emissions or 0),
+                    "n2o": float(r.n2o_emissions or 0),
+                    "co2e_total": float(r.co2e_total or 0),
+                    "status": r.status or "Verified",
+                }
+            )
+
+    # 2. SCOPE 2
+    if scope in ["all", "2", "scope2"]:
+        q2 = Scope2Emission.query.filter(Scope2Emission.status == "Verified")
+        if allowed_ids is not None:
+            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids))
+        if year_int:
+            q2 = q2.filter(Scope2Emission.year == year_int)
+        if month_int:
+            q2 = q2.filter(Scope2Emission.month == month_int)
+        if facility_int:
+            q2 = q2.filter(Scope2Emission.facility_id == facility_int)
+        if division_arg and division_arg != "all":
+            q2 = q2.filter(Scope2Emission.division.ilike(f"%{_escape_like(division_arg.strip())}%", escape="\\"))
+        if field_arg and field_arg != "all":
+            q2 = q2.filter(Scope2Emission.field.ilike(f"%{_escape_like(field_arg.strip())}%", escape="\\"))
+        if search_arg:
+            safe_s = _escape_like(search_arg.strip())
+            q2 = q2.filter(
+                or_(
+                    Scope2Emission.activity.ilike(f"%{safe_s}%", escape="\\"),
+                    Scope2Emission.grid_region.ilike(f"%{safe_s}%", escape="\\"),
+                )
+            )
+
+        for r in q2.order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc()).all():
+            fac = all_facs.get(r.facility_id)
+            export_data.append(
+                {
+                    "record_id": f"S2-{r.id}",
+                    "scope": 2,
+                    "year": r.year,
+                    "month": r.month,
+                    "facility": fac.name if fac else "Unknown",
+                    "division": r.division or (fac.division if fac else ""),
+                    "field": r.field or (fac.field if fac else ""),
+                    "group": "N/A",
+                    "process": f"Scope 2: {r.source_type or 'Electricity'}",
+                    "fuel": r.grid_region or "Grid Electricity",
+                    "quantity": float(r.electricity_kwh or 0),
+                    "unit": "kWh",
+                    "co2": 0.0,
+                    "ch4": 0.0,
+                    "n2o": 0.0,
+                    "co2e_total": float(r.co2e or 0),
+                    "status": r.status or "Verified",
+                }
+            )
+
+    # 3. SCOPE 3
+    if scope in ["all", "3", "scope3"]:
+        q3 = Scope3Emission.query.filter(Scope3Emission.status == "Verified")
+        if allowed_ids is not None:
+            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids))
+        if year_int:
+            q3 = q3.filter(Scope3Emission.year == year_int)
+        if month_int:
+            q3 = q3.filter(Scope3Emission.month == month_int)
+        if facility_int:
+            q3 = q3.filter(Scope3Emission.facility_id == facility_int)
+        if search_arg:
+            safe_s = _escape_like(search_arg.strip())
+            q3 = q3.filter(
+                or_(
+                    Scope3Emission.category.ilike(f"%{safe_s}%", escape="\\"),
+                    Scope3Emission.sub_category.ilike(f"%{safe_s}%", escape="\\"),
+                )
+            )
+
+        for r in q3.order_by(Scope3Emission.year.desc(), Scope3Emission.month.desc()).all():
+            fac = all_facs.get(r.facility_id)
+            export_data.append(
+                {
+                    "record_id": f"S3-{r.id}",
+                    "scope": 3,
+                    "year": r.year,
+                    "month": r.month,
+                    "facility": fac.name if fac else "Unknown",
+                    "division": fac.division if fac else "",
+                    "field": fac.field if fac else "",
+                    "group": "N/A",
+                    "process": r.category or "Value Chain",
+                    "fuel": r.sub_category or "Scope 3",
+                    "quantity": float(r.activity_data or 0),
+                    "unit": r.unit or "",
+                    "co2": 0.0,
+                    "ch4": 0.0,
+                    "n2o": 0.0,
+                    "co2e_total": float(r.co2e or 0),
+                    "status": r.status or "Verified",
+                }
+            )
+
+    # Return Excel workbook if requested
+    if export_format == "excel":
+        wb = openpyxl.Workbook()
+        wb.remove(wb.active)  # Remove initial blank sheet
+
+        header_fill = PatternFill(start_color="1E293B", end_color="1E293B", fill_type="solid")
+        summary_hdr_fill = PatternFill(start_color="0F766E", end_color="0F766E", fill_type="solid")
+        total_fill = PatternFill(start_color="F1F5F9", end_color="F1F5F9", fill_type="solid")
+
+        header_font = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
+        title_font = Font(name="Calibri", size=15, bold=True, color="1E293B")
+        bold_font = Font(name="Calibri", size=11, bold=True)
+        regular_font = Font(name="Calibri", size=11)
+        thin_border = Border(
+            left=Side(style="thin", color="E2E8F0"),
+            right=Side(style="thin", color="E2E8F0"),
+            top=Side(style="thin", color="E2E8F0"),
+            bottom=Side(style="thin", color="E2E8F0"),
+        )
+        double_bottom_border = Border(
+            top=Side(style="thin", color="94A3B8"),
+            bottom=Side(style="double", color="1E293B"),
+            left=Side(style="thin", color="E2E8F0"),
+            right=Side(style="thin", color="E2E8F0"),
+        )
+
+        # ─── Sheet 1: Detailed Inventory ───
+        ws1 = wb.create_sheet(title="Emissions Inventory")
+        ws1.views.sheetView[0].showGridLines = True
+
+        ws1.cell(row=1, column=1, value="GHG EMISSIONS INVENTORY DISCLOSURE").font = title_font
+        subtitle = (
+            f"Generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | "
+            f"Scope: {scope.upper()} | Year: {year_arg or 'All'} | Month: {month_arg or 'All'} | "
+            f"Facility: {all_facs.get(facility_int).name if facility_int and facility_int in all_facs else 'All'}"
+        )
+        ws1.cell(row=2, column=1, value=subtitle).font = regular_font
+
+        headers = [
+            "Record ID",
+            "Scope",
+            "Year",
+            "Month",
+            "Facility",
+            "Division",
+            "Field",
+            "Group",
+            "Category / Process",
+            "Fuel / Source",
+            "Quantity",
+            "Unit",
+            "CO₂ (t)",
+            "CH₄ (t)",
+            "N₂O (t)",
+            "Total CO₂e (t)",
+            "Status",
+        ]
+
+        for col_idx, h in enumerate(headers, 1):
+            cell = ws1.cell(row=4, column=col_idx, value=h)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+
+        row_num = 5
+        total_qty = 0.0
+        total_co2 = 0.0
+        total_ch4 = 0.0
+        total_n2o = 0.0
+        total_co2e = 0.0
+
+        for item in export_data:
+            total_qty += item["quantity"]
+            total_co2 += item["co2"]
+            total_ch4 += item["ch4"]
+            total_n2o += item["n2o"]
+            total_co2e += item["co2e_total"]
+
+            ws1.cell(row=row_num, column=1, value=_safe_excel_value(item["record_id"]))
+            ws1.cell(row=row_num, column=2, value=f"Scope {item['scope']}")
+            ws1.cell(row=row_num, column=3, value=item["year"])
+            ws1.cell(row=row_num, column=4, value=item["month"])
+            ws1.cell(row=row_num, column=5, value=_safe_excel_value(item["facility"]))
+            ws1.cell(row=row_num, column=6, value=_safe_excel_value(item["division"]))
+            ws1.cell(row=row_num, column=7, value=_safe_excel_value(item["field"]))
+            ws1.cell(row=row_num, column=8, value=_safe_excel_value(item["group"]))
+            ws1.cell(row=row_num, column=9, value=_safe_excel_value(item["process"]))
+            ws1.cell(row=row_num, column=10, value=_safe_excel_value(item["fuel"]))
+
+            c_qty = ws1.cell(row=row_num, column=11, value=round(item["quantity"], 2))
+            c_qty.number_format = "#,##0.00"
+            c_qty.alignment = Alignment(horizontal="right")
+
+            ws1.cell(row=row_num, column=12, value=_safe_excel_value(item["unit"]))
+
+            c_co2 = ws1.cell(row=row_num, column=13, value=round(item["co2"], 2))
+            c_co2.number_format = "#,##0.00"
+            c_co2.alignment = Alignment(horizontal="right")
+
+            c_ch4 = ws1.cell(row=row_num, column=14, value=round(item["ch4"], 2))
+            c_ch4.number_format = "#,##0.00"
+            c_ch4.alignment = Alignment(horizontal="right")
+
+            c_n2o = ws1.cell(row=row_num, column=15, value=round(item["n2o"], 2))
+            c_n2o.number_format = "#,##0.00"
+            c_n2o.alignment = Alignment(horizontal="right")
+
+            c_tot = ws1.cell(row=row_num, column=16, value=round(item["co2e_total"], 2))
+            c_tot.number_format = "#,##0.00"
+            c_tot.alignment = Alignment(horizontal="right")
+            c_tot.font = bold_font
+
+            ws1.cell(row=row_num, column=17, value=_safe_excel_value(item["status"]))
+
+            for c in range(1, len(headers) + 1):
+                ws1.cell(row=row_num, column=c).border = thin_border
+            row_num += 1
+
+        # Totals row
+        ws1.cell(row=row_num, column=1, value="TOTALS").font = bold_font
+        for c in range(1, len(headers) + 1):
+            cell = ws1.cell(row=row_num, column=c)
+            cell.fill = total_fill
+            cell.border = double_bottom_border
+
+        cell_t_qty = ws1.cell(row=row_num, column=11, value=round(total_qty, 2))
+        cell_t_qty.number_format = "#,##0.00"
+        cell_t_qty.font = bold_font
+
+        cell_t_co2 = ws1.cell(row=row_num, column=13, value=round(total_co2, 2))
+        cell_t_co2.number_format = "#,##0.00"
+        cell_t_co2.font = bold_font
+
+        cell_t_ch4 = ws1.cell(row=row_num, column=14, value=round(total_ch4, 2))
+        cell_t_ch4.number_format = "#,##0.00"
+        cell_t_ch4.font = bold_font
+
+        cell_t_n2o = ws1.cell(row=row_num, column=15, value=round(total_n2o, 2))
+        cell_t_n2o.number_format = "#,##0.00"
+        cell_t_n2o.font = bold_font
+
+        cell_t_co2e = ws1.cell(row=row_num, column=16, value=round(total_co2e, 2))
+        cell_t_co2e.number_format = "#,##0.00"
+        cell_t_co2e.font = bold_font
+
+        # Autofit columns
+        for col in ws1.columns:
+            max_len = 0
+            col_letter = get_column_letter(col[0].column)
+            for cell in col:
+                val_str = str(cell.value or "")
+                if "\n" in val_str:
+                    val_str = max(val_str.split("\n"), key=len)
+                max_len = max(max_len, len(val_str))
+            ws1.column_dimensions[col_letter].width = max(max_len + 4, 11)
+
+        # ─── Sheet 2: Executive Summary ───
+        ws2 = wb.create_sheet(title="Executive Summary")
+        ws2.views.sheetView[0].showGridLines = True
+        ws2.cell(row=1, column=1, value="EMISSION SCOPE BREAKDOWN & SUMMARY").font = title_font
+
+        s1_sum = sum(i["co2e_total"] for i in export_data if i["scope"] == 1)
+        s2_sum = sum(i["co2e_total"] for i in export_data if i["scope"] == 2)
+        s3_sum = sum(i["co2e_total"] for i in export_data if i["scope"] == 3)
+
+        sum_headers = ["Metric / Scope", "Value", "Unit"]
+        for col_idx, h in enumerate(sum_headers, 1):
+            cell = ws2.cell(row=3, column=col_idx, value=h)
+            cell.fill = summary_hdr_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center")
+
+        summary_rows = [
+            ("Scope 1 — Direct Operational Emissions", s1_sum, "tCO₂e"),
+            ("Scope 2 — Indirect Purchased Electricity", s2_sum, "tCO₂e"),
+            ("Scope 3 — Value Chain Emissions", s3_sum, "tCO₂e"),
+            ("Grand Total CO₂e Footprint", total_co2e, "tCO₂e"),
+            ("Total CO₂ Gas Mass", total_co2, "tonnes CO₂"),
+            ("Total CH₄ Gas Mass", total_ch4, "tonnes CH₄"),
+            ("Total N₂O Gas Mass", total_n2o, "tonnes N₂O"),
+            ("Total Activity Quantity", total_qty, "mixed units"),
+            ("Total Record Count", len(export_data), "records"),
+        ]
+
+        for s_idx, (label, val, unit) in enumerate(summary_rows, 4):
+            ws2.cell(row=s_idx, column=1, value=label).font = (
+                bold_font if "Grand Total" in label or "Scope" in label else regular_font
+            )
+            val_cell = ws2.cell(row=s_idx, column=2, value=round(val, 2) if isinstance(val, float) else val)
+            if isinstance(val, (int, float)):
+                val_cell.number_format = "#,##0.00" if isinstance(val, float) else "#,##0"
+            val_cell.font = bold_font if "Grand Total" in label else regular_font
+            val_cell.alignment = Alignment(horizontal="right")
+            ws2.cell(row=s_idx, column=3, value=unit).font = regular_font
+
+            for c in range(1, 4):
+                ws2.cell(row=s_idx, column=c).border = thin_border
+            if "Grand Total" in label:
+                for c in range(1, 4):
+                    ws2.cell(row=s_idx, column=c).fill = total_fill
+
+        for col in ws2.columns:
+            max_len = 0
+            col_letter = get_column_letter(col[0].column)
+            for cell in col:
+                max_len = max(max_len, len(str(cell.value or "")))
+            ws2.column_dimensions[col_letter].width = max(max_len + 4, 15)
+
+        buf = io.BytesIO()
+        wb.save(buf)
+        buf.seek(0)
+
+        year_lbl = year_arg if year_arg and year_arg != "all" else "all"
+        month_lbl = month_arg if month_arg and month_arg != "all" else "all"
+        fname = f"emissions_{year_lbl}_{month_lbl}.xlsx"
+        return send_file(
+            buf,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            as_attachment=True,
+            download_name=fname,
         )
 
     return jsonify({"data": export_data, "count": len(export_data)})
@@ -3800,102 +4303,188 @@ def export_emissions():
 @emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
 @login_required
 def approve_emission(emission_id):
-    """Approve a single pending Scope 1 emission record."""
+    """Approve a single pending emission record (Scope 1, 2, or 3)."""
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Insufficient permissions"}), 403
+        return jsonify({"error": "Only Admin role can approve emission records"}), 403
 
-    emission = db.session.get(Emission, emission_id)
+    req_data = request.get_json(silent=True) or {}
+    scope = str(req_data.get("scope") or request.args.get("scope") or "1")
+
+    if scope == "2":
+        emission = db.session.get(Scope2Emission, emission_id)
+        label = "Scope 2"
+    elif scope == "3":
+        emission = db.session.get(Scope3Emission, emission_id)
+        label = "Scope 3"
+    else:
+        emission = db.session.get(Emission, emission_id)
+        label = "Scope 1"
+
     if not emission:
         return jsonify({"error": "Record not found"}), 404
+
+    # Facility scoping check
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None and emission.facility_id not in allowed_fids:
+        return jsonify({"error": "Access to record facility is denied"}), 403
+
     if emission.status not in ["Pending", "Draft", "Pending Approval"]:
         return jsonify({"error": "Record is not pending approval"}), 400
+
+    # Segregation of duties: the submitter cannot approve their own record
+    if getattr(emission, "created_by", None) == user.id:
+        return jsonify({"error": "Maker-Checker violation: You cannot approve a record you submitted yourself"}), 403
 
     emission.status = "Verified"
     emission.approved_by = user.id
     emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
+    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
     log_activity_and_notify(
         action="UPDATE",
-        record_id=emission.record_id,
-        details=f"Scope 1 emission approved by {user.fullName}",
+        record_id=rec_id,
+        details=f"{label} emission approved by {user.fullName}",
         user=user,
-        entity="emission",
+        entity=f"scope{scope}_emission",
         entity_id=emission.id,
     )
     db.session.commit()
-    return jsonify({"success": True, "id": emission_id, "status": "Verified"})
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
+    return jsonify({"success": True, "id": emission_id, "scope": scope, "status": "Verified"})
 
 
 @emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
 @login_required
 def reject_emission(emission_id):
-    """Reject a single pending Scope 1 emission record (marks status as Rejected)."""
+    """Reject a single pending emission record (Scope 1, 2, or 3)."""
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Insufficient permissions"}), 403
+        return jsonify({"error": "Only Admin role can reject emission records"}), 403
 
-    emission = db.session.get(Emission, emission_id)
+    req_data = request.get_json(silent=True) or {}
+    scope = str(req_data.get("scope") or request.args.get("scope") or "1")
+    reason = req_data.get("reason", "Rejected by reviewer")
+
+    if scope == "2":
+        emission = db.session.get(Scope2Emission, emission_id)
+        label = "Scope 2"
+    elif scope == "3":
+        emission = db.session.get(Scope3Emission, emission_id)
+        label = "Scope 3"
+    else:
+        emission = db.session.get(Emission, emission_id)
+        label = "Scope 1"
+
     if not emission:
         return jsonify({"error": "Record not found"}), 404
 
-    req_data = request.get_json(silent=True) or {}
-    reason = req_data.get("reason", "Rejected by reviewer")
+    # Facility scoping check
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None and emission.facility_id not in allowed_fids:
+        return jsonify({"error": "Access to record facility is denied"}), 403
+
     emission.status = "Rejected"
+    if hasattr(emission, "qa_flag"):
+        emission.qa_flag = f"Rejected: {reason}"
     emission.approved_by = user.id
     emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
+    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
     log_activity_and_notify(
         action="UPDATE",
-        record_id=emission.record_id,
-        details=f"Scope 1 emission rejected by {user.fullName}: {reason}",
+        record_id=rec_id,
+        details=f"{label} emission rejected by {user.fullName}: {reason}",
         user=user,
-        entity="emission",
+        entity=f"scope{scope}_emission",
         entity_id=emission.id,
     )
     db.session.commit()
-    return jsonify({"success": True, "id": emission_id, "status": "Rejected"})
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
+    return jsonify({"success": True, "id": emission_id, "scope": scope, "status": "Rejected", "reason": reason})
 
 
 @emissions_bp.route("/approve/batch", methods=["POST"])
 @login_required
 def approve_batch_emissions():
     """Approve multiple pending emission records in one request.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3", "approve_all": bool }
+    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "approve_all": bool, "by_scope": {"1": [], "2": [], "3": []} }
     """
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Insufficient permissions"}), 403
+        return jsonify({"error": "Only Admin role can approve emission records"}), 403
 
+    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json(silent=True) or {}
     ids = data.get("ids", [])
     scope = str(data.get("scope", "1"))
     approve_all = data.get("approve_all", False)
+    by_scope = data.get("by_scope", {})
 
-    if not ids and not approve_all:
-        return jsonify({"error": "No IDs provided"}), 400
+    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
+
+    if not ids and not approve_all and not has_by_scope:
+        return jsonify({"error": "No IDs or scope mapping provided"}), 400
 
     now = datetime.datetime.now(datetime.timezone.utc)
     approved_count = 0
-
     pending_statuses = ["Pending", "Draft", "Pending Approval"]
-    if scope == "1":
-        query = Emission.query.filter(Emission.status.in_(pending_statuses))
-        if not approve_all:
-            query = query.filter(Emission.id.in_(ids))
-        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
+
+    def apply_approval(model, target_ids=None):
+        q = model.query.filter(model.status.in_(pending_statuses))
+        if allowed_fids is not None:
+            q = q.filter(model.facility_id.in_(allowed_fids))
+        # Segregation of duties: Maker cannot approve their own submitted records
+        q = q.filter(or_(model.created_by != user.id, model.created_by.is_(None)))
+        if target_ids is not None:
+            q = q.filter(model.id.in_(target_ids))
+        return q.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
+
+    if scope == "all" and approve_all:
+        approved_count = (
+            apply_approval(Emission)
+            + apply_approval(Scope2Emission)
+            + apply_approval(Scope3Emission)
+        )
+    elif has_by_scope:
+        s1_ids = by_scope.get("1") or by_scope.get(1) or []
+        s2_ids = by_scope.get("2") or by_scope.get(2) or []
+        s3_ids = by_scope.get("3") or by_scope.get(3) or []
+        if s1_ids:
+            approved_count += apply_approval(Emission, s1_ids)
+        if s2_ids:
+            approved_count += apply_approval(Scope2Emission, s2_ids)
+        if s3_ids:
+            approved_count += apply_approval(Scope3Emission, s3_ids)
+    elif scope == "1":
+        approved_count = apply_approval(Emission, None if approve_all else ids)
     elif scope == "2":
-        query = Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses))
-        if not approve_all:
-            query = query.filter(Scope2Emission.id.in_(ids))
-        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
+        approved_count = apply_approval(Scope2Emission, None if approve_all else ids)
     elif scope == "3":
-        query = Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses))
-        if not approve_all:
-            query = query.filter(Scope3Emission.id.in_(ids))
-        approved_count = query.update({"status": "Verified", "approved_by": user.id, "approved_at": now}, synchronize_session=False)
+        approved_count = apply_approval(Scope3Emission, None if approve_all else ids)
+    elif scope == "all" and ids:
+        approved_count = (
+            apply_approval(Emission, ids)
+            + apply_approval(Scope2Emission, ids)
+            + apply_approval(Scope3Emission, ids)
+        )
     else:
         return jsonify({"error": f"Invalid scope: {scope}"}), 400
 
+    log_activity_and_notify(
+        action="UPDATE",
+        record_id="batch_approve",
+        details=f"{approved_count} pending records approved by {user.fullName}",
+        user=user,
+        entity="batch_emissions",
+        entity_id="batch",
+    )
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
     return jsonify({
         "success": True,
         "approved_count": approved_count,
@@ -3907,62 +4496,105 @@ def approve_batch_emissions():
 @login_required
 def reject_batch_emissions():
     """Reject (delete) multiple pending emission records.
-    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3", "reason": "...", "reject_all": bool }
+    Body: { "ids": [1, 2, 3], "scope": "1"|"2"|"3"|"all", "reason": "...", "reject_all": bool, "by_scope": {"1": [], "2": [], "3": []} }
     """
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
-        return jsonify({"error": "Insufficient permissions"}), 403
+        return jsonify({"error": "Only Admin role can reject emission records"}), 403
 
+    allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json(silent=True) or {}
     ids = data.get("ids", [])
     scope = str(data.get("scope", "1"))
     reason = data.get("reason", "Batch rejected by reviewer")
     reject_all = data.get("reject_all", False)
+    by_scope = data.get("by_scope", {})
 
-    if not ids and not reject_all:
-        return jsonify({"error": "No IDs provided"}), 400
+    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
+
+    if not ids and not reject_all and not has_by_scope:
+        return jsonify({"error": "No IDs or scope mapping provided"}), 400
 
     deleted_count = 0
+    pending_statuses = ["Pending", "Draft", "Pending Approval"]
 
-    if scope == "1":
-        query = Emission.query.filter_by(status="Pending")
-        if not reject_all:
-            query = query.filter(Emission.id.in_(ids))
-        deleted_count = query.delete()
+    def apply_rejection(model, target_ids=None):
+        q = model.query.filter(model.status.in_(pending_statuses))
+        if allowed_fids is not None:
+            q = q.filter(model.facility_id.in_(allowed_fids))
+        if target_ids is not None:
+            q = q.filter(model.id.in_(target_ids))
+        return q.delete(synchronize_session=False)
+
+    if scope == "all" and reject_all:
+        deleted_count = (
+            apply_rejection(Emission)
+            + apply_rejection(Scope2Emission)
+            + apply_rejection(Scope3Emission)
+        )
+    elif has_by_scope:
+        s1_ids = by_scope.get("1") or by_scope.get(1) or []
+        s2_ids = by_scope.get("2") or by_scope.get(2) or []
+        s3_ids = by_scope.get("3") or by_scope.get(3) or []
+        if s1_ids:
+            deleted_count += apply_rejection(Emission, s1_ids)
+        if s2_ids:
+            deleted_count += apply_rejection(Scope2Emission, s2_ids)
+        if s3_ids:
+            deleted_count += apply_rejection(Scope3Emission, s3_ids)
+    elif scope == "1":
+        deleted_count = apply_rejection(Emission, None if reject_all else ids)
     elif scope == "2":
-        query = Scope2Emission.query.filter_by(status="Pending")
-        if not reject_all:
-            query = query.filter(Scope2Emission.id.in_(ids))
-        deleted_count = query.delete()
+        deleted_count = apply_rejection(Scope2Emission, None if reject_all else ids)
     elif scope == "3":
-        query = Scope3Emission.query.filter_by(status="Pending")
-        if not reject_all:
-            query = query.filter(Scope3Emission.id.in_(ids))
-        deleted_count = query.delete()
+        deleted_count = apply_rejection(Scope3Emission, None if reject_all else ids)
+    elif scope == "all" and ids:
+        deleted_count = (
+            apply_rejection(Emission, ids)
+            + apply_rejection(Scope2Emission, ids)
+            + apply_rejection(Scope3Emission, ids)
+        )
     else:
         return jsonify({"error": f"Invalid scope: {scope}"}), 400
 
     log_activity_and_notify(
         action="DELETE",
-        record_id="batch",
-        details=f"{deleted_count} Scope {scope} pending records rejected by {user.fullName}: {reason}",
+        record_id="batch_reject",
+        details=f"{deleted_count} pending records rejected by {user.fullName}: {reason}",
         user=user,
-        entity=f"scope{scope}_emission",
+        entity="batch_emissions",
         entity_id="batch",
     )
     db.session.commit()
+    from routes.dashboard import clear_dashboard_cache
+
+    clear_dashboard_cache()
     return jsonify({"success": True, "deleted_count": deleted_count})
 
 
 @emissions_bp.route("/erp/sync", methods=["POST"])
 @login_required
 def trigger_erp_sync():
-    """Mock ERP integration sync endpoint"""
-    from services.erp_integration import sync_erp_data
-    
+    """ERP integration sync endpoint (Gated by ENABLE_MOCK_ERP flag & Admin role, H8)"""
     user = get_current_user()
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Admin privileges required for ERP sync"}), 403
+
+    import os
+    if os.environ.get("ENABLE_MOCK_ERP", "false").lower() not in ["1", "true", "yes"]:
+        return (
+            jsonify(
+                {
+                    "error": "Mock ERP synchronization is disabled in production. Set ENABLE_MOCK_ERP=true to enable testing mode."
+                }
+            ),
+            501,
+        )
+
+    from services.erp_integration import sync_erp_data
+
     result = sync_erp_data(user.id if user else None)
-    
+
     if result.get("success"):
         return jsonify(result), 200
     else:
@@ -3972,63 +4604,96 @@ def trigger_erp_sync():
 @emissions_bp.route("/pending", methods=["GET"])
 @login_required
 def get_pending_emissions():
-    """Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard."""
+    """Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard.
+    Query params: ?all=true (unlimited) or ?limit=200
+    """
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Insufficient permissions"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)
     pending_statuses = ["Pending", "Draft", "Pending Approval"]
+    fetch_all = request.args.get("all", "").lower() == "true"
+    limit_val = None if fetch_all else int(request.args.get("limit", 200))
 
     def q_scope1():
         q = Emission.query.filter(Emission.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(Emission.facility_id.in_(allowed_fids))
+        q = q.order_by(Emission.timestamp.desc())
+        if limit_val:
+            q = q.limit(limit_val)
         return [
             {
                 "id": e.id, "scope": "1", "facility_id": e.facility_id,
+                "facility_name": e.facility.name if getattr(e, "facility", None) else None,
                 "year": e.year, "month": e.month, "process_type": e.process_type,
                 "fuel_type": e.fuel_type, "quantity": e.quantity, "unit": e.unit,
-                "co2e_total": e.co2e_total, "status": e.status, "created_at": e.timestamp.isoformat() if e.timestamp else None,
+                "co2e_total": e.co2e_total, "status": e.status, 
+                "qa_flag": getattr(e, "qa_flag", None),
+                "emission_factor": getattr(e, "emission_factor", None),
+                "created_by": getattr(e, "created_by", None),
+                "created_at": e.timestamp.isoformat() if e.timestamp else None,
             }
-            for e in q.order_by(Emission.timestamp.desc()).limit(200).all()
+            for e in q.all()
         ]
 
     def q_scope2():
         q = Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(Scope2Emission.facility_id.in_(allowed_fids))
+        q = q.order_by(Scope2Emission.created_at.desc())
+        if limit_val:
+            q = q.limit(limit_val)
         return [
             {
                 "id": e.id, "scope": "2", "facility_id": e.facility_id,
+                "facility_name": e.facility.name if getattr(e, "facility", None) else None,
                 "year": e.year, "month": e.month, "source_type": e.source_type,
-                "electricity_kwh": e.electricity_kwh, "co2e": e.co2e, "status": e.status,
+                "electricity_kwh": e.electricity_kwh, "heat_mmbtu": getattr(e, "heat_mmbtu", None),
+                "co2e": e.co2e, "status": e.status,
+                "qa_flag": getattr(e, "qa_flag", None),
+                "emission_factor": getattr(e, "emission_factor", None),
+                "created_by": getattr(e, "created_by", None),
                 "created_at": e.created_at.isoformat() if e.created_at else None,
             }
-            for e in q.order_by(Scope2Emission.created_at.desc()).limit(200).all()
+            for e in q.all()
         ]
 
     def q_scope3():
         q = Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(Scope3Emission.facility_id.in_(allowed_fids))
+        q = q.order_by(Scope3Emission.created_at.desc())
+        if limit_val:
+            q = q.limit(limit_val)
         return [
             {
                 "id": e.id, "scope": "3", "facility_id": e.facility_id,
+                "facility_name": e.facility.name if getattr(e, "facility", None) else None,
                 "year": e.year, "month": e.month, "category": e.category,
-                "co2e": e.co2e, "status": e.status, "created_at": e.created_at.isoformat() if e.created_at else None,
+                "sub_category": getattr(e, "sub_category", None),
+                "activity_data": getattr(e, "activity_data", None),
+                "unit": getattr(e, "unit", None),
+                "co2e": e.co2e, "status": e.status,
+                "qa_flag": getattr(e, "qa_flag", None),
+                "emission_factor": getattr(e, "emission_factor", None),
+                "created_by": getattr(e, "created_by", None),
+                "created_at": e.created_at.isoformat() if e.created_at else None,
             }
-            for e in q.order_by(Scope3Emission.created_at.desc()).limit(200).all()
+            for e in q.all()
         ]
+
+    def count_pending(model):
+        q = model.query.filter(model.status.in_(pending_statuses))
+        if allowed_fids is not None:
+            q = q.filter(model.facility_id.in_(allowed_fids))
+        return q.count()
 
     return jsonify({
         "scope1": q_scope1(),
         "scope2": q_scope2(),
         "scope3": q_scope3(),
-        "total_pending": (
-            Emission.query.filter(Emission.status.in_(pending_statuses)).count()
-            + Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses)).count()
-            + Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses)).count()
-        ),
+        "total_pending": count_pending(Emission) + count_pending(Scope2Emission) + count_pending(Scope3Emission),
     })
 

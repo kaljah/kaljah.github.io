@@ -72,7 +72,7 @@ export const PieChart = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "rgba(255,255,255,0.3)",
+            color: "var(--text-muted, #94a3b8)",
           }}
         >
           No data available

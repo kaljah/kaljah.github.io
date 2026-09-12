@@ -61,9 +61,19 @@ export const ToastProvider = ({ children }) => {
     [addToast],
   );
 
+  const show = useCallback(
+    (message, type = "info", duration = 3000) => {
+      if (type === "success") return success(message, duration);
+      if (type === "error") return error(message, duration);
+      if (type === "warning") return warning(message, duration);
+      return info(message, duration);
+    },
+    [success, error, warning, info],
+  );
+
   return (
     <ToastContext.Provider
-      value={{ success, error, warning, info, removeToast, addToast }}
+      value={{ success, error, warning, info, show, removeToast, addToast }}
     >
       {children}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
