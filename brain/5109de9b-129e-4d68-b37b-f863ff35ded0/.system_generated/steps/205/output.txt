@@ -1,0 +1,91 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -38,8 +38,14 @@
+         # Optional filter params
+         year_arg = request.args.get("year")
+         scope_arg = request.args.get("scope")  # "1", "2", "3", or "all"
+-        limit = min(int(request.args.get("limit", _MAX_FLAGGED_RECORDS)), _MAX_FLAGGED_RECORDS)
+-        offset = int(request.args.get("offset", 0))
++        try:
++            limit = max(1, min(int(request.args.get("limit", 100)), _MAX_FLAGGED_RECORDS))
++        except (ValueError, TypeError):
++            limit = 100
++        try:
++            offset = max(0, int(request.args.get("offset", 0)))
++        except (ValueError, TypeError):
++            offset = 0
+ 
+         # ── Helper: apply facility filter ──────────────────────────────────
+         def _fac_filter(q, model):
+@@ -52,7 +52,7 @@
+             return q
+ 
+         # ── Flagged anomaly queries ──────────────────────────────────────────
+-        flagged_records = []
++        all_flagged = []
+         total_flagged = 0
+ 
+         if scope_arg in [None, "all", "1"]:
+@@ -59,7 +59,11 @@
+             q1 = _fac_filter(q1, Emission)
+             total_flagged += q1.count()
+-            for r in q1.order_by(Emission.timestamp.desc()).offset(offset).limit(limit):
+-                flagged_records.append({
++            if scope_arg == "1":
++                q1 = q1.order_by(Emission.timestamp.desc()).offset(offset).limit(limit)
++            else:
++                q1 = q1.order_by(Emission.timestamp.desc()).limit(_MAX_FLAGGED_RECORDS)
++            for r in q1:
++                all_flagged.append({
+                     "id": r.id,
+                     "record_id": r.record_id,
+                     "scope": 1,
+@@ -75,8 +75,12 @@
+             q2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
+             q2 = _fac_filter(q2, Scope2Emission)
+             total_flagged += q2.count()
+-            for r in q2.order_by(Scope2Emission.created_at.desc()).offset(offset).limit(limit):
+-                flagged_records.append({
++            if scope_arg == "2":
++                q2 = q2.order_by(Scope2Emission.created_at.desc()).offset(offset).limit(limit)
++            else:
++                q2 = q2.order_by(Scope2Emission.created_at.desc()).limit(_MAX_FLAGGED_RECORDS)
++            for r in q2:
++                all_flagged.append({
+                     "id": r.id,
+                     "record_id": None,
+                     "scope": 2,
+@@ -92,8 +92,12 @@
+             q3 = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))
+             q3 = _fac_filter(q3, Scope3Emission)
+             total_flagged += q3.count()
+-            for r in q3.order_by(Scope3Emission.created_at.desc()).offset(offset).limit(limit):
+-                flagged_records.append({
++            if scope_arg == "3":
++                q3 = q3.order_by(Scope3Emission.created_at.desc()).offset(offset).limit(limit)
++            else:
++                q3 = q3.order_by(Scope3Emission.created_at.desc()).limit(_MAX_FLAGGED_RECORDS)
++            for r in q3:
++                all_flagged.append({
+                     "id": r.id,
+                     "record_id": None,
+                     "scope": 3,
+@@ -105,8 +105,13 @@
+                     "co2e": r.co2e,
+                 })
+ 
+-        # Sort combined list by co2e descending so highest-impact anomalies appear first
+-        flagged_records.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
++        # When querying all scopes together, sort uniformly and slice [offset:offset+limit]
++        if scope_arg in [None, "all"]:
++            all_flagged.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
++            flagged_records = all_flagged[offset : offset + limit]
++        else:
++            all_flagged.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
++            flagged_records = all_flagged
+ 
+         # ── Uncertainty aggregation (IPCC SRSS — scoped to allowed facilities) ──
+         def _norm_unc(pct_val, frac_val, default_val=0.05):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

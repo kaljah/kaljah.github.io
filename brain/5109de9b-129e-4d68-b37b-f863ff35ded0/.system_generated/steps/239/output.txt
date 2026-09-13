@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -671,7 +671,10 @@
+                                         justifyContent: 'space-between', borderTop: '1px solid rgba(226,232,240,0.8)' 
+                                     }}>
+                                         <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
+-                                            Showing {offset + 1}–{Math.min(offset + returned_count, total_flagged_count)} of {total_flagged_count} flagged records
++                                            {searchQuery || statusFilter !== 'all'
++                                                ? `Showing ${filteredRecords.length} filtered record${filteredRecords.length === 1 ? '' : 's'} on this page (${total_flagged_count} total in inventory)`
++                                                : `Showing ${offset + 1}–${Math.min(offset + returned_count, total_flagged_count)} of ${total_flagged_count} flagged records`
++                                            }
+                                         </span>
+                                         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                             <button
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

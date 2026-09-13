@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":275,"LineContent":"@app.route(\"/api/health\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":276,"LineContent":"def health_check():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":5,"LineContent":"    \"description\": \"API documentation and health checking portal for the Greenhouse Gas (GHG) Platform backend.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":19,"LineContent":"    \"/api/health\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":21,"LineContent":"        \"summary\": \"Check API Health Status\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":25,"LineContent":"            \"description\": \"API is healthy and running.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":132,"LineContent":"    def test_health_does_not_expose_db(self, client):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":133,"LineContent":"        res = client.get(\"/api/health\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":136,"LineContent":"        assert \"database\" not in data, \"Health endpoint must not expose 'database' key\""}

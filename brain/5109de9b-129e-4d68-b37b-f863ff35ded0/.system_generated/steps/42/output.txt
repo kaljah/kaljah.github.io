@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":10,"LineContent":"qaqc_bp = Blueprint(\"qaqc_bp\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":21,"LineContent":"@qaqc_bp.route(\"/dashboard\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":23,"LineContent":"def get_qaqc_dashboard():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":194,"LineContent":"        current_app.logger.error(f\"[QAQC] Dashboard error: {e}\\n{traceback.format_exc()}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":198,"LineContent":"@qaqc_bp.route(\"/export\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":200,"LineContent":"def export_qaqc_report():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":263,"LineContent":"@qaqc_bp.route(\"/resolve/\u003cint:record_id\u003e\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":320,"LineContent":"@qaqc_bp.route(\"/bulk-resolve\", methods=[\"POST\"])"}

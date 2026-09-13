@@ -1,0 +1,249 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -171,6 +171,235 @@
+             (total_unc_var ** 0.5) / total_inventory if total_inventory > 0 else 0
+         )
+ 
++        # ── Diagnostic & Data Health Analysis (SQL-speed) ───────────────────
++        cutoff_30d = datetime.now(timezone.utc) - timedelta(days=30)
++
++        # Scoped queries for counts
++        q_s1_all = _fac_filter(Emission.query, Emission)
++        q_s2_all = _fac_filter(Scope2Emission.query, Scope2Emission)
++        q_s3_all = _fac_filter(Scope3Emission.query, Scope3Emission)
++
++        s1_count = q_s1_all.count()
++        s2_count = q_s2_all.count()
++        s3_count = q_s3_all.count()
++        total_records_count = s1_count + s2_count + s3_count
++
++        # Recent activity (last 30 days)
++        try:
++            recent_s1 = q_s1_all.filter(Emission.timestamp >= cutoff_30d).count()
++        except Exception:
++            recent_s1 = 0
++        try:
++            recent_s2 = q_s2_all.filter(Scope2Emission.created_at >= cutoff_30d).count()
++        except Exception:
++            recent_s2 = 0
++        try:
++            recent_s3 = q_s3_all.filter(Scope3Emission.created_at >= cutoff_30d).count()
++        except Exception:
++            recent_s3 = 0
++        recent_records_count = recent_s1 + recent_s2 + recent_s3
++
++        # Field-level gap checks on Scope 1
++        missing_facility_count = Emission.query.filter(Emission.facility_id.is_(None)).count()
++        missing_fuel_count = q_s1_all.filter(
++            or_(
++                Emission.fuel_type.is_(None),
++                Emission.fuel_type == "",
++                and_(Emission.process_type.is_(None), Emission.fuel_type.is_(None)),
++            )
++        ).count()
++        missing_amount_count = q_s1_all.filter(
++            or_(Emission.quantity.is_(None), Emission.quantity <= 0)
++        ).count()
++        missing_co2e_count = q_s1_all.filter(
++            or_(Emission.co2e_total.is_(None), Emission.co2e_total < 0)
++        ).count()
++
++        # Facilities coverage
++        total_facilities = Facility.query.count()
++        active_fids = set(
++            r[0]
++            for r in db.session.query(distinct(Emission.facility_id))
++            .filter(Emission.facility_id.isnot(None))
++            .all()
++        )
++        unused_facilities = max(0, total_facilities - len(active_fids))
++
++        # Custom factors
++        try:
++            total_custom_factors = CustomFactor.query.count()
++        except Exception:
++            total_custom_factors = 0
++
++        # Status counts for flagged records
++        pending_anomalies = 0
++        verified_anomalies = 0
++        rejected_anomalies = 0
++
++        q1_flags = Emission.query.filter(Emission.qa_flag.isnot(None))
++        q1_flags = _fac_filter(q1_flags, Emission)
++        pending_anomalies += q1_flags.filter(
++            or_(Emission.status.ilike("%pending%"), Emission.status.is_(None))
++        ).count()
++        verified_anomalies += q1_flags.filter(Emission.status.ilike("%verified%")).count()
++        rejected_anomalies += q1_flags.filter(Emission.status.ilike("%rejected%")).count()
++
++        q2_flags = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
++        q2_flags = _fac_filter(q2_flags, Scope2Emission)
++        pending_anomalies += q2_flags.filter(
++            or_(Scope2Emission.status.ilike("%pending%"), Scope2Emission.status.is_(None))
++        ).count()
++        verified_anomalies += q2_flags.filter(Scope2Emission.status.ilike("%verified%")).count()
++        rejected_anomalies += q2_flags.filter(Scope2Emission.status.ilike("%rejected%")).count()
++
++        q3_flags = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))
++        q3_flags = _fac_filter(q3_flags, Scope3Emission)
++        pending_anomalies += q3_flags.filter(
++            or_(Scope3Emission.status.ilike("%pending%"), Scope3Emission.status.is_(None))
++        ).count()
++        verified_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%verified%")).count()
++        rejected_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%rejected%")).count()
++
++        # Completeness rates per dimension
++        if s1_count > 0:
++            fac_completeness = round(max(0.0, (s1_count - missing_facility_count) / s1_count * 100), 1)
++            fuel_completeness = round(max(0.0, (s1_count - missing_fuel_count) / s1_count * 100), 1)
++            amount_completeness = round(max(0.0, (s1_count - missing_amount_count) / s1_count * 100), 1)
++            calc_completeness = round(max(0.0, (s1_count - missing_co2e_count) / s1_count * 100), 1)
++            overall_completeness = round(
++                (fac_completeness + fuel_completeness + amount_completeness + calc_completeness) / 4, 1
++            )
++        else:
++            fac_completeness = 100.0
++            fuel_completeness = 100.0
++            amount_completeness = 100.0
++            calc_completeness = 100.0
++            overall_completeness = 100.0
++
++        # Structured diagnostic findings
++        issues = []
++        warnings = []
++        suggestions = []
++
++        if missing_facility_count > 0:
++            issues.append({
++                "id": "missing_facility",
++                "type": "critical",
++                "title": "Unassigned Facility Boundary",
++                "description": f"{missing_facility_count} emission record(s) lack facility assignment, breaking GHG Protocol organizational boundary requirements.",
++                "affected_count": missing_facility_count,
++                "impact": "High",
++                "action": "Assign Facilities",
++                "action_tab": "queue",
++            })
++
++        if missing_co2e_count > 0:
++            issues.append({
++                "id": "missing_co2e",
++                "type": "critical",
++                "title": "Uncalculated Emission Values",
++                "description": f"{missing_co2e_count} record(s) have uncalculated or negative CO₂e totals.",
++                "affected_count": missing_co2e_count,
++                "impact": "High",
++                "action": "Recalculate",
++                "action_tab": "queue",
++            })
++
++        if missing_fuel_count > 0:
++            warnings.append({
++                "id": "missing_fuel",
++                "type": "warning",
++                "title": "Missing Fuel or Source Classification",
++                "description": f"{missing_fuel_count} Scope 1 record(s) are missing explicit fuel or process types, using generic defaults.",
++                "affected_count": missing_fuel_count,
++                "impact": "Medium",
++                "action": "Classify Sources",
++                "action_tab": "queue",
++            })
++
++        if missing_amount_count > 0:
++            warnings.append({
++                "id": "missing_amount",
++                "type": "warning",
++                "title": "Zero or Null Activity Quantities",
++                "description": f"{missing_amount_count} record(s) contain zero or unrecorded activity amounts.",
++                "affected_count": missing_amount_count,
++                "impact": "Medium",
++                "action": "Review Activity",
++                "action_tab": "queue",
++            })
++
++        if total_records_count > 0 and recent_records_count == 0:
++            warnings.append({
++                "id": "stale_data",
++                "type": "warning",
++                "title": "Data Freshness Advisory",
++                "description": "No emissions or activity records ingested during the last 30 days.",
++                "affected_count": 0,
++                "impact": "Low",
++                "action": "Check Ingestion",
++                "action_tab": "diagnostics",
++            })
++
++        if unused_facilities > 0:
++            suggestions.append({
++                "id": "unused_facilities",
++                "type": "info",
++                "title": "Inactive Facilities In Scope",
++                "description": f"{unused_facilities} facility boundary(ies) are registered in master data but have no emissions reported for this period.",
++                "affected_count": unused_facilities,
++                "impact": "Low",
++                "action": "View Facilities",
++                "action_url": "/reference-data",
++            })
++
++        if total_custom_factors == 0:
++            suggestions.append({
++                "id": "no_custom_factors",
++                "type": "info",
++                "title": "Tier 1 Default Factor Reliance",
++                "description": "No custom or site-specific emission factors registered. Adding facility-calibrated factors reduces Tier 1 uncertainty.",
++                "affected_count": 0,
++                "impact": "Low",
++                "action": "Manage Factors",
++                "action_url": "/reference-data",
++            })
++
++        # Calculate composite health score
++        penalty = (len(issues) * 10) + (len(warnings) * 5) + min(15, pending_anomalies * 2)
++        health_score = max(0, min(100, int(round(overall_completeness - penalty))))
++
++        diagnostics_data = {
++            "health_score": health_score,
++            "completeness": overall_completeness,
++            "dimension_completeness": {
++                "facility": fac_completeness,
++                "fuel_source": fuel_completeness,
++                "activity_amount": amount_completeness,
++                "calculation": calc_completeness,
++            },
++            "total_records": total_records_count,
++            "records_by_scope": {
++                "scope1": s1_count,
++                "scope2": s2_count,
++                "scope3": s3_count,
++            },
++            "recent_records_30d": recent_records_count,
++            "total_facilities": total_facilities,
++            "active_facilities": len(active_fids),
++            "unused_facilities": unused_facilities,
++            "total_custom_factors": total_custom_factors,
++            "anomalies_summary": {
++                "total": total_flagged,
++                "pending": pending_anomalies,
++                "verified": verified_anomalies,
++                "rejected": rejected_anomalies,
++            },
++            "issues": issues,
++            "warnings": warnings,
++            "suggestions": suggestions,
++        }
++
+         return jsonify({
+             "status": "success",
+             "total_flagged_count": total_flagged,
+@@ -186,6 +186,7 @@
+                 "s3_total_tco2e": s3_total,
+             },
+             "flagged_records": flagged_records,
++            "diagnostics": diagnostics_data,
+         })
+ 
+     except Exception as e:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

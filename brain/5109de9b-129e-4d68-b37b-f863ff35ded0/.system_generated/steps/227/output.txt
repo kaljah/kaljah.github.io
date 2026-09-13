@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -129,7 +129,6 @@
+         }
+     };
+ 
+-    // ── Single row resolve ────────────────────────────────────────────────
+     const handleSingleResolve = async (scope, id, resolution) => {
+         setResolving(true);
+         try {
+@@ -136,5 +136,10 @@
+             const res = await api.post('/qaqc/bulk-resolve', { records, resolution });
+             toast.success(res.data.message || `Record marked as ${resolution}`);
++            setSelectedIds(prev => {
++                const next = new Set(prev);
++                next.delete(`${scope}-${id}`);
++                return next;
++            });
+             fetchDashboard();
+         } catch (err) {
+             toast.error(err.response?.data?.error || 'Resolution failed');
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

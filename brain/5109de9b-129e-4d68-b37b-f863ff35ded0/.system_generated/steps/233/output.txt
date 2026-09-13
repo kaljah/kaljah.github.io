@@ -1,0 +1,66 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -523,20 +523,46 @@
+                         {/* Table or Empty State */}
+                         {filteredRecords.length === 0 ? (
+                             <div style={{ padding: '64px 24px', textAlign: 'center' }}>
+-                                <div style={{ 
+-                                    background: '#ecfdf5', color: '#10b981', width: '64px', height: '64px', 
+-                                    borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+-                                    margin: '0 auto 16px auto' 
+-                                }}>
+-                                    <CheckCircle size={32} />
+-                                </div>
+-                                <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
+-                                    Zero Anomalies Detected
+-                                </h3>
+-                                <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto' }}>
+-                                    No statistical outliers or data quality flags detected matching your current filters.
+-                                    The inventory is fully verified and audit-compliant.
+-                                </p>
++                                {total_flagged_count === 0 ? (
++                                    <>
++                                        <div style={{ 
++                                            background: '#ecfdf5', color: '#10b981', width: '64px', height: '64px', 
++                                            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
++                                            margin: '0 auto 16px auto' 
++                                        }}>
++                                            <CheckCircle size={32} />
++                                        </div>
++                                        <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
++                                            Zero Anomalies Detected
++                                        </h3>
++                                        <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto' }}>
++                                            No statistical outliers or data quality flags detected matching your current filters.
++                                            The inventory is fully verified and audit-compliant.
++                                        </p>
++                                    </>
++                                ) : (
++                                    <>
++                                        <div style={{ 
++                                            background: '#fef3c7', color: '#b45309', width: '64px', height: '64px', 
++                                            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
++                                            margin: '0 auto 16px auto' 
++                                        }}>
++                                            <Search size={32} />
++                                        </div>
++                                        <h3 style={{ fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
++                                            No Matching Records
++                                        </h3>
++                                        <p style={{ color: '#64748b', maxWidth: '440px', margin: '0 auto 16px auto' }}>
++                                            No flagged records match your current search query "{searchQuery}" or status filter "{statusFilter}".
++                                        </p>
++                                        <button
++                                            className="qa-btn-action qa-btn-secondary"
++                                            onClick={() => { setSearchQuery(''); setStatusFilter('all'); }}
++                                        >
++                                            Clear Filters
++                                        </button>
++                                    </>
++                                )}
+                             </div>
+                         ) : (
+                             <>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

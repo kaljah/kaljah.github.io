@@ -1,0 +1,131 @@
+# Walkthrough: Unified QA/QC & System Diagnostics Dashboard
+
+## Overview
+We successfully merged the disconnected **Diagnostics** page and **QA/QC** dashboard into a unified, audit-grade **QA/QC & System Diagnostics** suite. The page has been reimagined around an intuitive 3-stage auditor workflow that follows Carbon Tech's enterprise glassmorphic design system and tokens.
+
+---
+
+## Key Changes
+
+### 1. Unified 3-Stage Auditor Workflow
+
+```mermaid
+flowchart TD
+    A[Executive Assurance Header & KPI Strip] --> B[Global Filters: Scope & Year]
+    B --> T1[Tab 1: Anomaly Resolution Queue]
+    B --> T2[Tab 2: Health & Completeness Diagnostics]
+    B --> T3[Tab 3: Uncertainty & Rigor Analysis]
+    
+    T1 --> C1[Bulk & Inline Verify / Reject]
+    T1 --> C2[Real-time Search & Status Filters]
+    T1 --> C3[CSV Compliance Export]
+    
+    T2 --> D1[Attribute Completeness Progress Bars]
+    T2 --> D2[Critical Issues, Warnings & Optimizations]
+    T2 --> D3[Interactive Action Links to Queue & Reference Data]
+    
+    T3 --> E1[IPCC SRSS Error Propagation Formulation]
+    T3 --> E2[Scope 1, 2, 3 Variance & tCO2e Totals]
+```
+
+### 2. UI & Design System Harmonization
+- **100% Theme Adherence**: Removed the legacy dark background (`#0f172a` / `#1e293b`) from the old Diagnostics page. The entire experience now utilizes Carbon Tech's light glassmorphism (`--bg-card`, `--accent-color: #ff6600`, `--border-color`, `--text-primary: #0f172a`, `--success: #10b981`).
+- **Executive KPI Strip**:
+  - **Overall Data Health Score**: Radial/numerical score (0–100%) with dynamic status badges (`Optimal`, `Attention Needed`, `Action Required`).
+  - **IPCC Tier 1 Uncertainty (SRSS)**: Combined inventory uncertainty % alongside Scope 1, 2, 3 values.
+  - **Flagged Anomalies Queue**: Total count, pending review count, and verified tally.
+  - **Inventory & Facility Coverage**: Total records scanned, active vs. registered facilities, and custom factors count.
+- **Unified Navigation & Routing**:
+  - Replaced the two separate admin sidebar items with a single menu entry: **"QA/QC & Diagnostics"** (`/qa-dashboard`).
+  - Added redirect routing from `/diagnostics` to `/qa-dashboard` to preserve existing bookmarks.
+
+### 3. Server-Side SQL Diagnostic Analytics
+- Modified [qaqc.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/qaqc.py) to compute data completeness rates, field gaps (unassigned facilities, missing fuel/source types, zero quantities, uncalculated totals), and facility coverage directly at SQL database speed, avoiding client-side overhead on large datasets.
+
+---
+
+## Files Modified and Created
+
+| File | Change | Description |
+|---|---|---|
+| [qaqc.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/qaqc.py) | `MODIFY` | Added SQL-speed completeness, facility coverage, and categorized findings to `/dashboard` response |
+| [QADashboard.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/pages/QADashboard.jsx) | `MODIFY` | Reimagined unified page combining QA/QC queue, health diagnostics, and IPCC uncertainty tabs |
+| [QADashboard.css](file:///c:/Users/samsung/Desktop/H2/new/client/src/pages/QADashboard.css) | `NEW` | Scoped styling matching Carbon Tech theme variables, badges, and responsive tables |
+| [Diagnostics.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/pages/Diagnostics.jsx) | `MODIFY` | Updated to serve as backward-compatible wrapper rendering `QADashboard` |
+| [Sidebar.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/components/layout/Sidebar.jsx) | `MODIFY` | Consolidated admin navigation to single "QA/QC & Diagnostics" link |
+| [App.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/App.jsx) | `MODIFY` | Updated route `/diagnostics` to redirect to `/qa-dashboard` |
+| [test_qaqc_diagnostics.py](file:///c:/Users/samsung/Desktop/H2/new/server/tests/test_qaqc_diagnostics.py) | `NEW` | Integration test verifying unified payload, diagnostics shape, and CSV export |
+
+---
+
+## Fullstack Bug Hunting & Remediation Report
+
+During our comprehensive audit and bug hunting phase across the unified QA/QC & Diagnostics stack, we identified and resolved **10 critical and subtle issues**:
+
+### 1. Cross-Scope Pagination Truncation (Backend - High Severity)
+- **Issue**: When querying `scope=all`, the backend executed `.offset(offset).limit(limit)` independently against `Scope1Emission`, `Scope2Emission`, and `Scope3Emission`. This resulted in up to $3 \times \text{limit}$ records returned, corrupting pagination slicing and causing skipped records across pages.
+- **Fix**: Unified candidate records across all 3 scopes sorted uniformly by calculated emissions volume, then applied exact slicing `[offset : offset + limit]` in memory after calculating the true combined total.
+
+### 2. Audit Trail Destruction & Counter Desync (Backend - High Severity)
+- **Issue**: When an auditor clicked "Verify" or "Reject", the endpoint executed `row.qa_flag = None`. This erased the audit flag from the database, meaning resolved records disappeared from the QA view entirely, broke the "Verified" status filter tab, and made historical audit logs inaccessible.
+- **Fix**: Retained historical integrity by updating flags with an audit tag (`f"[{resolution}] {row.qa_flag}"`) and updating `row.status = resolution`. This ensures verified and rejected records remain queryable in the compliance archive.
+
+### 3. Scope Query Parameter Type Coercion (Backend - Medium Severity)
+- **Issue**: Incoming HTTP query parameters arrive as strings (`scope="1"`). Python condition `scope == 1` evaluated to `False`, causing queries for Scope 1 or 2 to fall through to the `Scope3Emission` model.
+- **Fix**: Added safe integer casting `int(scope)` with fallback validation.
+
+### 4. CSV Export Scope & Year Filter Bypass (Backend - Medium Severity)
+- **Issue**: `/api/qaqc/export` completely ignored active `year` and `scope` filter parameters, always dumping the entire unfiltered database regardless of what the user was inspecting.
+- **Fix**: Wire up `year` and `scope` filters into `/export` query builder so exports accurately reflect the user's active viewport.
+
+### 5. CSV Formula Injection Vulnerability (Backend / Security - High Severity)
+- **Issue**: Exported fields (`process_type`, `qa_flag`, `status`) were written directly into CSV cells without sanitization. If an anomalous process contained leading formula characters (`=`, `+`, `-`, `@`), opening the CSV in Microsoft Excel could execute arbitrary formulas or exfiltrate data (CWE-1236).
+- **Fix**: Implemented `_sanitize_csv()` helper that prepends a tab character `\t` to any cell starting with `=`, `+`, `-`, or `@`.
+
+### 6. Invalidation of Dashboard Summary Cache (Backend - Medium Severity)
+- **Issue**: Resolving an anomaly or updating status did not invalidate cached dashboard analytics, causing stale metric counters to persist until manual cache expiry.
+- **Fix**: Integrated `clear_dashboard_cache()` triggers immediately upon single or bulk anomaly resolution.
+
+### 7. Missing CSS Spinner Keyframe (Frontend - Low Severity)
+- **Issue**: In `QADashboard.jsx`, loading states applied the `.spin-icon` class with `animation: spin 1s linear infinite`, but `@keyframes spin` was not declared in the stylesheet, resulting in static loading icons during diagnostics execution.
+- **Fix**: Added `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }` in `QADashboard.css`.
+
+### 8. Selection State Desync on Single Row Resolve (Frontend - Medium Severity)
+- **Issue**: When an auditor had checkboxes selected and resolved an anomaly via the inline single-row button, the resolved row remained inside `selectedIds`, causing accidental bulk actions if the auditor subsequently clicked "Approve Selected".
+- **Fix**: Added automatic removal of `${scope}-${id}` from `selectedIds` state upon single-row resolution.
+
+### 9. Contextual Empty State Clarification (Frontend - UX Improvement)
+- **Issue**: If filters were active (e.g. searching for a non-existent keyword) and no rows matched, the table showed "Inventory 100% compliant! Zero anomalies detected", confusing auditors into thinking no issues existed across the entire inventory.
+- **Fix**: Partitioned empty state: if filters are active, displays "No matching records found for active filters" with a "Clear Filters" action; only shows "100% compliant" when the database queue is truly empty.
+
+### 10. Diagnostics-to-Queue Filter Bridge (Frontend - Workflow Integration)
+- **Issue**: Action buttons in Tab 2 (Health Diagnostics) like "Inspect Fuel Classifications" did not pass search keywords when switching to Tab 1, requiring the user to manually re-type the search terms.
+- **Fix**: Connected diagnostic finding action buttons to set `searchQuery` and switch to the Anomaly Queue tab in a single click.
+
+---
+
+## Verification Results
+
+### Automated Test Verification
+1. **Frontend Production Build**:
+   ```bash
+   npm run build (in new/client)
+   ✓ 3199 modules transformed.
+   ✓ built in 15.27s (Exit Code 0, Zero errors)
+   ```
+2. **Backend Unit & Integration Tests**:
+   ```bash
+   python -m pytest tests/test_qaqc_diagnostics.py
+   ======================== 3 passed, 1 warning in 3.08s =========================
+   ```
+3. **Full Server Test Suite**:
+   ```bash
+   python -m pytest tests/
+   ====================== 80 passed, 41 warnings in 16.43s =======================
+   ```
+4. **Knowledge Graph Synchronization**:
+   ```bash
+   graphify update .
+   [graphify watch] Rebuilt: 1932 nodes, 3780 edges, 187 communities (Exit Code 0)
+   ```
+
