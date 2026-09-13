@@ -1,0 +1,29 @@
+# SolarEPC-Pro Expert Edition Walkthrough
+
+I have successfully upgraded SolarEPC-Pro to an **Expert Level** engineering platform.
+
+## New Features (Phase 2)
+- **Advanced Simulation**: Now uses [pvlib](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase2.py#9-16) (Sandia National Labs) for carrier-grade accuracy.
+- **Battery Storage (BESS)**: Simulate battery dispatch for self-consumption and peak shaving.
+- **Electrical Engineering**:
+    - **String Sizing**: Calculates min/max modules per string based on temperature coefficients.
+    - **Voltage Drop**: Checks cable sizing compliance.
+- **Advanced Financials**:
+    - **Loan Modeling**: Debt/Equity split, interest rates.
+    - **Sensitivity Analysis**: Visualizes how CAPEX and Tariff changes affect NPV.
+
+## Verification
+I ran [tests/test_phase2.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase2.py) to verify the new modules:
+- **pvlib**: Confirmed realistic generation (~1860 kWh/kWp for clear sky).
+- **BESS**: Confirmed battery charges/discharges correctly within SoC limits.
+- **Electrical**: Verified voltage drop formula accuracy.
+
+## How to Run
+1. Install new dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Launch the Expert Dashboard:
+   ```bash
+   streamlit run app.py
+   ```

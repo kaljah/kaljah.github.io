@@ -1,0 +1,39 @@
+# Emissions Fixing Walkthrough
+
+> [!IMPORTANT]
+> The issues with emissions data not saving, Scope 2 tables showing incorrect headers/actions, and dashboard synchronization have been resolved.
+
+## Changes
+
+### 1. Fix Emissions Saving (500 Error)
+- **Problem**: The backend was throwing a 500 error because of incorrect property access on the incoming JSON payload (trying to read `emissions.co2` when `emissions` was undefined).
+- **Fix**: Updated [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) to robustly handle both nested and flat payload structures.
+- **Verification**: Verified via Browser Subagent that submitted forms now return 200 OK and persist to the SQLite database.
+
+### 2. Scope 2 Table & Actions
+- **Problem**: Scope 2 (Electricity) table was missing "Actions" (Duplicate/Delete) and logic to handle them.
+- **Fix**: 
+    - Added "Actions" column to [scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html).
+    - Implemented [duplicateRecord](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calc.js#624-670) and [deleteRecord](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calc.js#131-151) in [scope2-calc.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calc.js) with full API integration.
+    - Added `DELETE /api/emissions/:id` endpoint in [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js).
+- **Media**:
+    - *Scope 2 Actions Verification*: Validated via browser interaction tests (duplication and deletion persist after reload).
+
+### 3. Dashboard Synchronization
+- **Problem**: Changing data in calculators didn't immediately update the dashboard.
+- **Fix**: Ensured that [emissions-calc.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calc.js) logic correctly waits for API responses before updating shared state, and dashboard re-fetches latest data on load.
+- **Verification**: Confirmed total emissions verify correctly after adding/duplicating records (`373,700 t` -> `373,701+ t`).
+
+## Verification Results
+
+### 1. Emissions Activity Log
+- **Status**: ✅ **VERIFIED**
+- **Notes**: Scope 1 table now correctly filters out Scope 2 (electricity) records.
+
+### 2. Scope 2 Calculator
+- **Status**: ✅ **VERIFIED**
+- **Notes**: Duplicate and Delete buttons work and sync with the backend.
+
+### 3. Git Status
+- **Status**: ✅ **COMMITTED**
+- **Message**: "Fix emissions saving, Scope 2 actions, and dashboard sync"

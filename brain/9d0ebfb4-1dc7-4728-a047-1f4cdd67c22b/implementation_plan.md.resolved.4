@@ -1,0 +1,57 @@
+# Global Filter Scrollability & Consistency Update
+
+## Goal Description
+Ensure all filter dropdowns across the entire application are scrollable, visually consistent, and use the premium custom dropdown styling. This involves converting remaining native HTML `<select>` elements to custom `<div>` based structures that utilize the `.dropdown-options` class (which has been updated with scrolling capability).
+
+## User Review Required
+> [!IMPORTANT]
+> This change replaces native browser selects with custom DOM elements. While this provides better styling control and consistency, it requires careful handling of events.
+> **Strategy**: We will replace `<select id="X">` with a wrapper `div` and a `<input type="hidden" id="X">`. This allows existing code that reads `.value` to access the selected value without modification. However, we must ensure we programmatically dispatch [change](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#345-346) events when a custom option is selected so that attached event listeners still fire.
+
+## Proposed Changes
+
+### Global Styling
+No further changes needed for [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css) (scrolling fix already applied).
+
+### Component Updates
+
+#### [Emissions Calculator](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html)
+Convert the following native selects to custom dropdowns:
+- **Top Filter Bar**: `filter-facility`, `filter-group`, `filter-process`
+- **Input Panel**: `act-facility`, `act-process`, `act-fuel`, `act-unit` (if select), `act-custom-factor`
+
+**Files to modify:**
+- [public/emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html): Replace `<select>` tags with Custom Dropdown structure and Hidden Inputs.
+- [public/emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js): Update population logic to render `div` options instead of `option` elements. Update event handling to update the display text and hidden input value.
+
+#### [Manage Data](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+Convert the following native selects:
+- **Facilities Tab**: `facility-activity`, `facility-division`
+- **Production Tab**: `prod-activity`, `prod-division`, `prod-facility`
+
+**Files to modify:**
+- [public/manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html): Replace `<select>` tags.
+- `public/manage-data.js`: Update `updatePropDropdown` and related population functions to generate custom options.
+
+#### [Reports](file:///c:/Users/samsung/Desktop/h/public/reports.html)
+Convert the following native selects:
+- **Create Report**: `new-report-year`, `report-division`, `report-activity`, `report-field`
+- **Filter Bar**: `group-by`, `year-filter`
+
+**Files to modify:**
+- [public/reports.html](file:///c:/Users/samsung/Desktop/h/public/reports.html): Replace `<select>` tags.
+- `public/reports.js`: Update population and event handling logic (`populateReportSelectors`, `renderGrid`).
+
+## Verification Plan
+
+### Automated Tests
+- None (UI interaction).
+
+### Manual Verification
+For each modified page (`emissions-calculator`, `manage-data`, `reports`):
+1. **Visual Check**: Confirm filters look like the premium custom dropdowns (no default OS styling).
+2. **Functionality**:
+    - Click to open: Verify standard click toggles the list.
+    - Selection: Verify clicking an option updates the display text.
+    - Logic: Verify selecting an option triggers the associated filter logic (e.g., table updates, dependent dropdowns populating).
+    - Scrolling: Verify that lists with many items (e.g., Facility list) have a max-height and scrollbar.

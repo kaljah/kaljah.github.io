@@ -1,0 +1,41 @@
+# Walkthrough - WBCSD Protocol Upgrade
+
+I have completely upgraded the application to ensure compliance with the **WBCSD Cement Industry Protocol**. The system now supports comprehensive Scope 1 (Process & Energy) and Scope 2 (Electricity) calculations with automatic formula application.
+
+## 1. Backend Upgrades
+
+### Models ([emissions/models.py](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py))
+- **FuelConsumption**: Added `biomass_percentage` to separate biogenic (neutral) from fossil emissions.
+- **ClinkerProduction**: Added `non_carbonate_mgo_contribution` to refine calcination emission factors.
+- **ElectricityConsumption (NEW)**: Added support for Scope 2 location-based reporting.
+- **RawMaterialConsumption (NEW)**: Added Method B (Input-based) for calcination when clinker data is unavailable.
+
+### Calculation Engine ([emissions/signals.py](file:///c:/Users/samsung/Desktop/cement/backend/emissions/signals.py))
+Implemented automatic calculation logic triggered on every save:
+- **Combustion**: $Energy \times EF \times (1 - Biomass\%)$
+- **Calcination (Method A)**: $Clinker \times [0.785(CaO\% - CaO_{nc}) + 1.092(MgO\% - MgO_{nc})]$
+- **Calcination (Method B)**: $Material \times Carbonate\% \times 0.44 \times (1 - Moisture\%)$
+- **Electricity**: $kWh \times GridEF$
+
+## 2. Frontend Upgrades
+
+### Protocol Calculator ([components/emissions/ProtocolCalculator.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/ProtocolCalculator.tsx))
+A new, comprehensive calculator wizard that guides the user through calculation steps:
+- **Scope 1 Process**: Toggle between Method A (Output/Clinker) and Method B (Input/Raw Material).
+- **Scope 1 Energy**: Enhanced fuel input with biomass deduction.
+- **Scope 2**: Electricity consumption input.
+
+### Emission List ([components/emissions/EmissionList.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionList.tsx))
+Updated to display all four categories of emission data:
+- Clinker Production
+- Raw Material Consumption
+- Fuel Consumption (with Fossil vs Biogenic split)
+- Electricity Consumption
+
+## User Action Required
+**Database Migration**: Since new models and fields were added, you must run the following commands in the backend terminal:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+Then restart the backend server.

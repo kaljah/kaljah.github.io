@@ -1,0 +1,35 @@
+# Walkthrough - Database Reset and Seeding (v2)
+
+## Changes
+The database has been reset and seeded using the **corrected Sonatrach hierarchy** to match the application's frontend logic.
+
+### Key Corrections
+-   **Hierarchy Alignment**:
+    -   Activities used: `EP`, `LQS`, `RPC`, `TRC`.
+    -   Divisions used: [Production](file:///c:/Users/samsung/Desktop/h/public/manage-data.html#1756-1781), `Association`, `LSH`, `Raffinage`, `Petrochimie`, `Make`.
+    -   This fixes the issue where regions were not appearing under the correct dropdowns.
+-   **Scope 3 Data**:
+    -   Added **Scope 3 Category 11** ("Use of Sold Products") data.
+    -   Included entries with `0.00` values as requested for verification/baseline purposes.
+
+### Data Overview
+-   **User**: Ramzi Dalil (`ramzi.dalil@sonatrach.dz` / `test`).
+-   **Total Records**: **116,091** emission entries.
+-   **Timeframe**: 2015-2024.
+-   **Sources**: Combustion, Flaring, Venting, Fugitive (Pneumatic, Tanks), Dehydrators.
+
+## Verification
+### Automated Check
+Seeding output confirmed:
+```bash
+✓ Seeded 22 Sonatrach regions (Correct Hierarchy)
+✓ Seeded Scope 3 Data (including 0.00 entries)
+✓ Database transaction committed. Total Records: 116091
+```
+
+### Manual Verification
+1.  **Login**: Use `ramzi.dalil@sonatrach.dz` / `test`.
+2.  **Facilities**: Go to "Manage Data" -> "Regions".
+    -   Select "EP" -> "Production" -> You should see "Hassi Messaoud", etc.
+    -   Select "LQS" -> "LSH" -> You should see "GL1Z", etc.
+3.  **Scope 3**: Check the "Scope 3" calculator or report to see the seeded Category 11 data.

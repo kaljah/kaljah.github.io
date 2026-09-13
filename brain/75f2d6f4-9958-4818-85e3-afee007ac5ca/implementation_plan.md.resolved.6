@@ -1,0 +1,55 @@
+# SolarEPC-Pro Phase 7: Expert Engineering
+
+## Goal Description
+Elevate the tool to "Expert Level" by adding physical realism (horizon shading, mismatch), commercial depth (complex tariffs), and construction detail (civil BOM).
+
+## User Review Required
+> [!IMPORTANT]
+> **Tariffs**: We will implement a "Time-of-Use" editor where users define Peak/Off-Peak hours.
+> **Civil**: We will estimate quantities based on "Area" derived from capacity and GCR.
+
+## Proposed Changes
+
+### 1. Horizon & Mismatch ([src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py))
+#### [MODIFY] [src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py)
+- [calculate_generation](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py#24-96):
+    - Accept `horizon_profile` (list of elevation angles for N, E, S, W).
+    - Apply mask: If Solar Elevation < Horizon Elevation, Beam Irradiance = 0.
+    - Apply `mismatch_loss`: If `shading_factor` > 0, apply non-linear loss (e.g., `loss = shading * 3` to simulate diode bypass).
+
+### 2. Complex Tariffs ([src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py))
+#### [MODIFY] [src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py)
+- Update [calculate_metrics](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py#18-88) to accept:
+    - `tou_rates`: Dict `{hour: rate}`.
+    - `demand_charge`: Float `$/kW` applied to monthly peak grid import.
+
+### 3. Battery Degradation ([src/hybrid_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/hybrid_model.py))
+#### [MODIFY] [src/hybrid_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/hybrid_model.py)
+- Update [BatterySystem](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/hybrid_model.py#4-79):
+    - Track `cumulative_throughput`.
+    - `soh` (State of Health) decreases by `0.00001` per kWh throughput (simplified physics).
+
+### 4. Civil Engineering (`src/civil.py`)
+#### [NEW] [src/civil.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/civil.py)
+- `CivilEngineer` class:
+    - `calculate_quantities(capacity_kw, gcr, area_m2)`:
+        - **Fence**: Perimeter of square area.
+        - **Trenching**: Approx `sqrt(area) * 1.5`.
+        - **Roads**: `sqrt(area)`.
+        - **Concrete**: `capacity * 0.5` m3 (foundations).
+
+### 5. UI Integration ([app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py))
+- **Simulation Tab**: Add Horizon inputs.
+- **Financial Tab**: Add TOU Editor (Peak Hours selector).
+- **Report Tab**: Add "Civil Bill of Quantities" to PDF.
+
+## Verification Plan
+### Automated Tests
+- `test_phase7.py`:
+    - `test_horizon`: Verify generation is 0 when sun is below horizon.
+    - `test_tou`: Verify revenue is higher if generation matches peak hours.
+    - `test_civil`: Verify fence length calculation.
+
+### Manual Verification
+- Set Horizon to 45 degrees East and check morning generation drop.
+- Set Peak Rate to $0.50 and check savings increase.

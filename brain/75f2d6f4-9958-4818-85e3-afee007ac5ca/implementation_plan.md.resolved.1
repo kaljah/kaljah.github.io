@@ -1,0 +1,48 @@
+# SolarEPC-Pro Phase 2: Expert Edition
+
+## Goal Description
+Transform the MVP into a professional-grade engineering tool by integrating industry-standard libraries (`pvlib`), adding Battery Storage (BESS) capabilities, and implementing detailed electrical sizing tools.
+
+## User Review Required
+> [!IMPORTANT]
+> **External Data**: We will attempt to use the `pvlib` interface to fetch PVGIS data (free, global). If APIs fail, we fallback to the clear-sky model but with `pvlib` physics.
+
+## Proposed Changes
+
+### 1. Advanced Simulation ([src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py))
+#### [MODIFY] [src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py)
+- **Library Switch**: Replace custom logic with `pvlib` python library.
+- **Features**:
+    - `get_pvgis_tmy()`: Fetch real weather data.
+    - `pvlib.pvsystem.PVSystem`: Use accurate diode models for modules.
+    - Temperature corrections for efficiency.
+
+### 2. Battery Storage (`src/storage_model.py`)
+#### [NEW] [src/storage_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/storage_model.py)
+- `BatterySystem` class:
+    - Inputs: Capacity (kWh), Power (kW), Round-trip Efficiency, DoD.
+    - Logic: Dispatch strategy (Self-consumption maximization).
+
+### 3. Electrical Engineering (`src/electrical.py`)
+#### [NEW] [src/electrical.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/electrical.py)
+- `calculate_string_size(min_temp, max_temp, module_specs, inverter_specs)`: Returns min/max modules per string.
+- `calculate_voltage_drop(current, distance, cable_cross_section)`: Returns % drop.
+
+### 4. Advanced Financials ([src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py))
+#### [MODIFY] [src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py)
+- Add `loan_amount`, `interest_rate`, `tenure` to [FinancialAnalyzer](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py#5-68).
+- Add `sensitivity_analysis(param_range)` method to generate data for Tornado charts.
+
+### 5. Reporting ([src/reporting.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py))
+#### [MODIFY] [src/reporting.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py)
+- Implement `create_pdf_report(data, charts)` using `fpdf` or `reportlab`.
+
+## Verification Plan
+### Automated Tests
+- `test_pvlib_integration.py`: Compare `pvlib` output vs simplified model (expect `pvlib` to be more variable due to weather).
+- `test_storage.py`: Verify battery doesn't discharge below DoD.
+- `test_electrical.py`: Verify voltage drop calculation against standard formula ($V_d = \frac{2 \cdot L \cdot I \cdot \rho}{A}$).
+
+### Manual Verification
+- Run the app, select a location in Europe (for PVGIS coverage), and check if real weather data loads.
+- Test the "String Sizing" calculator with standard module specs (Voc, Vmp).

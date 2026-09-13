@@ -1,0 +1,45 @@
+# CO & Combustion Efficiency Implementation Plan
+
+## Goal Description
+Implement Carbon Monoxide (CO) emissions tracking for Stationary Combustion and Flaring processes to allow for the quantification of **Combustion Efficiency (CE)**.
+
+**Formula:**
+$$ CE (\%) = \frac{n_{CO2}}{n_{CO2} + n_{CO}} \times 100 $$
+Where $n$ represents moles of the substance.
+- $MW_{CO2} = 44.01 \text{ g/mol}$
+- $MW_{CO} = 28.01 \text{ g/mol}$
+
+### Production Data Features
+#### [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+- **Table Visibility**: Add CSS to ensure `.data-table td` has high contrast color (dark gray/black).
+- **Buttons**: Add "Import CSV" and "Export CSV" buttons next to the Year filter.
+- **Export Logic**: 
+    - JS function `exportProductionCSV()`.
+    - Iterates over `window.productionData` (need to store loaded data in a variable) or table rows.
+    - Generates CSV string: `Facility Name,Year,Oil (bbl),Gas (mcf)`.
+    - Triggers download.
+- **Import Logic**:
+    - Input `type="file" id="csv-upload" accept=".csv"`.
+    - JS function `importProductionCSV()`.
+    - Parses file. Checks for columns: `Facility, Year, Oil, Gas`.
+    - Matches "Facility" name to ID.
+    - Post each record to `/api/production`.
+    - Show progress/toast on completion.
+
+### Manage Data Page
+#### [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+- Add "Production Data" item to the sidebar navigation within the page.
+- Add a new content section `<div id="tab-production" ...>` similar to `tab-factors`.
+- The section will contain a table listing production records grouped by year/facility.
+- Add "Add Record" form at the top, reusing styles from other tabs.
+
+#### [NEW] [Backend]
+- Add `DELETE /api/production/:id` endpoint to [server.js](file:///c:/Users/samsung/Desktop/h/server.js).
+
+## Verification Plan
+### Manual Verification
+1.  Navigate to Manage Data.
+2.  Click "Production Data".
+3.  Add a record for 2023.
+4.  Verify it appears in the table.
+5.  Delete the record and verify removal.

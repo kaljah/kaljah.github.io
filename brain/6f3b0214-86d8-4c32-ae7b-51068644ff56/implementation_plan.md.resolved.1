@@ -1,0 +1,33 @@
+# Fix and Enhance Registration Flow
+
+Fix the reported registration failure and add all profile fields to the registration form to collect more user information upfront.
+
+## Proposed Changes
+
+### Backend
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- Update `/register` endpoint to handle optional profile fields: `email`, `jobTitle`, `department`, `phone`, `location`, `bio`.
+- Modify the database `INSERT` query to include these fields.
+
+### Frontend
+
+#### [MODIFY] [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html)
+- Add more fields to the registration form: Email, Job Title, Department, Phone, Location, and Bio.
+- Style the registration form to handle the increased number of fields.
+
+#### [MODIFY] [script.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/script.js)
+- Update registration handler to collect all new form field values.
+- Pass these values to the `/register` API call.
+
+## Verification Plan
+
+### Automated Tests
+- Create a test script to verify the updated `/register` endpoint with all fields.
+
+### Manual Verification
+- Manually register a new user via the UI and verify:
+  1. No errors occur during submission.
+  2. The user is correctly created in [users_v2.db](file:///c:/Users/samsung/Desktop/ghg%20old/users_v2.db).
+  3. The user-specific database is created.
+  4. Logging in with the new account works.

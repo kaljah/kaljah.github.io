@@ -1,0 +1,47 @@
+# Restructure Compliance & Login Page Implementation Plan
+
+## Goal
+To refactor [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) into a dedicated "Base Year Recalculation History" page and move the high-level compliance status indicators (Score % and Boxes) to the [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) (Login Page) to showcase compliance status to users before they log in.
+
+## User Review Required
+> [!NOTE]
+> I will replace the simple "Compliance Badges" on the login page with the detailed "Status Cards" (EPA 98, ISO 14064, GHG Protocol) from the compliance page. I will adapt the styling to match the Login page's Teal/Dark Green theme.
+
+## Proposed Changes
+
+### 1. [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) (Refactor)
+[DELETE] High-level compliance visuals:
+- Remove `.compliance-grid` (The 3 status cards).
+- Remove `.finding-card` (The gap analysis checklist).
+- Remove inline CSS specific to these elements if no longer needed.
+
+[MODIFY] Page Header:
+- Rename "Regulatory Compliance & Standards" to **"Base Year Recalculation History"**.
+- Update description to "Log of formal decisions regarding base year recalculations."
+
+[KEEP]
+- The "Base Year Recalculation History" table and logic.
+
+### 2. [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) (Login Page Enhancement)
+[NEW] Add Compliance Visuals:
+- Copy the 3 "Status Cards" (EPA, ISO, GHG Protocol) into the `.brand-content` section (Left Panel).
+- Replace the existing simple text badges with these cards.
+
+[NEW] Styles:
+- Port the CSS for `.status-card`, `.score-large`, etc., into [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) (or [login.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/login.css)).
+- **Theming**: Adjust background colors from `rgba(255, 255, 255, 0.02)` to blend with the Login Page's `#1a5d4a` (Teal) background. Likely usage of slightly lighter transparent whites/greens.
+
+### 3. File Updates
+
+#### [MODIFY] [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)
+- Remove lines 382-494 (approx).
+- Update header text.
+
+#### [MODIFY] [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html)
+- Add CSS block in `<head>` for card styling.
+- Insert the 3 status cards HTML into `.brand-content`.
+
+## Verification Plan
+### Manual Verification
+- Open [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html): Verify only the Recalculation History table exists and the title is correct.
+- Open [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html): Verify the 3 compliance cards appear in the left brand panel and look visually integrated (correct colors, spacing).

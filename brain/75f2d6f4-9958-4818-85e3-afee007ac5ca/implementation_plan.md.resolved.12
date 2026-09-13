@@ -1,0 +1,43 @@
+
+### 3. Battery Degradation ([src/hybrid_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/hybrid_model.py))
+    - **Energy Balance**: Stacked Area Chart (Solar, Grid, Battery).
+    - **Cashflow**: Waterfall or Bar chart for annual cashflows.
+- **Layout**: Use `st.columns` more effectively to reduce scrolling.
+
+## Verification Plan
+### Automated Tests
+- `test_phase7.py`: Verify Horizon, TOU, Civil calculations.
+
+### Manual Verification
+- Check if graphs look "Professional" (no default rainbow colors).
+- Verify Layout Visualizer shows individual modules.
+
+# Phase 9: 3D Realism (Ultra-High Fidelity)
+
+## Goal
+Achieve "most realistic possible" visualization of the PV array using Plotly 3D.
+
+## Proposed Changes
+### [src/design.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py)
+#### [MODIFY] [visualize_layout_3d](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py#153-466)
+- **Extruded Frame**: Add side faces to the frame mesh to give it physical thickness (30-40mm).
+- **Racking Structure**: Add `go.Scatter3d` traces for vertical piles (posts) and horizontal torque tubes/rails.
+- **Cell Grid**: Add faint grid lines to simulate individual cells on the module surface.
+- **Materials**: Fine-tune lighting for glass-like reflection on cells and matte finish on frames.
+
+## Verification
+- **Visual Check**: Ensure panels look like physical objects with depth, not flat planes.
+- **Performance**: Ensure the browser does not crash with the added geometry (optimize vertex counts).
+
+### Potential Enhancements (Menu)
+- **Environment**: Textured ground (grass/earth), Sky background.
+- **Infrastructure**: 3D Inverter Stations (concrete pads + boxes), Perimeter Fencing, Access Roads.
+- **Dynamic Elements**: Interactive Sun Position slider to show real-time shadowing.
+- **Context**: 3D Human figure for scale, Compass Rose.
+- **Ground Types**: Dropdown to select:
+    - Grass (#4CAF50)
+    - Sand/Desert (#E6C288)
+    - Gravel (#9E9E9E)
+    - Dirt (#795548)
+    - Snow (#FFFFFF)
+- **Details**: Cable trays, Combiner boxes at row ends.

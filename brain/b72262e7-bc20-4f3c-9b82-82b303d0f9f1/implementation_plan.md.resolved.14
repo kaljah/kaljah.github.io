@@ -1,0 +1,32 @@
+# Modernize Emissions Breakdown Table
+
+Transform the breakdown table into a dynamic, premium component that displays results for the most recent year in the dataset.
+
+## Proposed Changes
+
+### Dashboard
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Add an ID to the breakdown table header (e.g., `breakdown-year-title`) to update the year dynamically.
+- Update IDs for Scope 1, Scope 2, and Total values to be more specific (e.g., `table-scope1-val`, etc. - actually they already have IDs, I'll just use them).
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Update [updateBreakdownTable](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#286-295) to:
+    - Identify the most recent year from the `trend` data.
+    - Display that year in the table header.
+    - Update the table cells with values specifically for that year.
+    - Add a fallback if no data exists.
+
+#### [MODIFY] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css)
+- Modernize `.data-table` styling:
+    - Add horizontal padding to rows.
+    - Implement a subtle hover effect on rows.
+    - Enhance typography and color contrast for key values.
+    - Ensure the "Total" row stands out with a bolder style.
+
+## Verification Plan
+
+### Manual Verification
+- Verify the table header correctly identifies the most recent year (e.g., "2024 Results").
+- Confirm the values shown match the totals for that specific year in the trend chart.
+- Ensure the table styling looks premium and consistent with the rest of the dashboard.

@@ -1,0 +1,15 @@
+# Task: Investigate PDF Report Download Issue
+
+## Plan
+- [x] Go to http://localhost:5173/reports
+- [x] Click the red "PDF Report" button
+- [x] Intercept the API request to `/api/reports/export` (Trying direct access)
+- [ ] Check if the response starts with `%PDF-`
+- [ ] Document findings
+
+## Findings
+- Clicked the red "PDF Report" button.
+- Encountered a devtools error when trying to list network requests.
+- Tried accessing http://localhost:5000/api/reports/export directly; resulted in a blank page (likely download triggered).
+- Console logs of the blank page are being checked.
+- Plan: If console is empty, use a fetch script on the reports page to capture the response.

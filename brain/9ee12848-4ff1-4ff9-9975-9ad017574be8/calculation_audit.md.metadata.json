@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "Complete calculation logic audit of the Sonatrach GHG software. Covers all 11 calculation modules, 3 scope routes, the intensity/dashboard pipeline, and the Scope 2/3 bulk import paths. Classifies each finding as Critical (wrong numbers), Medium (potential wrong numbers in edge cases), or Low (code quality). Includes exact file+line references and a concise fix description. NO code changes made — read-only audit.",
+  "updatedAt":  "2026-04-23T18:46:16.170112300Z"
+}

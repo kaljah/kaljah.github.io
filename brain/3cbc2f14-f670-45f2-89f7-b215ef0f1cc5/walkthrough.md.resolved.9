@@ -1,0 +1,26 @@
+# Walkthrough - Carbon Intensity & Hierarchical Filtering
+
+I have successfully updated the Carbon Intensity page to include hierarchical filtering and a new Flaring Intensity metric, ensuring it uses real data from your database.
+
+## 1. Hierarchical Filtering
+- **Three Levels**: Activity → Division → Region.
+- **Cascading Logic**: Selecting an Activity filters available Divisions; selecting a Division filters available Regions.
+- **Field Names**: Region dropdown now displays the field name (e.g., "RNS - North Field") for better context.
+
+## 2. Flaring Intensity Metric
+- **New KPI**: Added "Flaring Intensity" to the top hero card (3-column layout).
+- **Formula**: `Total Flaring Emissions (tCO2e) / Total Flaring Volume`.
+- **Unit**: Displayed as `tCO2e / unit`.
+- **Precision**: Increased to 5 decimal places to show small values accurately (e.g., 0.00006).
+- **Robustness**: Updated backend to match any process type containing "flaring" (e.g., "Associated Gas Flaring").
+
+## 3. Data Integrity & Fixes
+- **Real Data**: Connected the dashboard to your live database by adding the `/api/facilities` endpoint.
+- **No Mock Data**: Removed all fallback mock data generation from both the main dashboard and trend charts.
+- **Orphaned Data Filter**: Added logic to filter out "ghost" data from deleted facilities (e.g., dealing with old records linked to deleted Facility IDs), ensuring discrepancies between "Manage Data" and "Dashboard" are resolved.
+
+## 4. Manage Data Improvements
+- **Production Data Tab**: Updated the input form to use the same hierarchical filtering as the dashboard.
+    - **Activity**: Select EP, LQS, RPC, TRC.
+    - **Division**: Auto-populated based on Activity.
+    - **Region**: Filtered based on Division.

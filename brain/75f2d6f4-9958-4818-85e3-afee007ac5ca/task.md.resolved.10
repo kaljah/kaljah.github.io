@@ -1,0 +1,31 @@
+# Task: Renewable Energy Feasibility & EPC Platform (SolarEPC-Pro)
+
+- [x] **Phase 1: Foundation (MVP)** <!-- id: 0 -->
+    - [x] Project Setup & Architecture <!-- id: 1 -->
+    - [x] Core Simulation Engine (Basic) <!-- id: 2 -->
+    - [x] Financial Model (Basic) <!-- id: 3 -->
+    - [x] User Interface (Streamlit) <!-- id: 4 -->
+    - [x] BOM Generator <!-- id: 5 -->
+
+- [x] **Phase 2: Expert Engineering (Previous)** <!-- id: 6 -->
+    - [x] Advanced Simulation Engine ([pvlib](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase2.py#9-16)) <!-- id: 7 -->
+    - [x] Electrical Engineering Tools (Basic) <!-- id: 8 -->
+    - [x] Advanced Financials <!-- id: 9 -->
+
+- [x] **Phase 3: Professional EPC Modules (Inverter/Geometry)** <!-- id: 10 -->
+    - [x] Refactor & Cleanup (Remove BESS) <!-- id: 11 -->
+    - [x] Module 2: Inverter Sizing & Matching <!-- id: 12 -->
+    - [x] Module 4: Shading & Geometry <!-- id: 13 -->
+    - [x] Module 8: Full Feasibility Report <!-- id: 14 -->
+
+- [ ] **Phase 4: Advanced EPC Modules (Current)** <!-- id: 15 -->
+    - [ ] **Module 3: Cable Sizing & Voltage Drop** <!-- id: 16 -->
+        - [ ] Implement Ampacity checks (Current Carrying Capacity) <!-- id: 17 -->
+        - [ ] Suggest cable size (4/6/10mm²) based on drop limits (1% DC) <!-- id: 18 -->
+    - [ ] **Module 5: Thermal, Losses & PR** <!-- id: 19 -->
+        - [ ] Implement NOCT-based cell temp calculation <!-- id: 20 -->
+        - [ ] Detailed Loss Breakdown (Soiling, LID, Wiring, Mismatch) <!-- id: 21 -->
+        - [ ] Calculate and display Performance Ratio (PR) <!-- id: 22 -->
+    - [ ] **Module 6 & 7: Degradation & Advanced Financials** <!-- id: 23 -->
+        - [ ] Implement LID (Year 1) vs Annual Degradation <!-- id: 24 -->
+        - [ ] Detailed Cashflow Table (ROI, OPEX, CAPEX breakdown) <!-- id: 25 -->

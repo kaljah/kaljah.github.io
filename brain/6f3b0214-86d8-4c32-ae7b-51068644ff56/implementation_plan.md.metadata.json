@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary":  "Implement a profile dropdown menu for the top-right profile icon across all pages.\nTarget pages: `dashboard.html`, `emissions-calculator.html` + 7 others.\nNew Script: `public/profile-logic.js`.",
+  "updatedAt":  "2026-01-02T14:28:22.911538100Z",
+  "version":  "8"
+}

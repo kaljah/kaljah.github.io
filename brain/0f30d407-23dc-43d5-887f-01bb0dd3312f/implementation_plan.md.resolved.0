@@ -1,0 +1,36 @@
+# Implementation Plan - Dashboard Optimization
+
+The goal is to optimize the dashboard data loading, ensure "All Years" is the default view, and simplify the loading experience.
+
+## User Review Required
+
+> [!NOTE]
+> The "All Years" default seems to be the current intended behavior in the frontend code. I will verify if the backend respects this and if the "loading" optimizations create a smoother experience.
+
+## Proposed Changes
+
+### Frontend ([public/dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js))
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- Refactor [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#240-306) to fetch categorical breakdown data in parallel with summary data.
+- Pass the pre-fetched categorical data to rendering functions to avoid a "waterfall" loading effect.
+- Ensure the `year` parameter is explicitly set to `'all'` when fetching categorical breakdown on initial load.
+- Remove the separate, delayed call to [loadCategoricalBreakdown](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#436-608) if the data is already available.
+
+### Styling ([public/loading-states.css](file:///c:/Users/samsung/Desktop/h/public/loading-states.css))
+
+#### [MODIFY] [loading-states.css](file:///c:/Users/samsung/Desktop/h/public/loading-states.css)
+- Simplify the loading animation or overlay.
+- Make it less intrusive (e.g., smaller spinner or skeleton loader instead of full-screen blocking if that's the case).
+
+### Backend ([server.js](file:///c:/Users/samsung/Desktop/h/server.js) or separate route file)
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js) (or relevant route file)
+- Verify `categorical-breakdown` route handles `year=all` correctly (aggregating potentially).
+
+## Verification Plan
+
+### Manual Verification
+- **Load Dashboard**: Open [public/dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) (via server) and observe the network tab. All major data requests should start simultaneously.
+- **Default View**: Confirm that "All Years" is selected in the dropdown and the data displayed matches the total of all years.
+- **Loading State**: Refresh the page and observe the loading indicator. It should be "simpler" (subjective, but based on code changes) and the content should appear more snappily.

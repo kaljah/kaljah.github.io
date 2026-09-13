@@ -1,0 +1,14 @@
+# Tasks
+
+- [x] Refactor [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) layout to match [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) <!-- id: 9.1 -->
+- [x] Ensure [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) uses global white theme <!-- id: 9.2 -->
+- [x] Verify functionality (Add Factor, Add Facility) <!-- id: 9.3 -->
+- [x] Verify Navigation Links <!-- id: 9.4 -->
+- [x] Restore Nested Layout (Global Sidebar + Inner Nav) <!-- id: 10.1 -->
+- [x] Fix Theme (White background) <!-- id: 10.2 -->
+- [x] Modernize Inner Sidebar (Pills, Glass) <!-- id: 11.1 -->
+- [x] Improve Input Styling (Focus rings, Spacing) <!-- id: 11.2 -->
+- [x] Animate Lists & Cards <!-- id: 11.3 -->
+- [x] Implement Premium "Floating Label" Inputs <!-- id: 12.1 -->
+- [ ] Revert Floating Labels & Apply Emission Style <!-- id: 13.1 -->
+- [ ] Verify Clean Minimalist Look <!-- id: 13.2 -->

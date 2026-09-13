@@ -1,0 +1,6 @@
+# Task: Debugging Verification Report Error
+
+- [/] Identify the cause of "Error loading history"
+- [ ] Update [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) to ensure `recalculation_log` exists on every request
+- [ ] Improve error handling in [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) to show specific error messages
+- [ ] Verify fix by reviewing code and simulated flow

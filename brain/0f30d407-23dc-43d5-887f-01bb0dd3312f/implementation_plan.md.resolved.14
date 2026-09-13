@@ -1,0 +1,37 @@
+# Fix Manage Data Dropdowns & Field Order
+
+The user reported that the Activity, Division, and Region dropdowns on the Manage Data page (Production tab) don't match the rest of the tool. Additionally, the field order in Region Management needs to be updated to match the requested flow: Activity -> Division -> Region.
+
+## User Review Required
+
+> [!IMPORTANT]
+> I will be updating the [EmissionSource](file:///c:/Users/samsung/Desktop/h/new/server/models.py#123-144) database model to include an `equipment_id` field. This ensures consistency between the inventory and the calculation records.
+
+> [!NOTE]
+> The **Type** dropdown for emission sources will now include the full list of process types from the calculator (e.g., Pneumatic Devices, Storage Tanks, Well Completions, etc.).
+
+## Proposed Changes
+
+### [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+
+#### [MODIFY] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+- Import `PROCESS_TYPES` from [EmissionFactors.js](file:///c:/Users/samsung/Desktop/h/new/client/src/utils/EmissionFactors.js).
+- Update `sourceForm` state to include `equipment_id`.
+- Update **Emission Sources** tab:
+    - Add **Equipment ID** input field.
+    - Synchronize **Type** dropdown with `PROCESS_TYPES`.
+    - Show **Equipment ID** in the active sources table.
+
+### [Models & Routes]
+#### [MODIFY] [models.py](file:///c:/Users/samsung/Desktop/h/new/server/models.py)
+- Add `equipment_id` column to [EmissionSource](file:///c:/Users/samsung/Desktop/h/new/server/models.py#123-144) model.
+
+#### [MODIFY] [managedata.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/managedata.py)
+- Update [get_sources](file:///c:/Users/samsung/Desktop/h/new/server/routes/managedata.py#9-26) and [add_source](file:///c:/Users/samsung/Desktop/h/new/server/routes/managedata.py#27-46) to support `equipment_id`.
+
+## Verification Plan
+
+### Manual Verification
+- Navigate to **Manage Data** -> **Regions**. Verify the field order is Activity -> Division -> Region.
+- Navigate to **Manage Data** -> **Production Data**. Verify that selecting an Activity (e.g., "Exploration & Production") updates the Division list correctly and that the Region list displays the appropriate assets.
+- Verify that adding a new region with the new labels works correctly and it appears on the map.

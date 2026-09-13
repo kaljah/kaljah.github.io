@@ -1,0 +1,36 @@
+# Global Notifications Implementation
+
+## Goal
+Expand the emissions notification system (bell icon, badge, dropdown) to all application pages to ensure consistent user feedback.
+
+## Implementation Steps
+
+### 1. Batch HTML Update
+Inject the Notification HTML snippet into the `header class="top-bar"` section of the following files, replacing the existing static bell icon:
+- [public/emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html)
+- [public/scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html)
+- [public/emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+- [public/reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html)
+- [public/reference-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reference-data.html)
+- [public/emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html)
+- [public/manage-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/manage-data.html)
+- [public/scope1-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope1-selection.html) (if applicable)
+
+**HTML Snippet to Inject:**
+```html
+<div style="position: relative;">
+    <button id="notification-btn" style="...">
+       <!-- Icon + Badge -->
+    </button>
+    <div id="notification-dropdown" style="...">
+       <!-- Dropdown Content -->
+    </div>
+</div>
+```
+
+### 2. Script Injection
+Add `<script src="notification-logic.js"></script>` to the bottom of the body in all modified files.
+
+## Verification
+- **Automated Check**: I will essentially "check without DOM" by verifying the file content post-edit to ensure the snippet is present and the script is linked. 
+- **Robustness**: The script is already written to be safe if elements are missing, but adding them ensures it works.

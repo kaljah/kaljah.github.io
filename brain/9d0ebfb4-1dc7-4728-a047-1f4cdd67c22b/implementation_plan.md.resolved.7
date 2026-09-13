@@ -1,0 +1,59 @@
+# Global Filter Scrollability & Consistency Update (Phase 2)
+
+## Goal Description
+Ensure all filter dropdowns across the entire application are scrollable, visually consistent, and use the premium custom dropdown styling. This phase completes the refactoring for [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) and standardizes the dropdown handlers in [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) and [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js).
+
+## Proposed Changes
+
+### [Manage Data UI Structural Fix]
+
+#### [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+- Fix premature closing of `.grid-forms` at line 703 in `tab-facilities`.
+- Fix premature closing of `#tab-facilities` at line 738.
+- Move the closing tag of `#tab-facilities` to encompass the `facilities-list` container.
+- Remove redundant closing `</div>` tags that break the parent `section` layout.
+- Verify consistent nesting across all other tab containers.
+
+---
+
+### [Manage Data](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+Summary of changes:
+- Convert remaining native `<select>` for units in the conversion helper to custom dropdowns.
+- Standardize the [setupCustomDropdown](file:///c:/Users/samsung/Desktop/h/public/manage-data.html#1319-1360) initialization.
+
+#### [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+- Replace `<select id="conv-oil-unit">` and `<select id="conv-gas-unit">` with custom dropdown wrappers and hidden inputs.
+- Update [initCustomDropdowns](file:///c:/Users/samsung/Desktop/h/public/manage-data.html#1361-1393) to initialize these new wrappers.
+
+---
+
+### [Dashboard Consistency](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+Summary of changes:
+- Refactor the manual toggle/event logic for top filters to use the shared [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#613-654) function.
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- Update [initDashboard](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#23-222) to call [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#613-654) for `activity-selector-wrapper`, `division-selector-wrapper`, and `facility-selector-wrapper`.
+- Remove manual `setupToggle` and manual class management for these wrappers.
+
+---
+
+### [Carbon Intensity Consistency](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js)
+Summary of changes:
+- Standardize all filter and year dropdowns to use [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#613-654).
+
+#### [MODIFY] [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js)
+- Refactor [setupDropdownHandlers](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js#102-134) and [populateYears](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js#24-60) to use [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#613-654).
+- Remove manual toggle and "click outside" listeners that are now redundant.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- None.
+
+### Manual Verification
+1. **[manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)**: Verify the oil/gas unit converters in the "Tools" or "Production" tab use the custom dropdowns.
+2. **[dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html)**: Verify Activity, Division, and Region filters still function correctly after refactoring to the helper.
+3. **[carbon-intensity.html](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.html)**: Verify Year, Activity, Division, and Region filters still function correctly.
+4. **Click Outside**: Verify that clicking anywhere outside an open dropdown closes it across all three pages.

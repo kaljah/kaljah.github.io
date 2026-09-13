@@ -1,0 +1,24 @@
+# PostgreSQL Launch Support
+
+## Goal Description
+Enable the user to run the application with a PostgreSQL database, as requested. Since PostgreSQL is not currently installed, this involves creating a startup script (`start_postgres.bat`) that configures the environment and providing clear instructions on how to install and setup PostgreSQL.
+
+## User Review Required
+> [!IMPORTANT]
+> **PostgreSQL Installation Required**: The user currently does not have PostgreSQL installed. Attempting to run the new script without installing PostgreSQL first will result in connection errors.
+
+## Proposed Changes
+
+### Root Directory
+#### [NEW] [start_postgres.bat](file:///c:/Users/samsung/Desktop/h/start_postgres.bat)
+- A Windows batch script that:
+    - Sets `DB_TYPE=postgres`
+    - Sets default database credentials (`DB_USER`, `DB_PASS`, etc.)
+    - Launches [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+
+## Verification Plan
+### Manual Verification
+1.  **Script Creation**: Verify `start_postgres.bat` is created with correct environment variables.
+2.  **User Handoff**: Provide the user with the script and a guide (via `notify_user`) on how to:
+    - Install PostgreSQL.
+    - Create the `ghg_enterprise` database and `test` user (or update the script).

@@ -1,0 +1,10 @@
+# Task: Settings Page Modernization
+
+- [x] Research and Planning
+- [x] Modernize Settings Page (General)
+- [x] Modernize Settings Dropdowns
+- [x] Add Save Button to Reporting
+- [x] Bug Fix: 500 Error on Save
+    - [x] Fix [authMiddleware](file:///c:/Users/samsung/Desktop/ghg%20old/server.js#328-347) to fetch full user
+    - [x] Fix `PUT /api/users/:id` to use fallbacks
+- [x] Verify changes

@@ -1,0 +1,9 @@
+# Task: specificfix Region saving/display issues
+
+- [ ] Investigate Schema and API <!-- id: 0 -->
+    - [ ] Check SQLite table columns for `facilities` <!-- id: 1 -->
+    - [ ] Review [server.js](file:///c:/Users/samsung/Desktop/h/server.js) API endpoints for facilities <!-- id: 2 -->
+- [ ] Fix Schema creation logic <!-- id: 3 -->
+    - [ ] Make [createSchema](file:///c:/Users/samsung/Desktop/h/server.js#73-269) cross-compatible (SQLite/Postgres) <!-- id: 4 -->
+- [ ] Fix Frontend interaction (if necessary) <!-- id: 5 -->
+- [ ] Verify fix <!-- id: 6 -->

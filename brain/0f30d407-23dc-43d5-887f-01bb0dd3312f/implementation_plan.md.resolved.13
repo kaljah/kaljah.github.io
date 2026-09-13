@@ -1,0 +1,34 @@
+# Fix Manage Data Dropdowns & Field Order
+
+The user reported that the Activity, Division, and Region dropdowns on the Manage Data page (Production tab) don't match the rest of the tool. Additionally, the field order in Region Management needs to be updated to match the requested flow: Activity -> Division -> Region.
+
+## User Review Required
+
+> [!IMPORTANT]
+> I will be updating the [Activity](file:///c:/Users/samsung/Desktop/h/server.js#929-944) and [Division](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx#435-438) labels to be more descriptive (e.g., "EP" -> "Exploration & Production") and ensuring they match the Sonatrach corporate structure.
+
+## Proposed Changes
+
+### [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+
+#### [MODIFY] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+- Unify `HIERARCHY` and `ACTIVITY_LABELS` constants.
+- Reorder fields in the **Region Management** tab:
+    1. Activity
+    2. Division
+    3. Region Name
+    4. Field
+    5. Location
+    6. (Others)
+- Update **Production Data** tab dropdowns to use descriptive labels for Activities.
+- Ensure all dropdowns correlate correctly with the seeded data (Oil, Gas, LNG, LPG, Refining, Transport).
+
+### [Scope1Form.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/Scope1Form.jsx)
+- Ensure consistency in how Activity and Division labels are handled during auto-population.
+
+## Verification Plan
+
+### Manual Verification
+- Navigate to **Manage Data** -> **Regions**. Verify the field order is Activity -> Division -> Region.
+- Navigate to **Manage Data** -> **Production Data**. Verify that selecting an Activity (e.g., "Exploration & Production") updates the Division list correctly and that the Region list displays the appropriate assets.
+- Verify that adding a new region with the new labels works correctly and it appears on the map.

@@ -1,0 +1,22 @@
+Task: 5cbdeed4-f792-41df-8b3b-d02e016b1a27/task-568
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5cbdeed4-f792-41df-8b3b-d02e016b1a27\.system_generated\tasks\task-568.log
+Log output:
+<truncated 4 lines>
+er
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 80 items
+
+new\server\tests\test_all_bulk_imports.py ........                       [ 10%]
+new\server\tests\test_api_security.py ...............                    [ 28%]
+new\server\tests\test_audit.py ........                                  [ 38%]
+new\server\tests\test_calculations_page.py ....                          [ 43%]
+new\server\tests\test_combustion.py ...                                  [ 47%]
+new\server\tests\test_dispatcher.py ............                         [ 62%]
+new\server\tests\test_gwp_dynamic.py ...                                 [ 66%]
+new\server\tests\test_reports.py ......                                  [ 73%]
+new\server\tests\test_satellite.py .....                                 [ 80%]
+new\server\tests\test_sbti.py ...                                        [ 83%]
+new\server\tests\test_uncertainty.py ...
+Last progress: 0s ago

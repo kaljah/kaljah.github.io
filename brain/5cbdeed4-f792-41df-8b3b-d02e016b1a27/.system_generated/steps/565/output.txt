@@ -1,0 +1,17 @@
+Task: 5cbdeed4-f792-41df-8b3b-d02e016b1a27/task-563
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\5cbdeed4-f792-41df-8b3b-d02e016b1a27\.system_generated\tasks\task-563.log
+Log output:
+<truncated 16 lines>
+_users_emission
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py:151: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    if not Facility.query.get(1):
+
+tests/test_api_security.py::TestIDOR::test_user_can_delete_own_emission
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py:187: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    if not Facility.query.get(1):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 15 passed, 3 warnings in 3.40s ========================
+
+Last progress: 1s ago

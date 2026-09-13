@@ -1,0 +1,31 @@
+# Walkthrough - Dashboard Logic Verification
+
+I have verified the data logic and filter functionality for the Dashboard components.
+
+## Verification Steps
+
+### 1. Emission Trends
+- **Logic**: Backend [get_dashboard_summary](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#8-129) correctly aggregates emissions by year, applying `facilityId`, `activity`, and `division` filters.
+- **Frontend**: `yearlyTrend` state correctly accumulates Scope 1 and Scope 2 data from the API response.
+
+### 2. Emissions by Source
+- **Issue Found**: The backend query for this chart was missing `activity` and `division` filters.
+- **Fix**: Added these filters to [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py). Now the "Emissions by Source" doughnut chart correctly reflects the selected filters.
+
+### 3. Emissions by Activity
+- **Logic**: Derived from the categorical breakdown data.
+- **Frontend**: `activityChartData` is calculated by summing emissions per activity from `categoricalData`. This data is already filtered by the backend.
+
+### 4. Categorical Emissions Overview
+- **Logic**: Backend [get_categorical_breakdown](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#262-335) joins [Emission](file:///c:/Users/samsung/Desktop/h/new/server/models.py#49-98) and [Scope2Emission](file:///c:/Users/samsung/Desktop/h/new/server/models.py#215-238) with [Facility](file:///c:/Users/samsung/Desktop/h/new/server/models.py#32-48) table and applies all filters (year, activity, division, facility).
+- **Result**: Data is correctly structured as Activity -> Division -> Region hierarchy.
+
+### 5. Detailed Breakdown
+- **Logic**: Displays the [stats](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#351-475) object (Gross/Net/Scopes) and `getHierarchicalData` (Table rows).
+- **Calculations**:
+    - **Scope 1 Breakdown**: Aggregated from `dashboard/summary` endpoint (combustion, flaring, venting).
+    - **Gross Emissions**: Verified to be Scope 1 + Scope 2 (Operational).
+    - **Net Emissions**: Verified to be Gross - Mitigation.
+
+## Conclusion
+All dashboard components now correctly respect the Year, Activity, Division, and Region filters. The logic for Gross/Net emissions and Intensity has also been corrected to align with standard reporting (Operational Control).

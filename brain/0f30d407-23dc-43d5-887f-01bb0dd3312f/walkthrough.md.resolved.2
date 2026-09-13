@@ -1,0 +1,24 @@
+# Walkthrough - Advanced Dashboard Features
+
+I have implemented three major analytical enhancements to the dashboard to improve decision-making and trend analysis.
+
+## 1. YoY Variance Indicators
+The Hero Card now displays a **variance badge** next to the Gross Emissions figure when a specific year is selected.
+*   **Logic**: Calculates the percentage change compared to the previous calendar year.
+*   **Visuals**: Green for reductions (good), Red for increases (requires attention).
+
+## 2. Target Trajectory (Net Zero Path)
+The Trend Chart now includes a **Net Zero Path** line based on your corporate goals.
+*   **Mechanism**: A linear interpolation from the **Base Year** emissions to the **Target Goal** value.
+*   **Visualization**: A dashed green line on the main trend chart, providing a clear reference of whether current performance is on track.
+*   **Automatic Padding**: The chart now extends to your goal year (e.g., 2030) even if historical data only goes up to the current year.
+
+## 3. Comparison View (Multi-Series Trend)
+Added a **"Compare Regions"** button to the Trend Chart card.
+*   **Functionality**: Splits the single emission line into multiple lines—one for each facility/region within your current Activity/Division filter.
+*   **Use Case**: Identify which regions are the primary drivers of emission spikes or where best practices are leading to faster reductions.
+
+## Technical Summary
+*   **Backend**: Extended `/summary` to support `groupBy=facility`.
+*   **Frontend**: Implemented real-time interpolation for trajectory points and dynamic series assignment for the comparison chart.
+*   **Components**: Refactored [LineChart.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/charts/LineChart.jsx) to support complex multi-series rendering with individualized styling (dashed lines, dynamic colors).

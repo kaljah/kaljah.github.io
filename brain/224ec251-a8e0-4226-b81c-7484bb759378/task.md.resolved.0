@@ -1,0 +1,30 @@
+# PVGIS Data Analyzer - Implementation Tasks
+
+## Project Setup
+- [ ] Initialize Node.js project structure
+- [ ] Install required dependencies (Express, CSV parser, Chart.js)
+- [ ] Create directory structure (public, src, data)
+
+## Backend Development
+- [ ] Implement CSV parser for PVGIS data format
+- [ ] Create data analysis module (statistics calculations)
+- [ ] Build monthly/annual aggregation functions
+- [ ] Develop API endpoints for data operations
+
+## Frontend Development
+- [ ] Create HTML interface for file upload
+- [ ] Build statistics display components
+- [ ] Implement chart visualizations (Chart.js)
+- [ ] Add data table viewer
+
+## Features Implementation
+- [ ] Calculate and display max/min/average irradiance
+- [ ] Generate monthly energy production calculations
+- [ ] Create annual energy production summary
+- [ ] Add export functionality (CSV, charts)
+
+## Testing & Verification
+- [ ] Test with provided PVGIS data
+- [ ] Verify calculations accuracy
+- [ ] Test chart rendering
+- [ ] Browser compatibility check

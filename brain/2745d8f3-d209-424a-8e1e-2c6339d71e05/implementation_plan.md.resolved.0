@@ -1,0 +1,58 @@
+# Dashboard Categorical Overview Fixes
+
+## Problem
+
+The user reports issues with the Categorical Emissions Overview on the dashboard:
+1. LP, LQS, RFC, and TRC aren't visible in the categorical breakdown
+2. Data needs to be grouped by regions
+3. Mitigation number formatting is not readable (shows "Less 100,500.00 Mitigation")
+
+## Analysis
+
+After investigating the codebase:
+- Dashboard API endpoints exist: `/api/dashboard/summary` and `/api/dashboard/categorical-breakdown`
+- The categorical breakdown IS already grouped by regions (Activity > Division > Region) in [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) lines 423-543
+- User might be using different naming: "LP" instead of "EP", "RFC" instead of "RPC"
+- The **real issue appears to be**: The categorical breakdown currently shows data grouped by *activity and division*, **but the title and subtitle say it groups by regions**
+- The mitigation number in [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) line 418 uses `toLocaleString()` which should format correctly, but may need `tCO₂e` units added
+
+## Root Cause
+
+Looking at the [loadCategoricalBreakdown](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#423-544) function in [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js):
+1. The function filters to show only the 4 predefined categories: EP, LQS, RPC, TRC (line 441)
+2. Data is retrieved correctly from the API endpoint
+3. However, title says "Grouped by Activity & Division" but doesn't mention Region
+4. The user might not be seeing data because there's no data in the database for the current year, OR filtering is hiding it
+
+## Proposed Changes
+
+### 1. [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- **Line 423-543**: Modify [loadCategoricalBreakdown()](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#423-544) to group data properly by regions within each activity/division
+- **Line 441**: Ensure all 4 activities (EP, LQS, RPC, TRC) are visible even if they have 0 emissions
+- Add region-level cards under each division to show regional breakdown
+
+### 2. [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html)
+- **Line 418**: Improve mitigation number formatting to include units and proper separators:
+  ```html
+  Less <span id="mitigation-total" style="color:#10b981; font-weight:600;">0</span> tCO₂e Mitigation
+  ```
+- **Line 469**: Update subtitle text to make it clear what's being grouped
+
+### 3. [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) - Hero Metrics
+- **Line 357**: Ensure mitigation total formatting uses proper locale string with decimals
+
+## Verification Plan
+
+### Browser Testing
+1. Navigate to `http://localhost:3000/dashboard.html` (server already running)
+2. Verify the Categorical Emissions Overview section shows:
+   - All 4 activities (EP, LQS, RPC, TRC) with their divisions
+   - Region cards under each division showing regional breakdown
+   - Proper grouping hierarchy: Activity → Division → Region
+3. Check the mitigation number in the "Net Emissions" card shows proper formatting with units
+4. Test with year filter to ensure data updates correctly
+5. Test with activity/division/region filters to ensure categorical breakdown responds appropriately
+
+### Data Verification
+- Verify the API endpoint `/api/dashboard/categorical-breakdown` returns data with all required fields (activity, division, region, total_emissions)
+- Test console.log output at line 436 to debug what data is being received

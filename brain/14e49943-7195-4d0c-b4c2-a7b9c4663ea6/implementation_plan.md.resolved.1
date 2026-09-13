@@ -1,0 +1,35 @@
+# Implementation Plan - Emission Data Page
+
+The goal is to implement the Emission Data page where users can input and view their emission data (Fuel Consumption and Clinker Production).
+
+## Proposed Changes
+
+### Frontend
+
+#### [MODIFY] [types/index.ts](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts)
+- Add [FuelConsumption](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#74-102) interface.
+- Add [ClinkerProduction](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#103-122) interface.
+- Add related enums/types if needed.
+
+#### [NEW] [components/emissions/EmissionList.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionList.tsx)
+- Component to list emission data entries.
+- Tabs or filtered view to separate Fuel Consumption and Clinker Production.
+- Columns: Date/Month, Facility, Type, Quantity, CO2 (calculated).
+
+#### [NEW] [components/emissions/EmissionForm.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionForm.tsx)
+- Form to add new emission data.
+- Tabs to switch between "Fuel Consumption" and "Clinker Production".
+- Fields dynamically change based on selected type.
+- Fetch [Facility](file:///c:/Users/samsung/Desktop/cement/backend/core/models.py#58-98) list for selection.
+
+#### [MODIFY] [app/dashboard/emissions/page.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/emissions/page.tsx)
+- Replace placeholder with `EmissionList` and `EmissionForm` (toggle view).
+
+## Verification Plan
+
+### Manual Verification
+1.  **Navigate**: Go to `/dashboard/emissions`.
+2.  **View**: Check if list is empty or shows existing data (if any).
+3.  **Add Fuel**: Click "Add Data", select "Fuel Consumption", fill form (select facility, fuel type, quantity), submit. Verify list update.
+4.  **Add Clinker**: Click "Add Data", select "Clinker Production", fill form (production volume), submit. Verify list update.
+5.  **Delete**: Test deletion of an entry.

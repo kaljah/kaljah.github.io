@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":21,"LineContent":"def get_allowed_facility_ids(user):"}

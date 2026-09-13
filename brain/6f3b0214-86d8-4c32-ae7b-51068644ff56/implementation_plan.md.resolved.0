@@ -1,0 +1,22 @@
+# Finding Ramzi's Password
+
+The goal is to retrieve or reset the password for the user "Ramzi" to allow the user to access the application.
+
+## Proposed Changes
+
+No application code changes are proposed yet. The plan is to perform research and potentially use utility scripts to identify the password.
+
+### Research Phase
+- **Database Inspection**: Create a utility script to extract user records from [users.db](file:///c:/Users/samsung/Desktop/ghg%20old/users.db) and [users_v2.db](file:///c:/Users/samsung/Desktop/ghg%20old/users_v2.db) into a readable text file.
+- **Documentation Search**: Search through [BUG_FIXES.md](file:///c:/Users/samsung/Desktop/ghg%20old/BUG_FIXES.md), [FINAL_FIXES.md](file:///c:/Users/samsung/Desktop/ghg%20old/FINAL_FIXES.md), and other documentation for any mention of default passwords.
+- **Seeding Logic**: Check for any hidden or default password values in [seed_db.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_db.js), [seed_future_ramzi.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_future_ramzi.js), and [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js).
+
+### Execution Phase
+- If the password is found in plaintext in a legacy file or documentation, report it to the user.
+- If the password hash is found but the plaintext is unknown, I may propose resetting the password to a known value (e.g., "password123") using a utility script if requested, but first I will try to find the existing one.
+
+## Verification Plan
+
+### Manual Verification
+- Attempt to use the found password on the login page if possible (using the browser tool).
+- If resetting, verify the new password allows login.

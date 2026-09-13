@@ -1,0 +1,43 @@
+# Adaptive and Responsive Design Implementation Plan
+
+The objective is to ensure the GHG Reporting application is fully functional and visually appealing on tablets and mobile devices.
+
+## Proposed Changes
+
+### [CSS Layer]
+
+#### [MODIFY] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css)
+- Add media queries for Tablet (`max-width: 1024px`) and Mobile (`max-width: 768px`).
+- **Sidebar**:
+    - Hide sidebar by default on tablet/mobile and add a `.sidebar-open` class to show it as an overlay (drawer).
+    - Add transition effects for the drawer.
+- **Main Content**:
+    - Remove `overflow: hidden` from body if needed or ensure inner containers handle scroll.
+    - Adjust `dashboard-grid` to a single column on tablet/mobile.
+- **Top Bar**:
+    - Add a hamburger menu button (menu icon) that appears only on mobile.
+- **Containers**:
+    - Reduce padding in `.dashboard-grid`, `.calculator-container`, and `.top-bar`.
+
+### [Javascript Layer]
+
+#### [NEW] [mobile-menu.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/mobile-menu.js)
+- Implement a simple script to toggle the `.sidebar-open` class on the sidebar when the hamburger menu is clicked.
+- Add an overlay to close the sidebar when clicking outside.
+
+### [HTML Layer]
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html), [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html), [emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+- Include the hamburger menu SVG in the `.breadcrumbs` or `.top-bar` area.
+- Link the new `mobile-menu.js`.
+
+## Verification Plan
+
+### Automated Tests
+- Use the browser tool to verify the presence of the toggle button and test clicking it on mobile resolutions.
+
+### Manual Verification
+- Resize the browser window to verify all breakpoints.
+- Check that the dashboard grid stacks correctly.
+- Ensure the sidebar drawer opens and closes as expected on mobile.
+- Verify horizontal scrolling for tables.

@@ -1,0 +1,22 @@
+# Dashboard Categorical Overview Fixes
+
+## Issues to Address
+- [ ] Fix visibility of LP, LQS, RFC, and TRC in Categorical Emissions Overview
+- [ ] Group data by regions in the categorical breakdown
+- [ ] Make mitigation number readable (currently showing "Less 100,500.00 Mitigation")
+
+## Investigation
+- [/] Research current dashboard implementation
+- [ ] Identify categorical breakdown API endpoint
+- [ ] Review data processing logic
+
+## Implementation
+- [ ] Fix activity filtering (LP → EP, RFC → RPC, etc.)
+- [ ] Add region grouping to categorical breakdown
+- [ ] Format mitigation number with proper separators
+
+## Verification
+- [ ] Test dashboard with browser
+- [ ] Verify all activities are visible
+- [ ] Confirm regional grouping works correctly
+- [ ] Check mitigation number formatting

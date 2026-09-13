@@ -1,0 +1,25 @@
+# Sonatrach Theme Implementation Task List
+
+- [x] Analyze existing CSS and design system <!-- id: 0 -->
+- [x] Create Implementation Plan for Sonatrach Orange/White/Black theme <!-- id: 1 -->
+- [x] Define Color Variables and Base Styles (Root Variables) <!-- id: 2 -->
+- [/] Apply "Black Contours" (Borders) to all major components <!-- id: 3 -->
+    - [x] Revert contours to Black <!-- id: 3.1 -->
+    - [x] Fix Gray Tables and Option Lists <!-- id: 3.2 -->
+    - [x] Contour Profile Avatar <!-- id: 3.3 -->
+    - [x] Fix Uncertainty Page Contours <!-- id: 3.4 -->
+- [x] Update Layout and Global Styles (Backgrounds, Typography) <!-- id: 4 -->
+- [x] Update Components (Cards, Tables, Forms, Buttons) <!-- id: 5 -->
+- [x] Update Navigation (Sidebar, Topbar) <!-- id: 6 -->
+- [x] Verify Consistency and Polish <!-- id: 7 -->
+- [ ] Fix Visual Defects <!-- id: 8 -->
+    - [ ] Fix Top Bar SVGs Visibility <!-- id: 8.1 -->
+    - [x] Fix Option List/Dropdown Styling <!-- id: 8.2 -->
+    - [x] Fix Profile Avatar Styling <!-- id: 8.3 -->
+    - [x] Remove residual Green colors <!-- id: 8.4 -->
+    - [ ] Fix emission-factor.html Gray Backgrounds <!-- id: 8.5 -->
+    - [ ] Fix reference-data.html Gray Backgrounds <!-- id: 8.6 -->
+    - [x] Change Secondary Text to Black <!-- id: 8.7 -->
+    - [ ] Fix Notification Dropdown (Gray -> White) <!-- id: 8.8 -->
+    - [ ] Fix Notification/Profile SVGs <!-- id: 8.9 -->
+    - [ ] Add Contours to Option Lists <!-- id: 8.10 -->

@@ -1,0 +1,37 @@
+# Blending Emission Pages and SVG Integration Plan
+
+The goal is to create a more consistent and professional UI by blending the emission calculation pages with the dashboard's design language and replacing all emojis with high-quality inline SVGs.
+
+## Proposed Changes
+
+### [Dashboard]
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Replace emojis (`🏭`, `🔥`, `🔧`) in the "Data Entry" card with professional inline SVGs.
+
+### [Emission Factor]
+
+#### [MODIFY] [emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+- Replace emojis (`🔥`, `💨`, `🚚`, `🏭`) in the source selection grid with professional SVGs.
+- Sync the sidebar and top bar HTML/CSS with [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) for a seamless transition.
+- Refine the `.calc-panel` and `.source-card` to use the same glassmorphism/blur effects as the dashboard.
+- Replace calculator emoji `🧮` with a professional SVG.
+
+### [Emission Selection]
+
+#### [MODIFY] [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html)
+- Replace external Iconify `<img>` tags with professional inline SVGs for Scope 1 and Scope 2 cards.
+- Replace text arrow `➜` with a consistent SVG arrow icon.
+- Ensure the layout feels integrated with the dashboard's side/top bars.
+
+## Verification Plan
+
+### Manual Verification
+1. Navigate to the **Dashboard** and verify that "Data Entry" buttons now have professional icons instead of emojis.
+2. Navigate to **Calculations** (emission-selection.html) and verify that:
+    - The Scope cards have new professional SVGs.
+    - The layout matches the dashboard's dark theme perfectly.
+    - Hover effects are smooth and consistent.
+3. Navigate to **Stationary Combustion** (emissions-calculator.html) and verify that:
+    - The "box" layout is gone, replaced with a seamless "blended" dashboard panel.
+    - All interactive elements follow the design system.

@@ -1,0 +1,38 @@
+# Verification Walkthrough: Region Hierarchy Refactor
+
+## 1. Restart Server
+**Action**: Stop your current server (Ctrl+C) and start it again.
+- This is required to trigger the database migration which adds the `field` column to the `facilities` table.
+- Run: `node server.js` (or `start_local.bat` / `start_postgres.bat`)
+
+## 2. Verify "Manage Data" Changes
+**Action**: Navigate to the "Manage Data" page.
+1.  Check that the tab is now named **"Regions"** (instead of Facilities).
+2.  Click the tab. Verify the form inputs are in this order:
+    - **Activity**
+    - **Division**
+    - **Region** (formerly Facility Name)
+    - **Field**
+    - Location
+    - Boundary Notes
+3.  **Test**: Add a new Region.
+    - Activity: `Test Activity`
+    - Division: `Test Div`
+    - Region: `Test Region`
+    - Field: `Test Field`
+    - Click **"Add Region"**.
+4.  **Verify**: Check the "Active Regions" list below. It should display your new region with the details (Activity • Division • Field • Location).
+
+## 3. Verify "Emission Calculator" Changes
+**Action**: Navigate to "Calculations" (Emission Selection) -> "Emissions Activity Log" (Calculator).
+1.  Verify the dropdown label is **"Region"**.
+2.  **Test**: Select the `Test Region` you just created.
+3.  **Verify**:
+    - The **Activity**, **Division**, and **Field** inputs (above the dropdown) should automatically fill with `Test Activity`, `Test Div`, and `Test Field`.
+    - These fields should be Read-Only.
+
+## 4. Verify Data Persistence
+**Action**: Add an emission record using this Region.
+1.  Fill in other required fields (Year, Month, Group, Equipment, Quantity).
+2.  Click **"Add Activity"**.
+3.  Verify the record is added to the table.

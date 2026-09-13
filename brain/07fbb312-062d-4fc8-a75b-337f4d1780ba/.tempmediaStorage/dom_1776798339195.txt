@@ -1,0 +1,58 @@
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (120,252)<li  />
+		[2] (98,249)<a class='nav-link ' href='/'>Dashboard />
+	[3] (120,396)<li  />
+		[4] (115,392)<a class='nav-link active' href='/carbon-intensity'>Carbon Intensity />
+	[5] (120,539)<li  />
+		[6] (102,536)<a class='nav-link ' href='/emissions'>Calculations />
+	[7] (120,683)<li  />
+		[8] (111,679)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (120,826)<li  />
+		[10] (107,823)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (120,970)<li  />
+		[12] (89,966)<a class='nav-link ' href='/reports'>Reports />
+	Dashboard
+	[13] (429,60)<div  />
+		[14] (411,60)<span >All Years />
+	[15] (560,60)<div  />
+		[16] (534,60)<span >All Activities />
+	[17] (708,60)<div  />
+		[18] (682,60)<span >All Divisions />
+	[19] (881,60)<div  />
+		[20] (827,60)<span >All Regions />
+	[21] (988,60)<button class='icon-button' title='Notifications' />
+		[22] (991,53)<span  />
+	[23] (620,561)<div scrollable='true' />
+		Intensity & Production Overview
+		all
+		Performance
+		Carbon Intensity (Avg)
+		16255.06
+		kg CO₂e / BOE
+		Using API 2021 Standard: 1 BOE = 1 bbl oil / 5.615 Mcf gas
+		Total:
+		5,744.538
+		tCO₂e
+		Methane Intensity (Avg)
+		97.4482
+		kg CH₄ / BOE
+		Total:
+		34.438
+		tCH₄
+		Flaring Intensity (Avg)
+		5.354
+		kg CO₂e / BOE
+		Total:
+		1.892
+		tCO₂e
+		Total Oil Production
+		300
+		bbl
+		Total Gas Production
+		300
+		mcf
+		Total Gas Flared
+		1,001
+		m³
+		GHG Intensity by Region (kg CO₂e/BOE)

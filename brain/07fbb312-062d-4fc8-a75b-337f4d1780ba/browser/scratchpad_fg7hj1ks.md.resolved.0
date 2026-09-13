@@ -1,0 +1,12 @@
+# Task: Investigate Report Generation Issue
+
+## Goal
+Go to `http://localhost:5173/reports`, select a region, click "Create Report", and observe the download (filename, size) and console errors.
+
+## Checklist
+- [ ] Open `http://localhost:5173/reports`
+- [ ] Select a region in "Create New Report"
+- [ ] Click "Create Report"
+- [ ] Observe download filename and size
+- [ ] Check console logs for errors
+- [ ] Identify the root cause

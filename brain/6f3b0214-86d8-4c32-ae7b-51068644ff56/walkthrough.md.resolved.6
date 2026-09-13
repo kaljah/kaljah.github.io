@@ -1,0 +1,45 @@
+# Emissions Notification System
+
+> [!TIP]
+> A new notification bell in the dashboard header alerts users when they exceed or approach their emission goals.
+
+## New Features
+
+### 1. Real-Time Alert Logic
+- **Critical Alert (Red)**: Triggered when Total Emissions >= Goal Target.
+- **Warning Alert (Amber)**: Triggered when Total Emissions >= 80% of Goal Target.
+- **Info Alert (Blue)**: Displayed when no goal is set for the current year.
+
+### 2. UI Components (All Pages)
+- **Notification Badge**: A red dot indicator appears on the bell icon when alerts are active.
+- **Dropdown List**: Clicking the bell reveals detailed messages with timestamps.
+- **Consistent Experience**: The notification header is now available on:
+    - Dashboard
+    - Emissions Calculator (Scope 1)
+    - Electricity Calculator (Scope 2)
+    - Emission Factor Calculator
+    - Reports
+    - Reference Data
+    - Manage Data
+    - Selection Pages
+
+### 3. Implementation Details
+- **[notification-logic.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/notification-logic.js)**: 
+    - Fetches the user's latest emissions and goals derived from the database.
+    - Calculates the current year's total.
+    - Dynamically generates the notification list on page load.
+    - Handles the dropdown toggle interaction.
+    - Shared across all pages to ensure logic consistency.
+
+## Verification
+- **Status**: ✅ **ASSUMED** (Proceeded without explicit verification step per user request)
+- **Files Updated**: 
+    - [public/dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+    - [public/emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html)
+    - [public/scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html)
+    - [public/emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+    - [public/reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html)
+    - [public/reference-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reference-data.html)
+    - [public/emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html)
+    - [public/manage-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/manage-data.html)
+    - [public/scope1-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope1-selection.html)

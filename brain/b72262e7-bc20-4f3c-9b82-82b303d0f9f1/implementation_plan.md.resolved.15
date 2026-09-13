@@ -1,0 +1,37 @@
+# Interactive Account Navigation
+
+Replace the static profile link in the sidebar with a premium, interactive account menu providing quick access to profile settings, security, and logout.
+
+## Proposed Changes
+
+### Dashboard & Sidebar
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Update `.user-profile-sidebar` to remove the direct `onclick="window.location.href='settings.html'"`.
+- Wrap the profile item in a container to manage the relative positioning of the menu.
+- Add a hidden `.account-dropdown` menu structure with the following options:
+    - **Header**: User name and role (repeated or refined).
+    - **Links**: "My Profile", "Settings", "Security", "Support".
+    - **Separator**.
+    - **Logout**: Move the "Sign Out" button inside this menu.
+
+#### [MODIFY] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css)
+- Style `.account-dropdown`:
+    - **Position**: Absolute, bottom: 80px, left: 16px.
+    - **Glassmorphism**: Semi-transparent background, heavy blur, subtle border.
+    - **Animations**: Slide and fade-in effect when triggered.
+    - **Hover States**: Distinct highlights for menu items.
+- Style the profile toggle to indicate interactivity (e.g., active state colors).
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Implement toggle logic for the account menu.
+- Handle click-outside-to-close behavior.
+- Ensure the menu items link correctly to their destinations.
+
+## Verification Plan
+
+### Manual Verification
+- Click on the profile sidebar item and verify the account menu appears smoothly.
+- Test all links within the menu.
+- Verify the logout functionality works correctly from its new location.
+- Ensure clicking outside the menu closes it.

@@ -1,0 +1,31 @@
+# Project Roadmap: SolarEPC-Pro
+
+## Phase 1: Core Foundation (Completed)
+- [x] Basic Solar Simulation (pvlib)
+- [x] Financial Modeling (NPV, IRR, LCOE)
+- [x] Report Generation (PDF)
+- [x] Interactive Layout (Streamlit)
+
+## Phase 2: "Real World" Features (Recently Completed)
+- [x] Near-Shading Analysis (Obstacles)
+- [x] TMY3 Weather Data Import
+- [x] Complex Utility Tariffs (Seasonal/Demand)
+- [x] Robust Load Profile Handling
+
+## Phase 3: The "Perfect" Engineering Tool (Gap Analysis)
+These are the remaining steps to rival commercial tools like PVSyst or Helioscope.
+
+### Physics & Engineering
+- [ ] **Sub-hourly Simulation**: Move from hourly to 15-min or 1-min resolution for accurate clipping and battery dispatch.
+- [ ] **String-Level Mismatch**: Calculate mismatch losses based on specific module IV curves and shadow patterns, not just linear factors.
+- [ ] **3D CAD Import**: Allow importing `.dxf` or `.pvc` files for complex site layouts.
+
+### Equipment Database
+- [ ] **PAN/OND File Support**: Ability to read PVSyst equipment files (.pan, .ond) to access the global database of 50,000+ components.
+
+### Financials & Operations
+- [ ] **Complex Incentives**: Model SRECs, depreciation recapture, and flip structures.
+- [ ] **Battery Dispatch Strategies**: Add "Arbitrage" and "Frequency Regulation" modes beyond simple Peak Shaving.
+
+### Validation
+- [ ] **Automated Regression Testing**: Compare results against a known PVSyst report to ensure <1% deviation.

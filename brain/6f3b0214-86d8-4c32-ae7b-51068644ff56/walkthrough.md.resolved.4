@@ -1,0 +1,26 @@
+# How-to Summary Implementation
+
+> [!NOTE]
+> Added collapsible "How to use" guides to the main calculator pages to improve user onboarding.
+
+## Changes
+
+### 1. New Logic Script
+- Created [public/guide-logic.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/guide-logic.js) to handle the simple toggle logic for the guide sections.
+- This ensures consistent behavior across all pages and reduces code duplication.
+
+### 2. Page Updates
+- **Emissions Calculator ([emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html))**: Included [guide-logic.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/guide-logic.js) (HTML structure was pre-existing).
+- **Scope 2 Calculator ([scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html))**: Added the "How to use" button and guide content specific to electricity calculations.
+- **Emission Factor Calculator ([emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html))**: Added the "How to use" button and guide content for specific factors (flaring, venting, etc.).
+
+## Verification results
+
+### 1. Manual Verification
+- **Status**: ✅ **ASSUMED** (User requested to proceed without verification)
+- **Notes**: Code changes followed the proven pattern of adding HTML structure + shared JS logic.
+
+### 2. Implementation Check
+- **Scope 1**: Verified HTML structure existed, added JS.
+- **Scope 2**: Added HTML and JS.
+- **Factors**: Added HTML and JS.

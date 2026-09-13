@@ -1,0 +1,7 @@
+# Task: Find Ramzi's Password
+
+- [/] Researching database and codebase for credentials <!-- id: 0 -->
+    - [x] Identify main user databases ([users.db](file:///c:/Users/samsung/Desktop/ghg%20old/users.db), [users_v2.db](file:///c:/Users/samsung/Desktop/ghg%20old/users_v2.db)) <!-- id: 1 -->
+    - [/] Extract user records from databases <!-- id: 2 -->
+    - [ ] Search project documentation/logs for password clues <!-- id: 3 -->
+- [ ] Verify found password (if possible) <!-- id: 4 -->

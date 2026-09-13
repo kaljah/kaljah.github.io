@@ -1,0 +1,18 @@
+# Task: Implement Specific Emission Factor Calculator
+
+## Objective
+Convert the provided Python `API_GHG_Emission_Factor_Calculator` script into a JavaScript library and integrate it into the application to enable detailed specific emission factor calculations.
+
+## Todo List
+- [ ] Create `public/js/ghg-calc-library.js` converting the Python class to ES6 class <!-- id: 0 -->
+    - [ ] Implement Unit Conversion Engine
+    - [ ] Implement Section 4: Stationary Combustion (Gas, Liquid, Solid)
+    - [ ] Implement Section 5: Flaring (CO2, CH4 Slip, N2O)
+    - [ ] Implement Section 6: Venting (Mass/Vol, Dehydrator)
+    - [ ] Implement Section 7: Fugitive (Average, Screening)
+    - [ ] Implement Section 4.6: Mobile Combustion
+- [ ] Determine integration point in UI (Explore [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html)) <!-- id: 1 -->
+- [ ] Create `implementation_plan.md` <!-- id: 2 -->
+- [ ] Update [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html) to include a "Calculate Factor" wizard/modal <!-- id: 3 -->
+- [ ] Implement UI logic to use the library and populate the specific factor fields <!-- id: 4 -->
+- [ ] Verify calculations against Python script outputs <!-- id: 5 -->

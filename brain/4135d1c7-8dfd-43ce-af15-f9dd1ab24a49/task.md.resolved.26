@@ -1,0 +1,30 @@
+# Task: Settings Page Modernization
+
+- [x] Research and Planning
+- [x] Modernize Settings Page (General)
+- [x] Modernize Settings Dropdowns
+- [x] Add Save Button to Reporting
+- [x] Bug Fix: 500 Error on Save
+- [x] Bug Fix: Toast Notifications
+    - [x] Un-silence [toast.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/toast.js) (restore DOM logic)
+    - [x] Import [toast.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/toast.js) in [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html)
+- [x] Verify changes
+
+# Task:- [/] Restructure Dashboard Navigation
+    - [x] Update [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+    - [x] Update [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html)
+    - [x] Update [reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html)
+    - [x] Update [reference-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reference-data.html)
+    - [x] Update [uncertainty.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/uncertainty.html)
+    - [x] Update [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)
+    - [x] Update Calculator Pages:
+        - [x] [stationary-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/stationary-combustion.html)
+        - [x] [mobile-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/mobile-combustion.html)
+        - [x] [scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html)
+        - [x] [flaring.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/flaring.html)
+        - [x] [venting.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/venting.html)
+        - [x] [emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html)
+        - [x] [combustion-ef.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/combustion-ef.html)
+        - [x] [emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+        - [x] [scope1-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope1-selection.html)
+    - [x] Manual Verification

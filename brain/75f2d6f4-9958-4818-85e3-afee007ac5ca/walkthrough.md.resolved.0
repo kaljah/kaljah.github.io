@@ -1,0 +1,27 @@
+# SolarEPC-Pro Walkthrough
+
+I have successfully built the **SolarEPC-Pro** platform, a comprehensive tool for renewable energy engineering.
+
+## What's Included
+- **Simulation Engine**: Calculates hourly solar generation based on location and system design.
+- **Financial Model**: Computes NPV, IRR, LCOE, and Payback Period.
+- **Reporting**: Generates a Bill of Materials (BOM) for EPC estimation.
+
+## Verification
+I ran automated tests to verify the core logic:
+- **Solar Simulation**: Confirmed positive generation output (Total: ~157 MWh/year for 100kWp).
+- **Financials**: Verified NPV and IRR calculations (IRR: ~19.6%).
+
+## How to Run
+1. Open a terminal in the project directory:
+   ```bash
+   cd C:\Users\samsung\.gemini\antigravity\scratch\SolarEPC-Pro
+   ```
+2. Install dependencies (if not already done):
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Launch the dashboard:
+   ```bash
+   streamlit run app.py
+   ```

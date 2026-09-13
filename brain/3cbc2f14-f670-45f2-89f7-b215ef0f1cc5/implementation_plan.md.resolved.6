@@ -1,0 +1,42 @@
+The dashboard needs to be updated to support filtering by Activity and Division, and to provide a new overview of emissions categorized by these hierarchical levels. Additionally, a strict hierarchy must be enforced across the app:
+- `EP` (Exploration & Production) -> [Production](file:///c:/Users/samsung/Desktop/h/public/manage-data.html#1498-1523), `Association`
+- `LQS` (Liquefaction) -> `LSH`
+- `RPC` (Raffinage & Petrochimie) -> `Raffinage`, `Petrochimie`
+- `TRC` (Transport par Canalisation) -> `TRC`
+
+## Proposed Changes
+
+### Backend (server.js)
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+- Update `GET /api/dashboard/summary` to support `activity` and `division` query parameters.
+- Join the `emissions` table with the `facilities` table to filter by these new fields.
+- Create a NEW endpoint `GET /api/dashboard/categorical-breakdown` that returns emissions grouped by Activity and Division for the selected year range.
+- **[FIX]** Resolve SQLite syntax errors (near "EXISTS") in database migrations and ensure standard column names are used.
+
+### Frontend (dashboard.html & dashboard.js)
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html)
+- Replace the single facility selector with three cascaded dropdowns: **Activity**, **Division**, and **Region (Facility)**.
+- Add a new section below the Hero Metrics for "Categorical Emissions Overview" (cards or a nested table showing totals by Activity and Division).
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- Implement cascaded dropdown logic:
+    - Selecting an Activity filters available Divisions based on the strict hierarchy.
+    - Selecting a Division filters available Facilities.
+- Update [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#269-340) to pass `activity` and `division` to the API.
+- Implement logic to fetch and render the new "Categorical Emissions Overview".
+
+### Manage Data (manage-data.html)
+
+#### [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+- Replace Activity and Division text inputs with cascaded dropdowns.
+- Implement JS logic to enforce the Activity-Division hierarchy during Region creation.
+
+## Verification Plan
+
+### Manual Verification
+- Filter by a specific Activity and verify dashboard metrics update.
+- Filter by a specific Division and verify metrics.
+- Verify the new categorical overview shows accurate sums for each group.
+- Ensure "All" options work at each level of the hierarchy.

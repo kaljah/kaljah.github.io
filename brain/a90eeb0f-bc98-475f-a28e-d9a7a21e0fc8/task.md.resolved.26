@@ -1,0 +1,60 @@
+# Task: Implement Specific Emission Factor Calculator
+
+## Objective
+Convert and append the specific emission factor calculation logic to [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js) and integrate into the UI.
+
+## Todo List
+- [x] Revert [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html) changes <!-- id: 0 -->
+- [x] Append initial port of Python script to [public/emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js) <!-- id: 1 -->
+- [x] Add missing equations to [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#368-670) class (Fugitive, Mobile, Venting, Combustion) <!-- id: 3 -->
+- [x] Carbon Intensity Page
+    - [x] Plan and Design (Schema & UI)
+    - [x] Backend: Create `production_data` table
+    - [x] Backend: Add API endpoints for Production Data (GET/POST) & Intensity Calculations
+    - [x] Frontend: Create [carbon-intensity.html](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.html) (Modern UI)
+    - [x] Frontend: Create [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js) (Charts & Logic)
+    - [x] Update Sidebar Navigation across all pages
+- [x] Verify Carbon Intensity Calculations
+- [x] Manage Data - Production Table
+    - [x] Add "Production Data" tab to [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+    - [x] Create UI for viewing/editing annual production
+    - [x] Update `manage-data.js` to handle CRUD for production data
+- [ ] Production Data Features
+    - [ ] Fix table text visibility (contrast issue)
+    - [x] Implement CSV Export (Client-side)
+    - [x] Implement CSV Import (Bulk Upload)
+- [ ] Emission Sources Management
+    - [ ] Backend: Create `emission_sources` table and APIs
+    - [ ] Frontend: Add "Emission Sources" tab to [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+    - [ ] Frontend: Implement CRUD for Emission Sources
+- [x] UI Refinements
+    - [x] Change Intensity Overview card background to white
+- [x] Expand [public/emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html) UI <!-- id: 4 -->
+    - [x] Add **Fugitive** Card & Logic
+    - [x] Update **Stationary Combustion** Card (Fuel Type Selector)
+    - [x] Update **Venting** Card (Venting Type Selector)
+    - [x] Fix Selectors & Add C9/C10/CO2/N2
+    - [x] Expand Ultimate Analysis Inputs
+    - [x] Add **Chemical Formula Calculation** mode for Liquid/Solid fuels <!-- id: 5 -->
+    - [x] Modernize **Results Section** UI <!-- id: 6 -->
+    - [x] Add **Save to Custom Factors** functionality <!-- id: 7 -->
+- [x] Separate **Custom Factors** from Standard Fuels in Calculator UI <!-- id: 8 -->
+- [x] **Gap Analysis & Critical Updates** <!-- id: 9 -->
+    - [x] Implement **Loading Loss Equation** (Eq 5-1)
+    - [x] Implement **Tank Flashing** Factor defaults (Vasquez-Beggs placeholder)
+    - [x] Implement **Glycol Dehydrator** specific models (GRI-GLYCalc style simplified)
+- [x] **Move Dehydrator to Main Calculator** <!-- id: 10 -->
+    - [x] Update `PROCESS_TYPES` and `API_FACTORS` in [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js)
+    - [x] Add Dehydrator inputs (Rate, Eff) to [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html)
+    - [x] Implement calculation override in [emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js)
+    - [x] Remove Dehydrator card from [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html)
+- [ ] Verify logic with a test script <!-- id: 2 -->
+- [ ] Add all pollutants to Sentinel-5P map (CH4, NO2, CO, SO2, O3) <!-- id: 11 -->
+    - [x] Create implementation plan <!-- id: 12 -->
+    - [x] Update [mars-map.html](file:///c:/Users/samsung/Desktop/h/public/mars-map.html) UI with pollutant selector <!-- id: 13 -->
+    - [x] Refactor [mars-map.js](file:///c:/Users/samsung/Desktop/h/public/mars-map.js) to handle multiple pollutant layers <!-- id: 14 -->
+    - [x] Verify pollutant switching and data simulation <!-- id: 15 -->
+- [x] Implement CO & Combustion Efficiency Tracking <!-- id: 16 -->
+    - [x] Update [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html) with CO input fields <!-- id: 17 -->
+    - [x] Update [emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js) logic to calculate CO and Efficiency <!-- id: 18 -->
+    - [x] Verify calculation with test record <!-- id: 19 -->

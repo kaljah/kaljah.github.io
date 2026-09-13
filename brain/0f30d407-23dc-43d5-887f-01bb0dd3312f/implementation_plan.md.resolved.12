@@ -1,0 +1,24 @@
+# Emissions MAP Expansion Plan
+
+The "Emissions MAP" (formerly Methane Explorer) will be enhanced to display all major Sonatrach facilities with accurate coordinates, searchable emissions data, and smooth map transitions.
+
+## Proposed Changes
+
+### 1. Backend: Data Infrastructure
+- **[MODIFY] [models.py](file:///c:/Users/samsung/Desktop/h/new/server/models.py)**: Added `latitude` and `longitude` to the [Facility](file:///c:/Users/samsung/Desktop/h/new/server/models.py#32-50) model.
+- **[MODIFY] [routes/facilities.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/facilities.py)**: Updated API to return and accept coordinates.
+- **[NEW] [seed_map_data.py](file:///c:/Users/samsung/Desktop/h/new/server/seed_map_data.py)**: Script to populate the database with Sonatrach's major field and refinery locations.
+
+### 2. Frontend: Map & Search Logic
+- **[MODIFY] [MethaneExplorer.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/MethaneExplorer.jsx)**:
+    - Renamed internal references to "Emissions MAP".
+    - Removed "LIVE" tags.
+    - Updated to fetch facility list from `/api/facilities` and use backend coordinates.
+    - Enhanced search to filter by name and check if emissions data exists.
+    - Improved selection logic to "fly to" coordinates of any facility, even those without current data (showing a placeholder for them).
+
+## Verification Plan
+1. Run `seed_map_data.py` to populate DB.
+2. Open Emissions MAP and verify all major markers (Hassi Messaoud, Arzew, etc.) are visible.
+3. Search for a facility and click to verify the fly-to animation.
+4. Verify "LIVE" tags are gone.

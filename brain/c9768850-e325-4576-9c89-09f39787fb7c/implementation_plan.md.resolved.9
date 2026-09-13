@@ -1,0 +1,28 @@
+# Plan: Visual Recovery (Clean & Minimal)
+
+## Problem
+The "Floating Label" design with transparent inputs appears cluttered or "not pretty". The transparency likely conflicts with the white cards, and the floating labels can feel gimmicky.
+
+## Solution
+Pivot to a **High-End Minimalist** design (inspired by Linear/Vercel/Stripe).
+
+### 1. Style Changes (CSS)
+- [MODIFY] **Inputs**:
+    - remove transparency (`rgba`).
+    - Use `background: #f9fafb` (Very light grey) for high contrast against the white card.
+    - `border: 1px solid #e5e7eb` (Subtle).
+    - `border-radius: 8px` (Slightly tighter).
+- [MODIFY] **Interaction**:
+    - Focus State: Background becomes **Pure White**, Border becomes **Orange**, subtle shadow ring.
+- [MODIFY] **Labels**:
+    - Move **Above** the input (Standard).
+    - Style: `font-weight: 600`, `text-transform: uppercase`, `font-size: 0.75rem`, `letter-spacing: 0.05em`.
+    - Color: `var(--text-secondary)`.
+
+### 2. Markup Updates
+- [MODIFY] Remove `.input-group-premium` floating logic.
+- [MODIFY] Return to standard `display: block` structure but with the new classes.
+
+## Verification
+- Check for "Cleanliness".
+- Ensure vertical rhythm (spacing between label/input and input/next-group).

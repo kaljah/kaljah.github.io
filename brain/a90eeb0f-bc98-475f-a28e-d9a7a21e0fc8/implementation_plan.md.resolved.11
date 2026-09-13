@@ -1,0 +1,42 @@
+# CO & Combustion Efficiency Implementation Plan
+
+## Goal Description
+Implement Carbon Monoxide (CO) emissions tracking for Stationary Combustion and Flaring processes to allow for the quantification of **Combustion Efficiency (CE)**.
+
+**Formula:**
+$$ CE (\%) = \frac{n_{CO2}}{n_{CO2} + n_{CO}} \times 100 $$
+Where $n$ represents moles of the substance.
+- $MW_{CO2} = 44.01 \text{ g/mol}$
+- $MW_{CO} = 28.01 \text{ g/mol}$
+
+## User Review Required
+> [!NOTE]
+> This change introduces a new "Specific CO Factor" input. If left blank, CO emissions will be 0, resulting in 100% calculated efficiency (ideal combustion).
+
+## Proposed Changes
+
+### 1. Data Layer ([emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js))
+- Update `API_FACTORS` to include [co](file:///c:/Users/samsung/Desktop/h/public/toast.js#61-75) factors where available (default to placeholders or usage-based).
+- Add [co](file:///c:/Users/samsung/Desktop/h/public/toast.js#61-75) calculation to [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#359-641) methods if applicable.
+
+### 2. UI / Frontend ([emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html))
+- Add **Specific CO Factor** input group (similar to CO2, CH4).
+- Add Unit selector for CO (kg/m³, lb/MMBtu, etc.).
+
+### 3. Logic ([emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js))
+- Update [addRecord](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js#167-379) to:
+    - Capture `specCo` input.
+    - Calculate `em.co` (Mass in Tonnes).
+    - Calculate `combustionEfficiency` using molar ratio.
+    - Store [ce](file:///c:/Users/samsung/Desktop/h/public/toast.js#96-99) in the record object.
+- Update [renderTable](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js#507-616) to display:
+    - CO Emissions (t).
+    - Combustion Efficiency (%).
+
+## Verification Plan
+1.  **Test Record**: Add a combustion record with specific CO2 and CO factors.
+    - Example: CO2 = 2 kg/unit, CO = 0.05 kg/unit.
+2.  **Verify CE**:
+    - Calc Moles: $2/44 = 0.045$, $0.05/28 = 0.0018$.
+    - CE: $0.045 / (0.045 + 0.0018) \approx 96\%$.
+3.  **UI Check**: Ensure new column appears and data is correct.

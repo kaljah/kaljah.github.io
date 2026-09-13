@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -401,9 +401,11 @@
+         variance_flag = False
+ 
+     if record_id:
+-        record = OgmpSurvey.query.get(record_id)
+-        if not record:
+-            return jsonify({'error': 'Record not found'}), 404
++        record = db.session.get(OgmpSurvey, record_id)
++        if not record:
++            return jsonify({'error': 'Record not found'}), 404
++        if not require_facility_access(user, record.facility_id):
++            return jsonify({'error': 'Access to this existing survey record facility is denied'}), 403
+         record.facility_id = facility_id
+         record.year = year
+         record.survey_date = survey_date
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

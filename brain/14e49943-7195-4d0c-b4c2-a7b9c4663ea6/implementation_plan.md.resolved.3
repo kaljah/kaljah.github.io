@@ -1,0 +1,46 @@
+# Implementation Plan - UI/UX Modernization & Enhancements
+
+## Goal
+Transform the current functional calculator into a premium, modern tool with enhanced usability features:
+1.  **Unified View**: Calculator and Data Table on the same page.
+2.  **Smart Defaults**: Auto-fill NCV and EF based on fuel type selection.
+3.  **Unit Conversion**: Allow users to input in various units (kg, lbs, MWh, etc.) while standardizing for the backend (Tonnes, TJ).
+4.  **Modern Aesthetics**: Improved spacing, cards, and visual hierarchy.
+
+## User Actions
+> [!NOTE]
+> No backend changes are required for this phase. All logic will be handled client-side before submission.
+
+## Proposed Changes
+
+### Frontend Constants
+#### [NEW] [src/constants/emissionFactors.ts](file:///c:/Users/samsung/Desktop/cement/frontend/src/constants/emissionFactors.ts)
+*   Export a dictionary of standard fuels (Coal, Petcoke, Diesel, NG) with:
+    *   Default NCV (TJ/tonne)
+    *   Default EF (kg CO2/TJ)
+    *   Biomass % defaults (if applicable)
+
+### Frontend Components
+
+#### [MODIFY] [src/components/emissions/ProtocolCalculator.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/ProtocolCalculator.tsx)
+*   **State Management**: Add local state for "Input Unit" separate from "Value".
+*   **Conversion Logic**: 
+    *   Mass: `kg -> tonne`, `lb -> tonne`.
+    *   Energy: `GJ -> TJ`, `MWh -> TJ`.
+*   **UI Redesign**:
+    *   Use a modern "Card" layout for each scope.
+    *   Replace simple inputs with "Input + Unit Select" groups.
+    *   Add a "Reference Library" dropdown to auto-fill Fuel data.
+    *   Show "Converted Value" preview (e.g. "1000 kg = 1 Tonne").
+
+#### [MODIFY] [src/app/dashboard/emissions/page.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/emissions/page.tsx)
+*   Remove the toggle (List vs Calculate).
+*   Structure:
+    *   Top: [ProtocolCalculator](file:///C:/Users/samsung/Desktop/cement/frontend/src/components/emissions/ProtocolCalculator.tsx#13-278) (Collapsible or always visible, maybe side-by-side or stacked).
+    *   Bottom: [EmissionList](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionList.tsx#13-235) (Already exists, just needs placement).
+*   Add a refresh callback so the list updates immediately after calculation.
+
+## Verification Plan
+1.  **Unit Check**: Enter `1000 kg` of fuel. Verify backend receives `1.0 tonne`.
+2.  **Auto-fill**: Select "Diesel" -> Verify NCV and EF fields populate.
+3.  **Visual**: Ensure the layout is responsive and clean.

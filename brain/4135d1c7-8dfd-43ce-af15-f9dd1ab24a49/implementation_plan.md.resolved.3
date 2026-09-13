@@ -1,0 +1,28 @@
+# Implementation Plan - Trend Badge Fix
+
+The goal is to ensure the trend badges (total and scope-specific) are always accurate and never "disappear" or show stale data when switching between goals and base years.
+
+## Proposed Changes
+
+### [Component Name] Dashboard UI - dashboard.html
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Add `id="trend-badge-total"` to the main trend badge.
+- Add `id="trend-badge-scope1"` and `id="trend-badge-scope2"` to the scope breakdown badges.
+- Remove hardcoded static trend values (e.g., "↓ 3.8%").
+
+### [Component Name] Dashboard Logic - dashboard.js
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Refactor [updateHeroMetrics](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#382-449) to:
+    - Centralize trend calculation into a helper function (handling base year or goal fallbacks).
+    - Update all three badges (total, scope 1, scope 2) using the same logic.
+    - Ensure "—" is shown only when absolutely no data/goal/base-year is available.
+    - Set colors consistently (success for reduction, danger for increase).
+
+## Verification Plan
+
+### Manual Verification
+- **Scenario 1**: Set a base year with data. Verify all three badges show the trend vs. that base year.
+- **Scenario 2**: Set a base year with NO data, but have a goal. Verify badges fall back to showing progress vs. goal.
+- **Scenario 3**: Have no base year and no goal. Verify badges show "—".

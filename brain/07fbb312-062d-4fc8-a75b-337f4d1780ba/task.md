@@ -1,0 +1,4 @@
+- `[x]` Delete Legacy Files and Folders
+  - Run PowerShell script to remove all items in the root directory except `new`, `.git`, `.gitignore`, `.vscode`, and the API reference PDFs/texts.
+- `[x]` Verify Deletion
+  - List the directory to ensure only the kept items remain.

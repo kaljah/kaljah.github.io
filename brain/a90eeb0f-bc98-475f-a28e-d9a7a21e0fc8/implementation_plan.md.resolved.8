@@ -1,0 +1,75 @@
+# Implementation Plan - Advanced API Specialized Models
+
+## Goal Description
+Implement three critical "Specialized Calculators" from the API Compendium to cover complex Oil & Gas operations that cannot be modeled by simple emission factors:
+1.  **Loading Losses** (Marketing/Distribution)
+2.  **Tank Flashing** (Production)
+3.  **Glycol Dehydrators** (Processing)
+
+## User Review Required
+> [!IMPORTANT]
+> **Technical Complexity**: These models use empirical correlations (Equations) rather than simple multiplication factors.
+> - **Loading Loss**: Requires inputting Vapor Pressure (P) and Temperature (T).
+> - **Tanks**: Uses the **Vasquez-Beggs correlation** to estimate GOR (Gas-Oil Ratio). Use this when direct measurements/samples are unavailable.
+> - **Dehydrators**: Uses a **Calculated Factor approach** based on Glycol Recirculation Rate (conventional method for un-controlled vents).
+
+## Proposed Changes
+
+### 1. Loading Loss Calculator (API Section 5.2)
+**Use Case**: Truck/Rail loading of Crude Oil, Gasoline, or Jet Fuel.
+**Equation (Eq 5-1)**:
+$$ L_L = 12.46 \cdot \frac{S \cdot P \cdot M}{T} $$
+- **Result**: `lb/1000 gal` loaded.
+- **New Inputs**:
+    - **Saturation Factor (S)**: Dropdown (0.6 Submerged, 1.45 Splash, 1.0 Vapor Balance).
+    - **True Vapor Pressure (P)**: PSIA.
+    - **Mol. Weight (M)**: lb/lb-mole (e.g., 66 for Gasoline, 50 for Crude).
+    - **Temperature (T)**: °F (Converted to Rankine).
+
+### 2. Flashing Losses (Storage Tanks)
+**Use Case**: Crude oil dumped from a high-pressure separator to a low-pressure atmospheric tank.
+**Method**: **Vasquez-Beggs Correlation** (Standard industry estimation).
+**Inputs**:
+- **Separator Pressure**: psig.
+- **Separator Temp**: °F.
+- **API Gravity**: Oil density.
+- **Gas Specific Gravity**: Relative to air.
+- **Throughput**: bbl/day.
+**Logic**:
+- Calculate Solution GOR at separator conditions ($R_{sep}$).
+- Calculate Solution GOR at tank conditions ($R_{tank} \approx 0$).
+- **Flash Gas** = Throughput $\times (R_{sep} - R_{tank})$.
+- Convert Gas Volume to Mass ($CO_2/CH_4$) using Gas Gravity.
+
+### 3. Glycol Dehydrators
+**Use Case**: Removing water from natural gas using TEG/EG. Methane is absorbed and vented from the reboiler.
+**Method**: **Emission Factor x Circulation Rate** (GRI-GLYCalc Simplified).
+**Inputs**:
+- **Glycol Pump Rate**: gal/hr.
+- **Dry Gas Flow**: MMscf/day (optional, for cross-check).
+- **Control Type**: Vented vs. Flared.
+**Equation**:
+$$ Emissions = Rate_{pump} \times Factor_{methane} \times (1 - Control_{eff}) $$
+- Uses conservative Industry Factors (e.g., 3 scf CH4 / gal TEG calculated).
+
+---
+
+### UI Changes
+#### [MODIFY] [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html)
+- Add a new **"Advanced Models"** tab or section in the calculator card list.
+- **New Cards**:
+    - `[Model] Product Loading`
+    - `[Model] Tank Flashing`
+    - `[Model] Dehydrator`
+- Each card opens a specific form with the math described above.
+
+#### [MODIFY] [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js)
+- Add [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#350-565) methods:
+    - `calculateLoadingLoss(S, P, M, T)`
+    - `calculateVasquezBeggs(P_sep, T_sep, API, SG_gas)`
+    - `calculateDehydrator(pump_rate, control_eff)`
+
+## Verification Plan
+1.  **Loading**: Test Gasoline splashing (`S=1.45`). Compare vs API Table 5-1 example.
+2.  **Tanks**: Test 1000 bbl/day, 300 psig separator. Ensure GOR is positive and realistic (~50-200 scf/bbl).
+3.  **Dehydrator**: Test 5 gpm TEG rate. Verify daily emissions.

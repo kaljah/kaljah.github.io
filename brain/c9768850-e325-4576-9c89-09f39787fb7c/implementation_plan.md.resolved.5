@@ -1,0 +1,23 @@
+# Plan: Refactor Manage Data Layout
+
+## Goal
+Keep [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) as a standalone page but refactor its internal layout to match [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) exactly (same sidebar, same header structure). Ensure theme is consistent (White/Orange).
+
+## User Review Required
+> [!NOTE]
+> [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) will be significantly refactored to drop the custom `.manage-layout` and adopt the standard `.app-container` structure.
+
+## Proposed Changes
+
+### Manage Data ([manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html))
+- [MODIFY] Replace `.manage-layout` grid with standard `.app-container` > `.sidebar` + `.main-content`.
+- [MODIFY] Copy standard Sidebar HTML from [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html).
+- [MODIFY] Move the "Custom Factors" and "Facilities" forms into the standard `.main-content` area.
+- [MODIFY] Update tab switching logic to work with the new structure.
+
+### Navigation
+- [VERIFY] Links in sidebar point correctly to [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html).
+
+## Verification
+- Verify [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) looks identical to [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) (sidebar, top bar).
+- Verify functionality (add/delete factors/facilities) still works.

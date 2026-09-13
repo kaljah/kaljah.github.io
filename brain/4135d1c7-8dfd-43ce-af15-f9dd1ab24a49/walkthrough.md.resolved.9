@@ -1,0 +1,49 @@
+# Walkthrough - Sidebar Restructuring
+
+I have successfully restructured the global sidebar navigation across the application to ensure consistency and improve user experience. The new navigation order is enforced on all main pages and calculator sub-pages.
+
+## Changes
+
+### 1. Global Navigation Order
+The sidebar navigation links have been reordered to:
+1.  **Dashboard**
+2.  **Calculations**
+3.  **Manage Data**
+4.  **Reports**
+5.  **Reference Data**
+6.  **Uncertainty**
+7.  **Compliance**
+
+### 2. Updated Files
+The following files were updated with the new sidebar structure, ensuring the correct "Active" state is applied:
+
+| Category | File | Active State |
+| :--- | :--- | :--- |
+| **Main Pages** | [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) | Dashboard |
+| | [reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html) | Reports |
+| | [reference-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reference-data.html) | Reference Data |
+| | [uncertainty.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/uncertainty.html) | Uncertainty |
+| | [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) | Compliance |
+| **Calculations** | [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html) | Calculations |
+| | [stationary-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/stationary-combustion.html) | Calculations |
+| | [mobile-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/mobile-combustion.html) | Calculations |
+| | [scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html) | Calculations |
+| | [flaring.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/flaring.html) | Calculations |
+| | [venting.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/venting.html) | Calculations |
+| | [emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html) | Calculations |
+| | [combustion-ef.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/combustion-ef.html) | Calculations |
+| | [emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html) | Calculations |
+| | [scope1-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope1-selection.html) | Calculations |
+
+### 3. Exclusions
+- [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html), [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html), and [manage-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/manage-data.html) were identified as having different or no sidebar structures (`nav-links` class not found) and were thus excluded from this specific restructuring to avoid breaking their custom layouts.
+
+## Verification Results
+
+### Manual Code Verification
+- Verified that [flaring.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/flaring.html), [venting.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/venting.html), etc., now contain the `<ul>` block with the new order.
+- Verified that "Calculations" link has the `active` class in calculator pages.
+- Validated that [Uncertainty](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html#492-506) appears before `Compliance` as requested.
+
+### Visual Consistency
+The application now presents a unified navigation structure across all primary workflows, reducing user cognitive load when switching between modules.

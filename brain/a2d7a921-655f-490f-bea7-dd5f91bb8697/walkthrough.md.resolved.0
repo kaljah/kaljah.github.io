@@ -1,0 +1,28 @@
+# Walkthrough: Cement GHG Emissions Calculator
+
+I have successfully built the Cement Industry GHG Emissions Calculator, establishing a professional-grade platform compliant with WBCSD and ISO 14064-1 standards.
+
+## 1. Login Page
+The application features a modern, split-screen login page combining industrial cement aesthetics with environmental responsibility themes.
+- **Design**: "Cement" grey backgrounds with "Nature" green accents (Tailwind v4 theme).
+- **Icons**: SVG icons (Factory, Leaf) used exclusively.
+
+## 2. Dashboard
+Upon login, users are greeted with a comprehensive emissions dashboard.
+- **Stats**: Key metrics for Scope 1 & 2 emissions.
+- **Charts**: A 5-year trend analysis bar chart (Recharts) showing the split between process emissions and energy usage.
+- **Navigation**: A sidebar allows access to Facilities (CRUD), Emissions Data, and Reports.
+
+## 3. Backend Logic (WBCSD Compliance)
+The Django backend performs complex calculations automatically:
+- **Fuel Consumption**: Automatically calculates CO2 based on NCV * Emission Factors.
+- **Clinker Production**: Uses the detailed oxide method (CaO/MgO) to compute process emissions (Method A1).
+- **Audit Logic**: Every change is tracked in an [AuditLog](file:///c:/Users/samsung/Desktop/cement/backend/reporting/models.py#6-34) for ISO compliance.
+
+## 4. Verification
+- **Build**: The Frontend is built using `npm run build` (Next.js 15).
+- **API**: The Backend (Django Rest Framework) exposes secure endpoints at `/api/`.
+
+## Next Steps
+- Deploy the Backend to a production server (Docker recommended).
+- Populate the [EmissionFactorLib](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#18-47) with the latest IPCC 2006 factors.

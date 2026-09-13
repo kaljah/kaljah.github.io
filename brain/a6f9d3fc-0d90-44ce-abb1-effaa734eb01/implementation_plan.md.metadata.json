@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary":  "Plan to fix discrepancies between software and API Compendium 2021 examples.\n1. Fix unit handling in dispatcher.py for combustion.\n2. Correct equipment-level fugitive calculation logic in fugitive.py.\n3. Update emission factors in emission_factors_api2021.py to match latest Compendium values.\n4. Align input parameter names in dispatcher.py and test suite.",
+  "updatedAt":  "2026-05-08T18:26:58.504432Z",
+  "requestFeedback":  true
+}

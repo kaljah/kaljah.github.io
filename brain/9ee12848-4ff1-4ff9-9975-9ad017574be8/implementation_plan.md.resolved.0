@@ -1,0 +1,55 @@
+# Phase 1: Security Audit Remediation Plan
+
+This plan focuses exclusively on the **Security Audit** discipline. Once we implement and verify these fixes, we will move on to Data Integrity.
+
+## User Review Required
+
+> [!WARNING]
+> Implementing RBAC (Role-Based Access Control) means some users will no longer be able to delete data. We need to ensure you have at least one account in the database with the `role = 'admin'` to avoid locking yourself out. 
+> 
+> Also, adding CSRF protection requires a small update to how the frontend sends API requests. 
+
+## Proposed Changes
+
+### Component: Authentication & Session Management
+
+#### [MODIFY] [config.py](file:///c:/Users/samsung/Desktop/h/new/server/config.py)
+- **SEC-01 (Hardcoded Secret):** Modify `SECRET_KEY` to throw a fatal `ValueError` if it is missing when deployed in a production environment, rather than falling back to a hardcoded string.
+
+#### [MODIFY] [routes/auth.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/auth.py)
+- **SEC-02 (Rate Limiting):** Remove the in-memory `_login_attempts` dictionary (which causes memory leaks). We will replace it with `Flask-Limiter` (requires `pip install Flask-Limiter`) for robust, production-ready rate limiting.
+- **SEC-06 (Password Strength):** Add a minimum length (10 chars) and complexity check to the `/register` endpoint to match the logic already present in `/change-password`.
+- **New Middleware:** Add an `@admin_required` decorator that verifies `user.role == 'admin'`.
+
+### Component: Access Control & Authorization
+
+#### [MODIFY] [routes/audit.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/audit.py)
+- **SEC-03 (Unauthenticated Access):** Add `session.get('user_id')` check to `get_audit_logs()`. Apply the new `@admin_required` decorator to ensure only admins can view the global system audit trail.
+
+#### [MODIFY] [routes/notifications.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/notifications.py)
+- **SEC-03 (Unauthenticated Access):** Add `session.get('user_id')` check to block anonymous access to global notifications.
+
+#### [MODIFY] All Relevant Backend Routes (`facilities.py`, `custom_factors.py`, `emissions.py`)
+- **SEC-02 (RBAC):** Apply the `@admin_required` decorator to destructive `DELETE` endpoints and global configuration endpoints (like adding new facilities or modifying custom emission factors). Standard users will still be able to create and edit emissions, but not destroy global master data.
+
+### Component: CSRF Protection
+
+#### [MODIFY] [app.py](file:///c:/Users/samsung/Desktop/h/new/server/app.py)
+- **SEC-04 (CSRF):** Configure Flask to enforce a strict custom header check (e.g., `X-Requested-With: XMLHttpRequest`) for all state-changing requests (POST, PUT, DELETE). This is a modern, lightweight defense against Cross-Site Request Forgery that works seamlessly with Axios.
+
+#### [MODIFY] [client/src/api.js](file:///c:/Users/samsung/Desktop/h/new/client/src/api.js)
+- **SEC-04 (CSRF):** Update the global Axios interceptor to automatically attach the required `X-Requested-With` header to all outgoing requests.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+1. Verify anonymous users cannot access `/api/audit` (should return 401).
+2. Verify standard users cannot `DELETE /api/facilities/1` (should return 403 Forbidden).
+3. Verify password registration fails for "123" (should return 400).
+4. Verify POST requests without the `X-Requested-With` header are rejected.
+
+### Manual Verification
+1. Ask the user to log in via the frontend.
+2. Verify that they can still view dashboards and add emissions without CSRF blockers preventing the request.

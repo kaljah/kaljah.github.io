@@ -1,0 +1,45 @@
+# Implementation Plan - Final Compliance Features
+
+This plan implements the final two requirements for full ISO 14064-1 compliance: a formal Base Year Recalculation Log and an audit-ready Verification Export Framework.
+
+## Proposed Changes
+
+### [Component Name] Backend - server.js
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- Add `recalculation_log` table initialization in [initUserSchema](file:///c:/Users/samsung/Desktop/ghg%20old/server.js#156-248).
+- Create `GET /api/base-year-recalculation` to fetch the log history.
+- Create `POST /api/base-year-recalculation` to set the base year and record the reason in the log.
+- Modify `POST /api/base-year` (optionally, or just use the new endpoint).
+
+### [Component Name] Dashboard - dashboard.html & dashboard.js
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Update the `base-year-modal` to include a `<textarea>` for "Reason for Recalculation".
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Update the `saveBaseYear` logic to capture the reason and use the new `/api/base-year-recalculation` endpoint.
+
+### [Component Name] Compliance - compliance.html
+
+#### [MODIFY] [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)
+- Add a section titled "Base Year Recalculation History" below the gap analysis.
+- Add a "Generate Audit-Ready Verification Report" button.
+- Implement JavaScript to fetch and display the recalculation log.
+
+### [Component Name] Verification - verification-report.js [NEW]
+
+#### [NEW] [verification-report.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/verification-report.js)
+- Implement a comprehensive PDF generation logic using `jsPDF`.
+- The report will include:
+    - Boundary Detail (Approach & Facilities).
+    - Emissions Summary (Scopes & Sources).
+    - Methodology & Factor References.
+    - Uncertainty Assessment Summary.
+    - Base Year Recalculation Log history.
+
+## Verification Plan
+
+### Manual Verification
+- **Recalculation Log**: Change the base year with a reason, then verify it appears in the "Recalculation History" on the compliance page.
+- **Verification Report**: Click the "Generate Audit-Ready Verification Report" button and verify the resulting PDF contains all required auditor information.

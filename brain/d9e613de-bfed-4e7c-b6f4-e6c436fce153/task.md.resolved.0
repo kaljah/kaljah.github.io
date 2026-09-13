@@ -1,0 +1,7 @@
+# Tasks
+
+- `[/]` Generate software UI screenshots using `generate_image`.
+- `[ ]` Install `python-pptx` package.
+- `[ ]` Write `generate_pitch.py` script.
+- `[ ]` Run the script to generate `Sonatrach_GHG_Pitch.pptx`.
+- `[ ]` Verify output and create walkthrough artifact.

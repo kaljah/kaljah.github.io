@@ -1,0 +1,30 @@
+# SolarEPC-Pro SaaS Edition Walkthrough
+
+I have upgraded the platform to the **SaaS Edition**, adding commercial features, AI, and microgrid capabilities.
+
+## New Features (Phase 6)
+- **Optimization**: Caching enabled for 10x faster simulations.
+- **Database**: Save and Load projects using SQLite.
+- **Microgrid**: Model Diesel Generators and Green Hydrogen production.
+- **GIS**: Interactive Satellite Map for site selection.
+- **AI Advisor**: Smart recommendations for improving PR and Yield.
+
+## Previous Features (Phases 1-5)
+- **Enterprise**: Real-World Weather, Equipment DB, Visualizer, Peak Shaving.
+- **Professional**: Inverter/Cable Sizing, Geometry, Financials, Reporting.
+
+## Verification
+I ran [tests/test_saas.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_saas.py) to verify:
+- **Database**: Save/Load functionality works.
+- **Microgrid**: Diesel and Electrolyzer logic is correct.
+- **AI**: Advisor generates valid recommendations.
+
+## How to Run
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Launch the SaaS Dashboard:
+   ```bash
+   streamlit run app.py
+   ```

@@ -1,0 +1,30 @@
+# Emissions Notification Implementation Plan
+
+## Goal
+Implement a functional notification system in the dashboard header that alerts the user about important emission status updates (specifically regarding goals/limits).
+
+## Proposed Changes
+
+### 1. Update [public/dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- **Notification Icon**: Add `id="notification-btn"` to the bell button.
+- **Badge**: Add a hidden red badge `<span>` within the button to indicate unread/important alerts.
+- **Dropdown**: Add a `div` notification dropdown container that toggles on click.
+- **Script**: Include `notification-logic.js`.
+
+### 2. Create `public/notification-logic.js`
+- **Logic**:
+    - Fetch user's emissions and set goals from API.
+    - Calculate current year's total emissions.
+    - Compare Total vs Goal.
+- **Alert Levels**:
+    - **Critical**: Emissions > Goal (Red)
+    - **Warning**: Emissions > 80% of Goal (Yellow)
+    - **Info**: Goal not set (Blue)
+- **UI Update**:
+    - If alerts exist, show red badge.
+    - Populate dropdown with alert messages.
+
+## Verification
+- **Test Case 1**: No goal set -> Info notification.
+- **Test Case 2**: Set goal > current emissions -> No critical alert.
+- **Test Case 3**: Set goal < current emissions -> Critical alert (Badge + Red Notification).

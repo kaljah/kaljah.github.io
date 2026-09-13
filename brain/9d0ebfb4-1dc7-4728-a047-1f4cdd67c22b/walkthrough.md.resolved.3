@@ -1,0 +1,31 @@
+# Walkthrough - Database Reset and Seeding (v4)
+
+## Changes
+The database has been reset and seeded using the **corrected Sonatrach hierarchy**, an **extended timeframe**, and **Custom Emission Factors**.
+
+### Key Updates
+-   **Custom Factors**: Seeded Sonatrach-specific factors:
+    -   `Natural Gas (Algeria Grid)`
+    -   `Field Gas (Hassi Messaoud)`
+    -   `Diesel (DZ Standard)`
+    -   `Sonelgaz Grid Mix`
+-   **Extended Timeframe**: Data covers **12 years (2015-2026)**.
+-   **Hierarchy**: Correctly mapped `EP` (Production/Association), `LQS`, `RPC`, `TRC`.
+-   **Scope 3**: Category 11 data included.
+
+### Data Overview
+-   **User**: Ramzi Dalil (`ramzi.dalil@sonatrach.dz` / `test`).
+-   **Total Records**: **139,399** emission entries.
+-   **Custom Factors**: 4 initial reference factors.
+
+## Verification
+### Automated Check
+```bash
+✓ Seeded custom emission factors
+✓ Seeded 22 Sonatrach regions
+✓ Database transaction committed. Total Records: 139399
+```
+
+### Manual Verification
+1.  **Reference Data**: Go to "Reference Data" -> "Custom Factors" (if UI available) or check in calculation dropdowns.
+2.  **Dashboard**: Verify data appears for 2024-2026.

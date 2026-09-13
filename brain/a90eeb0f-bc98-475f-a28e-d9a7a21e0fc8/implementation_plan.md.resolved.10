@@ -1,0 +1,49 @@
+# Sentinel-5P Multi-Pollutant Integration Plan
+
+## Goal Description
+Expand the current "Methane Explorer" (Sentinel-5P map) to support **all major pollutants** monitored by the Sentinel-5P satellite. This includes shifting from a methane-only view to a multi-pollutant monitoring dashboard.
+
+**Pollutants to Add:**
+*   **Methane (CH4):** Existing (retained as default).
+*   **Nitrogen Dioxide (NO2):** Indicator of combustion (vehicles, power plants, flares).
+*   **Carbon Monoxide (CO):** Incomplete combustion.
+*   **Sulfur Dioxide (SO2):** Volcanic gas and industrial/flaring emissions (sour gas).
+*   **Ozone (O3):** Atmospheric monitoring.
+
+## User Review Required
+> [!NOTE]
+> The current implementation uses **simulated data** based on defined "zones" (Algerian oil fields). This update will extend the simulation logic to other pollutants with plausible values and distinct visual styles (colors). It will NOT connect to the live ESA Copernicus API unless specifically requested and credentials are provided, as that requires complex authentication and data processing.
+
+## Proposed Changes
+
+### UI / Frontend ([mars-map.html](file:///c:/Users/samsung/Desktop/h/public/mars-map.html))
+*   **Rename**: Update titles from "Methane Explorer" to "Sentinel-5P Emissions Monitor".
+*   **Controls**: Add a "Pollutant Selector" (Layer Control) to the top-right overlay card or a new floating control.
+    *   Options: CH4, NO2, CO, SO2, O3.
+*   **Legend/Info**: Update the info card to dynamically display the selected pollutant's name, chemical formula, and unit (e.g., kg/hr, molecules/cm², DU).
+
+### Logic / Interaction ([mars-map.js](file:///c:/Users/samsung/Desktop/h/public/mars-map.js))
+*   **Refactor [initMap](file:///c:/Users/samsung/Desktop/h/public/mars-map.js#6-126)**: Break down the monolithic function.
+*   **Pollutant Definitions**: Create a configuration object for each pollutant:
+    ```javascript
+    const POLLUTANTS = {
+        CH4: { name: 'Methane', color: '#ef4444', unit: 'kg/hr', label: 'Plume Rate' },
+        NO2: { name: 'Nitrogen Dioxide', color: '#f59e0b', unit: 'µmol/m²', label: 'Column Density' },
+        CO:  { name: 'Carbon Monoxide', color: '#10b981', unit: 'mol/m²', label: 'Concentration' },
+        SO2: { name: 'Sulfur Dioxide', color: '#8b5cf6', unit: 'DU', label: 'Column Density' },
+        O3:  { name: 'Ozone', color: '#3b82f6', unit: 'DU', label: 'Column Density' } // DU = Dobson Units
+    };
+    ```
+*   **Layer Management**:
+    *   Clear existing layers when switching pollutants.
+    *   Generate new "hotspots" or "clouds" appropriate for the pollutant type (e.g., NO2 might be more stable/widespread, CH4 is sporadic plumes).
+*   **Popup Updates**: Update popup content to reflect the selected pollutant's metadata.
+
+## Verification Plan
+
+### Manual Verification
+1.  **UI Check**: Verify page title and new selector exist.
+2.  **Switching**: Click through each pollutant (NO2, CO, etc.).
+    *   Verify map markers/circles change color.
+    *   Verify values in popups and the info card update to correct units and ranges.
+3.  **Responsiveness**: Ensure the floating card looks good on resize.

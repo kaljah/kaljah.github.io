@@ -1,0 +1,45 @@
+# Implementation Plan - Dashboard Advancements (YoY, Trajectory, Comparison)
+
+This plan outlines the steps to add advanced analytical features to the Industrial GHG Dashboard.
+
+## Proposed Changes
+
+### 1. YoY Variance Indicators (Hero Card)
+- **Calculation**: In [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#240-306), if a specific year is selected, identify the previous year's total emissions from `summaryData`.
+- **UI**: Add a `VarianceBadge` component next to Gross Emissions and Intensity values.
+- **Visuals**: Green for decrease, Red for increase, Grey for no change/no data.
+
+### 2. Target Trajectory (Trend Chart)
+- **Logic**: Use the `baseYear` (start point) and [goal](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#205-221) (end point) states.
+- **Interpolation**: Create a "Trajectory" data series by calculating a linear path from the Base Year emissions value to the Target Goal value in 2030.
+- **UI**: Add a dashed line named "Net Zero Path" to the Line Chart.
+
+### 3. Comparison View
+- **Mechanism**: Introduce a "Compare" mode toggle.
+- **Logic**: 
+    - When "Compare Mode" is active, fetch data for all facilities within the selected Activity/Division.
+    - Transform `trendData` to have many series (one per facility) instead of a single Scope 1+2 sum.
+- **UI**: Add a toggle button in the header. Update `LineChartWrapper` to handle dynamic numbers of lines.
+
+---
+
+## Technical Details
+
+### [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx)
+- Add `isCompareMode` state.
+- Update [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#240-306) to handle multi-series fetching for comparison.
+- Calculate `prevYearStats` for YoY logic.
+- Generate `trajectoryPoints` for the goal line.
+
+### [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) (Backend)
+- Verify that [get_dashboard_summary](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#8-129) supports detailed facility-level trends when needed for comparison. (Existing endpoint returns yearly data aggregated, might need a specific "compare" endpoint or param).
+- Current `/summary` groups by year. For comparison, we need a query that returns [(year, facility_id, emissions)](file:///c:/Users/samsung/Desktop/h/server.js#2285-2290).
+
+---
+
+## Verification Plan
+
+### Manual Verification
+- Select 2024 and verify the YoY badge correctly compares with 2023.
+- Set a Goal for 2030 and verify the dashed line appears on the trend chart.
+- Toggle "Compare Mode" and check if multiple lines appear (one for each region).

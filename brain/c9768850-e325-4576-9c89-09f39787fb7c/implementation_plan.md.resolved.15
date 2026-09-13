@@ -1,0 +1,22 @@
+# OGMP MARS Notification Implementation Plan
+
+## Goal
+Implement a simulated "OGMP MARS (Methane Alert and Response System)" notification in the [notification-logic.js](file:///c:/Users/samsung/Desktop/h/public/notification-logic.js) file. This will provide users with a rigorous, real-time alert simulation consistent with high-standard methane reporting.
+
+## Proposed Changes
+
+### [public/notification-logic.js](file:///c:/Users/samsung/Desktop/h/public/notification-logic.js)
+
+#### [MODIFY]
+- **Logic**: Implement a "Real-time Detection Engine" that randomly selects from a list of active Sonatrach zones:
+  - Hassi Messaoud (Field A, B)
+  - Hassi R'Mel (North/South)
+  - In Amenas
+  - Rhourde Nouss
+  - Tin Fouyé Tabankort (TFT)
+- **Content**: Dynamic message based on selection, e.g., "OGMP MARS Alert: Methane Plume Detected. Zone: [Random Zone]. Est. Rate: [Random Rate] kg/hr."
+- **Frequency**: Generate 1-2 unique alerts to prompt user attention to multiple potentially affected areas.
+
+## Verification
+- Refresh the dashboard.
+- Verify a red "Critical" notification appears with the MARS alert details.

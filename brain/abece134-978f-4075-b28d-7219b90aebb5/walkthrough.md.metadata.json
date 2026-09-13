@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Comprehensive walkthrough of the enhanced CSV Spreadsheet Pro application. Documents all implemented features including dark/light theme toggle, URL import, Excel export (.xlsx), row add/delete operations, interactive chart visualization with Chart.js, and localStorage auto-save. Includes screenshots demonstrating light theme and the enhanced feature set with all new buttons and controls working as expected.",
+  "updatedAt": "2025-11-25T23:49:03.796057900Z",
+  "version": "1"
+}

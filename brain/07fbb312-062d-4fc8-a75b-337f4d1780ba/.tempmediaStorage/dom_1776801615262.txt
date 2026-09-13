@@ -1,0 +1,142 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (96,224)<li  />
+		[2] (79,221)<a class='nav-link ' href='/'>Dashboard />
+	[3] (96,351)<li  />
+		[4] (93,348)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (96,478)<li  />
+		[6] (81,475)<a class='nav-link ' href='/emissions'>Calculations />
+	[7] (96,605)<li  />
+		[8] (89,602)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (96,733)<li  />
+		[10] (85,729)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (96,860)<li  />
+		[12] (72,857)<a class='nav-link active' href='/reports'>Reports />
+	[13] (96,987)<li  />
+		[14] (89,984)<a class='nav-link ' href='/reference-data'>Reference Data />
+	Dashboard
+	[15] (908,53)<button class='icon-button' title='Notifications' />
+		[16] (911,47)<span  />
+	[17] (941,53)<button class='icon-button' />
+	Test
+	[18] (597,555)<div scrollable='true' />
+		Dashboard
+		/
+		Reports
+		Test User
+		Emission Database
+		Complete history of all recorded emissions and compliance data.
+		[19] (825,289)<button class='btn-action btn-excel'>Excel Export />
+		[20] (938,289)<button class='btn-action btn-pdf'>PDF Report />
+		Create New Report
+		[21] (301,508)<label class='input-label'>Reporting Year
+* />
+			*
+		[22] (301,566)<select class='component-select' />
+		[23] (495,508)<label class='input-label'>Compare With />
+		[24] (495,566)<select class='component-select' />
+		[25] (690,508)<label class='input-label'>Regions / Facilities
+* />
+			*
+		[26] (690,566)<div  />
+			[27] (634,566)<span >All Selected />
+		Generating...
+		Hassi Messaoud
+		[28] (291,640)<button >× />
+		Hassi Berkine
+		[29] (374,640)<button >× />
+		Ourhoud
+		[30] (440,640)<button >× />
+		Rhourde El Baguel
+		[31] (544,640)<button >× />
+		El Borma
+		[32] (610,640)<button >× />
+		Zarzaitine
+		[33] (679,640)<button >× />
+		Haoud Berkaoui
+		[34] (774,640)<button >× />
+		Bir Seba
+		[35] (836,640)<button >× />
+		Menzel Lejmat
+		[36] (925,640)<button >× />
+		Adrar District
+		[37] (278,691)<button >× />
+		Edjeleh
+		[38] (337,691)<button >× />
+		Bir M'Sana
+		[39] (409,691)<button >× />
+		Gassi Berkine
+		[40] (492,691)<button >× />
+		Hassi R'Mel
+		[41] (569,691)<button >× />
+		Rhourde Nouss
+		[42] (661,691)<button >× />
+		In Salah Gas
+		[43] (739,691)<button >× />
+		In Amenas
+		[44] (811,691)<button >× />
+		Tin Fouyé Tabankort
+		[45] (925,691)<button >× />
+		Gassi Touil
+		[46] (268,742)<button >× />
+		Alrar
+		[47] (316,742)<button >× />
+		Stah
+		[48] (363,742)<button >× />
+		Mereksen
+		[49] (432,742)<button >× />
+		Timimoun Gas
+		[50] (522,742)<button >× />
+		Reggane Nord
+		[51] (610,742)<button >× />
+		Ohanet
+		[52] (669,742)<button >× />
+		Menzel Lejmat Est
+		[53] (772,742)<button >× />
+		Skikda Refinery
+		[54] (864,742)<button >× />
+		Arzew Refinery
+		[55] (954,742)<button >× />
+		Algiers Refinery
+		[56] (288,793)<button >× />
+		Hassi Messaoud Refinery
+		[57] (419,793)<button >× />
+		Adrar Refinery
+		[58] (507,793)<button >× />
+		GL1Z Complex
+		[59] (596,793)<button >× />
+		GL2Z Complex
+		[60] (685,793)<button >× />
+		GL3Z Complex
+		[61] (774,793)<button >× />
+		GL1K Complex
+		[62] (863,793)<button >× />
+		GP1Z Plant
+		[63] (937,793)<button >× />
+		GP2Z Plant
+		[64] (269,844)<button >× />
+		Bejaia District
+		[65] (354,844)<button >× />
+		Oran District
+		[66] (434,844)<button >× />
+		Annaba District
+		[67] (526,844)<button >× />
+		Tiaret Hub
+		[68] (599,844)<button >× />
+		Djelfa Hub
+		[69] (672,844)<button >× />
+		Touggourt Hub
+		[70] (765,844)<button >× />
+		Biskra Hub
+		[71] (838,844)<button >× />
+		Laghouat Hub
+		[72] (926,844)<button >× />
+		Filter & Group Data
+	Generating ISO 14064-1 Report...
+	[73] (961,179)<button class='toast-close'>× />
+
+</current_dom>

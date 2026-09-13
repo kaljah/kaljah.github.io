@@ -1,0 +1,19 @@
+# Task: GHG Reporting Fixes
+
+- [x] Fix SQLite migration syntax errors (`IF NOT EXISTS` not supported)
+- [x] Correct API logic for ID retrieval in SQLite (`this.lastID` instead of `RETURNING id`)
+- [x] Ensure newly saved Regions appear in 'Active Regions' list
+- [x] Update facility import to support new columns (activity, division, field)
+- [x] Verify frontend rendering of new fields in [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+- [x] Fix dashboard facilities dropdown disappearance bug
+    - [x] Rename conflicting ID in [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html)
+    - [x] Update interaction logic in [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- [x] Verify fix by testing dropdown interactions
+- [ ] Align entire dashboard with Activity-Division hierarchy
+    - [ ] Correct TRC division in [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) and [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+    - [ ] Update [server.js](file:///c:/Users/samsung/Desktop/h/server.js) [seedHierarchy](file:///c:/Users/samsung/Desktop/h/server.js#1263-1292) with clean names
+    - [ ] Add "Emissions by Activity" Doughnut chart to dashboard
+    - [ ] Restructure Categorical Overview to group by Activity
+- [x] Fix SQLite schema warnings (near "EXISTS")
+- [x] Verify cumulative filtering logic
+

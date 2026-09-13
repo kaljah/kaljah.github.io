@@ -1,0 +1,25 @@
+# Modernize Facility Selector
+
+Enhance the dashboard's facility selector by replacing emojis with a premium SVG icon and applying modern glassmorphism styling.
+
+## Proposed Changes
+
+### Dashboard Navigation
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Wrap the facility selector in a container with a Map-Pin SVG icon.
+- Remove inline styles and replace with CSS classes.
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Remove the "📍" emoji from the dynamic population of the facility selector.
+
+#### [MODIFY] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css)
+- Add premium styling for the facility selector container, icon, and the select element itself.
+- Implement hover and focus states for better interactivity.
+
+## Verification Plan
+
+### Manual Verification
+- Verify the facility selector looks premium on the dashboard.
+- Confirm the Map-Pin SVG is correctly aligned.
+- Ensure the functionality (filtering) still works as expected.

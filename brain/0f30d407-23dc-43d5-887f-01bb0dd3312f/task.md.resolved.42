@@ -1,0 +1,23 @@
+# Tasks
+
+- [x] Install dependencies <!-- id: 5 -->
+- [x] Analyze New Tool Dashboard Code <!-- id: 6 -->
+- [x] Default Year to "All Years" (Fix Dropdown) <!-- id: 9 -->
+- [x] Simplify Loading Screen <!-- id: 11 -->
+- [x] Carbon Intensity Optimization <!-- id: 15 -->
+- [x] Fix Production Data Overestimation <!-- id: 21 -->
+- [x] Debug Dashboard Hero Card Logic <!-- id: 26 -->
+- [x] Verify Dashboard Components & Filters <!-- id: 31 -->
+- [x] Add Missing Units to Dashboard <!-- id: 39 -->
+- [x] Add M/K Suffixes to Large Numbers <!-- id: 42 -->
+- [x] Dashboard Enhancements (YoY, Trajectory, Comparison) <!-- id: 44 -->
+- [x] Carbon Intensity Logic & Bug Fixes <!-- id: 50 -->
+    - [x] Research frontend implementation ([CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx)) <!-- id: 51 -->
+    - [x] Research backend implementation ([dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py)) <!-- id: 52 -->
+    - [x] Audit Intensity Logic (Weighting vs Averaging) <!-- id: 53 -->
+    - [x] Audit Production Unit Scaling <!-- id: 54 -->
+    - [x] Perform Performance Benchmarking (Query analysis) <!-- id: 55 -->
+    - [x] Document findings and proposed fixes <!-- id: 56 -->
+    - [x] Implement backend filter support (activity/division) <!-- id: 57 -->
+    - [x] Standardize units to kg/BOE across UI <!-- id: 58 -->
+    - [x] Fix 1000x unit discrepancy bug <!-- id: 59 -->

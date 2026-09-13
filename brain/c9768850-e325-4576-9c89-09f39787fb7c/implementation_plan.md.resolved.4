@@ -1,0 +1,27 @@
+# Plan: Merge Manage Data to Dashboard & Fix Theme
+
+## Goal
+Integrate the functionality of [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) (Custom Factors, Facilities) directly into [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) to create a unified experience, and fix the theme inconsistencies (remove dark backgrounds).
+
+## User Review Required
+> [!IMPORTANT]
+> This change will move "Manage Data" from a separate page to a view/section within [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html). The existing [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) file will be deprecated or redirected.
+
+## Proposed Changes
+
+### Dashboard ([dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html))
+- [MODIFY] Add a container for "Manage Data" views (Factors, Facilities).
+- [MODIFY] Add logic (or update [sidebar-logic.js](file:///c:/Users/samsung/Desktop/h/public/sidebar-logic.js)) to toggle between "Dashboard" view and "Manage Data" view without reloading the page.
+- [NEW] Copy the `factors` and `facilities` form logic and HTML from [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) into [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) (view toggled).
+- [MODIFY] Ensure all styles use `var(--bg-card)`, `var(--text-primary)`, etc.
+
+### Manage Data ([manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html))
+- [DELETE] (Or keep as redirect) - Since functionality is merging.
+
+### Styles ([dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css))
+- [MODIFY] Ensure global styles support the new forms in dashboard.
+
+## Verification
+- Check that clicking "Manage Data" in the sidebar switches the view within Dashboard.
+- Verify "Custom Factors" and "Facilities" tab switching works.
+- Verify Theme is consistent (White background, Black text, Orange accents).

@@ -1,0 +1,30 @@
+# Integrate Registration Data with Profile Page
+
+Ensure all data collected during registration flows correctly to the profile page and can be updated.
+
+## Proposed Changes
+
+### Backend
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- Update `/api/users/:id` endpoint:
+    - Add `sector` to the `UPDATE` query.
+    - Ensure it accepts either `orgName` or `company` from the request body (for compatibility).
+
+### Frontend
+
+#### [MODIFY] [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html)
+- **UI Update**: Add a "Sector" field (dropdown) to the Professional Information tab.
+- **Populate Logic**: Ensure all fields from the `user` object (stored in localStorage after login) are correctly populated into the form.
+- **Update Logic**: 
+    - Include `sector` in the data sent to the backend.
+    - Use `orgName` consistently to match the database field name.
+
+## Verification Plan
+
+### Manual Verification
+1.  Register a new user with all fields filled in (Email, Sector, Job Title, etc.).
+2.  Log in as that user.
+3.  Go to the Profile page and verify all fields are populated with the registration data.
+4.  Update a few fields on the profile page (e.g., change Sector or Bio) and save.
+5.  Refresh the page and verify the changes persisted.

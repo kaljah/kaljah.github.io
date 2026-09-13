@@ -1,0 +1,51 @@
+# SolarEPC-Pro Phase 4: Advanced EPC Modules
+
+## Goal Description
+Implement Modules 3, 5, 6, and 7 from the professional curriculum. This includes advanced cable sizing, detailed loss/thermal modeling, performance ratio analysis, and granular financial/degradation modeling.
+
+## User Review Required
+> [!IMPORTANT]
+> **Cable Sizing**: We will use simplified IEC 60364-5-52 tables for ampacity (Current Carrying Capacity) assuming standard conditions (30°C ambient, in air).
+> **Thermal Model**: We will explicitly calculate Cell Temp using the NOCT formula $T_{cell} = T_{amb} + \frac{G}{800}(NOCT - 20)$ for display purposes, while [pvlib](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase2.py#9-16) handles the physics internally.
+
+## Proposed Changes
+
+### 1. Module 3: Cable Sizing ([src/electrical.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/electrical.py))
+#### [MODIFY] [src/electrical.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/electrical.py)
+- Add `check_cable_ampacity(current, cross_section)`: Returns True/False based on max current rating.
+- Add `suggest_cable_size(current, length, max_drop_percent, voltage)`: Iterates through [4, 6, 10, 16, 25] mm² to find smallest size meeting drop & ampacity limits.
+
+### 2. Module 5: Thermal & Losses ([src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py))
+#### [MODIFY] [src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py)
+- Update `SolarSystem.__init__` to accept:
+    - `noct`: Nominal Operating Cell Temp (e.g., 45°C).
+    - `temp_coeff`: Power temp coefficient (e.g., -0.35%/°C).
+    - `losses`: Dict with `soiling`, `shading`, `mismatch`, `wiring`, `lid`.
+- Implement `calculate_pr(annual_gen, capacity, irradiation)`: Returns Performance Ratio.
+- Return `cell_temp` time series in simulation results.
+
+### 3. Module 6 & 7: Financials ([src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py))
+#### [MODIFY] [src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py)
+- Update [calculate_metrics](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py#18-69) to use:
+    - `lid_loss`: Year 1 extra degradation (e.g., 2%).
+    - `annual_degradation`: Year 2+ degradation (e.g., 0.5%).
+- Return detailed `cashflow_df` with columns: `Year`, `Revenue`, `OPEX`, `Debt Service`, `Net Cashflow`, `Cumulative`.
+
+### 4. UI Updates ([app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py))
+#### [MODIFY] [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py)
+- **Design Tab**: Add "Cable Sizing" section with auto-suggestion.
+- **Simulation Tab**: Add "Loss Factors" expander (Soiling, LID, etc.). Display PR and Cell Temp charts.
+- **Financial Tab**: Display detailed Cashflow Table and ROI.
+
+## Verification Plan
+### Automated Tests
+- `test_phase4.py`:
+    - `test_cable_suggestion`: Verify it recommends larger cable for long distances.
+    - `test_losses`: Verify higher losses reduce generation.
+    - `test_degradation`: Verify Year 1 gen < Year 0 * (1-LID).
+
+### Manual Verification
+- Run app.
+- Check if Cable Sizer recommends reasonable values (e.g., 4mm² for short strings, 6mm² for long).
+- Verify PR is around 75-85%.
+- Check Cashflow table for correct degradation curve.

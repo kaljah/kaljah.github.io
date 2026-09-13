@@ -1,0 +1,45 @@
+# SolarEPC-Pro Phase 7: Expert Engineering & UI Polish
+
+## Goal Description
+Elevate the tool to "Expert Level" with physical realism (horizon, mismatch), commercial depth (tariffs), construction detail (civil), and a **Premium UI/UX**.
+
+## User Review Required
+> [!IMPORTANT]
+> **UI Overhaul**: We will switch to a "Dashboard" layout with cards and cleaner charts.
+> **Graphs**: We will use a consistent color theme (Solar Gold, Grid Blue, Battery Green).
+
+## Proposed Changes
+
+### 1. Horizon & Mismatch ([src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py))
+- [calculate_generation](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py#24-96): Apply horizon mask and non-linear mismatch loss.
+
+### 2. Complex Tariffs ([src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py))
+- [calculate_metrics](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py#18-88): Support TOU rates and Demand Charges.
+
+### 3. Battery Degradation ([src/hybrid_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/hybrid_model.py))
+- [BatterySystem](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/hybrid_model.py#4-79): Add SOH tracking based on throughput.
+
+### 4. Civil Engineering (`src/civil.py`)
+- `CivilEngineer`: Calculate Fence, Trenching, Roads, Concrete.
+
+### 5. UI & Graph Polish ([app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py), [src/design.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py))
+#### [MODIFY] [src/design.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py)
+- [visualize_layout](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py#95-142):
+    - Draw individual modules (rectangles) instead of just rows.
+    - Add "Ruler" or dimensions to the plot.
+    - Use "Real" aspect ratio.
+
+#### [MODIFY] [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py)
+- **Theme**: Set Plotly theme to `plotly_white` or custom.
+- **Charts**:
+    - **Energy Balance**: Stacked Area Chart (Solar, Grid, Battery).
+    - **Cashflow**: Waterfall or Bar chart for annual cashflows.
+- **Layout**: Use `st.columns` more effectively to reduce scrolling.
+
+## Verification Plan
+### Automated Tests
+- `test_phase7.py`: Verify Horizon, TOU, Civil calculations.
+
+### Manual Verification
+- Check if graphs look "Professional" (no default rainbow colors).
+- Verify Layout Visualizer shows individual modules.

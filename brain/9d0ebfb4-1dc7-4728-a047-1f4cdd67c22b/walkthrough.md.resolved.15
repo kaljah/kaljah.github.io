@@ -1,0 +1,33 @@
+# Dropdown Functional Standardisation & Fixes
+
+I have completed a comprehensive overhaul of the dropdown system across the entire application. This addresses the issues with non-functional dropdowns on the Dashboard, Reports, and Emissions Calculation pages, as well as the overlapping issues in the Manage Data section.
+
+## Key Changes
+
+### 1. Robust Dropdown Logic
+- **Idempotent Initialization**: Added `data-init` guards to all dropdown helper functions across [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js), [emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js), [reports-logic.js](file:///c:/Users/samsung/Desktop/h/public/reports-logic.js), and [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js). This prevents double-registration of event listeners which was causing dropdowns to toggle on and then immediately off.
+- **Single-Init Pattern**: Standardized the application entry points to ensure that [init()](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js#33-130) functions are called exactly once, regardless of whether they are triggered by `auth-ready` or a direct `window.GHG_USER` check.
+- **Class-based State Management**: Fully transitioned to using the `.active` CSS class for all custom dropdowns, ensuring consistent behaviour and synchronization with arrow rotation animations.
+- **UI Corruption Cleanup**: Fixed severe code corruption in [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) where Javascript fragments were accidentally merged into HTML tags, breaking the tab-switching functionality.
+
+### 2. UI & CSS Optimisation
+- **Z-Index Strategy**: Updated [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css) with a high `z-index: 9999 !important` for active dropdowns. This ensures they always float above subsequent input fields and other structural elements.
+- **Overflow Fixes**: Ensured that parent containers like `.manage-card` and `.input-group` do not clip dropdown menus by setting proper `overflow` and [position](file:///c:/Users/samsung/Desktop/h/public/flaring.html#640-673) properties.
+- **Redundant Logic Removal**: Removed the strict requirement for a hidden input field in the helper functions, allowing the same logic to work for navigation/action dropdowns (like the profile and notification menus).
+
+## Affected Pages
+- **Dashboard**: Activity, Division, and Region selectors are now fully functional and properly close when clicking outside.
+- **Carbon Intensity**: The year filter and chart interactivity have been restored and protected from double-init issues.
+- **Manage Data**: Overlapping issues in the data entry forms have been resolved through improved stacking contexts and z-index management.
+- **Emissions Calculator**: All unit and factor selection dropdowns are now robust and responsive.
+- **Reports**: The facility multi-select dropdown and top-level filters have been standardized.
+
+## Verification
+I have verified that:
+- [x] All dropdowns open reliably on the first click.
+- [x] Dropdowns close correctly when clicking outside or selecting an option.
+- [x] Open dropdowns stay on top of other form elements and are never clipped.
+- [x] No `ReferenceError` or `TypeError` messages appear in the console during dropdown interaction.
+
+> [!NOTE]
+> Please perform a hard refresh (Ctrl+F5) to ensure your browser fetches the latest versions of the CSS and JS files.

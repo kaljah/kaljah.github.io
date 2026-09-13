@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -220,9 +220,22 @@
+     user_id = session.get("user_id")
+     user = User.query.get(user_id)
+ 
+-    factor = CustomFactor.query.get(factor_id)
+-    if not factor:
+-        return jsonify({"error": "Factor not found"}), 404
++    factor = db.session.get(CustomFactor, factor_id)
++    if not factor:
++        return jsonify({"error": "Factor not found"}), 404
++
++    from models import Emission, Scope2Emission
++    ref_count_s1 = Emission.query.filter(Emission.fuel_type == factor.name).count()
++    ref_count_s2 = Scope2Emission.query.filter(Scope2Emission.source_type == factor.name).count()
++    if (ref_count_s1 + ref_count_s2) > 0:
++        return (
++            jsonify(
++                {
++                    "error": f"Cannot delete factor '{factor.name}': referenced by {ref_count_s1 + ref_count_s2} emission records. Archive the factor instead."
++                }
++            ),
++            409,
++        )
+ 
+     factor_name = factor.name
+     try:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

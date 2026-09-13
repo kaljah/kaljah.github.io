@@ -1,0 +1,32 @@
+# Web Deployment Preparation Plan
+
+The goal is to prepare the GHG Reporting Platform for deployment to a web hosting service (e.g., VPS, Heroku, Render).
+
+## Proposed Changes
+
+### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- **Port Configurability**: Update to use `process.env.PORT || 3000` for cloud platform compatibility.
+- **Database Paths**: Use environment variables for database file locations if available.
+- **Static Assets**: Ensure all routes correctly serve the frontend.
+
+### [MODIFY] [package.json](file:///c:/Users/samsung/Desktop/ghg%20old/package.json)
+- **Start Scripts**: Add `npm start` to run the server.
+- **Seed Scripts**: Add `npm run seed` to initialize the database.
+
+### [MODIFY] [.gitignore](file:///c:/Users/samsung/Desktop/ghg%20old/.gitignore)
+- **Database Exclusion**: Add `*.db` and journal files to prevent accidental inclusion of local data in repositories.
+
+### [NEW] [README.md](file:///c:/Users/samsung/Desktop/ghg%20old/README.md)
+- **Installation Guide**: Clear steps to clone, install, and run.
+- **Deployment Guide**: Brief instructions for common hosting platforms.
+- **Seeding Instructions**: How to reset/initialize test data.
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm start` and verify local access.
+- Check if environment variables override local settings.
+
+### Manual Verification
+- Verify the root URL (`/`) serves the login page.
+- Ensure the API is functional under the new configuration.

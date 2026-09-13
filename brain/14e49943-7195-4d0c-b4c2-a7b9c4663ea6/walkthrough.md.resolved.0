@@ -1,0 +1,36 @@
+# Walkthrough - Facility Management Page
+
+I have successfully implemented the Facility Management page, allowing users to view, create, edit, and delete facilities.
+
+## Changes
+
+### Frontend
+
+#### [NEW] [types/index.ts](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts)
+- Defined [Facility](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts#3-14) interface and [FacilityType](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts#1-2) enum to ensure type safety across the application.
+
+#### [NEW] [components/facilities/FacilityList.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityList.tsx)
+- Displays facilities in a responsive grid layout.
+- Handles empty states and loading states.
+- Provides "Edit" and "Delete" actions for each facility.
+
+#### [NEW] [components/facilities/FacilityForm.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityForm.tsx)
+- Form for creating and editing facilities.
+- Includes validation for required fields.
+- Handles API requests (POST/PUT) and error management.
+
+#### [MODIFY] [app/dashboard/facilities/page.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/facilities/page.tsx)
+- Integrated [FacilityList](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityList.tsx#13-112) and [FacilityForm](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityForm.tsx#22-162).
+- Implemented state management to toggle between list view and form view.
+- Added a "Create Facility" button to trigger the form.
+
+## Verification Results
+
+### Automated Tests
+- No automated tests were created for this task as requested.
+
+### Manual Verification
+- **List View**: Verified that facilities fetch and display correctly.
+- **Create**: Verified that new facilities can be added via the form.
+- **Edit**: Verified that existing facilities can be updated.
+- **Delete**: Verified that facilities can be removed.

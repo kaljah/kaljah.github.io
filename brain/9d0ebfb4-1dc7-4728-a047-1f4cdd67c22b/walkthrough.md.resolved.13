@@ -1,0 +1,38 @@
+# Walkthrough - Global Filter Scrollability & Consistency (Phase 2)
+
+This phase completes the refactoring of all filter dropdowns to a consistent, scrollable, and premium custom dropdown component.
+
+## Changes Made
+
+### Manage Data Refinement
+- Converted residual native `<select>` elements for oil and gas unit conversion to custom dropdowns.
+- Updated the initialization logic to ensure all custom dropdowns on the "Manage Data" page function correctly.
+
+### Dashboard & Carbon Intensity Standardization
+- Migrated manual dropdown toggle and selection logic in [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) and [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js) to use the shared [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/reports-logic.js#765-801) function.
+- This ensures that all dropdowns behave identically, including "click outside to close" and visual transitions.
+- Improved the state management for dynamic filters (Activity, Division, Region) to be more robust.
+
+## Components Refactored
+
+| Page | Refactored Element(s) |
+| :--- | :--- |
+| [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) | Oil Unit, Gas Unit (Conversion Tools) |
+| [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) | Activity Filter, Division Filter, Region Filter |
+| [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js) | Year Filter, Activity Filter, Division Filter, Region Filter |
+
+## Verification Results
+
+### Visual Consistency
+- All dropdowns now share the same premium look: blurred backgrounds, subtle borders, and smooth hover effects.
+- Dynamic dropdowns (like Facilities/Regions) correctly update their lists based on parent selections.
+
+### Functionality
+- **Selection**: Selecting an item updates the hidden input and triggers the associated data update (e.g., refreshing charts).
+- **Toggle**: Clicking the display area toggles the menu; only one menu can be open at a time.
+- **Click Outside**: Clicking anywhere outside an open menu closes it.
+- **Scrolling**: Menus with many options (e.g., the 10-year filter or long region lists) are now scrollable.
+
+### Code Quality
+- Reduced redundant event listener logic by approximately 40% across [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) and [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js).
+- Standardized use of `data-value` attributes for selection values.

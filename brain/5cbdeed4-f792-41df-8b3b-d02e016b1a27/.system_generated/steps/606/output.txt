@@ -1,0 +1,27 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":22,"LineContent":"const Diagnostics = React.lazy(() =\u003e import(\"./pages/Diagnostics\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":172,"LineContent":"          path=\"diagnostics\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":175,"LineContent":"              \u003cDiagnostics /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.css","LineNumber":1,"LineContent":".diagnostics {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.css","LineNumber":7,"LineContent":".diagnostics-container {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.css","LineNumber":234,"LineContent":"  .diagnostics-container {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":6,"LineContent":"import \"./Diagnostics.css\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":8,"LineContent":"const Diagnostics = () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":12,"LineContent":"  const [diagnostics, setDiagnostics] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":15,"LineContent":"    runDiagnostics();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":18,"LineContent":"  const runDiagnostics = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":32,"LineContent":"      setDiagnostics(results);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":34,"LineContent":"      console.error(\"Diagnostics failed:\", error);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":35,"LineContent":"      toast.error(\"Failed to run diagnostics\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":154,"LineContent":"    return \u003cLoadingSpinner fullScreen message=\"Running diagnostics...\" /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":157,"LineContent":"  if (!diagnostics) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":159,"LineContent":"      \u003cdiv className=\"diagnostics\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":174,"LineContent":"  } = diagnostics;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":181,"LineContent":"    \u003cdiv className=\"diagnostics\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":205,"LineContent":"            Diagnostics"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":215,"LineContent":"      \u003cdiv className=\"diagnostics-container\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":229,"LineContent":"              Data Quality Diagnostics"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":237,"LineContent":"            onClick={runDiagnostics}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":409,"LineContent":"export default Diagnostics;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":357,"LineContent":"                  to=\"/diagnostics\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":361,"LineContent":"                  title=\"System Diagnostics\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":376,"LineContent":"                  \u003cspan className=\"nav-label\"\u003eDiagnostics\u003c/span\u003e"}

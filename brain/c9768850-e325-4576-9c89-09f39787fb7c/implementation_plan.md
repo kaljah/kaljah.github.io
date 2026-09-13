@@ -1,0 +1,31 @@
+# Methane Hotspot Explorer Implementation Plan
+
+## Goal
+Create a dedicated "Methane Hotspot Explorer" page to visualize OGMP MARS satellite data. This page will feature an interactive map of Algeria, highlighting active methane plumes detected by Sentinel-5P (simulated).
+
+## Proposed Changes
+
+### 1. New Page: [public/mars-map.html](file:///c:/Users/samsung/Desktop/h/public/mars-map.html)
+- **Layout**: Standard dashboard layout (Sidebar + Top Bar).
+- **Core Component**: Full-width/height container for the map.
+- **Library**: Use **Leaflet.js** for mapping (lightweight, easy to use).
+- **Theme**: Dark map style (CartoDB Dark Matter) to match the dashboard's premium aesthetic.
+
+### 2. Map Logic: [public/mars-map.js](file:///c:/Users/samsung/Desktop/h/public/mars-map.js)
+- **Initialization**: Center map on Algeria (Lat: 28.0339, Lng: 1.6596).
+- **Data Layers**:
+    - **Active Plumes**: Red pulsating circles for high-rate events (>1000 kg/hr).
+    - **Monitored Zones**: Orange/Blue boundaries for Hassi Messaoud, Hassi R'Mel, etc.
+- **Interactivity**: Clicking a plume shows a popup with detailed "MARS Report" (Rate, Confidence, Time).
+
+### 3. Navigation
+- Update the **Sidebar** in `dashboard.html`, `manage-data.html`, and `mars-map.html` to include a new link:
+    - **Icon**: Satellite/Globe.
+    - **Label**: "Methane Explorer".
+    - **Badge**: "LIVE" (Red pulsing badge).
+
+## Verification
+- Load `mars-map.html`.
+- Confirm map loads with dark theme.
+- Confirm "Hassi R'Mel" and other zones show simulated plume data.
+- Verify navigation works between Dashboard and Explorer.

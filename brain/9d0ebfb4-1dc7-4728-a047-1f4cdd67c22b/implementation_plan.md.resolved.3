@@ -1,0 +1,35 @@
+
+# Production Data Filter Implementation Plan
+
+## Goal
+Enhance the "Production Data" section in [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) by replacing the numeric input year filter with a dynamic dropdown that defaults to "All Years" and contains only years where data exists.
+
+## Proposed Changes
+
+### Backend ([server.js](file:///c:/Users/samsung/Desktop/h/server.js))
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+1.  **Update `GET /api/production`**:
+    -   Modify the query parameter logic to ignore the `year` filter if it equals `'all'`.
+2.  **Add `GET /api/production/years`**:
+    -   Create a new endpoint that returns a distinct list of years found in the `production_data` table, ordered descending.
+
+### Frontend ([public/manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html))
+#### [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+1.  **Update Filter Element**:
+    -   Replace `<input type="number" id="filter-prod-year" ...>` with `<select id="filter-prod-year" ...>`.
+    -   Add an option for "All Years" as the default.
+2.  **Add `populateProductionYears` Function**:
+    -   Fetch data from `/api/production/years`.
+    -   Populate the dropdown options.
+3.  **Update [loadProduction](file:///c:/Users/samsung/Desktop/h/public/manage-data.html#1709-1750) Function**:
+    -   Ensure it handles the "all" value correctly (passing `year=all` to the API).
+4.  **Integration**:
+    -   Call `populateProductionYears()` during the initialization phase (`auth-ready` listener).
+
+## Verification Plan
+1.  **Manual Verification**:
+    -   Open [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) (Production Data tab).
+    -   Verify the year filter is a dropdown.
+    -   Verify "All Years" is selected by default and data from multiple years is shown.
+    -   Verify the dropdown contains specific years provided in the database.
+    -   Select a specific year and verify the table filters correctly.

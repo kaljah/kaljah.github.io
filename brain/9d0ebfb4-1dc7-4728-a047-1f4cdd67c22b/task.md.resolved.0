@@ -1,0 +1,15 @@
+# Task List
+
+- [ ] Explore codebase and database schema <!-- id: 0 -->
+    - [ ] Identify database connection and schema (PostgreSQL) <!-- id: 1 -->
+    - [ ] Understand hierarchy (Activity -> Division -> Region) <!-- id: 2 -->
+    - [ ] Identify Sonatrach regions for EP, LQS, TRC, RPC <!-- id: 3 -->
+- [ ] Create implementation plan <!-- id: 4 -->
+- [ ] Implement data reset and seeding script <!-- id: 5 -->
+    - [ ] Delete existing data <!-- id: 6 -->
+    - [ ] Create user "Ramzi Dalil" with password "test" <!-- id: 7 -->
+    - [ ] Define hierarchy and regions <!-- id: 8 -->
+    - [ ] Generate 50k emission entries across scopes <!-- id: 9 -->
+    - [ ] Add base year, goals, mitigation actions, production data <!-- id: 10 -->
+    - [ ] Add custom emission factors and sources <!-- id: 11 -->
+- [ ] Verify data seeding <!-- id: 12 -->

@@ -1,0 +1,29 @@
+# Plan: Modernize Inputs (Premium Floating Labels)
+
+## Goal
+Replace standard inputs in [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) with "Floating Label" style inputs that feel high-end and interactive.
+
+## Proposed Changes
+
+### 1. New CSS Logic (in [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html))
+- [NEW] `.input-group-premium`: A container for relative positioning.
+- [NEW] `.mole-input-premium`: An input with padding for the label.
+- [NEW] Floating Label Animation: Label moves up and shrinks when input defaults focus or has value.
+- [NEW] Focus Ring: Orange glow with transition.
+
+### 2. Markup Updates
+- [MODIFY] Wrap existing inputs in the new structure:
+    ```html
+    <div class="input-group-premium">
+        <input class="mole-input-premium" placeholder=" ">
+        <label>Label</label>
+    </div>
+    ```
+- [MODIFY] Apply to "Custom Factors" and "Facility" forms.
+
+### 3. Verify Animation (List Items)
+- [FIX] Re-verify that the list item stagger animations are actually present (earlier tool call might have faltered).
+
+## Verification
+- Inputs should have a crisp placeholder that floats up on click.
+- Transitions should be smooth (0.2s cubic-bezier).

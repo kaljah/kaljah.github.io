@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_TASK",
+  "summary": "Mark verification as done. Add task for PostgreSQL enforcement.",
+  "updatedAt": "2026-01-28T20:51:44.494867100Z",
+  "version": "8"
+}

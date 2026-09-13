@@ -1,0 +1,33 @@
+# Dashboard Hierarchical Filtering and Categorized Overview
+
+The dashboard needs to be updated to support filtering by Activity and Division, and to provide a new overview of emissions categorized by these hierarchical levels.
+
+## Proposed Changes
+
+### Backend (server.js)
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+- Update `GET /api/dashboard/summary` to support `activity` and `division` query parameters.
+- Join the `emissions` table with the `facilities` table to filter by these new fields.
+- Create a NEW endpoint `GET /api/dashboard/categorical-breakdown` that returns emissions grouped by Activity and Division for the selected year range.
+
+### Frontend (dashboard.html & dashboard.js)
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html)
+- Replace the single facility selector with three cascaded dropdowns: **Activity**, **Division**, and **Region (Facility)**.
+- Add a new section below the Hero Metrics for "Categorical Emissions Overview" (cards or a nested table showing totals by Activity and Division).
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- Implement cascaded dropdown logic:
+    - Selecting an Activity filters available Divisions.
+    - Selecting a Division filters available Facilities.
+- Update [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#227-296) to pass `activity` and `division` to the API.
+- Implement logic to fetch and render the new "Categorical Emissions Overview".
+
+## Verification Plan
+
+### Manual Verification
+- Filter by a specific Activity and verify dashboard metrics update.
+- Filter by a specific Division and verify metrics.
+- Verify the new categorical overview shows accurate sums for each group.
+- Ensure "All" options work at each level of the hierarchy.

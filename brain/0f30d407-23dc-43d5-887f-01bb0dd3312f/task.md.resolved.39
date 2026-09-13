@@ -1,0 +1,18 @@
+# Tasks
+
+- [x] Install dependencies <!-- id: 5 -->
+- [x] Analyze New Tool Dashboard Code <!-- id: 6 -->
+- [x] Default Year to "All Years" (Fix Dropdown) <!-- id: 9 -->
+- [x] Simplify Loading Screen <!-- id: 11 -->
+- [x] Carbon Intensity Optimization <!-- id: 15 -->
+- [x] Fix Production Data Overestimation <!-- id: 21 -->
+- [x] Debug Dashboard Hero Card Logic <!-- id: 26 -->
+- [x] Verify Dashboard Components & Filters <!-- id: 31 -->
+- [x] Add Missing Units to Dashboard <!-- id: 39 -->
+- [x] Add M/K Suffixes to Large Numbers <!-- id: 42 -->
+- [/] Dashboard Enhancements (YoY, Trajectory, Comparison) <!-- id: 44 -->
+    - [/] Plan enhancements <!-- id: 45 -->
+    - [ ] Implement YoY Variance Indicators in Hero Card <!-- id: 46 -->
+    - [ ] Add Target Trajectory line to Trend Chart <!-- id: 47 -->
+    - [ ] Implement Comparison View logic and UI <!-- id: 48 -->
+    - [ ] Verify features <!-- id: 49 -->

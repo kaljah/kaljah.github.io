@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+0b21e68 fix: remediate 54 audit findings across calculations, security, audit logging, and UI reporting
+cf4594e Optimize frontend performance, eliminate layout flashing, and fix test suite data isolation
+d0cf8a4 style: Polish platform-wide UI/UX with enhanced glassmorphism, tabular numerals, and responsive layouts
+c0fbabe feat: Implement Maker-Checker approval, forgot password flow, SBTi Net-Zero dashboard, and data safeguards
+7d83ef9 r
+f732feb feat: Implement QA/QC dashboard, batch review actions, and UI refinements
+4b6a2c5 feat: Completed Phase 4 ERP API Integration
+7679269 feat: Completed SBTi Trajectory Modeling
+ffe436d feat: Completed EEIO Spend-Based Scope 3 Mode
+ba269e0 feat: Completed Phase 1 Approval Workflow and Anomaly Detection
+0cb8d84 bug
+1e42283 Fix CBAM bugs: restore routes, fix models, encoding, and frontend mappings
+7e1af9f UI Overhaul & Bug Fixes: Glassmorphism, animations, and Audit API registration
+c3feef7 r
+7baa84a re
+2ff7e9f Refactor bulk import to use ColumnMappingWizard
+7a87054 new + bug fixes
+fbc6ea6 bug fixes
+88eba45 feat: initial release of GHG accounting & reporting platform
+

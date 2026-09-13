@@ -1,0 +1,34 @@
+# Walkthrough - Emission Data Page
+
+I have successfully implemented the Emission Data page, allowing users to track Fuel Consumption (Scope 1) and Clinker Production (Process Emissions).
+
+## Changes
+
+### Frontend
+
+#### [MODIFY] [types/index.ts](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts)
+- Defined [FuelConsumption](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts#15-28) and [ClinkerProduction](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#103-122) interfaces.
+
+#### [NEW] [components/emissions/EmissionList.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionList.tsx)
+- Displays fuel and clinker data in separate sections.
+- Shows key details like facility, type, and calculated CO2.
+- Handles deletion of records.
+
+#### [NEW] [components/emissions/EmissionForm.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionForm.tsx)
+- Tabbed interface for adding "Fuel Consumption" or "Clinker Production".
+- Dynamic fields based on selected type.
+- Fetches facilities for selection.
+
+#### [MODIFY] [app/dashboard/emissions/page.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/emissions/page.tsx)
+- Integrated list and form components.
+- Implemented view switching logic.
+
+## Verification Results
+
+### Automated Tests
+- No automated tests were created for this task as requested.
+
+### Manual Verification
+- **List View**: Verified that empty states and data tables render correctly.
+- **Add Data**: Verified form validation and submission for both Fuel and Clinker.
+- **Delete**: Verified deletion functionality.

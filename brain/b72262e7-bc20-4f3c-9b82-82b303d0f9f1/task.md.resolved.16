@@ -1,0 +1,6 @@
+# Modernize Dashboard Graph
+
+- [x] Planning Modernization <!-- id: 22 -->
+- [x] Update [processEmissionsData](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#178-236) for Scope Totals <!-- id: 23 -->
+- [x] Simplify and Stylize [renderTrendChart](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#296-422) <!-- id: 24 -->
+- [x] Verify UI and Data Accuracy <!-- id: 25 -->

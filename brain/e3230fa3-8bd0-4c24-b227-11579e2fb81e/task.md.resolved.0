@@ -1,0 +1,15 @@
+# Task: GHG Emissions Tool (API Compendium)
+
+- [ ] Initialize Project
+    - [ ] Create project directory `ghg_tool` <!-- id: 0 -->
+    - [ ] Create `task.md` and `implementation_plan.md` <!-- id: 1 -->
+- [ ] Planning & Requirements
+    - [ ] Confirm specific API Compendium modules (Combustion, Flaring, etc.) <!-- id: 2 -->
+    - [ ] Determine technology stack (Streamlit vs Web App) <!-- id: 3 -->
+- [ ] Implementation
+    - [ ] Set up basic app structure <!-- id: 4 -->
+    - [ ] Implement Combustion Calculator <!-- id: 5 -->
+    - [ ] Implement Flaring Calculator <!-- id: 6 -->
+    - [ ] Implement Venting/Fugitive Calculator <!-- id: 7 -->
+- [ ] Verification
+    - [ ] Test with sample data <!-- id: 8 -->

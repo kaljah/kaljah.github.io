@@ -1,0 +1,50 @@
+# Implementation Plan - Modernize Custom Factors Page
+
+Modernize the "Custom Factors" page to match the premium, glassmorphism design of the dashboard and profile pages. This includes updating the sidebar, top bar, and form styling.
+
+## User Review Required
+
+> [!IMPORTANT]
+> This update will move inline styles from [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html) to a new `custom-factors.css` file to improve maintainability and performance.
+
+## Proposed Changes
+
+### UI & Styling
+
+#### [MODIFY] [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html)
+- Replace legacy sidebar with the modernized sidebar (with account dropdown) used in [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html).
+- Update top bar with breadcrumbs and mobile toggle.
+- Refactor form containers to use `.card` class and glassmorphism styling.
+- Remove extensive inline `<style>` block.
+- Add link to `custom-factors.css`.
+
+#### [NEW] [custom-factors.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.css)
+- Define specific styles for custom factors forms and lists.
+- Ensure consistency with [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css).
+
+### Logic & Interaction
+
+#### [MODIFY] [sidebar-profile.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/sidebar-profile.js)
+- Add logic to handle the account dropdown toggle (currently duplicated in [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)).
+- Ensure user info is populated in both sidebar and dropdown.
+
+#### [MODIFY] [custom-factors.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.js)
+- Update [loadFactors](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.js#3-37) and [loadFacilities](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.js#112-143) to render items using more premium card-based layouts.
+- Integrate success/error toasts for all actions.
+
+---
+
+## Verification Plan
+
+### Automated/Browser Testing
+- Use the browser tool to:
+    1. Navigate to [/custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html).
+    2. Verify the sidebar dropdown opens and shows correct user info.
+    3. Test creating a new custom factor and facility.
+    4. Test deleting a factor and facility.
+    5. Verify responsive layout on mobile views.
+
+### Manual Verification
+- Verify the "glassmorphism" effect is consistent with other modernized pages.
+- Check for any visual regressions in the input fields or buttons.
+- Confirm sidebar active state is correctly set to "Custom Factors".

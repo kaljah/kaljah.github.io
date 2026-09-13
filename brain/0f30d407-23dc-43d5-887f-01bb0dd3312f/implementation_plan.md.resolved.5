@@ -1,0 +1,29 @@
+# Implementation Plan - Dashboard Hero Card Fix
+
+The goal is to align the dashboard hero card metrics with standard reporting practices and correct mathematical aggregation.
+
+## Problem
+1.  **Performance Intensity**: Currently calculated as a simple average of facility intensities. This is incorrect for aggregated data; it should be a weighted average based on production (BOE).
+2.  **Gross/Net Emissions**: Currently includes Scope 3. "Gross Emissions" in this context usually refers to Operational Emissions (Scope 1 + Scope 2). Including Scope 3 (which can be very large and estimated) distorts the "Net Zero" progress tracking against operational mitigation.
+
+## Proposed Changes
+
+### Frontend: [new/client/src/pages/DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx)
+
+1.  **Weighted Intensity Calculation**:
+    *   Update the intensity calculation logic to use `total_emissions` and `total_boe` from the `intensity-stats` response to calculate a weighted average.
+    *   Formula: `Sum(Facility Emissions) / Sum(Facility BOE)`.
+    *   Note: `intensity-stats` already provides `co2_intensity` (which is `emissions/boe`). We can derive emissions back or use the sums if available. [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) returns `total_boe` but maybe not total emissions directly in that endpoint?
+    *   Actually, [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) [get_intensity_stats](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#345-469) returns: `facility_name`, `co2_intensity`, ... `total_boe`.
+    *   I need to check if [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) returns the raw emissions in [get_intensity_stats](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#345-469) or if I need to derive them (`intensity * boe`).
+    *   I will derive them: `emissions = intensity * boe`.
+
+2.  **Gross/Net Emissions Logic**:
+    *   Remove `totals.totalEmissions += totals.scope3`.
+    *   Ensure `totals.totalEmissions` = Scope 1 + Scope 2.
+    *   Scope 3 will still be displayed in the "Scope Pills" section for visibility but won't skew the main KPI or Goal progress (unless the Goal is explicitly S1+S2+S3, but usually it's S1+S2 first).
+    *   *Self-Correction*: If the user's Goal INCLUDES Scope 3, this might hide progress. However, typically Dashboard Hero Cards focus on Operational Control. I will make this change and if user wants S3 back, I can add a toggle. given "wrong results" complaint, this is the most likely fix.
+
+## Verification
+-   Calculate manually expected intensity for a sample set.
+-   Verify Gross Emissions matches Sum(Scope 1) + Sum(Scope 2).

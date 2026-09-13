@@ -1,0 +1,25 @@
+# Plan: Restore Manage Data with Nested Layout
+
+## Goal
+Revert [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) to use its original (nested) layout for "Custom Factors" and "Facilities" (Vertical Sidebar), but wrap it inside the global Dashboard Sidebar to maintain unified navigation.
+
+## Proposed Changes
+
+### Structure
+- [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+    - Outer Layer: Standard Dashboard `.app-container` > `.sidebar`.
+    - Content Layer: Re-introduce `.manage-layout` (Grid: 280px 1fr) *inside* the main content area.
+    - Inner Sidebar: Restore `.manage-nav` (vertical list for Factors/Facilities).
+    - Inner Content: Restore `.manage-content` logic.
+
+### Theme
+- [MODIFY] Ensure the restored inner layout uses:
+    - `background: var(--bg-card)` (White)
+    - `color: var(--text-primary)` (Black)
+    - `border: 1px solid var(--border-color)` (Orange/Black)
+
+## Verification
+- Check that the Global Sidebar is on the left.
+- Check that the Manage Sub-Sidebar is next to it (or in the content area).
+- Verify functionality of both sidebars.
+- Verify Theme consistency.

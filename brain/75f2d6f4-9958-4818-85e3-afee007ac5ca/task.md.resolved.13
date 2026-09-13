@@ -1,0 +1,41 @@
+# Task: Renewable Energy Feasibility & EPC Platform (SolarEPC-Pro)
+
+- [x] **Phase 1: Foundation (MVP)** <!-- id: 0 -->
+    - [x] Project Setup & Architecture <!-- id: 1 -->
+    - [x] Core Simulation Engine (Basic) <!-- id: 2 -->
+    - [x] Financial Model (Basic) <!-- id: 3 -->
+    - [x] User Interface (Streamlit) <!-- id: 4 -->
+    - [x] BOM Generator <!-- id: 5 -->
+
+- [x] **Phase 2: Expert Engineering (Previous)** <!-- id: 6 -->
+    - [x] Advanced Simulation Engine ([pvlib](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase2.py#9-16)) <!-- id: 7 -->
+    - [x] Electrical Engineering Tools (Basic) <!-- id: 8 -->
+    - [x] Advanced Financials <!-- id: 9 -->
+
+- [x] **Phase 3: Professional EPC Modules** <!-- id: 10 -->
+    - [x] Refactor & Cleanup (Remove BESS) <!-- id: 11 -->
+    - [x] Module 2: Inverter Sizing & Matching <!-- id: 12 -->
+    - [x] Module 4: Shading & Geometry <!-- id: 13 -->
+    - [x] Module 8: Full Feasibility Report <!-- id: 14 -->
+
+- [x] **Phase 4: Advanced EPC Modules** <!-- id: 15 -->
+    - [x] Module 3: Cable Sizing & Voltage Drop <!-- id: 16 -->
+    - [x] Module 5: Thermal, Losses & PR <!-- id: 17 -->
+    - [x] Module 6 & 7: Degradation & Advanced Financials <!-- id: 18 -->
+
+- [ ] **Phase 5: Enterprise Features (Current)** <!-- id: 19 -->
+    - [ ] **1. Real-World Weather Data** <!-- id: 20 -->
+        - [ ] Integrate `pvlib.iotools.get_pvgis_tmy` <!-- id: 21 -->
+        - [ ] Fallback to Clear Sky if API fails <!-- id: 22 -->
+    - [ ] **2. Equipment Database** <!-- id: 23 -->
+        - [ ] Load CEC/Sandia Module & Inverter databases <!-- id: 24 -->
+        - [ ] Add UI selectors for specific hardware <!-- id: 25 -->
+    - [ ] **3. 3D/2D Layout Visualizer** <!-- id: 26 -->
+        - [ ] Plotly chart showing row layout and spacing <!-- id: 27 -->
+        - [ ] Visualize shadow cast at Winter Solstice <!-- id: 28 -->
+    - [ ] **4. Hybrid Systems (BESS 2.0)** <!-- id: 29 -->
+        - [ ] Re-implement `BatterySystem` with Peak Shaving logic <!-- id: 30 -->
+        - [ ] Add BESS financial ROI analysis <!-- id: 31 -->
+    - [ ] **5. White-Label Reporting** <!-- id: 32 -->
+        - [ ] Add Logo Upload to Sidebar <!-- id: 33 -->
+        - [ ] Customize PDF with Logo and Company Name <!-- id: 34 -->

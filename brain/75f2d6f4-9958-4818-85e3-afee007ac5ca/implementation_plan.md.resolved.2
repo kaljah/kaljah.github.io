@@ -1,0 +1,52 @@
+# SolarEPC-Pro Phase 3: Professional EPC Modules
+
+## Goal Description
+Align the project with the "8-Module Professional EPC" curriculum. This involves removing the Battery Storage (BESS) system and adding deep engineering tools for Inverter Sizing, Site Geometry (Row Spacing), and generating a commercial-grade PDF Feasibility Report.
+
+## User Review Required
+> [!IMPORTANT]
+> **BESS Removal**: The Battery Storage module will be completely removed from the codebase and UI.
+> **PDF Generation**: We will use `fpdf` to generate reports. The report will include static charts (saved as images from Plotly) if possible, or just tables and metrics for the first iteration to ensure stability.
+
+## Proposed Changes
+
+### 1. Remove BESS
+#### [DELETE] [src/storage_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/storage_model.py)
+#### [MODIFY] [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py)
+- Remove [BatterySystem](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/storage_model.py#4-74) import and all BESS-related UI inputs and logic.
+
+### 2. Engineering Modules (`src/design.py`)
+#### [NEW] [src/design.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py)
+- **Inverter Matching**:
+    - `check_inverter_sizing(n_strings, modules_per_string, module_specs, inverter_specs)`: Checks Voc, Isc, DC/AC ratio.
+- **Geometry**:
+    - `calculate_row_spacing(module_width, tilt, lat)`: Calculates minimum row spacing to avoid winter solstice shading.
+    - `calculate_gcr(module_width, row_spacing)`: Returns Ground Coverage Ratio.
+
+### 3. PDF Reporting ([src/reporting.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py))
+#### [MODIFY] [src/reporting.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py)
+- Implement `create_pdf_report(project_data, financial_metrics, bom)`:
+    - Generates a multi-page PDF.
+    - **Page 1**: Executive Summary (Key Metrics).
+    - **Page 2**: System Design (Modules, Inverters, Spacing).
+    - **Page 3**: Financial Analysis (Cash Flow, NPV).
+    - **Page 4**: Bill of Materials.
+
+### 4. UI Updates ([app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py))
+#### [MODIFY] [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py)
+- **New Tab**: "📐 Design & Engineering" (combines Electrical and Geometry).
+- **Inverter Section**: Inputs for Inverter Power, Max Voltage, Max Current, MPPT range.
+- **Report Section**: Button to download the PDF.
+
+## Verification Plan
+### Automated Tests
+- `test_design.py`:
+    - Verify row spacing calculation for a known latitude (e.g., 35°N).
+    - Verify inverter checks (e.g., fail if Voc > Vmax).
+- `test_reporting.py`:
+    - Verify PDF file is created and has non-zero size.
+
+### Manual Verification
+- Run app, verify BESS is gone.
+- Input a system with high DC/AC ratio (e.g., 1.5) and check if warning appears.
+- Download PDF and check formatting.

@@ -1,0 +1,34 @@
+The dashboard needs to be updated to support filtering by Activity and Division, and to provide a new overview of emissions categorized by these hierarchical levels. Additionally, a strict hierarchy must be enforced across the app:
+- `EP` (Exploration & Production) -> [Production](file:///c:/Users/samsung/Desktop/h/public/manage-data.html#1535-1560), `Association`
+- `LQS` (Liquefaction) -> `LSH`
+- `RPC` (Raffinage & Petrochimie) -> `Raffinage`, `Petrochimie`
+- `TRC` (Transport par Canalisation) -> `TRC`
+
+## Proposed Changes
+
+### Backend (server.js)
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+- **[NEW]** Update `GET /api/dashboard/summary` to group by `year` AND `activity` to support multi-line trend charts.
+- Join the `emissions` table with the `facilities` table to filter by these new fields.
+- Create a NEW endpoint `GET /api/dashboard/categorical-breakdown` that returns emissions grouped by Activity and Division for the selected year range.
+
+### Frontend (dashboard.html & dashboard.js)
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html)
+- Adjust breakdown-row to a 3-column grid for better visual balance.
+- Add containers for Activity and Source doughnut charts.
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- **Hierarchy-Aware Trends**: Update Trend Chart to show 4 separate lines (EP, LQS, RPC, TRC) when viewing "All Activities".
+- **Dynamic Table**: Rewrite the Detailed Breakdown table to dynamically show Activity, Division, or Region totals based on selected filters.
+- **Year-Linked Source Chart**: Ensure the "Emissions by Source" chart updates when the table's year selector changes.
+- **Restructure Categorical Overview**: Group cards by parent Activity with clear headers.
+
+## Verification Plan
+
+### Manual Verification
+- Verify the Trend Chart shows 4 lines when All Activities is selected.
+- Verify the Detailed Breakdown table changes structure based on filters.
+- Confirm the Source Chart is sensitive to the year selector.
+- Ensure "Make" division is correctly mapped to TRC activity.

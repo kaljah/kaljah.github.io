@@ -1,0 +1,81 @@
+# Expanded Emissions MAP & Refined Data Entry
+
+This walkthrough documents the successful integration of over 40 Sonatrach assets into the **Emissions MAP**, along with a overhauled **Manage Data** interface for better consistency and user registration flow.
+
+## 1. Comprehensive Regional Map
+The map now accurately displays the major Sonatrach assets across Algeria.
+
+- **Dynamic Markers**: Markers are no longer hardcoded; they fetch coordinates directly from the backend.
+- **Performance Visualization**: Regions with recorded data pulse based on their emissions intensity (kgCO₂e/BOE).
+- **Search & Fly-To**: Integrated search allows you to instantly locate any region with a smooth transition.
+
+## 2. Refined Data Entry Flow
+I've updated the management interface to ensure consistency and a logical hierarchy.
+
+### Field Reordering
+The **Region Management** form now follows the natural organizational flow:
+1. **Activity** (Choose from high-level categories)
+2. **Division** (Filter based on the selected activity)
+3. **Region Name** 
+4. **Field**
+
+### Unified Descriptive Labels
+Internal codes have been replaced with descriptive corporate labels across the entire tool:
+- **EP** → Exploration & Production
+- **LQS** → Liquefaction & Separation
+- **RPC** → Refining & Petrochemicals
+- **TRC** → Transport (Pipeline)
+
+## 3. Map Integration via Data Entry
+You can now add new regions to the map directly through the UI.
+
+- **Coordinate Input**: Added Latitude and Longitude fields to the region creation form.
+- **Instant Mapping**: As soon as a region is added with coordinates, a marker appears on the map.
+- **Auto-Stats**: The map automatically calculates and displays performance stats as you enter emission and production data for those regions.
+
+---
+
+## 4. Bulk Data Import & Auto-Calculation
+I've implemented a comprehensive system for importing large datasets into the inventory.
+
+### Bulk Import Modal
+A new `BulkImportModal` component facilitates the upload of CSV files with the following features:
+- **Intelligent Mapping**: Automatically detects CSV columns and lets you map them to system fields.
+- **Comprehensive CSV Templates**: Added a "Download sample CSV template" button that generates a multi-row example covering **all process types** (Combustion, Flaring, Venting, etc.) with correct units, **Quantity**, and **Engineering Parameters** (Flare Type, HHV, etc.).
+- **Import Validation & Cheat Sheet**: Implemented a "Cheat Sheet" reference UI and a validation layer that flags mismatched identifiers (Activity, Division, Process Type) before import.
+- **Tier 3 Engineering Integration**: The CSV schema now supports precise engineering calculations (GOR, CH4 Content, HHV, Efficiencies) by providing these fields directly in the import.
+- **Organizational Hierarchy Correction**: Globally updated the Activity-Division mappings (EP: Production, Association; LQS: LNG, LPG; RPC: Refining, Petrochemicals; TRC: TRC) and synchronized existing database records to match.
+- **Technical Improvements & Fixes**:
+    - **CORS Conflict Resolved**: Removed redundant header additions in `app.py` that caused browser blocks due to "multiple values".
+    - **Bulk Import Calculation Support**: Added "Import CSV" buttons to Scope 1, 2, and 3 forms.
+    - **Cross-Scope Backend Support**: Automated facility lookup and calculation for electricity usage (Scope 2) and value-chain activities (Scope 3).
+    - **Endpoint Path Correction**: Fixed incorrect `/api/import` routing by correctly prefixing with `/emissions` to match backend blueprint logic.
+    - **Robust Facility Lookup**: Implemented case-insensitive and whitespace-tolerant facility name matching in all import routes, ensuring that minor name variations in CSV files (e.g., "Region 1" vs "REGION 1") no longer cause import failures.
+    - **Unified Backend Diagnostics**: Added detailed error logging and traceback capture in the backend import loop to quickly identify calculation or validation issues per-row.
+    - **CSV Placeholder Sanitization**: Fixed critical issue where CSV template placeholders ("-" for empty fields) were causing float conversion errors. Now all dash placeholders are converted to `None` before calculation, allowing the engine to apply safe defaults.
+    - **Automatic HHV Defaults**: Implemented automatic HHV lookup for common fuels.
+    - **Dashboard Summary Fix**: Resolved a `KeyError` in the `/api/dashboard/summary` endpoint that caused a 500 Internal Server Error when processing certain data sets.
+    - **Robust CORS Handling**: Updated `app.py` to ensure CORS headers are correctly appended to all responses, including errors, preventing browser blocks during debugging.
+    - **UI Cleanup**: Removed "Import CSV" buttons from Scope 1 and Scope 3 forms and fixed a related button tag lint error.
+    - **Performance Optimization**: Optimized CSV mapping and validation in `BulkImportModal.jsx`.
+- **Backend Validation**: Every row is validated by the backend before being stored.
+
+### Automated Calculations
+The import process is not just for data storage—it's for calculation:
+- **Activity Data Import**: When you import activity data (e.g., fuel consumption), the backend automatically looks up the correct emission factor (including any `Custom Factors` you've defined) and performs a full CO2e calculation.
+- [x] Fuel Name Aliasing (Diesel → Diesel (No. 2 Fuel Oil))
+- [x] Fix ReferenceData TypeError (Optional Chaining)
+- [x] Persist Production Metadata (Activity, Division, Field)
+- [x] ISO 14064-1 §4.6.5 Uncertainty Quantification
+- [x] Dashboard Data Mapping Fix (`co2e_total`)
+- [x] EF Uncertainty Workbench (SRSS Instrument Precision)
+- [x] GWP Standard Selection Dropdown (AR4/AR5/AR6)
+- [x] Data Quality Tier Breakdown UI
+
+---
+
+## Verification Results
+- [x] Bulk Import buttons integrated into "Emission Sources" and "Production Data" tabs.
+- [x] Downloadable CSV templates provided for both data types.
+- [x] Backend correctly handles multi-row imports and factor lookups.
+- [x] Column mapping UI correctly identifies required fields.

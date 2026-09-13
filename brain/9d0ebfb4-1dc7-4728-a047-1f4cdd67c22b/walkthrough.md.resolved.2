@@ -1,0 +1,27 @@
+# Walkthrough - Database Reset and Seeding (v3)
+
+## Changes
+The database has been reset and seeded using the **corrected Sonatrach hierarchy** and an **extended timeframe**.
+
+### Key Updates
+-   **Extended Timeframe**: Data now covers **12 years (2015-2026)** to ensure all dashboard years display data.
+-   **Hierarchy Alignment**: Correctly mapped to `EP`, `LQS`, `RPC`, `TRC`.
+-   **Scope 3 Data**: Includes Category 11 data for all years, including future projections.
+
+### Data Overview
+-   **User**: Ramzi Dalil (`ramzi.dalil@sonatrach.dz` / `test`).
+-   **Total Records**: **139,323** emission entries.
+-   **Sources**: Combustion, Flaring, Venting, Fugitive (Pneumatic, Tanks), Dehydrators.
+
+## Verification
+### Automated Check
+Seeding output confirmed:
+```bash
+✓ Seeded 22 Sonatrach regions (Correct Hierarchy)
+✓ Seeded Scope 3 Data (including 0.00 entries)
+✓ Database transaction committed. Total Records: 139323
+```
+
+### Manual Verification
+1.  **Dashboard**: Check "Intensity & Production Overview" for **2026**, **2025**, and **2024**. All should show data.
+2.  **Facilities**: Go to "Manage Data" -> "Regions" to verify the hierarchy.

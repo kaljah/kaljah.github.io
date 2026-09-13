@@ -1,0 +1,21 @@
+Task: 5cbdeed4-f792-41df-8b3b-d02e016b1a27/task-14
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5cbdeed4-f792-41df-8b3b-d02e016b1a27\.system_generated\tasks\task-14.log
+Log output:
+<truncated 219 lines>
+C).
+    now = datetime.datetime.utcnow()
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\writer\excel.py:292: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    workbook.properties.modified = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_calculations_page.py::test_scope1_calculation_and_maker_checker
+FAILED new\server\tests\test_calculations_page.py::test_scope2_authoritative_calculation_and_draft
+================= 2 failed, 78 passed, 36 warnings in 16.48s ==================
+
+Last progress: 0s ago

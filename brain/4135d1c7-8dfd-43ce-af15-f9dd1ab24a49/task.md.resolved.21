@@ -1,0 +1,8 @@
+# Task: Settings Page Modernization
+
+- [x] Research and Planning
+- [x] Modernize Settings Page (General)
+- [x] Modernize Settings Dropdowns
+    - [x] Update [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html) (Replace selects)
+    - [x] Update [settings.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js) (Dropdown logic)
+- [x] Verify changes

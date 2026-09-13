@@ -1,0 +1,48 @@
+# Implementation Plan - Enhance User Profile & Dashboard Integration
+
+Enhance the user profile with more useful professional and personal information, and integrate these details into the dashboard for a more personalized experience. This involves backend schema updates, new API endpoints, and frontend UI enhancements.
+
+## User Review Required
+
+> [!IMPORTANT]
+> This update will modify the `users` table structure in `users_v2.db`. Existing user records will be migrated to include the new columns.
+
+## Proposed Changes
+
+### Backend Enhancements
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- Update `createUsersTable` to include new columns: `email`, `jobTitle`, `department`, `phone`, `location`, `bio`, `profilePic`.
+- Implement `PUT /api/users/:id` endpoint to handle profile updates.
+- Implement `PUT /api/users/:id/password` endpoint for secure password changes.
+- Ensure the `login` response returns the full set of user attributes.
+
+### Frontend Enhancements
+
+#### [MODIFY] [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html)
+- Add new fields: "Biography" (textarea), "LinkedIn Profile", and "Reporting Preference" (e.g., Fiscal vs Calendar Year).
+- Improve successful save notifications using existing `toast.js`.
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Display `Job Title` and `Company Name` in the sidebar and account dropdown.
+- Add a "User Profile Summary" section in the dashboard (possibly in the account dropdown or a new sidebar widget).
+- Show "Joined Date" or "Account Tenure" as a subtle metric.
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Update profile rendering logic to fetch and display the new user attributes from the login session/localStorage.
+
+---
+
+## Verification Plan
+
+### Automated/Browser Testing
+- Use the browser tool to:
+    1. Navigate to `/profile.html`.
+    2. Fill in the new and existing fields and save.
+    3. Verify that changes persist after a page reload.
+    4. Navigate to `/dashboard.html` and verify that the new info (Job Title, etc.) appears correctly in the sidebar and dropdown.
+    5. Test password change functionality.
+
+### Manual Verification
+- Check the `users_v2.db` directly to ensure columns were added and data is stored correctly.
+- Verify the layout remains clean and responsive on different screen sizes.

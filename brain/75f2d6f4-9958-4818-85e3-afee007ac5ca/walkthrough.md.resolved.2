@@ -1,0 +1,30 @@
+# SolarEPC-Pro Professional Edition Walkthrough
+
+I have upgraded the platform to the **Professional EPC** level, aligning with the 8-module curriculum.
+
+## New Features (Phase 3)
+- **Module 2: Inverter Sizing**:
+    - Checks Max Voltage, Max Current, and MPPT window.
+    - Calculates DC/AC Ratio (Optimal range 1.1-1.4).
+- **Module 4: Shading & Geometry**:
+    - Calculates Minimum Row Spacing (Pitch) to avoid winter shading.
+    - Computes Ground Coverage Ratio (GCR).
+- **Module 8: Feasibility Report**:
+    - Generates a professional PDF report with Executive Summary, System Specs, and BOM.
+- **Cleanup**: Removed Battery Storage (BESS) as requested.
+
+## Verification
+I ran [tests/test_professional.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_professional.py) to verify:
+- **Inverter Sizing**: Confirmed safe operation for a typical string design.
+- **Geometry**: Verified pitch calculation logic.
+- **PDF**: Confirmed report generation works.
+
+## How to Run
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Launch the Professional Dashboard:
+   ```bash
+   streamlit run app.py
+   ```

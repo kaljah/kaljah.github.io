@@ -1,0 +1,45 @@
+# Tasks
+
+- [x] Dashboard Advancements & Logic Fixes <!-- id: 1 -->
+- [x] Carbon Intensity Logic & Bug Fixes <!-- id: 50 -->
+- [x] Fix Carbon Intensity Heatmap & Trend Dependencies <!-- id: 60 -->
+- [x] Style Region-Field in Dropdowns <!-- id: 70 -->
+- [x] Rename Methane Explorer to Emissions MAP <!-- id: 80 -->
+- [x] Expand Emissions MAP to All Sonatrach Regions <!-- id: 90 -->
+    - [x] Remove "LIVE" tags <!-- id: 91 -->
+    - [x] Research/Collect coordinates for ALL Sonatrach facilities <!-- id: 92 -->
+    - [x] Update [Facility](file:///c:/Users/samsung/Desktop/h/new/server/models.py#32-50) table in DB with comprehensive asset list <!-- id: 93 -->
+    - [x] Update `Emissions MAP` (MethaneExplorer.jsx) to fetch all regions from DB <!-- id: 94 -->
+    - [x] Implement robust search and selection (Fly-to + Data display) <!-- id: 95 -->
+    - [x] Handle regions with vs without emissions data visually <!-- id: 96 -->
+- [x] Refine Manage Data Dropdowns & Field Order <!-- id: 100 -->
+    - [x] Sync `HIERARCHY` and `ACTIVITY_LABELS` with seeded data <!-- id: 101 -->
+    - [x] Reorder Region Management fields (Activity -> Division -> Region) <!-- id: 102 -->
+    - [x] Update Production Data tab to use descriptive labels <!-- id: 103 -->
+- [x] Expand Emission Sources Management <!-- id: 104 -->
+    - [x] Add `equipment_id` to database and backend routes <!-- id: 105 -->
+    - [x] Sync [Type](file:///c:/Users/samsung/Desktop/h/new/client/src/components/Scope1Form.jsx#95-100) dropdown with `PROCESS_TYPES` in frontend <!-- id: 106 -->
+    - [x] Add `Equipment ID` input and table column <!-- id: 107 -->
+- [x] Implement Bulk Data Import & Auto-Calculation <!-- id: 110 -->
+    - [x] Plan CSV template and backend validation flow <!-- id: 111 -->
+    - [x] Create Generic Bulk Import component <!-- id: 112 -->
+    - [x] Enhance backend [import_emissions](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py#306-423) with factor lookup <!-- id: 113 -->
+    - [x] Add CSV import for Emission Sources inventory <!-- id: 114 -->
+    - [x] Add CSV import for Monthly Activity Data (Auto-Calc) <!-- id: 115 -->
+- [x] Add CSV Template Examples to UI <!-- id: 116 -->
+    - [x] Implement template generation and download logic <!-- id: 117 -->
+    - [x] Update BulkImportModal UI with download link <!-- id: 118 -->
+- [x] Improve Import Validation & Reference Guidance <!-- id: 119 -->
+    - [x] Plan validation logic for fuel and process types <!-- id: 120 -->
+    - [x] Add "Cheat Sheet" reference guide to UI <!-- id: 121 -->
+    - [x] Implement pre-import data scanning & error highlighting <!-- id: 122 -->
+- [x] Correct Organizational Hierarchy & Sync Database <!-- id: 123 -->
+    - [x] Update HIERARCHY constants in ManageData.jsx & BulkImportModal.jsx <!-- id: 124 -->
+    - [x] Perform database sync to update existing region/source records <!-- id: 125 -->
+    - [x] Verify hierarchy consistency across entire tool <!-- id: 126 -->
+
+- [x] Expand CSV Schema for Engineering Calculations <!-- id: 127 -->
+- [x] Fix Bulk Import Calculation Failure <!-- id: 132 -->
+    - [x] Update [import_emissions](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py#306-423) with Facility name-to-ID lookup <!-- id: 133 -->
+    - [x] Modify [compute_emissions](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py#297-670) to handle flat CSV payloads for Tier 3 <!-- id: 134 -->
+    - [x] Verify imported record calculations in dashboard/explorer <!-- id: 135 -->

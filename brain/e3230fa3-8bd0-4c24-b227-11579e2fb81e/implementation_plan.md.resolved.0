@@ -1,0 +1,45 @@
+# Implementation Plan - GHG Emissions Tool (API Compendium)
+
+## Goal Description
+Create a software tool to calculate Greenhouse Gas (GHG) emissions based on the methodologies from the API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry (4th Edition, 2021/2023).
+
+## User Review Required
+> [!IMPORTANT]
+> **Methodology Access**: The API Compendium is a comprehensive and often proprietary document. I will need you to provide specific emission factors or confirm if I should use standard default values (e.g., from EPA Subpart W or public API summaries) where the exact API Compendium text is not publicly available.
+
+> [!NOTE]
+> **Tech Stack**: I am proposing a **Streamlit** application (Python) based on your previous projects. Please confirm if you would prefer a different stack (e.g., React/Next.js).
+
+## Proposed Changes
+
+### Project Structure
+I propose a modular Python structure:
+
+```
+ghg_tool/
+├── app.py                  # Main Streamlit entry point
+├── requirements.txt        # Dependencies
+├── src/
+│   ├── __init__.py
+│   ├── calculations.py     # Core calculation logic (Combustion, Flaring, etc.)
+│   ├── factors.py          # Database of emission factors
+│   └── utils.py            # Helper functions (unit conversions, etc.)
+└── data/                   # Folder for storing reference data or user inputs
+```
+
+### Modules to Implement
+1.  **Combustion**: Stationary combustion (Boilers, Heaters, Turbines, Engines).
+    *   Inputs: Fuel type, Fuel consumption, Heating value.
+    *   Outputs: CO2, CH4, N2O emissions.
+2.  **Flaring**:
+    *   Inputs: Flare gas volume, composition, destruction efficiency.
+3.  **Venting & Fugitives**:
+    *   Inputs: Component counts, equipment type, leak rates.
+
+## Verification Plan
+
+### Automated Tests
+- Unit tests for calculation functions in `src/calculations.py` to ensure math matches API formulas.
+
+### Manual Verification
+- Compare tool outputs with example calculations provided in the API Compendium (if available) or manual Excel calculations.

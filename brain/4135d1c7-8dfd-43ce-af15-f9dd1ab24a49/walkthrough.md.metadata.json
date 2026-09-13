@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary":  "Comprehensive walkthrough documenting the creation of a realistic test database with 10 years of emissions data across multiple emission types, 7 facilities, base year, goals, custom emission factors, and 150 audit trail entries.",
+  "updatedAt":  "2026-01-03T17:09:27.189884800Z",
+  "version":  "22"
+}

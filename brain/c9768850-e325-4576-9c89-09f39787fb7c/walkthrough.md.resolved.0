@@ -1,0 +1,25 @@
+# Sonatrach Theme Update Walkthrough
+
+**Goal**: Re-theme the platform to use a White background, Sonatrach Orange accents/SVGs, and distinct **Orange Contours** (borders).
+
+## Changes Made
+
+### 1. Global CSS Variables ([dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css) & [login.css](file:///c:/Users/samsung/Desktop/h/public/login.css))
+- **Backgrounds**: Switched from Dark Blue (`#0f172a`) to Pure White (`#ffffff`).
+- **Cards**: Switched from translucent dark to Solid White (`#ffffff`).
+- **Text**: Switched from White (`#f8fafc`) to Black (`#000000`).
+- **Borders**: Defined `var(--border-color)` as Orange (`#ff6600`) and applied it globally.
+
+### 2. Component Styling
+- **Sidebar**: Now consistent White background with Orange right border.
+- **Inputs**: White background with Orange borders.
+- **Buttons**: Updated to align with the new palette.
+- **Cards**: Removed glassmorphism blur and dark shadows, replaced with solid white and clean borders.
+
+### 3. Login Page
+- **Brand Panel**: Maintained Orange background (`#ff6600` primary).
+- **Login Form**: White card, Orange border, Orange input borders.
+
+## Verification
+- Checked [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css) for any remaining dark mode colors (gradients, rgba backgrounds) and replaced them with theme variables.
+- Verified text contrast (Black on White).

@@ -1,0 +1,36 @@
+# Fix API Compendium Calculation Logic Compliance
+
+During the review of the calculation logic and the `verify_all_calcs.py` test outputs, I identified failures to comply with the API Compendium (2021) methodologies, primarily due to input mapping issues and improper fallbacks.
+
+## Problem Details
+
+**1. Acid Gas Removal (AGR) Compliance Failure:**
+- **Issue**: The API Compendium defines specific mass-balance methods for calculating CO2 venting from Amine units (Section 6.5). However, the application uses `server_default_total` for specific AGR calculations, resulting in zero CO2 and massive, erroneous CH4 emissions.
+- **Root Cause**: In `server/calculations/dispatcher.py`, the AGR calculation extracts `co2_in` and `co2_out`. But the UI and frontend payloads supply `agr_co2_in` and `agr_co2_out`. This mismatch causes the API 2021 calculation to return zero, triggering a fallback to the legacy engine's incorrect generic method.
+
+**2. Storage Tank (Default) Fallback Issue:**
+- **Issue**: Default tank calculations fall back to the legacy `server_tank_factor` method instead of using the API 2021 standardized calculation pipeline.
+- **Root Cause**: The `TankFlashingCalculator` in `vented.py` attempts to perform a GOR (Gas-Oil Ratio) flashing calculation whenever the process type is "tank", regardless of whether it's a specific engineering calculation or a default factor calculation. When GOR is not provided (default mode), it returns zero, causing a fallback to the legacy engine.
+
+## Proposed Changes
+
+### `server/calculations/dispatcher.py`
+
+#### [MODIFY] dispatcher.py (file:///c:/Users/samsung/Desktop/h/new/server/calculations/dispatcher.py)
+- Update the `agr` routing block to correctly read `agr_co2_in` and `agr_co2_out` from `flat_inputs` if `co2_in` or `co2_out` are not present.
+- Update the `tank` routing block to ensure that if `gor` is 0 and it's a default calculation, we pass `is_flashing=False` to the `TankFlashingCalculator` so it correctly processes the default API emission factor within the API 2021 pipeline.
+
+### `server/calculations/vented.py`
+
+#### [MODIFY] vented.py (file:///c:/Users/samsung/Desktop/h/new/server/calculations/vented.py)
+- Update `TankFlashingCalculator.calculate()` to accept an explicit `is_flashing` flag, or automatically set it to false if `gas_oil_ratio == 0` and an emission factor is provided, ensuring compliance and correct formatting for standard tank emission factors.
+
+## Verification Plan
+
+### Automated Tests
+- Run `python verify_all_calcs.py` to ensure that:
+  - `AGR (Specific)` correctly reports the `Acid Gas Removal` method and produces accurate CO2 emissions instead of CH4.
+  - `Storage Tank (Default)` correctly uses the API 2021 pipeline.
+
+## User Review Required
+Please review this implementation plan. These fixes will ensure complete adherence to the API 2021 Compendium methods. If you approve, I will proceed with the code changes.

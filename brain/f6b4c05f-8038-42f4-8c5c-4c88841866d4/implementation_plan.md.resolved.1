@@ -1,0 +1,66 @@
+# Implementation Plan: Professional Features
+
+## Goal
+Add the remaining 5 critical features to make SolarEPC-Pro production-ready for large EPC firms and professional consultants.
+
+## User Review Required
+> [!IMPORTANT]
+> This implementation adds significant complexity. Each feature is implemented as a standalone module to maintain code quality and testability.
+
+## Proposed Changes
+
+### 1. Grid Connection Study
+#### [NEW] src/grid_study.py
+IEEE 1547 compliance analysis:
+- **Fault Current Analysis**: Calculate short-circuit contribution from PV inverters
+- **Voltage Rise**: ΔV = (P×R + Q×X) / V² at Point of Common Coupling
+- **Flicker**: Rapid voltage change analysis
+
+#### [MODIFY] app.py
+Add "Grid Study" tab with utility interconnection results.
+
+---
+
+### 2. Data Export
+#### [NEW] src/export_utils.py
+Export functions:
+- `export_to_csv()`: Hourly generation/load data
+- `export_to_excel()`: Multi-sheet workbook (Summary, Hourly, Financials)
+
+#### [MODIFY] app.py (Simulation Tab)
+Add download buttons using `st.download_button()`.
+
+---
+
+### 3. Scenario Comparison
+#### [MODIFY] app.py
+- Use `st.session_state['scenarios']` dict to store multiple runs
+- Add "Compare Scenarios" button
+- Display side-by-side metrics table
+
+---
+
+### 4. O&M Budget
+#### [NEW] src/operations.py
+Maintenance forecasting:
+- `calculate_om_schedule()`: Annual cleaning, inspections
+- `forecast_replacements()`: Inverter (12yr), module degradation
+
+#### [MODIFY] app.py (Financials Tab)
+Integrate O&M costs into cashflow.
+
+---
+
+### 5. Environmental Impact
+#### [NEW] src/environmental.py
+Carbon calculations:
+- CO2 savings = kWh × grid_emission_factor (kg CO2/kWh)
+- Tree equivalent = CO2 / 21.77 kg/tree/year
+
+#### [MODIFY] app.py (Reporting Tab)
+Add environmental metrics section.
+
+## Verification Plan
+- Manual testing of each feature
+- Validate grid calculations against IEEE 1547 examples
+- Test CSV/Excel exports with large datasets

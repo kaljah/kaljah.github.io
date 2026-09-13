@@ -1,0 +1,41 @@
+# Facilities CSV Import Walkthrough
+
+I have implemented the ability to import operational facilities from a CSV file.
+
+## Changes
+### Backend ([server.js](file:///C:/Users/samsung/Desktop/h/server.js))
+- Added `POST /api/facilities/import`: Accepts a JSON array of facility objects and performs a bulk insert transaction.
+- Returns success/failure counts.
+
+### Frontend ([manage-data.html](file:///C:/Users/samsung/Desktop/h/public/manage-data.html))
+- Added "Import CSV" button to the "Active Facilities" section.
+- Added [importFacilitiesCSV](file:///C:/Users/samsung/Desktop/h/public/manage-data.html#1312-1371) function:
+    - Parses CSV file client-side.
+    - expects headers: [Name](file:///C:/Users/samsung/Desktop/h/public/manage-data.html#1411-1415), `Location`, `Description`, `Boundary Notes`.
+    - Sends parsed data to the new backend endpoint.
+    - Displays success/error toasts and refreshes the list.
+
+## Verification
+### automated Integration Test
+Ran a PowerShell script to:
+1.  Authenticate as a user.
+2.  POST sample data to `/api/facilities/import`.
+3.  Verified the API returned `success: 2`.
+
+```powershell
+Import Result:
+message          success failed
+-------          ------- ------
+Import processed       2      0
+```
+
+## How to Test
+1.  Navigate to **Manage Data > Facilities**.
+2.  Click **Import CSV**.
+3.  Select a CSV file with the following format (header required):
+    ```csv
+    Name,Location,Description,Boundary Notes
+    Site A,Texas,Main Plant,Control
+    Site B,Ohio,Warehouse,Equity
+    ```
+4.  Verify facilities appear in the list.

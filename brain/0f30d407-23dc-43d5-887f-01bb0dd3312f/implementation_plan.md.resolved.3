@@ -1,0 +1,26 @@
+# Implementation Plan - Carbon Intensity Optimization
+
+The goal is to update the "Carbon Intensity" page ([CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx)) in the New Tool to default to "All Years" and ensure the year dropdown functions exactly like the Dashboard.
+
+## User Review Required
+
+> [!NOTE]
+> This plan extends the previous optimization patterns to the [CarbonIntensity](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx#12-416) page.
+
+## Proposed Changes
+
+### Frontend ([new/client/src/pages/CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx))
+
+#### [MODIFY] [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx)
+- **Default Year**: Change `selectedYear` initial state from `'2024'` to `'all'`.
+- **Dropdown Options**: Ensure the year dropdown options include "All Years" as the first option, similar to [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx).
+- **Data Loading**: Review [loadIntensityData](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx#80-129) to ensure it handles `year='all'` correctly (sending `year=all` or omitting the parameter).
+- **Hardcoded Years**: The current code has hardcoded years `['2020', '2021', '2022', '2023', '2024']`. We will keep this for now but ensure 'All Years' is the default.
+
+## Verification Plan
+
+### Manual Verification
+1.  **Navigate**: Go to the "Carbon Intensity" page in the new client.
+2.  **Initial State**: Verify the Year dropdown defaults to "All Years".
+3.  **Data Check**: Verify the "Intensity & Production Overview" cards show data aggregated for all years.
+4.  **Interaction**: Change the year to a specific year (e.g., 2024) and verify the data updates. Switch back to "All Years".

@@ -1,0 +1,82 @@
+# Implementation Plan - GHG Emissions Tool (API Compendium)
+
+## Goal Description
+Create a software tool to calculate Greenhouse Gas (GHG) emissions based on the methodologies from the API Compendium of Greenhouse Gas Emissions Methodologies for the Oil and Natural Gas Industry (4th Edition, 2021/2023).
+
+## User Review Required
+> [!IMPORTANT]
+> **Methodology Access**: The API Compendium is a comprehensive and often proprietary document. I will need you to provide specific emission factors or confirm if I should use standard default values (e.g., from EPA Subpart W or public API summaries) where the exact API Compendium text is not publicly available.
+
+> [!NOTE]
+> **Tech Stack**: I am proposing a **Streamlit** application (Python) based on your previous projects. Please confirm if you would prefer a different stack (e.g., React/Next.js).
+
+## Proposed Changes
+
+### Project Structure
+I propose a modular Python structure:
+
+```
+ghg_tool/
+├── app.py                  # Main Streamlit entry point
+├── requirements.txt        # Dependencies
+├── src/
+│   ├── __init__.py
+│   ├── calculations.py     # Core calculation logic (Combustion, Flaring, etc.)
+│   ├── factors.py          # Database of emission factors
+│   └── utils.py            # Helper functions (unit conversions, etc.)
+└── data/                   # Folder for storing reference data or user inputs
+```
+
+### Modules to Implement
+1.  **Emission Factor Database ([src/factors.py](file:///C:/Users/samsung/.gemini/antigravity/brain/e3230fa3-8bd0-4c24-b227-11579e2fb81e/ghg_tool/src/factors.py))**:
+    *   Existing: Combustion, Flaring, Venting, Fugitives.
+    *   **New**: Glycol Dehydrators (GRI-GLYCalc proxies), Storage Tanks (E&P Tank proxies), Truck Loading.
+
+2.  **Unit Conversion ([src/units.py](file:///C:/Users/samsung/.gemini/antigravity/brain/e3230fa3-8bd0-4c24-b227-11579e2fb81e/ghg_tool/src/units.py))**:
+    *   Class/Functions to handle conversion between Metric (SI) and Imperial (US) units.
+    *   Support: Mass (lb<->kg), Volume (scf<->m3, gal<->L), Energy (MMBtu<->GJ).
+
+3.  **Calculation Engine ([src/calculations.py](file:///C:/Users/samsung/.gemini/antigravity/brain/e3230fa3-8bd0-4c24-b227-11579e2fb81e/ghg_tool/src/calculations.py))**:
+    *   **Combustion**:
+        *   Tier 1: Volume $\times$ Default EF.
+        *   Tier 2: Volume $\times$ Measured HHV $\times$ Energy EF.
+        *   Tier 3: Mass Balance (Carbon Content).
+    *   **Flaring**:
+        *   Tier 1: Volume $\times$ Default EF.
+        *   Tier 2: Volume $\times$ Gas Composition (Mole %).
+        *   Tier 3: Mass Balance with specific DE.
+    *   **Venting**:
+        *   Tier 1: Count $\times$ Generic Factor.
+        *   Tier 2: Count $\times$ Specific Factor (Bleed Rate).
+        *   Tier 3: User-supplied Vent Rate (scf/hr) $\times$ Time.
+    *   **Fugitives**:
+        *   Tier 1: Count $\times$ Generic Factor.
+        *   Tier 2: Count $\times$ Service-Specific Factor.
+        *   Tier 3: User-supplied Total Leak Rate (e.g., from LDAR).
+    *   **Tanks**:
+        *   Tier 1: Simplified Throughput $\times$ Factor.
+        *   Tier 2: Vasquez-Beggs Correlation (RVP, Gravity, Sep Temp).
+        *   Tier 3: User-supplied Flash Gas Ratio (scf/bbl).
+    *   **Dehydrators**:
+        *   Tier 1: Throughput $\times$ Generic Factor.
+        *   Tier 2: GRI-GLYCalc Proxy (Pump Rate, Glycol Type).
+        *   Tier 3: User-supplied Emission Rate.
+    *   **Loading**:
+        *   Tier 1: Throughput $\times$ Generic Factor.
+        *   Tier 2: AP-42 Formula (Saturation Factor).
+        *   Tier 3: User-supplied VRU Efficiency / Test Data.
+
+4.  **User Interface ([app.py](file:///C:/Users/samsung/.gemini/antigravity/brain/e3230fa3-8bd0-4c24-b227-11579e2fb81e/ghg_tool/app.py))**:
+    *   **Global Settings**: Toggle for "Input Units" (Metric vs Imperial).
+    *   **Module Updates**: Add "Calculation Tier" dropdown for **ALL** modules.
+        *   Dynamic input fields based on selected Tier.
+    *   **New Tabs**: Tanks, Dehydrators, Loading.
+
+## Verification Plan
+
+### Automated Tests
+- Unit tests for each calculation function to ensure accuracy against known examples.
+
+### Manual Verification
+- **Data Accuracy**: Verify emission factors against available API Compendium summaries.
+- **Export Test**: Generate a report with multiple entries and open the Excel file to verify formatting.

@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_TASK",
+  "summary":  "Task completed: Fix Toast Notifications.\n- [x] Fix Toast Notifications\n    - [x] Un-silence `toast.js` (restore DOM logic)\n    - [x] Import `toast.js` in `settings.html`\n- [x] Verify changes",
+  "updatedAt":  "2026-01-03T13:38:31.111238400Z",
+  "version":  "25"
+}

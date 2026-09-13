@@ -1,0 +1,75 @@
+# Task: Settings Page Modernization
+
+- [x] Research and Planning
+- [x] Modernize Settings Page (General)
+- [x] Modernize Settings Dropdowns
+- [x] Add Save Button to Reporting
+- [x] Bug Fix: 500 Error on Save
+- [x] Bug Fix: Toast Notifications
+    - [x] Un-silence [toast.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/toast.js) (restore DOM logic)
+    - [x] Import [toast.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/toast.js) in [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html)
+- [x] Verify changes
+
+# Task:- [/] Restructure Dashboard Navigation
+    - [x] Update [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+    - [x] Update [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html)
+    - [x] Update [reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html)
+    - [x] Update [reference-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reference-data.html)
+    - [x] Update [uncertainty.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/uncertainty.html)
+    - [x] Update [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)
+    - [x] Update Calculator Pages:
+        - [x] [stationary-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/stationary-combustion.html)
+        - [x] [mobile-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/mobile-combustion.html)
+        - [x] [scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html)
+        - [x] [flaring.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/flaring.html)
+        - [x] [venting.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/venting.html)
+        - [x] [emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html)
+        - [x] [combustion-ef.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/combustion-ef.html)
+        - [x] [emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+        - [x] [scope1-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope1-selection.html)
+    - [x] Manual Verification
+
+# Task: Restructure Compliance and Login Report
+- [x] Analyze [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) and [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) structure
+- [x] Create Implementation Plan
+- [x] **Restructure [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)**
+    - [x] Remove compliance score and checklist sections
+    - [x] Rename main header to "Base Year Recalculation History"
+    - [x] Ensure only the table remains
+- [x] **Update [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) (Login Page)**
+    - [x] Import necessary styles/scripts for compliance visualization
+    - [x] Add Compliance Score and Boxes to the layout
+    - [x] Blend styling with login page theme
+- [x] Verify changes
+
+# Task:- [ ] Expand Test Data to 9 Years & Diverse Types
+    - [/] Design diverse emission profiles (Scope 1, 2)
+    - [ ] Update [seed_script.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_script.js) with 2016-2024 range
+    - [ ] Implement emission trends (2-3% annual reduction)
+    - [ ] Seed goals for all 9 years
+    - [ ] Execute script and verify database counts
+- [x] Modernize Compliance page to Audit History
+    - [x] Rename [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) to [audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html)
+    - [x] Update navigation links across all files
+    - [x] Update header to "Audit History" and "Base Year Recalculation Log"
+    - [x] Apply glassmorphism styling to table and container
+    - [x] Fix layout gap between title and table
+- [x] Implement Comprehensive Audit Logging
+    - [x] Create `activity_log` table in backend schema
+    - [x] Implement [logActivity](file:///c:/Users/samsung/Desktop/ghg%20old/server.js#361-368) helper function in [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+    - [x] Instrument critical routes (Login, Settings, Data Entry)
+    - [x] Update [audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html) to fetch from `/api/activity-log`
+- [x] Seed Realistic Test Data
+    - [x] Fix syntax error in [seed_script.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_script.js)
+    - [x] Generate 100+ emission records across multiple facilities/years
+    - [x] Seed 50+ diverse activity log entries
+    - [x] Verify data population in [test.db](file:///c:/Users/samsung/Desktop/ghg%20old/test.db)
+- [x] System Cleanup
+    - [x] Remove obsolete [audit.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit.html) and [audit-trail.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-trail.html)
+    - [x] Remove old [style.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/style.css) and [dashboard.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.css) if redundant
+    - [x] Delete old user databases to start fresh
+- [x] **Modernize [audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html)**
+    - [x] Update Page Title & Header
+    - [x] Apply glassmorphism to the table container
+    - [x] Enhance "Verification Report" button styling
+    - [x] Improve table typography and spacing

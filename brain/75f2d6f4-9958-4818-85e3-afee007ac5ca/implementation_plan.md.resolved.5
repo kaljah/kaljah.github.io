@@ -1,0 +1,49 @@
+# SolarEPC-Pro Phase 6: SaaS & Advanced Features
+
+## Goal Description
+Transform the platform into a commercial-grade SaaS with performance optimizations, database persistence, advanced hybrid modeling (Diesel/H2), GIS integration, and intelligent automation.
+
+## User Review Required
+> [!IMPORTANT]
+> **Dependencies**: We need to add `streamlit-folium` and `folium` to [requirements.txt](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/requirements.txt).
+> **AI**: We will implement a "Smart Advisor" (Rule-based Expert System) instead of calling external APIs to ensure offline functionality and privacy.
+> **Database**: We will use a local SQLite file (`projects.db`) to store project data.
+
+## Proposed Changes
+
+### 1. Optimization ([src/utils.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/utils.py), [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py))
+- Decorate [get_weather_data](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/utils.py#5-23) and heavy calculation functions with `@st.cache_data`.
+
+### 2. Commercial & Database (`src/database.py`)
+#### [NEW] [src/database.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/database.py)
+- `init_db()`: Create tables.
+- `save_project(name, data)`: Store project JSON.
+- `load_project(name)`: Retrieve project.
+
+### 3. Microgrid & Hydrogen (`src/hybrid_model.py`)
+#### [RENAME/MODIFY] [src/storage_model.py] -> [src/hybrid_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/hybrid_model.py)
+- Add `DieselGenerator` class:
+    - `simulate_run(net_load)`: Consumes fuel to meet deficit.
+- Add `Electrolyzer` class:
+    - `produce_hydrogen(excess_power)`: Consumes power to make H2 (kg).
+
+### 4. GIS & Mapping ([app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py))
+- Use `st_folium` to show a map.
+- Allow user to click to set Lat/Lon automatically.
+
+### 5. AI & Automation (`src/optimization.py`)
+#### [NEW] [src/optimization.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/optimization.py)
+- `optimize_design(solar_system, lat, lon)`: Iterates Tilt (0-60) and Azimuth (100-260) to find max generation.
+- `analyze_performance(metrics)`: Returns text advice (e.g., "Low PR detected, check temperature losses").
+
+## Verification Plan
+### Automated Tests
+- `test_phase6.py`:
+    - `test_database`: Save/Load cycle.
+    - `test_diesel`: Verify diesel picks up load when solar/batt fails.
+    - `test_optimizer`: Verify it finds a better tilt than 0 degrees.
+
+### Manual Verification
+- Check if map appears and updates Lat/Lon.
+- Run Auto-Optimizer and see if it updates inputs.
+- Save a project, reload page, and load it back.

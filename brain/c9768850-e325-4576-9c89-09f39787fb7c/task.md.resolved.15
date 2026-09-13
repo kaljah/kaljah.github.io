@@ -1,0 +1,9 @@
+
+# Tasks
+
+- [ ] Fix emission-factor.html Gray Backgrounds <!-- id: 8.5 -->
+- [ ] Fix reference-data.html Gray Backgrounds <!-- id: 8.6 -->
+- [x] Change Secondary Text to Black <!-- id: 8.7 -->
+- [x] Fix Notification Dropdown (Gray -> White) <!-- id: 8.8 -->
+- [x] Fix Notification/Profile SVGs <!-- id: 8.9 -->
+- [x] Add Contours to Option Lists and fix Modern Select <!-- id: 8.10 -->

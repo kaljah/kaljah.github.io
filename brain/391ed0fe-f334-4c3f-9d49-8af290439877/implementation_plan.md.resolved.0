@@ -1,0 +1,28 @@
+# Implementation Plan - Import Facilities from CSV
+
+This plan outlines the steps to add a feature allowing users to import facilities via CSV upload.
+
+## User Review Required
+> [!IMPORTANT]
+> I will be implementing client-side CSV parsing to avoid adding new backend dependencies like `multer`. The data will be sent as a JSON array to a new bulk import endpoint.
+
+## Proposed Changes
+
+### Frontend
+#### [MODIFY] [manage-data.html](file:///C:/Users/samsung/Desktop/h/public/manage-data.html) (Assumed filename, will verify)
+- Add "Import CSV" button next to "Add Facility".
+- Add a hidden file input for CSV selection.
+- Add JavaScript to handle file selection, parsing, and sending data to the backend.
+
+### Backend
+#### [MODIFY] [server.js](file:///C:/Users/samsung/Desktop/h/server.js)
+- Add `POST /api/facilities/import` endpoint.
+- This endpoint will accept an array of facility objects and insert them into the `facilities` table.
+- It will handle duplicates (skip or update? Defaulting to skip or basic insert).
+
+## Verification Plan
+### Manual Verification
+- Create a sample CSV file with valid headers (`name`, `location`, `description`, `boundary_notes`).
+- Use the "Import CSV" button to upload the file.
+- Verify that the facilities appear in the list.
+- Check database content.

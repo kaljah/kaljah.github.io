@@ -1,0 +1,76 @@
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (120,252)<li  />
+		[2] (98,249)<a class='nav-link ' href='/'>Dashboard />
+	[3] (120,396)<li  />
+		[4] (115,392)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (120,539)<li  />
+		[6] (102,536)<a class='nav-link ' href='/emissions'>Calculations />
+	[7] (120,683)<li  />
+		[8] (111,679)<a class='nav-link active' href='/methane-explorer'>Emissions MAP />
+	[9] (120,826)<li  />
+		[10] (107,823)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (120,970)<li  />
+		[12] (89,966)<a class='nav-link ' href='/reports'>Reports />
+	Dashboard
+	[13] (886,60)<button class='icon-button' title='Notifications' />
+		[14] (890,53)<span  />
+	[15] (927,60)<button class='icon-button' />
+	Test
+	[16] (620,561)<div scrollable='true' />
+		[17] (616,622)<div class='leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom' />
+			[18] (735,286)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[19] (735,286)<div  />
+			[20] (858,286)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[21] (858,286)<div  />
+			[22] (874,622)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[23] (874,622)<div  />
+			[24] (725,274)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[25] (725,274)<div  />
+			[26] (772,349)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[27] (772,349)<div  />
+			[28] (858,665)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[29] (858,665)<div  />
+			[30] (780,321)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[31] (780,321)<div  />
+			[32] (777,363)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[33] (777,363)<div  />
+			[34] (626,168)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[35] (626,168)<div  />
+			[36] (762,576)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[37] (762,576)<div  />
+			[38] (595,693)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[39] (595,693)<div  />
+			[40] (794,582)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[41] (794,582)<div  />
+			[42] (751,394)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[43] (751,394)<div  />
+			[44] (869,576)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[45] (869,576)<div  />
+			[46] (881,538)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[47] (881,538)<div  />
+			[48] (869,531)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[49] (869,531)<div  />
+			[50] (845,561)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[51] (845,561)<div  />
+			[52] (776,330)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[53] (776,330)<div  />
+			[54] (735,276)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[55] (735,276)<div  />
+			[56] (735,153)<div class='leaflet-marker-icon solid-marker leaflet-zoom-animated leaflet-interactive' role='button' />
+				[57] (735,153)<div  />
+			[58] (961,980)<a aria-label='Zoom in' class='leaflet-control-zoom-in' href='#' role='button' title='Zoom in' />
+				[59] (962,980)<span >+ />
+		Emissions MAP
+		[60] (395,329)<label class='filter-label'>Search Facility />
+		[61] (395,390)<input placeholder='Type facility name...' />
+		[62] (395,479)<label class='filter-label'>Year />
+		[63] (395,541)<select  />
+		[64] (395,631)<label class='filter-label'>Activity />
+		[65] (395,693)<select  />
+		[66] (395,782)<label class='filter-label'>Visualization Mode />
+		[67] (338,845)<button class='active'>Total GHG />
+		[68] (452,845)<button >Methane (CH₄) />
+		Visible Regions
+		45
+		[69] (395,1019)<div class='region-list-container' scrollable='true' />

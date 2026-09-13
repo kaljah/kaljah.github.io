@@ -1,0 +1,29 @@
+# Web Deployment Preparation Plan
+
+The goal is to prepare the GHG Reporting Platform for deployment to a web hosting service (e.g., VPS, Heroku, Render). This plan now includes "Auto-Seeding" to support environments without terminal access.
+
+## Proposed Changes
+
+### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- **Auto-Seed on Startup**: Add logic to check if any users exist. If the database is empty, automatically execute the seeding logic to create the `test` account and historical data.
+- **Port Configurability**: Update to use `process.env.PORT || 3000` for cloud platform compatibility.
+- **Database Paths**: Use environment variables for database file locations if available.
+
+### [MODIFY] [seed_script.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_script.js)
+- **Export Seeding Logic**: Wrap the seeding logic into a function that can be exported and called by [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js).
+
+### [MODIFY] [package.json](file:///c:/Users/samsung/Desktop/ghg%20old/package.json)
+- **Main Entry**: Set [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) as the main entry point.
+- **Start Scripts**: Ensure `npm start` is configured.
+
+### [NEW] [README.md](file:///c:/Users/samsung/Desktop/ghg%20old/README.md)
+- **Auto-Init Feature**: Explain that the database initializes automatically on the first run.
+
+## Verification Plan
+
+### Automated Tests
+- Delete local [.db](file:///c:/Users/samsung/Desktop/ghg%20old/test.db) files and run `npm start`.
+- Verify that [test.db](file:///c:/Users/samsung/Desktop/ghg%20old/test.db) and [users_v2.db](file:///c:/Users/samsung/Desktop/ghg%20old/users_v2.db) are recreated and populated automatically.
+
+### Manual Verification
+- Verify the platform is accessible and the `test` user can log in immediately after the first launch.

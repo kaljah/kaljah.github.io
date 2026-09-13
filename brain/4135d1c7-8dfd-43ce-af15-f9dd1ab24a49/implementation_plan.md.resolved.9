@@ -1,0 +1,30 @@
+# Comprehensive Audit Logging Implementation Plan
+
+## Goal Description
+The goal is to capture and display "All activity" in the audit table for verification purposes. Currently, only base year recalculations are logged. We will implement a system-wide `activity_log` to track logins, settings changes, data updates, and report generation.
+
+## Proposed Changes
+
+### Backend ([server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js))
+- **Schema**: Create a new SQLite table `activity_log` with columns: [id](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html#573-628), `user_name`, `action`, `details`, `timestamp`, `ip_address` (optional).
+- **API**:
+    - `GET /api/activity-log`: Endpoint to fetch logs (supports filtering/pagination if needed).
+    - Helper Function: `logActivity(db, user, action, details)` to standardize insertion.
+- **Instrumentation**:
+    - **Login**: Log successful logins.
+    - **Settings**: Log updates to goals, preferences, organizational boundaries.
+    - **Data**: Log emission factor updates or significant data entry (optional/high-level).
+    - **Base Year**: Continue logging recalculations, but also add an entry to `activity_log` for consistency.
+
+### Frontend ([audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html))
+- **Table Structure**: Rename headers to generic terms: "Date", "User", "Action", "Details".
+- **Data Fetching**: Switch from `/api/base-year-recalculation` to `/api/activity-log`.
+- **UI**: Ensure the table can handle variable length content in "Details".
+
+## Verification Plan
+
+### Automated/Manual Tests
+1.  **Login**: Log out and log in. Check if a "User Login" event appears in the Audit History.
+2.  **Settings**: Change a goal or setting. Check for "Settings Update" event.
+3.  **Recalc**: Perform a base year recalculation. Check that it appears in both the specific log (if kept) and the main audit log.
+4.  **Display**: Verify the table in [audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html) correctly formats timestamps and details.

@@ -1,0 +1,45 @@
+# Walkthrough - Database Reset and Seeding (v5)
+
+## Changes
+The database has been reset and seeded using the **corrected Sonatrach hierarchy**, an **extended timeframe**, **Custom Emission Factors**, and **Mitigation Actions**.
+- Verified [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) successfully fetches and displays mitigation records via `/api/mitigation`.
+- Confirmed [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) integrates mitigation data into "Net Emissions" and "GHG Mitigation" using the API response.
+- **Implemented Missing UI**: Added `/api/factors` to [server.js](file:///c:/Users/samsung/Desktop/h/server.js) and updated [reference-data.html](file:///c:/Users/samsung/Desktop/h/public/reference-data.html) to fetch and display custom emission factors dynamically.
+    - Custom factors seeded with [seed_sonatrach_full.js](file:///c:/Users/samsung/Desktop/h/seed_sonatrach_full.js) are now visible in the "Reference Data" page under a "Custom & Regional Factors" category.
+    - Verified [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) also utilizes the new `/api/factors` endpoint for managing custom factors.
+- **Enhanced Production Data Filters**:
+    - Replaced the static year input with a dynamic dropdown in [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html).
+    - Added `/api/production/years` to [server.js](file:///c:/Users/samsung/Desktop/h/server.js) to fetch distinct years from the database.
+    - Updated `/api/production` to support an 'all' years filter.
+    - **Debugging**: Resolved an issue where filtered data was not appearing by removing redundant logic in [server.js](file:///c:/Users/samsung/Desktop/h/server.js) and restarting the server.
+    - **Frontend Fix**: Corrected [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) to ensure "All Years" is selected by default, preventing the dropdown from auto-selecting 2024.
+    - **Crash Fix**: Removed undefined function calls (`loadScope3`, `loadEFactors`) that were preventing the page from initializing correctly.
+    - **Intensity Dashboard**: Updated [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js) to dynamically load years from the database, fixing the issue where only partial years were visible.
+    - **UX Improvement**: Updated [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css) to limit the height of all custom dropdowns and enable scrolling, preventing long lists from cluttering the UI.
+
+### Key Updates
+-   **Mitigation Actions**: Added 5 major projects (2023-2026):
+    -   Hassi Messaoud **Flaring Reduction** (50k tCO2e)
+    -   Hassi R'Mel **Solar PV** (12k tCO2e)
+    -   South Region **LDAR Campaign** (8.5k tCO2e)
+    -   GL1Z **Energy Efficiency** (25k tCO2e)
+    -   In Salah **CCUS Pilot** (5k tCO2e)
+-   **Custom Factors**: Seeded Sonatrach-specific factors (Gas, Diesel, Grid).
+-   **Extended Timeframe**: Data covers **12 years (2015-2026)**.
+
+### Data Overview
+-   **User**: Ramzi Dalil (`ramzi.dalil@sonatrach.dz` / `test`).
+-   **Total Records**: **139,451** emission entries.
+
+## Verification
+### Automated Check
+```bash
+✓ Seeded mitigation actions
+✓ Seeded custom emission factors
+✓ Seeded 22 Sonatrach regions
+✓ Database transaction committed. Total Records: 139451
+```
+
+### Manual Verification
+1.  **Mitigation**: Go to "Reports" or "Mitigation" section (if available) to see the projects.
+2.  **Dashboard**: Verify data appears for 2024-2026.

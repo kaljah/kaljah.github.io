@@ -1,0 +1,58 @@
+# SolarEPC-Pro Implementation Plan
+
+## Goal Description
+Build an expert-level "Technico-Economic Analysis & EPC" platform for renewable energy engineers. The tool will allow users to simulate solar PV systems, analyze financial viability (LCOE, NPV, IRR), and generate EPC-ready reports (BOM, Feasibility).
+
+## User Review Required
+> [!IMPORTANT]
+> **Data Sources**: We will use static TMY (Typical Meteorological Year) data or simplified clear-sky models for the initial version to avoid complex API key requirements for the user. Future versions can integrate NREL/PVGIS APIs.
+
+## Proposed Changes
+
+### Project Structure
+#### [NEW] [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py)
+- Main Streamlit application entry point.
+- Handles navigation between "Input", "Dashboard", and "Report" tabs.
+
+#### [NEW] [src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py)
+- `SolarSystem` class:
+    - Inputs: Capacity (kWp), Tilt, Azimuth, Efficiency.
+    - Methods: `calculate_generation(irradiance_data)` returning hourly generation profile.
+
+#### [NEW] [src/financial_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py)
+- `FinancialAnalyzer` class:
+    - Inputs: CAPEX, OPEX, Inflation, Discount Rate, Electricity Tariff.
+    - Methods: `calculate_metrics()` returning NPV, IRR, LCOE, Payback Period.
+
+#### [NEW] [src/load_profile.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/load_profile.py)
+- Functions to generate synthetic load profiles (Residential/Industrial) or parse uploaded CSVs.
+
+#### [NEW] [src/reporting.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py)
+- Functions to generate a Bill of Materials (BOM) dictionary.
+- Simple HTML/PDF report generator.
+
+### Dependencies
+- `streamlit`: Web UI.
+- `pandas`: Data manipulation.
+- `numpy`: Numerical calculations.
+- `plotly`: Interactive charting.
+- `numpy_financial`: Financial functions (irr, npv).
+
+## Verification Plan
+
+### Automated Tests
+- Create `tests/test_models.py` to verify:
+    - `FinancialAnalyzer` returns correct NPV for a known cash flow.
+    - `SolarSystem` returns non-zero generation for daylight hours.
+- Run tests via `pytest`.
+
+### Manual Verification
+1. **Launch App**: Run `streamlit run app.py`.
+2. **Input Data**:
+    - Select "Industrial" load profile.
+    - Set System Size to 100kW.
+    - Set Tariff to $0.15/kWh.
+3. **Verify Dashboard**:
+    - Check if "Monthly Generation" chart appears.
+    - Confirm ROI/Payback period is calculated and displayed.
+4. **Export**: Click "Generate Report" and verify the output contains a BOM.

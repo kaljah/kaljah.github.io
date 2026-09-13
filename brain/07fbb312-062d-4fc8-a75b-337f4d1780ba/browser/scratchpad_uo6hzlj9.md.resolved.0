@@ -1,0 +1,11 @@
+# Task: Investigate PDF Report Download Issue
+
+## Plan
+- [x] Go to http://localhost:5173/reports
+- [ ] Click the red "PDF Report" button
+- [ ] Intercept the API request to `/api/reports/export`
+- [ ] Check if the response starts with `%PDF-`
+- [ ] Document findings
+
+## Findings
+- 

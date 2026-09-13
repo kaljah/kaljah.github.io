@@ -1,0 +1,39 @@
+# Implementation Plan - Move Dehydrator to Main Calculator
+
+## Goal Description
+Integrate the Glycol Dehydrator calculation (GRI-GLYCalc simplified) into the main **Emissions Calculator** activity flow, and remove it from the **Specific Emission Factors** tool.
+
+## Proposed Changes
+
+### 1. Data Definitions
+#### [MODIFY] [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js)
+- Add `"dehydrator": "Dehydrator"` to `PROCESS_TYPES`.
+- Add `"Glycol Dehydrator"` to `API_FACTORS` with `usage: ["dehydrator"]` and placeholder factors (set to 0, as they are calculated dynamically).
+
+### 2. Main Calculator UI
+#### [MODIFY] [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html)
+- Add a hidden container `#dehydrator-inputs` inside the calculation panel.
+- Fields:
+    - **Pump Rate** (Number + Unit Select: gal/hr, L/hr, m³/hr)
+    - **Control Efficiency** (Number %)
+    - **Hours of Operation** (Already exists as "Quantity" or repurpose "Quantity" field as Hours).
+        - *Decision*: Repurpose the main "Quantity" field to mean "Annual Hours" when Dehydrator is selected, and change its label dynamically.
+
+### 3. Main Calculator Logic
+#### [MODIFY] [emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js)
+- Update [handleProcessChange](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js#596-624):
+    - If `dehydrator`, show `#dehydrator-inputs`.
+    - Change quantity label to "Hours of Operation".
+- Update `calculateEmissions` (or [addRecord](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js#166-296)):
+    - Detect if source is Dehydrator.
+    - If so, call `ghg.calculateDehydrator(rate, hours, eff)`.
+    - Override the standard `Quantity * Factor` math with the result from the library.
+
+### 4. Clean Up
+#### [MODIFY] [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html)
+- Remove "Dehydrator" card and config.
+
+## Verification
+- Select "Dehydrator" in Main Calculator.
+- Enter Rate=5 gph, Hours=8760, Eff=0%.
+- Verify result matches previous tool (~58 tonnes CH4).

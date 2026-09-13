@@ -1,0 +1,29 @@
+# Adding Hierarchical Filtering to Carbon Intensity Page
+
+## Planning Phase
+- [x] Review current carbon intensity page structure
+- [x] Create implementation plan
+- [ ] Get user approval
+
+## Implementation Phase
+
+### HTML Updates
+- [ ] Remove current facility dropdown
+- [ ] Add Activity dropdown component
+- [ ] Add Division dropdown component  
+- [ ] Add Region dropdown component
+- [ ] Style dropdowns to match dashboard
+
+### JavaScript Implementation
+- [ ] Load facilities data
+- [ ] Implement cascading filter logic
+- [ ] Add updateFilters() function
+- [ ] Add renderOptions() helper
+- [ ] Update chart rendering for filtered data
+- [ ] Add field name display to regions
+
+## Verification Phase
+- [ ] Test filter cascading behavior
+- [ ] Verify charts update correctly
+- [ ] Test field name display
+- [ ] Test "All" options

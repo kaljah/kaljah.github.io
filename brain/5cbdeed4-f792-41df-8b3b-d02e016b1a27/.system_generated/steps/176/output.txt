@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":127,"LineContent":"    const [activeTab, setActiveTab] = useState('factors');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":503,"LineContent":"            setActiveTab(targetTab);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":512,"LineContent":"        setActiveTab(tab);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":69,"LineContent":"  const [activeTab, setActiveTab] = useState(\"gwp\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":355,"LineContent":"            onClick={() =\u003e setActiveTab(\"gwp\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":363,"LineContent":"            onClick={() =\u003e setActiveTab(\"ogmp\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":371,"LineContent":"            onClick={() =\u003e setActiveTab(\"facilities\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":379,"LineContent":"            onClick={() =\u003e setActiveTab(\"satellite\")}"}

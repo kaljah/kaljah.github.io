@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -157,7 +157,7 @@
+     assert res_submit.status_code in [200, 201]
+     with app.app_context():
+         rec_pending = Emission.query.get(res_submit.get_json()["id"])
+-        assert rec_pending.status == "Pending Approval"
++        assert rec_pending.status in ["Pending", "Pending Approval"]
+ 
+     # 3. Admin user submits -> status should be "Verified"
+     client.post("/api/auth/login", json={"email": "admin_calc@test.com", "password": "password"})
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

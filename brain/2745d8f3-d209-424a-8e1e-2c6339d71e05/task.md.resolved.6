@@ -1,0 +1,29 @@
+# Dashboard and Calculator Fixes
+
+## Issues to Address
+- [x] Fix visibility of EP, LQS, RPC, and TRC in Categorical Emissions Overview
+- [x] Ensure regional grouping is visible and clear in categorical breakdown
+- [x] Improve mitigation number formatting with units
+- [ ] Make year filter in carbon intensity show all years
+- [ ] Fix Scope 2 and Scope 3 calculator dropdowns not working
+
+## Investigation
+- [x] Research current dashboard implementation
+- [x] Identify categorical breakdown API endpoint
+- [x] Review data processing logic
+- [x] Understand activity naming (EP not LP, RPC not RFC)
+
+## Implementation  
+- [x] Enhance categorical breakdown to show Activity → Division → Region hierarchy
+- [x] Add mitigation units (tCO₂e) to display
+- [x] Improve number formatting consistency
+- [x] Update subtitles to clarify grouping
+- [x] Fix activity header text color visibility
+- [x] Update carbon intensity year filter to include "All Years" option
+- [ ] Fix Scope 2/3 calculator dropdown functionality
+
+## Verification
+- [x] Test dashboard with browser at http://localhost:3000
+- [x] Verify all 4 activities visible with divisions and regions
+- [x] Confirm mitigation number shows units and proper formatting
+- [x] Test filter interactions

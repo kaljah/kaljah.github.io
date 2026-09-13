@@ -1,0 +1,51 @@
+# Walkthrough - API GHG Emissions Tool
+
+I have successfully created the **API Compendium GHG Emissions Calculator**. This tool allows you to calculate emissions for all major oil and gas sources using advanced **Multi-Tier Methodologies** and **Scope Grouping**.
+
+## Features
+1.  **Multi-Tier Calculations**:
+    *   **Tier 1**: Default factors (Simplest).
+    *   **Tier 2**: Measured properties (HHV, Gas Composition).
+    *   **Tier 3**: Mass balance / Measured rates (Most accurate).
+2.  **Scope Grouping**:
+    *   **Scope 1**: Combustion, Flaring, Venting, Fugitives, Tanks, Loading.
+    *   **Scope 2**: Purchased Electricity (New module).
+3.  **Year Selection**: Calculate and report emissions for specific years (2021-2025).
+4.  **Unit Conversion**: Full support for Metric and Imperial units.
+5.  **Excel Export**: Comprehensive report grouped by Scope and Year.
+
+## Modules
+*   **Combustion**: Boilers, Heaters, Engines.
+*   **Flaring**: Flare stacks (supports gas composition).
+*   **Venting**: Pneumatic controllers (supports measured rates).
+*   **Fugitives**: Equipment leaks (supports LDAR rates).
+*   **Storage Tanks**: Working/Standing losses (supports GOR).
+*   **Glycol Dehydrators**: TEG units (supports emission rates).
+*   **Truck Loading**: Product loading losses (supports VRU).
+*   **Electricity**: Grid electricity usage.
+
+## How to Run
+1.  Open a terminal in the project directory:
+    ```bash
+    cd ghg_tool
+    ```
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Run the application:
+    ```bash
+    streamlit run app.py
+    ```
+
+## Project Structure
+```
+ghg_tool/
+├── app.py                  # Main Application
+├── requirements.txt        # Dependencies
+└── src/
+    ├── factors.py          # Emission Factor Database (API 2021)
+    ├── calculations.py     # Calculation Logic
+    ├── units.py            # Unit Conversion Logic
+    └── export.py           # Excel Export Functionality
+```

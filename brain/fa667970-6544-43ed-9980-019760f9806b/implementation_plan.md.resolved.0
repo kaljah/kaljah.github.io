@@ -1,0 +1,41 @@
+# ISO 14064-1 Compliance Implementation Plan
+
+# Goal Description
+Implement the missing ISO 14064-1 features identified in the compliance audit: **Uncertainty Assessment**, **Verification Workflow**, and **Biogenic CO2 Separation**. This will elevate the tool from EPA-compliant to enterprise-ready.
+
+## User Review Required
+> [!IMPORTANT]
+> **Database Migration**: This change will alter the `emissions` and `custom_factors` tables. Existing records will default to: `uncertainty=0`, `status='verified'`, `co2_biogenic=0`.
+
+## Proposed Changes
+
+### Backend ([server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js))
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+*   **Database Schema**:
+    *   Add `uncertainty` (REAL) and `status` (TEXT) and `co2_biogenic` (REAL) to `emissions` table.
+    *   Add `uncertainty` (REAL) to `custom_factors` table.
+*   **API Endpoints**:
+    *   Update `POST /api/emissions` to accept `uncertainty`, `status`, and `biogenic_co2` fields.
+    *   Update `POST /api/factors` to accept `uncertainty`.
+    *   Update `POST /api/emissions/:id/status` (New Endpoint) for the verification workflow (approve/reject).
+
+### Frontend (User Interface)
+#### [MODIFY] [public/js/emissions-calc.js] (Assuming file exists based on audit) OR [public/index.html]
+*   **Emissions Form**:
+    *   Add input field for **Uncertainty (±%)**.
+    *   Add toggle or auto-calc for **Biogenic CO2**.
+    *   Add "Submit for Approval" vs "Save Draft" buttons.
+*   **Dashboard/Table**:
+    *   Display "Draft" vs "Verified" badges on records.
+    *   Show Uncertainty ± values in the table.
+
+## Verification Plan
+
+### Automated Tests
+*   **Database Check**: Verify new columns exist in [users_v2.db](file:///c:/Users/samsung/Desktop/ghg%20old/users_v2.db) (or user specific db) after server restart.
+*   **API Test**: Send a POST request with the new fields and verify they are stored and returned.
+
+### Manual Verification
+1.  Create a new emission record with 5% uncertainty and "Draft" status.
+2.  Verify it appears in the dashboard with a "Draft" badge.
+3.  "Approve" the record and verify status changes to "Verified".

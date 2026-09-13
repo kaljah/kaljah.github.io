@@ -1,0 +1,26 @@
+# API Guidance 2.0 Compliance Upgrade
+
+## Phase 1: Core Calculation Standards
+- [x] Update GWP Constants in [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js) (Verified 25/298)
+- [x] Rename current Flaring KPI to "Flaring Efficiency" in Dashboard
+- [x] Implement new "API Flaring Intensity" KPI (Emissions / Total Production BOE)
+
+## Phase 2: Database Schema Expansion
+- [x] Create `mitigation_records` table (CCUS, RECs, Offsets)
+- [x] Create `scope3_data` table (Category 11 Sales Volumes)
+- [x] Create `reporting_metadata` table (Targets, Assurance)
+
+## Phase 3: "Manage Data" UI Expansion
+- [x] Create "GHG Mitigation" Tab (CCUS, RECs, Offsets forms)
+- [x] Create "Scope 3 Calculator" Tab (Production/Sales method inputs)
+- [x] Create "Reporting Metadata" Tab (Targets & Verification inputs)
+
+## Phase 4: Dashboard Integration
+- [ ] Add "Net Emissions" Card (Gross - Mitigation)
+- [ ] Add Scope 3 Category 11 Card (Separate from Scope 1+2)
+- [ ] Update Verification Report to include new tables and metadata
+
+## Phase 5: Verification
+- [ ] Verify GWP values in calculations
+- [ ] Verify Flaring Intensity formula against API Guidance
+- [ ] Verify PDF Report generation with new fields

@@ -1,0 +1,30 @@
+# SolarEPC-Pro Enterprise Edition Walkthrough
+
+I have upgraded the platform to the **Enterprise Edition**, adding real-world data, visual tools, and white-labeling.
+
+## New Features (Phase 5)
+- **Real-World Weather**: Integrates **PVGIS** for accurate TMY data.
+- **Equipment Database**: Select specific modules (Jinko, Canadian Solar) and inverters (Huawei, Sungrow).
+- **Layout Visualizer**: 2D Plot of array layout with shadow zones.
+- **Hybrid Storage**: Advanced **Peak Shaving** simulation for BESS.
+- **White-Labeling**: Upload company logo and customize report headers.
+
+## Previous Features (Phases 1-4)
+- **Professional Modules**: Inverter Sizing, Cable Sizing, Geometry, PR Analysis, Financials.
+- **Core**: PVLib Simulation, Load Profiling, BOM.
+
+## Verification
+I ran [tests/test_enterprise.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_enterprise.py) to verify:
+- **Weather**: Successfully fetches PVGIS data (or handles offline gracefully).
+- **Peak Shaving**: Confirmed battery discharges to cap grid import at target level.
+- **Visualizer**: Verified chart generation.
+
+## How to Run
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Launch the Enterprise Dashboard:
+   ```bash
+   streamlit run app.py
+   ```

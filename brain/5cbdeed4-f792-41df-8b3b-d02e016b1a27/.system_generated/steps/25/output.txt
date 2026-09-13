@@ -1,0 +1,19 @@
+Task: 5cbdeed4-f792-41df-8b3b-d02e016b1a27/task-22
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\5cbdeed4-f792-41df-8b3b-d02e016b1a27\.system_generated\tasks\task-22.log
+Log output:
+<truncated 176 lines>
+2.0 at: https://sqlalche.me/e/b8d9)
+    rec = Scope2Emission.query.get(rec_id)
+
+tests/test_calculations_page.py::test_scope3_eeio_and_fallback_calculation
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:252: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    s3_rec = Scope3Emission.query.get(s3_data["record"]["id"])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_calculations_page.py::test_scope1_calculation_and_maker_checker
+FAILED new\server\tests\test_calculations_page.py::test_scope2_authoritative_calculation_and_draft
+================== 2 failed, 2 passed, 13 warnings in 4.53s ===================
+
+Last progress: 1s ago

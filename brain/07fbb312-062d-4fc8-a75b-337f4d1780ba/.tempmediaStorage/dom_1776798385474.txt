@@ -1,0 +1,48 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (120,252)<li  />
+		[2] (98,249)<a class='nav-link ' href='/'>Dashboard />
+	[3] (120,396)<li  />
+		[4] (115,392)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (120,539)<li  />
+		[6] (102,536)<a class='nav-link ' href='/emissions'>Calculations />
+	[7] (120,683)<li  />
+		[8] (111,679)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (120,826)<li  />
+		[10] (107,823)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (120,970)<li  />
+		[12] (89,966)<a class='nav-link active' href='/reports'>Reports />
+	Dashboard
+	[13] (886,60)<button class='icon-button' title='Notifications' />
+		[14] (890,53)<span  />
+	[15] (927,60)<button class='icon-button' />
+	Test
+	[16] (620,561)<div scrollable='true' />
+		Dashboard
+		/
+		Reports
+		Test User
+		Emission Database
+		Complete history of all recorded emissions and compliance data.
+		[17] (786,324)<button class='btn-action btn-excel'>Excel Export />
+		[18] (925,324)<button class='btn-action btn-pdf'>PDF Report />
+		Create New Report
+		[19] (374,571)<label class='input-label'>Reporting Year
+* />
+			*
+		[20] (374,639)<select class='component-select' />
+		[21] (616,571)<label class='input-label'>Compare With />
+		[22] (616,639)<select class='component-select' />
+		[23] (858,575)<label class='input-label'>Regions / Facilities
+* />
+			*
+		[24] (858,641)<div  />
+			[25] (799,641)<span >Select Regions... />
+		[26] (374,751)<button class='btn-create'>Create Report />
+		Filter & Group Data
+
+</current_dom>

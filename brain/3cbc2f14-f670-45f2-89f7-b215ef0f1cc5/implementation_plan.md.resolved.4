@@ -1,0 +1,23 @@
+# Fix Dashboard Facilities Dropdown Disappearance
+
+The facilities selector in the dashboard header disappears completely when other dropdowns (profile, notifications) are clicked. This is due to a naming conflict where the generic [profile-logic.js](file:///c:/Users/samsung/Desktop/h/public/profile-logic.js) script targets any element with an ID ending in `-dropdown` and sets `display: none` on it.
+
+## Proposed Changes
+
+### [Component Name]
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js)
+- Update references to `facility-dropdown` to `facility-selector-wrapper` to avoid conflict with generic dropdown logic.
+- Improve the click-outside listener to use `event.target.closest()` for more reliable behavior.
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html)
+- Rename `id="facility-dropdown"` to `id="facility-selector-wrapper"`.
+
+## Verification Plan
+
+### Manual Verification
+- Open the dashboard.
+- Open the facilities dropdown.
+- Click the profile icon or notification bell.
+- Verify that the facilities selector stays visible in the header (even if its menu closes).
+- Click randomly on the header and verify the menu closes but the selector stays visible.

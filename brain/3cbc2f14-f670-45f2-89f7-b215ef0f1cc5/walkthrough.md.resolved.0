@@ -1,0 +1,34 @@
+# Walkthrough - Region Saving and Database Restoration
+
+ I've restored SQLite support and fixed the "Region" (Facilities) saving issues so they work in both local (SQLite) and migration (Postgres) modes.
+
+## Changes Made
+
+### 1. SQLite Support Restored
+- Updated [server.js](file:///c:/Users/samsung/Desktop/h/server.js) to dynamically choose between SQLite and PostgreSQL based on the `DB_TYPE` environment variable.
+- Defaulted to SQLite for [start_local.bat](file:///c:/Users/samsung/Desktop/h/start_local.bat) to ensure the app runs even if PostgreSQL is not configured.
+
+### 2. Fixed Region Saving (Activity/Division/Field)
+- **Schema Migration**: Fixed a bug where new columns (Activity, Division, Field) were not being added to the SQLite database because of incompatible syntax.
+- **Cross-Compatible API**: Updated the backend registration and facility creation logic to handle ID generation correctly for both database types:
+    - PostgreSQL uses `RETURNING id`.
+    - SQLite uses the standard `INSERT` and retrieves the ID from the driver.
+
+## Verification Results
+
+### Database Schema Verified
+I ran a diagnostic check on your local [ghg_shared.db](file:///c:/Users/samsung/Desktop/h/ghg_shared.db) (SQLite) and confirmed the columns now exist:
+- `activity` ✅
+- `division` ✅
+- `field` ✅
+- `boundary_notes` ✅
+
+### Server Status
+- The server starts successfully in SQLite mode: `Initializing Database (sqlite)...`
+- API endpoints for `/api/facilities` are now compatible with both database engines.
+
+## How to Test
+1.  Run [start_local.bat](file:///c:/Users/samsung/Desktop/h/start_local.bat) (or `node server.js`).
+2.  Go to the **Region/Facility Management** page.
+3.  Add or Edit a region and fill in the **Activity**, **Division**, and **Field** fields.
+4.  Save and verify that the data persists and displays in the list correctly.
