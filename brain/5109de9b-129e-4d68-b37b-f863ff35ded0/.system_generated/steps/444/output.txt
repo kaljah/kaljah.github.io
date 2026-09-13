@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1213,"LineContent":"  cogen_allocation: \"Cogeneration Allocation (Section 8)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":15,"LineContent":"  \"Facility Allocation Mismatch\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":273,"LineContent":"      { id: \"location\", label: \"Location\", required: false },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":548,"LineContent":"      window.location.href = `http://127.0.0.1:5000/api/emissions/template/csv?tier=${selectedTier}\u0026process=${selectedProcess}`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":291,"LineContent":"    { id: \"location\", label: \"Location (Wilaya)\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ErrorBoundary.jsx","LineNumber":32,"LineContent":"    window.location.reload();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Layout.jsx","LineNumber":10,"LineContent":"  const location = useLocation();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Layout.jsx","LineNumber":20,"LineContent":"              key={location.pathname}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":39,"LineContent":"  const [allocationMethod, setAllocationMethod] = useState(\"wri_efficiency\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":137,"LineContent":"      if (val \u003c= 0 \u0026\u0026 sourceType !== \"cogen_allocation\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":169,"LineContent":"          location: gridRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":186,"LineContent":"      } else if (sourceType === \"cogen_allocation\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":189,"LineContent":"          source_type: \"cogen_allocation\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":191,"LineContent":"            cogen_allocation: {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":195,"LineContent":"              allocation_method: allocationMethod,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":236,"LineContent":"            : \"CHP / Cogen Allocation\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":254,"LineContent":"        (isElectricity ? \"Location-Based Grid EF\" : \"Energy Allocation\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":424,"LineContent":"                    value: \"cogen_allocation\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":425,"LineContent":"                    label: \"CHP / Cogeneration Allocation\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":465,"LineContent":"            {sourceType === \"cogen_allocation\" \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":489,"LineContent":"                    value={allocationMethod}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":490,"LineContent":"                    onChange={(e) =\u003e setAllocationMethod(e.target.value)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":507,"LineContent":"                {sourceType === \"cogen_allocation\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":659,"LineContent":"                      cogen_allocation: \"CHP / Cogen Allocation\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":669,"LineContent":"                  } else if (entry.source_type === \"cogen_allocation\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":543,"LineContent":"        (role === \"superuser\" \u0026\u0026 res.data?.location === \"all\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":126,"LineContent":"      { key: \"source_type\",   label: \"Source Type\",   required: false, hint: \"electricity, indirect_steam, or cogen_allocation\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":292,"LineContent":"        (role === \"superuser\" \u0026\u0026 res.data?.location === \"all\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":756,"LineContent":"              \u003cdiv className=\"location-badge\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":283,"LineContent":".location-badge {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":319,"LineContent":"        (role === \"superuser\" \u0026\u0026 res.data?.location === \"all\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1289,"LineContent":"              \u003cdiv className=\"geo-location\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":372,"LineContent":"    location: \"\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":456,"LineContent":"        location: userToEdit.location || \"\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":469,"LineContent":"        location: regions[0] || \"\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":480,"LineContent":"        const payload = { role: formData.role, location: formData.location };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":491,"LineContent":"                ? { ...u, role: formData.role, location: formData.location }"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":516,"LineContent":"          !formData.location"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":533,"LineContent":"          location: formData.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":637,"LineContent":"      u.location === filterRegion ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1207,"LineContent":"                        ) : u.location ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1216,"LineContent":"                            {u.location}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1441,"LineContent":"                    location: [\"user\", \"superuser\"].includes(e.target.value)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1442,"LineContent":"                      ? formData.location || regions[0] || \"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1461,"LineContent":"                  value={formData.location}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1463,"LineContent":"                    setFormData({ ...formData, location: e.target.value })"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1466,"LineContent":"                    ...inputStyle(\"location\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1469,"LineContent":"                    borderColor: !formData.location"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1471,"LineContent":"                      : focusedField === \"location\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1474,"LineContent":"                    boxShadow: !formData.location"}
+(...23 more results not shown)

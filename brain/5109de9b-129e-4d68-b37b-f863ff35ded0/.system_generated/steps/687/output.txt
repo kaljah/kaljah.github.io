@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -205,8 +205,8 @@
+     user = get_current_user()
+     if not user:
+         return jsonify({"error": "Not authenticated"}), 401
+-    if user.role == "it_admin":
+-        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
++    if user.role in ["viewer", "auditor", "it_admin"]:
++        return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
+ 
+     emission = db.session.get(Scope3Emission, emission_id)
+     if not emission:
+@@ -214,6 +214,16 @@
+     if not require_facility_access(user, emission.facility_id):
+         return jsonify({"error": "Unauthorized: Outside your region"}), 403
+ 
++    # Enforce creator ownership for standard user role
++    if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
++        return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
++
++    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
++    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
++        emission.status = "Pending"
++        emission.approved_by = None
++        emission.approved_at = None
++
+     data = request.get_json() or {}
+ 
+     # Strip status and co2e from direct client overwrite (H2, L9)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

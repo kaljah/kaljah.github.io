@@ -1,0 +1,135 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
++                        </div>
++                    </div>
++                )}
++
++                {/* ════════════════════════════════════════════════════════════
++                    TAB 3: UNCERTAINTY & RIGOR ANALYSIS (IPCC SRSS)
++                   ════════════════════════════════════════════════════════════ */}
++                {activeTab === 'uncertainty' && (
++                    <div className="qa-panel-card">
++                        <div className="qa-uncertainty-container">
++                            {/* Standards Formula Card */}
++                            <div className="qa-formula-card">
++                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
++                                    <div>
++                                        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>
++                                            IPCC Tier 1 Error Propagation (Square Root of Sum of Squares)
++                                        </h3>
++                                        <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: '#64748b' }}>
++                                            Complies with ISO 14064-1:2018 §7.5 and GHG Protocol Corporate Standard Chapter 11.
++                                        </p>
++                                    </div>
++                                    <span style={{ 
++                                        background: 'rgba(255, 102, 0, 0.1)', color: 'var(--accent-color, #ff6600)', 
++                                        padding: '4px 10px', borderRadius: '6px', fontSize: '0.78rem', fontWeight: 700 
++                                    }}>
++                                        95% Confidence Interval (k=2)
++                                    </span>
++                                </div>
++
++                                <div className="qa-formula-box">
++                                    U_total = √[ (U₁ · E₁)² + (U₂ · E₂)² + (U₃ · E₃)² ] / ( E₁ + E₂ + E₃ )
++                                </div>
++
++                                <p style={{ fontSize: '0.84rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
++                                    Each scope uncertainty is propagated from activity data precision and emission factor variance.
++                                    Higher granularity (e.g. facility-specific continuous monitoring or Tier 3 custom factors) reduces total uncertainty.
++                                </p>
++                            </div>
++
++                            {/* Scope-by-Scope Uncertainty Cards */}
++                            <div className="qa-scopes-unc-grid">
++                                {/* Scope 1 */}
++                                <div className="qa-scope-unc-card">
++                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
++                                        <span className="qa-scope-badge scope-1">Scope 1 (Direct)</span>
++                                        <Flame size={16} color="#059669" />
++                                    </div>
++                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
++                                        ±{((tier1_uncertainty.scope1 || 0) * 100).toFixed(2)}%
++                                    </div>
++                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
++                                        Total Audited: <strong>{(tier1_uncertainty.s1_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
++                                    </div>
++                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
++                                        Combustion, flaring, vented & fugitive sources
++                                    </div>
++                                </div>
++
++                                {/* Scope 2 */}
++                                <div className="qa-scope-unc-card">
++                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
++                                        <span className="qa-scope-badge scope-2">Scope 2 (Indirect)</span>
++                                        <Zap size={16} color="#2563eb" />
++                                    </div>
++                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
++                                        ±{((tier1_uncertainty.scope2 || 0) * 100).toFixed(2)}%
++                                    </div>
++                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
++                                        Total Audited: <strong>{(tier1_uncertainty.s2_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
++                                    </div>
++                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
++                                        Purchased electricity & grid emission factors
++                                    </div>
++                                </div>
++
++                                {/* Scope 3 */}
++                                <div className="qa-scope-unc-card">
++                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
++                                        <span className="qa-scope-badge scope-3">Scope 3 (Value Chain)</span>
++                                        <Layers size={16} color="#7c3aed" />
++                                    </div>
++                                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a' }}>
++                                        ±{((tier1_uncertainty.scope3 || 0) * 100).toFixed(2)}%
++                                    </div>
++                                    <div style={{ fontSize: '0.82rem', color: '#64748b' }}>
++                                        Total Audited: <strong>{(tier1_uncertainty.s3_total_tco2e || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} tCO₂e</strong>
++                                    </div>
++                                    <div style={{ fontSize: '0.76rem', color: '#94a3b8', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
++                                        Upstream & downstream category estimations
++                                    </div>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++                )}
+             </div>
+         </ErrorBoundary>
+     );
+ }
+-
+-// ── Style helpers ──────────────────────────────────────────────────────────
+-const thStyle = {
+-    padding: '12px 16px',
+-    textAlign: 'left',
+-    fontSize: '0.72rem',
+-    textTransform: 'uppercase',
+-    letterSpacing: '0.05em',
+-    color: '#64748b',
+-    fontWeight: '600',
+-    borderBottom: '1px solid rgba(226,232,240,0.6)',
+-    background: 'rgba(248,250,252,0.5)',
+-    whiteSpace: 'nowrap',
+-};
+-
+-const tdStyle = {
+-    padding: '12px 16px',
+-    verticalAlign: 'middle',
+-};
+-
+-const paginationBtnStyle = (disabled) => ({
+-    padding: '0 8px',
+-    height: '28px',
+-    borderRadius: '6px',
+-    border: '1px solid #e2e8f0',
+-    background: disabled ? '#f8fafc' : '#fff',
+-    color: disabled ? '#cbd5e1' : '#475569',
+-    cursor: disabled ? 'default' : 'pointer',
+-    display: 'flex',
+-    alignItems: 'center',
+-});
+

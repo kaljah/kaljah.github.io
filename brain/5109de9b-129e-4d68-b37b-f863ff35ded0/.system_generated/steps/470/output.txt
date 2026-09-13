@@ -1,0 +1,61 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -987,7 +987,11 @@
+         unit = str(inputs.get("unit") or "m3").lower()
+         f_unit = str(emission_factors.get("unit") or "kg/m3").lower()
+ 
+-        if "m3" in f_unit or "m³" in f_unit:
++        f_parts = f_unit.split("/")
++        f_num = f_parts[0].strip() if len(f_parts) > 0 else f_unit
++        f_denom = f_parts[1].strip() if len(f_parts) > 1 else ""
++
++        if "m3" in f_denom or "m³" in f_denom or "m3" in f_unit or "m³" in f_unit:
+             if unit == "scf":
+                 quantity *= CONVERSIONS["scf_to_m3"]
+             elif unit in ["mcf", "mscf"]:
+@@ -999,6 +999,20 @@
+                 quantity *= CONVERSIONS["gal_to_m3"]
+             elif unit == "bbl":
+                 quantity *= CONVERSIONS["bbl_to_m3"]
++        elif "tonne" in f_denom or "metric_ton" in f_denom or f_denom in ["t", "mt"]:
++            if unit == "kg":
++                quantity /= 1000.0
++            elif unit in ["lb", "lbs"]:
++                quantity = (quantity * 0.453592) / 1000.0
++            elif unit in ["ton", "tons", "short_ton", "us_ton"]:
++                quantity = (quantity * 907.185) / 1000.0
++        elif f_denom in ["kg", "kilogram", "kilograms"]:
++            if unit in ["tonne", "tonnes", "metric_ton", "mt"]:
++                quantity *= 1000.0
++            elif unit in ["lb", "lbs"]:
++                quantity *= 0.453592
++            elif unit in ["ton", "tons", "short_ton", "us_ton"]:
++                quantity *= 907.185
+         # Energy-based normalization (Standard EFs are usually kg/MMBtu)
+         elif "mmbtu" in f_unit:
+             if unit in ["mmbtu", "mm_btu"]:
+@@ -1035,8 +1035,10 @@
+         ch4_val = quantity * ch4_ef
+         n2o_val = quantity * n2o_ef
+ 
+-        # Determine result unit based on factor unit
+-        is_tonne = "tonne" in f_unit or " mt" in f_unit or "metric ton" in f_unit
++        # Determine result unit based on factor numerator only (prevent kg/tonne from being misidentified as tonne)
++        is_tonne = any(
++            t in f_num for t in ["tonne", "metric_ton", "metric ton", "t co2", "tco2", "t ch4", "tch4", "t n2o"]
++        ) or f_num in ["t", "tonne", "tonnes", "mt"]
+         if is_tonne:
+             co2_tonnes, ch4_tonnes, n2o_tonnes = co2_val, ch4_val, n2o_val
+         else:
+@@ -1043,5 +1043,6 @@
+-            ch4_tonnes = ch4_val / 1000.0
+-            n2o_tonnes = n2o_val / 1000.0
++            ch4_val_t = ch4_val / 1000.0
++            n2o_val_t = n2o_val / 1000.0
++            ch4_tonnes, n2o_tonnes = ch4_val_t, n2o_val_t
+ 
+         # Tier-aware uncertainty propagation — 95% CI, non-negative bounds
+         _tier = resolve_tier(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3300,6 +3300,12 @@
+ @login_required  # EXTRA-06 FIX: decorator was present but get_current_user() could return None causing 500
+ def update_emission(id):
+     user = get_current_user()
++    if not user:
++        return jsonify({"error": "Unauthorized"}), 401
++
++    if user.role in ["viewer", "auditor", "it_admin"]:
++        return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
++
+     data = request.get_json()  # EXTRA-03 FIX: removed duplicate call below
+     record = Emission.query.filter_by(record_id=id).first() or db.session.get(
+         Emission, int(id) if str(id).isdigit() else -1
+@@ -3309,6 +3309,16 @@
+     allowed_fids = get_allowed_facility_ids(user)
+     if allowed_fids is not None and record.facility_id not in allowed_fids:
+         return jsonify({"error": "Unauthorized: Outside your region"}), 403
++
++    # Enforce creator ownership for standard user role
++    if user.role == "user" and record.created_by is not None and record.created_by != user.id:
++        return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
++
++    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
++    if user.role not in ["admin", "superuser"] and record.status == "Verified":
++        record.status = "Pending"
++        record.approved_by = None
++        record.approved_at = None
+         # EXTRA-03 FIX: removed second data = request.get_json() (double-read, second returns None)
+     import json
+     
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

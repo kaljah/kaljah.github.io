@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1423,14 +1423,17 @@
+ 
+         gas = float(rec.total_gas_raw or 0)
+         g_unit = (rec.gas_unit or "mscf").lower().strip()
+-        gas_m3 = 0
+-        if g_unit == "m3":
++        gas_m3 = 0.0
++        if g_unit in ("m3", "cubic_meters", "m³"):
+             gas_m3 = gas
+-            gas *= 0.035315
+-        elif g_unit == "scf":
++            gas *= 0.0353147
++        elif g_unit in ("scf", "cf"):
+             gas_m3 = gas * 0.0283168
+             gas *= 0.001
+-        else:  # mscf
++        elif g_unit == "mmscf":
++            gas_m3 = gas * 28316.8
++            gas *= 1000.0
++        else:  # mscf, mcf (default standard 1,000 scf)
+             gas_m3 = gas * 28.3168
+ 
+         prod_results[fid]["total_oil"] += oil
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

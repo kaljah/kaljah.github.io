@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\constants.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -37,8 +37,11 @@
+     std_key = str(standard or "").upper().strip()
+     if not std_key:
+         try:
+-            from routes.auth import _app_settings
+-
++            from routes.auth import _app_settings, load_settings_from_db
++            try:
++                load_settings_from_db()
++            except Exception:
++                pass
+             std_key = str(_app_settings.get("gwp_standard") or "AR5").upper().strip()
+         except Exception:
+             std_key = "AR5"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

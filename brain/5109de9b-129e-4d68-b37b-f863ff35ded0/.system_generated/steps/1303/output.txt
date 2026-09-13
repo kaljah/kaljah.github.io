@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2423,11 +2423,13 @@
+         s12 = round(s1 + s2, 2)
+         tot = round(s1 + s2 + s3, 2)
+ 
+-        has_actual_data = yr in actuals and actuals[yr] > 0
++        has_actual_data = yr in actuals
++        has_s12_data = (yr in scope1_actuals) or (yr in scope2_actuals)
++        has_s3_data = yr in scope3_actuals
+         if scope == "s1_s2":
+-            active_actual = s12 if (has_actual_data and s12 > 0) else None
++            active_actual = s12 if has_s12_data else None
+         elif scope == "s3":
+-            active_actual = s3 if (has_actual_data and s3 > 0) else None
++            active_actual = s3 if has_s3_data else None
+         else:
+             active_actual = tot if has_actual_data else None
+         
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

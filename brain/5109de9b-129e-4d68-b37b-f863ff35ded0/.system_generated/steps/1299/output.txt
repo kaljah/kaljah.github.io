@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -264,7 +264,12 @@
+         # Recalculate co2e in tonnes: activity_data * emission_factor (if factor is kg/unit -> /1000)
+         ef = emission.emission_factor or 0.0
+         act = emission.activity_data or 0.0
+-        emission.co2e = round((act * ef) / 1000.0, 4)
++        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "").lower()
++        is_factor_tonne = any(t in factor_unit for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]) or factor_unit.startswith("t ")
++        if is_factor_tonne:
++            emission.co2e = round(act * ef, 4)
++        else:
++            emission.co2e = round((act * ef) / 1000.0, 4)
+ 
+         if emission.status == "Verified" and user.role != "admin":
+             emission.status = "Pending"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

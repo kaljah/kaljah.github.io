@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -73,8 +73,8 @@
+     user = get_current_user()
+     if not user:
+         return jsonify({"error": "Not authenticated"}), 401
+-    if user.role == "it_admin":
+-        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
++    if user.role in ["viewer", "auditor", "it_admin"]:
++        return jsonify({"error": "Read-only or administrative role cannot create emission records"}), 403
+ 
+     data = request.get_json() or {}
+     facility_id = data.get("facility_id")
+@@ -94,10 +94,11 @@
+     activity_data = float(data.get("activity_data") or data.get("amount", 0))
+     emission_factor = float(data.get("emission_factor", 0))
+     co2e_input = data.get("co2e") or data.get("emissions_tco2e")
+-    if co2e_input not in [None, ""]:
+-        co2e_val = float(co2e_input)
+-    elif activity_data > 0 and emission_factor > 0:
++    # Enforce server-side calculation from activity_data and emission_factor to prevent client-side tampering
++    if activity_data > 0 and emission_factor > 0:
+         co2e_val = (activity_data * emission_factor) / 1000.0
++    elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
++        co2e_val = float(co2e_input)
+     else:
+         co2e_val = 0.0
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

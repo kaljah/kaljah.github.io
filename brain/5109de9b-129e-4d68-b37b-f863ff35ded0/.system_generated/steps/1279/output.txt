@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\services\sentinel5p.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -418,6 +418,7 @@
+         wind_speed_m_s: float = 3.5,
+         pbl_height_m: float = 1200.0,
+         box_width_km: float = 7.0,
++        surface_pressure_pa: float = STD_SURFACE_PRESSURE_PA,
+     ) -> float:
+         """
+         Estimates methane mass emission rate (kg CH4/hr) from a Sentinel-5P column concentration anomaly (delta ppb)
+@@ -424,6 +424,8 @@
+ 
+         Formula:
+-          Q = Delta_X (ppb) * 10^-9 * (P_surface / (R_spec_air * T)) * (M_CH4 / M_air) * Box_Width * Wind_Speed * PBL_Height
++          Total Column Air Mass = P_surface / g (~ 10,332.27 kg air / m2)
++          Delta_Mass_CH4 = (delta_ch4_ppb * 1e-9) * (M_CH4 / M_air) * Total_Column_Air_Mass
++          Q = Delta_Mass_CH4 * Box_Width_m * Wind_Speed_m_s * 3600
+         """
+         if delta_ch4_ppb <= 0:
+             return 0.0
+@@ -433,11 +433,11 @@
+         # Volume mixing ratio fraction
+         vmr_fraction = delta_ch4_ppb * 1e-9
+ 
+-        # Column mass density anomaly (kg CH4 / m2 in boundary layer)
+-        # Delta_Mass_CH4 = vmr_fraction * mass_ratio * Air_Density_Surface * PBL_Height
+-        delta_column_mass_kg_m2 = (
+-            vmr_fraction * mass_ratio * STD_AIR_DENSITY_SURFACE * pbl_height_m
+-        )
++        # Total dry air column mass density (kg air / m2 across full atmospheric column)
++        total_col_air_mass = (surface_pressure_pa or STD_SURFACE_PRESSURE_PA) / STD_GRAVITY
++
++        # Column mass density anomaly (kg CH4 / m2 across atmospheric column)
++        delta_column_mass_kg_m2 = vmr_fraction * mass_ratio * total_col_air_mass
+ 
+         # Flux across downwind cross-section = Column_Mass * Box_Width_m * Wind_Speed_m_s (kg/s)
+         box_width_m = box_width_km * 1000.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

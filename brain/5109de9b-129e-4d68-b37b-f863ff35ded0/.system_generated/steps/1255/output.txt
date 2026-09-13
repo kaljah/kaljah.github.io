@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -830,15 +830,9 @@
+                     flat_inputs, ["agr_co2_out", "co2_out"], "outlet CO2 mole %"
+                 )
+ 
+-                if raw_co2_in > 1.0:
+-                    co2_in = raw_co2_in / 100.0
+-                    co2_out = raw_co2_out / 100.0
+-                elif raw_co2_out > 1.0:
+-                    co2_in = raw_co2_in
+-                    co2_out = raw_co2_out / 100.0
+-                elif raw_co2_out >= raw_co2_in:
+-                    co2_in = raw_co2_in
+-                    co2_out = raw_co2_out / 100.0
++                if raw_co2_in > 1.0 or raw_co2_out > 1.0:
++                    co2_in = raw_co2_in / 100.0 if raw_co2_in > 1.0 else raw_co2_in
++                    co2_out = (raw_co2_out / 100.0) if raw_co2_in > 1.0 else (raw_co2_out / 100.0 if raw_co2_out > 1.0 else raw_co2_out)
+                 else:
+                     co2_in = raw_co2_in
+                     co2_out = raw_co2_out
+@@ -845,3 +845,6 @@
++                if co2_out > co2_in:
++                    co2_out = co2_in
++
+                 ch4_in = self._optional_fraction(
+                     flat_inputs, ["agr_ch4_in", "ch4_in", "c1", "ch4_mole_pct"], 0.85
+                 )
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

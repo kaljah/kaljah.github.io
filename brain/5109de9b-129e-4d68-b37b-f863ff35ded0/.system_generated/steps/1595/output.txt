@@ -1,0 +1,22 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":522,"LineContent":"    bottom_up_tch4 = db.Column(db.Float, default=0.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":139,"LineContent":"            if \"bottom_up_tch4\" not in ogmp_cols:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":141,"LineContent":"                    \"ALTER TABLE ogmp_surveys ADD COLUMN bottom_up_tch4 FLOAT DEFAULT 0.0\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":63,"LineContent":"    bottom_up_tch4: Optional[float] = None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":81,"LineContent":"    # If top_down and bottom_up were provided or resolved"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":83,"LineContent":"    bu = bottom_up_tch4 if bottom_up_tch4 is not None else 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":365,"LineContent":"        'bottom_up_tch4': d.bottom_up_tch4 or 0.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":415,"LineContent":"    bottom_up_sum = db.session.query(func.sum(Emission.ch4_emissions)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":420,"LineContent":"    bottom_up_tch4 = round(float(bottom_up_sum), 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":423,"LineContent":"    if bottom_up_tch4 \u003e 0:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":424,"LineContent":"        variance_pct = round(((estimated_annual_tch4 - bottom_up_tch4) / bottom_up_tch4 * 100.0), 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":449,"LineContent":"        record.bottom_up_tch4 = bottom_up_tch4"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":466,"LineContent":"            bottom_up_tch4=bottom_up_tch4,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":948,"LineContent":"        bottom_up = ch4_map.get(f.id, 0.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":950,"LineContent":"            round(((top_down - bottom_up) / bottom_up * 100.0), 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":951,"LineContent":"            if (top_down \u003e 0 and bottom_up \u003e 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":956,"LineContent":"            f, year=current_year, top_down_tch4=top_down, bottom_up_tch4=bottom_up"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":268,"LineContent":"    bottom_up_emissions = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":280,"LineContent":"    if bottom_up_emissions \u003e 0:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":282,"LineContent":"            ((estimated_annual_tch4 - bottom_up_emissions) / bottom_up_emissions)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":305,"LineContent":"        bottom_up_tch4=round(float(bottom_up_emissions), 3),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":904,"LineContent":"                f, year=year_filter, top_down_tch4=td_ch4, bottom_up_tch4=bu_ch4"}

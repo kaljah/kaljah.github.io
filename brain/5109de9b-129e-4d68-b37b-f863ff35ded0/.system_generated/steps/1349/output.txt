@@ -1,0 +1,61 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -651,7 +651,7 @@
+     """Finding 11: Verify SBTi net-zero endpoint preserves legitimate 0.0 tCO2e actuals."""
+     from models import SbtiTarget
+     with app.app_context():
+-        target = SbtiTarget.query.first()
++        target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+         if not target:
+             target = SbtiTarget(
+                 base_year=2020,
+@@ -663,10 +663,11 @@
+             )
+             db.session.add(target)
+             db.session.commit()
+-
+-        # Add a verified emission with 0.0 tCO2e for 2020
++        test_year = target.base_year
++
++        # Add a verified emission with 0.0 tCO2e for test_year
+         e_zero = Emission.query.filter_by(
+-            facility_id=test_users["facility_id"], year=2020
++            facility_id=test_users["facility_id"], year=test_year
+         ).first()
+         if not e_zero:
+             e_zero = Emission(
+@@ -673,4 +673,4 @@
+-                year=2020,
++                year=test_year,
+                 month=1,
+                 process_type="combustion",
+                 fuel_type="Diesel",
+@@ -678,7 +678,10 @@
+                 status="Verified",
+             )
+             db.session.add(e_zero)
+-            db.session.commit()
++        else:
++            e_zero.co2e_total = 0.0
++            e_zero.status = "Verified"
++        db.session.commit()
+ 
+     with client.session_transaction() as sess:
+         sess["user_id"] = test_users["admin"]
+@@ -686,9 +686,9 @@
+     assert resp.status_code == 200
+     data = resp.get_json()
+     assert "trajectory" in data
+-    traj_2020 = next((t for t in data["trajectory"] if t["year"] == "2020"), None)
+-    assert traj_2020 is not None
+-    # 2020 had a verified 0.0 record, actual must be 0.0, NOT None
+-    assert traj_2020["actual"] == 0.0
++    traj_test = next((t for t in data["trajectory"] if t["year"] == str(test_year)), None)
++    assert traj_test is not None
++    # Verified 0.0 record must yield actual == 0.0, NOT None
++    assert traj_test["actual"] == 0.0
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

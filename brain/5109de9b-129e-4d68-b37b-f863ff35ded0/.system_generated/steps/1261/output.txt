@@ -1,0 +1,142 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1010,35 +1010,25 @@
+         f_num = f_parts[0].strip() if len(f_parts) > 0 else f_unit
+         f_denom = f_parts[1].strip() if len(f_parts) > 1 else ""
+ 
+-        if "m3" in f_denom or "m³" in f_denom or "m3" in f_unit or "m³" in f_unit:
+-            if unit == "scf":
+-                quantity *= CONVERSIONS["scf_to_m3"]
+-            elif unit in ["mcf", "mscf"]:
+-                quantity *= CONVERSIONS["scf_to_m3"] * 1000.0
+-            elif unit == "mmscf":
+-                quantity *= CONVERSIONS["scf_to_m3"] * 1000000.0
+-            elif unit in ["l", "liter", "liters"]:
+-                quantity *= CONVERSIONS["liter_to_m3"]
+-            elif unit == "gal":
+-                quantity *= CONVERSIONS["gal_to_m3"]
+-            elif unit == "bbl":
+-                quantity *= CONVERSIONS["bbl_to_m3"]
+-        elif "tonne" in f_denom or "metric_ton" in f_denom or f_denom in ["t", "mt"]:
+-            if unit == "kg":
+-                quantity /= 1000.0
+-            elif unit in ["lb", "lbs"]:
+-                quantity = (quantity * 0.453592) / 1000.0
+-            elif unit in ["ton", "tons", "short_ton", "us_ton"]:
+-                quantity = (quantity * 907.185) / 1000.0
+-        elif f_denom in ["kg", "kilogram", "kilograms"]:
+-            if unit in ["tonne", "tonnes", "metric_ton", "mt"]:
+-                quantity *= 1000.0
+-            elif unit in ["lb", "lbs"]:
+-                quantity *= 0.453592
+-            elif unit in ["ton", "tons", "short_ton", "us_ton"]:
+-                quantity *= 907.185
++        vol_factors = {
++            "m3": 1.0, "m³": 1.0, "cubic_meter": 1.0, "cubic_meters": 1.0,
++            "scf": CONVERSIONS["scf_to_m3"], "cf": CONVERSIONS["scf_to_m3"], "ft3": CONVERSIONS["scf_to_m3"],
++            "mcf": 1000.0 * CONVERSIONS["scf_to_m3"], "mscf": 1000.0 * CONVERSIONS["scf_to_m3"],
++            "mmscf": 1_000_000.0 * CONVERSIONS["scf_to_m3"],
++            "bbl": CONVERSIONS["bbl_to_m3"], "barrel": CONVERSIONS["bbl_to_m3"], "barrels": CONVERSIONS["bbl_to_m3"],
++            "gal": CONVERSIONS["gal_to_m3"], "gallon": CONVERSIONS["gal_to_m3"], "gallons": CONVERSIONS["gal_to_m3"],
++            "l": CONVERSIONS["liter_to_m3"], "liter": CONVERSIONS["liter_to_m3"], "liters": CONVERSIONS["liter_to_m3"],
++        }
++        mass_factors = {
++            "kg": 1.0, "kilogram": 1.0, "kilograms": 1.0,
++            "g": 0.001, "gram": 0.001, "grams": 0.001,
++            "tonne": 1000.0, "tonnes": 1000.0, "metric_ton": 1000.0, "metric ton": 1000.0, "mt": 1000.0, "t": 1000.0,
++            "lb": 0.453592, "lbs": 0.453592, "pound": 0.453592, "pounds": 0.453592,
++            "ton": 907.185, "tons": 907.185, "short_ton": 907.185, "us_ton": 907.185,
++        }
++
+         # Energy-based normalization (Standard EFs are usually kg/MMBtu)
+-        elif "mmbtu" in f_unit:
++        if "mmbtu" in f_unit:
+             if unit in ["mmbtu", "mm_btu"]:
+                 energy_mmbtu = quantity
+             elif unit in ["gj", "gigajoule", "gigajoules"]:
+@@ -1045,19 +1045,48 @@
+             elif unit in ["therm", "therms"]:
+                 energy_mmbtu = quantity * 0.1
+             else:
+-                hhv = float(inputs.get("hhv") or emission_factors.get("hhv") or 1020.0)
+-                if unit in ["m3", "m³"]:
+-                    quantity *= CONVERSIONS["m3_to_scf"]
+-                elif unit == "mmscf":
+-                    quantity *= 1000000.0
+-                elif unit in ["mcf", "mscf"]:
+-                    quantity *= 1000.0
+-                elif unit in ["l", "liter", "liters"]:
+-                    quantity *= CONVERSIONS.get("l_to_gal", 0.264172)
+-                elif unit == "bbl":
+-                    quantity *= 42.0
+-                energy_mmbtu = (quantity * hhv) / 1_000_000.0
++                fuel_name = str(inputs.get("fuel_type") or inputs.get("fuel") or "").lower()
++                is_liquid = (
++                    any(liq in fuel_name for liq in ["diesel", "gasoline", "petrol", "fuel oil", "crude", "oil", "kerosene", "lpg", "propane", "condensate", "naphtha", "liquid"])
++                    or unit in ["bbl", "barrel", "barrels", "gal", "gallon", "gallons", "l", "liter", "liters"]
++                )
++                if is_liquid:
++                    # Liquid fuel HHV: standard ~138,000 Btu/gal (0.138 MMBtu/gal)
++                    hhv_liquid = float(inputs.get("hhv") or emission_factors.get("hhv") or 138000.0)
++                    if unit in ["bbl", "barrel", "barrels"]:
++                        gallons = quantity * 42.0
++                    elif unit in ["l", "liter", "liters"]:
++                        gallons = quantity * CONVERSIONS.get("l_to_gal", 0.264172)
++                    elif unit in ["m3", "m³", "cubic_meter", "cubic_meters"]:
++                        gallons = quantity * CONVERSIONS["m3_to_gal"]
++                    else:  # gal
++                        gallons = quantity
++                    energy_mmbtu = (gallons * hhv_liquid) / 1_000_000.0
++                else:
++                    # Gaseous fuel HHV: standard ~1,020 Btu/scf
++                    hhv_gas = float(inputs.get("hhv") or emission_factors.get("hhv") or 1020.0)
++                    if unit in ["m3", "m³", "cubic_meter", "cubic_meters"]:
++                        scf = quantity * CONVERSIONS["m3_to_scf"]
++                    elif unit == "mmscf":
++                        scf = quantity * 1_000_000.0
++                    elif unit in ["mcf", "mscf"]:
++                        scf = quantity * 1000.0
++                    else:
++                        scf = quantity
++                    energy_mmbtu = (scf * hhv_gas) / 1_000_000.0
+             quantity = energy_mmbtu
++        else:
++            # Check for volume factor denominator conversion
++            matched_v_denom = next((k for k in sorted(vol_factors.keys(), key=len, reverse=True) if k == f_denom or k in f_denom), None)
++            matched_v_unit = next((k for k in sorted(vol_factors.keys(), key=len, reverse=True) if k == unit or k in unit), None)
++            if matched_v_denom and matched_v_unit:
++                quantity = quantity * (vol_factors[matched_v_unit] / vol_factors[matched_v_denom])
++            else:
++                # Check for mass factor denominator conversion
++                matched_m_denom = next((k for k in sorted(mass_factors.keys(), key=len, reverse=True) if k == f_denom or k in f_denom), None)
++                matched_m_unit = next((k for k in sorted(mass_factors.keys(), key=len, reverse=True) if k == unit or k in unit), None)
++                if matched_m_denom and matched_m_unit:
++                    quantity = quantity * (mass_factors[matched_m_unit] / mass_factors[matched_m_denom])
+ 
+         # Calculate raw values (Usually EF is kg/unit)
+         co2_ef = float(
+@@ -1074,10 +1074,20 @@
+ 
+         # Determine result unit based on factor numerator only (prevent kg/tonne from being misidentified as tonne)
+         is_tonne = any(
+-            t in f_num for t in ["tonne", "metric_ton", "metric ton", "t co2", "tco2", "t ch4", "tch4", "t n2o"]
++            t in f_num for t in ["tonne", "metric_ton", "metric ton", "t co2", "tco2", "t ch4", "tch4", "t n2o", "tco2e", "mtco2"]
+         ) or f_num in ["t", "tonne", "tonnes", "mt"]
++        is_gram = (
++            f_num in ["g", "gram", "grams"]
++            or any(f_num.startswith(p) for p in ["g/", "g ", "gco2", "gch4", "gn2o", "gco2e"])
++            or any(p in f_num for p in ["g co2", "g ch4", "g n2o", "g co2e"])
++        )
++
+         if is_tonne:
+             co2_tonnes, ch4_tonnes, n2o_tonnes = co2_val, ch4_val, n2o_val
++        elif is_gram:
++            co2_tonnes = co2_val / 1_000_000.0
++            ch4_tonnes = ch4_val / 1_000_000.0
++            n2o_tonnes = n2o_val / 1_000_000.0
+         else:
+             co2_tonnes = co2_val / 1000.0
+             ch4_val_t = ch4_val / 1000.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

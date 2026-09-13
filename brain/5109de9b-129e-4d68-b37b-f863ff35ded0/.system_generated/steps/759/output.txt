@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                              
+---------- ----                                                                              
+        12     def __init__(self):                                                           
+        15     def calculate(self, fuel_mass, carbon_content, uncertainties, mass_unit="kg"):
+
+
+

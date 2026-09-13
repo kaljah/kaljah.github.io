@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\services\sentinel5p.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -33,6 +33,9 @@
+ MOLAR_MASS_CH4 = 16.042  # g/mol
+ AIR_MOLAR_MASS = 28.97  # g/mol
+ STD_AIR_DENSITY_SURFACE = 1.225  # kg/m3
++STD_SURFACE_PRESSURE_PA = 101325.0  # Pa (standard 1 atm surface pressure)
++STD_GRAVITY = 9.80665  # m/s2
++TOTAL_COLUMN_AIR_MASS_KG_M2 = STD_SURFACE_PRESSURE_PA / STD_GRAVITY  # ~10,332.27 kg air/m2
+ 
+ 
+ class Sentinel5PService:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

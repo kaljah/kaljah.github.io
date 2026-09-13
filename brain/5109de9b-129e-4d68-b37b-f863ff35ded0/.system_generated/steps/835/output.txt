@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                           
+---------- ----                                                                                           
+        14 def _prune_old_jobs(max_age_seconds=86400):                                                    
+        32 def start_background_upload(                                                                   
+        77 def get_job_status(job_id):                                                                    
+        97 def _process_file_thread(                                                                      
+       460 def _build_mapping(headers):                                                                   
+       615 def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS, job_id, row_idx):
+       754 def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):         
+       826 def _process_row_scope3(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):              
+       910 def _process_row_sources(row, user_id, fac_name_map, fac_id_map):                              
+       952 def _process_row_production(row, user_id, fac_name_map, fac_id_map):                           
+      1037 def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):                           
+      1111 def _process_row_custom_factors(row, user_id):                                                 
+      1141 def _process_row_facilities(row, user_id, overwrite_duplicates):                               
+      1217 def _process_row(                                                                              
+
+
+

@@ -1,0 +1,72 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -249,6 +249,10 @@
+             elif s_type == "vru":
+                 still_eff = 0.95
+ 
++        still_is_combustion = s_type in ("flare", "combustor", "thermal_oxidizer", "incinerator")
++        f_type = str(flash_control_type or "").strip().lower()
++        flash_is_combustion = f_type in ("flare", "combustor", "thermal_oxidizer", "incinerator")
++
+         if has_flash_tank:
+             flash_gas_scf = total_ch4_scf * 0.80
+             still_gas_scf = total_ch4_scf * 0.20
+@@ -255,13 +255,27 @@
+                 still_gas_scf * (1.0 - still_eff)
+             )
++            ch4_combusted_scf = (
++                (still_gas_scf * still_eff if still_is_combustion else 0.0)
++                + (flash_gas_scf * flash_eff if flash_is_combustion else 0.0)
++            )
+         else:
+             ch4_emitted_scf = total_ch4_scf * (1.0 - still_eff)
++            ch4_combusted_scf = (total_ch4_scf * still_eff) if still_is_combustion else 0.0
+ 
+         # Convert scf to metric tonnes
++        density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+         ch4_vol_m3 = convert(ch4_emitted_scf, "scf", "m3")
+-        ch4_mass_kg = ch4_vol_m3 * CONVERSIONS.get("density_ch4", 0.6785)
++        ch4_mass_kg = ch4_vol_m3 * density_ch4
+         ch4_tonnes = ch4_mass_kg / 1000.0
+ 
++        # Stoichiometric combustion of CH4 to CO2: CH4 + 2 O2 -> CO2 + 2 H2O (44.01 / 16.04)
++        if ch4_combusted_scf > 0:
++            ch4_comb_vol_m3 = convert(ch4_combusted_scf, "scf", "m3")
++            ch4_comb_tonnes = (ch4_comb_vol_m3 * density_ch4) / 1000.0
++            co2_combusted_tonnes = ch4_comb_tonnes * (44.01 / 16.04)
++        else:
++            co2_combusted_tonnes = 0.0
++
+         _tier = resolve_tier(uncertainties.get("_factor_source", "specific"))
+         ch4_res = propagate_uncertainty(
+             ch4_tonnes,
+@@ -269,9 +269,23 @@
+             process_category="midstream",
+             gas="ch4",
+         )
+-        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
+-
+-        return self.format_result(
++        co2_res = (
++            propagate_uncertainty(
++                co2_combusted_tonnes,
++                resolve_ef_uncertainty("midstream", "co2", _tier, uncertainties.get("co2")),
++                tier=_tier,
++                process_category="midstream",
++                gas="co2",
++            )
++            if co2_combusted_tonnes > 0
++            else None
++        )
++        total_co2e = calculate_co2e(
++            co2=co2_combusted_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict
++        )
++
++        return self.format_result(
++            co2=co2_res,
+             ch4=ch4_res,
+             total_co2e=total_co2e,
+             inputs={
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

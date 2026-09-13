@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1852,6 +1852,9 @@
+         else:
+             current_level = 2
+ 
++        ogmp_target = 0.20 if "upstream" in segment else 0.05
++        ogmp_warning = round(ogmp_target * 1.25, 4)
++
+         current_cal_year = int(year) if (year and str(year).isdigit()) else 2026
+         years_left = max(0, target_gold_year - current_cal_year)
+         if current_level == 5:
+@@ -1858,4 +1858,4 @@
+-        elif current_level == 4 and methane_loss_rate_pct <= 0.20:
++        elif current_level == 4 and methane_loss_rate_pct <= ogmp_target:
+             pathway_status = "Level 4 Pathway (Target Met)"
+         elif current_cal_year <= target_gold_year:
+             pathway_status = (
+@@ -1896,12 +1896,12 @@
+                 # Loss and flaring rates %
+                 "methane_loss_rate_pct": methane_loss_rate_pct,
+                 "flaring_rate_pct": flaring_rate_pct,
+-                "ogmp_gold_standard_target": 0.20 if "upstream" in segment else 0.05,
+-                "ogmp_target_status": (
+-                    "Compliant"
+-                    if methane_loss_rate_pct <= 0.20
+-                    else (
+-                        "Warning" if methane_loss_rate_pct <= 0.25 else "Non-Compliant"
++                "ogmp_gold_standard_target": ogmp_target,
++                "ogmp_target_status": (
++                    "Compliant"
++                    if methane_loss_rate_pct <= ogmp_target
++                    else (
++                        "Warning" if methane_loss_rate_pct <= ogmp_warning else "Non-Compliant"
+                     )
+                 ),
+                 # EPA WEC
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

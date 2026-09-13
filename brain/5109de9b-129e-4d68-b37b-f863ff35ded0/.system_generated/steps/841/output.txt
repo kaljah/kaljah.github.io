@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                  
+---------- ----                                                                                                  
+       744         emission.qa_flag = f"Outlier detected: usage {amount} exceeds 10,000,000 threshold"           
+       747             "reason": emission.qa_flag,                                                               
+       817         emission.qa_flag = f"Outlier detected: activity data {spend_usd} exceeds 10,000,000 threshold"
+       820             "reason": emission.qa_flag,                                                               
+       900         emission.qa_flag = f"Outlier detected: activity data {amt} exceeds 10,000,000 threshold"      
+       903             "reason": emission.qa_flag,                                                               
+
+
+

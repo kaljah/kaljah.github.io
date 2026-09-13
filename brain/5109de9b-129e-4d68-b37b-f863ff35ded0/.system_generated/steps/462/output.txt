@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\dispatcher.py:124:    def _require_fraction(self, flat_inputs, keys, desc, is_percent=False):
+new\server\calculations\dispatcher.py:131:    def _optional_fraction(self, flat_inputs, keys, default=0.0, 
+is_percent=False):
+new\server\calculations\dispatcher.py:349:                ch4_content = self._require_fraction(
+new\server\calculations\dispatcher.py:440:                ch4_content = self._require_fraction(
+new\server\calculations\dispatcher.py:445:                co2_content = self._optional_fraction(
+new\server\calculations\dispatcher.py:448:                flare_eff = self._optional_fraction(
+new\server\calculations\dispatcher.py:497:                ch4_content = self._require_fraction(
+new\server\calculations\dispatcher.py:502:                co2_content = self._optional_fraction(
+new\server\calculations\dispatcher.py:505:                flare_eff = self._optional_fraction(
+new\server\calculations\dispatcher.py:568:                ch4_content = self._require_fraction(
+new\server\calculations\dispatcher.py:571:                co2_content = self._optional_fraction(
+new\server\calculations\dispatcher.py:574:                flare_eff = self._optional_fraction(
+new\server\calculations\dispatcher.py:638:                ch4_content = self._require_fraction(
+new\server\calculations\dispatcher.py:643:                tank_eff = self._optional_fraction(
+new\server\calculations\dispatcher.py:646:                co2_content = self._optional_fraction(
+new\server\calculations\dispatcher.py:689:                ch4_content = self._require_fraction(
+new\server\calculations\dispatcher.py:798:                ch4_in = self._optional_fraction(
+new\server\calculations\dispatcher.py:801:                ch4_slip = self._optional_fraction(
+new\server\calculations\dispatcher.py:806:                ctrl_eff = self._optional_fraction(
+new\server\calculations\dispatcher.py:842:                ch4_content = self._optional_fraction(
+new\server\calculations\dispatcher.py:845:                control_eff = self._optional_fraction(
+new\server\calculations\dispatcher.py:863:                flash_eff = self._optional_fraction(
+new\server\calculations\dispatcher.py:895:                trans_loss = self._optional_fraction(
+
+
+

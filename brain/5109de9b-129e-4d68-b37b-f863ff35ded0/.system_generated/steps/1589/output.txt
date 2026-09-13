@@ -1,0 +1,43 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":588,"LineContent":"        measured_rate_kg_hr: '', reconciliation_status: 'Reconciled', operator_notes: ''"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":969,"LineContent":"                reconciliation_status: ogmpForm.reconciliation_status,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":979,"LineContent":"                measured_rate_kg_hr: '', reconciliation_status: 'Reconciled', operator_notes: ''"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1149,"LineContent":"        const rStatus = o.reconciliation_status || o.reconciliationStatus || '';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3657,"LineContent":"                                            value={ogmpForm.reconciliation_status}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3658,"LineContent":"                                            onChange={(e) =\u003e setOgmpForm({ ...ogmpForm, reconciliation_status: e.target.value })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3695,"LineContent":"                                                    measured_rate_kg_hr: '', reconciliation_status: 'Reconciled', operator_notes: ''"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3733,"LineContent":"                                                const rStatus = o.reconciliation_status || o.reconciliationStatus || 'Reconciled';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3776,"LineContent":"                                                                            reconciliation_status: rStatus,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":1255,"LineContent":".reconciliation-meter-box {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":439,"LineContent":"        notes: `Sentinel-5P Level-3 CH4 Top-Down observation reconciliation for ${selectedFacility.name}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":586,"LineContent":"  const reconciliationAnalysis = useMemo(() =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1430,"LineContent":"                {reconciliationAnalysis \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1432,"LineContent":"                    className=\"reconciliation-meter-box\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1433,"LineContent":"                    style={{ borderColor: `${reconciliationAnalysis.color}50` }}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1437,"LineContent":"                        \u003cActivity size={13} color={reconciliationAnalysis.color} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1443,"LineContent":"                          backgroundColor: `${reconciliationAnalysis.color}15`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1444,"LineContent":"                          color: reconciliationAnalysis.color,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1445,"LineContent":"                          borderColor: `${reconciliationAnalysis.color}40`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1448,"LineContent":"                        {reconciliationAnalysis.label}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1452,"LineContent":"                      {reconciliationAnalysis.deltaText}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1514,"LineContent":"                      \u003cspan className=\"survey-status-badge\"\u003e{survey.reconciliation_status || \"Recorded\"}\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":104,"LineContent":"          if (settingsRes.data.reconciliation_threshold) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":106,"LineContent":"              Number(settingsRes.data.reconciliation_threshold),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1013,"LineContent":"                site-level measurement reconciliation."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1083,"LineContent":"                    fac.reconciliation_threshold ?? globalThreshold ?? 20.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1086,"LineContent":"                    fac.reconciliation_variance_pct ??"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1089,"LineContent":"                      ? (matchedSurvey.reconciliation_variance_pct ?? matchedSurvey.variance_pct ?? null)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1304,"LineContent":"                        s.reconciliationStatus ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1305,"LineContent":"                        s.reconciliation_status ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1310,"LineContent":"                        s.variance_pct ?? s.reconciliation_variance_pct ?? null;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":113,"LineContent":"        if (settings.reconciliation_threshold)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":114,"LineContent":"          setGlobalThreshold(settings.reconciliation_threshold);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":151,"LineContent":"            reconciliation_threshold: f.reconciliation_threshold || 20.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":188,"LineContent":"        reconciliation_threshold: Number(globalThreshold),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":292,"LineContent":"        reconciliation_threshold: Number(data.reconciliation_threshold),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":325,"LineContent":"              facility-specific reconciliation tolerances."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":406,"LineContent":"            \u003cstrong\u003eRead-Only Mode:\u003c/strong\u003e System methodologies (IPCC GWP standards, OGMP reconciliation parameters, and Copernicus satellite credentials) are centrally managed. Updates require an Administrator account."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":545,"LineContent":"              years, and acceptable reconciliation tolerances."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":748,"LineContent":"              base year, and specific reconciliation variance thresholds for"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":848,"LineContent":"                            value={edit.reconciliation_threshold || 20.0}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":852,"LineContent":"                                \"reconciliation_threshold\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":901,"LineContent":"              reconciliation engine."}

@@ -1,0 +1,20 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":75,"LineContent":"  if (record.scope === '2' \u0026\u0026 !record.source_type) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":182,"LineContent":"        desc: `${r.source_type || 'Electricity'} (${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":285,"LineContent":"                desc: `${r.source_type || 'Electricity'} (${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":126,"LineContent":"      { key: \"source_type\",   label: \"Source Type\",   required: false, hint: \"electricity, indirect_steam, or cogen_allocation\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":165,"LineContent":"          source_type: \"electricity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":176,"LineContent":"          source_type: \"indirect_steam\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":189,"LineContent":"          source_type: \"cogen_allocation\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":220,"LineContent":"    const isElectricity = entry.source_type === \"electricity\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":226,"LineContent":"      : entry.source_type === \"indirect_steam\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":232,"LineContent":"        entry.source_type === \"electricity\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":234,"LineContent":"          : entry.source_type === \"indirect_steam\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":238,"LineContent":"      fuel: entry.grid_region || entry.source_type || \"Grid Electricity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":300,"LineContent":"    setUnit(entry.source_type === \"indirect_steam\" ? \"mmbtu\" : \"kWh\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":301,"LineContent":"    setSourceType(entry.source_type || \"electricity\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":660,"LineContent":"                    }[entry.source_type] || entry.source_type;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":663,"LineContent":"                  if (entry.source_type === \"electricity\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":665,"LineContent":"                  } else if (entry.source_type === \"indirect_steam\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":669,"LineContent":"                  } else if (entry.source_type === \"cogen_allocation\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":688,"LineContent":"                            entry.source_type === \"electricity\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":690,"LineContent":"                              : entry.source_type === \"indirect_steam\""}

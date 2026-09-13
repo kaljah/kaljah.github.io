@@ -1,0 +1,25 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":555,"LineContent":"        (\"gas_unit\", \"gas unit\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":999,"LineContent":"    gas_unit = row.get(\"energy_unit\") or row.get(\"gas_unit\") or \"mscf\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1015,"LineContent":"        existing.gas_unit = gas_unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1032,"LineContent":"        gas_unit=gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":745,"LineContent":"            gas_unit = spec.get(f\"{gas}Unit\") or base_unit or unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":763,"LineContent":"                    if gas_unit and gas_unit != unit:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":765,"LineContent":"                            raw_val, gas_unit, unit, hhv"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":201,"LineContent":"    gas_unit = db.Column(db.String(20), default=\"mscf\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":277,"LineContent":"                        gas_unit=\"mscf\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":51,"LineContent":"        'gasUnit': d.gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":82,"LineContent":"    gas_unit = data.get('gas_unit', 'mscf')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":99,"LineContent":"            existing.gas_unit = gas_unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":113,"LineContent":"                gas_unit=gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":123,"LineContent":"        log_details = f\"{action.title()} Production Data for {year}-{month}: {oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":256,"LineContent":"            if rec.get('gas_unit'): existing.gas_unit = rec.get('gas_unit')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":268,"LineContent":"                gas_unit=rec.get('gas_unit', 'mscf'),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1066,"LineContent":"        ProductionData.gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1086,"LineContent":"        ProductionData.gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1100,"LineContent":"        g_unit = (rec.gas_unit or \"mscf\").lower().strip()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1382,"LineContent":"        ProductionData.gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1403,"LineContent":"        ProductionData.facility_id, ProductionData.oil_unit, ProductionData.gas_unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1425,"LineContent":"        g_unit = (rec.gas_unit or \"mscf\").lower().strip()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":880,"LineContent":"                * GAS_UNIT_TO_M3.get(str(p.gas_unit or \"mscf\").lower(), 28.3168)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":244,"LineContent":"            \"gas_unit\": \"mscf\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":258,"LineContent":"            \"gas_unit\": \"mscf\","}

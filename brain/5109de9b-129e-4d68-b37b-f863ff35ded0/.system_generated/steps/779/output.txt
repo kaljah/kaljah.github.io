@@ -1,0 +1,64 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -101,13 +101,13 @@
+ def test_dispatcher_fraction_boundary():
+     """Verify _require_fraction handles boundary values and percentages cleanly."""
+     dispatcher = CalculationDispatcher()
+-    val, _ = dispatcher._require_fraction({"eff": 1.0}, "eff", "combustion_efficiency")
++    val = dispatcher._require_fraction({"eff": 1.0}, "eff", "combustion_efficiency")
+     assert val == 1.0
+ 
+-    val_pct, _ = dispatcher._require_fraction({"eff": "100%"}, "eff", "combustion_efficiency")
++    val_pct = dispatcher._require_fraction({"eff": "100%"}, "eff", "combustion_efficiency")
+     assert val_pct == 1.0
+ 
+-    val_95, _ = dispatcher._require_fraction({"eff": "95%"}, "eff", "combustion_efficiency")
++    val_95 = dispatcher._require_fraction({"eff": "95%"}, "eff", "combustion_efficiency")
+     assert abs(val_95 - 0.95) < 1e-6
+ 
+ 
+@@ -115,11 +115,11 @@
+     calc = StoichiometricCalculator()
+     res_short = calc.calculate(1.0, 1.0, {}, mass_unit="ton")
+     expected_short_co2 = 907.185 * (44.01 / 12.011) / 1000.0
+-    assert abs(res_short["co2_emissions"] - expected_short_co2) < 0.01
++    assert abs(res_short["results"]["co2"]["value"] - expected_short_co2) < 0.01
+ 
+     res_metric = calc.calculate(1.0, 1.0, {}, mass_unit="tonne")
+     expected_metric_co2 = 1000.0 * (44.01 / 12.011) / 1000.0
+-    assert abs(res_metric["co2_emissions"] - expected_metric_co2) < 0.01
++    assert abs(res_metric["results"]["co2"]["value"] - expected_metric_co2) < 0.01
+ 
+ 
+ def test_base_calculator_uncertainty_k_factor():
+@@ -126,16 +126,14 @@
+-    calc = BaseCalculator(gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
+-    u_pct, (low, high) = calc.calculate_uncertainty(
+-        activity_data=100.0,
+-        ad_uncertainty=0.05,
+-        ef_co2=1.0,
+-        ef_uncertainty=0.05,
+-        gwp=1.0,
+-        emissions_tco2e=100.0,
+-    )
+-    assert low < 86.5
+-    assert high > 113.5
+-    assert low > 80.0
+-    assert high < 120.0
++    calc = BaseCalculator("TestModule", "Section 1")
++    res = calc.calculate_uncertainty(
++        value=100.0,
++        relative_uncertainty=0.05,
++        coverage_factor=2.0,
++    )
++    assert res["coverage_factor"] == 2.0
++    assert res["confidence_level_pct"] == 95
++    assert abs(res["abs_uncertainty_95"] - 10.0) < 1e-6
++    assert abs(res["lower_bound"] - 90.0) < 1e-6
++    assert abs(res["upper_bound"] - 110.0) < 1e-6
+ 
+ 
+ def test_profile_location_immutability(client, test_users):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

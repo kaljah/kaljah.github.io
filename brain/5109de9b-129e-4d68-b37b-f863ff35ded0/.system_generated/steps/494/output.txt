@@ -1,0 +1,48 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -173,14 +173,34 @@
+     Returns:
+         dict with relative_uncertainty_1sigma, relative_uncertainty_95pct, total_value
+     """
+-    total_value = sum(s["value"] for s in source_list if s["value"] > 0)
+-    if total_value == 0:
+-        return {
+-            "relative_uncertainty_1sigma": 0.0,
+-            "relative_uncertainty_95pct": 0.0,
+-            "total_value": 0.0,
+-        }
+-    sum_sq = sum((s["value"] * s["relative_uncertainty"]) ** 2 for s in source_list)
++    if not source_list:
++        return {
++            "relative_uncertainty_1sigma": 0.0,
++            "relative_uncertainty_95pct": 0.0,
++            "total_value": 0.0,
++        }
++
++    valid_sources = []
++    for s in source_list:
++        val = float(s.get("value") or 0.0)
++        u_rel = s.get("relative_uncertainty")
++        if u_rel is None:
++            u_rel = s.get("uncertainty") or s.get("uncertainty_1sigma") or 0.05
++        u_rel = float(u_rel or 0.0)
++        valid_sources.append({"value": val, "relative_uncertainty": u_rel})
++
++    total_value = sum(s["value"] for s in valid_sources if s["value"] > 0)
++    if total_value <= 0:
++        return {
++            "relative_uncertainty_1sigma": 0.0,
++            "relative_uncertainty_95pct": 0.0,
++            "total_value": 0.0,
++        }
++    sum_sq = sum(
++        (s["value"] * s["relative_uncertainty"]) ** 2
++        for s in valid_sources
++        if s["value"] > 0
++    )
+     u_1sigma = math.sqrt(sum_sq) / total_value
+     return {
+         "relative_uncertainty_1sigma": u_1sigma,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

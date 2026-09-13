@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\satellite.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -277,7 +277,7 @@
+     )
+ 
+     thresh = facility.reconciliation_threshold or 20.0
+-    if bottom_up_emissions > 0:
++    if bottom_up_emissions > 0 and estimated_annual_tch4 > 0:
+         variance_pct = round(
+             ((estimated_annual_tch4 - bottom_up_emissions) / bottom_up_emissions)
+             * 100.0,
+@@ -284,10 +284,13 @@
+         )
+         variance_flag = abs(variance_pct) > thresh
+-    elif estimated_annual_tch4 > 0:
++    elif bottom_up_emissions > 0 and estimated_annual_tch4 == 0:
++        variance_pct = None
++        variance_flag = False
++    elif estimated_annual_tch4 > 0 and bottom_up_emissions == 0:
+         variance_pct = None
+         variance_flag = True
+     else:
+-        variance_pct = 0.0
++        variance_pct = None
+         variance_flag = False
+ 
+     survey_status = "Verified" if (user and user.role in ["admin", "superuser"]) else "Pending"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

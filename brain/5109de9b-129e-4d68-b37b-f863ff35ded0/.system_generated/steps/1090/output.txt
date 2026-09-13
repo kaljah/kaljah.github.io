@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":147,"LineContent":"class CombustionCalculator(BaseCalculator):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1,"LineContent":"from .combustion import CombustionCalculator, FlaringCalculator"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":34,"LineContent":"            \"stationary_combustion\": CombustionCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":35,"LineContent":"            \"combustion\": CombustionCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_combustion.py","LineNumber":1,"LineContent":"from calculations.combustion import FlaringCalculator, CombustionCalculator"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_combustion.py","LineNumber":35,"LineContent":"    calc = CombustionCalculator()"}

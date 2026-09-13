@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+Re-extracting code files in . (no LLM needed)...
+  AST extraction: 97/97 uncached files (100%) [8 workers]
+  warning: 13 source file(s) produced zero nodes and are absent from the graph: init-options.json, integration.json, gemini.manifest.json, speckit.manifest.json, .constitution-template.json (+8 more). A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+  warning: 24 file(s) had syntax errors and may be partially extracted: BatchReviewWizard.jsx (first error at line 470), BulkImportModal.jsx (first error at line 1585), ColumnMappingWizard.jsx (first error at line 1357), Scope1Form.jsx (first error at line 1362), Scope1ImportWizard.jsx (first error at line 778) (+19 more) (#2551)
+[graphify watch] community set changed since labeling (189 saved labels, 184 communities now; renamed 40 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.
+[graphify] backed up semantic+curated graph (6 files) -> 2026-09-14/
+[graphify watch] Rebuilt: 1982 nodes, 3877 edges, 184 communities
+[graphify watch] graph.json, graph.html and GRAPH_REPORT.md updated in graphify-out
+Code graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.
+Tip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.
+

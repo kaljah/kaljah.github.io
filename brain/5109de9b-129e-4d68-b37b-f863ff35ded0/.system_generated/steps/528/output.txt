@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\reports.py:269:        from models import Scope2Emission, Scope3Emission
+new\server\routes\reports.py:356:            q2 = Scope2Emission.query
+new\server\routes\reports.py:364:                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+new\server\routes\reports.py:365:            q2 = q2.filter(Scope2Emission.status == "Verified")
+new\server\routes\reports.py:457:        from models import Scope2Emission, Scope3Emission
+new\server\routes\reports.py:565:            q2 = Scope2Emission.query
+new\server\routes\reports.py:573:                q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
+new\server\routes\reports.py:575:                q2 = q2.filter(Scope2Emission.division.ilike(f"%{division.strip()}%"))
+new\server\routes\reports.py:577:                q2 = q2.filter(Scope2Emission.field.ilike(f"%{field.strip()}%"))
+new\server\routes\reports.py:582:                        Scope2Emission.activity.ilike(f"%{s_term}%"),
+new\server\routes\reports.py:583:                        Scope2Emission.grid_region.ilike(f"%{s_term}%"),
+new\server\routes\reports.py:586:            q2 = q2.filter(Scope2Emission.status == "Verified")
+
+
+

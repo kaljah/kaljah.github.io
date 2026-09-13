@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\fugitive.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -63,8 +63,8 @@
+ 
+         # Check if EF is already in tonnes
+         is_tonne = "tonne" in ef_unit.lower() or " mt" in ef_unit.lower()
+-        # Check if EF is already methane-based
+-        is_methane = "ch" in ef_unit.lower() or "methane" in ef_unit.lower()
++        # Check if EF is already methane-based (do not match substrings like 'component')
++        is_methane = any(x in ef_unit.lower() for x in ["ch4", "methane", "ch_4"])
+ 
+         total_ch4_raw = equipment_count * ef
+         if not is_methane:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

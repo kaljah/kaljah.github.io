@@ -1,0 +1,18 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-967
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-967.log
+Log output:
+<truncated 39 lines>
+it.py::test_audit_export_csv_and_formula_injection_defense PASSED [ 32%]
+tests/test_audit.py::test_audit_pagination_limits PASSED                 [ 34%]
+tests/test_audit_remediation.py::test_dispatcher_kg_per_tonne_factor PASSED [ 35%]
+tests/test_audit_remediation.py::test_dispatcher_fraction_boundary PASSED [ 36%]
+tests/test_audit_remediation.py::test_stoichiometry_short_ton PASSED     [ 37%]
+tests/test_audit_remediation.py::test_base_calculator_uncertainty_k_factor PASSED [ 38%]
+tests/test_audit_remediation.py::test_profile_location_immutability PASSED [ 39%]
+tests/test_audit_remediation.py::test_audit_sod_for_it_admin PASSED      [ 40%]
+tests/test_audit_remediation.py::test_scope3_server_side_calculation PASSED [ 41%]
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit PASSED [ 42%]
+tests/test_calculations_page.py::test_calculations_rbac_and_it_admin PASSED [ 43%]
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker PASSED [ 45%]
+Last progress: 0s ago

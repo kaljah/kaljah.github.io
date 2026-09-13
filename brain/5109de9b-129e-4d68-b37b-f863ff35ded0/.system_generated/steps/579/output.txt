@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":184,"LineContent":"            from calculations.constants import get_active_gwp"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":190,"LineContent":"            gwp_std = \"AR5\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":198,"LineContent":"                    gwp_std = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":199,"LineContent":"                        prefs.get(\"gwp_standard\") or prefs.get(\"gwpModel\") or \"AR5\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":203,"LineContent":"            if gwp_std not in [\"AR4\", \"AR5\", \"AR6\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":207,"LineContent":"                    gwp_std = _app_settings.get(\"gwp_standard\", \"AR5\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":209,"LineContent":"                    gwp_std = \"AR5\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":210,"LineContent":"            gwp_dict = get_active_gwp(standard=gwp_std)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":310,"LineContent":"                        gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":311,"LineContent":"                        gwp_std=gwp_std,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1226,"LineContent":"    gwp_dict=None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1227,"LineContent":"    gwp_std=\"AR5\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1366,"LineContent":"            calc_data, factor_data, gwp_dict=gwp_dict"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1374,"LineContent":"            or calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1442,"LineContent":"            gwp_version=gwp_std,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":168,"LineContent":"        gwp_dict=None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":330,"LineContent":"        total_co2e = calculate_co2e(co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":373,"LineContent":"        gwp_dict=None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":514,"LineContent":"            co2_tonnes, ch4_tonnes, n2o_tonnes, gwp_dict=gwp_dict"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":2,"LineContent":"Global Warming Potential (GWP) Constants \u0026 Resolution Engine"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":7,"LineContent":"GWP_AR4 = {\"CO2\": 1.0, \"CH4\": 25.0, \"N2O\": 298.0, \"CH4_20\": 72.0, \"N2O_20\": 289.0}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":10,"LineContent":"GWP_AR5 = {\"CO2\": 1.0, \"CH4\": 28.0, \"N2O\": 265.0, \"CH4_20\": 82.5, \"N2O_20\": 268.0}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":13,"LineContent":"GWP_AR6 = {\"CO2\": 1.0, \"CH4\": 27.9, \"N2O\": 273.0, \"CH4_20\": 82.5, \"N2O_20\": 273.0}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":16,"LineContent":"GWP_STANDARDS = {\"AR4\": GWP_AR4, \"AR5\": GWP_AR5, \"AR6\": GWP_AR6}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":19,"LineContent":"GWP_DEFAULT_GWP = GWP_AR5"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":21,"LineContent":"# Standard GWP for the application (default to AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":22,"LineContent":"DEFAULT_GWP = GWP_AR5"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":25,"LineContent":"def get_active_gwp(standard=None, gwp_dict=None, horizon=\"100\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":27,"LineContent":"    Dynamically resolve the active GWP factors dictionary based on standard and horizon."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":30,"LineContent":"    :param gwp_dict: Optional explicit override dictionary"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":34,"LineContent":"    if gwp_dict is not None and isinstance(gwp_dict, dict) and \"CH4\" in gwp_dict:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":35,"LineContent":"        return gwp_dict"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":42,"LineContent":"            std_key = str(_app_settings.get(\"gwp_standard\") or \"AR5\").upper().strip()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\constants.py","LineNumber":46,"LineContent":"    std_profile = GWP_STANDARDS.get(std_key, GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":177,"LineContent":"        gwp_dict=None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":178,"LineContent":"        gwp_standard=None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":185,"LineContent":"        from .constants import get_active_gwp"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":187,"LineContent":"        if gwp_dict is None:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":188,"LineContent":"            gwp_dict = get_active_gwp(standard=gwp_standard)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":203,"LineContent":"                gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":290,"LineContent":"                        gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":298,"LineContent":"                gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":364,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":427,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":446,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":501,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":571,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":627,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":695,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":731,"LineContent":"                    gwp_dict=gwp_dict,"}
+(...218 more results not shown)

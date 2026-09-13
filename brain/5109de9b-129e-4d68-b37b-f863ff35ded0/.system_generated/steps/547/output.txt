@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\reports.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -365,6 +365,19 @@
+             q2 = q2.filter(Scope2Emission.status == "Verified")
+             for e in q2.all():
+                 m_val = e.month if e.month is not None else 1
++                st = (e.source_type or "Electricity").strip().lower()
++                if "steam" in st:
++                    s2_amount = e.steam_ton or 0
++                    s2_unit = "tons"
++                elif "heat" in st:
++                    s2_amount = e.heat_mmbtu or 0
++                    s2_unit = "MMBtu"
++                elif "cooling" in st:
++                    s2_amount = e.cooling_ton or 0
++                    s2_unit = "tons"
++                else:
++                    s2_amount = e.electricity_kwh or 0
++                    s2_unit = "kWh"
+                 emissions_data.append(
+                     {
+                         "scope": 2,
+@@ -371,8 +371,8 @@
+                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
+                         "process_type": f"Scope 2: {e.source_type or 'Electricity'}",
+                         "fuel_type": e.grid_region or "Grid",
+-                        "amount": e.electricity_kwh or 0,
+-                        "unit": "kWh",
++                        "amount": s2_amount,
++                        "unit": s2_unit,
+                         "co2_emissions": 0,
+                         "ch4_emissions": 0,
+                         "n2o_emissions": 0,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

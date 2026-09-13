@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                   
+---------- ----                                                   
+       200 @scope3_bp.route("/<int:emission_id>", methods=["PUT"])
+
+
+

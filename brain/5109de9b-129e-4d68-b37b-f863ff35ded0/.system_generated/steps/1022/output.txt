@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -422,7 +422,8 @@
+ 
+ def test_bulk_anomaly_flag_persistence(client, test_users):
+     """Verify that background anomaly detection flags are stored in emission.qa_flag."""
+-    from background_processor import anomaly_detector
++    from calculations.anomaly import AnomalyDetector
++    anomaly_detector = AnomalyDetector()
+     with app.app_context():
+         # High value that triggers outlier flag
+         emission = Emission(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

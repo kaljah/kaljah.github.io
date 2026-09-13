@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+FullName                              
+--------                              
+C:\Users\samsung\Desktop\H2\Dockerfile
+
+
+
