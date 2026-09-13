@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\emissions.py:36:@emissions_bp.route("/", methods=["GET"])
+new\server\routes\emissions.py:431:@emissions_bp.route("/bulk-upload", methods=["POST"])
+new\server\routes\emissions.py:942:@emissions_bp.route("/template/csv", methods=["GET"])
+new\server\routes\emissions.py:1999:@emissions_bp.route("/template/excel", methods=["GET"])
+new\server\routes\emissions.py:2834:@emissions_bp.route("/upload/start", methods=["POST"])
+new\server\routes\emissions.py:2906:@emissions_bp.route("/upload/status/<job_id>", methods=["GET"])
+new\server\routes\emissions.py:2915:@emissions_bp.route("/upload/errors/<job_id>", methods=["GET"])
+new\server\routes\emissions.py:2930:@emissions_bp.route("/", methods=["POST"])
+new\server\routes\emissions.py:3242:@emissions_bp.route("/<id>", methods=["DELETE"])
+new\server\routes\emissions.py:3299:@emissions_bp.route("/<id>", methods=["PUT"])
+new\server\routes\emissions.py:3520:@emissions_bp.route("/bulk-delete", methods=["POST"])
+new\server\routes\emissions.py:3562:@emissions_bp.route("/import", methods=["POST"])
+new\server\routes\emissions.py:3879:@emissions_bp.route("/export", methods=["GET"])
+new\server\routes\emissions.py:4317:@emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
+new\server\routes\emissions.py:4372:@emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
+new\server\routes\emissions.py:4423:@emissions_bp.route("/approve/batch", methods=["POST"])
+new\server\routes\emissions.py:4509:@emissions_bp.route("/reject/batch", methods=["POST"])
+new\server\routes\emissions.py:4606:@emissions_bp.route("/erp/sync", methods=["POST"])
+new\server\routes\emissions.py:4635:@emissions_bp.route("/pending", methods=["GET"])
+
+
+
