@@ -1,0 +1,10 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-2158
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-2158.log
+Log output:
+Re-extracting code files in . (no LLM needed)...
+  AST extraction: 94/94 uncached files (100%) [8 workers]
+  warning: 13 source file(s) produced zero nodes and are absent from the graph: init-options.json, integration.json, gemini.manifest.json, speckit.manifest.json, .constitution-template.json (+8 more). A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+  warning: 24 file(s) had syntax errors and may be partially extracted: BatchReviewWizard.jsx (first error at line 470), BulkImportModal.jsx (first error at line 1585), ColumnMappingWizard.jsx (first error at line 1357), Scope1Form.jsx (first error at line 1362), Scope1ImportWizard.jsx (first error at line 778) (+19 more) (#2551)
+
+Last progress: 15s ago

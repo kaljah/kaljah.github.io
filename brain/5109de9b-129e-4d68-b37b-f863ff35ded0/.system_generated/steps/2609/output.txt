@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -481,6 +481,18 @@
+                 message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+             )
+         db.session.commit()
++
++    if imported_count > 0:
++        log_activity_and_notify(
++            action="BULK_IMPORT",
++            record_id=f"count:{imported_count}",
++            user=user,
++            request=request,
++            entity="Scope3Emission",
++            details=f"Bulk imported {imported_count} Scope 3 records (Status: {bulk_status})",
++        )
++        db.session.commit()
++
+     return jsonify(
+         {"message": f"Successfully imported {imported_count} records", "errors": errors}
+     ), (200 if not errors else 207)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,149 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+__________ test_custom_factor_percentage_uncertainty_in_add_emission __________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):
+        """Defect 4: Verify custom factor with general uncertainty 5.0 is divided by 100 to 0.05."""
+        from models import CustomFactor
+        with app.app_context():
+            cf = CustomFactor.query.filter_by(name="Test 5% Factor Audit").first()
+            if not cf:
+>               cf = CustomFactor(
+                    name="Test 5% Factor Audit",
+                    facility_id=test_users["facility_id"],
+                    co2_factor=1.5,
+                    ch4_factor=0.01,
+                    n2o_factor=0.001,
+                    unit="m3",
+                    uncertainty=5.0,  # 5%
+                    status="approved",
+                    approved_by=test_users["admin"],
+                )
+
+tests\test_audit_remediation.py:977: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<string>:4: in __init__
+    ???
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:564: in _initialize_instance
+    with util.safe_reraise():
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:562: in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <CustomFactor (transient 1741442696064)>
+kwargs = {'name': 'Test 5% Factor Audit', 'facility_id': 14, 'co2_factor': 1.5, 'ch4_factor': 0.01, ...}
+
+    def _declarative_constructor(self: Any, **kwargs: Any) -> None:
+        """A simple constructor that allows initialization from kwargs.
+    
+        Sets attributes on the constructed instance using the names and
+        values in ``kwargs``.
+    
+        Only keys that are present as
+        attributes of the instance's class are allowed. These could be,
+        for example, any mapped columns or relationships.
+        """
+        cls_ = type(self)
+        for k in kwargs:
+            if not hasattr(cls_, k):
+>               raise TypeError(
+                    "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+                )
+E               TypeError: 'facility_id' is an invalid keyword argument for CustomFactor
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py:2139: TypeError
+_________________ test_update_emission_preserves_calc_payload _________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_update_emission_preserves_calc_payload(client, test_users):
+        """Defect 5: Verify update_emission merges existing process_type and inputs."""
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        payload = {
+            "facility_id": test_users["facility_id"],
+            "year": 2024,
+            "month": 8,
+            "process_type": "Venting",
+            "quantity": 500.0,
+            "unit": "m3",
+            "calc_method": "engineering_estimate",
+            "status": "Draft",
+        }
+        res = client.post("/api/emissions", json=payload)
+        assert res.status_code == 201
+>       em_id = res.get_json()["record"]["id"]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests\test_audit_remediation.py:1031: KeyError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/emissions 201 [0.021s] [ReqID: 33001b85-80c1-415d-8a4a-9e889c6290b3]
+________________ test_delete_mitigation_record_admin_required _________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_delete_mitigation_record_admin_required(client, test_users):
+        """Defect 11: Verify regular users cannot delete corporate MitigationRecord."""
+        from models import MitigationRecord
+        with app.app_context():
+            rec = MitigationRecord(
+                year=2024,
+                type="Reforestation",
+                quantity_tco2e=500.0,
+                notes="Corporate offset",
+            )
+            db.session.add(rec)
+            db.session.commit()
+            rec_id = rec.id
+    
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["user"]
+        res_user = client.delete(f"/api/managedata/mitigation/rec_{rec_id}")
+>       assert res_user.status_code == 403
+E       assert 404 == 403
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+tests\test_audit_remediation.py:1224: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 DELETE /api/managedata/mitigation/rec_2 404 [0.001s] [ReqID: e62b3cb7-c94e-47cb-a554-2a0b855902f7]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3123: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    facility = Facility.query.get(data["facility_id"])
+
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3167: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    goal = Goal.query.get(current_year)
+
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3226: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    and Facility.query.get(data["facility_id"])
+
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3224: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Facility.query.get(data["facility_id"]).name
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_audit_remediation.py::test_scope2_steam_recalculation_enthalpy
+FAILED tests/test_audit_remediation.py::test_scope3_eeio_per_thousand_scaling_defect
+FAILED tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission
+FAILED tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+FAILED tests/test_audit_remediation.py::test_delete_mitigation_record_admin_required
+================ 5 failed, 34 deselected, 5 warnings in 3.84s =================
+

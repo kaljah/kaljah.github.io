@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\services\sentinel5p.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -428,6 +428,11 @@
+           Total Column Air Mass = P_surface / g (~ 10,332.27 kg air / m2)
+           Delta_Mass_CH4 = (delta_ch4_ppb * 1e-9) * (M_CH4 / M_air) * Total_Column_Air_Mass
+           Q = Delta_Mass_CH4 * Box_Width_m * Wind_Speed_m_s * 3600
++
++        Note on Column Physics & PBL Height:
++          TROPOMI measures the column-averaged dry-air mixing ratio (XCH4) across the entire atmospheric column.
++          The column mass enhancement is strictly governed by surface pressure Ps / g. The parameter `pbl_height_m`
++          is accepted for boundary-layer transport profile scaling and downstream API compatibility.
+         """
+         if delta_ch4_ppb <= 0:
+             return 0.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

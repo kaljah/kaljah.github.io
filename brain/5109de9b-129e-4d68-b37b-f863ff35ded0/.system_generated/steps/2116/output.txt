@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":588,"LineContent":"    rate = sentinel5p_service.estimate_emission_rate_from_anomaly("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":260,"LineContent":"        measured_rate_kg_hr = sentinel5p_service.estimate_emission_rate_from_anomaly("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\sentinel5p.py","LineNumber":416,"LineContent":"    def estimate_emission_rate_from_anomaly("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":346,"LineContent":"        q1 = service.estimate_emission_rate_from_anomaly(delta_ch4_ppb=20.0, wind_speed_m_s=3.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":347,"LineContent":"        q2 = service.estimate_emission_rate_from_anomaly(delta_ch4_ppb=40.0, wind_speed_m_s=3.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":351,"LineContent":"        q_double_wind = service.estimate_emission_rate_from_anomaly(delta_ch4_ppb=20.0, wind_speed_m_s=6.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":358,"LineContent":"        assert service.estimate_emission_rate_from_anomaly(0.0) == 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":359,"LineContent":"        assert service.estimate_emission_rate_from_anomaly(-10.0) == 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":10,"LineContent":"    emission_rate = sentinel5p_service.estimate_emission_rate_from_anomaly("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":15,"LineContent":"    assert sentinel5p_service.estimate_emission_rate_from_anomaly(0.0) == 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":16,"LineContent":"    assert sentinel5p_service.estimate_emission_rate_from_anomaly(-10.0) == 0.0"}

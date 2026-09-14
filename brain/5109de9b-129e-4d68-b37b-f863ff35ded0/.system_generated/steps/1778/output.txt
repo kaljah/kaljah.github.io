@@ -1,0 +1,18 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-1776
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-1776.log
+Log output:
+<truncated 28 lines>
+estInputLimits::test_limit_all_capped_at_5000 PASSED [ 15%]
+tests/test_api_security.py::TestInputLimits::test_large_payload_rejected PASSED [ 15%]
+tests/test_api_security.py::TestInputLimits::test_wildcard_search_does_not_crash PASSED [ 16%]
+tests/test_api_security.py::TestRateLimiting::test_login_rate_limit PASSED [ 17%]
+tests/test_api_security.py::TestCalculationIntegrity::test_calculation_error_returns_422_not_zero PASSED [ 18%]
+tests/test_audit.py::test_audit_rbac_unauthenticated PASSED              [ 19%]
+tests/test_audit.py::test_audit_rbac_regular_user_forbidden PASSED       [ 19%]
+tests/test_audit.py::test_audit_admin_and_it_admin_authorized PASSED     [ 20%]
+tests/test_audit.py::test_audit_search_and_filtering PASSED              [ 21%]
+tests/test_audit.py::test_audit_entity_id_fallback PASSED                [ 22%]
+tests/test_audit.py::test_audit_stats_endpoint PASSED                    [ 23%]
+tests/test_audit.py::test_audit_export_csv_and_formula_injection_defense 
+Last progress: 0s ago

@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\anomaly.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -49,7 +49,7 @@
+ 
+         if std == 0:
+             # All historical values identical — flag only if new value differs significantly
+-            if mean > 0 and abs(value - mean) / mean > 0.5:
++            if (mean > 0 and abs(value - mean) / mean > 0.5) or (mean == 0 and value > 0):
+                 return {
+                     "flagged": True,
+                     "z_score": None,
+@@ -56,5 +56,5 @@
+                     "std": 0,
+-                    "expected_range": [mean * 0.5, mean * 1.5],
++                    "expected_range": [mean * 0.5, mean * 1.5] if mean > 0 else [0.0, 0.0],
+                     "reason": "constant_history_deviation",
+                     "message": f"Historical values are constant ({mean:.1f}) but new value is {value:.1f}."
+                 }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

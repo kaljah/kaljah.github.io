@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":39,"LineContent":"    ComponentFugitiveCalculator,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":170,"LineContent":"        assert ComponentFugitiveCalculator().calculate({}, 0.85, {})[\"total_co2e\"] == 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":27,"LineContent":"    ComponentFugitiveCalculator,"}

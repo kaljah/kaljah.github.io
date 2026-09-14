@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -98,9 +98,13 @@
+     # Enforce server-side calculation from activity_data and emission_factor to prevent client-side tampering
+     if activity_data > 0 and emission_factor > 0:
+         factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "").lower()
+-        is_factor_tonne = any(t in factor_unit for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]) or factor_unit.startswith("t ")
++        calc_method = str(data.get("calculation_method") or "").lower()
++        is_factor_tonne = any(t in factor_unit for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]) or factor_unit.startswith("t ")
++        is_factor_per_thousand = any(t in factor_unit for t in ["1000", "1,000", "1k"]) or ("eeio" in calc_method and not is_factor_tonne)
+         if is_factor_tonne:
+             co2e_val = activity_data * emission_factor
++        elif is_factor_per_thousand:
++            co2e_val = (activity_data * emission_factor) / 1000000.0
+         else:
+             co2e_val = (activity_data * emission_factor) / 1000.0
+     elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

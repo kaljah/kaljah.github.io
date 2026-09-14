@@ -1,0 +1,48 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -374,6 +374,8 @@
+         press_unit="psig",
+         z_factor=1.0,
+         gwp_dict=None,
++        combustion_efficiency=None,
++        destruction_efficiency=None,
+         **comps,
+     ):
+         """
+@@ -384,20 +384,23 @@
+             ["volume", "ch4_fraction"],
+         )
+ 
+-        # Determine efficiencies based on flare type
++        # Determine efficiencies based on flare type or custom parameter overrides
+         ft = str(flare_type or "elevated").lower().strip().replace("-", "_").replace(" ", "_")
+         if ft in ["enclosed", "enclosed_ground", "ground"]:
+-            eta_c = 0.996
+-            eta_d = 0.995  # Higher for enclosed
++            default_eta_c = 0.996
++            default_eta_d = 0.995  # Higher for enclosed
+         elif ft in ["elevated", "steam_assisted", "air_assisted", "unassisted", "flare", "open"]:
+-            eta_c = 0.984
+-            eta_d = 0.98
++            default_eta_c = 0.984
++            default_eta_d = 0.98
+         elif ft in ["pit", "open_pit", "other", "candle"]:
+-            eta_c = 0.920
+-            eta_d = 0.95
+-        else:
+-            eta_c = 0.984
+-            eta_d = 0.98
++            default_eta_c = 0.920
++            default_eta_d = 0.95
++        else:
++            default_eta_c = 0.984
++            default_eta_d = 0.98
++
++        eta_c = float(combustion_efficiency) if (combustion_efficiency is not None and float(combustion_efficiency) > 0) else default_eta_c
++        eta_d = float(destruction_efficiency) if (destruction_efficiency is not None and float(destruction_efficiency) > 0) else default_eta_d
+ 
+         # Normalize gas volume if actual temperature/pressure supplied
+         vol_std = float(gas_volume)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,62 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -929,11 +929,11 @@
+     with client.session_transaction() as sess:
+         sess["user_id"] = test_users["admin"]
+ 
+-    # Update steam: heat=200 MMBtu, factor=0.06, steam enthalpy=2.75, boiler eff=0.8
++    # Update steam: steam_ton=200.0, factor=0.06, steam enthalpy=2.75, boiler eff=0.8
+     # enthalpy_mult = 2.75 / 0.8 = 3.4375
+     # co2e = 200 * 0.06 * 3.4375 = 41.25 tCO2e
+     res = client.put(f"/api/scope2/{rec_id}", json={
+-        "heat_mmbtu": 200.0,
++        "steam_ton": 200.0,
+         "emission_factor": 0.06,
+         "steam_enthalpy": 2.75,
+         "boiler_efficiency": 0.8,
+@@ -964,7 +964,7 @@
+     assert res.status_code == 201
+     data = res.get_json()
+     # 500,000 * 3200.1 / 1,000,000 = 1600.05 tCO2e
+-    assert pytest.approx(data["record"]["co2e"], 0.01) == 1600.05
++    assert pytest.approx(data["co2e"], 0.01) == 1600.05
+ 
+ 
+ def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):
+@@ -974,7 +974,6 @@
+         if not cf:
+             cf = CustomFactor(
+                 name="Test 5% Factor Audit",
+-                facility_id=test_users["facility_id"],
+                 co2_factor=1.5,
+                 ch4_factor=0.01,
+                 n2o_factor=0.001,
+@@ -981,6 +981,5 @@
+                 uncertainty=5.0,  # 5%
+-                status="approved",
+-                approved_by=test_users["admin"],
++                created_by=test_users["admin"],
+             )
+             db.session.add(cf)
+             db.session.commit()
+@@ -1002,7 +1002,7 @@
+     assert res.status_code == 201
+     data = res.get_json()
+     with app.app_context():
+-        em = db.session.get(Emission, data["record"]["id"])
++        em = db.session.get(Emission, data["id"])
+         assert em.uncertainty is not None
+         assert pytest.approx(em.uncertainty, 0.001) == 0.05
+ 
+@@ -1023,7 +1023,7 @@
+     }
+     res = client.post("/api/emissions", json=payload)
+     assert res.status_code == 201
+-    em_id = res.get_json()["record"]["id"]
++    em_id = res.get_json()["id"]
+ 
+     update_res = client.put(f"/api/emissions/{em_id}", json={"quantity": 1000.0})
+     assert update_res.status_code == 200
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

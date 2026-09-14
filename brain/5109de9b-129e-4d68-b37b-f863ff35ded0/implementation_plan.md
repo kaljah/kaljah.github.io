@@ -1,42 +1,82 @@
-# Numerical Methods & Mathematical Logic Remediation Plan
+# Comprehensive Defect Remediation Implementation Plan
 
-Application of drop-in verified mathematical fixes for all 8 findings identified during the exhaustive numerical audit of calculation logic, data transformations, and mathematical invariants.
+This implementation plan addresses and resolves all 12 defects identified during the full-stack system audit across computation, concurrency, security, and lifecycle domains.
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Maker-Checker Segregation of Duties Enforced in QA/QC**: Reviewers cannot verify records they submitted themselves in the QA/QC dashboard, mirroring the emissions approval rules.
+> - **Base Year Recalculation Authorization Restatement**: Access to `POST /api/dashboard/base-year-recalculation` is restricted to Admins and Superusers, harmonizing with `/api/base-years`.
+> - **Scope 3 Spend-Based EEIO Correction**: Fixes the $1000\times$ unit discrepancy for Category 1 spend-based calculations ($kg \text{ CO}_2\text{e} / \$1,000 \to t \text{ CO}_2\text{e}$).
 
 ---
 
-## Scope of Changes
+## Proposed Changes
 
-### 1. Unit & Dimensional Precision (`new/server/calculations/units.py`)
-- **Mscf / Mcf / MMscf Invariant Registry**: Expand `CONVERSIONS` with bidirectional definitions for `mscf_to_m3`, `m3_to_mscf`, `mcf_to_m3`, `m3_to_mcf`, `mmscf_to_scf`, `scf_to_mmscf`, and align high-precision physical constants ($0.028316846592\text{ m}^3/\text{scf}$) to prevent round-trip drift.
+Grouped by component layer:
 
-### 2. Conservation of Mass in Midstream Dehydration (`new/server/calculations/midstream.py`)
-- **Dehydrator Combustion $\text{CO}_2$ Product**: When regenerator still vent or flash tank stream is routed to thermal destruction (`flare`, `combustor`, `thermal_oxidizer`), compute the stoichiometric conversion of oxidized methane to carbon dioxide:
-  $$\text{CO}_{2,\text{combusted}} = \text{CH}_{4,\text{combusted}} \times \left(\frac{44.01}{16.04}\right)$$
-- Propagate Tier-aware uncertainty for generated $\text{CO}_2$, update `total_co2e`, and return `co2=co2_res`.
+### 1. Web & Real-Time Communications
+#### [MODIFY] [notifications.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/notifications.py)
+- Initialize `last_heartbeat = start_time` before the while loop in `stream_notifications.generate()` to prevent `UnboundLocalError`.
 
-### 3. Dashboard KPI Normalization & Boundary Invariants (`new/server/routes/dashboard.py`)
-- **Gas Production Normalization**: In `_query_intensity_stats`, add explicit branch for `g_unit == "mmscf"` scaling `gas *= 1000.0` (Mscf) and `gas_m3 = gas * 28316.8` ($\text{m}^3$), eliminating $1,000\times$ BOE deficit and artificial intensity spikes.
-- **Flaring Volume Normalization**: In `_query_intensity_stats`, add `elif unit == "mmscf": qty *= 28316.8` ($\text{m}^3$), eliminating $28,316.8\times$ under-reporting of flaring volume.
-- **IEEE 754 Floating-Point Regularization**: Round `methane_loss_rate_pct` and `flaring_rate_pct` to 4 decimal places to prevent $\epsilon \approx 10^{-16}$ float drift triggering false positive regulatory warnings.
-- **Segment-Aware OGMP Target Status**: In `pathway_status` and `ogmp_target_status`, replace hardcoded `0.20` with segment-specific `ogmp_target` ($0.20\%$ upstream, $0.05\%$ midstream).
-- **SBTi Zero-Actual Preservation**: In `get_sbti_trajectory`, preserve valid reporting periods where actual emissions reached $0.0\text{ tCO}_2\text{e}$ by testing candidate year membership rather than filtering `v > 0`.
+### 2. Computational & Numerical Logic
+#### [MODIFY] [scope2.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/scope2.py)
+- In `update_scope2_emission`, calculate indirect steam using the authoritative thermodynamic model (`_calc_indirect_steam`), including MMBtu enthalpy conversion ($2.0\times$) and boiler net efficiency division.
 
-### 4. Reconciliation Domain Edge-Case Safety (`new/server/routes/data.py` & `new/server/routes/satellite.py`)
-- **Non-Detection Variance Suppression**: When `bottom_up > 0` but `top_down == 0.0` (baseline/non-detection), set `variance_pct = None` and `variance_flag = False` to prevent spurious $-100.0\%$ failure flags.
+#### [MODIFY] [scope3.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/scope3.py)
+- In `create_scope3_emission`, detect spend-based factor units (`kg CO2e / $1000`) and divide by $1,000,000$ instead of $1,000$ to correctly output metric tonnes $\text{CO}_2\text{e}$.
+
+#### [MODIFY] [emissions.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/emissions.py)
+- In `add_emission`, divide general `cf.uncertainty` by $100.0$ when populating `factor_data["uncertainty"]`, eliminating the $100\times$ inflation bug.
+- In `update_emission`, merge existing record fields (`process_type`, `unit`, `fuel_type`, equipment ID, and calculation inputs) into `calc_payload` prior to calling `compute_emissions`, preventing partial updates from reverting to general combustion.
+
+### 3. Security, Authorization & RBAC
+#### [MODIFY] [scope3.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/scope3.py)
+- In `bulk_import_scope3`, verify that each resolved facility is within `allowed_fids`.
+
+#### [MODIFY] [scope2.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/scope2.py)
+- In `bulk_import_scope2`, block `it_admin`, retrieve `allowed_fids`, and filter out facilities outside the caller's authorized scope.
+
+#### [MODIFY] [qaqc.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/qaqc.py)
+- In `resolve_flagged_record` and `bulk_resolve`, block `it_admin` and enforce Maker-Checker segregation of duties (`record.created_by != user.id` when `resolution == "Verified"`).
+
+#### [MODIFY] [dashboard.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/dashboard.py)
+- In `create_base_year_recalculation`, restrict access to `admin` and `superuser`, block `it_admin`, populate `created_by`, update the `BaseYear` singleton, and record an audit log.
+
+#### [MODIFY] [data.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/data.py)
+- In `save_cbam_export`, verify `require_facility_access(user, record.facility_id)` on existing records before updating to eliminate IDOR.
+
+#### [MODIFY] [managedata.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/managedata.py)
+- In `delete_mitigation`, require `admin` or `superuser` role to delete generic `MitigationRecord` entries.
+
+#### [MODIFY] [auth.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/auth.py)
+- In `update_user`, enforce a strict whitelist check on `role` (`{"user", "superuser", "admin", "it_admin"}`).
+
+### 4. Concurrency & Background Processing
+#### [MODIFY] [background_processor.py](file:///c:/Users/samsung/Desktop/H2/new/server/background_processor.py)
+- Introduce `upload_jobs_lock = threading.Lock()` and wrap all access, pruning, and state transitions of `upload_jobs` with the lock.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- Run `pytest tests/ -v` to ensure zero regression across all existing 105 tests.
-- Add regression tests in `tests/test_audit_remediation.py` specifically targeting:
-  - `mmscf` gas production and flaring volume scaling in intensity stats.
-  - Midstream dehydrator stoichiometric $\text{CO}_2$ combustion output.
-  - Midstream $0.05\%$ OGMP compliance classification.
-  - Non-detection top-down zero survey variance behavior.
-  - SBTi trajectory selection with zero actuals.
-  - High-precision unit conversions (`mscf_to_m3`, `m3_to_mscf`).
+1. Run full existing test suite to ensure zero regressions:
+   ```powershell
+   pytest tests/ -v
+   ```
+2. Add dedicated test cases in `new/server/tests/test_audit_remediation.py`:
+   - `test_notifications_stream_heartbeat_unbound_fix`: Verify generator yields connected and handles heartbeats without `UnboundLocalError`.
+   - `test_scope2_update_indirect_steam_thermodynamic_accuracy`: Verify PUT preserves boiler efficiency and enthalpy.
+   - `test_scope3_spend_based_eeio_scale_correctness`: Verify Category 1 spend calculation divides by 1,000,000.
+   - `test_custom_factor_general_uncertainty_scale`: Verify `cf.uncertainty` is converted to relative decimal ($0.05$).
+   - `test_scope1_partial_update_preserves_process_type`: Verify partial quantity update on venting/fugitive does not revert to combustion.
+   - `test_bulk_import_scope2_and_3_rbac_enforcement`: Verify facilities outside allowed regions are rejected.
+   - `test_qaqc_resolve_maker_checker_enforcement`: Verify self-approval is rejected with 403.
+   - `test_dashboard_base_year_recalc_rbac`: Verify standard users cannot post recalculation events.
+   - `test_cbam_export_update_idor_protection`: Verify cannot mutate exports belonging to unauthorized facilities.
+   - `test_auth_update_user_role_whitelist`: Verify invalid role strings are rejected.
 
-### Frontend Production Build
-- Run `npm run build` in `new/client` to verify seamless client-side compilation.
+### Manual / System Verification
+- Compile frontend client bundle (`npm run build` in `new/client`) to ensure complete contract compatibility.
+- Synchronize knowledge graph via `graphify update .`.

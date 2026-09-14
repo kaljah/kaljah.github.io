@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":100,"LineContent":"        factor_unit = str(data.get(\"factor_unit\") or data.get(\"emission_factor_unit\") or \"\").lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":267,"LineContent":"        factor_unit = str(data.get(\"factor_unit\") or data.get(\"emission_factor_unit\") or getattr(emission, \"factor_unit\", \"\") or \"\").lower()"}

@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -841,7 +841,7 @@
+     # QA/QC Anomaly Detection
+     if spend_usd > 10000000:
+         emission.qa_flag = f"Outlier detected: activity data {spend_usd} exceeds 10,000,000 threshold"
+-        upload_jobs[job_id]["anomalies"].append({
++        _append_job_list(job_id, "anomalies", {
+             "row": row_idx,
+             "reason": emission.qa_flag,
+             "amount": spend_usd
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

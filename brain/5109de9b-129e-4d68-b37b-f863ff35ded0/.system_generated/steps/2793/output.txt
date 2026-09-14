@@ -1,0 +1,109 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 39 items / 37 deselected / 2 selected
+
+tests/test_audit_remediation.py::test_scope2_steam_recalculation_enthalpy FAILED [ 50%]
+tests/test_audit_remediation.py::test_scope3_eeio_per_thousand_scaling_defect FAILED [100%]
+
+================================== FAILURES ===================================
+__________________ test_scope2_steam_recalculation_enthalpy ___________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_scope2_steam_recalculation_enthalpy(client, test_users):
+        """Defect 2: Verify indirect steam update uses thermodynamic enthalpy formula."""
+        fid = test_users["facility_id"]
+        with app.app_context():
+            rec = Scope2Emission(
+                facility_id=fid,
+                year=2024,
+                month=5,
+                source_type="Steam / Purchased Heat",
+                heat_mmbtu=100.0,
+                emission_factor=0.06,
+                co2e=6.0,
+                status="Draft",
+                created_by=test_users["admin"],
+            )
+            db.session.add(rec)
+            db.session.commit()
+            rec_id = rec.id
+    
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        # Update steam: heat=200 MMBtu, factor=0.06, steam enthalpy=2.75, boiler eff=0.8
+        # enthalpy_mult = 2.75 / 0.8 = 3.4375
+        # co2e = 200 * 0.06 * 3.4375 = 41.25 tCO2e
+        res = client.put(f"/api/scope2/{rec_id}", json={
+            "heat_mmbtu": 200.0,
+            "emission_factor": 0.06,
+            "steam_enthalpy": 2.75,
+            "boiler_efficiency": 0.8,
+        })
+        assert res.status_code == 200
+        with app.app_context():
+            updated = db.session.get(Scope2Emission, rec_id)
+>           assert pytest.approx(updated.co2e, 0.01) == 41.25
+E           assert 6.0 � 0.06 == 41.25
+E             
+E             comparison failed
+E             Obtained: 41.25
+E             Expected: 6.0 � 0.06
+
+tests\test_audit_remediation.py:944: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 PUT /api/scope2/206 200 [0.005s] [ReqID: 6bab3db3-56f0-453e-94ac-58641b485f33]
+________________ test_scope3_eeio_per_thousand_scaling_defect _________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_scope3_eeio_per_thousand_scaling_defect(client, test_users):
+        """Defect 3: Verify Scope 3 spend-based EEIO scales per-$1000 factor by 1,000,000."""
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        payload = {
+            "facility_id": test_users["facility_id"],
+            "year": 2024,
+            "month": 6,
+            "category": "Category 1",
+            "sub_category": "Purchased Goods",
+            "activity_data": 500000.0,  # $500,000
+            "unit": "USD",
+            "emission_factor": 3200.1,  # 3,200.1 kg CO2e / $1,000
+            "factor_unit": "kg CO2e / $1,000",
+            "calculation_method": "Spend-based (EEIO)",
+        }
+        res = client.post("/api/scope3", json=payload)
+        assert res.status_code == 201
+        data = res.get_json()
+        # 500,000 * 3200.1 / 1,000,000 = 1600.05 tCO2e
+>       assert pytest.approx(data["record"]["co2e"], 0.01) == 1600.05
+                             ^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2e'
+
+tests\test_audit_remediation.py:968: KeyError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/scope3 201 [0.011s] [ReqID: ea42cfe7-8f70-45cc-83f8-e189e2c97a37]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_audit_remediation.py::test_scope2_steam_recalculation_enthalpy
+FAILED tests/test_audit_remediation.py::test_scope3_eeio_per_thousand_scaling_defect
+================= 2 failed, 37 deselected, 1 warning in 3.80s =================
+

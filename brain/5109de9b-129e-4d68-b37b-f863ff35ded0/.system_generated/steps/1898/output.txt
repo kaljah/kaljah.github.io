@@ -1,0 +1,160 @@
+
+The command exited with code 1.
+Output:
+<truncated 76 lines>
+            fuel_quantity=10000.0,
+            ef_co2=53.06,
+            ef_ch4=0.001,
+            ef_n2o=0.0001,
+            uncertainties={"_factor_source": "custom"},
+            hhv=1150.0,
+            ef_unit="kg/MMBtu",
+            fuel_unit="m3",
+            fuel_type="gas",
+        )
+        expected_mmbtu = 10000.0 * 35.3147 * (1150.0 / 1e6)
+        expected_co2 = (expected_mmbtu * 53.06) / 1000.0
+>       assert abs(res["co2"]["value"] - expected_co2) < 0.05
+                   ^^^^^^^^^^
+E       KeyError: 'co2'
+
+tests\test_tier_scope_kpi_numerical.py:108: KeyError
+__ TestScope1Tiers.test_scope1_tier3_gas_composition_stoichiometric_balance ___
+
+self = <test_tier_scope_kpi_numerical.TestScope1Tiers object at 0x0000024EFD903650>
+
+    def test_scope1_tier3_gas_composition_stoichiometric_balance(self):
+        """Tier 3: Detailed chromatographic gas composition (C1-C10) with carbon mass balance.
+        Composition: 80% CH4 (C1), 10% C2H6 (C2), 5% C3H8 (C3), 5% CO2 (native).
+        Total carbon moles per mole of fuel gas:
+          = 0.80*1 + 0.10*2 + 0.05*3 = 0.80 + 0.20 + 0.15 = 1.15 moles C.
+        Volume: 100,000 scf fuel gas.
+        Combustion efficiency: 99.5% (0.995).
+        Combusted CO2 volume = 100,000 scf * 0.028316846592 m3/scf * 1.15 * 0.995 = 3240.165 m3 CO2.
+        Combusted CO2 mass = 3240.165 m3 * 1.861 kg/m3 = 6030.01 kg CO2 = 6.0300 tCO2.
+        Native CO2 mass = (100,000 * 0.028316846592 * 0.05) * 1.861 = 263.49 kg = 0.2635 tCO2.
+        Total CO2 = 6.0300 + 0.2635 = 6.2935 tCO2.
+        Uncombusted CH4 slip = 100,000 * 0.028316846592 * 0.80 * (1 - 0.995) * 0.6785 = 7.685 kg = 0.007685 tCH4.
+        """
+        calc = CombustionCalculator()
+>       res = calc.calculate(
+            fuel_quantity=100.0,  # 100 Mscf = 100,000 scf
+            ef_co2=53.06,
+            ef_ch4=0.001,
+            ef_n2o=0.0001,
+            gas_composition={
+                "c1": 0.80,
+                "c2": 0.10,
+                "c3": 0.05,
+                "co2_comp": 0.05,
+            },
+            combustion_efficiency=0.995,
+            uncertainties={"_factor_source": "site_specific"},
+            fuel_unit="mscf",
+            fuel_type="gas",
+        )
+E       TypeError: CombustionCalculator.calculate() missing 2 required positional arguments: 'hhv' and 'ef_unit'
+
+tests\test_tier_scope_kpi_numerical.py:126: TypeError
+__________ TestScope1Tiers.test_scope1_tier2_flaring_dual_efficiency __________
+
+self = <test_tier_scope_kpi_numerical.TestScope1Tiers object at 0x0000024EFD9038F0>
+
+    def test_scope1_tier2_flaring_dual_efficiency(self):
+        """Tier 2 Flaring: Dual efficiency model (combustion efficiency vs destruction efficiency).
+        Gas flared: 50,000 m3 of gas with 90% CH4 (0.90 mol fraction).
+        Combustion efficiency eta_c = 98.0%, Destruction efficiency eta_d = 98.5%.
+        Combusted CH4 -> CO2: 50,000 * 0.90 * 0.980 = 44,100 m3 CH4 combusted.
+        CO2 mass = 44,100 m3 * 1.861 kg/m3 = 82,070.1 kg = 82.0701 tCO2.
+        Uncombusted CH4 emitted: 50,000 * 0.90 * (1.0 - 0.985) = 675 m3 CH4.
+        CH4 mass = 675 m3 * 0.6785 kg/m3 = 457.9875 kg = 0.45799 tCH4.
+        """
+        calc = FlaringCalculator()
+>       res = calc.calculate(
+            flare_volume=50000.0,
+            ch4_content=0.90,
+            flare_type="elevated",
+            combustion_efficiency=0.980,
+            destruction_efficiency=0.985,
+            uncertainties={"_factor_source": "custom"},
+            volume_unit="m3",
+        )
+E       TypeError: FlaringCalculator.calculate() missing 2 required positional arguments: 'gas_volume' and 'ch4_fraction'
+
+tests\test_tier_scope_kpi_numerical.py:162: TypeError
+_________ TestScope1Tiers.test_scope1_tier1_and_tier3_pneumatic_bleed _________
+
+self = <test_tier_scope_kpi_numerical.TestScope1Tiers object at 0x0000024EFD903B90>
+
+    def test_scope1_tier1_and_tier3_pneumatic_bleed(self):
+        """Tier 1 default pneumatic bleed vs Tier 3 measured bleed rates.
+        Tier 1: 10 continuous high-bleed devices * 8760 hrs * default 37.3 scf/hr * 85% CH4.
+        Tier 3: 5 low-bleed devices measured at 2.1 scf/hr with Coriolis calibration.
+        """
+        calc = PneumaticDeviceCalculator()
+        # Tier 1
+        res_t1 = calc.calculate(
+            count=10,
+            hours=8760,
+            bleed_rate=37.3,
+            ch4_content=0.85,
+            uncertainties={"_factor_source": "default"},
+        )
+        total_scf_ch4 = 10 * 8760 * 37.3 * 0.85
+        total_m3_ch4 = convert(total_scf_ch4, "scf", "m3")
+        expected_t1_ch4_tonnes = (total_m3_ch4 * CONVERSIONS["density_ch4"]) / 1000.0
+>       assert abs(res_t1["ch4"]["value"] - expected_t1_ch4_tonnes) < 1e-4
+                   ^^^^^^^^^^^^^
+E       KeyError: 'ch4'
+
+tests\test_tier_scope_kpi_numerical.py:192: KeyError
+_________ TestScope2Methods.test_scope2_location_based_grid_averages __________
+
+self = <test_tier_scope_kpi_numerical.TestScope2Methods object at 0x0000024EFD903DA0>
+
+    def test_scope2_location_based_grid_averages(self):
+        """Scope 2 Location-Based Method:
+        Emissions (tCO2e) = Electricity (kWh) � Grid Emission Factor (kg CO2e / kWh) / 1,000.
+        Test regional factors from electricity_factors.GRID_FACTORS:
+        - US Average: 0.386 kg/kWh
+        - France: 0.052 kg/kWh (nuclear baseload)
+        - Algeria: 0.518 kg/kWh (gas-dominated)
+        """
+        for region, expected_factor in [("US Average", 0.386), ("France", 0.052), ("Algeria", 0.518)]:
+            factor = GRID_FACTORS[region]["factor"]
+>           assert abs(factor - expected_factor) < 1e-4
+E           assert 0.0010000000000000009 < 0.0001
+E            +  where 0.0010000000000000009 = abs((0.385 - 0.386))
+
+tests\test_tier_scope_kpi_numerical.py:226: AssertionError
+_ TestUncertaintyQuantificationMath.test_coverage_factor_and_non_negative_bounds _
+
+self = <test_tier_scope_kpi_numerical.TestUncertaintyQuantificationMath object at 0x0000024EFD924770>
+
+    def test_coverage_factor_and_non_negative_bounds(self):
+        """GUM �6.2 Coverage Factor k=2.0 and non-negative lower bound:
+        If standard uncertainty is 60% (0.60), expanded 95% CI is 2 * 0.60 = 120% (1.20).
+        Lower bound = max(0.0, value * (1 - 1.20)) = 0.0 (clamped, no negative emissions).
+        Upper bound = value * (1 + 1.20) = 2.20 * value.
+        """
+        u = propagate_uncertainty(100.0, ef_uncertainty=0.60, activity_uncertainty=0.10, tier=Tier.T1)
+>       assert u["lower_bound"] == 0.0
+E       assert 39.17237469701781 == 0.0
+
+tests\test_tier_scope_kpi_numerical.py:571: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier1_combustion_default_ef
+FAILED tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier2_combustion_custom_hhv_and_density
+FAILED tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier3_gas_composition_stoichiometric_balance
+FAILED tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier2_flaring_dual_efficiency
+FAILED tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier1_and_tier3_pneumatic_bleed
+FAILED tests/test_tier_scope_kpi_numerical.py::TestScope2Methods::test_scope2_location_based_grid_averages
+FAILED tests/test_tier_scope_kpi_numerical.py::TestUncertaintyQuantificationMath::test_coverage_factor_and_non_negative_bounds
+=================== 7 failed, 15 passed, 1 warning in 2.84s ===================
+

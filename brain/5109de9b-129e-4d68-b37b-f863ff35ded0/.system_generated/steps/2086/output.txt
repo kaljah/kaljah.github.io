@@ -1,0 +1,23 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":553,"LineContent":"        (\"oil_unit\", \"oil unit\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":998,"LineContent":"    oil_unit = row.get(\"production_unit\") or row.get(\"oil_unit\") or \"bbl\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1014,"LineContent":"        existing.oil_unit = oil_unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1030,"LineContent":"        oil_unit=oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":200,"LineContent":"    oil_unit = db.Column(db.String(20), default=\"bbl\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":276,"LineContent":"                        oil_unit=\"bbl\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1065,"LineContent":"        ProductionData.oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1085,"LineContent":"        ProductionData.oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1096,"LineContent":"        o_unit = (rec.oil_unit or \"bbl\").lower().strip()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1381,"LineContent":"        ProductionData.oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1403,"LineContent":"        ProductionData.facility_id, ProductionData.oil_unit, ProductionData.gas_unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1420,"LineContent":"        o_unit = (rec.oil_unit or \"bbl\").lower().strip()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":50,"LineContent":"        'oilUnit': d.oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":81,"LineContent":"    oil_unit = data.get('oil_unit', 'bbl')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":98,"LineContent":"            existing.oil_unit = oil_unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":112,"LineContent":"                oil_unit=oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":123,"LineContent":"        log_details = f\"{action.title()} Production Data for {year}-{month}: {oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":255,"LineContent":"            if rec.get('oil_unit'): existing.oil_unit = rec.get('oil_unit')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":267,"LineContent":"                oil_unit=rec.get('oil_unit', 'bbl'),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":243,"LineContent":"            \"oil_unit\": \"bbl\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":257,"LineContent":"            \"oil_unit\": \"bbl\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":768,"LineContent":"            oil_unit=\"bbl\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":824,"LineContent":"            oil_unit=\"bbl\","}

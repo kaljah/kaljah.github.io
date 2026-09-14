@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -16,7 +16,7 @@
+ 
+ def _is_admin_or_superuser(user):
+     """Returns True if the user has QA/QC viewing rights (admin or superuser roles)."""
+-    return user and user.role in ["admin", "superuser", "it_admin"]
++    return user and user.role in ["admin", "superuser"]
+ 
+ 
+ @qaqc_bp.route("/dashboard", methods=["GET"])
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

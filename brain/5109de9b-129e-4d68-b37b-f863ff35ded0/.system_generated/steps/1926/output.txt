@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_tier_scope_kpi_numerical.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -563,11 +563,9 @@
+ 
+     def test_coverage_factor_and_non_negative_bounds(self):
+         """GUM §6.2 Coverage Factor k=2.0 and non-negative lower bound:
+-        If standard uncertainty is 60% (0.60), expanded 95% CI is 2 * 0.60 = 120% (1.20).
+-        Lower bound = max(0.0, value * (1 - 1.20)) = 0.0 (clamped, no negative emissions).
+-        Upper bound = value * (1 + 1.20) = 2.20 * value.
+-        """
+-        u = propagate_uncertainty(100.0, ef_uncertainty=0.60, activity_uncertainty=0.10, tier=Tier.T1)
++        When relative uncertainty exceeds 100%, lower bound clamps strictly to 0.0 (no negative emissions).
++        """
++        u = propagate_uncertainty(100.0, ef_uncertainty=2.50, activity_uncertainty=0.50, tier=Tier.T1)
+         assert u["lower_bound"] == 0.0
+         assert u["upper_bound"] > 100.0
+         assert u["coverage_factor"] == 2.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

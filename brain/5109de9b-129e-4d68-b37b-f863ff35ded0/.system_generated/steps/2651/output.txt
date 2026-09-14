@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3433,9 +3433,32 @@
+ 
+         gwp_dict = resolve_gwp_dict(user)
+         gwp_std = resolve_gwp_standard(user)
++        # Build merged calc_payload from existing source_payload / record fields and new data
++        calc_payload = {}
++        if record.source_payload:
++            try:
++                calc_payload = json.loads(record.source_payload)
++            except Exception:
++                calc_payload = {}
++        base_record_fields = {
++            "process_type": record.process_type,
++            "process": record.process_type,
++            "fuel_type": record.fuel_type,
++            "fuel": record.fuel_type,
++            "unit": record.unit,
++            "quantity": record.quantity,
++            "amount": record.quantity,
++            "calc_method": record.calc_method,
++            "factor_source": record.factor_source,
++        }
++        for k, v in base_record_fields.items():
++            if k not in calc_payload or calc_payload[k] is None:
++                calc_payload[k] = v
++        calc_payload.update(data)
++
+         try:
+             calculated_em, method = compute_emissions(
+-                data, factor_data, gwp_dict=gwp_dict
++                calc_payload, factor_data, gwp_dict=gwp_dict
+             )
+             record.co2_emissions = calculated_em["co2"]
+             record.ch4_emissions = calculated_em["ch4"]
+@@ -3443,6 +3443,7 @@
+             record.co2e_total = calculated_em["totalCo2e"]
+             record.calc_method = method
+             record.gwp_version = gwp_std
++            record.source_payload = json.dumps(calc_payload)
+ 
+             # Update record uncertainty
+             u_dict = factor_data.get("uncertainty", {})
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

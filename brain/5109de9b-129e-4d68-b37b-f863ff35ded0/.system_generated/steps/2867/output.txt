@@ -1,0 +1,87 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 39 items / 37 deselected / 2 selected
+
+tests/test_audit_remediation.py::test_dashboard_sbti_zero_actuals FAILED [ 50%]
+tests/test_audit_remediation.py::test_scope2_steam_recalculation_enthalpy PASSED [100%]
+
+================================== FAILURES ===================================
+______________________ test_dashboard_sbti_zero_actuals _______________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_dashboard_sbti_zero_actuals(client, test_users):
+        """Finding 11: Verify SBTi net-zero endpoint preserves legitimate 0.0 tCO2e actuals."""
+        from models import SbtiTarget
+        with app.app_context():
+            target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+            if not target:
+                target = SbtiTarget(
+                    base_year=2020,
+                    target_year=2030,
+                    base_year_emissions=1000.0,
+                    target_emissions=100.0,
+                    reduction_rate_pct=9.0,
+                    target_type="Net Zero",
+                    scope_coverage="Scope 1+2+3",
+                )
+                db.session.add(target)
+                db.session.commit()
+            test_year = target.base_year
+    
+            # Add a verified emission with 0.0 tCO2e for test_year
+            e_zero = Emission.query.filter_by(
+                facility_id=test_users["facility_id"], year=test_year
+            ).first()
+            if not e_zero:
+                e_zero = Emission(
+                    facility_id=test_users["facility_id"],
+                    year=test_year,
+                    month=1,
+                    process_type="combustion",
+                    fuel_type="Diesel",
+                    quantity=0.0,
+                    co2e_total=0.0,
+                    status="Verified",
+                )
+                db.session.add(e_zero)
+            else:
+                e_zero.co2e_total = 0.0
+                e_zero.status = "Verified"
+            db.session.commit()
+    
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        resp = client.get(f"/api/dashboard/sbti-trajectory?facility_id={test_users['facility_id']}")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert "trajectory" in data
+        traj_test = next((t for t in data["trajectory"] if t["year"] == str(test_year)), None)
+        assert traj_test is not None
+        # Verified 0.0 record must yield actual == 0.0, NOT None
+>       assert traj_test["actual"] == 0.0
+E       assert 11200.35 == 0.0
+
+tests\test_audit_remediation.py:700: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/dashboard/sbti-trajectory 200 [0.007s] [ReqID: 635cb730-24cd-48b7-8cdf-d4a5fb941584]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_audit_remediation.py::test_dashboard_sbti_zero_actuals - as...
+============ 1 failed, 1 passed, 37 deselected, 1 warning in 2.72s ============
+

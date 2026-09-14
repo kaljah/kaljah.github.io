@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -650,21 +650,19 @@
+ def test_dashboard_sbti_zero_actuals(client, test_users):
+     """Finding 11: Verify SBTi net-zero endpoint preserves legitimate 0.0 tCO2e actuals."""
+     from models import SbtiTarget
+-    with app.app_context():
+-        target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+-        if not target:
+-            target = SbtiTarget(
+-                base_year=2020,
+-                target_year=2030,
+-                base_year_emissions=1000.0,
+-                target_emissions=100.0,
+-                reduction_rate_pct=9.0,
+-                target_type="Net Zero",
+-                scope_coverage="Scope 1+2+3",
+-            )
+-            db.session.add(target)
+-            db.session.commit()
+-        test_year = target.base_year
++    test_year = 2015
++    with app.app_context():
++        target = SbtiTarget(
++            base_year=test_year,
++            target_year=2030,
++            base_year_emissions=1000.0,
++            target_emissions=100.0,
++            reduction_rate_pct=9.0,
++            target_type="Net Zero",
++            scope_coverage="Scope 1+2+3",
++        )
++        db.session.add(target)
++        db.session.commit()
+ 
+         # Add a verified emission with 0.0 tCO2e for test_year
+         e_zero = Emission.query.filter_by(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,18 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-2282
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-2282.log
+Log output:
+<truncated 24 lines>
+oved PASSED [ 10%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_health_does_not_expose_db PASSED [ 10%]
+tests/test_api_security.py::TestIDOR::test_user_cannot_delete_other_users_emission PASSED [ 11%]
+tests/test_api_security.py::TestIDOR::test_user_can_delete_own_emission PASSED [ 12%]
+tests/test_api_security.py::TestInputLimits::test_limit_all_capped_at_5000 PASSED [ 12%]
+tests/test_api_security.py::TestInputLimits::test_large_payload_rejected PASSED [ 13%]
+tests/test_api_security.py::TestInputLimits::test_wildcard_search_does_not_crash PASSED [ 14%]
+tests/test_api_security.py::TestRateLimiting::test_login_rate_limit PASSED [ 14%]
+tests/test_api_security.py::TestCalculationIntegrity::test_calculation_error_returns_422_not_zero PASSED [ 15%]
+tests/test_audit.py::test_audit_rbac_unauthenticated PASSED              [ 16%]
+tests/test_audit.py::test_audit_rbac_regular_user_forbidden PASSED       [ 16%]
+tests/test_audit.py::test_audit_admin_and_it_admin_authorized 
+Last progress: 0s ago

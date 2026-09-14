@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":6956,"LineContent":"-            'ogmp_gold_standard_target': 0.20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":6957,"LineContent":"+            'ogmp_gold_standard_target': 0.20 if 'upstream' in segment else 0.05,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":6956,"LineContent":"-            'ogmp_gold_standard_target': 0.20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":6957,"LineContent":"+            'ogmp_gold_standard_target': 0.20 if 'upstream' in segment else 0.05,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_routes_dashboard.py.txt","LineNumber":269,"LineContent":"-            'ogmp_gold_standard_target': 0.20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_routes_dashboard.py.txt","LineNumber":270,"LineContent":"+            'ogmp_gold_standard_target': 0.20 if 'upstream' in segment else 0.05,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":846,"LineContent":"        assert stats_mid[0][\"ogmp_gold_standard_target\"] == 0.05"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":856,"LineContent":"        assert stats_up[0][\"ogmp_gold_standard_target\"] == 0.20"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1353,"LineContent":"                \"ogmp_gold_standard_target\": 0.20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1928,"LineContent":"                \"ogmp_gold_standard_target\": ogmp_target,"}

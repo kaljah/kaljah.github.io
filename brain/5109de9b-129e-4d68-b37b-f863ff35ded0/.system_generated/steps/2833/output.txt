@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -23,6 +23,8 @@
+     boiler_eff = float(ci.get("boiler_eff", 0.80))
+     trans_loss = float(ci.get("trans_loss", 0.0))
+     ef_co2 = float(ci.get("ef_co2", _DEFAULT_BOILER_EF_KG_PER_MMBTU))
++    if 0 < ef_co2 < 1.0:
++        ef_co2 = ef_co2 * 1000.0
+ 
+     # Normalise input to MMBtu
+     # Conversion factors:
+@@ -41,11 +41,13 @@
+     elif unit in ["mwh", "mw-hr"]:
+         energy_mmbtu = amount * 3.412142
+     elif unit in ["ton", "us_ton", "short_ton"]:
+-        # Saturated steam: 1 US ton (~2000 lb) = 2.0 MMBtu
+-        energy_mmbtu = amount * 2.0
++        # Saturated steam: 1 US ton (~2000 lb) = 2.0 MMBtu (or specific enthalpy)
++        enthalpy = float(ci.get("steam_enthalpy") or 2.0)
++        energy_mmbtu = amount * enthalpy
+     elif unit in ["tonne", "metric_ton", "mt"]:
+-        # 1 metric tonne = 2.20462 MMBtu
+-        energy_mmbtu = amount * 2.20462
++        # 1 metric tonne = 2.20462 MMBtu (or specific enthalpy)
++        enthalpy = float(ci.get("steam_enthalpy") or 2.20462)
++        energy_mmbtu = amount * enthalpy
+     elif unit in ["mlb", "klb", "thousand_lbs"]:
+         # 1,000 lbs steam = 1.0 MMBtu
+         energy_mmbtu = amount * 1.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

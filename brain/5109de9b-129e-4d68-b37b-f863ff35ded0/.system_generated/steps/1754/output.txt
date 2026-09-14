@@ -1,0 +1,163 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+
+tests/test_numerical_invariants.py::TestConservationLaws::test_stoichiometric_carbon_mass_balance PASSED [  6%]
+tests/test_numerical_invariants.py::TestConservationLaws::test_flaring_dual_efficiency_mass_balance PASSED [ 12%]
+tests/test_numerical_invariants.py::TestConservationLaws::test_dehydrator_stoichiometric_carbon_balance PASSED [ 18%]
+tests/test_numerical_invariants.py::TestConservationLaws::test_cogen_allocation_energy_conservation PASSED [ 25%]
+tests/test_numerical_invariants.py::TestBoundaryConditions::test_all_calculators_zero_activity_no_crash FAILED [ 31%]
+tests/test_numerical_invariants.py::TestBoundaryConditions::test_extreme_orders_of_magnitude PASSED [ 37%]
+tests/test_numerical_invariants.py::TestDimensionalInvariants::test_bidirectional_conversions_exactness FAILED [ 43%]
+tests/test_numerical_invariants.py::TestDimensionalInvariants::test_thermodynamic_ideal_gas_normalization PASSED [ 50%]
+tests/test_numerical_invariants.py::TestDimensionalInvariants::test_temperature_unit_conversions PASSED [ 56%]
+tests/test_numerical_invariants.py::TestUncertaintyQuantification::test_srss_subadditivity_property PASSED [ 62%]
+tests/test_numerical_invariants.py::TestUncertaintyQuantification::test_confidence_interval_bounds_ordering PASSED [ 68%]
+tests/test_numerical_invariants.py::TestUncertaintyQuantification::test_zero_emission_uncertainty_bounds PASSED [ 75%]
+tests/test_numerical_invariants.py::TestAnomalyMathematics::test_z_score_identical_history_no_false_positive PASSED [ 81%]
+tests/test_numerical_invariants.py::TestAnomalyMathematics::test_z_score_small_sample_guard PASSED [ 87%]
+tests/test_numerical_invariants.py::TestSatelliteFluxMathematics::test_column_mass_flux_linearity PASSED [ 93%]
+tests/test_numerical_invariants.py::TestSatelliteFluxMathematics::test_zero_and_negative_anomaly_returns_zero PASSED [100%]
+
+================================== FAILURES ===================================
+_____ TestBoundaryConditions.test_all_calculators_zero_activity_no_crash ______
+
+self = <test_numerical_invariants.TestBoundaryConditions object at 0x00000200B2CE90A0>
+
+    def test_all_calculators_zero_activity_no_crash(self):
+        """Every calculation engine must return 0.0 total_co2e on zero activity without ZeroDivisionError."""
+        # 1. Stoichiometry
+        assert StoichiometricCalculator().calculate(0.0, 0.85, {})["total_co2e"] == 0.0
+    
+        # 2. Combustion
+        assert CombustionCalculator().calculate(0.0, 50.0, 0.01, 0.001, {}, 1020.0, "kg/m3", "m3", "gas")["total_co2e"] == 0.0
+    
+        # 3. Flaring
+        assert FlaringCalculator().calculate(0.0, 0.90, "elevated", {})["total_co2e"] == 0.0
+    
+        # 4. Indirect Steam
+        assert IndirectSteamCalculator().calculate(0.0, 50.0, 0.80, 0.05, {})["total_co2e"] == 0.0
+    
+        # 5. Cogen Allocation
+        assert CogenAllocationCalculator().calculate(0.0, 100.0, 50.0)["total_co2e"] == 0.0
+    
+        # 6. Fugitive Component
+        assert ComponentFugitiveCalculator().calculate({}, 0.85, {})["total_co2e"] == 0.0
+    
+        # 7. Equipment Fugitive
+        assert EquipmentFugitiveCalculator().calculate(0, 0.01, 0.85, {})["total_co2e"] == 0.0
+    
+        # 8. Compressor Seal
+        assert CompressorSealCalculator().calculate(0, "reciprocating", {})["total_co2e"] == 0.0
+    
+        # 9. Mud Degassing
+        assert MudDegassingCalculator().calculate(0, 0.85, {})["total_co2e"] == 0.0
+    
+        # 10. Completions Flowback
+        assert CompletionFlowbackCalculator().calculate(0, 0, 0.85, {})["total_co2e"] == 0.0
+    
+        # 11. Liquids Unloading
+        assert LiquidsUnloadingCalculator().calculate(5000.0, 2.0, 100.0, 0.85, 0, {})["total_co2e"] == 0.0
+    
+        # 12. Blowdown
+        assert BlowdownCalculator().calculate(0.0, 100.0, 0, 0.85, {})["total_co2e"] == 0.0
+    
+        # 13. Tank Flashing
+        assert TankFlashingCalculator().calculate(0.0, 50.0, 0.85, 0.0, {})["total_co2e"] == 0.0
+    
+        # 14. Pneumatics
+>       assert PneumaticDeviceCalculator().calculate(0, 1.0, 0.85, {})["total_co2e"] == 0.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_numerical_invariants.py:194: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <calculations.vented.PneumaticDeviceCalculator object at 0x00000200B30FA330>
+count = 0, hours = 1.0, bleed_rate = 0.85, ch4_content = {}, uncertainties = {}
+actuations = None, gwp_dict = None
+
+    def calculate(
+        self,
+        count,
+        hours=8760,
+        bleed_rate=None,
+        ch4_content=0.85,
+        uncertainties=None,
+        actuations=None,
+        gwp_dict=None,
+    ):
+        """
+        API Section 6.10 & EPA Subpart W �98.233(a):
+        - Continuous bleed: Device count * Hours * Bleed rate (scf/hr)
+        - Intermittent / actuation-based: Device count * Actuations * Bleed per event (scf/actuation)
+        """
+        uncertainties = uncertainties or {}
+        self.validate_inputs(
+            {"count": count},
+            ["count"],
+        )
+    
+        is_intermittent = actuations is not None and float(actuations) > 0
+        if is_intermittent:
+            # Bleed rate is scf/event (default 13.5 scf/event per EPA Subpart W Table W-1 / API �6.10 if bleed_rate <= 0)
+            event_bleed_scf = float(bleed_rate) if (bleed_rate and float(bleed_rate) > 0) else 13.5
+            event_bleed_m3 = convert(event_bleed_scf, "scf", "m3")
+            total_ch4_vol = (
+                float(count) * float(actuations) * event_bleed_m3 * float(ch4_content)
+            )
+        else:
+            self.validate_inputs(
+                {"hours": hours, "bleed_rate": bleed_rate},
+                ["hours", "bleed_rate"],
+            )
+            # Bleed rate in scf/hr -> m3/hr
+            bleed_m3_hr = convert(float(bleed_rate), "scf", "m3")
+            total_ch4_vol = (
+>               float(count) * float(hours) * bleed_m3_hr * float(ch4_content)
+                                                            ^^^^^^^^^^^^^^^^^^
+            )
+E           TypeError: float() argument must be a string or a real number, not 'dict'
+
+calculations\vented.py:655: TypeError
+_____ TestDimensionalInvariants.test_bidirectional_conversions_exactness ______
+
+self = <test_numerical_invariants.TestDimensionalInvariants object at 0x00000200B2CE95E0>
+
+    def test_bidirectional_conversions_exactness(self):
+        """Every unit conversion pair in CONVERSIONS must round-trip with relative error < 1e-6."""
+        pairs = [
+            ("scf", "m3"),
+            ("mscf", "m3"),
+            ("mcf", "m3"),
+            ("mmscf", "m3"),
+            ("bbl", "m3"),
+            ("gal", "m3"),
+            ("liter", "m3"),
+            ("mcf", "scf"),
+            ("mscf", "scf"),
+            ("mmscf", "scf"),
+            ("lb", "kg"),
+            ("tonne", "kg"),
+            ("short_ton", "kg"),
+            ("long_ton", "kg"),
+            ("btu", "kj"),
+            ("mj", "btu"),
+            ("mmbtu", "mj"),
+            ("kwh", "mj"),
+        ]
+        test_val = 1234.5678
+        for u1, u2 in pairs:
+            converted = convert(test_val, u1, u2)
+            roundtrip = convert(converted, u2, u1)
+            err = abs(roundtrip - test_val) / test_val
+>           assert err < 1e-6, f"Round-trip failed for {u1} <-> {u2}: original={test_val}, roundtrip={roundtrip}, err={err}"
+E           AssertionError: Round-trip failed for lb <-> kg: original=1234.5678, roundtrip=1234.5653247409437, err=2.004960000076244e-06
+E           assert 2.004960000076244e-06 < 1e-06
+
+tests\test_numerical_invariants.py:245: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_numerical_invariants.py::TestBoundaryConditions::test_all_calculators_zero_activity_no_crash
+FAILED tests/test_numerical_invariants.py::TestDimensionalInvariants::test_bidirectional_conversions_exactness
+======================== 2 failed, 14 passed in 1.10s =========================
+

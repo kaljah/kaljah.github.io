@@ -1,0 +1,84 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -346,7 +346,7 @@
+                         "fuel": mapped_data.get("fuel", ""),
+                         "quantity": mapped_data.get("quantity", ""),
+                     }
+-                    upload_jobs[job_id]["skipped"].append(skip_entry)
++                    _append_job_list(job_id, "skipped", skip_entry)
+                     # Also keep flat list for CSV
+                     skipped_list = ["; ".join(row_errors)]
+                     skipped_list.extend([str(row_dict.get(h, "")) for h in headers])
+@@ -380,6 +380,7 @@
+                                     "z_score": anomaly.get('z_score'),
+                                     "expected_range": anomaly.get('expected_range'),
+                                     "message": anomaly.get('message'),
++                                Too long: false
+                                 })
+                         except Exception:
+                             pass  # Never let anomaly detection crash the upload
+@@ -393,11 +393,11 @@
+                 if processed % 100 == 0:
+                     import time
+                     time.sleep(0)  # Yield the GIL so the main Flask thread can handle /status polling API calls
+-                    upload_jobs[job_id]["processed"] = processed
+-                    if total_rows > 0:
+-                        upload_jobs[job_id]["progress"] = min(
+-                            99, int((processed / total_rows) * 100)
+-                        )
++                    _update_job(
++                        job_id,
++                        processed=processed,
++                        progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else 0,
++                    )
+ 
+             # Final chunk commit
+             if chunk:
+@@ -404,9 +404,12 @@
+             db.session.commit()
+ 
+-            upload_jobs[job_id]["processed"] = processed
+-            upload_jobs[job_id]["progress"] = 100
+-            upload_jobs[job_id]["status"] = "completed"
+-            upload_jobs[job_id]["anomalies"] = anomaly_rows  # expose anomalies
++            _update_job(
++                job_id,
++                processed=processed,
++                progress=100,
++                status="completed",
++                anomalies=anomaly_rows,
++            )
+ 
+             # --- Maker-Checker: Notify reviewers for bulk Scope 1/2/3 uploads ---
+             if str(scope) in ["1", "2", "3"] and processed > 0:
+@@ -424,7 +424,8 @@
+                         status="active"
+                     ).all()
+ 
+-                    skipped_count = len(upload_jobs[job_id].get("skipped", []))
++                    with upload_jobs_lock:
++                        skipped_count = len(upload_jobs.get(job_id, {}).get("skipped", []))
+                     success_count = processed - skipped_count
+                     scope_label = f"Scope {scope}"
+ 
+@@ -450,12 +450,14 @@
+                     writer = csv.writer(ef)
+                     writer.writerow(error_headers)
+                     writer.writerows(skipped_rows)
+-                upload_jobs[job_id]["error_csv_path"] = error_file
++                _update_job(job_id, error_csv_path=error_file)
+ 
+         except Exception as e:
+             traceback.print_exc()
+-            upload_jobs[job_id]["status"] = "error"
+-            upload_jobs[job_id]["errors"].append(f"Fatal error: {str(e)}")
++            with upload_jobs_lock:
++                if job_id in upload_jobs:
++                    upload_jobs[job_id]["status"] = "error"
++                    upload_jobs[job_id]["errors"].append(f"Fatal error: {str(e)}")
+ 
+         finally:
+             if wb:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,19 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-2282
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-2282.log
+Log output:
+<truncated 145 lines>
+nticated PASSED       [ 91%]
+tests/test_uncertainty.py::test_uncertainty_it_admin_blocked PASSED      [ 92%]
+tests/test_uncertainty.py::test_uncertainty_default_response PASSED      [ 93%]
+tests/test_uncertainty.py::test_uncertainty_year_filter PASSED           [ 93%]
+tests/test_uncertainty.py::test_uncertainty_scope_filter PASSED          [ 94%]
+tests/test_uncertainty.py::test_uncertainty_csv_export PASSED            [ 95%]
+tests/test_uncertainty.py::test_uncertainty_95ci_correctness PASSED      [ 95%]
+tests/test_uncertainty.py::test_uncertainty_category_95ci PASSED         [ 96%]
+tests/test_vented.py::test_tanks_calculator PASSED                       [ 97%]
+tests/test_vented.py::test_pneumatics_calculator PASSED                  [ 97%]
+tests/test_vented.py::test_pneumatics_intermittent_actuation PASSED      [ 98%]
+tests/test_vented.py::test_liquids_unloading_units PASSED                [ 99%]
+tests/test_vented.py::test_blowdown_calculator PASSED                    [100%]
+Last progress: 0s ago

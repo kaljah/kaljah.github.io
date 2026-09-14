@@ -1,0 +1,78 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -506,10 +506,13 @@
+ @login_required
+ def bulk_import_scope2():
+     """Import Scope 2 emissions from CSV data"""
+-    user_id = session.get("user_id")
+-    if not user_id:
+-        return jsonify({"error": "Not authenticated"}), 401
+-
++    user = get_current_user()
++    if not user:
++        return jsonify({"error": "Not authenticated"}), 401
++    if user.role == "it_admin":
++        return jsonify({"error": "IT Admins do not have access to upload emission data"}), 403
++
++    allowed_fids = get_allowed_facility_ids(user)
+     data = request.get_json() or {}
+     records = data.get("records", [])
+     if not records:
+@@ -525,6 +525,8 @@
+             413,
+         )
+ 
++    # Per Maker-Checker: admin/superuser imports are Verified, regular user imports are Pending
++    bulk_status = "Verified" if user.role in ["admin", "superuser"] else "Pending"
+     imported_count = 0
+     errors = []
+     facility_cache = {}
+@@ -557,6 +557,10 @@
+                 errors.append(f"Row {i}: Facility '{f_val}' not found")
+                 continue
+ 
++            if allowed_fids is not None and facility.id not in allowed_fids:
++                errors.append(f"Row {i}: Unauthorized for facility '{facility.name}'")
++                continue
++
+             # 2. Get Factor and Calculate
+             grid_region = rec.get("grid_region")
+             factor_info = GRID_FACTORS.get(grid_region)
+@@ -603,8 +603,10 @@
+                 activity=rec.get("activity") or facility.activity,
+                 division=rec.get("division") or facility.division,
+                 field=rec.get("field") or facility.field,
+-                created_by=user_id,
+-                status="Pending",
++                created_by=user.id,
++                status=bulk_status,
++                approved_by=user.id if bulk_status == "Verified" else None,
++                approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+             )
+             db.session.add(emission)
+             imported_count += 1
+@@ -611,6 +611,19 @@
+             errors.append(f"Row {i}: {str(e)}")
+ 
+     db.session.commit()
++    try:
++        log_activity_and_notify(
++            "IMPORT",
++            str(imported_count),
++            f"Bulk imported {imported_count} Scope 2 records",
++            user=user,
++            request=request,
++            entity="Scope2Emission",
++        )
++        db.session.commit()
++    except Exception:
++        db.session.rollback()
++
+     from routes.dashboard import clear_dashboard_cache
+ 
+     clear_dashboard_cache()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.
