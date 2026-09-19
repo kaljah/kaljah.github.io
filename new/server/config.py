@@ -34,10 +34,18 @@ class Config:
             os.environ.get("SECRET_KEY") or "dev-secret-key-change-in-prod-please"
         )
 
-    ALLOWED_ORIGINS = os.environ.get(
-        "ALLOWED_ORIGINS",
-        "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000",
-    ).split(",")
+    _default_origins = (
+        "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
+        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000,"
+        "https://kaljah.github.io"
+    )
+    ALLOWED_ORIGINS = [
+        o.strip()
+        for o in os.environ.get("ALLOWED_ORIGINS", _default_origins).split(",")
+        if o.strip()
+    ]
+    if "https://kaljah.github.io" not in ALLOWED_ORIGINS:
+        ALLOWED_ORIGINS.append("https://kaljah.github.io")
 
     # Database Configuration
     # Defaults to SQLite, can be overridden by DB_TYPE env var
@@ -67,7 +75,7 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = os.environ.get(
         "SESSION_COOKIE_SAMESITE",
-        "None" if os.environ.get("FLASK_ENV") == "production" else "Lax",
+        "None" if _is_production else "Lax",
     )
     # Only set Secure in production to allow localhost testing
     SESSION_COOKIE_SECURE = _is_production

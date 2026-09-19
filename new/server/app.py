@@ -33,7 +33,14 @@ app.logger.setLevel(logging.INFO)
 
 
 # Enable CORS
-CORS(app, origins=app.config.get("ALLOWED_ORIGINS", []), supports_credentials=True)
+CORS(
+    app,
+    origins=app.config.get("ALLOWED_ORIGINS", []),
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization", "X-CSRFToken", "X-Request-ID", "Accept"],
+    methods=["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
+    expose_headers=["X-Request-ID", "Content-Disposition"],
+)
 
 # Database
 db.init_app(app)
