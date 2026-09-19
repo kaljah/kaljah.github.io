@@ -942,17 +942,18 @@
 .dashboard-filters {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-left: 20px;
+  gap: 8px;
+  margin-left: 10px;
   height: auto;
-  flex-wrap: wrap;
+  flex-wrap: nowrap !important;
+  white-space: nowrap;
 }
 
 .filter-wrapper {
   display: flex;
   align-items: center;
-  flex: 1 1 auto;
-  min-width: 120px;
+  flex: 0 0 auto;
+  min-width: 105px;
 }
 
 /* Ensure dropdowns fit well in top bar */
@@ -1056,14 +1057,40 @@
 
 /* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
+  .dashboard-content {
+    padding: 14px 12px 36px;
+  }
+
+  .dashboard-filters {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .dashboard-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dashboard-filters .filter-wrapper {
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+
   .hero-header {
     flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
+  }
+
+  .hero-stats-card {
+    padding: 20px 16px;
   }
 
   .hero-stats-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
   }
 
   .categorical-hierarchy-grid {
@@ -1084,6 +1111,46 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+
+  .trend-card-enhanced,
+  .distribution-card,
+  .detailed-table-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .data-table {
+    min-width: 480px;
+  }
+
+  .dashboard-header-right {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 1.35rem;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+  }
+
+  .scope-pills-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
   }
 }
 
@@ -1116,3 +1183,267 @@
 .card.collapsed-card {
   padding-bottom: 20px;
 }
+
+/* ==========================================================================
+   Pending Records Notification & Live Preview Banner
+   ========================================================================== */
+.pending-banner-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 22px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pending-banner-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #f59e0b 0%, #ff6600 100%);
+  border-radius: 4px 0 0 4px;
+}
+
+.pending-banner-card.active-preview {
+  border-color: rgba(255, 102, 0, 0.4);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 247, 237, 0.9) 100%);
+  box-shadow: 0 6px 24px -2px rgba(255, 102, 0, 0.12), 0 2px 8px -1px rgba(15, 23, 42, 0.04);
+}
+
+.pending-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 280px;
+}
+
+.pending-banner-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(255, 102, 0, 0.12) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #d97706;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.pending-banner-card:hover .pending-banner-icon {
+  transform: scale(1.05);
+}
+
+.pending-banner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pending-banner-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pending-banner-title {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  letter-spacing: -0.01em;
+}
+
+.pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.pending-badge.active-preview-badge {
+  background: rgba(255, 102, 0, 0.12);
+  color: #c2410c;
+  border-color: rgba(255, 102, 0, 0.28);
+}
+
+.pending-banner-desc {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.45;
+}
+
+.pending-banner-desc strong {
+  color: var(--text-primary, #0f172a);
+  font-weight: 700;
+}
+
+.pending-co2e-highlight {
+  display: inline-block;
+  font-weight: 600;
+  color: #d97706;
+  background: rgba(245, 158, 11, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin: 0 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Right side actions */
+.pending-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Modern Toggle Switch */
+.pending-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: rgba(241, 245, 249, 0.8);
+  border: 1px solid var(--border-color, #e2e8f0);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.pending-toggle-wrapper:hover {
+  background: rgba(255, 247, 237, 0.9);
+  border-color: rgba(255, 102, 0, 0.3);
+}
+
+.pending-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary, #475569);
+  transition: color 0.2s ease;
+}
+
+.pending-toggle-wrapper:hover .pending-toggle-label {
+  color: var(--text-primary, #0f172a);
+}
+
+.pending-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: #cbd5e1;
+  border-radius: 999px;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.pending-switch.active {
+  background: linear-gradient(135deg, #ff6600 0%, #ea580c 100%);
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.3);
+}
+
+.pending-switch-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.pending-switch-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pending-switch.active .pending-switch-slider {
+  transform: translateX(16px);
+}
+
+/* Action Button */
+.pending-review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.pending-review-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+  filter: brightness(1.05);
+}
+
+.pending-review-btn:active {
+  transform: translateY(0);
+}
+
+.pending-review-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.pending-review-btn:hover svg {
+  transform: translateX(2px);
+}
+
+@media (max-width: 640px) {
+  .pending-banner-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px 16px;
+  }
+  
+  .pending-banner-actions {
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+  }
+}
+

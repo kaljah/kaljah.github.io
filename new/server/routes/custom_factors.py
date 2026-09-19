@@ -14,8 +14,8 @@ custom_factors_bp = Blueprint("custom_factors", __name__)
 def get_custom_factors():
     """Get all custom emission factors"""
     user = get_current_user()
-    if user and user.role == "it_admin":
-        return jsonify({"error": "IT Admins do not have access to operational factor data"}), 403
+    if user and user.role in ["it_admin", "it"]:
+        return jsonify({"error": "IT personnel do not have access to operational factor data"}), 403
 
     factors = CustomFactor.query.all()
     return jsonify(

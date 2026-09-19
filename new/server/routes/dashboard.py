@@ -143,6 +143,8 @@ def get_batch_dashboard_data():
         division,
         segment,
         group_by,
+        include_pending,
+        gwp_horizon,
         user.id if user else 0,
     )
     with CACHE_LOCK:
@@ -204,6 +206,7 @@ def get_batch_dashboard_data():
                 division=division,
                 allowed_fids=allowed_fids,
                 segment=segment,
+                gwp_horizon=gwp_horizon,
             )
             f_intensity = executor.submit(
                 _run_in_app_ctx,
@@ -458,8 +461,11 @@ def _query_summary(
         ch4_val = float(row.ch4_total or 0)
         n2o_val = float(row.n2o_total or 0)
         gwp100_val = float(row.scope1_total or 0)
-        # IPCC AR5/AR6 GWP-20: CO2=1, CH4=84, N2O=264
-        gwp20_val = round(co2_val + (84.0 * ch4_val) + (264.0 * n2o_val), 2)
+        # IPCC AR5/AR6 GWP-20:
+        # Base scope1_total is computed under GWP-100 (CH4=28, N2O=265).
+        # Converting to GWP-20 (CH4=84, N2O=264) requires adding the delta: + (84 - 28)*CH4 + (264 - 265)*N2O.
+        # This guarantees all Scope 1 records (even if not split by gas) are preserved and GWP-20 >= GWP-100.
+        gwp20_val = round(max(gwp100_val, gwp100_val + (56.0 * ch4_val) - (1.0 * n2o_val)), 2)
 
         yearly_data[key] = {
             "year": yr,
@@ -503,6 +509,9 @@ def _query_summary(
     act_sel = [
         Emission.year.label("year"),
         Emission.process_type,
+        func.sum(Emission.co2_emissions).label("co2_total"),
+        func.sum(Emission.ch4_emissions).label("ch4_total"),
+        func.sum(Emission.n2o_emissions).label("n2o_total"),
         func.sum(Emission.co2e_total).label("total"),
     ]
     if group_by == "facility":
@@ -539,15 +548,19 @@ def _query_summary(
         fid = getattr(row, "facility_id", "total")
         key = (yr, fid)
         if key in yearly_data:
+            g100 = float(row.total or 0)
+            ch4_t = float(row.ch4_total or 0)
+            n2o_t = float(row.n2o_total or 0)
+            g_val = round(max(g100, g100 + (56.0 * ch4_t) - (1.0 * n2o_t)), 2) if is_20 else g100
             source_raw = (row.process_type or "").lower().strip()
             mapped = False
             for pattern, category in SOURCE_MAP.items():
                 if pattern in source_raw:
-                    yearly_data[key][category] += float(row.total or 0)
+                    yearly_data[key][category] += g_val
                     mapped = True
                     break
             if not mapped:
-                yearly_data[key]["other"] += float(row.total or 0)
+                yearly_data[key]["other"] += g_val
 
     return list(yearly_data.values())
 
@@ -667,6 +680,7 @@ def _query_categorical_breakdown(
     division=None,
     allowed_fids=None,
     segment=None,
+    gwp_horizon="100",
 ):
     """Pure query logic for /categorical-breakdown — returns a plain Python list."""
     query = db.session.query(
@@ -674,6 +688,9 @@ def _query_categorical_breakdown(
         Facility.division,
         Facility.name.label("region"),
         Facility.field,
+        func.sum(Emission.co2_emissions).label("co2_total"),
+        func.sum(Emission.ch4_emissions).label("ch4_total"),
+        func.sum(Emission.n2o_emissions).label("n2o_total"),
         func.sum(Emission.co2e_total).label("total_emissions"),
     ).join(Facility, Emission.facility_id == Facility.id)
     if allowed_fids is not None:
@@ -743,9 +760,14 @@ def _query_categorical_breakdown(
 
     output_map = {}
     scope3_map = {}
+    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
     for r in results:
         key = (r.activity, r.division, r.region, r.field)
-        output_map[key] = float(r.total_emissions or 0)
+        g100 = float(r.total_emissions or 0)
+        ch4_t = float(r.ch4_total or 0)
+        n2o_t = float(r.n2o_total or 0)
+        g_val = round(max(g100, g100 + (56.0 * ch4_t) - (1.0 * n2o_t)), 2) if is_20 else g100
+        output_map[key] = g_val
     for r in scope2_results:
         key = (r.activity, r.division, r.region, r.field)
         output_map[key] = output_map.get(key, 0) + float(r.total_emissions or 0)
@@ -825,6 +847,7 @@ def get_dashboard_summary():
             group_by=request.args.get("groupBy"),
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
+            include_pending=request.args.get("includePending", "false").lower() == "true",
             gwp_horizon=request.args.get("gwp_horizon", "100"),
         )
     )
@@ -965,6 +988,7 @@ def get_categorical_breakdown():
             division=request.args.get("division"),
             allowed_fids=allowed_fids,
             segment=request.args.get("segment"),
+            gwp_horizon=request.args.get("gwp_horizon", "100"),
         )
     )
 
@@ -1518,11 +1542,8 @@ def _query_intensity_trend_bulk(
 
         # Exact GWP20 formula using dynamic active standard
         total_s1 = ed["total_co2e"] - ed["total_s2"]
-        s1_gwp20 = (
-            ed["total_co2"]
-            + (ed["total_ch4"] * ch4_gwp20)
-            + (ed["total_n2o"] * n2o_gwp20)
-        )
+        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * (n2o_gwp20 - 265.0))
+        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
         total_gwp20 = s1_gwp20 + ed["total_s2"]
 
         if boe > 0:
@@ -1957,12 +1978,10 @@ def _query_intensity_stats(
         gwp20_factors = get_active_gwp(horizon="20")
         ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
         n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
-        s1_gwp20 = (
-            ed["total_co2"]
-            + (ed["total_ch4"] * ch4_gwp20)
-            + (ed["total_n2o"] * n2o_gwp20)
-        )
         s2_val = s2_map.get(fid, 0)
+        total_s1 = ed["total_co2e"] - s2_val
+        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * (n2o_gwp20 - 265.0))
+        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
         total_co2e_gwp20 = s1_gwp20 + s2_val
 
         # Intensities in kg/BOE

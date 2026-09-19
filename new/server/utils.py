@@ -27,8 +27,8 @@ def get_allowed_facility_ids(user):
     if not user:
         return []
 
-    # IT Admin manages user accounts ONLY — zero facility/emission data access.
-    if user.role == "it_admin":
+    # IT Admin & IT roles have zero facility/emission data access.
+    if user.role in ["it_admin", "it"]:
         return []
 
     # admin has full unrestricted data access.
@@ -60,7 +60,7 @@ def require_facility_access(user, facility_id):
     Checks if user has permission to access or modify data for the given facility_id.
     Returns True if permitted, False otherwise.
     """
-    if not user or user.role == "it_admin":
+    if not user or user.role in ["it_admin", "it"]:
         return False
     if user.role == "admin":
         return True
