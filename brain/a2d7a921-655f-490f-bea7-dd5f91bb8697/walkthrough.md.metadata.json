@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Walkthrough of the completed Cement GHG Emissions Calculator.\nFeatures:\n- Backend: Django API with Signals for WBCSD Calculation.\n- Frontend: Next.js + Tailwind v4 with \"Cement & Nature\" theme.\n- Dashboard: Visualizations using Recharts (Area, Donut).\n- Data: SQLite Database with Audit Trail.",
+  "updatedAt": "2026-01-17T15:34:24.075407300Z",
+  "version": "1"
+}

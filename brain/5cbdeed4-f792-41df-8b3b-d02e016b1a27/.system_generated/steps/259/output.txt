@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":110,"LineContent":"    res_stats = client.get(\"/api/audit/stats\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":197,"LineContent":"    res = client.get(\"/api/audit/stats\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":152,"LineContent":"      const res = await api.get(\"/audit/stats\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":1022,"LineContent":"# --- Audit Stats Alias (/api/audit/stats) ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":1023,"LineContent":"@managedata_bp.route(\"/audit/stats\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":1024,"LineContent":"@managedata_bp.route(\"/audit/stats/\", methods=[\"GET\"])"}

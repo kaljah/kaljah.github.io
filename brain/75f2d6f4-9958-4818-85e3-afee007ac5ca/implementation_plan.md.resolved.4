@@ -1,0 +1,54 @@
+# SolarEPC-Pro Phase 5: Enterprise Features
+
+## Goal Description
+Transform the tool into an Enterprise Platform by adding real-world data integration, specific equipment selection, visual design tools, advanced storage modeling, and customizable reporting.
+
+## User Review Required
+> [!IMPORTANT]
+> **Weather Data**: We will use PVGIS (free, no key required) for TMY data. This requires internet access.
+> **Database**: Loading the full CEC database can be slow. We will cache it in `st.session_state`.
+> **BESS**: We are re-introducing the Battery System, but with advanced "Peak Shaving" logic.
+
+## Proposed Changes
+
+### 1. Weather & Database ([src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py), `src/utils.py`)
+#### [NEW] [src/utils.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/utils.py)
+- `get_weather_data(lat, lon)`: Tries PVGIS first, falls back to Clear Sky.
+- `load_equipment_database()`: Returns CEC Modules and Inverters.
+
+#### [MODIFY] [src/solar_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py)
+- Update [calculate_generation](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py#24-69) to accept external weather DataFrame.
+- Update [SolarSystem](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py#8-78) to accept specific module/inverter parameters (Voc, Isc, etc.) from the database.
+
+### 2. Layout Visualizer ([src/design.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py))
+#### [MODIFY] [src/design.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py)
+- Add `visualize_layout(tilt, azimuth, pitch, n_rows, row_length)`: Returns a Plotly figure showing the array layout and potential shading zones.
+
+### 3. Hybrid Systems ([src/storage_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/storage_model.py))
+#### [NEW] [src/storage_model.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/storage_model.py)
+- Re-create `BatterySystem`.
+- Add `simulate_peak_shaving(load_profile, generation, battery_cap, battery_power)`: Dispatches battery to flatten demand peaks.
+
+### 4. White-Label Reporting ([src/reporting.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py))
+#### [MODIFY] [src/reporting.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py)
+- Update [generate_pdf_report](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/reporting.py#18-91) to accept `logo_path` and `company_name`.
+- Embed logo in PDF header.
+
+### 5. UI Integration ([app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py))
+#### [MODIFY] [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py)
+- **Sidebar**: Add "Company Logo" uploader.
+- **Simulation Tab**: Add "Weather Source" toggle (PVGIS/ClearSky).
+- **Design Tab**: Add "Equipment Selector" (Selectbox for Module/Inverter). Add "Layout Visualizer" chart.
+- **Storage Tab**: New tab for BESS sizing and simulation.
+
+## Verification Plan
+### Automated Tests
+- `test_phase5.py`:
+    - `test_weather_fetch`: Check if PVGIS returns valid data (mocked if offline).
+    - `test_database_load`: Verify CEC database loads.
+    - `test_peak_shaving`: Verify peak load is reduced with battery.
+
+### Manual Verification
+- Select a specific Jinko panel and verify Voc updates.
+- Run simulation with PVGIS data and compare to Clear Sky (should be lower/more variable).
+- Upload a dummy logo and check the PDF.

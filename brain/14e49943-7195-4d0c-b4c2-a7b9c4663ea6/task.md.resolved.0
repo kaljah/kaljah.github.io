@@ -1,0 +1,9 @@
+# Tasks
+
+- [ ] Analyze current facility page implementation <!-- id: 0 -->
+- [ ] Analyze backend facility API and models <!-- id: 1 -->
+- [ ] Create implementation plan <!-- id: 2 -->
+- [ ] Implement backend API for facilities (if missing or incomplete) <!-- id: 3 -->
+- [ ] Implement frontend facility list view <!-- id: 4 -->
+- [ ] Implement add/edit/delete facility functionality <!-- id: 5 -->
+- [ ] Verify functionality <!-- id: 6 -->

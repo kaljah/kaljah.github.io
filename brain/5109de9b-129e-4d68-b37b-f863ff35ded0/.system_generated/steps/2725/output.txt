@@ -1,0 +1,128 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -9,6 +9,19 @@
+ # Global in-memory job tracker
+ # Structure: { job_id: { 'status', 'progress', 'processed', 'total', 'skipped': [{row, reason, ...}], 'error_csv_path', 'created_at' } }
+ upload_jobs = {}
++upload_jobs_lock = threading.Lock()
++
++
++def _update_job(job_id, **kwargs):
++    with upload_jobs_lock:
++        if job_id in upload_jobs:
++            upload_jobs[job_id].update(kwargs)
++
++
++def _append_job_list(job_id, list_key, item):
++    with upload_jobs_lock:
++        if job_id in upload_jobs:
++            upload_jobs[job_id].setdefault(list_key, []).append(item)
+ 
+ 
+ def _prune_old_jobs(max_age_seconds=86400):
+@@ -15,17 +15,18 @@
+     now = time.time()
+     to_delete = []
+-    for jid, job in list(upload_jobs.items()):
+-        created_at = job.get("created_at", 0)
+-        if now - created_at > max_age_seconds:
+-            to_delete.append(jid)
+-            csv_path = job.get("error_csv_path")
+-            if csv_path and os.path.exists(csv_path):
+-                try:
+-                    os.remove(csv_path)
+-                except Exception:
+-                    pass
+-    for jid in to_delete:
+-        upload_jobs.pop(jid, None)
++    with upload_jobs_lock:
++        for jid, job in list(upload_jobs.items()):
++            created_at = job.get("created_at", 0)
++            if now - created_at > max_age_seconds:
++                to_delete.append((jid, job.get("error_csv_path")))
++        for jid, _ in to_delete:
++            upload_jobs.pop(jid, None)
++    for _, csv_path in to_delete:
++        if csv_path and os.path.exists(csv_path):
++            try:
++                os.remove(csv_path)
++            except Exception:
++                pass
+ 
+ 
+ def start_background_upload(
+@@ -39,17 +39,18 @@
+ ):
+     _prune_old_jobs()
+     job_id = str(uuid.uuid4())
+-    upload_jobs[job_id] = {
+-        "status": "processing",
+-        "progress": 0,
+-        "processed": 0,
+-        "total": 0,
+-        "errors": [],  # fatal/global errors
+-        "skipped": [],  # per-row skip reasons [{row, reason, date, facility, ...}]
+-        "error_csv_path": None,
+-        "anomalies": [],  # anomaly-flagged rows
+-        "created_at": time.time(),
+-    }
++    with upload_jobs_lock:
++        upload_jobs[job_id] = {
++            "status": "processing",
++            "progress": 0,
++            "processed": 0,
++            "total": 0,
++            "errors": [],  # fatal/global errors
++            "skipped": [],  # per-row skip reasons [{row, reason, date, facility, ...}]
++            "error_csv_path": None,
++            "anomalies": [],  # anomaly-flagged rows
++            "created_at": time.time(),
++        }
+ 
+     # Spawn the background thread
+     thread = threading.Thread(
+@@ -72,23 +72,24 @@
+ 
+ 
+ def get_job_status(job_id):
+-    job = upload_jobs.get(job_id)
+-    if not job:
+-        return None
+-    skipped_all = job.get("skipped", [])
+-    anomalies = job.get("anomalies", [])
+-    return {
+-        "status": job["status"],
+-        "progress": job["progress"],
+-        "processed": job["processed"],
+-        "total": job["total"],
+-        "errors": job.get("errors", []),
+-        "skipped_count": len(skipped_all),
+-        "skipped_preview": skipped_all[:100],  # first 100 for inline display
+-        "error_csv_path": job.get("error_csv_path"),
+-        "anomaly_count": len(anomalies),
+-        "anomalies": anomalies[:50],  # first 50 anomalies for review
+-    }
++    with upload_jobs_lock:
++        job = upload_jobs.get(job_id)
++        if not job:
++            return None
++        skipped_all = list(job.get("skipped", []))
++        anomalies = list(job.get("anomalies", []))
++        return {
++            "status": job["status"],
++            "progress": job["progress"],
++            "processed": job["processed"],
++            "total": job["total"],
++            "errors": list(job.get("errors", [])),
++            "skipped_count": len(skipped_all),
++            "skipped_preview": skipped_all[:100],  # first 100 for inline display
++            "error_csv_path": job.get("error_csv_path"),
++            "anomaly_count": len(anomalies),
++            "anomalies": anomalies[:50],  # first 50 anomalies for review
++        }
+ 
+ 
+ def _process_file_thread(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

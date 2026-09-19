@@ -1,0 +1,37 @@
+# Implementation Plan - Sidebar Restructuring
+
+The goal is to reorder the sidebar navigation across the application to:
+1.  Dashboard
+2.  Calculations
+3.  Manage Data
+4.  Reports
+5.  Reference Data
+6.  Uncertainty
+7.  Compliance
+
+## User Review Required
+> [!NOTE]
+> [manage-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/manage-data.html), [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html), and [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html) currently use a different layout and do NOT have the main sidebar. This plan only updates pages that *already* display the main sidebar.
+
+## Proposed Changes
+
+### Global Sidebar Updates
+All files containing `<aside class="sidebar">` will have their navigation list updated.
+
+#### [MODIFY] Public HTML Files
+Reorder the `<li>` items in the sidebar `<ul class="nav-links">`.
+The `active` class will be correctly assigned based on the file.
+
+**Affected Files:**
+1.  [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) (Active: Dashboard)
+2.  [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html) + all calculators (`stationary...`, `mobile...` etc.) (Active: Calculations)
+3.  [reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html) (Active: Reports)
+4.  [reference-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reference-data.html) (Active: Reference Data)
+5.  [uncertainty.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/uncertainty.html) (Active: Uncertainty)
+6.  [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) (Active: Compliance)
+
+## Verification Plan
+### Manual Verification
+-   Open [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) and verify the new order.
+-   Open [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) and verify order + active state.
+-   Open a calculator page (e.g., [stationary-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/stationary-combustion.html)) and verify order + active state.

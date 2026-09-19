@@ -1,0 +1,28 @@
+# Walkthrough - Compliance and Login Restructuring
+
+I have restructured the compliance reporting features to separate high-level status from detailed logs. The Login page now serves as the high-level compliance dashboard for unauthenticated users, while the Compliance page within the app focuses on the formal Base Year Recalculation Log.
+
+## Changes
+
+### 1. Compliance Page ([compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html))
+- **Visuals Removed**: Removed the 3 "Status Cards" (EPA, ISO, GHG Protocol) and the detailed "Gap Analysis" checklist.
+- **Header Updated**: Renamed from "Regulatory Compliance & Standards" to **"Base Year Recalculation History"**.
+- **Focus**: The page is now dedicated solely to tracking base year recalculations (ISO 14064-1 requirement).
+
+### 2. Login Page ([index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html))
+- **New Visuals**: Added the 3 Compliance Status Cards to the left-hand branding panel.
+- **Styling**: Adapted the card styles to blend with the login page's Teal (`#1a5d4a`) theme using semi-transparent backgrounds.
+- **Content**:
+    - **EPA 40 CFR Part 98**: 100% Score.
+    - **ISO 14064**: 100% Score.
+    - **GHG Protocol**: 100% Score.
+
+## Verification Results
+
+### Manual Code Verification
+- Checked [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) to ensure the previous large grid of cards is gone and the table remains accessible.
+- Checked [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) to confirm the new `.compliance-grid-login` class is present and contains the 3 cards.
+- Verified CSS in [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) head for `status-card` looks correct for the dark teal theme.
+
+### Visual Consistency
+The Login page now immediately communicates the platform's robust compliance status to prospective or returning users, reinforcing trust before they even sign in.

@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\anomaly.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -43,7 +43,8 @@
+ 
+         n = len(historical)
+         mean = sum(historical) / n
+-        variance = sum((x - mean) ** 2 for x in historical) / n
++        # Use Bessel's correction (sample variance n-1) for small sample sizes
++        variance = sum((x - mean) ** 2 for x in historical) / max(1, n - 1 if n > 1 else 1)
+         std = math.sqrt(variance) if variance > 0 else 0
+ 
+         if std == 0:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

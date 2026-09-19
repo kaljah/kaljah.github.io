@@ -1,0 +1,31 @@
+# Walkthrough - Database Reset and Seeding
+
+## Changes
+The database has been completely reset and seeded with a comprehensive dataset tailored for **Ramzi Dalil** and **Sonatrach**.
+
+### Key Data Points
+-   **User Profile**: Ramzi Dalil (`ramzi.dalil@sonatrach.dz` / `test`).
+-   **Hierarchy**: 4 Activities (EP, TRC, LQS, RPC) -> Divisions -> 22 Regions (Facilities).
+-   **Emission Records**: **116,323 entries** spanning 10 years (2015-2024).
+-   **Sources**:
+    *   Standard: Combustion (Turbines, Boilers), Flaring, Venting.
+    *   **New**: Pneumatic Devices, Storage Tanks, Dehydrators.
+-   **Base Year**: 2015 (Locked).
+-   **Goals**: Reduction targets set for 2015-2030.
+
+## Verification
+### Automated Check
+Ran a verification script to count records:
+```bash
+Emission Count: 116323
+Facilities Count: 22
+```
+
+### Manual Verification Steps
+1.  **Login**: Use username `Ramzi Dalil` and password `test`.
+2.  **Dashboard**: Verify data appears for all years (2015-2024).
+3.  **Facilities**: Check the "Facilities" page to see the Sonatrach regions (e.g., Hassi Messaoud, GL1Z, etc.).
+4.  **Emissions Data**: Navigate to "Manage Data" to see the large dataset.
+
+## Notes
+-   The server may need to be restarted if it was holding a lock on the database during the reset.

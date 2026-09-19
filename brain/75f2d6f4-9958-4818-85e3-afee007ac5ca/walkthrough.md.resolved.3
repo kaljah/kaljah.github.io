@@ -1,0 +1,36 @@
+# SolarEPC-Pro Professional Edition Walkthrough
+
+I have upgraded the platform to the **Professional EPC** level, aligning with the 8-module curriculum.
+
+## New Features (Phase 4)
+- **Module 3: Cable Sizing**:
+    - Auto-suggests cable size (4/6/10/16/25 mm²) based on Ampacity and Voltage Drop.
+    - Checks IEC 60364-5-52 ampacity limits.
+- **Module 5: Thermal & PR**:
+    - Calculates Performance Ratio (PR).
+    - Displays NOCT-based Cell Temperature.
+    - Detailed loss breakdown (Soiling, Mismatch, Wiring).
+- **Module 6 & 7: Advanced Financials**:
+    - Light-Induced Degradation (LID) for Year 1.
+    - Detailed Annual Cashflow Table (Revenue, OPEX, Debt).
+
+## Previous Features (Phase 3)
+- **Module 2: Inverter Sizing**: DC/AC Ratio, Safety Checks.
+- **Module 4: Geometry**: Row Spacing & GCR.
+- **Module 8: Reporting**: PDF Feasibility Report.
+
+## Verification
+I ran [tests/test_phase4.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase4.py) to verify:
+- **Cable Sizing**: Correctly suggests larger cables for high currents/distances.
+- **PR**: Confirmed PR is within realistic range (75-90%).
+- **Degradation**: Verified Year 1 vs Year 2 generation drop matches LID settings.
+
+## How to Run
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Launch the Professional Dashboard:
+   ```bash
+   streamlit run app.py
+   ```

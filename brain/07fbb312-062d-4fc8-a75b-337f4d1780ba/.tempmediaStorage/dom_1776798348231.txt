@@ -1,0 +1,32 @@
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (120,252)<li  />
+		[2] (98,249)<a class='nav-link ' href='/'>Dashboard />
+	[3] (120,396)<li  />
+		[4] (115,392)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (120,539)<li  />
+		[6] (102,536)<a class='nav-link active' href='/emissions'>Calculations />
+	[7] (120,683)<li  />
+		[8] (111,679)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (120,826)<li  />
+		[10] (107,823)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (120,970)<li  />
+		[12] (89,966)<a class='nav-link ' href='/reports'>Reports />
+	Dashboard
+	[13] (886,60)<button class='icon-button' title='Notifications' />
+		[14] (890,53)<span  />
+	[15] (927,60)<button class='icon-button' />
+	Test
+	[16] (620,561)<div scrollable='true' />
+		[17] (291,181)<span >Dashboard />
+		/
+		[18] (392,181)<span >Calculations />
+		/
+		Select Scope
+		Emission Calculator
+		Select a scope to begin calculating emissions.
+		[19] (616,686)<div  />
+			[20] (616,560)<div  />
+			[21] (616,638)<h3 >Scope 1 />
+			[22] (616,732)<p >Direct emissions from owned or controlled sources. />
+			[23] (616,824)<div >→ />

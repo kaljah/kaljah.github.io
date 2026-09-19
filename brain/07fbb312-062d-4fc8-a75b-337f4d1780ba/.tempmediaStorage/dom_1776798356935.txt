@@ -1,0 +1,40 @@
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (120,252)<li  />
+		[2] (98,249)<a class='nav-link ' href='/'>Dashboard />
+	[3] (120,396)<li  />
+		[4] (115,392)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (120,539)<li  />
+		[6] (102,536)<a class='nav-link active' href='/emissions'>Calculations />
+	[7] (120,683)<li  />
+		[8] (111,679)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (120,826)<li  />
+		[10] (107,823)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (120,970)<li  />
+		[12] (89,966)<a class='nav-link ' href='/reports'>Reports />
+	Dashboard
+	[13] (886,60)<button class='icon-button' title='Notifications' />
+		[14] (890,53)<span  />
+	[15] (927,60)<button class='icon-button' />
+	Test
+	[16] (620,561)<div scrollable='true' />
+		[17] (291,181)<span >Dashboard />
+		/
+		[18] (392,181)<span >Calculations />
+		/
+		Scope 1
+		New Activity Entry
+		1. IDENTITY & LOCATION
+		[19] (370,580)<label >Activity />
+		[20] (534,580)<label >Division />
+		[21] (698,580)<label >Region />
+		[22] (698,648)<div  />
+			[23] (679,648)<span >Select Region... />
+		[24] (861,580)<label >Field />
+		[25] (398,760)<label >Year />
+		[26] (398,835)<input class='mole-input' />
+		[27] (616,760)<label >Month />
+		[28] (616,828)<select class='component-select' />
+		[29] (834,760)<label >Group Name />
+		[30] (834,835)<input class='mole-input' placeholder='e.g. West Facility' />
+		Equipment ID/Name

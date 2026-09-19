@@ -1,0 +1,20 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":11,"LineContent":"upload_jobs = {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":18,"LineContent":"    for jid, job in list(upload_jobs.items()):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":29,"LineContent":"        upload_jobs.pop(jid, None)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":44,"LineContent":"    upload_jobs[job_id] = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":78,"LineContent":"    job = upload_jobs.get(job_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":168,"LineContent":"            upload_jobs[job_id][\"total\"] = total_rows"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":333,"LineContent":"                    upload_jobs[job_id][\"skipped\"].append(skip_entry)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":382,"LineContent":"                    upload_jobs[job_id][\"processed\"] = processed"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":384,"LineContent":"                        upload_jobs[job_id][\"progress\"] = min("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":393,"LineContent":"            upload_jobs[job_id][\"processed\"] = processed"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":394,"LineContent":"            upload_jobs[job_id][\"progress\"] = 100"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":395,"LineContent":"            upload_jobs[job_id][\"status\"] = \"completed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":396,"LineContent":"            upload_jobs[job_id][\"anomalies\"] = anomaly_rows  # expose anomalies"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":415,"LineContent":"                    skipped_count = len(upload_jobs[job_id].get(\"skipped\", []))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":442,"LineContent":"                upload_jobs[job_id][\"error_csv_path\"] = error_file"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":446,"LineContent":"            upload_jobs[job_id][\"status\"] = \"error\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":447,"LineContent":"            upload_jobs[job_id][\"errors\"].append(f\"Fatal error: {str(e)}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":749,"LineContent":"        upload_jobs[job_id][\"anomalies\"].append({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":822,"LineContent":"        upload_jobs[job_id][\"anomalies\"].append({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":905,"LineContent":"        upload_jobs[job_id][\"anomalies\"].append({"}

@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":209,"LineContent":"        \"/api/scope3\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":628,"LineContent":"        \"/api/scope3\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":98,"LineContent":"    assert client.get(\"/api/scope3\").status_code == 401"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":104,"LineContent":"    assert client.get(\"/api/scope3\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":219,"LineContent":"    eeio_res = client.post(\"/api/scope3/eeio-calculate\", json={"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":243,"LineContent":"    res_s3 = client.post(\"/api/scope3\", json=s3_payload)"}

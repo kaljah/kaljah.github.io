@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -915,8 +915,9 @@
+         text("UPDATE facilities SET created_by = NULL WHERE created_by = :uid"),
+         {"uid": id},
+     )
+-    # Nullify any other created_by/updated_by references in emissions tables
+-    for tbl in [
++    # Nullify all created_by, approved_by, updated_by references across all tables
++    cols_to_nullify = ["created_by", "approved_by", "updated_by"]
++    tables_to_clean = [
+         "emissions",
+         "scope2_emissions",
+         "scope3_emissions",
+@@ -923,12 +923,20 @@
+         "mitigation_records",
+-    ]:
+-        try:
+-            db.session.execute(
+-                text(f"UPDATE {tbl} SET created_by = NULL WHERE created_by = :uid"),
+-                {"uid": id},
+-            )
+-        except Exception:
+-            pass  # Table may not have created_by column; skip
++        "facilities",
++        "emission_sources",
++        "custom_factors",
++        "cbam_product_exports",
++        "base_year_recalculations",
++        "ogmp_surveys",
++    ]
++    for tbl in tables_to_clean:
++        for col in cols_to_nullify:
++            try:
++                db.session.execute(
++                    text(f"UPDATE {tbl} SET {col} = NULL WHERE {col} = :uid"),
++                    {"uid": id},
++                )
++            except Exception:
++                pass  # Table or column may not exist in current schema; skip
+ 
+     db.session.delete(user)
+     db.session.commit()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

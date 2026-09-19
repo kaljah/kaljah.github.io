@@ -1,0 +1,238 @@
+# Dashboard Categorical Overview Fixes - Walkthrough
+
+## Summary
+
+Successfully fixed the Categorical Emissions Overview dashboard issues:
+1. ✅ Enhanced categorical breakdown to show full **Activity → Division → Region** hierarchy
+2. ✅ Added **tCO₂e units** to mitigation display for better readability
+3. ✅ Improved **number formatting** consistency across the dashboard
+4. ✅ Updated subtitles to clarify grouping structure
+
+## Changes Made
+
+### 1. Enhanced Categorical Breakdown ([dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#L439-L520))
+
+**What was changed:**
+- Completely rewrote the [loadCategoricalBreakdown()](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#423-595) function to create a proper three-level hierarchy
+- Data is now grouped: Activity → Division → Region
+- Added visual hierarchy with:
+  - **Activity headers** (EP, LQS, RPC, TRC) in large bold text with accent color border
+  - **Division subheaders** in medium gray text under each activity
+  - **Region cards** under each division showing individual regional emissions
+
+**Visual improvements:**
+- Cards now have hover effects (background brightens, border color changes to accent)
+- Proper spacing and indentation to show hierarchy
+- Field information displayed alongside region name when available
+- Consistent tCO₂e unit formatting across all cards
+
+**Code structure:**
+```javascript
+// Creates hierarchy object: hierarchy[activity][division] = [regions...]
+const hierarchy = {};
+data.forEach(item => {
+    const act = item.activity || 'Unassigned';
+    const div = item.division || 'Unknown';
+    if (!hierarchy[act]) hierarchy[act] = {};
+    if (!hierarchy[act][div]) hierarchy[act][div] = [];
+    hierarchy[act][div].push(item);
+});
+```
+
+### 2. Mitigation Number Formatting
+
+#### [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html#L418)
+**Before:**
+```html
+Less <span id="mitigation-total" style="color:#fff;">0</span> Mitigation
+```
+
+**After:**
+```html
+Less <span id="mitigation-total" style="color:#10b981; font-weight:600;">0</span> tCO₂e Mitigation
+```
+
+**Changes:**
+- Added **tCO₂e** units for clarity
+- Changed color to **green** (#10b981) to match the "Net Emissions" theme
+- Added `font-weight:600` for better visual prominence
+
+#### [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#L357)
+**Before:**
+```javascript
+mitigation.toLocaleString(undefined, { minimumFractionDigits: 2 })
+```
+
+**After:**
+```javascript
+mitigation.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+```
+
+**Changes:**
+- Added `maximumFractionDigits: 2` to ensure consistent formatting
+- Now shows exactly 2 decimal places (e.g., "1,234.56" instead of "1,234.567891")
+
+### 3. Updated Subtitle ([dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html#L469))
+
+**Before:**
+```html
+Grouped by Activity & Division
+```
+
+**After:**
+```html
+Grouped by Activity → Division → Region
+```
+
+**Changes:**
+- Updated text to reflect the actual three-level hierarchy being displayed
+- Uses arrow symbols (→) to show the hierarchical flow
+
+## Expected User Experience
+
+### Categorical Emissions Overview Section
+
+Users will now see a clear hierarchical structure:
+
+```
+EP                                    ← Activity header (bold, accent border)
+  Production                          ← Division subheader
+    [Région ADR]     1,234.56 tCO₂e  ← Region card (hover effects)
+    [Région REB]       987.65 tCO₂e
+    
+  Association
+    [BRS]             456.78 tCO₂e
+    [MLN]             345.67 tCO₂e
+
+LQS
+  LSH
+    [GL1Z]            234.56 tCO₂e
+    [GL1K]            123.45 tCO₂e
+
+RPC
+  Raffinage
+    [RA1K]            890.12 tCO₂e
+    
+  Petrochimie
+    [CP1Z]            567.89 tCO₂e
+
+TRC
+  Make
+    [STC]             456.78 tCO₂e
+```
+
+### Net Emissions Display
+
+The mitigation line now reads:
+```
+Less 1,234.56 tCO₂e Mitigation
+```
+- Number is in **green** color
+- Shows exactly **2 decimal places**
+- Includes **tCO₂e** units
+
+## Activity Name Clarification
+
+> **Note:** The correct activity names in the system are:
+> - **EP** (Exploration & Production) - not "LP"
+> - **RPC** (Raffinage et Petrochimie) - not "RFC"
+> - **LQS** (Liquéfaction)
+> - **TRC** (Transport)
+
+## Testing Instructions
+
+Since the browser verification tool encountered an environment issue, please manually verify by:
+
+1. **Navigate to** `http://localhost:3000/dashboard.html`
+2. **Scroll down** to the "Categorical Emissions Overview (Current Year)" section
+3. **Verify** you see:
+   - ✓ Subtitle says "Grouped by Activity → Division → Region"
+   - ✓ All 4 activities (EP, LQS, RPC, TRC) are visible as headers
+   - ✓ Divisions appear as subheaders under each activity
+   - ✓ Region cards appear under each division with emissions data
+   - ✓ Cards have hover effects when you mouse over them
+4. **Scroll up** to the "Net Emissions" section
+5. **Verify** you see:
+   - ✓ Mitigation number in green
+   - ✓ Text reads "Less [number] tCO₂e Mitigation"
+   - ✓ Number shows exactly 2 decimal places
+
+## Files Modified
+
+1. [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) - Updated mitigation display and subtitle
+2. [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) - Rewrote categorical breakdown rendering, improved number formatting, and fixed activity header visibility
+3. [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js) - Added "All Years" option to year filter dropdown
+4. [scope2-calc.js](file:///c:/Users/samsung/Desktop/h/public/scope2-calc.js) - Fixed dropdown functionality to use CSS class toggling
+5. [scope3-calc.js](file:///c:/Users/samsung/Desktop/h/public/scope3-calc.js) - Fixed dropdown functionality to use CSS class toggling
+
+## Technical Notes
+
+- The API endpoints `/api/dashboard/summary` and `/api/dashboard/categorical-breakdown` already existed and return the correct data
+- The dashboard fix was entirely on the frontend rendering logic
+- No database schema changes were required
+- Server restart is not needed (JavaScript changes only)
+- Simply refresh the pages in your browser to see the changes
+
+---
+
+## Carbon Intensity Year Filter Fix
+
+### Added "All Years" Option ([carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js#L36-L43))
+
+**What was added:**
+- New "All Years" option at the top of the year dropdown
+- Users can now view carbon intensity data across all available years instead of being limited to individual years
+
+**Code added:**
+```javascript
+// Add "All Years" option first
+const allYearsOpt = document.createElement('div');
+allYearsOpt.className = 'dropdown-option';
+allYearsOpt.dataset.value = 'all';
+allYearsOpt.textContent = 'All Years';
+optionsContainer.appendChild(allYearsOpt);
+```
+
+**User experience:**
+- Navigate to Carbon Intensity page
+- Click the year dropdown
+- See "All Years" as the first option
+- Select to view aggregated data across all years
+
+---
+
+## Scope 2 & Scope 3 Calculator Dropdown Fix
+
+### Fixed Dropdown Functionality ([scope2-calc.js](file:///c:/Users/samsung/Desktop/h/public/scope2-calc.js#L385-L424), [scope3-calc.js](file:///c:/Users/samsung/Desktop/h/public/scope3-calc.js#L181-L220))
+
+**Problem identified:**
+- Dropdowns were using inline `style.display` toggling instead of CSS class-based approach
+- The application's CSS ([dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css)) uses the `.active` class to control dropdown visibility
+- This mismatch caused dropdowns to not respond to clicks properly
+
+**Solution:**
+- Updated [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js#683-722) function in both files to use CSS class toggling
+- Added proper initialization guards to prevent double-binding
+- Ensured all dropdowns close when clicking outside
+- Added `addEventListener` instead of direct [onclick](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#169-170) for better event handling
+
+**Changes made:**
+```javascript
+// Before: Using inline styles
+display.onclick = (e) => {
+    options.style.display = options.style.display === 'block' ? 'none' : 'block';
+};
+
+// After: Using CSS classes
+display.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isActive = wrapper.classList.contains('active');
+    document.querySelectorAll('.custom-dropdown').forEach(w => w.classList.remove('active'));
+    if (!isActive) wrapper.classList.add('active');
+});
+```
+
+**User experience:**
+- Navigate to Scope 2 or Scope 3 calculator pages
+- All dropdowns (Facility, Grid Region, Unit, Method, Product, etc.) now respond to clicks
+- Dropdowns open smoothly and close when selecting an option or clicking elsewhere

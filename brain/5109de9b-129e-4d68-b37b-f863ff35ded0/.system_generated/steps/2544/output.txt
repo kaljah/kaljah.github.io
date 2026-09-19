@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -406,10 +406,27 @@
+         if st in ["electricity"]:
+             emission.co2e = round((emission.electricity_kwh * factor) / 1000.0, 4)
+         elif st in ["steam", "indirect_steam"]:
+-            if emission.steam_ton and emission.steam_ton > 0:
+-                emission.co2e = round((emission.steam_ton * factor) / 1000.0, 4)
+-            elif emission.heat_mmbtu and emission.heat_mmbtu > 0:
+-                emission.co2e = round((emission.heat_mmbtu * factor) / 1000.0, 4)
++            # Authoritative thermodynamic indirect steam formula with enthalpy & efficiency
++            temp_data = {
++                "amount": emission.steam_ton if (emission.steam_ton and emission.steam_ton > 0) else emission.heat_mmbtu,
++                "unit": "ton" if (emission.steam_ton and emission.steam_ton > 0) else "mmbtu",
++                "calc_inputs": data.get("calc_inputs", {}),
++            }
++            if "indirect_steam" not in temp_data["calc_inputs"]:
++                temp_data["calc_inputs"]["indirect_steam"] = {
++                    "boiler_eff": float(data.get("boiler_eff") or 0.80),
++                    "trans_loss": float(data.get("trans_loss") or 0.0),
++                    "ef_co2": factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU,
++                }
++            try:
++                co2e_val, heat_mmbtu, _ = _calc_indirect_steam(temp_data)
++                emission.co2e = round(co2e_val, 4)
++                if heat_mmbtu:
++                    emission.heat_mmbtu = round(heat_mmbtu, 4)
++            except Exception:
++                eff = 0.80
++                mmbtu = (emission.steam_ton * 2.0) if (emission.steam_ton and emission.steam_ton > 0) else (emission.heat_mmbtu or 0.0)
++                emission.co2e = round((mmbtu * factor) / (eff * 1000.0), 4)
+         elif st in ["heat"]:
+             emission.co2e = round((emission.heat_mmbtu * factor) / 1000.0, 4)
+         elif st in ["cooling"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

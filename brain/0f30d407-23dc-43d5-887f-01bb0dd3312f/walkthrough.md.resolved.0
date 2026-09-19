@@ -1,0 +1,24 @@
+# Walkthrough - Dashboard Optimization
+
+I have optimized the dashboard in the new tool to ensure a smoother experience and correct default settings.
+
+## Changes
+
+### 1. Default to "All Years"
+- **File**: [new/client/src/pages/DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx)
+- **Change**: Removed the logic that automatically selected the most recent year on load. The dashboard now initializes with "All Years" selected.
+- **Benefit**: Users see the full historical context immediately, and it prevents an unnecessary data fetch for a single year.
+
+### 2. Simplified Loading Screen
+- **File**: [new/client/src/components/LoadingSpinner.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.jsx)
+- **Change**: Removed the "Initializing secure connection..." text and simplified the message structure.
+- **File**: [new/client/src/components/LoadingSpinner.css](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.css)
+- **Change**:
+    - Changed the background from a dark, heavy radial gradient to a lighter, semi-transparent dark blue/gray (`rgba(15, 23, 42, 0.85)`).
+    - Reduced the blur effect for a cleaner look.
+    - Simplified the text styling to be standard, clean white text instead of a shimmering effect.
+- **Benefit**: The loading state feels faster and less intrusive.
+
+## Verification
+- **Code Logic**: Verified that [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#240-306) correctly handles `currentYear === 'all'` by passing the appropriate parameters to the backend and aggregating data correctly on the frontend.
+- **Backend Support**: Confirmed that [server/routes/dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) supports `year='all'` for all relevant endpoints ([summary](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#170-197), `categorical-breakdown`, etc.).

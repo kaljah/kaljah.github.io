@@ -1,0 +1,56 @@
+# Adding Hierarchical Filtering to Carbon Intensity Page
+
+## Overview
+Add the same Activity → Division → Region hierarchical filtering system from the dashboard to the carbon intensity page. This will provide a consistent filtering experience across the application and allow users to drill down through organizational hierarchy.
+
+## Current State
+- Carbon intensity page has a simple year dropdown and facility dropdown
+- Facility dropdown shows "All Assets" option
+- No hierarchical filtering capability
+
+## Proposed Changes
+
+### [carbon-intensity.html](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.html)
+
+**Replace simple dropdowns with hierarchical filter system:**
+- Remove current facility dropdown (lines 473-478)
+- Add three cascading dropdown components matching dashboard style:
+  - Activity dropdown (EP, LQS, RPC, TRC, All)
+  - Division dropdown (filtered by selected activity)
+  - Region dropdown (filtered by selected activity + division, with field names)
+- Use same glassmorphism styling and dropdown structure as dashboard
+- Position filters in top-bar next to year selector
+
+### [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js)
+
+**Add filtering logic:**
+- Load facilities data from `/api/facilities` endpoint
+- Implement cascading filter logic:
+  - Activity selection filters available divisions
+  - Activity + Division selection filters available regions
+- Update all charts and KPIs based on selected filters
+- Add field name display in region dropdown options
+- Maintain current year filtering functionality
+
+**Functions to add:**
+- [updateFilters()](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#77-134) - Rebuild dropdown options based on current selections
+- [renderOptions()](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#135-148) - Generic dropdown option renderer
+- `filterData()` - Filter intensity data by activity/division/region
+- `refreshCharts()` - Refresh all charts with filtered data
+
+## Implementation Steps
+
+1. Update HTML to add three dropdown components
+2. Load facilities data in JavaScript
+3. Implement cascading filter logic
+4. Update chart rendering to use filtered data
+5. Add field name display to region dropdown
+6. Test filtering across all charts and KPIs
+
+## Verification Plan
+
+- Test each filter level independently
+- Verify cascading behavior (Activity → Division → Region)
+- Confirm field names appear in region dropdown
+- Ensure charts update correctly when filters change
+- Test "All" options at each level

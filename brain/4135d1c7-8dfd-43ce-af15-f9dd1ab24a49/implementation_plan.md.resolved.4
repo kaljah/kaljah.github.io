@@ -1,0 +1,46 @@
+# Implementation Plan - Settings Modernization
+
+The goal is to streamline the settings page, removing unused options and ensuring the remaining ones are fully functional and "modernized".
+
+## Proposed Changes
+
+### [Component Name] Settings UI - settings.html
+
+#### [MODIFY] [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html)
+- **General Tab**:
+    - **Language**: Remove options other than English and French.
+    - **Date Format**: Remove entirely.
+    - **Timezone**: Ensure the dropdown has a comprehensive list of major timezones.
+- **Reporting Tab**:
+    - **GWP**: Remove options other than SAR and AR4.
+    - **Units & Currency**: Remove entirely.
+- **Notifications Tab**:
+    - Remove "Email Notifications" toggle if present (or anything explicitly labeled as such).
+    - Ensure styling is consistent with the glassmorphism theme.
+- **Save Actions**: Ensure buttons are clearly visible and wired to [settings.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js).
+
+### [Component Name] Settings Logic - settings.js
+
+#### [MODIFY] [settings.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js)
+- **Modifications**:
+    - Remove logic related to deleted fields (date format, currency, units).
+    - Update [saveNotificationSettings](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js#53-64) to trigger a toast message and potentially add an entry to the user's notification belt (dropdown) to confirm the action as requested ("make sure the notification arrive in the notification belt").
+    - Ensure [saveGeneralSettings](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js#36-52) triggers a toast message.
+
+### [Component Name] Dashboard - dashboard.js
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Use `Intl.DateTimeFormat` with the stored `ghg_timezone` to display the "Last Updated" time correctly.
+
+## Verification Plan
+
+### Manual Verification
+- **Settings Page**:
+    - Verify only EN/FR languages are shown.
+    - Verify Date Format/Currency/Units are gone.
+    - Verify GWP only shows SAR/AR4.
+    - Verify Timezone selection saves correctly.
+    - Verify Save buttons show a successful toast message.
+- **Dashboard**:
+    - detailed check: Change timezone in settings (e.g., to Tokyo), go to dashboard, verify the "Last Updated" time reflects the new timezone.
+    - Check the notification bell dropdown to see if a specific "Settings Updated" notification appears (if requested, though the user said "remove email notifications... make sure the notification arrive in the notification belt").

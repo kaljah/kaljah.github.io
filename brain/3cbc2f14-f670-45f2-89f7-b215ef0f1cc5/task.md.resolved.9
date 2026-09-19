@@ -1,0 +1,23 @@
+# Task: specificfix connection issues
+
+- [x] Investigate database configuration <!-- id: 0 -->
+    - [x] Check [db_config.js](file:///c:/Users/samsung/Desktop/h/db_config.js) <!-- id: 1 -->
+    - [x] Check [pg-adapter.js](file:///c:/Users/samsung/Desktop/h/pg-adapter.js) <!-- id: 2 -->
+    - [x] Check [start_postgres.bat](file:///c:/Users/samsung/Desktop/h/start_postgres.bat) <!-- id: 3 -->
+- [x] Fix authentication error <!-- id: 4 -->
+- [ ] Guide user to create DB user/password <!-- id: 6 -->
+- [ ] Guide user to create DB user/password <!-- id: 6 -->
+- [ ] Reset `postgres` password <!-- id: 7 -->
+    - [x] Locate [pg_hba.conf](file:///C:/Program%20Files/PostgreSQL/18/data/pg_hba.conf) <!-- id: 8 -->
+    - [x] Modify to `trust` <!-- id: 9 -->
+    - [x] Reset password to `password` <!-- id: 10 -->
+    - [x] Revert [pg_hba.conf](file:///C:/Program%20Files/PostgreSQL/18/data/pg_hba.conf) <!-- id: 11 -->
+- [ ] Verify connection <!-- id: 5 -->
+    - [x] Check [start_postgres.bat](file:///c:/Users/samsung/Desktop/h/start_postgres.bat) credentials <!-- id: 12 -->
+    - [x] Check [db_config.js](file:///c:/Users/samsung/Desktop/h/db_config.js) credentials <!-- id: 13 -->
+    - [x] Diagnose connection failure <!-- id: 14 -->
+- [ ] Restore SQLite support <!-- id: 15 -->
+    - [ ] Update [server.js](file:///c:/Users/samsung/Desktop/h/server.js) to support SQLite <!-- id: 16 -->
+    - [ ] Verify [package.json](file:///c:/Users/samsung/Desktop/h/package.json) dependencies <!-- id: 17 -->
+    - [ ] Update start scripts <!-- id: 18 -->
+    - [ ] specificverify SQLite connection <!-- id: 19 -->

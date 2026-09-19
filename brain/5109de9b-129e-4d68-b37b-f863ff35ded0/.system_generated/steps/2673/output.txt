@@ -1,0 +1,34 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":295,"LineContent":"class BaseYear(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":426,"LineContent":"class BaseYearRecalculation(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":21,"LineContent":"    BaseYear,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":397,"LineContent":"        base = BaseYear.query.first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":399,"LineContent":"            base = BaseYear("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":11,"LineContent":"    BaseYearRecalculation,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":170,"LineContent":"        base_year_rec = BaseYearRecalculation.query.order_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":171,"LineContent":"            BaseYearRecalculation.recalc_date.desc()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":779,"LineContent":"    base_year = BaseYearRecalculation.query.order_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":780,"LineContent":"        BaseYearRecalculation.recalc_date.desc()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":842,"LineContent":"        recalc = BaseYearRecalculation("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":103,"LineContent":"            from models import BaseYear"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":105,"LineContent":"            base = BaseYear.query.first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":14,"LineContent":"    BaseYear,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":15,"LineContent":"    BaseYearRecalculation,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":788,"LineContent":"        active_rec = BaseYearRecalculation.query.order_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":789,"LineContent":"            BaseYearRecalculation.recalc_date.desc()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":791,"LineContent":"        base_year_entry = BaseYear.query.get(1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":799,"LineContent":"        recalculations = BaseYearRecalculation.query.order_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":800,"LineContent":"            BaseYearRecalculation.recalc_date.desc()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":868,"LineContent":"        recalc = BaseYearRecalculation("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":877,"LineContent":"        # Keep BaseYear singleton synchronized"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":878,"LineContent":"        base_year_singleton = BaseYear.query.get(1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":882,"LineContent":"            base_year_singleton = BaseYear(id=1, year=year, locked=1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":908,"LineContent":"        rec = BaseYearRecalculation.query.get(rec_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":915,"LineContent":"        latest = BaseYearRecalculation.query.order_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":916,"LineContent":"            BaseYearRecalculation.recalc_date.desc()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":919,"LineContent":"            singleton = BaseYear.query.get(1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":936,"LineContent":"    from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission, BaseYearRecalculation"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":945,"LineContent":"        # Calculate suggested base year baseline from verified emissions or BaseYearRecalculation"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":955,"LineContent":"        recalc = BaseYearRecalculation.query.filter_by(year=calc_year).order_by(BaseYearRecalculation.recalc_date.desc()).first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":26,"LineContent":"    BaseYearRecalculation,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":809,"LineContent":"        _active_base_year = BaseYearRecalculation.query.order_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":810,"LineContent":"            BaseYearRecalculation.recalc_date.desc()"}

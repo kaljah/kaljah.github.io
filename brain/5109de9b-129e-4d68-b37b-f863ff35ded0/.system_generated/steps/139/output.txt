@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":7,"LineContent":"} from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":5,"LineContent":"import { Database, RefreshCw, CheckCircle, AlertCircle, HardDrive } from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":20,"LineContent":"} from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":4,"LineContent":"import { Download, AlertTriangle, CheckCircle, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';"}

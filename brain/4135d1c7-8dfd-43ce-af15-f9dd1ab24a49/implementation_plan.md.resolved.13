@@ -1,0 +1,30 @@
+# Zero-Terminal Deployment Plan
+
+The goal is to make the GHG Reporting Platform 100% "Plug and Play" for hosts where the user cannot access a terminal.
+
+## Proposed Changes
+
+### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- **Auto-Seed on Startup**: On launch, the server will check if [users_v2.db](file:///c:/Users/samsung/Desktop/ghg%20old/users_v2.db) exists. If not, it will automatically invoke the seeding logic.
+- **Dependency Awareness**: The platform is already using `bcryptjs` (pure JavaScript), which is safer for cross-platform uploads than the binary-based `bcrypt`.
+- **Port Configurability**: Uses `process.env.PORT` to satisfy cloud platform requirements.
+
+### [MODIFY] [seed_script.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_script.js)
+- **Module Export**: Wrap the main seeding logic in an exported function `runSeed(callback)` so [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) can trigger it programmatically.
+
+### [MODIFY] [package.json](file:///c:/Users/samsung/Desktop/ghg%20old/package.json)
+- **Main Entry**: Confirmed as [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js).
+
+## Deployment Guide for No-Terminal Hosts
+1. **Modern Hosts (Render, Heroku, Railway, Vercel)**:
+   - They **automatically** run `npm install` when they see your [package.json](file:///c:/Users/samsung/Desktop/ghg%20old/package.json).
+   - The server will boot, see no database, and run the seed script automatically.
+   - **Status: Ready.**
+2. **Classic/Shared Hosts (cPanel, Plesk)**:
+   - Look for a "Node.js Selector" or "Setup Node.js App" icon.
+   - Click the button labeled **"Run NPM Install"** in that UI.
+
+## Verification Plan
+1. Delete local [.db](file:///c:/Users/samsung/Desktop/ghg%20old/test.db) files.
+2. Run `npm start`.
+3. Verify that the platform initializes itself and the `test` user works immediately.

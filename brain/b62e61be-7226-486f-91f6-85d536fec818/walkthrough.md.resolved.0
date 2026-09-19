@@ -1,0 +1,34 @@
+# GHG Tracker - Feature Expansion Walkthrough
+
+All 4 requested features have been successfully implemented and integrated.
+
+## 1. Scope 2 (Electricity) Calculator
+A dedicated calculator for indirect emissions from purchased electricity is now live.
+- **Location**: Access via "Emission Calculations" -> "Scope 2" card.
+- **Features**: Supports grid-specific emission factors (US regional, UK, EU, Global).
+- **Storage**: Automatically saves to the same centralized database as Scope 1.
+
+## 2. Custom Emission Factors
+Users can now define their own specific factors for unique equipment.
+- **Location**: "Settings" page (top navigation).
+- **Features**: Add/Delete factors for CO2, CH4, and N2O.
+- **Usage**: Once saved, custom factors appear in the main calculator's "Source/Fuel" dropdown with a ⭐ icon.
+
+## 3. PDF Reports
+Professional PDF reports can now be generated directly from the database.
+- **Location**: "Emissions Reports" page.
+- **Features**: A new "PDF Report" button generates a landscape PDF with company branding, summary totals, and a detailed data table.
+
+## 4. Reduction Targets (Goals)
+The Dashboard now includes progress tracking against annual targets.
+- **Location**: Dashboard (bottom row).
+- **Features**: Set an annual tCO2e target. The system calculates real-time progress against your current year's emissions and displays a color-coded status bar.
+
+## Verification Steps
+- [x] **Scope 2**: Verified that MWh inputs are correctly converted to kg CO2e.
+- [x] **Custom Factors**: Verified that adding a factor in Settings makes it available in the calculator immediately.
+- [x] **PDF**: Verified that the generated report includes correct totals and formatting.
+- [x] **Goals**: Verified that updating the goal refreshes the progress bar correctly.
+
+> [!NOTE]
+> All data is secured per-user in the backend SQLite databases, matching the existing security model.

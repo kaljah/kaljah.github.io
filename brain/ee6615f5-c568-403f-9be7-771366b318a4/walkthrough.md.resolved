@@ -1,0 +1,11 @@
+# Fix NameError in app.py
+
+I have fixed the `NameError: name 'tilt' is not defined` in [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py).
+
+## Changes
+- **Moved** the "Advanced Technical" code block (lines 349-367) to be after the "Advanced Physics" block (now lines 460-479).
+- This ensures that `tilt` and `azimuth` are defined (by the inputs earlier in the sidebar) before they are used in `bifacial_view_factor`.
+
+## Verification
+- Verified that the code block is now placed after the inputs for `tilt` and `azimuth`.
+- Verified that the indentation is correct.

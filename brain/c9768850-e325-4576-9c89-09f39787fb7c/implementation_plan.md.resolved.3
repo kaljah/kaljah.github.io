@@ -1,0 +1,35 @@
+# Sonatrach Theme Implementation Plan
+
+**Goal**: Re-theme the entire platform to match Sonatrach's branding: Orange and White with distinct **Black Contours** (borders) around UI elements.
+
+## User Review Required
+> [!IMPORTANT]
+> The theme is High Contrast: White Backgrounds, Black Borders, Orange Accents/SVGs.
+
+## Global Theme Variables ([dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css))
+| Variable | Value | Description |
+| :--- | :--- | :--- |
+| `--bg-dark` | `#ffffff` | Pure White Background |
+| `--bg-card` | `#ffffff` | Pure White Cards |
+| `--text-primary` | `#000000` | Pure Black Text |
+| `--text-secondary` | `#000000` | **Pure Black Text** |
+| `--accent-color` | `#ff6600` | Sonatrach Orange (SVGs, Highlights) |
+| `--border-color` | `#000000` | **Solid Black Borders** |
+
+## Components Updated
+
+### [Global] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css)
+- **Tables**: White background, Black text, Black borders.
+- **Dropdowns**: White background, Black borders.
+- **Avatar**: Contoured with Black border.
+
+### [Page] [uncertainty.html](file:///c:/Users/samsung/Desktop/h/public/uncertainty.html)
+- **Cards**: Switched from translucent to Solid White with Black borders.
+
+### [Page] [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html)
+- **Panels**: Removed hardcoded dark styles, now uses Theme Variables.
+- **Inputs**: Removed gray backgrounds, now White with Black borders.
+
+## Verification
+- Verified Global CSS variable updates.
+- Verified manual overrides in specific HTML files were removed or updated.

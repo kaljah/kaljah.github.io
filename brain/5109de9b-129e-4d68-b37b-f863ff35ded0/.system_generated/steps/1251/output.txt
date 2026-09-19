@@ -1,0 +1,49 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -739,6 +739,11 @@
+                         ["fugitive_ppm", "ppm", "screening_ppm"],
+                         "screening concentration (PPM)",
+                     )
++                    comp_count = self._require_float(
++                        flat_inputs,
++                        ["amount", "quantity", "component_count", "count", "equipment_count"],
++                        "component count",
++                    )
+                     ef_base = float(
+                         emission_factors.get("ch4")
+                         or emission_factors.get("factor")
+@@ -745,4 +745,9 @@
+                     )
++                    ef_unit = str(emission_factors.get("unit") or flat_inputs.get("unit") or "").lower()
++                    is_annual = "yr" in ef_unit or "year" in ef_unit
++                    is_tonne = "tonne" in ef_unit or "mt" in ef_unit
++                    is_methane = any(x in ef_unit for x in ["ch4", "methane"])
++
+                     hours = float(
+                         flat_inputs.get("hours")
+                         or flat_inputs.get("hours_operating")
+@@ -749,7 +749,19 @@
+                     )
++                    ch4_fraction = self._optional_fraction(
++                        flat_inputs, ["ch4_fraction", "ch4_content", "c1"], 1.0
++                    )
+                     screening_mult = 2.5 if ppm >= 10000 else 1.0
+-                    ch4_kg = count * ef_base * screening_mult * hours
+-                    ch4_tonnes = ch4_kg / 1000.0
++
++                    if is_annual:
++                        annual_hours_ratio = hours / 8760.0 if hours != 8760.0 else 1.0
++                        ch4_raw = comp_count * ef_base * screening_mult * annual_hours_ratio
++                    else:
++                        ch4_raw = comp_count * ef_base * screening_mult * hours
++
++                    if not is_methane:
++                        ch4_raw *= ch4_fraction
++
++                    ch4_tonnes = ch4_raw if is_tonne else (ch4_raw / 1000.0)
+ 
+                     def _wrap_unc(val, gas):
+                         u = propagate_uncertainty(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

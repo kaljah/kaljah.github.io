@@ -1,0 +1,14 @@
+[0] (500,392)<div  />
+	GHG Reporting Platform
+	Oil & Gas | ISO 14064 | API | IPCC
+	Automated, auditable greenhouse gas emissions reporting for regulated energy operations.
+	100%
+	EPA Subparts A, C, W
+	EPA 40 CFR Part 98
+	Ready for Reporting
+	100%
+	Sign in
+	Access your emissions inventory
+	Invalid credentials
+	[1] (772,795)<input class='form-control' placeholder='Email Address' />
+	[2] (772,916)<input class='form-control' placeholder='Password' />

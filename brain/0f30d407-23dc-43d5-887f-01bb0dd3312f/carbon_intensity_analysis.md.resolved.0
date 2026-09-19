@@ -1,0 +1,57 @@
+# Carbon Intensity Logic Analysis
+
+This document details the calculations and logic behind the **Carbon Intensity** page in the New Tool.
+
+## 1. Data Source & Granularity
+- **Source**: The data comes from the `/api/dashboard/intensity-stats` endpoint.
+- **Granularity**: The backend calculates intensity metrics **per facility** based on the selected filters (Year, Activity, Division, Region).
+- **Default View**: When "All Years" is selected, the backend aggregates data across all available years for each facility.
+
+## 2. Backend Calculations ([server/routes/dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py))
+
+The backend performs the primary heavy lifting, converting raw production and emissions data into intensity metrics for each facility.
+
+### A. Production (BOE)
+Production data is converted to **Barrels of Oil Equivalent (BOE)** using standard conversion factors:
+$$ \text{Total BOE} = \text{Oil (bbl)} + (\text{Gas (mcf)} \times 0.166) $$
+- **Oil**: Sum of `oil_amount` from `production_data` table.
+- **Gas**: Sum of `gas_amount` from `production_data` table.
+
+### B. Emissions
+- **Scope 1**: Sum of `co2e_total` from `emissions` table (filtered by year/facility).
+- **Scope 2**: Sum of `co2e` from `scope2_emissions` table.
+- **Total Emissions**: $\text{Scope 1} + \text{Scope 2}$
+
+### C. Intensity Metrics (Per Facility)
+All intensities are calculated in **kg per BOE**. Since emissions are stored in **tonnes**, they are multiplied by 1000.
+
+1.  **Carbon Intensity (kg CO2e/BOE)**
+    $$ \frac{(\text{Total Scope 1 CO2e} + \text{Total Scope 2 CO2e}) \times 1000}{\text{Total BOE}} $$
+
+2.  **Methane Intensity (kg CH4/BOE)**
+    $$ \frac{\text{Total CH4 Emissions (tonnes)} \times 1000}{\text{Total BOE}} $$
+
+3.  **Flaring Intensity (kg CO2e/BOE)**
+    $$ \frac{\text{Flaring Emissions (tonnes)} \times 1000}{\text{Total BOE}} $$
+
+## 3. Frontend Aggregation ([CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx))
+
+The frontend receives the per-facility data and calculates the **Weighted Averages** for the top-level KPIs. This ensures that larger facilities have a clearer impact on the overall intensity than smaller ones.
+
+### A. Weighted Average Carbon Intensity
+$$ \frac{\sum (\text{Facility Intensity} \times \text{Facility BOE})}{\sum \text{Total BOE}} $$
+*This is mathematically equivalent to:* $\frac{\text{Total Emissions for all Facilities} \times 1000}{\text{Total BOE for all Facilities}}$
+
+### B. Weighted Average Methane Intensity
+$$ \frac{\sum (\text{Facility CH4 Intensity} \times \text{Facility BOE})}{\sum \text{Total BOE}} $$
+
+### C. Flaring Efficiency
+Note: This metric is calculated differently. It represents the emissions generated per unit of flared volume.
+$$ \frac{\text{Total Flaring Emissions (tonnes)}}{\text{Total Flared Volume (m}^3\text{)}} $$
+
+## 4. Visualizations
+
+- **Bar Charts**: Display the raw `co2_intensity` and `ch4_intensity` values directly from the backend for each facility.
+- **Trend Chart**: 
+    - Calculates the weighted average intensity (same as above) for each year.
+    - If a specific region is selected, it filters the data to show only that facility's trend.

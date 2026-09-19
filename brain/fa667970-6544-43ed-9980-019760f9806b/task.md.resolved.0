@@ -1,0 +1,8 @@
+# Cleanup Task List
+
+- [ ] Identify active database in [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) <!-- id: 0 -->
+- [ ] Create `_archive` directory <!-- id: 1 -->
+- [ ] Move debug/test scripts and HTML files to `_archive` <!-- id: 2 -->
+- [ ] Move unused database files to `_archive` <!-- id: 3 -->
+- [ ] Move old fix documentation to `_archive` <!-- id: 4 -->
+- [ ] Verify application still runs (optional/if requested) <!-- id: 5 -->

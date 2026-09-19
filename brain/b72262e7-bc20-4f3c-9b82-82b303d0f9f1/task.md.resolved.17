@@ -1,0 +1,12 @@
+# Modernize Dashboard Graph
+- [x] Planning Modernization <!-- id: 22 -->
+- [x] Update [processEmissionsData](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#178-236) for Scope Totals <!-- id: 23 -->
+- [x] Simplify and Stylize [renderTrendChart](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#300-432) <!-- id: 24 -->
+- [x] Verify UI and Data Accuracy <!-- id: 25 -->
+
+# Modernize Emissions by Source Chart
+- [/] Planning Modernization <!-- id: 26 -->
+- [ ] Implement Premium Donut Chart in [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js) <!-- id: 27 -->
+- [ ] Add Center-Label Plugin Logic <!-- id: 28 -->
+- [ ] Refine [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) Containers <!-- id: 29 -->
+- [ ] Verify UI and Interactivity <!-- id: 30 -->

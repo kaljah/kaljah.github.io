@@ -1,0 +1,40 @@
+# GHG Tracker - Feature Expansion Walkthrough
+
+All 4 requested features have been successfully implemented and integrated.
+
+## 1. Scope 2 (Electricity) Calculator
+A dedicated calculator for indirect emissions from purchased electricity is now live.
+- **Location**: Access via "Emission Calculations" -> "Scope 2" card.
+- **Features**: Supports grid-specific emission factors (US regional, UK, EU, Global).
+- **Storage**: Automatically saves to the same centralized database as Scope 1.
+
+## 2. Custom Emission Factors
+Users can now define their own specific factors for unique equipment.
+- **Location**: "Settings" page (top navigation).
+- **Features**: Add/Delete factors for CO2, CH4, and N2O.
+- **Usage**: Once saved, custom factors appear in the main calculator's "Source/Fuel" dropdown with a ⭐ icon.
+
+## 3. PDF Reports
+Professional PDF reports can now be generated directly from the database.
+- **Location**: "Emissions Reports" page.
+- **Features**: A new "PDF Report" button generates a landscape PDF with company branding, summary totals, and a detailed data table.
+
+## 4. Reduction Targets & Modern Goal UI
+The Dashboard now includes a highly premium tracking's against annual targets.
+- **Location**: Dashboard (bottom row).
+- **Features**: 
+    - **Modernized UI**: A clean, card-based interface with real-time feedback and a sleek progress bar.
+    - **Goal Progress**: Direct visualization of current year-to-date (YTD) emissions vs. target allowance.
+    - **Goal Trend Chart**: A new **"Monthly Progress vs Goal"** chart shows cumulative actual emissions vs. a linear target path for the year.
+- **Visuals**:
+    ![Goal Progress UI](file:///C:/Users/samsung/.gemini/antigravity/brain/b62e61be-7226-486f-91f6-85d536fec818/.system_generated/click_feedback/click_feedback_1766245076212.png)
+    *Setting a new goal in the modernized Target Settings card.*
+
+## Verification Steps
+- [x] **Scope 2**: Verified that MWh inputs are correctly converted to kg CO2e.
+- [x] **Custom Factors**: Verified that adding a factor in Settings makes it available in the calculator immediately.
+- [x] **PDF**: Verified that the generated report includes correct totals and formatting.
+- [x] **Goals & Trend**: Verified real-time updates of the goal progress bar and the trend chart path in the browser.
+
+> [!NOTE]
+> All data is secured per-user in the backend SQLite databases, matching the existing security model.

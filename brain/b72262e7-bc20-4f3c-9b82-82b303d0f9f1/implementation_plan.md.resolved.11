@@ -1,0 +1,23 @@
+# Modernize Dashboard Graph
+
+Simplify and enhance the main trend chart on the dashboard to show consolidated Scope 1 and Scope 2 emissions with a premium visual style.
+
+## Proposed Changes
+
+### Dashboard
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Update [processEmissionsData](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#178-240) to aggregate total CO2e for Scope 1 and Scope 2 per year.
+- Simplify [renderTrendChart](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#300-432) to show only two datasets: Scope 1 Total and Scope 2 Total.
+- Implement premium styling for the chart:
+    - Smooth area charts with vertical gradients.
+    - Improved tooltips and legend.
+    - Simplified grid and axis labels.
+- Remove separate CO2 and CH4 lines as requested.
+
+## Verification Plan
+
+### Manual Verification
+- Check the dashboard to ensure the trend chart now displays two consolidated lines/areas for Scope 1 and Scope 2.
+- Verify the chart aesthetics match the modern dashboard theme.
+- Confirm the data values match the aggregated totals.

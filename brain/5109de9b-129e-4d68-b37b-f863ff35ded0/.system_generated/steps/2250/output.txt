@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1304,6 +1304,9 @@
+         )
+         scope3 = s3_map.get((yr, fid), 0)
+         fac = fac_info.get(fid)
++        fac_segment = (fac.segment or "Upstream").lower() if fac else "upstream"
++        ogmp_target = 0.20 if "upstream" in fac_segment else 0.05
++        ogmp_warning = round(ogmp_target * 1.25, 4)
+ 
+         ch4_vol_m3 = (ed["total_ch4"] * 1000.0) / 0.6785 if ed["total_ch4"] > 0 else 0.0
+         methane_loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
+@@ -1349,12 +1349,14 @@
+                 "api_flaring_intensity": flare_int,
+                 "methane_loss_rate_pct": methane_loss_rate_pct,
+                 "flaring_rate_pct": flaring_rate_pct,
+-                "ogmp_gold_standard_target": 0.20,
+-                "ogmp_target_status": (
+-                    "Compliant"
+-                    if methane_loss_rate_pct <= 0.20
+-                    else (
+-                        "Warning" if methane_loss_rate_pct <= 0.25 else "Non-Compliant"
++                "ogmp_gold_standard_target": ogmp_target,
++                "ogmp_target_status": (
++                    "Compliant"
++                    if methane_loss_rate_pct <= ogmp_target
++                    else (
++                        "Warning"
++                        if methane_loss_rate_pct <= ogmp_warning
++                        else "Non-Compliant"
+                     )
+                 ),
+                 "total_boe": boe,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

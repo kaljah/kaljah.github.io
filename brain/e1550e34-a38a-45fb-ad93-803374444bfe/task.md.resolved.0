@@ -1,0 +1,3 @@
+- [ ] Check [docker-compose.yml](file:///c:/Users/samsung/Desktop/h/docker-compose.yml) for DB configuration <!-- id: 0 -->
+- [ ] Determine best way to start application (Docker vs Local Node) <!-- id: 1 -->
+- [ ] Guide user to start the application <!-- id: 2 -->

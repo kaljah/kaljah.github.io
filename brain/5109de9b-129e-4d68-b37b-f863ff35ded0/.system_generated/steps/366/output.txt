@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\managedata.py:8:    ProductionData,
+new\server\routes\managedata.py:489:# --- Production Years ---
+new\server\routes\managedata.py:490:@managedata_bp.route("/production/years", methods=["GET"])
+new\server\routes\managedata.py:492:def get_production_years():
+new\server\routes\managedata.py:497:        db.session.query(ProductionData.year)
+new\server\routes\managedata.py:499:        .order_by(ProductionData.year.desc())
+new\server\routes\managedata.py:516:        db.session.query(distinct(ProductionData.year)),
+
+
+

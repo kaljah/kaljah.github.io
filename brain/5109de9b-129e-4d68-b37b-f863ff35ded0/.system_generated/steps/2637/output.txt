@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1447,"LineContent":"            source_payload=json.dumps(calc_data),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":440,"LineContent":"                    source_payload=json.dumps(data),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":173,"LineContent":"    source_payload = db.Column(db.Text)  # JSON string"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":187,"LineContent":"        self.assertIsNotNone(row1.source_payload, \"Source payload JSON must be saved\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":229,"LineContent":"            Emission.source_payload.label(\"source_payload\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":270,"LineContent":"            literal(None).label(\"source_payload\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":310,"LineContent":"            literal(None).label(\"source_payload\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":387,"LineContent":"            and hasattr(r, \"source_payload\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":388,"LineContent":"            and getattr(r, \"source_payload\", None)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":393,"LineContent":"                payload = json.loads(r.source_payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":837,"LineContent":"            source_payload=json.dumps(calc_data),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3082,"LineContent":"        source_payload=json.dumps(data),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3824,"LineContent":"                source_payload=json.dumps(rec_data),"}

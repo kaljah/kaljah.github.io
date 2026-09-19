@@ -1,0 +1,28 @@
+# Reset PostgreSQL Password Plan
+
+## Goal Description
+The user cannot authenticate to the local PostgreSQL database because the `postgres` user password is unknown or incorrect. The goal is to reset this password to `password` (and enable the `test` user) to allow the application to connect.
+
+## User Review Required
+> [!WARNING]
+> This process involves modifying [pg_hba.conf](file:///C:/Program%20Files/PostgreSQL/18/data/pg_hba.conf) in your PostgreSQL installation directory. This is a system configuration file.
+> We will temporarily change authentication method to `trust` (no password), reset the password, and then change it back to `scram-sha-256` (password required).
+
+## Proposed Changes
+### PostgreSQL Configuration
+#### [MODIFY] [pg_hba.conf](file:///C:/Program Files/PostgreSQL/18/data/pg_hba.conf)
+- Temporarily change `host all all 127.0.0.1/32 scram-sha-256` to `host all all 127.0.0.1/32 trust`
+- Temporarily change `host all all ::1/128 scram-sha-256` to `host all all ::1/128 trust`
+
+### Database
+- Reset password for user `postgres` to `password`.
+- Create user `test` with password `test` (as requested originally).
+- Create database `ghg_enterprise` if it doesn't exist.
+
+## Verification Plan
+### Automated Verification
+1.  Run `node check_pg_db.js` to verify connection with `postgres`/`password`.
+2.  Run `node check_pg_db.js` (modified for `test` user) to verify `test`/`test`.
+
+### Manual Verification
+- User will run the provided batch scripts and confirm successful connection.

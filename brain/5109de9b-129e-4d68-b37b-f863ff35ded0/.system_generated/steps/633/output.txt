@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -438,7 +438,7 @@
+ 
+     data = request.get_json()
+ 
+-    # Update allowed fields
++    # Update allowed fields (location is immutable via /profile to prevent RBAC bypass; managed via /users/<id>)
+     if "fullName" in data:
+         user.fullName = data["fullName"]
+     if "jobTitle" in data:
+@@ -446,8 +446,6 @@
+         user.department = data["department"]
+     if "phone" in data:
+         user.phone = data["phone"]
+-    if "location" in data:
+-        user.location = data["location"]
+     if "bio" in data:
+         user.bio = data["bio"]
+     if "consolidationApproach" in data:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

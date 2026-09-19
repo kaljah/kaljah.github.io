@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":668,"LineContent":"        from models import Scope2Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":669,"LineContent":"        total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":670,"LineContent":"            Scope2Emission.facility_id == facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":671,"LineContent":"            Scope2Emission.year == year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":672,"LineContent":"            Scope2Emission.status == 'Verified'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":6,"LineContent":"    Scope2Emission,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":292,"LineContent":"        Scope2Emission.year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":293,"LineContent":"        func.sum(Scope2Emission.co2e).label(\"scope2_total\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":294,"LineContent":"        func.sum(Scope2Emission.electricity_kwh).label(\"scope2_energy\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":297,"LineContent":"        sel2.insert(1, Scope2Emission.facility_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":300,"LineContent":"        scope2_query = scope2_query.filter(Scope2Emission.facility_id.in_(allowed_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":303,"LineContent":"            Scope2Emission.facility_id == int(facility_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":307,"LineContent":"            Facility, Scope2Emission.facility_id == Facility.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":310,"LineContent":"        scope2_query = scope2_query.filter(Scope2Emission.activity == activity)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":312,"LineContent":"        scope2_query = scope2_query.filter(Scope2Emission.division == division)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":314,"LineContent":"        scope2_query = scope2_query.filter(Scope2Emission.year == int(year))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":315,"LineContent":"    scope2_query = scope2_query.filter(Scope2Emission.status == \"Verified\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":316,"LineContent":"    groups2 = [Scope2Emission.year]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":318,"LineContent":"        groups2.append(Scope2Emission.facility_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":556,"LineContent":"        func.sum(Scope2Emission.co2e).label(\"total_emissions\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":557,"LineContent":"    ).join(Facility, Scope2Emission.facility_id == Facility.id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":559,"LineContent":"        scope2_q = scope2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":561,"LineContent":"        scope2_q = scope2_q.filter(Scope2Emission.year == int(year))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":563,"LineContent":"        scope2_q = scope2_q.filter(Scope2Emission.facility_id == int(facility_id))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":567,"LineContent":"        scope2_q = scope2_q.filter(Scope2Emission.activity == activity)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":569,"LineContent":"        scope2_q = scope2_q.filter(Scope2Emission.division == division)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":570,"LineContent":"    scope2_q = scope2_q.filter(Scope2Emission.status == \"Verified\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":637,"LineContent":"        db.session.query(Scope2Emission.year)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":638,"LineContent":"        .filter(Scope2Emission.status == \"Verified\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1201,"LineContent":"        Scope2Emission.year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1202,"LineContent":"        Scope2Emission.facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1203,"LineContent":"        func.sum(Scope2Emission.co2e).label(\"total_co2e\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1204,"LineContent":"    ).filter(Scope2Emission.year.in_(year_list), Scope2Emission.status == \"Verified\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1206,"LineContent":"        s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1208,"LineContent":"        s2_q = s2_q.filter(Scope2Emission.facility_id == int(facility_id))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1210,"LineContent":"        s2_q = s2_q.join(Facility, Scope2Emission.facility_id == Facility.id).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1213,"LineContent":"    s2_rows = s2_q.group_by(Scope2Emission.year, Scope2Emission.facility_id).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1593,"LineContent":"        Scope2Emission.facility_id, func.sum(Scope2Emission.co2e).label(\"total_co2e\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1596,"LineContent":"        s2_query = s2_query.filter(Scope2Emission.facility_id.in_(allowed_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1598,"LineContent":"        s2_query = s2_query.filter(Scope2Emission.year == int(year))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1600,"LineContent":"        s2_query = s2_query.filter(Scope2Emission.facility_id == int(facility_id))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1603,"LineContent":"            Facility, Scope2Emission.facility_id == Facility.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1606,"LineContent":"        s2_query = s2_query.filter(Scope2Emission.activity == activity)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1608,"LineContent":"        s2_query = s2_query.filter(Scope2Emission.division == division)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1610,"LineContent":"    s2_query = s2_query.filter(Scope2Emission.status == \"Verified\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1611,"LineContent":"    s2_results = s2_query.group_by(Scope2Emission.facility_id).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2063,"LineContent":"        s2_q = db.session.query(Scope2Emission.co2e, Scope2Emission.source_type).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2064,"LineContent":"            Scope2Emission.year == year, Scope2Emission.status == \"Verified\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2067,"LineContent":"            s2_q = s2_q.filter(Scope2Emission.facility_id.in_(effective_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2303,"LineContent":"    from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission, Facility"}
+(...93 more results not shown)

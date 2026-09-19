@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary": "Major overhaul of PDF report generation to meet \"glassy/modern\" aesthetic requirements. Includes embedded charts, expanded data scope (Scope 2/3, Intensity), and ISO/API compliance text.",
+  "updatedAt": "2026-01-31T18:37:38.472876700Z",
+  "version": "1"
+}

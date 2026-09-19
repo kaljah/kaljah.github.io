@@ -1,0 +1,6 @@
+# Tasks
+
+- [ ] Refactor [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) layout to match [dashboard.html](file:///c:/Users/samsung/Desktop/h/public/dashboard.html) <!-- id: 9.1 -->
+- [ ] Ensure [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) uses global white theme <!-- id: 9.2 -->
+- [ ] Verify functionality (Add Factor, Add Facility) <!-- id: 9.3 -->
+- [ ] Verify Navigation Links <!-- id: 9.4 -->

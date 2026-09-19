@@ -1,0 +1,80 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -417,15 +417,43 @@
+     if user.role == "it_admin":
+         return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+ 
+-    emission = db.session.get(Scope2Emission, emission_id)
+-    if not emission:
+-        return jsonify({"error": "Emission not found"}), 404
+-
+-    if not require_facility_access(user, emission.facility_id):
+-        return jsonify({"error": "Unauthorized: Outside your region"}), 403
++    if user.role in ["viewer", "auditor"]:
++        return jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}), 403
++
++    emission = db.session.get(Scope2Emission, emission_id)
++    if not emission:
++        return jsonify({"error": "Emission not found"}), 404
++
++    if not require_facility_access(user, emission.facility_id):
++        return jsonify({"error": "Unauthorized: Outside your region"}), 403
++
++    if user.role not in ["admin", "superuser"] and emission.created_by != user.id:
++        return (
++            jsonify(
++                {"error": "Forbidden: You do not have permission to delete records created by another user"}
++            ),
++            403,
++        )
++
++    log_details = f"Deleted Scope 2 emission: {emission.source_type} ({emission.co2e:.2f} tCO2e, facility #{emission.facility_id})"
+ 
+     db.session.delete(emission)
+-    db.session.commit()
++    try:
++        from utils import log_activity_and_notify
++        log_activity_and_notify(
++            action="DELETE",
++            record_id=str(emission_id),
++            user=user,
++            request=request,
++            entity="Scope2Emission",
++            details=log_details,
++        )
++        db.session.commit()
++    except Exception as e:
++        db.session.rollback()
++        current_app.logger.error(f"Failed to delete Scope 2 emission: {e}")
++        return jsonify({"error": "Failed to delete Scope 2 record"}), 500
++
+     from routes.dashboard import clear_dashboard_cache
+ 
+     clear_dashboard_cache()
+@@ -440,7 +440,7 @@
+     if not user_id:
+         return jsonify({"error": "Not authenticated"}), 401
+ 
+-    data = request.get_json()
++    data = request.get_json() or {}
+     records = data.get("records", [])
+     if not records:
+         return jsonify({"error": "No records provided"}), 400
+@@ -447,3 +447,14 @@
++    MAX_SYNCHRONOUS_IMPORT = 2500
++    if len(records) > MAX_SYNCHRONOUS_IMPORT:
++        return (
++            jsonify(
++                {
++                    "error": f"Payload exceeds maximum synchronous limit of {MAX_SYNCHRONOUS_IMPORT} rows. Please split the batch."
++                }
++            ),
++            413,
++        )
++
+     imported_count = 0
+     errors = []
+     facility_cache = {}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

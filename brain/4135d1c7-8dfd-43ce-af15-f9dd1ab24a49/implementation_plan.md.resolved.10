@@ -1,0 +1,37 @@
+# Expanded Test Data Seeding Plan
+
+The goal is to expand the [seed_script.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_script.js) to generate a larger, more diverse, and more realistic dataset for testing and demonstration purposes.
+
+## Proposed Changes
+
+### [MODIFY] [seed_script.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_script.js)
+
+- **Year Expansion**: Increase the emission data range to 9 years (2016 - 2024).
+- **Diverse Emission Types**:
+    - **Scope 1**:
+        - Stationary Combustion (Natural Gas, Diesel, Heavy Fuel Oil)
+        - Mobile Combustion (Motor Gasoline, Diesel)
+        - Fugitive Emissions (HFC-134a, Methane)
+    - **Scope 2**:
+        - Purchased Electricity
+        - Purchased Steams/Heating
+- **Profile-Based Seeding**:
+    - Different facilities will have different dominant emission sources (e.g., a "Refinery" will have more Stationary Combustion, while an "Office" might have more Purchased Electricity).
+- **Realistic Trends**:
+    - Implement a simulated 2-3% year-over-year reduction in emissions to reflect corporate sustainability goals.
+- **Goal Update**:
+    - Seed `goals` for each of the 9 years to ensure the dashboard charts look complete.
+
+## Verification Plan
+
+### Automated Tests
+- Run `node seed_script.js`.
+- Execute SQLite queries to verify counts:
+    - `SELECT COUNT(*) FROM emissions;` (Expect ~540+ records for 5 facilities * 9 years * multiple types/months).
+    - `SELECT DISTINCT year FROM emissions;` (Expect 9 distinct years).
+    - `SELECT DISTINCT process_type FROM emissions;` (Expect 4+ distinct types).
+
+### Manual Verification
+- Log in as the `test` user.
+- Verify the **Audit History** table displays entries.
+- Verify the **Dashboard** charts (once navigated to) show the 9-year trend.

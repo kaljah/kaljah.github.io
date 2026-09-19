@@ -1,0 +1,18 @@
+# Investigation Plan: PDF Report Generation Issues
+
+## Goal
+Identify which report generation button causes UUID filenames and massive file sizes, and find the root cause.
+
+## Checklist
+- [x] Navigate to `http://localhost:5173/reports`
+- [x] Click "Create Report" (Create New Report section)
+    - [ ] Observe filename and size
+    - [ ] Check console and network logs
+- [ ] Click red "PDF Report" (Top right)
+    - [ ] Observe filename and size
+    - [ ] Check console and network logs
+- [ ] Compare findings and identify the problematic button/logic
+
+## Findings
+- Selected "Hassi Messaoud" in the "Create New Report" section.
+- Clicked "Create Report" button. Toast "Generating ISO 14064-1 Report..." appeared.

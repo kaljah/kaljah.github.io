@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary":  "Walkthrough documentation for the completed PVGIS Data Analyzer application, including project structure overview, implemented features (CSV parsing, statistics, monthly/annual analysis, charts, export), verification results showing successful deployment and testing, and user instructions for uploading and analyzing PVGIS data files.",
+  "updatedAt":  "2025-12-30T18:59:38.637053400Z"
+}

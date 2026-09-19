@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -268,7 +268,8 @@
+             entity="Scope2Emission",
+             details=f"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})",
+         )
+-        if initial_status == "Pending Approval":
++        from status import PENDING_STATUS_SET
++        if initial_status in PENDING_STATUS_SET:
+             from models import Notification, User
+             admins = User.query.filter_by(role="admin", status="active").all()
+             for admin in admins:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

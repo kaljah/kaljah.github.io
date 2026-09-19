@@ -1,0 +1,32 @@
+# Implementation Plan - Specific Emission Factor Calculator
+
+## Goal Description
+Expand the Stationary Combustion calculator to allow users to define fuel properties using Chemical Formula (Atom Counts) in addition to Ultimate Analysis (Mass %).
+
+## User Review Required
+> [!NOTE]
+> Added a "Basis" selector for Liquid/Solid fuels: "Mass % (Ultimate Analysis)" or "Chemical Formula (Atoms)".
+> If "Chemical Formula" is selected, the tool calculates the Carbon Weight % based on atomic weights (C=12.011, H=1.008, etc.) and uses that for the emission factor.
+
+## Proposed Changes
+
+### UI Layer
+#### [MODIFY] [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html)
+- Update [getExtraInputs](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html#687-788) for `stationary`:
+    - Add `analysis-basis` selector (Mass % vs Formula).
+    - If Formula: Show inputs for `atoms-c`, `atoms-h`, `atoms-o`, `atoms-n`, `atoms-s`.
+- Update [calculateStationary](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html#1015-1079):
+    - Check `analysis-basis`.
+    - If Formula:
+        - Calculate `MW = C*12.011 + H*1.008 + ...`
+        - Calculate `Carbon % = (C*12.011 / MW) * 100`
+        - Use this calculated % in the [efCombustionCo2](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#421-430) calls.
+        - Display the calculated MW and Formula in results.
+
+## Verification Plan
+### Manual Verification
+- Test with Ethanol (C2H5OH):
+    - C=2, H=6, O=1.
+    - Expected MW ~ 46.07.
+    - Expected C% ~ 52.14%.
+    - Resulting EF should match known values.

@@ -1,0 +1,121 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_tier_scope_kpi_numerical.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -76,13 +76,13 @@
+             fuel_unit="MMBtu",
+             fuel_type="gas",
+         )
+-        assert abs(res["co2"]["value"] - 53.06) < 1e-4
+-        assert abs(res["ch4"]["value"] - 0.001) < 1e-6
+-        assert abs(res["n2o"]["value"] - 0.0001) < 1e-6
++        assert abs(res["results"]["co2"]["value"] - 53.06) < 1e-4
++        assert abs(res["results"]["ch4"]["value"] - 0.001) < 1e-6
++        assert abs(res["results"]["n2o"]["value"] - 0.0001) < 1e-6
+         assert abs(res["total_co2e"] - 53.1145) < 1e-3
+         # Tier 1 uncertainty verification
+-        assert res["co2"]["tier"] == Tier.T1
+-        assert res["co2"]["ad_uncertainty_1sigma"] == (ACTIVITY_UNCERTAINTY[Tier.T1] / COVERAGE_FACTOR_95)
++        assert res["results"]["co2"]["tier"] == Tier.T1
++        assert res["results"]["co2"]["ad_uncertainty_1sigma"] == (ACTIVITY_UNCERTAINTY[Tier.T1] / COVERAGE_FACTOR_95)
+ 
+     def test_scope1_tier2_combustion_custom_hhv_and_density(self):
+         """Tier 2: Fuel-specific Higher Heating Value (HHV) and regional density.
+@@ -104,9 +104,9 @@
+         )
+         expected_mmbtu = 10000.0 * 35.3147 * (1150.0 / 1e6)
+         expected_co2 = (expected_mmbtu * 53.06) / 1000.0
+-        assert abs(res["co2"]["value"] - expected_co2) < 0.05
+-        assert res["co2"]["tier"] == Tier.T2
+-        assert res["co2"]["ad_uncertainty_1sigma"] == (ACTIVITY_UNCERTAINTY[Tier.T2] / COVERAGE_FACTOR_95)
++        assert abs(res["results"]["co2"]["value"] - expected_co2) < 0.05
++        assert res["results"]["co2"]["tier"] == Tier.T2
++        assert res["results"]["co2"]["ad_uncertainty_1sigma"] == (ACTIVITY_UNCERTAINTY[Tier.T2] / COVERAGE_FACTOR_95)
+ 
+     def test_scope1_tier3_gas_composition_stoichiometric_balance(self):
+         """Tier 3: Detailed chromatographic gas composition (C1-C10) with carbon mass balance.
+@@ -126,16 +126,16 @@
+             ef_co2=53.06,
+             ef_ch4=0.001,
+             ef_n2o=0.0001,
+-            gas_composition={
+-                "c1": 0.80,
+-                "c2": 0.10,
+-                "c3": 0.05,
+-                "co2_comp": 0.05,
+-            },
+-            combustion_efficiency=0.995,
+-            uncertainties={"_factor_source": "site_specific"},
++            uncertainties={"_factor_source": "site_specific"},
++            hhv=1020.0,
++            ef_unit="kg/mscf",
+             fuel_unit="mscf",
+             fuel_type="gas",
++            combustion_efficiency=0.995,
++            c1=0.80,
++            c2=0.10,
++            c3=0.05,
++            co2_comp=0.05,
+         )
+         vol_m3 = 100.0 * 1000.0 * CONVERSIONS["scf_to_m3"]
+         expected_comb_co2 = (vol_m3 * 1.15 * 0.995 * CONVERSIONS["density_co2"]) / 1000.0
+@@ -142,9 +142,9 @@
+         expected_total_co2 = expected_comb_co2 + expected_native_co2
+         expected_ch4_slip = (vol_m3 * 0.80 * (1.0 - 0.995) * CONVERSIONS["density_ch4"]) / 1000.0
+ 
+-        assert abs(res["co2"]["value"] - expected_total_co2) < 1e-4
+-        assert abs(res["ch4"]["value"] - expected_ch4_slip) < 1e-5
+-        assert res["co2"]["tier"] == Tier.T3
++        assert abs(res["results"]["co2"]["value"] - expected_total_co2) < 1e-4
++        assert abs(res["results"]["ch4"]["value"] - expected_ch4_slip) < 1e-5
++        assert res["results"]["co2"]["tier"] == Tier.T3
+ 
+     def test_scope1_tier2_flaring_dual_efficiency(self):
+         """Tier 2 Flaring: Dual efficiency model (combustion efficiency vs destruction efficiency).
+@@ -156,17 +156,17 @@
+         """
+         calc = FlaringCalculator()
+         res = calc.calculate(
+-            flare_volume=50000.0,
+-            ch4_content=0.90,
++            gas_volume=50000.0,
++            ch4_fraction=0.90,
+             flare_type="elevated",
++            uncertainties={"_factor_source": "custom"},
+             combustion_efficiency=0.980,
+             destruction_efficiency=0.985,
+-            uncertainties={"_factor_source": "custom"},
+-            volume_unit="m3",
+-        )
+-        assert abs(res["co2"]["value"] - 82.0701) < 0.05
+-        assert abs(res["ch4"]["value"] - 0.45799) < 0.005
+-        assert res["co2"]["tier"] == Tier.T2
++            fuel_unit="m3",
++        )
++        assert abs(res["results"]["co2"]["value"] - 82.0701) < 0.05
++        assert abs(res["results"]["ch4"]["value"] - 0.45799) < 0.005
++        assert res["results"]["co2"]["tier"] == Tier.T2
+ 
+     def test_scope1_tier1_and_tier3_pneumatic_bleed(self):
+         """Tier 1 default pneumatic bleed vs Tier 3 measured bleed rates.
+@@ -184,7 +184,7 @@
+         total_scf_ch4 = 10 * 8760 * 37.3 * 0.85
+         total_m3_ch4 = convert(total_scf_ch4, "scf", "m3")
+         expected_t1_ch4_tonnes = (total_m3_ch4 * CONVERSIONS["density_ch4"]) / 1000.0
+-        assert abs(res_t1["ch4"]["value"] - expected_t1_ch4_tonnes) < 1e-4
++        assert abs(res_t1["results"]["ch4"]["value"] - expected_t1_ch4_tonnes) < 1e-4
+ 
+         # Tier 3
+         res_t3 = calc.calculate(
+@@ -196,8 +196,8 @@
+         total_t3_scf = 5 * 8760 * 2.1 * 0.85
+         total_t3_m3 = convert(total_t3_scf, "scf", "m3")
+         expected_t3_ch4_tonnes = (total_t3_m3 * CONVERSIONS["density_ch4"]) / 1000.0
+-        assert abs(res_t3["ch4"]["value"] - expected_t3_ch4_tonnes) < 1e-4
+-        assert res_t3["ch4"]["tier"] == Tier.T3
++        assert abs(res_t3["results"]["ch4"]["value"] - expected_t3_ch4_tonnes) < 1e-4
++        assert res_t3["results"]["ch4"]["tier"] == Tier.T3
+ 
+ 
+ # ===========================================================================
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+
+app.py:270:@app.route("/api/csrf-token")
+
+
+

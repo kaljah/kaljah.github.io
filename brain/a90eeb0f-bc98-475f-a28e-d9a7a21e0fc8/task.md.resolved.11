@@ -1,0 +1,24 @@
+# Task: Implement Specific Emission Factor Calculator
+
+## Objective
+Convert and append the specific emission factor calculation logic to [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js) and integrate into the UI.
+
+## Todo List
+- [x] Revert [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html) changes <!-- id: 0 -->
+- [x] Append initial port of Python script to [public/emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js) <!-- id: 1 -->
+- [x] Add missing equations to [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#350-632) class (Fugitive, Mobile, Venting, Combustion) <!-- id: 3 -->
+- [x] Expand [public/emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html) UI <!-- id: 4 -->
+    - [x] Add **Fugitive** Card & Logic
+    - [x] Update **Stationary Combustion** Card (Fuel Type Selector)
+    - [x] Update **Venting** Card (Venting Type Selector)
+    - [x] Fix Selectors & Add C9/C10/CO2/N2
+    - [x] Expand Ultimate Analysis Inputs
+    - [x] Add **Chemical Formula Calculation** mode for Liquid/Solid fuels <!-- id: 5 -->
+    - [x] Modernize **Results Section** UI <!-- id: 6 -->
+    - [x] Add **Save to Custom Factors** functionality <!-- id: 7 -->
+- [x] Separate **Custom Factors** from Standard Fuels in Calculator UI <!-- id: 8 -->
+- [x] **Gap Analysis & Critical Updates** <!-- id: 9 -->
+    - [x] Implement **Loading Loss Equation** (Eq 5-1)
+    - [x] Implement **Tank Flashing** Factor defaults (Vasquez-Beggs placeholder)
+    - [x] Implement **Glycol Dehydrator** specific models (GRI-GLYCalc style simplified)
+- [ ] Verify logic with a test script <!-- id: 2 -->

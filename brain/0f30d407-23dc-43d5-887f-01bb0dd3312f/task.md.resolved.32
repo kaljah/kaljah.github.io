@@ -1,0 +1,35 @@
+# Tasks
+
+- [x] Install dependencies <!-- id: 5 -->
+- [x] Analyze New Tool Dashboard Code <!-- id: 6 -->
+    - [x] Frontend: [new/client/src/pages/DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx) <!-- id: 7 -->
+    - [x] Backend: [new/server/routes/dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) <!-- id: 8 -->
+- [x] Default Year to "All Years" (Fix Dropdown) <!-- id: 9 -->
+    - [x] Update [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx) to default to `'all'` <!-- id: 12 -->
+- [x] Simplify Loading Screen <!-- id: 11 -->
+    - [x] Update [LoadingSpinner.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.jsx) <!-- id: 13 -->
+    - [x] Update [LoadingSpinner.css](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.css) <!-- id: 14 -->
+- [x] Carbon Intensity Optimization <!-- id: 15 -->
+    - [x] Analyze [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx) <!-- id: 16 -->
+    - [x] Default Year to "All Years" <!-- id: 17 -->
+    - [x] Add Flaring Intensity to Hero Card <!-- id: 18 -->
+    - [x] Add Oil/Gas Intensity Charts <!-- id: 19 -->
+    - [x] Display Absolute Emission Numbers in Hero Card <!-- id: 20 -->
+- [x] Fix Production Data Overestimation <!-- id: 21 -->
+    - [x] Check backend [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) for unit scaling <!-- id: 22 -->
+    - [x] Check frontend [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx) for formatting <!-- id: 23 -->
+    - [x] Verify raw DB values <!-- id: 24 -->
+    - [x] Create simple reproduction script to isolate the issue <!-- id: 25 -->
+- [x] Debug Dashboard Hero Card Logic <!-- id: 26 -->
+    - [x] Analyze [get_dashboard_summary](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#8-123) in [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) <!-- id: 27 -->
+    - [x] Verify frontend aggregation in [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx) <!-- id: 28 -->
+    - [x] Run backend reproduction script <!-- id: 29 -->
+    - [x] Apply logic fixes (Gross=S1+S2, Net=Gross-Mit, CH4=S1, Weighted Intensity) <!-- id: 30 -->
+- [/] Verify Dashboard Components & Filters <!-- id: 31 -->
+    - [x] Analyze frontend filter logic ([DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx)) <!-- id: 32 -->
+    - [x] Analyze backend filter logic ([dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py)) <!-- id: 33 -->
+    - [ ] Verify `EmissionTrends` behavior <!-- id: 34 -->
+    - [ ] Verify `EmissionsBySource` behavior (Found Check: Missing Activity/Division filters?) <!-- id: 35 -->
+    - [ ] Verify `EmissionsByActivity` behavior <!-- id: 36 -->
+    - [ ] Verify `CategoricalEmissions` behavior <!-- id: 37 -->
+    - [ ] Verify `DetailedBreakdown` behavior <!-- id: 38 -->

@@ -1,0 +1,33 @@
+# Implementation Plan - Standardize Navigation Bar
+
+This plan aims to ensure that the "Uncertainty" link is consistently present in the navigation bar across all relevant HTML files. Research has identified that [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) is currently missing this link.
+
+## Proposed Changes
+
+### [Component Name] UI - Sidebar Navigation
+
+#### [MODIFY] [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)
+
+Add the following HTML snippet to the `<ul class="nav-links">` section, after the "Compliance" link:
+
+```html
+<li class="nav-item">
+    <a href="uncertainty.html" class="nav-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            style="margin-right:8px;">
+            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z">
+            </path>
+            <path d="M12 18v.01"></path>
+            <path d="M12 14a2 2 0 0 0 .914-3.782 1.98 1.98 0 0 0-2.414.483"></path>
+        </svg>
+        Uncertainty
+    </a>
+</li>
+```
+
+## Verification Plan
+
+### Manual Verification
+- View the modified [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) to confirm the code was inserted correctly and matches the structure in other files.
+- Verify the link order matches the established pattern: Dashboard -> Calculations -> Reports -> Reference Data -> Manage Data -> Compliance -> Uncertainty.

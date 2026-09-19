@@ -1,0 +1,22 @@
+# Integrate Settings into Custom Factors
+
+This plan covers migrating the "Manage Facilities" functionality from [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html) to [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html) to consolidate administrative views while maintaining the dark dashboard theme.
+
+## Proposed Changes
+
+### [Component Name] UI Consolidation
+
+#### [MODIFY] [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html)
+- Add "Manage Facilities" section below the custom factors form.
+- Use consistent glassmorphism styles and dark theme tokens.
+- Ensure the layout is responsive (already using [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css)).
+
+#### [MODIFY] [custom-factors.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.js)
+- Port facility management logic ([loadFacilities](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js#92-122), [saveFacility](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js#123-152), [deleteFacility](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js#153-169)) from [settings.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js).
+- Integrate facility loading into the `DOMContentLoaded` event.
+
+#### [MODIFY] [All Dashboard Pages]
+- Update sidebar and top-bar "Settings" links to point to [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html) if applicable, or keep them as is if [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html) is kept but redirected.
+- *Decision*: For now, I will just add the functionality to [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html) as requested.
+
+

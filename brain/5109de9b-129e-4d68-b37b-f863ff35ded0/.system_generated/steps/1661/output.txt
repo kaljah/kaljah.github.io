@@ -1,0 +1,186 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+                    flat_inputs, ["agr_co2_out", "co2_out"], "outlet CO2 mole %"
+                )
+    
+                if raw_co2_in > 1.0 or raw_co2_out > 1.0:
+                    co2_in = raw_co2_in / 100.0 if raw_co2_in > 1.0 else raw_co2_in
+                    co2_out = (raw_co2_out / 100.0) if raw_co2_in > 1.0 else (raw_co2_out / 100.0 if raw_co2_out > 1.0 else raw_co2_out)
+                else:
+                    co2_in = raw_co2_in
+                    co2_out = raw_co2_out
+    
+                if co2_out > co2_in:
+                    co2_out = co2_in
+    
+                ch4_in = self._optional_fraction(
+                    flat_inputs, ["agr_ch4_in", "ch4_in", "c1", "ch4_mole_pct"], 0.85
+                )
+                ch4_slip = self._optional_fraction(
+                    flat_inputs,
+                    ["agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor"],
+                    0.001,
+                )
+                ctrl_eff = self._optional_fraction(
+                    flat_inputs, ["agr_control_eff", "control_efficiency"], 0.0
+                )
+                ctrl_type = (
+                    flat_inputs.get("agr_control_type")
+                    or flat_inputs.get("acid_gas_control_type")
+                    or flat_inputs.get("control_type", "vent")
+                )
+    
+                return calculator.calculate(
+                    throughput=vol_mmscf,
+                    co2_in=co2_in,
+                    co2_out=co2_out,
+                    uncertainties=uncertainties,
+                    ch4_in=ch4_in,
+                    ch4_slip_fraction=ch4_slip,
+                    acid_gas_control_eff=ctrl_eff,
+                    acid_gas_control_type=ctrl_type,
+                    gwp_dict=gwp_dict,
+                )
+    
+            elif process_type == "dehydrator":
+                throughput = (
+                    flat_inputs.get("dehy_throughput")
+                    or flat_inputs.get("amount")
+                    or flat_inputs.get("quantity")
+                )
+                pump_rate = flat_inputs.get("dehy_pump_rate") or flat_inputs.get(
+                    "pump_rate"
+                )
+                pump_unit = flat_inputs.get("dehy_pump_unit", "gph")
+                hours = float(
+                    flat_inputs.get("dehy_hours")
+                    or flat_inputs.get("hours_operating")
+                    or 8760
+                )
+                ch4_content = self._optional_fraction(
+                    flat_inputs, ["dehy_ch4_content", "ch4_content", "c1"], 0.85
+                )
+                control_eff = self._optional_fraction(
+                    flat_inputs, ["dehy_eff", "control_efficiency"], 0.0
+                )
+                contactor_press = float(
+                    flat_inputs.get("dehy_press")
+                    or flat_inputs.get("contactor_pressure")
+                    or 800.0
+                )
+                press_u = flat_inputs.get("dehy_press_unit", "psig")
+                contactor_t = float(
+                    flat_inputs.get("dehy_temp")
+                    or flat_inputs.get("contactor_temperature")
+                    or 100.0
+                )
+                temp_u = flat_inputs.get("dehy_temp_unit", "F")
+                has_flash = flat_inputs.get("dehy_has_flash", True)
+                if isinstance(has_flash, str):
+                    has_flash = has_flash.lower() in ["true", "1", "yes"]
+                flash_eff = self._optional_fraction(
+                    flat_inputs, ["dehy_flash_eff", "flash_control_eff"], 0.0
+                )
+                still_type = flat_inputs.get("dehy_still_type", "none")
+    
+                return calculator.calculate(
+                    throughput=throughput,
+                    pump_rate=pump_rate,
+                    pump_unit=pump_unit,
+                    hours=hours,
+                    ch4_content=ch4_content,
+                    control_eff=control_eff,
+                    uncertainties=uncertainties,
+                    contactor_pressure=contactor_press,
+                    press_unit=press_u,
+                    contactor_temperature=contactor_t,
+                    temp_unit=temp_u,
+                    has_flash_tank=has_flash,
+                    flash_control_eff=flash_eff,
+                    still_control_type=still_type,
+                    gwp_dict=gwp_dict,
+                )
+    
+            elif process_type == "indirect_steam":
+                heat = self._require_float(
+                    flat_inputs, ["quantity", "amount", "heat_energy"], "heat energy"
+                )
+                boiler_eff = self._require_float(
+                    flat_inputs,
+                    ["boiler_eff", "boiler_efficiency"],
+                    "boiler efficiency fraction (e.g. 0.80)",
+                )
+                trans_loss = self._optional_fraction(
+                    flat_inputs, ["trans_loss", "transmission_loss"], 0.0
+                )
+    
+                return calculator.calculate(
+                    heat_energy=heat,
+                    ef_co2=emission_factors.get("co2", 0),
+                    boiler_efficiency=boiler_eff,
+                    transmission_loss=trans_loss,
+                    uncertainties=uncertainties,
+                    heat_unit=flat_inputs.get("heat_unit", "btu"),
+                )
+    
+            elif process_type == "stoichiometry":
+                fuel_mass = self._require_float(
+                    flat_inputs, ["quantity", "amount", "fuel_mass"], "fuel mass"
+                )
+                carbon_content = self._require_float(
+                    flat_inputs,
+                    ["carbon_content"],
+                    "fuel carbon mass fraction (e.g. 0.85)",
+                )
+    
+                return calculator.calculate(
+                    fuel_mass=fuel_mass,
+                    carbon_content=carbon_content,
+                    uncertainties=uncertainties,
+                    mass_unit=unit,
+                )
+    
+            else:
+                return self._generic_calculation(
+                    flat_inputs,
+                    emission_factors,
+                    uncertainties,
+                    process_type,
+                    gwp_dict=gwp_dict,
+                )
+    
+        except Exception as e:
+            from flask import current_app, has_app_context
+    
+            if has_app_context():
+                current_app.logger.error(
+                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
+                    exc_info=True,
+                )
+            else:
+                import logging
+    
+                logging.error(
+                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
+                    exc_info=True,
+                )
+>           raise ValueError(f"Calculation error for '{process_type}': {str(e)}") from e
+E           ValueError: Calculation error for 'dehydrator': name 'flash_control_type' is not defined
+
+calculations\dispatcher.py:994: ValueError
+------------------------------ Captured log call ------------------------------
+ERROR    root:dispatcher.py:990 [Dispatcher] Calculation failed for process_type='dehydrator': name 'flash_control_type' is not defined
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 913, in dispatch
+    return calculator.calculate(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py", line 253, in calculate
+    f_type = str(flash_control_type or "").strip().lower()
+                 ^^^^^^^^^^^^^^^^^^
+NameError: name 'flash_control_type' is not defined. Did you mean: 'flash_control_eff'?
+=========================== short test summary info ===========================
+FAILED tests/test_dispatcher.py::test_dehydrator_parametric_solubility - Valu...
+====================== 1 failed, 11 deselected in 1.08s =======================
+

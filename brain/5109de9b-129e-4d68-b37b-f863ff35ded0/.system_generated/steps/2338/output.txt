@@ -1,0 +1,86 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -112,6 +112,61 @@
+ 
+ ---
+ 
++## Methane Intensity & Carbon Intensity Pages: Mathematical & UI Audit
++
++### 1. Carbon Intensity Page (`CarbonIntensity.jsx` & `_query_intensity_stats`)
++
++#### A. Mathematical Formulation
++* **Production-Weighted Portfolio Intensity ($\bar{I}_{\text{CO}_2}$)**:
++  $$\bar{I}_{\text{CO}_2} = \frac{\sum_{i \in \text{Fac}} (\text{Total CO}_2\text{e}_i \times 1,000)}{\sum_{i \in \text{Fac}} \text{BOE}_i} \quad [\text{kg CO}_2\text{e}/\text{BOE}]$$
++  *Satisfies linear additivity and physical mass/energy conservation invariants without skew from unweighted facility means.*
++* **Scope Breakdown Intensities**:
++  $$I_{\text{Scope 1}} = \frac{(\text{Total CO}_2\text{e} - \text{Scope 2}) \times 1000}{\text{BOE}}, \quad I_{\text{Scope 2}} = \frac{\text{Scope 2} \times 1000}{\text{BOE}}, \quad I_{\text{Flaring}} = \frac{\text{Flaring CO}_2\text{e} \times 1000}{\text{BOE}}$$
++  $$\text{Invariant: } I_{\text{Total Operational}} \equiv I_{\text{Scope 1}} + I_{\text{Scope 2}}$$
++* **GWP Horizon Toggle (100-Year vs 20-Year Horizon)**:
++  - Dynamically switches emission multipliers on the fly without database mutation:
++    - **100-Yr Horizon**: $\text{GWP}(\text{CH}_4) = 28.0$, $\text{GWP}(\text{N}_2\text{O}) = 265.0$ (AR5) / $27.9, 273.0$ (AR6).
++    - **20-Yr Horizon**: $\text{GWP}_{20}(\text{CH}_4) = 82.5$, $\text{GWP}_{20}(\text{N}_2\text{O}) = 264.0$ (AR5) / $82.5, 273.0$ (AR6).
++    $$\text{Scope } 1_{20\text{-yr}} = \text{CO}_{2,\text{mass}} + (\text{CH}_{4,\text{mass}} \times \text{GWP}_{20,\text{CH}_4}) + (\text{N}_2\text{O}_{\text{mass}} \times \text{GWP}_{20,\text{N}_2\text{O}})$$
++* **EU CBAM Product-Specific Embedded Emissions**:
++  - Direct and indirect embedded emissions for imported goods ($\text{tCO}_2\text{e}/\text{t}$ product) conforming strictly to EU Regulation 2023/956 Annexes III & IV.
++
++---
++
++### 2. Methane Intensity Page (`MethaneIntensity.jsx` & `_query_intensity_stats`)
++
++#### A. Mathematical Formulation
++* **Methane Intensity Metric**:
++  $$I_{\text{CH}_4} = \frac{M_{\text{CH}_4\text{, emitted}} \times 1,000}{\text{BOE}} \quad [\text{kg CH}_4/\text{BOE}]$$
++* **OGMP 2.0 / Statutory Methane Loss Rate (%)**:
++  Standard density $\rho_{\text{CH}_4} = 0.6785\text{ kg/m}^3$ at standard conditions ($60^\circ\text{F}$, $14.696\text{ psia}$ / $15^\circ\text{C}$, $101.325\text{ kPa}$):
++  $$V_{\text{CH}_4,\text{m}^3} = \frac{M_{\text{CH}_4,\text{tonnes}} \times 1,000}{0.6785}$$
++  $$\text{Methane Loss Rate (\%)} = \left( \frac{V_{\text{CH}_4,\text{m}^3}}{V_{\text{gas produced, m}^3}} \right) \times 100\%$$
++* **Segment-Specific Statutory Targets**:
++  - **Upstream Production**: $\text{Target} = 0.20\%$, $\text{Warning} = 0.25\%$, $\text{Non-Compliant} > 0.25\%$.
++  - **Midstream Processing / Transport**: $\text{Target} = 0.05\%$, $\text{Warning} = 0.0625\%$, $\text{Non-Compliant} > 0.0625\%$.
++* **EPA Waste Emissions Charge (WEC) - 40 CFR Part 99 / IRA §136**:
++  $$\text{Threshold Volume: } M_{\text{allowed, tCH}_4} = \frac{V_{\text{gas, m}^3} \times \text{Threshold Rate} \times 0.6785}{1,000}$$
++  $$\text{Excess CH}_4 = \max(0, M_{\text{CH}_4\text{, emitted}} - M_{\text{allowed}})$$
++  $$\text{WEC Liability (\$) } = \text{Excess CH}_4 \times \text{Fee Rate} \quad (\text{2024: \$900, 2025: \$1,200, 2026+: \$1,500/tonne})$$
++* **OGMP 2.0 Level 4/5 Top-Down Reconciliation**:
++  $$\text{Reconciliation Ratio} = \frac{\text{Top-Down CH}_4\text{ (Site Aerial/Drone/Satellite)}}{\text{Bottom-Down Inventory CH}_4}$$
++  $$\text{Variance (\%)} = \left( \frac{\text{Top-Down} - \text{Bottom-Up}}{\text{Bottom-Up}} \right) \times 100\%$$
++  - Level 5 Gold Standard requires $|\text{Variance}| \le 20.0\%$ (or facility-configured reconciliation threshold).
++
++---
++
++### 3. Remediations Applied & Verified
++
++1. **Segment-Specific OGMP Targets in Bulk Multi-Year Trend (`dashboard.py:L1340`)**:
++   - `_query_intensity_trend_bulk` previously hardcoded $0.20\%$ across all facilities. Corrected to dynamically set $0.05\%$ for Midstream Processing / Transport facilities and $0.20\%$ for Upstream, harmonizing with `_query_intensity_stats`.
++2. **Production Normalization Invariant**:
++   - Unified multi-unit volumetric conversions ($m^3$, $gal$, $l$, $tonne$, $bbl$, $mscf$, $mmscf$) across `_query_overview_stats`, `_query_intensity_stats`, and `_query_intensity_trend_bulk`, preventing rounding drift.
++3. **Zero Top-Down Observation Discrepancy Elimination**:
++   - Guarded survey reconciliation so un-surveyed facilities ($0\text{ top-down}$) do not trigger spurious $-100\%$ reconciliation flags.
++
++---
++
+ ## Final Verification Results
+ 
+ - **Complete Backend Test Suite**:
+@@ -118,5 +118,5 @@
+   pytest tests/ -v
+-  ====================== 148 passed, 45 warnings in 15.14s ======================
++  ====================== 148 passed, 45 warnings in 14.73s ======================
+   ```
+   - **148 passed, 0 failed (100% pass rate)**.
+ - **Frontend Client Production Build**:
+@@ -128,7 +128,8 @@
+ - **Knowledge Graph Synchronization**:
+   ```
+   graphify update .
+-  Rebuilt: 2088 nodes, 4365 edges, 201 communities.
+-  Exit code: 0
+-  ```
++  Rebuilt: 2088 nodes, 4367 edges, 204 communities.
++  Exit code: 0
++  ```
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

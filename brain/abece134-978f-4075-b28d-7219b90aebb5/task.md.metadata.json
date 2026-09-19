@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_TASK",
+  "summary": "Task checklist for building a CSV to spreadsheet converter web application, including project setup, core features (upload, parsing, display, editing, sorting, filtering), UI polish, and verification steps.",
+  "updatedAt": "2025-11-25T22:47:17.793649500Z"
+}

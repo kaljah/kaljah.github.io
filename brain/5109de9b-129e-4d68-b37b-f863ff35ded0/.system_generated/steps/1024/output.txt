@@ -1,0 +1,77 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 11 items
+
+tests/test_audit_remediation.py::test_dispatcher_kg_per_tonne_factor PASSED [  9%]
+tests/test_audit_remediation.py::test_dispatcher_fraction_boundary PASSED [ 18%]
+tests/test_audit_remediation.py::test_stoichiometry_short_ton PASSED     [ 27%]
+tests/test_audit_remediation.py::test_base_calculator_uncertainty_k_factor PASSED [ 36%]
+tests/test_audit_remediation.py::test_profile_location_immutability PASSED [ 45%]
+tests/test_audit_remediation.py::test_audit_sod_for_it_admin PASSED      [ 54%]
+tests/test_audit_remediation.py::test_scope3_server_side_calculation PASSED [ 63%]
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit PASSED [ 72%]
+tests/test_audit_remediation.py::test_scope2_rbac_and_creator_ownership PASSED [ 81%]
+tests/test_audit_remediation.py::test_scope2_case_insensitive_recalc_and_steam_amount PASSED [ 90%]
+tests/test_audit_remediation.py::test_bulk_anomaly_flag_persistence FAILED [100%]
+
+================================== FAILURES ===================================
+_____________________ test_bulk_anomaly_flag_persistence ______________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_bulk_anomaly_flag_persistence(client, test_users):
+        """Verify that background anomaly detection flags are stored in emission.qa_flag."""
+        from calculations.anomaly import AnomalyDetector
+        anomaly_detector = AnomalyDetector()
+        with app.app_context():
+            # High value that triggers outlier flag
+            emission = Emission(
+                facility_id=test_users["facility_id"],
+                year=2026,
+                month=9,
+                process_type="combustion",
+                fuel_type="Diesel",
+                quantity=999999999.0,
+                co2e_total=5000000.0,
+                status="Pending",
+            )
+            anomaly = anomaly_detector.check_scope1(
+                emission.facility_id,
+                emission.process_type,
+                emission.co2e_total,
+                emission.year,
+                emission.month,
+            )
+>           assert anomaly.get("flagged") is True
+E           AssertionError: assert False is True
+E            +  where False = <built-in method get of dict object at 0x000002941A251200>('flagged')
+E            +    where <built-in method get of dict object at 0x000002941A251200> = {'flagged': False, 'reason': 'insufficient_history', 'z_score': None, 'expected_range': None, ...}.get
+
+tests\test_audit_remediation.py:446: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_audit_remediation.py::test_profile_location_immutability
+  C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:435: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    user = User.query.get(user_id)
+
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit
+  C:\Users\samsung\Desktop\H2\new\server\routes\data.py:162: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    prod = ProductionData.query.get(record_id)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_audit_remediation.py::test_bulk_anomaly_flag_persistence - ...
+================== 1 failed, 10 passed, 3 warnings in 2.91s ===================
+

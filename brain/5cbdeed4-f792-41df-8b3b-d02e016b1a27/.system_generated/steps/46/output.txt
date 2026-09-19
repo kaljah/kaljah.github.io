@@ -1,0 +1,33 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":826,"LineContent":"            statusRes.data.status === \"completed\" ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":827,"LineContent":"            statusRes.data.status === \"failed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":831,"LineContent":"            if (statusRes.data.status === \"completed\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1435,"LineContent":"                        {uploadStatus.status === \"completed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1437,"LineContent":"                          : uploadStatus.status === \"failed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1451,"LineContent":"                            uploadStatus.status === \"failed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1515,"LineContent":"                    {(uploadStatus.status === \"completed\" ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1516,"LineContent":"                      uploadStatus.status === \"failed\") \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1668,"LineContent":"                        {uploadStatus.status === \"completed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1670,"LineContent":"                          : uploadStatus.status === \"failed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1684,"LineContent":"                            uploadStatus.status === \"failed\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1748,"LineContent":"                    {(uploadStatus.status === \"completed\" ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1749,"LineContent":"                      uploadStatus.status === \"failed\") \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":98,"LineContent":"                            background: syncResult.status === 'success' ? '#ecfdf5' : '#fef2f2',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":99,"LineContent":"                            border: `1px solid ${syncResult.status === 'success' ? '#a7f3d0' : '#fecaca'}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":102,"LineContent":"                            {syncResult.status === 'success' ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":110,"LineContent":"                                    color: syncResult.status === 'success' ? '#065f46' : '#991b1b',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":113,"LineContent":"                                    {syncResult.status === 'success' ? 'Synchronization Successful' : 'Synchronization Failed'}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":115,"LineContent":"                                \u003cp style={{ margin: 0, color: syncResult.status === 'success' ? '#064e3b' : '#7f1d1d' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":118,"LineContent":"                                {syncResult.status === 'success' \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":445,"LineContent":"          res.status === 201 ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":854,"LineContent":"                    : row.status === null"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":857,"LineContent":"                  border: `1px solid ${row.ok ? \"rgba(16,185,129,.2)\" : row.status === null ? \"rgba(100,116,139,.15)\" : \"rgba(239,68,68,.2)\"}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":871,"LineContent":"                      : row.status === null"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":876,"LineContent":"                      : row.status === null"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":900,"LineContent":"                        : row.status === null"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":905,"LineContent":"                    {row.status === null ? \"Not fetched yet\" : row.detail}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2348,"LineContent":"                        {entry.status === \"Draft\" \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\NotificationCenter.jsx","LineNumber":313,"LineContent":"      if (res.status === 200) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":716,"LineContent":"                        {entry.status === \"Draft\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":730,"LineContent":"                        ) : (entry.status === \"Pending Approval\" || entry.status === \"Pending\") ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":764,"LineContent":"                      {entry.status === \"Draft\" \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":141,"LineContent":"        if (data.status === \"completed\" || data.status === \"error\") {"}

@@ -1,0 +1,91 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\audit.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -198,17 +198,33 @@
+ @audit_bp.route("/stats/", methods=["GET"])
+ @audit_access_required
+ def get_audit_stats():
+-    total_events = ActivityLog.query.count()
+-    total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
+-    data_mutations = ActivityLog.query.filter(
+-        ActivityLog.action.in_(["CREATE", "UPDATE", "DELETE"])
+-    ).count()
+-    security_alerts = ActivityLog.query.filter(
+-        ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS"])
+-    ).count()
+-    unique_users = (
+-        db.session.query(func.count(distinct(ActivityLog.user_name))).scalar() or 0
+-    )
++    user = get_current_user()
++    if user and user.role == "it_admin":
++        sec_actions = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
++        total_events = ActivityLog.query.filter(ActivityLog.action.in_(sec_actions)).count()
++        total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
++        data_mutations = 0
++        security_alerts = ActivityLog.query.filter(
++            ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS"])
++        ).count()
++        unique_users = (
++            db.session.query(func.count(distinct(ActivityLog.user_name)))
++            .filter(ActivityLog.action.in_(sec_actions))
++            .scalar()
++            or 0
++        )
++    else:
++        total_events = ActivityLog.query.count()
++        total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
++        data_mutations = ActivityLog.query.filter(
++            ActivityLog.action.in_(["CREATE", "UPDATE", "DELETE"])
++        ).count()
++        security_alerts = ActivityLog.query.filter(
++            ActivityLog.action.in_(["SECURITY", "FAILED_LOGIN", "SUSPICIOUS"])
++        ).count()
++        unique_users = (
++            db.session.query(func.count(distinct(ActivityLog.user_name))).scalar() or 0
++        )
+ 
+     return jsonify(
+         {
+@@ -224,6 +224,22 @@
+ @audit_bp.route("/filters/", methods=["GET"])
+ @audit_access_required
+ def get_audit_filters():
++    user = get_current_user()
++    if user and user.role == "it_admin":
++        sec_actions = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
++        users = (
++            db.session.query(distinct(ActivityLog.user_name))
++            .filter(ActivityLog.action.in_(sec_actions))
++            .all()
++        )
++        return jsonify(
++            {
++                "users": sorted([u[0] for u in users if u[0]]),
++                "actions": sorted(sec_actions),
++                "entities": ["User", "Security"],
++            }
++        )
++
+     users = db.session.query(distinct(ActivityLog.user_name)).all()
+     actions = db.session.query(distinct(ActivityLog.action)).all()
+     entities = db.session.query(distinct(ActivityLog.entity)).all()
+@@ -252,13 +252,13 @@
+ @audit_access_required
+ def export_audit_logs():
+     export_format = request.args.get("format", "csv").lower()
+-    query = _build_audit_query()
++    user = get_current_user()
++    is_it_admin = bool(user and user.role == "it_admin")
++    query = _build_audit_query(current_user=user)
+ 
+     # Limit maximum export to 10,000 records to prevent memory exhaustion
+     logs = query.order_by(ActivityLog.timestamp.desc()).limit(10000).all()
+-    serialized = [_serialize_log(log) for log in logs]
+-
+-    user = get_current_user()
++    serialized = [_serialize_log(log, is_it_admin=is_it_admin) for log in logs]
+     timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+ 
+     # Record the export in the audit trail itself
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

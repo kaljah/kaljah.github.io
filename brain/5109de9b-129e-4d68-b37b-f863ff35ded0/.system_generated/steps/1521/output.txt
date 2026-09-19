@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":16,"LineContent":"from .indirect import IndirectSteamCalculator, CogenAllocationCalculator"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":55,"LineContent":"            \"cogen_allocation\": CogenAllocationCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\indirect.py","LineNumber":101,"LineContent":"class CogenAllocationCalculator(BaseCalculator):"}

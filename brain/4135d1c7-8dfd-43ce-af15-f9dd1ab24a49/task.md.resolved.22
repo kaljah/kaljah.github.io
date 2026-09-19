@@ -1,0 +1,9 @@
+# Task: Settings Page Modernization
+
+- [x] Research and Planning
+- [x] Modernize Settings Page (General)
+- [x] Modernize Settings Dropdowns
+- [/] Add Save Button to Reporting
+    - [/] Update [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html) (Add button)
+    - [ ] Update [settings.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js) (Disable auto-save, enable manual save)
+- [ ] Verify changes

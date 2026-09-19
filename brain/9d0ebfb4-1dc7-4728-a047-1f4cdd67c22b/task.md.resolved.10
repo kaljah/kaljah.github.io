@@ -1,0 +1,27 @@
+# Task List
+
+## Active Goal: Refactoring Filters to Scrollable Custom Dropdowns
+
+- [x] Refactor [mobile-combustion.html](file:///c:/Users/samsung/Desktop/h/public/mobile-combustion.html)
+- [x] Refactor [scope2-calculator.html](file:///c:/Users/samsung/Desktop/h/public/scope2-calculator.html)
+- [x] Refactor [scope3-calculator.html](file:///c:/Users/samsung/Desktop/h/public/scope3-calculator.html)
+- [x] Refactor [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html)
+- [x] Refactor [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+    - [x] Convert Activity/Division- [x] Fix Dropdown Issues
+    - [x] Convert conversion unit selects (`conv-oil-unit`, `conv-gas-unit`)
+    - [x] Standardize custom dropdown logic across all JS files
+    - [x] Implement idempotent guards to prevent double-init bugs
+    - [x] Update CSS for high z-index and overflow handling
+    [x] Fix specific ReferenceErrors and input requirements
+    [x] Verify global dropdown functionality and UI layering
+- [x] Global UI Consistency
+    - [x] Refactor [dashboard.js](file:///c:/Users/samsung/Desktop/h/public/dashboard.js) filters to use [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/flaring.html#802-830)
+    - [x] Refactor [carbon-intensity.js](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js) filters to use [setupCustomDropdownHelper](file:///c:/Users/samsung/Desktop/h/public/flaring.html#802-830)
+    - [x] Ensure [reference-data.html](file:///c:/Users/samsung/Desktop/h/public/reference-data.html) is consistent
+
+## Completed Goals
+- [x] Explore codebase and database schema
+- [x] Implement data reset and seeding script
+- [x] Production Data Enhancements (Year filters)
+- [x] Seed base year, goals, mitigation actions, production data
+- [x] Seed Custom Emission Factors (Sonatrach Specific)

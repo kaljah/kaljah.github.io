@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":783,"LineContent":"        GAS_UNIT_TO_M3 = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":880,"LineContent":"                * GAS_UNIT_TO_M3.get(str(p.gas_unit or \"mscf\").lower(), 28.3168)"}

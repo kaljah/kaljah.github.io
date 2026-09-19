@@ -1,0 +1,6 @@
+# Refining Login Error Display
+
+- [/] Remove toast notifications from login page <!-- id: 0 -->
+    - [ ] Remove `toastError` from login handler in [script.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/script.js) <!-- id: 1 -->
+    - [ ] Ensure error message container is properly targeted and styled <!-- id: 2 -->
+- [ ] Verify error display logic <!-- id: 3 -->

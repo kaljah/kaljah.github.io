@@ -1,0 +1,19 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-1183
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-1183.log
+Log output:
+<truncated 70 lines>
+st_completions_flowback_methods PASSED       [ 64%]
+tests/test_gwp_dynamic.py::test_constants_and_helpers PASSED             [ 65%]
+tests/test_gwp_dynamic.py::test_calculate_co2e_dynamic PASSED            [ 67%]
+tests/test_gwp_dynamic.py::test_legacy_engine_dynamic_gwp PASSED         [ 68%]
+tests/test_qaqc_diagnostics.py::test_qaqc_unauthenticated PASSED         [ 69%]
+tests/test_qaqc_diagnostics.py::test_qaqc_dashboard_unified_payload PASSED [ 70%]
+tests/test_qaqc_diagnostics.py::test_qaqc_export_csv PASSED              [ 71%]
+tests/test_reports.py::test_reports_unauthenticated PASSED               [ 72%]
+tests/test_reports.py::test_reports_it_admin_forbidden PASSED            [ 73%]
+tests/test_reports.py::test_emissions_excel_export_multi_scope PASSED    [ 74%]
+tests/test_reports.py::test_excel_formula_injection_defense PASSED       [ 75%]
+tests/test_reports.py::test_reports_pdf_export_get_and_post PASSED       [ 76%]
+tests/test_reports.py::test_reports_ogmp_excel_export 
+Last progress: 0s ago

@@ -1,0 +1,9 @@
+- [x] **Database Schema Update**: Add `field` column to `facilities` table in `server.js`.
+- [x] **Backend API Update (`server.js`)**:
+    - [x] Modify `facilities` table schema creation/alteration.
+    - [x] Update API endpoints (`/api/facilities`) to handle `field`, `activity`, `division`.
+- [x] **Frontend Updates**:
+    - [x] **`manage-data.html`**: Rename "Facilities" to "Region", add Activity/Division/Field inputs, reorder.
+    - [x] **`emissions-calculator.html` / `emissions-calc.js`**: Rename "Facility" to "Region", add Activity/Division/Field inputs (auto-filled).
+- [x] **PostgreSQL Enforcement**: Remove `sqlite3` fallback from `server.js` and enforce `PgAdapter`.
+- [x] **Verification**: Restart server and verify changes in UI.

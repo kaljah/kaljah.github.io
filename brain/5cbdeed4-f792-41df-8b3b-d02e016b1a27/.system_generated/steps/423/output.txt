@@ -1,0 +1,43 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -826,8 +826,11 @@
+       const jobId = res.data.job_id;
+       setUploadJobId(jobId);
+ 
+-      // Start polling
+-      const interval = setInterval(async () => {
++      // Start polling with cleanup protection
++      if (pollIntervalRef.current) {
++        clearInterval(pollIntervalRef.current);
++      }
++      pollIntervalRef.current = setInterval(async () => {
+         try {
+           const statusRes = await api.get(`/emissions/upload/status/${jobId}`);
+           setUploadStatus(statusRes.data);
+@@ -835,7 +835,10 @@
+             statusRes.data.status === "completed" ||
+             statusRes.data.status === "failed"
+           ) {
+-            clearInterval(interval);
++            if (pollIntervalRef.current) {
++              clearInterval(pollIntervalRef.current);
++              pollIntervalRef.current = null;
++            }
+             setLoading(false);
+             if (statusRes.data.status === "completed") {
+               toast.success(
+@@ -846,7 +846,10 @@
+             }
+           }
+         } catch (err) {
+-          clearInterval(interval);
++          if (pollIntervalRef.current) {
++            clearInterval(pollIntervalRef.current);
++            pollIntervalRef.current = null;
++          }
+           setLoading(false);
+           toast.error("Error checking upload status.");
+         }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

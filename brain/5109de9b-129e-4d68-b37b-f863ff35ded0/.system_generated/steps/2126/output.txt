@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\fugitive.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -26,7 +26,12 @@
+         for comp_type, data in component_counts.items():
+             count = data.get("count", 0)
+             ef = data.get("ef", 0)
+-            total_ch4_kg_hr += count * ef * ch4_content
++            ef_unit = str(data.get("unit") or data.get("ef_unit") or "").lower()
++            is_methane = bool(data.get("is_methane")) or any(
++                x in ef_unit for x in ["ch4", "methane", "ch_4"]
++            )
++            ch4_scaling = 1.0 if is_methane else ch4_content
++            total_ch4_kg_hr += count * ef * ch4_scaling
+ 
+         total_ch4_tonnes_year = (total_ch4_kg_hr * 8760) / 1000.0
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

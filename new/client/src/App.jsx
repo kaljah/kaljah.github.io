@@ -220,6 +220,9 @@ const App = () => {
       <BrowserRouter>
         <AuthProvider>
           <LayoutProvider>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <LayoutProvider>
+          <AuthProvider>
             <ToastProvider>
               <AppRoutes />
             </ToastProvider>

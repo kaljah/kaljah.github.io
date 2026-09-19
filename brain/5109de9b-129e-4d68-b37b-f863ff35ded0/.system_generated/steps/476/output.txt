@@ -1,0 +1,61 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -86,8 +86,8 @@
+             return val * (0.264172 * (hhv or 138000.0) / 1_000_000.0)
+         return val * ((hhv or 1020.0) / 1_000_000.0)
+ 
+-    # Physical denominator conversions relative to standard reference volume (m3) or mass (kg)
+-    conv = {
++    # Physical denominator conversions separated into Volume and Mass groups
++    vol_conv = {
+         "m3": 1.0,
+         "cubic_meters": 1.0,
+         "scf": 35.3147,
+@@ -104,6 +104,8 @@
+         "bbl": 264.172 / 42.0,
+         "barrel": 264.172 / 42.0,
+         "barrels": 264.172 / 42.0,
++    }
++    mass_conv = {
+         "kg": 1.0,
+         "lb": 2.20462,
+         "tonne": 0.001,
+@@ -111,10 +111,31 @@
+         "tons": 0.00110231,
+     }
+ 
+-    f = conv.get(factor_denom)
+-    a = conv.get(a_unit)
+-    if f is not None and a is not None:
+-        return val * (f / a)
++    # Standard representative fuel densities (kg/m3) when crossing mass/volume boundary
++    fuel_lower = str(fuel_type or "").lower()
++    if any(k in fuel_lower for k in ["gas", "methane", "c1", "natural_gas"]):
++        density_kg_m3 = 0.80
++    elif any(k in fuel_lower for k in ["oil", "diesel", "crude", "petroleum", "gasoline", "fuel_oil", "liquid"]):
++        density_kg_m3 = 850.0
++    elif any(k in fuel_lower for k in ["coal", "coke", "lignite", "solid"]):
++        density_kg_m3 = 1300.0
++    else:
++        density_kg_m3 = 850.0 if "liquid" in a_unit else 0.80
++
++    if factor_denom in vol_conv and a_unit in vol_conv:
++        return val * (vol_conv[factor_denom] / vol_conv[a_unit])
++    elif factor_denom in mass_conv and a_unit in mass_conv:
++        return val * (mass_conv[factor_denom] / mass_conv[a_unit])
++    elif factor_denom in mass_conv and a_unit in vol_conv:
++        # factor is kg / mass_unit. 1 m3 fuel has density_kg_m3 kg.
++        f_relative_to_kg = mass_conv[factor_denom]  # factor_denom / kg
++        kg_per_m3 = val * f_relative_to_kg * density_kg_m3
++        return kg_per_m3 / vol_conv[a_unit]
++    elif factor_denom in vol_conv and a_unit in mass_conv:
++        # factor is kg / vol_unit. 1 kg fuel has (1 / density_kg_m3) m3.
++        f_relative_to_m3 = vol_conv[factor_denom]  # factor_denom / m3
++        kg_per_kg = (val * f_relative_to_m3) / max(0.0001, density_kg_m3)
++        return kg_per_kg / mass_conv[a_unit]
+ 
+     return val
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

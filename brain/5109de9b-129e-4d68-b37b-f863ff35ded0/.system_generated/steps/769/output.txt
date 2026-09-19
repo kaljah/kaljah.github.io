@@ -1,0 +1,73 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 8 items
+
+tests/test_audit_remediation.py::test_dispatcher_kg_per_tonne_factor PASSED [ 12%]
+tests/test_audit_remediation.py::test_dispatcher_fraction_boundary FAILED [ 25%]
+tests/test_audit_remediation.py::test_stoichiometry_short_ton FAILED     [ 37%]
+tests/test_audit_remediation.py::test_base_calculator_uncertainty_k_factor FAILED [ 50%]
+tests/test_audit_remediation.py::test_profile_location_immutability PASSED [ 62%]
+tests/test_audit_remediation.py::test_audit_sod_for_it_admin PASSED      [ 75%]
+tests/test_audit_remediation.py::test_scope3_server_side_calculation PASSED [ 87%]
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit PASSED [100%]
+
+================================== FAILURES ===================================
+______________________ test_dispatcher_fraction_boundary ______________________
+
+    def test_dispatcher_fraction_boundary():
+        """Verify _require_fraction handles boundary values and percentages cleanly."""
+        dispatcher = CalculationDispatcher()
+>       val, _ = dispatcher._require_fraction({"eff": 1.0}, "eff", "combustion_efficiency")
+        ^^^^^^
+E       TypeError: cannot unpack non-iterable float object
+
+tests\test_audit_remediation.py:104: TypeError
+________________________ test_stoichiometry_short_ton _________________________
+
+    def test_stoichiometry_short_ton():
+        """Verify short ton conversion to kg (907.185 kg)."""
+        calc = StoichiometricCalculator()
+        res_short = calc.calculate(1.0, 1.0, {}, mass_unit="ton")
+        expected_short_co2 = 907.185 * (44.01 / 12.011) / 1000.0
+>       assert abs(res_short["co2_emissions"] - expected_short_co2) < 0.01
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2_emissions'
+
+tests\test_audit_remediation.py:119: KeyError
+__________________ test_base_calculator_uncertainty_k_factor __________________
+
+    def test_base_calculator_uncertainty_k_factor():
+        """Verify calculate_uncertainty applies k=2.0 coverage factor for 95% CI."""
+>       calc = BaseCalculator(gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: BaseCalculator.__init__() got an unexpected keyword argument 'gwp_dict'
+
+tests\test_audit_remediation.py:128: TypeError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_audit_remediation.py::test_profile_location_immutability
+  C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:435: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    user = User.query.get(user_id)
+
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit
+  C:\Users\samsung\Desktop\H2\new\server\routes\data.py:162: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    prod = ProductionData.query.get(record_id)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_audit_remediation.py::test_dispatcher_fraction_boundary - T...
+FAILED tests/test_audit_remediation.py::test_stoichiometry_short_ton - KeyErr...
+FAILED tests/test_audit_remediation.py::test_base_calculator_uncertainty_k_factor
+=================== 3 failed, 5 passed, 3 warnings in 4.13s ===================
+

@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -802,7 +802,7 @@
+ 
+ def test_dashboard_ogmp_target_status_segment_specific(client, test_users):
+     """Verify midstream facility with 0.15% loss rate is Non-Compliant while upstream is Compliant."""
+-    from routes.dashboard import _query_intensity_stats
++    from routes.dashboard import _query_intensity_stats, _query_intensity_trend_bulk
+     from models import ProductionData
+ 
+     with app.app_context():
+@@ -846,6 +846,11 @@
+         # Loss rate is ~0.15%, which exceeds 0.05% midstream target -> must be Non-Compliant
+         assert stats_mid[0]["ogmp_target_status"] == "Non-Compliant"
+ 
++        trend_mid = _query_intensity_trend_bulk(facility_id=str(fid), years=[2028], allowed_fids=[fid])
++        assert len(trend_mid) > 0
++        assert trend_mid[0]["data"][0]["ogmp_gold_standard_target"] == 0.05
++        assert trend_mid[0]["data"][0]["ogmp_target_status"] == "Non-Compliant"
++
+         # Change segment to Upstream Production (Target = 0.20%)
+         fac.segment = "Upstream Production"
+         db.session.commit()
+@@ -855,6 +855,11 @@
+         # Loss rate is ~0.15%, which is <= 0.20% upstream target -> must be Compliant
+         assert stats_up[0]["ogmp_target_status"] == "Compliant"
+ 
++        trend_up = _query_intensity_trend_bulk(facility_id=str(fid), years=[2028], allowed_fids=[fid])
++        assert len(trend_up) > 0
++        assert trend_up[0]["data"][0]["ogmp_gold_standard_target"] == 0.20
++        assert trend_up[0]["data"][0]["ogmp_target_status"] == "Compliant"
++
+ 
+ def test_ogmp_survey_zero_top_down_no_false_discrepancy(client, test_users):
+     """Verify zero top-down survey observation does not trigger spurious -100% discrepancy flag."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

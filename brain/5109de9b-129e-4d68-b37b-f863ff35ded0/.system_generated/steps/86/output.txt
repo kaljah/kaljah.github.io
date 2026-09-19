@@ -1,0 +1,27 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":224,"LineContent":"from routes.custom_factors import custom_factors_bp"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":240,"LineContent":"app.register_blueprint(custom_factors_bp, url_prefix=\"/api/custom-factors\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":225,"LineContent":"            custom_factors = CustomFactor.query.filter_by(created_by=user_id).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":226,"LineContent":"            cf_name_map = {cf.name.lower(): cf for cf in custom_factors}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":292,"LineContent":"                elif str(scope) == \"custom_factors\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":293,"LineContent":"                    emission_obj, row_errors = _process_row_custom_factors("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1111,"LineContent":"def _process_row_custom_factors(row, user_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":245,"LineContent":"    __tablename__ = \"custom_factors\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":8,"LineContent":"custom_factors_bp = Blueprint(\"custom_factors\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":11,"LineContent":"@custom_factors_bp.route(\"\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":12,"LineContent":"@custom_factors_bp.route(\"/\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":14,"LineContent":"def get_custom_factors():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":59,"LineContent":"@custom_factors_bp.route(\"\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":60,"LineContent":"@custom_factors_bp.route(\"/\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":132,"LineContent":"@custom_factors_bp.route(\"/\u003cint:factor_id\u003e\", methods=[\"PUT\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":216,"LineContent":"@custom_factors_bp.route(\"/\u003cint:factor_id\u003e\", methods=[\"DELETE\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":265,"LineContent":"@custom_factors_bp.route(\"/import\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":267,"LineContent":"def import_custom_factors():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":21,"LineContent":"    with op.batch_alter_table('custom_factors', schema=None) as batch_op:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":53,"LineContent":"    with op.batch_alter_table('custom_factors', schema=None) as batch_op:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":466,"LineContent":"    custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":467,"LineContent":"    cf_name_map = {cf.name.lower(): cf for cf in custom_factors}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\2ef6f882b02c_add_ghg_uncertainties_to_customfactor.py","LineNumber":22,"LineContent":"    with op.batch_alter_table(\"custom_factors\", schema=None) as batch_op:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\2ef6f882b02c_add_ghg_uncertainties_to_customfactor.py","LineNumber":110,"LineContent":"    with op.batch_alter_table(\"custom_factors\", schema=None) as batch_op:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":8,"LineContent":"custom_factors_bp = Blueprint(\"custom_factors\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":155,"LineContent":"def test_bulk_import_custom_factors(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":181,"LineContent":"        \"scope\": \"custom_factors\","}

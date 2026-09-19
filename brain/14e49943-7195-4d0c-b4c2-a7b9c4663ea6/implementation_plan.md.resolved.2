@@ -1,0 +1,51 @@
+# Implementation Plan - WBCSD Protocol Upgrade
+
+The goal is to strictly adhere to the WBCSD Cement Industry Protocol for CO2 calculation. This involves expanding the data models to cover all relevant scopes (1 & 2) and providing a calculation-centric UI.
+
+## User Review Required
+
+> [!IMPORTANT]
+> This upgrade changes the simple data entry workflow to a more comprehensive protocol-based calculator.
+
+## Proposed Changes
+
+### Backend (`emissions`)
+
+#### [MODIFY] [models.py](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py)
+*   **FuelConsumption**: Add `biomass_percentage` (Decimal, default 0). Calculate `biogenic_co2` separately from `fossil_co2`.
+*   **ClinkerProduction**: Add `non_carbonate_mgo_contribution` (Decimal, default 0).
+*   **[NEW] ElectricityConsumption**:
+    *   Fields: `facility`, `period`, `grid_emission_factor` (kg CO2/kWh), `kwh_consumed`.
+    *   Calculates: `scope_2_co2`.
+*   **[NEW] RawMaterialConsumption**:
+    *   Method B for Calcination.
+    *   Fields: `material_name`, `quantity`, `carbonate_content_%`, `moisture_%`.
+
+#### [MODIFY] [signals.py](file:///c:/Users/samsung/Desktop/cement/backend/emissions/signals.py) (Create if missing)
+*   Implement `pre_save` signals to perform the WBCSD equations automatically before saving.
+
+#### [MODIFY] [serializers.py](file:///c:/Users/samsung/Desktop/cement/backend/emissions/serializers.py)
+*   Add serializers for new models.
+*   Update existing serializers.
+
+### Frontend
+
+#### [MODIFY] [types/index.ts](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts)
+*   Update [FuelConsumption](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts#15-28) with biomass fields.
+*   Add `ElectricityConsumption` interface.
+
+#### [NEW] [components/emissions/ProtocolCalculator.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/ProtocolCalculator.tsx)
+*   A comprehensive form grouped by Protocol sections:
+    1.  **Scope 1: Calcination** (Method A or B selection).
+    2.  **Scope 1: Fuel Combustion** (Kiln & Non-Kiln, Biomass logic).
+    3.  **Scope 2: Electricity**.
+*   Real-time or step-by-step validation.
+
+#### [MODIFY] [app/dashboard/emissions/page.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/emissions/page.tsx)
+*   Replace simple list with a "Calculation Year Overview" and "New Calculation" wizard.
+
+## Verification Plan
+1.  **Protocol Check**: Verify equations against WBCSD formulas.
+    *   Calcination: $0.785(CaO - CaO_{nc}) + 1.092(MgO - MgO_{nc})$
+    *   Biomass: Total CO2 * (1 - Biomass%) = Fossil CO2.
+2.  **Manual Test**: Enter data for a sample plant and verify the calculated `total_co2_tonnes`.

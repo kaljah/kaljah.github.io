@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -586,6 +586,10 @@
+         if allowed_fids is not None and record.facility_id not in allowed_fids:
+             return jsonify({"error": "Access denied to this record"}), 403
+ 
++        # Maker-Checker segregation of duties: user cannot verify records they created
++        if resolution == "Verified" and getattr(record, "created_by", None) and record.created_by == user.id:
++            return jsonify({"error": "Maker-checker violation: users cannot verify records they created"}), 403
++
+         # Update status and tag QA flag for audit preservation
+         record.status = resolution
+         if record.qa_flag and not record.qa_flag.startswith(f"[{resolution}]"):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

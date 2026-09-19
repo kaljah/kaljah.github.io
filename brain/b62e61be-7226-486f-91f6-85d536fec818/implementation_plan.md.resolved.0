@@ -1,0 +1,70 @@
+# Feature Implementation Plan
+
+We will implement 4 major features to enhance the GHG Tracker.
+
+## 1. Scope 2 (Electricity) Calculator
+
+**Goal**: Allow users to calculate emissions from purchased electricity (Scope 2).
+
+**Changes**:
+-   **Frontend**:
+    -   Create `scope2-calculator.html`: Simplified version of the main calculator.
+        -   Inputs: Year, Month, Facility/Group, MWh/kWh Amount, Grid Region (e.g., US National, eGRID subregions, UK).
+    -   Create `scope2-calc.js`: Handles calculation. `Emissions = Activity (MWh) * Grid Factor (kg CO2e/MWh)`.
+    -   Update [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html): Link the "Scope 2" card to the new page.
+-   **Data/Backend**:
+    -   Reuse existing `emissions` table.
+    -   `process_type` = 'electricity'
+    -   `fuel_type` = [Grid Region Name]
+    -   Add strictly defined Grid Factors to a new file `electricity-factors.js` or merge into [emission-factors.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factors.js).
+
+## 2. Custom Emission Factors (Settings)
+
+**Goal**: Allow users to save their own specific equipment factors to avoid repetitive entry.
+
+**Changes**:
+-   **Backend ([server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js))**:
+    -   Create table `custom_factors` in `username.db`.
+        -   Columns: [id](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html#289-344), `name` (e.g. "Turbine-101"), `co2_factor`, `ch4_factor`, `n2o_factor`, `unit`.
+    -   Add API: `GET /api/factors`, `POST /api/factors`, `DELETE /api/factors/:id`.
+-   **Frontend**:
+    -   Create `settings.html` (if not exists) or a "Manage Factors" section.
+    -   Update [emissions-calc.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calc.js):
+        -   On [init()](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calc.js#501-536), fetch custom factors from API.
+        -   Append them to the "Fuel/Source" dropdown or a generic "Custom Equipment" dropdown.
+
+## 3. PDF Reports
+
+**Goal**: Professional, printable reports.
+
+**Technology**: `jspdf` and `jspdf-autotable` (via CDN).
+
+**Changes**:
+-   **Frontend ([reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html))**:
+    -   Add "Download PDF" button.
+    -   Script:
+        1.  Add Logo & Title.
+        2.  Summary Statistics (Total CO2e).
+        3.  Render the main data table using `autoTable`.
+        4.  (Optional) Add a snapshot of the chart if possible (using `canvas.toDataURL()`).
+
+## 4. Reduction Targets (Dashboard Goals)
+
+**Goal**: Visualize progress against a reduction target.
+
+**Changes**:
+-   **Backend ([server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js))**:
+    -   Create table `goals` in `username.db`.
+        -   Columns: `year`, `target_amount` (tCO2e).
+    -   Add API: `GET /api/goals`, `POST /api/goals`.
+-   **Frontend ([dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) / [js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js))**:
+    -   Add "Goals" card/widget.
+    -   UI: Input to set/edit the goal for the current year.
+    -   Visualization: Progress bar showing `Current Emissions / Target`.
+        -   Green if < Target, Red if > Target.
+
+## Proposed Order of Execution
+1.  **Scope 2**: Low complexity, standalone page.
+2.  **Custom Factors**: Medium complexity, requires DB changes.
+3.  **Goals**: Medium complexity, requires DB changes and Dashboard UI work.
+4.  **PDF Reports**: Isolated frontend task.

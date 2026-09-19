@@ -1,0 +1,85 @@
+# Implementation Plan - Dashboard Advancements (YoY, Trajectory, Comparison, Intensity)
+
+This plan outlines the steps to add advanced analytical features and fix critical logic bugs in the Carbon Intensity module.
+
+## Proposed Changes
+
+### 1. YoY Variance Indicators (Hero Card)
+- **Calculation**: In [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#240-306), if a specific year is selected, identify the previous year's total emissions from `summaryData`.
+- **UI**: Add a `VarianceBadge` component next to Gross Emissions and Intensity values.
+- **Visuals**: Green for decrease, Red for increase, Grey for no change/no data.
+
+### 2. Target Trajectory (Trend Chart)
+- **Logic**: Use the `baseYear` (start point) and [goal](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#241-257) (end point) states.
+- **Interpolation**: Create a "Trajectory" data series by calculating a linear path from the Base Year emissions value to the Target Goal value in 2030.
+- **UI**: Add a dashed line named "Net Zero Path" to the Line Chart.
+
+### 3. Comparison View
+- **Mechanism**: Introduce a "Compare" mode toggle.
+- **Logic**: 
+    - When "Compare Mode" is active, fetch data for all facilities within the selected Activity/Division.
+    - Transform `trendData` to have many series (one per facility) instead of a single Scope 1+2 sum.
+- **UI**: Add a toggle button in the header. Update `LineChartWrapper` to handle dynamic numbers of lines.
+
+### 4. Carbon Intensity Logic & Bug Fixes
+- **Backend ([dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py))**:
+    - Update `/intensity-stats` to join with the [Facility](file:///c:/Users/samsung/Desktop/h/new/server/models.py#32-48) table.
+    - Implement `activity` and `division` filtering for production and emissions queries.
+- **Frontend ([CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx))**:
+    - Correct Hero Card labels:
+        - Carbon Intensity: `tCO₂e / bbl` → `kg CO₂e / BOE`
+        - Methane Intensity: `tCH₄ / BOE` → `kg CH₄ / BOE`
+    - Standardize units across all charts (using kg/BOE as the primary metric).
+    - Ensure [formatNumber](file:///c:/Users/samsung/Desktop/h/new/client/src/utils/formatters.js#20-35) precision is appropriate for kg/BOE (e.g., 2 decimals for CO2, 4 for CH4).
+
+---
+
+## Technical Details
+
+### Dashboard Enhanced
+- Add `isCompareMode` state.
+- Update [loadDashboardData](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#240-306) to handle multi-series fetching for comparison.
+- Calculate `prevYearStats` for YoY logic.
+- Generate `trajectoryPoints` for the goal line.
+
+### Backend Routing
+- Update `/summary` to support `groupBy=facility`.
+- Update `/intensity-stats` to joined queries with organizational filters.
+
+---
+
+## Verification Plan
+
+### Manual Verification
+- Select 2024 and verify the YoY badge correctly compares with 2023.
+- Set a Goal for 2030 and verify the dashed line appears on the trend chart.
+- Toggle "Compare Mode" and check if multiple lines appear (one for each region).
+- Filter Carbon Intensity by "EP" and verify numbers change (Fixing the filter bug).
+- Verify Carbon Intensity units match "kg/BOE" in the UI.
+
+### 5. Styling Region-Field in Dropdowns
+- **[CustomDropdown.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/CustomDropdown.jsx)**:
+    - Modify to support a [renderOption](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#130-140) logic for the selected display.
+    - Add logic to automatically handle `subLabel` if provided in the option object.
+- **Dropdown Options**:
+    - Update region options in [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx), [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx), and Scope Forms to use: `{ value, label, subLabel }`.
+    - > [!IMPORTANT]
+    - > Do NOT change the region management dropdowns in [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx).
+- **Styling**:
+    - Update [CustomDropdown.css](file:///c:/Users/samsung/Desktop/h/new/client/src/components/CustomDropdown.css) to style `.sub-label` with a smaller font and grey color.
+
+---
+
+## Technical Details (Dropdown Styling)
+- **Component Change**: 
+    ```javascript
+    const display = renderOption ? renderOption(selectedOption) : (
+        selectedOption?.subLabel ? (
+            <>{selectedOption.label} <span className="sub-label">-{selectedOption.subLabel}</span></>
+        ) : selectedOption?.label || placeholder
+    );
+    ```
+- **Option Change**:
+    ```javascript
+    { value: f.id, label: f.name, subLabel: f.field }
+    ```

@@ -1,0 +1,73 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -828,6 +828,12 @@
+ @login_required
+ def create_base_year_recalculation():
+     """Create a new base year recalculation entry"""
++    user = get_current_user()
++    if not user or user.role not in ["admin", "superuser"]:
++        return jsonify({"error": "Admin or Superuser privileges required"}), 403
++    if user.role == "it_admin":
++        return jsonify({"error": "IT Admins do not have access to emission calculations"}), 403
++
+     data = request.get_json()
+ 
+     # BUG-20 FIX: Validate required fields before DB operation
+@@ -839,14 +839,50 @@
+         return jsonify({"error": "year must be an integer"}), 400
+ 
+     try:
++        prev_em = (
++            float(data["previous_emissions"])
++            if data.get("previous_emissions") not in (None, "")
++            else None
++        )
++        adj_em = (
++            float(data["adjusted_emissions"])
++            if data.get("adjusted_emissions") not in (None, "")
++            else None
++        )
++
+         recalc = BaseYearRecalculation(
+-            year=year_val, reason=str(data["reason"]).strip()
++            year=year_val,
++            reason=str(data["reason"]).strip(),
++            previous_emissions=prev_em,
++            adjusted_emissions=adj_em,
++            created_by=user.id,
+         )
+ 
+         db.session.add(recalc)
+-        db.session.commit()
+-
+-        return jsonify({"message": "Base year recalculation recorded"})
++
++        # Keep BaseYear singleton synchronized
++        base_year_singleton = BaseYear.query.get(1)
++        if base_year_singleton:
++            base_year_singleton.year = year_val
++        else:
++            base_year_singleton = BaseYear(id=1, year=year_val, locked=1)
++            db.session.add(base_year_singleton)
++
++        db.session.commit()
++
++        clear_dashboard_cache()
++
++        log_activity_and_notify(
++            action="CREATE",
++            record_id=str(recalc.id),
++            user=user,
++            request=request,
++            entity="BaseYearRecalculation",
++            details=f"Base year recalculated to {year_val} by {user.fullName}",
++        )
++        db.session.commit()
++
++        return jsonify({"message": "Base year recalculation recorded", "id": recalc.id}), 201
+     except Exception as e:
+         db.session.rollback()
+         return jsonify({"error": str(e)}), 500
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

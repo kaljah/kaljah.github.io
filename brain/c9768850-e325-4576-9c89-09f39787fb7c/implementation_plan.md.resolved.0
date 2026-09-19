@@ -1,0 +1,53 @@
+# Sonatrach Theme Implementation Plan
+
+**Goal**: Re-theme the entire platform to match Sonatrach's branding: Orange and White with distinct Black Contours (borders) around UI elements.
+
+## User Review Required
+> [!IMPORTANT]
+> This change will completely replace the existing "Dark Mode" / "Industrial" theme. The application will become primarily Light Mode (White/Orange).
+
+## Proposed Changes
+
+### Global Theme Variables ([dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css))
+I will redefine the `:root` variables to establish the new color palette.
+
+| Variable | Old Value (Approx) | New Value | Description |
+| :--- | :--- | :--- | :--- |
+| `--bg-dark` | `#0f172a` (Dark Blue) | `#f0f0f0` | Light Grey Background |
+| `--bg-card` | `rgba(30, 41, 59, 0.4)` | `#ffffff` | Pure White Cards |
+| `--text-primary` | `#f8fafc` (White) | `#000000` | Pure Black Text |
+| `--text-secondary` | `#94a3b8` (Grey) | `#404040` | Dark Grey Text |
+| `--accent-color` | `#10b981` (Emerald) | `#ff6600` | Sonatrach Orange |
+| `--border-color` | `rgba(255, 255, 255, 0.08)` | `#000000` | **Solid Black Borders** |
+| `--glass-bg` | ... | `#ffffff` | Remove glass effect, use solid white |
+
+### Styling Updates
+
+#### [MODIFY] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css)
+- **Borders**: Enforce `border: 1px solid var(--border-color)` on `.card`, `.sidebar`, `.nav-link`, `.btn`, `input`, `select`.
+- **Shadows**: Reduce soft glows, prefer hard shadows or flat look to match the "contour" style.
+- **Sidebar**: Change to White background with Black border right.
+- **Typography**: Ensure high contrast.
+- **Gradients**: Remove dark gradients, replace with solid colors or subtle white-to-light-orange gradients if needed.
+
+#### [MODIFY] [login.css](file:///c:/Users/samsung/Desktop/h/public/login.css)
+- Update `:root` variables to match the Dashboard theme.
+- **Brand Panel**: Change background to Orange (`#ff6600`).
+- **Login Card**: White background, Black border.
+- **Inputs**: White background, Black border, Black text.
+
+#### [MODIFY] [index.html](file:///c:/Users/samsung/Desktop/h/public/index.html) & others
+- Ensure no inline styles conflict with the new CSS.
+- Check for hardcoded colors in HTML (though unlikely based on previous file views).
+
+## Verification Plan
+
+### Manual Verification
+1.  **Open Browser**: Launch the application.
+2.  **Login Page**: Verify the Orange brand panel and White login card with Black borders.
+3.  **Dashboard**: Verify the Light background, White cards, and Orange accents.
+4.  **Components**: Check Inputs, Buttons, and Sidebar links for the specific "Black Contour" look.
+5.  **Navigation**: Ensure the Sidebar is distinct and readable.
+
+### Automated Verification
+- I will run the server and use the browser tool to take screenshots of the `Login` and `Dashboard` pages to visually confirm the changes.

@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -425,6 +425,21 @@
+     from calculations.anomaly import AnomalyDetector
+     anomaly_detector = AnomalyDetector()
+     with app.app_context():
++        # Seed 3 baseline emissions to establish statistical distribution
++        for m in [1, 2, 3]:
++            base_e = Emission(
++                facility_id=test_users["facility_id"],
++                year=2025,
++                month=m,
++                process_type="combustion",
++                fuel_type="Diesel",
++                quantity=100.0,
++                co2e_total=100.0,
++                status="Verified",
++            )
++            db.session.add(base_e)
++        db.session.commit()
++
+         # High value that triggers outlier flag
+         emission = Emission(
+             facility_id=test_users["facility_id"],
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

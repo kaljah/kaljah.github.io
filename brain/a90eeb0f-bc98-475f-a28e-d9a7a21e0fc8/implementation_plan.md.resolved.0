@@ -1,0 +1,48 @@
+# Implementation Plan - Specific Emission Factor Calculator
+
+## Goal Description
+Implement a comprehensive Specific Emission Factor Calculator in JavaScript, ported from the provided Python script. This will allow users to calculate custom emission factors based on fuel properties (e.g., carbon content, density, molecular weight) rather than relying solely on standard defaults or manual entry.
+
+## User Review Required
+> [!IMPORTANT]
+> I will implement this as a strictly client-side library (`ghg-calc-library.js`) first.
+> I need to decide on the UI integration. I propose adding a "Calculate" button next to the "Specific Emission Factors" inputs in the [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html) form, which opens a modal/wizard to perform these specific calculations.
+
+## Proposed Changes
+
+### Logic Layer
+#### [NEW] [ghg-calc-library.js](file:///c:/Users/samsung/Desktop/h/public/js/ghg-calc-library.js)
+- Port `API_GHG_Emission_Factor_Calculator` Python class to JavaScript.
+- Implement methods:
+    - `convertTemp(val, unit)`
+    - `convertPressure(val, unit)`
+    - `convertDensityToLbGal(val, unit)`
+    - `efCombustionCo2Gas(mw, wtPctC)`
+    - `efCombustionCo2Liquid(density, unit, wtPctC)`
+    - `efFlaringCo2(wtPctCInlet, eff)`
+    - etc.
+
+### UI Layer
+#### [MODIFY] [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html)
+- Add a "Calculator" button/icon near the "Specific Emission Factors" section.
+- Add a Modal structure for the Calculator interface.
+    - Tabs for: Combustion (Gas/Liquid/Solid), Flaring, Venting.
+    - Inputs for parameters (MW, Carbon %, Density, etc.).
+    - "Apply" button to auto-fill the main form inputs.
+
+#### [MODIFY] [emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js)
+- Import/Include `ghg-calc-library.js`.
+- Handle the Modal logic (open, calculate, apply).
+- Map the calculated result (e.g., `lb CO2/gal`) to the main form's specific factor inputs (converting units if necessary).
+
+## Verification Plan
+### Automated Tests
+- Create a test script `tests/test-calc-lib.js` execution via Node to verify the JS outputs match the Python script's example outputs.
+
+### Manual Verification
+- Open [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html).
+- Toggle "Use Specific Emission Factors".
+- Click "Calculate".
+- Select "Liquid Fuel", enter Density: 32 API, Carbon: 85%.
+- Verify result matches Python output (~20-21 lb CO2/gal).
+- Click "Apply" and verify the specific factor input is populated.

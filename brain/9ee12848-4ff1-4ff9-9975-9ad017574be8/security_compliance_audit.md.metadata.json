@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "Comprehensive Security, Compliance, and IT Audit Report categorizing vulnerabilities into Authentication, Authorization, Data Validation, and Compliance. Outlines critical, high, and medium severity findings such as missing auth checks on audit logs, default secret keys, lack of RBAC, and unvalidated bulk imports.",
+  "updatedAt":  "2026-04-23T19:04:33.539156600Z"
+}

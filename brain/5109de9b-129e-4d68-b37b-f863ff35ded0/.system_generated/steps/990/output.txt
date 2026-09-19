@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -232,6 +232,20 @@
+         # Maker-Checker (D-04): admin and superuser manual entries are auto-Verified
+         initial_status = "Verified" if user and user.role in ["admin", "superuser"] else "Pending"
+ 
++    # Map amount to steam_ton / cooling_ton if source_type or unit indicates steam or cooling
++    steam_ton_val = float(data.get("steam_ton") or data.get("stream_ton", 0) or 0)
++    cooling_ton_val = float(data.get("cooling_ton", 0) or 0)
++    raw_amt = float(data.get("amount", 0) or 0)
++    raw_unit = str(data.get("unit") or "").lower().strip()
++
++    if steam_ton_val == 0 and ("steam" in source_type.lower() or raw_unit in ["ton", "tonne", "mt", "us_ton", "short_ton", "tons"]):
++        if raw_amt > 0:
++            steam_ton_val = raw_amt
++
++    if cooling_ton_val == 0 and ("cooling" in source_type.lower() or raw_unit in ["cooling_ton", "ton_hour", "ton_cooling"]):
++        if raw_amt > 0:
++            cooling_ton_val = raw_amt
++
+     emission = Scope2Emission(
+         facility_id=data.get("facility_id"),
+         year=data.get("year"),
+@@ -238,8 +238,8 @@
+         source_type=source_type,
+         electricity_kwh=electricity_kwh,
+-        steam_ton=data.get("steam_ton") or data.get("stream_ton", 0),
++        steam_ton=steam_ton_val,
+         heat_mmbtu=heat_mmbtu,
+-        cooling_ton=data.get("cooling_ton", 0),
++        cooling_ton=cooling_ton_val,
+         emission_factor=emission_factor,
+         co2e=co2e,
+         uncertainty=final_uncertainty,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,183 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -58,9 +58,10 @@
+ @data_bp.route('/production/', methods=['POST'])
+ @login_required
+ def add_production():
+-    user = get_current_user()
+-    if user and user.role == 'it_admin':
+-        return jsonify({'error': 'IT administrators are not authorized to modify operational production data.'}), 403
++    from sqlalchemy.exc import IntegrityError
++    user = get_current_user()
++    if user and user.role in ['viewer', 'auditor', 'it_admin']:
++        return jsonify({'error': 'Read-only or IT administrative role cannot modify operational production data.'}), 403
+     data = request.get_json() or {}
+     fid = data.get('facility_id') or data.get('facilityId')
+     if not fid:
+@@ -71,48 +71,54 @@
+         
+     if not require_facility_access(user, fid):
+         return jsonify({'error': 'Access to this facility is denied'}), 403
+-    
+-    # Check if exists
+-    existing = ProductionData.query.filter_by(
+-        facility_id=fid,
+-        year=data.get('year'),
+-        month=data.get('month')
+-    ).first()
+-    
+-    if existing:
+-        existing.oil_amount = data.get('oil_amount', 0)
+-        existing.gas_amount = data.get('gas_amount', 0)
+-        existing.oil_unit = data.get('oil_unit', 'bbl')
+-        existing.gas_unit = data.get('gas_unit', 'mscf')
+-        existing.activity = data.get('activity')
+-        existing.division = data.get('division')
+-        existing.field = data.get('field')
+-    else:
+-        prod = ProductionData(
++
++    year = data.get('year')
++    month = data.get('month')
++    oil_amount = data.get('oil_amount', 0)
++    gas_amount = data.get('gas_amount', 0)
++    oil_unit = data.get('oil_unit', 'bbl')
++    gas_unit = data.get('gas_unit', 'mscf')
++    activity = data.get('activity')
++    division = data.get('division')
++    field = data.get('field')
++
++    # Atomic upsert pattern: try update if existing, handle race condition gracefully
++    def perform_upsert():
++        existing = ProductionData.query.filter_by(
+             facility_id=fid,
+-            year=data.get('year'),
+-            month=data.get('month'),
+-            oil_amount=data.get('oil_amount', 0),
+-            gas_amount=data.get('gas_amount', 0),
+-            oil_unit=data.get('oil_unit', 'bbl'),
+-            gas_unit=data.get('gas_unit', 'mscf'),
+-            activity=data.get('activity'),
+-            division=data.get('division'),
+-            field=data.get('field')
+-        )
+-    # Audit + commit atomically
+-    try:
+-        if not existing:
+-            db.session.add(prod)
+-            db.session.flush()
+-            rec_id = prod.id
+-            action = 'CREATE'
+-        else:
++            year=year,
++            month=month
++        ).first()
++        
++        if existing:
++            existing.oil_amount = oil_amount
++            existing.gas_amount = gas_amount
++            existing.oil_unit = oil_unit
++            existing.gas_unit = gas_unit
++            existing.activity = activity
++            existing.division = division
++            existing.field = field
+             rec_id = existing.id
+             action = 'UPDATE'
+-        
+-        log_details = f"{action.title()} Production Data for {data.get('year')}-{data.get('month')}: {data.get('oil_amount')} {data.get('oil_unit', 'bbl')} oil, {data.get('gas_amount')} {data.get('gas_unit', 'mscf')} gas"
+-        
++        else:
++            prod = ProductionData(
++                facility_id=fid,
++                year=year,
++                month=month,
++                oil_amount=oil_amount,
++                gas_amount=gas_amount,
++                oil_unit=oil_unit,
++                gas_unit=gas_unit,
++                activity=activity,
++                division=division,
++                field=field
++            )
++            db.session.add(prod)
++            db.session.flush()
++            rec_id = prod.id
++            action = 'CREATE'
++
++        log_details = f"{action.title()} Production Data for {year}-{month}: {oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas"
+         log_activity_and_notify(
+             action=action,
+             record_id=str(rec_id),
+@@ -120,9 +120,18 @@
+             entity='ProductionData',
+             details=log_details
+         )
+-        db.session.commit()  # commits: data + activity log + notification
+-        from routes.dashboard import clear_dashboard_cache
+-        clear_dashboard_cache()
++        db.session.commit()
++
++    try:
++        perform_upsert()
++    except IntegrityError:
++        # Concurrent insert occurred between check and insert; retry once as update
++        db.session.rollback()
++        try:
++            perform_upsert()
++        except Exception as retry_err:
++            db.session.rollback()
++            return jsonify({'error': f'Concurrency conflict: {str(retry_err)}'}), 409
+     except Exception as e:
+         db.session.rollback()
+         import traceback
+@@ -130,6 +130,8 @@
+             current_app.logger.error(f"Production save error: {traceback.format_exc()}")
+         return jsonify({'error': 'Failed to save production data'}), 500
+ 
++    from routes.dashboard import clear_dashboard_cache
++    clear_dashboard_cache()
+     return jsonify({'message': 'Production data saved'})
+ 
+ @data_bp.route('/production/<int:record_id>', methods=['DELETE'])
+@@ -136,7 +136,7 @@
+ def delete_production(record_id):
+     user = get_current_user()
+-    if user and user.role == 'it_admin':
+-        return jsonify({'error': 'IT administrators are not authorized to modify operational production data.'}), 403
++    if user and user.role in ['viewer', 'auditor', 'it_admin']:
++        return jsonify({'error': 'Read-only or IT administrative role cannot delete operational production data.'}), 403
+     prod = ProductionData.query.get(record_id)
+     if not prod:
+         return jsonify({'error': 'Production record not found'}), 404
+@@ -143,10 +143,23 @@
+     if not require_facility_access(user, prod.facility_id):
+         return jsonify({'error': 'Access to this facility is denied'}), 403
+-        
+-    db.session.delete(prod)
+-    db.session.commit()
+-    from routes.dashboard import clear_dashboard_cache
+-    clear_dashboard_cache()
++
++    try:
++        log_activity_and_notify(
++            action='DELETE',
++            record_id=str(record_id),
++            user=user,
++            request=request,
++            entity='ProductionData',
++            details=f"Deleted Production Data for facility {prod.facility_id} ({prod.year}-{prod.month})"
++        )
++        db.session.delete(prod)
++        db.session.commit()
++        from routes.dashboard import clear_dashboard_cache
++        clear_dashboard_cache()
++    except Exception as e:
++        db.session.rollback()
++        return jsonify({'error': 'Failed to delete production record'}), 500
++
+     return jsonify({'message': 'Production record deleted'})
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

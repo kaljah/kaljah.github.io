@@ -1,0 +1,25 @@
+# Implementation Plan - Specific Emission Factor Calculator
+
+## Goal Description
+Implement the Specific Emission Factor Calculator logic by porting the Python script to JavaScript and appending it to [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js).
+
+## User Review Required
+> [!NOTE]
+> All requested calculations (Combustion Defaults, Flaring N2O, Fugitive, Mobile) have been added to the [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#350-565) class in [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js).
+
+## Proposed Changes
+
+### Logic Layer
+#### [MODIFY] [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js)
+- Appended [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#350-565) class.
+- Implemented:
+    - Unit Conversions
+    - Stationary Combustion (Gas/Liquid/Solid + Defaults)
+    - Flaring (CO2, Slip, N2O)
+    - Venting (Mass/Vol, Dehydrator)
+    - Fugitive (Average, Screening)
+    - Mobile Combustion
+
+## Verification Plan
+### Automated Tests
+- Create a test script `tests/test-ghg-calc.js` to verify the logic.

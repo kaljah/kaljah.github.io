@@ -1,0 +1,58 @@
+# Compliance Gap Analysis: API Guidance 2.0 (2023)
+
+I have analyzed the [2023-API-Guidance-2.pdf](file:///c:/Users/samsung/Desktop/h/2023-API-Guidance-2.pdf) you provided. Here is the compliance status of the current tool:
+
+## 1. Flaring Intensity Metric
+*   **API Requirement (Section 4.3/8.3)**: `Upstream Scope 1 Flaring Emissions (All GHGs) / Hydrocarbon Production (BOE)`
+    *   *Purpose*: Measures flaring emissions relative to total energy produced.
+*   **Current Tool Implementation**: `Flaring Emissions / Flaring Volume`
+    *   *Purpose*: Measures the carbon intensity of the flaring process itself (efficiency), as you requested.
+*   **Gap**: **High**. The current metric does not match the API Guidance definition for "Flaring Intensity".
+*   **Recommendation**: Rename your current metric to "Flaring Efficiency" and add a new "API Flaring Intensity" KPI using the BOE denominator.
+
+## 2. Global Warming Potential (GWP)
+*   **API Requirement (Section 4.3.1)**: Must use **IPCC Fourth Assessment Report (AR4)** values:
+    *   Methane (CH4): **25**
+    *   Nitrous Oxide (N2O): **298**
+*   **Current Tool Status**: **Pending Verification**.
+    *   The frontend code ([emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js)) defines raw mass factors (e.g., kg CH4 / MMBtu).
+    *   *Action Required*: Verify where the multiplication by GWP occurs (e.g., `mass_ch4 * 25`). If "28" (AR5) or other values are used, they must be updated to 25/298 for strict API compliance.
+
+## 3. Organizational Boundaries
+*   **API Requirement**: Reporting on **Equity Share** and/or **Operated** basis.
+*   **Current Tool Status**: **Compliance Ready**.
+    *   The "Boundary Notes" field and the ability to define Facilities allows for both approaches.
+    *   *Gap*: The dashboard currently aggregates *all* active facilities. To report strictly on "Equity", logic would need to apply the ownership % (e.g., `Total * 0.40` for 40% equity).
+
+## 4. Hierarchy & Granularity
+*   **API Requirement**: Upstream, Midstream, Downstream, LNG.
+*   **Current Tool Status**: **Compliant**.
+    *   The new **Activity → Division → Region** hierarchy perfectly supports this segmentation (e.g., Activity = "LNG", Division = "Liquefaction").
+    *   The "Emission Sources" tab supports the granular inventory required by the guidance.
+
+## 5. Missing Sections (Major Gaps)
+The following sections from the API Guidance are **completely missing** from the application:
+
+### Section 3: GHG Mitigation
+*   **CCUS**: No interface to report Carbon Capture, Utilization, and Storage (Scope 1 subtraction).
+*   **RECs**: No fields for Renewable Energy Credits (Scope 2 market-based adjustment).
+*   **Offsets**: No logic to track or subtract carbon offsets.
+
+### Section 5: Scope 3 Emissions
+*   **Category 11 (Use of Sold Products)**: The tool currently has **no calculation logic** for consumer end-use emissions (e.g., combustion of sold crude/gas), which is a core requirement of Section 5.
+
+### Section 6: Climate Targets
+*   **Targets & Reporting**: No fields to track "GHG Reduction Targets" (Yes/No + Links) or "TCFD-informed Reporting" status.
+
+### Section 7: Third-Party Verification
+*   **Assurance Inputs**: While a [verification-report.js](file:///c:/Users/samsung/Desktop/h/public/verification-report.js) exists, the tool lacks the specific **input fields** required by the Guidance:
+    *   **Assurance Level** (Reasonable vs. Limited).
+    *   **Assurance Provider** (Name of the auditing firm).
+    *   Currently, the report hardcodes "Verified" status without user input, which may be misleading.
+
+## Summary
+The tool provides the necessary **structure** (Hierarchy, Sources) but requires significant development to be fully compliant:
+1.  **Formula Adjustment**: New KPI for API-styled Flaring Intensity.
+2.  **Factor Validation**: Confirmation/Update of GWP constants (25 vs 28).
+3.  **New Modules**: Implementation of **Mitigation** (Section 3) and **Scope 3** (Section 5) calculation tabs.
+4.  **Verification Metadata**: Add inputs for Assurance Level and Provider to the reporting flow.

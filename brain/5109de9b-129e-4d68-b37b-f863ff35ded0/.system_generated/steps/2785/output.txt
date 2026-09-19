@@ -1,0 +1,358 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -894,4 +894,352 @@
+         assert survey.variance_pct != -100.0
+ 
+ 
++# ===========================================================================
++# AUDIT REMEDIATION REGRESSION TESTS (DEFECTS 1 - 12)
++# ===========================================================================
++
++def test_notifications_stream_heartbeat_init(client, test_users):
++    """Defect 1: Verify SSE stream initializes last_heartbeat and does not raise UnboundLocalError."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++    res = client.get("/api/notifications/stream")
++    assert res.status_code == 200
++    assert "text/event-stream" in res.content_type
++
++
++def test_scope2_steam_recalculation_enthalpy(client, test_users):
++    """Defect 2: Verify indirect steam update uses thermodynamic enthalpy formula."""
++    fid = test_users["facility_id"]
++    with app.app_context():
++        rec = Scope2Emission(
++            facility_id=fid,
++            year=2024,
++            month=5,
++            source_type="Steam / Purchased Heat",
++            heat_mmbtu=100.0,
++            emission_factor=0.06,
++            co2e=6.0,
++            status="Draft",
++            created_by=test_users["admin"],
++        )
++        db.session.add(rec)
++        db.session.commit()
++        rec_id = rec.id
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    # Update steam: heat=200 MMBtu, factor=0.06, steam enthalpy=2.75, boiler eff=0.8
++    # enthalpy_mult = 2.75 / 0.8 = 3.4375
++    # co2e = 200 * 0.06 * 3.4375 = 41.25 tCO2e
++    res = client.put(f"/api/scope2/{rec_id}", json={
++        "heat_mmbtu": 200.0,
++        "emission_factor": 0.06,
++        "steam_enthalpy": 2.75,
++        "boiler_efficiency": 0.8,
++    })
++    assert res.status_code == 200
++    with app.app_context():
++        updated = db.session.get(Scope2Emission, rec_id)
++        assert pytest.approx(updated.co2e, 0.01) == 41.25
++
++
++def test_scope3_eeio_per_thousand_scaling_defect(client, test_users):
++    """Defect 3: Verify Scope 3 spend-based EEIO scales per-$1000 factor by 1,000,000."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    payload = {
++        "facility_id": test_users["facility_id"],
++        "year": 2024,
++        "month": 6,
++        "category": "Category 1",
++        "sub_category": "Purchased Goods",
++        "activity_data": 500000.0,  # $500,000
++        "unit": "USD",
++        "emission_factor": 3200.1,  # 3,200.1 kg CO2e / $1,000
++        "factor_unit": "kg CO2e / $1,000",
++        "calculation_method": "Spend-based (EEIO)",
++    }
++    res = client.post("/api/scope3", json=payload)
++    assert res.status_code == 201
++    data = res.get_json()
++    # 500,000 * 3200.1 / 1,000,000 = 1600.05 tCO2e
++    assert pytest.approx(data["record"]["co2e"], 0.01) == 1600.05
++
++
++def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):
++    """Defect 4: Verify custom factor with general uncertainty 5.0 is divided by 100 to 0.05."""
++    from models import CustomFactor
++    with app.app_context():
++        cf = CustomFactor.query.filter_by(name="Test 5% Factor Audit").first()
++        if not cf:
++            cf = CustomFactor(
++                name="Test 5% Factor Audit",
++                facility_id=test_users["facility_id"],
++                co2_factor=1.5,
++                ch4_factor=0.01,
++                n2o_factor=0.001,
++                unit="m3",
++                uncertainty=5.0,  # 5%
++                status="approved",
++                approved_by=test_users["admin"],
++            )
++            db.session.add(cf)
++            db.session.commit()
++        cf_id = cf.id
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    payload = {
++        "facility_id": test_users["facility_id"],
++        "year": 2024,
++        "month": 7,
++        "process_type": "Combustion",
++        "quantity": 100.0,
++        "unit": "m3",
++        "custom_factor_id": cf_id,
++        "status": "Draft",
++    }
++    res = client.post("/api/emissions", json=payload)
++    assert res.status_code == 201
++    data = res.get_json()
++    with app.app_context():
++        em = db.session.get(Emission, data["record"]["id"])
++        assert em.uncertainty is not None
++        assert pytest.approx(em.uncertainty, 0.001) == 0.05
++
++
++def test_update_emission_preserves_calc_payload(client, test_users):
++    """Defect 5: Verify update_emission merges existing process_type and inputs."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    payload = {
++        "facility_id": test_users["facility_id"],
++        "year": 2024,
++        "month": 8,
++        "process_type": "Venting",
++        "quantity": 500.0,
++        "unit": "m3",
++        "calc_method": "engineering_estimate",
++        "status": "Draft",
++    }
++    res = client.post("/api/emissions", json=payload)
++    assert res.status_code == 201
++    em_id = res.get_json()["record"]["id"]
++
++    update_res = client.put(f"/api/emissions/{em_id}", json={"quantity": 1000.0})
++    assert update_res.status_code == 200
++    with app.app_context():
++        updated_em = db.session.get(Emission, em_id)
++        assert updated_em.process_type == "Venting"
++        assert updated_em.quantity == 1000.0
++
++
++def test_bulk_import_scope2_and_3_rbac(client, test_users):
++    """Defect 6: Verify bulk import for Scope 2 & 3 blocks it_admin and enforces allowed_fids."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["it_admin"]
++
++    res_s2 = client.post("/api/scope2/bulk-import", json={"records": [{"facility_id": test_users["facility_id"]}]})
++    assert res_s2.status_code == 403
++
++    res_s3 = client.post("/api/scope3/bulk-import", json={"records": [{"facility_id": test_users["facility_id"]}]})
++    assert res_s3.status_code == 403
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["user"]
++
++    res_unauth = client.post("/api/scope3/bulk-import", json={"records": [
++        {"facility_id": 99999, "year": 2024, "amount": 100, "emission_factor": 1.0}
++    ]})
++    assert res_unauth.status_code in [200, 207]
++    data = res_unauth.get_json()
++    assert len(data.get("errors", [])) > 0
++
++
++def test_qaqc_maker_checker_and_it_admin_blocked(client, test_users):
++    """Defect 7: Verify IT admin cannot access QA/QC resolve and users cannot verify records they created."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["it_admin"]
++
++    res_it = client.post("/api/qaqc/resolve/1", json={"scope": 1, "resolution": "Verified"})
++    assert res_it.status_code == 403
++
++    with app.app_context():
++        em = Emission(
++            facility_id=test_users["facility_id"],
++            year=2024,
++            month=1,
++            co2e_total=100.0,
++            status="Pending",
++            created_by=test_users["admin"],
++            qa_flag="Outlier",
++        )
++        db.session.add(em)
++        db.session.commit()
++        em_id = em.id
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    res_verify_own = client.post(f"/api/qaqc/resolve/{em_id}", json={"scope": 1, "resolution": "Verified"})
++    assert res_verify_own.status_code == 403
++    assert "Maker-checker violation" in res_verify_own.get_json()["error"]
++
++
++def test_base_year_recalculation_rbac_and_singleton(client, test_users):
++    """Defect 8: Verify base year recalculation route enforces role, sets created_by, and updates singleton."""
++    from models import BaseYear, BaseYearRecalculation
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["user"]
++    res_user = client.post("/api/dashboard/base-year-recalculation", json={"year": 2020, "reason": "Structural change"})
++    assert res_user.status_code == 403
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["it_admin"]
++    res_it = client.post("/api/dashboard/base-year-recalculation", json={"year": 2020, "reason": "Structural change"})
++    assert res_it.status_code == 403
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++    res_admin = client.post("/api/dashboard/base-year-recalculation", json={
++        "year": 2022,
++        "reason": "Boundary revision",
++        "previous_emissions": 50000.0,
++        "adjusted_emissions": 52000.0,
++    })
++    assert res_admin.status_code == 201
++    with app.app_context():
++        singleton = BaseYear.query.get(1)
++        assert singleton is not None
++        assert singleton.year == 2022
++        rec = BaseYearRecalculation.query.filter_by(year=2022).first()
++        assert rec is not None
++        assert rec.created_by == test_users["admin"]
++
++
++def test_cbam_export_existing_record_facility_check(client, test_users):
++    """Defect 9: Verify save_cbam_export checks facility access for existing records before update."""
++    from models import CbamProductExport
++    with app.app_context():
++        cbam = CbamProductExport(
++            facility_id=test_users["facility_id"],
++            year=2026,
++            month=1,
++            product_name="Cement",
++            cn_code="2523",
++            quantity_tonnes=100.0,
++            export_destination="EU",
++        )
++        db.session.add(cbam)
++        db.session.commit()
++        cbam_id = cbam.id
++
++        other_user = User.query.filter_by(email="other_restricted_cbam@test.com").first()
++        if not other_user:
++            other_user = User(
++                email="other_restricted_cbam@test.com",
++                fullName="Other User",
++                orgName="AuditCorp",
++                sector="Energy",
++                role="user",
++                location="Oran",
++            )
++            other_user.set_password("Pass123!")
++            db.session.add(other_user)
++            db.session.commit()
++        other_uid = other_user.id
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = other_uid
++
++    res = client.post("/api/data/cbam-exports", json={
++        "id": cbam_id,
++        "facility_id": test_users["facility_id"],
++        "product_name": "Cement Modified",
++        "cn_code": "2523",
++        "quantity_tonnes": 200.0,
++    })
++    assert res.status_code == 403
++
++
++def test_background_processor_upload_jobs_lock():
++    """Defect 10: Verify upload_jobs_lock exists and functions thread-safely."""
++    from background_processor import upload_jobs, upload_jobs_lock, _update_job, _append_job_list, get_job_status
++    import threading
++    assert upload_jobs_lock is not None
++
++    test_jid = "test-lock-job"
++    with upload_jobs_lock:
++        upload_jobs[test_jid] = {
++            "status": "processing",
++            "progress": 0,
++            "processed": 0,
++            "total": 100,
++            "errors": [],
++            "skipped": [],
++            "anomalies": [],
++            "created_at": 1000.0,
++        }
++
++    threads = []
++    def worker():
++        for i in range(10):
++            _update_job(test_jid, progress=i)
++            _append_job_list(test_jid, "skipped", {"row": i})
++    for _ in range(5):
++        t = threading.Thread(target=worker)
++        threads.append(t)
++        t.start()
++    for t in threads:
++        t.join()
++
++    status = get_job_status(test_jid)
++    assert status is not None
++    assert status["skipped_count"] == 50
++    with upload_jobs_lock:
++        upload_jobs.pop(test_jid, None)
++
++
++def test_delete_mitigation_record_admin_required(client, test_users):
++    """Defect 11: Verify regular users cannot delete corporate MitigationRecord."""
++    from models import MitigationRecord
++    with app.app_context():
++        rec = MitigationRecord(
++            year=2024,
++            type="Reforestation",
++            quantity_tco2e=500.0,
++            notes="Corporate offset",
++        )
++        db.session.add(rec)
++        db.session.commit()
++        rec_id = rec.id
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["user"]
++    res_user = client.delete(f"/api/managedata/mitigation/rec_{rec_id}")
++    assert res_user.status_code == 403
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++    res_admin = client.delete(f"/api/managedata/mitigation/rec_{rec_id}")
++    assert res_admin.status_code == 200
++    with app.app_context():
++        assert db.session.get(MitigationRecord, rec_id) is None
++
++
++def test_auth_update_user_role_whitelist(client, test_users):
++    """Defect 12: Verify PUT /api/auth/users/<id> rejects invalid roles."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["it_admin"]
++
++    res = client.put(f"/api/auth/users/{test_users['user']}", json={"role": "super_root_admin"})
++    assert res.status_code == 400
++    assert "Invalid role" in res.get_json()["error"]
++
++
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

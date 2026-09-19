@@ -1,0 +1,111 @@
+# Login Error Message Implementation
+
+## Overview
+Successfully implemented visible error message display on the login page when an account is not available or credentials are invalid.
+
+## Changes Made
+
+### 1. HTML Structure ([index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html))
+
+Added an error message container directly in the login form:
+
+```html
+<!-- Error Message Container -->
+<div id="login-error" class="error-message" style="display: none;"></div>
+```
+
+This container is positioned between the login header and the form fields, making errors immediately visible to users.
+
+### 2. CSS Styling ([login.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/login.css))
+
+Added comprehensive styling for the error message:
+
+```css
+.error-message {
+    background-color: #fee2e2;
+    border: 1px solid #ef4444;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    animation: slideDown 0.3s ease-out;
+}
+```
+
+Features:
+- **Red color scheme** for clear error indication
+- **Smooth slide-down animation** for better UX
+- **Consistent styling** with the rest of the form
+
+### 3. JavaScript Error Handling ([script.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/script.js))
+
+Enhanced the login handler to display errors both as toasts and in the visible container:
+
+**Key improvements:**
+- Clears previous error messages on new login attempts
+- Displays error messages in both the error container and as toast notifications
+- Handles both server errors and network errors gracefully
+
+```javascript
+// Clear any previous error messages
+if (loginErrorDiv) {
+    loginErrorDiv.style.display = 'none';
+    loginErrorDiv.textContent = '';
+}
+
+// ... after failed login ...
+
+// Show error message on the form
+if (loginErrorDiv) {
+    loginErrorDiv.textContent = errorMessage;
+    loginErrorDiv.style.display = 'block';
+}
+```
+
+### 4. Server-Side Messaging ([server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js))
+
+Updated the login endpoint to provide more specific error messages:
+
+**Before:**
+```javascript
+return res.status(401).json({ message: 'Invalid credentials' });
+```
+
+**After:**
+```javascript
+return res.status(401).json({ 
+    message: 'Account not found. Please check your username or register a new account.' 
+});
+```
+
+This helps users understand whether they need to:
+- Register a new account
+- Check their username spelling
+- Try a different account
+
+## Error Messages
+
+The login page now displays different error messages for different scenarios:
+
+1. **Account not found**: "Account not found. Please check your username or register a new account."
+2. **Wrong password**: "Invalid credentials"
+3. **Network error**: "An error occurred during login. Please try again."
+
+## User Experience
+
+When a user tries to login with an account that doesn't exist:
+1. The error message appears smoothly with a slide-down animation
+2. The message is displayed in a prominent red box above the form
+3. A toast notification also appears for additional feedback
+4. The error message persists until the user attempts another login
+5. Clear, actionable guidance is provided to the user
+
+## Testing
+
+To test the implementation:
+1. Navigate to the login page (http://localhost:3000)
+2. Try logging in with a non-existent username
+3. Observe the error message: "Account not found. Please check your username or register a new account."
+4. The error should be displayed both in the red error box and as a toast notification

@@ -1,0 +1,52 @@
+# CO & Combustion Efficiency Implementation Plan
+
+## Goal Description
+Implement Carbon Monoxide (CO) emissions tracking for Stationary Combustion and Flaring processes to allow for the quantification of **Combustion Efficiency (CE)**.
+
+**Formula:**
+$$ CE (\%) = \frac{n_{CO2}}{n_{CO2} + n_{CO}} \times 100 $$
+Where $n$ represents moles of the substance.
+- $MW_{CO2} = 44.01 \text{ g/mol}$
+- $MW_{CO} = 28.01 \text{ g/mol}$
+
+## User Review Required
+> [!NOTE]
+> This change introduces a new "Specific CO Factor" input. If left blank, CO emissions will be 0, resulting in 100% calculated efficiency (ideal combustion).
+
+## Proposed Changes
+
+### 1. Data Layer ([emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js))
+- Update `API_FACTORS` to include [co](file:///c:/Users/samsung/Desktop/h/public/favicon.ico) factors where available (default to placeholders or usage-based).
+- Add [co](file:///c:/Users/samsung/Desktop/h/public/favicon.ico) calculation to [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#368-670) methods if applicable.
+
+### 2. UI / Frontend ([emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html))
+- Add **Specific CO Factor** input group (similar to CO2, CH4).
+- Add Unit selector for CO (kg/m³, lb/MMBtu, etc.).
+
+### 3. Logic ([emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js))
+- Update [addRecord](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js#175-406) to:
+    - Capture `specCo` input.
+    - Calculate `em.co` (Mass in Tonnes).
+    - Calculate `combustionEfficiency` using molar ratio.
+    - Store [ce](file:///c:/Users/samsung/Desktop/h/public/toast.js#96-99) in the record object.
+- Update [renderTable](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js#552-666) to display:
+    - CO Emissions (t).
+    - Combustion Efficiency (%).
+
+### Manage Data Page
+#### [MODIFY] [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html)
+- Add "Production Data" item to the sidebar navigation within the page.
+- Add a new content section `<div id="tab-production" ...>` similar to `tab-factors`.
+- The section will contain a table listing production records grouped by year/facility.
+- Add "Add Record" form at the top, reusing styles from other tabs.
+
+#### [NEW] [Backend]
+- Add `DELETE /api/production/:id` endpoint to [server.js](file:///c:/Users/samsung/Desktop/h/server.js).
+
+## Verification Plan
+### Manual Verification
+1.  Navigate to Manage Data.
+2.  Click "Production Data".
+3.  Add a record for 2023.
+4.  Verify it appears in the table.
+5.  Delete the record and verify removal.

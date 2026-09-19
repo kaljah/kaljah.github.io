@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\managedata.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -383,6 +383,9 @@
+         allowed_fids = get_allowed_facility_ids(user)
+         if allowed_fids is not None and item.facility_id not in allowed_fids:
+             return jsonify({"error": "Access to this facility is denied"}), 403
++    elif isinstance(item, MitigationRecord):
++        if not user or user.role not in ["admin", "superuser"]:
++            return jsonify({"error": "Admin or Superuser privileges required to delete corporate mitigation records"}), 403
+ 
+     db.session.delete(item)
+     db.session.commit()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

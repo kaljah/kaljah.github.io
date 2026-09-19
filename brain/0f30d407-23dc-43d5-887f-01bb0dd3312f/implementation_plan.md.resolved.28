@@ -1,0 +1,164 @@
+# Correcting Organizational Hierarchy & Syncing Data
+
+The user identified incorrect Activity-Division mappings. This plan corrects those mappings globally and ensures existing database records are updated to match.
+
+## User Review Required
+
+> [!IMPORTANT]
+> This change will update existing "Facility/Region" records in the database. Any record with an old division (e.g., "Oil" or "Gas" under EP) will be migrated to the new mapping if possible, or may require manual adjustment if the mapping is ambiguous.
+
+## Proposed Changes
+
+### [Frontend] Hierarchy Correction
+
+#### [MODIFY] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+- Update `HIERARCHY` constant to:
+    - EP: Production, Association
+    - LQS: LNG, LPG
+    - RPC: Refining, Petrochemicals
+    - TRC: TRC
+- Ensure `ACTIVITY_MAP` and other UI references reflect the user's naming convention.
+
+#### [MODIFY] [BulkImportModal.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx)
+- Update `HIERARCHY` constant to match [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx).
+- Update [downloadTemplate](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#90-138) logic to use the new sample data (Production/Association instead of Oil/Gas).
+
+### [Backend] Data Synchronization
+
+#### [NEW] [Sync Hierarchy Script](file:///c:/Users/samsung/Desktop/h/sync_hierarchy.py) [DELETE]
+- A one-time script (or temporary route/task) to scan existing `Region` (Facilities) and [EmissionSource](file:///c:/Users/samsung/Desktop/h/new/server/models.py#123-145) records.
+- Rename Divisions:
+    - [Oil](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx#263-271) -> [Production](file:///c:/Users/samsung/Desktop/h/new/server/models.py#101-122)
+    - [Gas](file:///c:/Users/samsung/Desktop/h/new/client/src/components/Scope1Form.jsx#627-638) -> `Association` (or as per user specific intent if disambiguation is needed)
+    - `Transport` -> `TRC`
+- Update Activity names if necessary.
+
+---
+The user reported that the Activity, Division, and Region dropdowns on the Manage Data page (Production tab) don't match the rest of the tool. Additionally, the field order in Region Management needs to be updated to match the requested flow: Activity -> Division -> Region.
+
+## User Review Required
+
+> [!IMPORTANT]
+> I will be implementing a **Bulk CSV Import** feature. Users will need to follow a specific CSV template to ensure data (Regions, Equipment, Activity) is mapped correctly.
+
+> [!NOTE]
+> The automated calculation will use the **latest available emission factors** in the database for each imported record. If a factor is missing, the record will be flagged for review.
+
+## Proposed Changes
+
+### [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+
+#### [NEW] [BulkImportModal.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx)
+- Added [downloadTemplate](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#90-138) function to provide users with example CSV structures with all process types.
+- **Expanded Schema**: Updated templates and preview tables to include mandatory fields: **Activity, Division, Region, Field, Year, Month, Quantity (Amount), and Unit**.
+- **Engineering Parameters**: Added optional fields for high-accuracy calculations:
+    - **Flaring**: Flare Type (Elevated/Enclosed), CH4 %
+    - **Combustion**: HHV, Combustion Efficiency
+    - **Equipment**: Device Count, Operating Hours
+    - **Tanks**: GOR, API Gravity
+- **Validation Logic**: Added logic to scan mapped data for invalid fuel/process types and organizational hierarchy mismatches.
+- **Reference UI**: Added a "System Identifiers" toggle to show valid names for CSV preparation.
+
+### [General Components]
+
+#### [MODIFY] [BulkImportModal.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx)
+- Correct the default import endpoint from `/import` to `/emissions/import` to match the backend blueprint.
+- Ensure all other bulk endpoints (`/sources/bulk-import`, `/scope2/bulk-import`, etc.) are correctly routed.
+
+### [Calculation Engine Fixes]
+#### [MODIFY] [BulkImportModal.css](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.css)
+- Styled validation error states (red highlights) and the reference guide container.
+- A reusable modal for uploading and parsing CSV files.
+- Visual mapping of CSV columns to database fields.
+- Preview of records before final submission.
+
+#### [MODIFY] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+- Add "Import CSV" buttons to **Sources** and **Activity Data** tabs.
+- Integrate the [BulkImportModal](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#9-476) for both inventory and emissions data.
+
+#### [MODIFY] [managedata.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/managedata.py)
+- Add `/api/sources/bulk-import` endpoint to handle bulk equipment inventory uploads.
+
+- **Bulk Import Calculation Support**:
+    - [x] Update [import_emissions](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py#307-489) in [server/routes/emissions.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py) to resolve facility names.
+    - [x] Modify [compute_emissions](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py#297-680) in [server/calculations/legacy_engine.py](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py) to support flat payloads.
+    - [x] Implement `/api/scope2/bulk-import` and `/api/scope3/bulk-import` for automated calculations.
+    - [x] Integrate [BulkImportModal](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#9-476) into [Scope1Form](file:///c:/Users/samsung/Desktop/h/new/client/src/components/Scope1Form.jsx#28-948), [Scope2Form](file:///c:/Users/samsung/Desktop/h/new/client/src/components/Scope2Form.jsx#11-348), and [Scope3Form](file:///c:/Users/samsung/Desktop/h/new/client/src/components/Scope3Form.jsx#10-355).
+- **UI Performance**:
+
+#### [MODIFY] [emissions.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py)
+- Update [import_emissions](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py#307-489) to lookup `facility_id` by name if the CSV provides a string.
+- Ensure the payload passed to [compute_emissions](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py#297-680) matches the structure expected by Tier 3 calculators.
+
+#### [MODIFY] [legacy_engine.py](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py)
+- Update [compute_emissions](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py#297-680) to merge root payload into `inputs` if `calc_inputs` is missing, allowing flat CSV data to drive engineering calculations.
+
+### [Debug Support]
+
+#### [MODIFY] [emissions.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py)
+- Redirect all debug [print](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py#312-315) statements to a file [import_debug.log](file:///c:/Users/samsung/Desktop/h/new/server/import_debug.log) to capture backend context.
+
+#### [MODIFY] [BulkImportModal.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx)
+- Enhance [handleImport](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#259-302) error handling to correctly display the `details` array from the 400 response.
+
+## Dashboard Summary and CORS Fixes
+
+### [Backend] [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py)
+
+#### [MODIFY] [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py)
+Fix `KeyError` in [get_dashboard_summary](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#8-165) where [year](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py#282-296) was used as a key instead of [(year, fid)](file:///c:/Users/samsung/Desktop/h/server.js#2285-2290).
+
+### [Backend] [app.py](file:///c:/Users/samsung/Desktop/h/new/server/app.py)
+
+#### [MODIFY] [app.py](file:///c:/Users/samsung/Desktop/h/new/server/app.py)
+Ensure CORS headers are appended to all responses, including error responses, for better debugging in the frontend.
+
+## ReferenceData and Metadata Fixes
+
+### [Frontend] [ReferenceData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ReferenceData.jsx)
+
+#### [MODIFY] [ReferenceData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ReferenceData.jsx)
+- Add optional chaining to `f.name.toLowerCase()` at line 69 to prevent `TypeError` if name is missing.
+
+### [Backend] [data.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/data.py)
+
+#### [MODIFY] [data.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/data.py)
+- Update [add_production](file:///c:/Users/samsung/Desktop/h/new/server/routes/data.py#29-65) and [get_production](file:///c:/Users/samsung/Desktop/h/new/server/routes/data.py#6-28) to include `activity`, `division`, and `field` fields.
+
+### [Frontend] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+
+#### [MODIFY] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+- Update [metadata](file:///c:/Users/samsung/Desktop/h/new/server/routes/managedata.py#153-181) state to include `is_tcfd_aligned` and `notes`.
+- Add UI inputs for these fields in the "Reporting Metadata" tab.
+
+---
+
+## ISO 14064-1 Uncertainty Implementation
+
+### [Backend] [dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py)
+
+#### [NEW] [/api/dashboard/uncertainty]
+Implement a route to calculate rolled-up uncertainty for the entire inventory:
+- **Emission Factor Uncertainty Quantification**:
+    - If `uncertainty` is explicitly stored in the [Emission](file:///c:/Users/samsung/Desktop/h/new/server/models.py#51-100) or `EmissionFactor` record, use it.
+    - Otherwise, derive based on `calc_method`:
+        - **Tier 3 / Direct Measurement**: ±2-5%
+        - **Tier 2 / Regional Factors**: ±5-15%
+        - **Tier 1 / IPCC Defaults**: ±30-50%
+- **Aggregation Logic (ISO 14064-1 / IPCC)**:
+    - Group emissions by process type (Stationary Combustion, Flaring, etc.).
+    - For each group, calculate uncertainty: $U_{group} = \frac{\sqrt{\sum (E_i \cdot U_i)^2}}{\sum E_i}$
+    - Total inventory uncertainty: $U_{total} = \frac{\sqrt{\sum (U_{group} \cdot E_{group})^2}}{\sum E_{group}}$
+
+### [Frontend] [UncertaintyAssessment.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/UncertaintyAssessment.jsx)
+
+#### [MODIFY] [UncertaintyAssessment.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/UncertaintyAssessment.jsx)
+- Remove hardcoded example data.
+- Fetch calculated uncertainty from the new API.
+- Remove ISO 14064-1 text blocks as requested.
+- Display a dynamic grid of sources with their actual calculated uncertainty contributions.
+
+---
+
+## Verification Plan
+...

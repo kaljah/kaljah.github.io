@@ -1,0 +1,34 @@
+# Implementation Plan - Specific Emission Factor Calculator
+
+## Goal Description
+Implement the Specific Emission Factor Calculator logic by porting the Python script to JavaScript and appending it to [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js).
+Expand [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html) to fully utilize these new capabilities.
+
+## User Review Required
+> [!NOTE]
+> All requested calculations (Combustion Defaults, Flaring N2O, Fugitive, Mobile) have been added to the [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#350-565) class in [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js).
+> UI will be updated to expose these new methods.
+
+## Proposed Changes
+
+### Logic Layer
+#### [MODIFY] [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js)
+- [x] Appended [GHGCalculator](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js#350-565) class.
+- [x] Implemented all requested equations.
+
+### UI Layer
+#### [MODIFY] [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html)
+- **Stationary Combustion**: Add `Fuel Category` dropdown (Gas, Liquid, Solid).
+    - If Gas: Show Gas Composition inputs.
+    - If Liquid: Show Density inputs + Carbon %.
+    - If Solid: Show Carbon %.
+- **Venting**: Add `Venting Type` dropdown (General, Dehydrator).
+    - If General: Show Mole Fraction + pollutant MW.
+    - If Dehydrator: Show Dehydrator inputs (Volume, Pressure, Temp).
+- **Fugitive**: Add new Source Card.
+    - Sub-options: Average Factors (Equipment Count) vs Screening (Leak measurement).
+    - Inputs for Equipment counts or Screening values.
+
+## Verification Plan
+### Automated Tests
+- Create a test script `tests/test-ghg-calc.js` to verify the logic.

@@ -1,0 +1,80 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\audit.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -43,7 +43,7 @@
+     return decorated
+ 
+ 
+-def _build_audit_query():
++def _build_audit_query(current_user=None):
+     user_filter = request.args.get("user")
+     action_filter = request.args.get("action")
+     entity_filter = request.args.get("entity")
+@@ -52,6 +52,12 @@
+ 
+     query = ActivityLog.query
+ 
++    # Separation of duties: IT Admins are strictly scoped to security and account lifecycle logs
++    if current_user and current_user.role == "it_admin":
++        query = query.filter(
++            ActivityLog.action.in_(["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"])
++        )
++
+     if user_filter and user_filter != "all":
+         query = query.filter(ActivityLog.user_name == user_filter)
+ 
+@@ -107,19 +107,21 @@
+     return query
+ 
+ 
+-def _serialize_log(log):
++def _serialize_log(log, is_it_admin=False):
+     old_val = None
+     new_val = None
+-    if log.old_values:
+-        try:
+-            old_val = json.loads(log.old_values)
+-        except Exception:
+-            old_val = log.old_values
+-    if log.new_values:
+-        try:
+-            new_val = json.loads(log.new_values)
+-        except Exception:
+-            new_val = log.new_values
++    # IT Admin separation of duties: redact operational emission / data diffs
++    if not is_it_admin:
++        if log.old_values:
++            try:
++                old_val = json.loads(log.old_values)
++            except Exception:
++                old_val = log.old_values
++        if log.new_values:
++            try:
++                new_val = json.loads(log.new_values)
++            except Exception:
++                new_val = log.new_values
+ 
+     # Determine stable entity ID with fallback to record_id
+     ent_id = log.entity_id or log.record_id
+@@ -142,7 +142,9 @@
+ @audit_bp.route("/", methods=["GET"])
+ @audit_access_required
+ def get_audit_logs():
+-    query = _build_audit_query()
++    user = get_current_user()
++    is_it_admin = bool(user and user.role == "it_admin")
++    query = _build_audit_query(current_user=user)
+ 
+     total_count = query.count()
+ 
+@@ -164,7 +164,7 @@
+         .all()
+     )
+ 
+-    result = [_serialize_log(log) for log in logs]
++    result = [_serialize_log(log, is_it_admin=is_it_admin) for log in logs]
+     pages = max(1, math.ceil(total_count / limit))
+ 
+     response = jsonify(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

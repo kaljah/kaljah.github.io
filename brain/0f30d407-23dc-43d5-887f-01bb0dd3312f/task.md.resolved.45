@@ -1,0 +1,13 @@
+# Tasks
+
+- [x] Dashboard Advancements & Logic Fixes <!-- id: 1 -->
+- [x] Carbon Intensity Logic & Bug Fixes <!-- id: 50 -->
+- [x] Fix Carbon Intensity Heatmap & Trend Dependencies <!-- id: 60 -->
+- [/] Style Region-Field in Dropdowns <!-- id: 70 -->
+    - [x] Analyze [CustomDropdown.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/CustomDropdown.jsx) <!-- id: 71 -->
+    - [/] Plan implementation for rich labels <!-- id: 72 -->
+    - [ ] Update [CustomDropdown.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/CustomDropdown.jsx) to support rich selected display <!-- id: 73 -->
+    - [ ] Update [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx) region options <!-- id: 74 -->
+    - [ ] Update [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx) region options <!-- id: 75 -->
+    - [ ] Search and update other region dropdowns <!-- id: 76 -->
+    - [ ] Add CSS for the sub-label styling <!-- id: 77 -->

@@ -1,0 +1,7 @@
+# Task: Fixing Trend Badge Disappearance
+
+- [x] Research and Planning
+- [/] Fix trend badge disappearance
+    - [/] Update [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) with specific badge IDs
+    - [ ] Refactor [updateHeroMetrics](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#382-449) and trend logic in [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- [ ] Verify fix (Code review)

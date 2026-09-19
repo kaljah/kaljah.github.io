@@ -1,0 +1,20 @@
+# Carbon Intensity Dashboard - Deep Analysis
+
+## 1. Technical Architecture
+... pending research ...
+
+## 2. Logic Audit & Bug Hunt
+### Calculation Accuracy
+- **Weighting**: Checking if intensity is a simple average of percentages or a true weighted average (Total Emissions / Total Production).
+- **BOE Factors**: Verifying Gas -> BOE conversion factors (standard is 0.166 Mscf/BOE or similar).
+
+### Edge Cases
+- **Zero Production**: How does the system handle facilities with emissions but zero production? (Division by zero risk).
+- **Unit Consistency**: Are Mscf, Bbl, and Tonnes aligned correctly in the DB?
+
+## 3. Performance Review
+- **Query Complexity**: JOIN operations and aggregation efficiency.
+- **Frontend State**: Redundant re-renders or heavy computations in `useMemo`.
+
+## 4. Proposed Fixes
+...

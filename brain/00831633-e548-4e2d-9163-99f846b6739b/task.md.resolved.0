@@ -1,0 +1,18 @@
+# Task: Modernize Custom Factors Page
+
+- [/] Planning
+    - [x] Research existing dashboard and custom factors pages
+    - [/] Create implementation plan
+- [ ] Modernize [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html)
+    - [ ] Update sidebar to match [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) (account dropdown)
+    - [ ] Refactor inline styles to external CSS
+    - [ ] Apply glassmorphism to form containers
+    - [ ] Update button styles
+- [ ] Enhancing [custom-factors.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.js)
+    - [ ] Integrate sidebar profile logic
+    - [ ] Improve table/list rendering
+    - [ ] Add toast notifications for save/delete actions
+- [ ] Final Verification
+    - [ ] Verify UI responsiveness
+    - [ ] Test form submissions and deletions
+    - [ ] Verify sidebar navigation and dropdown

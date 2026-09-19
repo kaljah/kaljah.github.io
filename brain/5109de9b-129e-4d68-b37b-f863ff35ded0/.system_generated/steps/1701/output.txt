@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -874,11 +874,13 @@
+     resp = client.post("/api/data/ogmp-surveys", json=payload)
+     assert resp.status_code in [200, 201]
+     data = resp.get_json()
+-    assert data["success"] is True
+-    survey = data["survey"]
+-    # Variance should be None and variance_flag False for zero reading
+-    assert survey["variance_pct"] is None
+-    assert survey["variance_flag"] is False
++    assert "id" in data
++    with app.app_context():
++        survey = db.session.get(OgmpSurvey, data["id"])
++        assert survey is not None
++        # Variance should be None and variance_flag False for zero reading
++        assert survey.variance_pct is None
++        assert survey.variance_flag is False
+ 
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

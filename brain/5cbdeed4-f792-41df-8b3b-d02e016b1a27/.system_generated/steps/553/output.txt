@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3258,17 +3258,18 @@
+             403,
+         )
+ 
+-    allowed_fids = get_allowed_facility_ids(user)
+-    if allowed_fids is not None and record.facility_id not in allowed_fids:
+-        return jsonify({"error": "Forbidden: Outside your region"}), 403
+-
+-    if user.role not in ["admin", "superuser"] and record.created_by != user.id:
+-        return (
+-            jsonify(
+-                {"error": "Forbidden: You do not have permission to delete records created by another user"}
+-            ),
+-            403,
+-        )
++    if user.role not in ["admin", "superuser"]:
++        if record.created_by != user.id:
++            return (
++                jsonify(
++                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
++                ),
++                403,
++            )
++    else:
++        allowed_fids = get_allowed_facility_ids(user)
++        if allowed_fids is not None and record.facility_id not in allowed_fids:
++            return jsonify({"error": "Forbidden: Outside your region"}), 403
+ 
+     # BUG-05 FIX: capture audit data before deletion, then commit everything atomically
+     log_details = f"Deleted {record.process_type} record: {record.quantity} {record.unit} of {record.fuel_type} ({record.month}/{record.year})"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

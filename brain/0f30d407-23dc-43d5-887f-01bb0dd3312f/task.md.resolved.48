@@ -1,0 +1,14 @@
+# Tasks
+
+- [x] Dashboard Advancements & Logic Fixes <!-- id: 1 -->
+- [x] Carbon Intensity Logic & Bug Fixes <!-- id: 50 -->
+- [x] Fix Carbon Intensity Heatmap & Trend Dependencies <!-- id: 60 -->
+- [x] Style Region-Field in Dropdowns <!-- id: 70 -->
+- [x] Rename Methane Explorer to Emissions MAP <!-- id: 80 -->
+- [/] Expand Emissions MAP (Map Page) Assets <!-- id: 90 -->
+    - [x] Remove "LIVE" tags <!-- id: 91 -->
+    - [ ] Research/Collect coordinates for all Sonatrach facilities <!-- id: 92 -->
+    - [ ] Update [Facility](file:///c:/Users/samsung/Desktop/h/new/server/models.py#32-48) table in DB with missing assets <!-- id: 93 -->
+    - [ ] Synchronize `COORDINATES` dictionary with DB metadata <!-- id: 94 -->
+    - [ ] Update Search & Selection logic to handle data-rich vs data-empty regions <!-- id: 95 -->
+    - [ ] Enhance "Fly To" animation and detail display <!-- id: 96 -->

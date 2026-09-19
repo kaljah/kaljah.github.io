@@ -1,0 +1,96 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -4531,41 +4531,58 @@
+     deleted_count = 0
+     pending_statuses = ["Pending", "Draft", "Pending Approval"]
+ 
+-    def apply_rejection(model, target_ids=None):
+-        q = model.query.filter(model.status.in_(pending_statuses))
+-        if allowed_fids is not None:
+-            q = q.filter(model.facility_id.in_(allowed_fids))
+-        if target_ids is not None:
+-            q = q.filter(model.id.in_(target_ids))
+-        return q.delete(synchronize_session=False)
++    def apply_rejection(model, scope_label, target_ids=None):
++        q = model.query.filter(model.status.in_(pending_statuses))
++        if allowed_fids is not None:
++            q = q.filter(model.facility_id.in_(allowed_fids))
++        if target_ids is not None:
++            q = q.filter(model.id.in_(target_ids))
++        records_to_reject = q.all()
++        now_utc = datetime.datetime.now(datetime.timezone.utc)
++        for rec in records_to_reject:
++            rec.status = "Rejected"
++            if hasattr(rec, "qa_flag"):
++                rec.qa_flag = f"Rejected: {reason}"
++            rec.approved_by = user.id
++            rec.approved_at = now_utc
++            rec_id = getattr(rec, "record_id", f"{scope_label}-{rec.id}")
++            log_activity_and_notify(
++                action="UPDATE",
++                record_id=str(rec_id),
++                details=f"{scope_label} emission batch rejected by {user.fullName}: {reason}",
++                user=user,
++                entity=f"scope{scope_label[-1] if scope_label[-1].isdigit() else '1'}_emission",
++                entity_id=rec.id,
++            )
++        return len(records_to_reject)
+ 
+     if scope == "all" and reject_all:
+         deleted_count = (
+-            apply_rejection(Emission)
+-            + apply_rejection(Scope2Emission)
+-            + apply_rejection(Scope3Emission)
+-        )
+-    elif has_by_scope:
+-        s1_ids = by_scope.get("1") or by_scope.get(1) or []
+-        s2_ids = by_scope.get("2") or by_scope.get(2) or []
+-        s3_ids = by_scope.get("3") or by_scope.get(3) or []
+-        if s1_ids:
+-            deleted_count += apply_rejection(Emission, s1_ids)
+-        if s2_ids:
+-            deleted_count += apply_rejection(Scope2Emission, s2_ids)
+-        if s3_ids:
+-            deleted_count += apply_rejection(Scope3Emission, s3_ids)
+-    elif scope == "1":
+-        deleted_count = apply_rejection(Emission, None if reject_all else ids)
+-    elif scope == "2":
+-        deleted_count = apply_rejection(Scope2Emission, None if reject_all else ids)
+-    elif scope == "3":
+-        deleted_count = apply_rejection(Scope3Emission, None if reject_all else ids)
+-    elif scope == "all" and ids:
+-        deleted_count = (
+-            apply_rejection(Emission, ids)
+-            + apply_rejection(Scope2Emission, ids)
+-            + apply_rejection(Scope3Emission, ids)
++            apply_rejection(Emission, "Scope 1")
++            + apply_rejection(Scope2Emission, "Scope 2")
++            + apply_rejection(Scope3Emission, "Scope 3")
++        )
++    elif has_by_scope:
++        s1_ids = by_scope.get("1") or by_scope.get(1) or []
++        s2_ids = by_scope.get("2") or by_scope.get(2) or []
++        s3_ids = by_scope.get("3") or by_scope.get(3) or []
++        if s1_ids:
++            deleted_count += apply_rejection(Emission, "Scope 1", s1_ids)
++        if s2_ids:
++            deleted_count += apply_rejection(Scope2Emission, "Scope 2", s2_ids)
++        if s3_ids:
++            deleted_count += apply_rejection(Scope3Emission, "Scope 3", s3_ids)
++    elif scope == "1":
++        deleted_count = apply_rejection(Emission, "Scope 1", None if reject_all else ids)
++    elif scope == "2":
++        deleted_count = apply_rejection(Scope2Emission, "Scope 2", None if reject_all else ids)
++    elif scope == "3":
++        deleted_count = apply_rejection(Scope3Emission, "Scope 3", None if reject_all else ids)
++    elif scope == "all" and ids:
++        deleted_count = (
++            apply_rejection(Emission, "Scope 1", ids)
++            + apply_rejection(Scope2Emission, "Scope 2", ids)
++            + apply_rejection(Scope3Emission, "Scope 3", ids)
+         )
+     else:
+         return jsonify({"error": f"Invalid scope: {scope}"}), 400
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

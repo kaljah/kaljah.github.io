@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1713,11 +1713,13 @@
+ 
+         # Methane conversion: 1 tonne CH4 = 1000 kg. Density at std cond ~ 0.6785 kg/m3
+         ch4_vol_m3 = (ed["total_ch4"] * 1000.0) / 0.6785 if ed["total_ch4"] > 0 else 0.0
+-        methane_loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
++        methane_loss_rate_pct = (
++            round((ch4_vol_m3 / gas_m3 * 100.0), 4) if gas_m3 > 0 else 0.0
++        )
+ 
+         # Flaring Rate %
+         flaring_rate_pct = (
+-            (ed["total_flaring_vol"] / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
++            round((ed["total_flaring_vol"] / gas_m3 * 100.0), 4) if gas_m3 > 0 else 0.0
+         )
+ 
+         # GWP 20-Year Horizon: dynamic resolution per active standard
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

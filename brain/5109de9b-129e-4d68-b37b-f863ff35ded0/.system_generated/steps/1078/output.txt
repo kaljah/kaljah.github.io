@@ -1,0 +1,18 @@
+{"name":"__init__.py","sizeBytes":"308"}
+{"name":"__pycache__","isDir":true}
+{"name":"anomaly.py","sizeBytes":"12598"}
+{"name":"base.py","sizeBytes":"2203"}
+{"name":"calculations.rar","sizeBytes":"33187"}
+{"name":"combustion.py","sizeBytes":"19322"}
+{"name":"constants.py","sizeBytes":"2095"}
+{"name":"dispatcher.py","sizeBytes":"47093"}
+{"name":"fugitive.py","sizeBytes":"5408"}
+{"name":"indirect.py","sizeBytes":"6243"}
+{"name":"legacy_engine.py","sizeBytes":"35443"}
+{"name":"midstream.py","sizeBytes":"12025"}
+{"name":"stoichiometry.py","sizeBytes":"2093"}
+{"name":"uncertainty.py","sizeBytes":"15866"}
+{"name":"units.py","sizeBytes":"5675"}
+{"name":"vented.py","sizeBytes":"23276"}
+
+Summary: This directory contains 1 subdirectories and 15 files.

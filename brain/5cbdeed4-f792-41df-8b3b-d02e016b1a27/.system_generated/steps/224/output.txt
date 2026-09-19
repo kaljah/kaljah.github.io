@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2268,"LineContent":"@dashboard_bp.route(\"/exclusions\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2270,"LineContent":"def get_report_exclusions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2271,"LineContent":"    \"\"\"Fetches items marked as exclusions for the report.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2288,"LineContent":"    exclusions = query.all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2296,"LineContent":"            for e in exclusions"}

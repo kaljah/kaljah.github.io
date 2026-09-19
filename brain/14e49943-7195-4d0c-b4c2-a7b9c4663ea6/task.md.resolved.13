@@ -1,0 +1,44 @@
+# Tasks
+
+- [x] Analyze current facility page implementation <!-- id: 0 -->
+- [x] Analyze backend facility API and models <!-- id: 1 -->
+- [x] Create implementation plan <!-- id: 2 -->
+- [x] Implement frontend types ([Facility](file:///c:/Users/samsung/Desktop/cement/backend/core/models.py#58-98), [FacilityType](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts#1-2)) <!-- id: 7 -->
+- [x] Implement [FacilityList](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityList.tsx#14-114) component <!-- id: 8 -->
+- [x] Implement [FacilityForm](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityForm.tsx#22-146) component <!-- id: 9 -->
+- [x] integrate components into [FacilitiesPage](file:///c:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/facilities/page.tsx#9-68) <!-- id: 10 -->
+- [x] Verify functionality <!-- id: 6 -->
+- [x] Debug "Create First Facility" button issue <!-- id: 11 -->
+
+## Emission Data Page (Completed Initial Version)
+- [x] Create Types for [FuelConsumption](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#74-106) and [ClinkerProduction](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#107-127) <!-- id: 12 -->
+- [x] Implement [EmissionList](file:///C:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionList.tsx#13-234) component <!-- id: 13 -->
+- [x] Implement [EmissionForm](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionForm.tsx#15-183) component (Tabs for Fuel/Clinker) <!-- id: 14 -->
+- [x] Integrate into [EmissionsPage](file:///C:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/emissions/page.tsx#6-37) <!-- id: 15 -->
+- [x] Verify functionality <!-- id: 16 -->
+
+## WBCSD Protocol Upgrade (Completed)
+- [x] Create Implementation Plan for Protocol Upgrade <!-- id: 17 -->
+- [x] **Backend**: Add [ElectricityConsumption](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts#44-53) model (Scope 2) <!-- id: 18 -->
+- [x] **Backend**: Update [ClinkerProduction](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#107-127) (add MgO non-carbonate) <!-- id: 19 -->
+- [x] **Backend**: Update [FuelConsumption](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py#74-106) (add Biomass %) <!-- id: 20 -->
+- [x] **Backend**: Add [RawMaterialConsumption](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts#54-65) (Method B) <!-- id: 21 -->
+- [x] **Backend**: Implement calculation signals/logic <!-- id: 22 -->
+- [x] **Frontend**: Create new `EmissionCalculator` component (Wizard/Accordion style) <!-- id: 23 -->
+- [x] **Frontend**: Integrate all new data types <!-- id: 24 -->
+- [x] Verify WBCSD Compliance <!-- id: 25 -->
+
+## UI/UX Modernization & Functional Enhancement (Completed)
+- [x] Create Implementation Plan <!-- id: 26 -->
+- [x] **Frontend**: Create [constants/emissionFactors.ts](file:///c:/Users/samsung/Desktop/cement/frontend/src/constants/emissionFactors.ts) (Default values) <!-- id: 27 -->
+- [x] **Frontend**: Implement Unit Conversion Logic (UI -> Backend units) <!-- id: 28 -->
+- [x] **Frontend**: Redesign [ProtocolCalculator](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/ProtocolCalculator.tsx#14-376) (Modern UI + Unit Selectors + Auto-fill) <!-- id: 29 -->
+- [x] **Frontend**: Update [EmissionsPage](file:///C:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/emissions/page.tsx#6-37) to show Calculator and List simultaneously <!-- id: 30 -->
+- [x] **Refinement**: Polish styling and interactivity <!-- id: 31 -->
+
+## Activity Log Dashboard Replica (In Progress)
+- [ ] **Backend**: Add `group_name`, `equipment_identifier`, `uncertainty` to schema <!-- id: 32 -->
+- [ ] **Backend**: Migration <!-- id: 33 -->
+- [ ] **Frontend**: Update [ProtocolCalculator](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/ProtocolCalculator.tsx#14-376) to match "New Activity Entry" Form (Row layout) <!-- id: 34 -->
+- [ ] **Frontend**: Refactor [EmissionList](file:///C:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionList.tsx#13-234) to a Unified "Activity Log" Table <!-- id: 35 -->
+- [ ] **Frontend**: Integrate Filters and Total CO2e Footer <!-- id: 36 -->

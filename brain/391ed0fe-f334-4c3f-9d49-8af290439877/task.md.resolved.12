@@ -1,0 +1,17 @@
+# Tasks
+
+- [x] Capture standard navigation HTML from [dashboard.html](file:///C:/Users/samsung/Desktop/h/public/dashboard.html) <!-- id: 0 -->
+- [x] Identify target HTML files in `public/` <!-- id: 1 -->
+- [x] Update [carbon-intensity.html](file:///C:/Users/samsung/Desktop/h/public/carbon-intensity.html) <!-- id: 2 -->
+- [x] Update [emission-selection.html](file:///C:/Users/samsung/Desktop/h/public/emission-selection.html) <!-- id: 3 -->
+- [x] Update [mars-map.html](file:///C:/Users/samsung/Desktop/h/public/mars-map.html) <!-- id: 4 -->
+- [x] Update [manage-data.html](file:///C:/Users/samsung/Desktop/h/public/manage-data.html) <!-- id: 5 -->
+- [x] Update [reports.html](file:///C:/Users/samsung/Desktop/h/public/reports.html) <!-- id: 6 -->
+- [x] Update [reference-data.html](file:///C:/Users/samsung/Desktop/h/public/reference-data.html) <!-- id: 7 -->
+- [x] Update [uncertainty.html](file:///C:/Users/samsung/Desktop/h/public/uncertainty.html) <!-- id: 8 -->
+- [x] Update [audit-history.html](file:///C:/Users/samsung/Desktop/h/public/audit-history.html) <!-- id: 9 -->
+- [x] Update [profile.html](file:///C:/Users/samsung/Desktop/h/public/profile.html) <!-- id: 10 -->
+- [x] Update [settings.html](file:///C:/Users/samsung/Desktop/h/public/settings.html) <!-- id: 11 -->
+- [x] Update [emissions-calculator.html](file:///C:/Users/samsung/Desktop/h/public/emissions-calculator.html) <!-- id: 12 -->
+- [x] Update [audit-trail.html](file:///C:/Users/samsung/Desktop/h/public/audit-trail.html) <!-- id: 13 -->
+- [x] Verify navigation consistency <!-- id: 14 -->

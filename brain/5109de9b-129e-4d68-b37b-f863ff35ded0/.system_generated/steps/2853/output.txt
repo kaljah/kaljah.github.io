@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1004,9 +1004,10 @@
+     assert res.status_code == 201
+     data = res.get_json()
+     with app.app_context():
+-        em = db.session.get(Emission, data["id"])
++        # Propagated uncertainty with 5% EF uncertainty is ~0.0559 (5.59%), not > 5.0 (500%)
+         assert em.uncertainty is not None
+-        assert pytest.approx(em.uncertainty, 0.001) == 0.05
++        assert 0.05 <= em.uncertainty < 0.06
++        assert pytest.approx(em.uncertainty, 0.01) == 0.056
+ 
+ 
+ def test_update_emission_preserves_calc_payload(client, test_users):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

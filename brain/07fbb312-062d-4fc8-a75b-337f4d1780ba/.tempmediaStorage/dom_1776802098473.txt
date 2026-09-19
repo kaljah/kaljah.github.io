@@ -1,0 +1,56 @@
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (96,224)<li  />
+		[2] (79,221)<a class='nav-link ' href='/'>Dashboard />
+	[3] (96,351)<li  />
+		[4] (93,348)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (96,478)<li  />
+		[6] (81,475)<a class='nav-link ' href='/emissions'>Calculations />
+	[7] (96,605)<li  />
+		[8] (89,602)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (96,733)<li  />
+		[10] (85,729)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (96,860)<li  />
+		[12] (72,857)<a class='nav-link active' href='/reports'>Reports />
+	[13] (96,987)<li  />
+		[14] (89,984)<a class='nav-link ' href='/reference-data'>Reference Data />
+	Dashboard
+	[15] (908,53)<button class='icon-button' title='Notifications' />
+		[16] (911,47)<span  />
+	[17] (941,53)<button class='icon-button' />
+	Test
+	[18] (597,555)<div scrollable='true' />
+		Dashboard
+		/
+		Reports
+		Test User
+		Emission Database
+		Complete history of all recorded emissions and compliance data.
+		[19] (825,289)<button class='btn-action btn-excel'>Excel Export />
+		[20] (938,289)<button class='btn-action btn-pdf'>PDF Report />
+		Create New Report
+		[21] (301,508)<label class='input-label'>Reporting Year
+* />
+			*
+		[22] (301,566)<select class='component-select' />
+		[23] (495,508)<label class='input-label'>Compare With />
+		[24] (495,566)<select class='component-select' />
+		[25] (690,508)<label class='input-label'>Regions / Facilities
+* />
+			*
+		[26] (690,566)<div  />
+			[27] (632,566)<span >1 Selected />
+		[28] (884,563)<button class='btn-create'>Create Report />
+		Hassi Messaoud
+		[29] (291,640)<button >× />
+		Filter & Group Data
+		[30] (281,886)<label class='input-label'>Inventory Scope />
+		[31] (281,944)<select class='component-select' />
+		[32] (437,886)<label class='input-label'>Reporting Year />
+		[33] (437,944)<select class='component-select' />
+		[34] (592,886)<label class='input-label'>Month />
+		[35] (592,944)<select class='component-select' />
+		[36] (748,886)<label class='input-label'>Region (Grid) />
+		[37] (748,944)<select class='component-select' />
+		[38] (903,886)<label class='input-label'>Group By />
+		[39] (903,944)<select class='component-select' />

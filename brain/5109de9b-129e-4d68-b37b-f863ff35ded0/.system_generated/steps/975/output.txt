@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":51,"LineContent":"    spawned by ThreadPoolExecutor don't inherit it automatically."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":92,"LineContent":"        with concurrent.futures.ThreadPoolExecutor(max_workers=7) as executor:"}

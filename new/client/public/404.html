@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Carbon Tech - Redirecting...</title>
+    <script>
+      // SPA redirect for GitHub Pages
+      // Stores path and redirects to base URL
+      var pathSegmentsToKeep = 0;
+      var l = window.location;
+      // If repo name is in path, e.g. /repo/path -> segment count
+      var path = l.pathname.slice(1);
+      sessionStorage.redirect = l.pathname + l.search + l.hash;
+      l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + (path.includes('/') ? '/' + path.split('/')[0] : ''));
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

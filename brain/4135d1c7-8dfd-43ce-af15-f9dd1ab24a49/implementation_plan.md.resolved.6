@@ -1,0 +1,46 @@
+# Implementation Plan - Modernizing Settings Dropdowns
+
+To meet the "Premium Design" requirement and modernize the selection lists, we will replace all native `<select>` elements in [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html) with custom `div`-based dropdowns, reusing the existing `.custom-dropdown` styles from [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css).
+
+## Proposed Changes
+
+### [Component Name] Settings UI - settings.html
+
+#### [MODIFY] [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html)
+- Replace `<div class="input-group"> ... <select> ...` with:
+  ```html
+  <div class="input-group">
+      <label>Language</label>
+      <div class="custom-dropdown" id="dropdown-language" data-value="en">
+          <div class="dropdown-selected">English (US) <svg...>Chevron</svg></div>
+          <div class="dropdown-options">
+              <div class="dropdown-option" data-val="en">English (US)</div>
+              <div class="dropdown-option" data-val="fr">French (Français)</div>
+          </div>
+      </div>
+      <!-- Hidden input to store value for easy JS access -->
+      <input type="hidden" id="set-language" value="en">
+  </div>
+  ```
+- Apply this pattern to: Language, Theme, Timezone, GWP, Consolidation.
+
+### [Component Name] Settings Logic - settings.js
+
+#### [MODIFY] [settings.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js)
+- **Refactor [loadSettings](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js#3-42)**:
+    - Initialize the custom dropdowns with stored values.
+    - Set the `data-value` and text content of `.dropdown-selected`.
+- **Add Dropdown Logic**:
+    - Implement a `setupDropdowns()` function to handle click-to-open and select-option interactions.
+    - Ensure selecting an option updates the hidden input and the display text.
+- **Refactor Save Functions**:
+    - Simple update: since we use hidden inputs with the *original IDs* (`set-language`, etc.), the existing [saveGeneralSettings](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js#43-54) logic (`document.getElementById('set-language').value`) should theoretically work without changes! We just need to ensure the hidden input is updated on selection.
+
+## Verification Plan
+
+### Manual Verification
+- **Visuals**: Check that dropdowns look like the "Facility Selector" (glassmorphism/dark theme).
+- **Interaction**: Verify clicking opens the menu, clicking outside closes it.
+- **Selection**: Verify selecting an option updates the UI text and the hidden input.
+- **Persistence**: Verify "Save Preferences" correctly reads the value from the hidden input and saves to localStorage.
+- **Reload**: Verify reloading the page restores the correct state in the custom dropdowns.

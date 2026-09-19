@@ -1,0 +1,6 @@
+- [x] Fix unit handling in `dispatcher.py` for combustion
+- [x] Align pneumatic parameter names in `dispatcher.py`
+- [x] Fix `EquipmentFugitiveCalculator` in `fugitive.py` (tonnes vs kg issue)
+- [x] Update `Tank - Crude Oil (Large, >10 bbl/d)` factor in `emission_factors_api2021.py`
+- [x] Update `test_compendium_examples.py` payloads
+- [x] Verify all tests pass

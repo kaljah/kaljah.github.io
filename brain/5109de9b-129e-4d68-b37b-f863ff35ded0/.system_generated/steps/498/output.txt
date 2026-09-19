@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\base.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -19,17 +19,21 @@
+                 raise ValueError(f"Input {key} cannot be negative: {inputs[key]}")
+         return True
+ 
+-    def calculate_uncertainty(self, value, relative_uncertainty):
+-        """
+-        Calculates absolute uncertainty and non-negative bounds at 95% CI.
+-        """
+-        abs_uncertainty = value * relative_uncertainty
++    def calculate_uncertainty(self, value, relative_uncertainty, coverage_factor=2.0):
++        """
++        Calculates absolute uncertainty and non-negative bounds at 95% CI (k=2.0 per ISO/IEC Guide 98-3 GUM §6.2).
++        """
++        abs_1sigma = value * relative_uncertainty
++        abs_95 = abs_1sigma * coverage_factor
+         return {
+             "value": value,
+             "uncertainty": relative_uncertainty,
+-            "abs_uncertainty": abs_uncertainty,
+-            "lower_bound": max(0.0, value - abs_uncertainty),
+-            "upper_bound": value + abs_uncertainty,
++            "abs_uncertainty": abs_1sigma,
++            "abs_uncertainty_95": abs_95,
++            "lower_bound": max(0.0, value - abs_95),
++            "upper_bound": value + abs_95,
++            "confidence_level_pct": 95,
++            "coverage_factor": coverage_factor,
+         }
+ 
+     def format_result(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

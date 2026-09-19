@@ -1,0 +1,39 @@
+# Sonatrach Theme Update Walkthrough
+
+**Goal**: Re-theme the platform to use a White background, Sonatrach Orange accents/SVGs, and distinct **Orange Contours** (borders).
+
+## Changes Made
+
+### 1. Global CSS Variables ([dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css) & [login.css](file:///c:/Users/samsung/Desktop/h/public/login.css))
+- **Backgrounds**: Switched from Dark Blue (`#0f172a`) to Pure White (`#ffffff`).
+- **Cards**: Switched from translucent dark to Solid White (`#ffffff`).
+- **Text**: Switched from White (`#f8fafc`) to Black (`#000000`).
+- **Borders**: Defined `var(--border-color)` as Orange (`#ff6600`) and applied it globally.
+
+### 2. Component Styling
+- **Sidebar**: Now consistent White background with Orange right border.
+- **Inputs**: White background with Orange borders.
+- **Buttons**: Updated to align with the new palette.
+- **Cards**: Removed glassmorphism blur and dark shadows, replaced with solid white and clean borders.
+
+### 3. Login Page
+- **Brand Panel**: Maintained Orange background (`#ff6600` primary).
+- **Login Form**: White card, Orange border, Orange input borders.
+
+### 4. Visual Polish & Defects Fixed
+- **Start/End**: Refactored [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) to a **Nested Layout** (Global + Inner Sidebar) and then **Modernized** it.
+- **Glassmorphism**: Inner navigation now uses a `backdrop-filter: blur(12px)` glass card effect with smooth hover transitions.
+- **Interactivity**: Active navigation items transform with a "pill" shape, glow, and slide effect.
+- **Emission Style Inputs**: Applied the standard **Clean / Solid** input style found in the Emission Calculator.
+- **Consistent UX**: Inputs use a solid background (`var(--bg-card)`), clear labels above the field, and the standard Orange focus ring. Removed experimental floating labels to ensure consistency.
+- **Entry Animations**: List items slide in with a staggered delay, making the data loading feel dynamic.
+- **Theme**: Ensured strict adherence to the White/Orange theme with no dark mode regressions.
+- **New Metrics**: Added **Total CH4 Emissions** display to the dashboard hero card, providing visibility into Methane intensity alongside Scope 1 & 2.
+- **Emission Factor Map**: Fixed "How to use" section (removed green).
+- **Reference Data**: Removed hardcoded gray backgrounds and green headers.
+- **Global**: Replaced residual Green (`#10b981`) with Orange (`#ff6600`) for consistency.
+
+## Verification
+- Checked [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css) for any remaining dark mode colors (gradients, rgba backgrounds) and replaced them with theme variables.
+- Verified text contrast (Black on White).
+- Validated that [profile.html](file:///c:/Users/samsung/Desktop/h/public/profile.html) and [settings.html](file:///c:/Users/samsung/Desktop/h/public/settings.html) now correctly inherit the white background.

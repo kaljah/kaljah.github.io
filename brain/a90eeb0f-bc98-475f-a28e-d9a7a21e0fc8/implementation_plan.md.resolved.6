@@ -1,0 +1,34 @@
+# Implementation Plan - Save Custom Factors
+
+## Goal Description
+Allow users to save the calculated emission factors directly to their "Custom Factor Library" (manage-data) from the specific calculator results.
+
+## User Review Required
+> [!NOTE]
+> The 'Manage Data' system uses `POST /api/factors` and supports units `scf`, `m3`, `gal`.
+> The Calculator produces results in various units. I will map these as follows:
+> - `kg/m³` -> Unit `m3`
+> - `kg/scf` -> Unit `scf`
+> - `lb/gal` (converted to kg) -> Unit `gal`
+> - `kg/kg` -> Not currently supported by Manage Data UI directly as a 'unit' dropdown, might need to default to a generic handling or add 'kg' support if needed. (Actually [manage-data.html](file:///c:/Users/samsung/Desktop/h/public/manage-data.html) only shows scf/m3/gal. I will stick to those for now or default to m3/scf/gal where applicable).
+
+## Proposed Changes
+
+### UI Layer
+#### [MODIFY] [emission-factor.html](file:///c:/Users/samsung/Desktop/h/public/emission-factor.html)
+- Add a "Save to Library" button in the `results-panel`.
+- Implement a `saveFactorModal` (HTML dialog or overlay).
+    - Inputs: Name (Text), Unit (Select: derived from calculated results).
+- Implement `openSaveDialog(currentResults)` function.
+    - Populates the modal with the calculated CO2, CH4, N2O values based on the selected Unit.
+- Implement `confirmSaveFactor()` function.
+    - Calls `fetch('/api/factors', { method: 'POST', ... })`.
+    - Shows success toast.
+
+## Verification Plan
+### Manual Verification
+1. Calculate a factor (e.g., Flaring Natural Gas).
+2. Click "Save to Library".
+3. Enter name "My Flare Factor". Select "m³" unit.
+4. Click Save.
+5. Go to "Manage Data" -> "Custom Factors" and verify "My Flare Factor" appears with correct values.

@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2303,"LineContent":"@dashboard_bp.route(\"/sbti-trajectory\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2305,"LineContent":"def get_sbti_trajectory():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2413,"LineContent":"        sbti_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate * years_diff)))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2414,"LineContent":"        sbti_15c_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate_15c * years_diff)))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2415,"LineContent":"        sbti_wb2c_emissions = max(residual_floor, target.base_year_emissions * (1 - (rate_wb2c * years_diff)))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2436,"LineContent":"            \"sbti_target\": round(sbti_emissions, 2),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2437,"LineContent":"            \"sbti_15c\": round(sbti_15c_emissions, 2),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2438,"LineContent":"            \"sbti_wb2c\": round(sbti_wb2c_emissions, 2),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":932,"LineContent":"@managedata_bp.route(\"/sbti\", methods=[\"GET\", \"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":933,"LineContent":"@managedata_bp.route(\"/manage/sbti\", methods=[\"GET\", \"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":935,"LineContent":"def manage_sbti():"}

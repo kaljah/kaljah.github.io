@@ -1,0 +1,27 @@
+# Integrating Registration Data with Profile Page
+
+- [x] Research and Planning <!-- id: 0 -->
+    - [x] Verify database schema for all profile fields <!-- id: 1 -->
+    - [x] Map registration fields to profile UI elements <!-- id: 2 -->
+    - [x] Create implementation plan <!-- id: 3 -->
+- [x] UI Enhancements <!-- id: 4 -->
+    - [x] Add "Sector" field to [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html) <!-- id: 5 -->
+    - [x] Ensure all form fields in [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html) match database columns <!-- id: 6 -->
+- [x] Logic Implementation <!-- id: 7 -->
+    - [x] Update populate logic in [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html) to handle all fields <!-- id: 8 -->
+    - [x] Verify `/login` and `/api/users/:id` endpoints return all fields <!-- id: 9 -->
+- [x] Verification (Skipped per user request) <!-- id: 10 -->
+    - [x] Register new user with full profile info <!-- id: 11 -->
+    - [x] Log in and verify profile page data <!-- id: 12 -->
+
+# Emissions & Dashboard Fixes
+
+- [x] Emissions Saving Logic <!-- id: 13 -->
+    - [x] Fix 500 Error on POST /api/emissions <!-- id: 14 -->
+    - [x] Ensure correct payload structure in [emissions-calc.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calc.js) <!-- id: 15 -->
+- [x] Scope 2 Table Improvements <!-- id: 16 -->
+    - [x] Filter out Scope 2 from "Activity Log" (Scope 1 table) <!-- id: 17 -->
+    - [x] Add Actions column (Duplicate/Delete) to Scope 2 table <!-- id: 18 -->
+    - [x] Implement persistence for Duplicate/Delete in [scope2-calc.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calc.js) <!-- id: 19 -->
+- [x] Dashboard Synchronization <!-- id: 20 -->
+    - [x] Ensure total emissions update immediately after add/duplicate/delete <!-- id: 21 -->

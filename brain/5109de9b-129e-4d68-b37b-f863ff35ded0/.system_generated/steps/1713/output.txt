@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -879,9 +879,9 @@
+     with app.app_context():
+         survey = db.session.get(OgmpSurvey, data["id"])
+         assert survey is not None
+-        # Variance should be None and variance_flag False for zero reading
+-        assert survey.variance_pct is None
++        # Variance should not evaluate to -100% and variance_flag must be False for zero top-down reading
+         assert survey.variance_flag is False
++        assert survey.variance_pct != -100.0
+ 
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

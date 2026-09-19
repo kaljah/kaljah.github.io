@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":530,"LineContent":"        record.qa_flag = None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":596,"LineContent":"            record.qa_flag = None"}

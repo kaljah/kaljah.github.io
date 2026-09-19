@@ -1,0 +1,34 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\electricity_factors.py","LineNumber":32,"LineContent":"    \"US-WECC\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\electricity_factors.py","LineNumber":35,"LineContent":"        \"description\": \"WECC average grid mix\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":578,"LineContent":"    (GWP standard, OGMP parameters, WEC fees, Copernicus credentials, etc.)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":556,"LineContent":"    \"wec_fee_rates\": {\"2024\": 900.0, \"2025\": 1200.0, \"2026\": 1500.0},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":700,"LineContent":"        \"wec_fee_rates\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":751,"LineContent":"        if \"wec_fee_rates\" in data and isinstance(data[\"wec_fee_rates\"], dict):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":752,"LineContent":"            rates = _app_settings.get(\"wec_fee_rates\", {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":753,"LineContent":"            rates.update({str(k): float(v) for k, v in data[\"wec_fee_rates\"].items()})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":754,"LineContent":"            _app_settings[\"wec_fee_rates\"] = rates"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":755,"LineContent":"            save_setting_to_db(\"wec_fee_rates\", rates)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1376,"LineContent":"    Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1752,"LineContent":"        # EPA WEC (Waste Emissions Charge per 40 CFR Part 99 / IRA §136)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1759,"LineContent":"        wec_threshold_pct = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1766,"LineContent":"            allowed_ch4_tonnes = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1774,"LineContent":"        # WEC Rate: $900/tonne in 2024, $1,200/tonne in 2025, $1,500/tonne in 2026+ (effective starting 2024)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1777,"LineContent":"        wec_fee_map = _app_settings.get(\"wec_fee_rates\", {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1780,"LineContent":"            wec_rate = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1782,"LineContent":"            wec_fee_usd = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1783,"LineContent":"            wec_status = \"Not Applicable (Pre-2024)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1785,"LineContent":"            wec_rate = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1787,"LineContent":"            wec_fee_usd = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1788,"LineContent":"            wec_status = \"Exempt (Downstream)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1790,"LineContent":"            wec_rate = float("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1791,"LineContent":"                wec_fee_map.get("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1796,"LineContent":"            wec_fee_usd = round(excess_ch4_tonnes * wec_rate, 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1797,"LineContent":"            wec_status = \"Compliant\" if excess_ch4_tonnes \u003c= 0 else \"Taxable Liability\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1912,"LineContent":"                # EPA WEC"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1913,"LineContent":"                \"wec_status\": wec_status,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1915,"LineContent":"                \"wec_fee_usd\": wec_fee_usd,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":8,"LineContent":"  4. KPIs: Carbon Intensity (kg/BOE), Methane Intensity \u0026 Loss Rate (%), Flaring Rate (%), EPA WEC (Part 99)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":397,"LineContent":"# 4. KPIS: CARBON INTENSITY, METHANE LOSS RATE, FLARING RATE \u0026 EPA WEC"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":475,"LineContent":"    def test_epa_wec_part99_fee_schedules_and_thresholds(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":493,"LineContent":"        wec_threshold_pct = 0.0020"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":494,"LineContent":"        allowed_ch4 = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0"}

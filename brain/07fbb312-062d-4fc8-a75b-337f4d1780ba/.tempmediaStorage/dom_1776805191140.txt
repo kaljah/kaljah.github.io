@@ -1,0 +1,160 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (96,224)<li  />
+		[2] (79,221)<a class='nav-link ' href='/'>Dashboard />
+	[3] (96,351)<li  />
+		[4] (93,348)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (96,478)<li  />
+		[6] (81,475)<a class='nav-link ' href='/emissions'>Calculations />
+	[7] (96,605)<li  />
+		[8] (89,602)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (96,733)<li  />
+		[10] (85,729)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (96,860)<li  />
+		[12] (72,857)<a class='nav-link active' href='/reports'>Reports />
+	[13] (96,987)<li  />
+		[14] (89,984)<a class='nav-link ' href='/reference-data'>Reference Data />
+	Dashboard
+	[15] (908,53)<button class='icon-button' title='Notifications' />
+		[16] (911,47)<span  />
+	[17] (941,53)<button class='icon-button' />
+	Test
+	[18] (597,555)<div scrollable='true' />
+		Dashboard
+		/
+		Reports
+		Test User
+		Emission Database
+		Complete history of all recorded emissions and compliance data.
+		[19] (825,289)<button class='btn-action btn-excel'>Excel Export />
+		[20] (938,289)<button class='btn-action btn-pdf'>PDF Report />
+		Create New Report
+		[21] (301,508)<label class='input-label'>Reporting Year
+* />
+			*
+		[22] (301,566)<select class='component-select' />
+		[23] (495,508)<label class='input-label'>Compare With />
+		[24] (495,566)<select class='component-select' />
+		[25] (690,508)<label class='input-label'>Regions / Facilities
+* />
+			*
+		[26] (690,566)<div  />
+			[27] (634,566)<span >All Selected />
+		[28] (690,797)<div class='dropdown-options' scrollable='true' />
+			[29] (683,634)<div >Deselect All />
+			[30] (683,689)<div  />
+				[31] (615,689)<input  />
+				[32] (665,689)<span >Hassi Messaoud />
+			[33] (683,744)<div  />
+				[34] (615,744)<input  />
+				[35] (658,744)<span >Hassi Berkine />
+			[36] (683,798)<div  />
+				[37] (615,798)<input  />
+				[38] (648,798)<span >Ourhoud />
+			[39] (683,853)<div  />
+				[40] (615,853)<input  />
+				[41] (669,853)<span >Rhourde El Baguel />
+			[42] (683,907)<div  />
+				[43] (615,907)<input  />
+				[44] (648,907)<span >El Borma />
+			[45] (683,962)<div  />
+				[46] (615,962)<input  />
+				[47] (649,962)<span >Zarzaitine />
+		[48] (884,563)<button class='btn-create'>Create Report />
+		Hassi Messaoud
+		[49] (291,640)<button >× />
+		Hassi Berkine
+		[50] (374,640)<button >× />
+		Ourhoud
+		[51] (440,640)<button >× />
+		Rhourde El Baguel
+		[52] (544,640)<button >× />
+		El Borma
+		×
+		Zarzaitine
+		×
+		Haoud Berkaoui
+		×
+		Bir Seba
+		[53] (836,640)<button >× />
+		Menzel Lejmat
+		[54] (925,640)<button >× />
+		Adrar District
+		[55] (278,691)<button >× />
+		Edjeleh
+		[56] (337,691)<button >× />
+		Bir M'Sana
+		[57] (409,691)<button >× />
+		Gassi Berkine
+		[58] (492,691)<button >× />
+		Hassi R'Mel
+		[59] (569,691)<button >× />
+		Rhourde Nouss
+		×
+		In Salah Gas
+		×
+		In Amenas
+		[60] (811,691)<button >× />
+		Tin Fouyé Tabankort
+		[61] (925,691)<button >× />
+		Gassi Touil
+		[62] (268,742)<button >× />
+		Alrar
+		[63] (316,742)<button >× />
+		Stah
+		[64] (363,742)<button >× />
+		Mereksen
+		[65] (432,742)<button >× />
+		Timimoun Gas
+		[66] (522,742)<button >× />
+		Reggane Nord
+		×
+		Ohanet
+		×
+		Menzel Lejmat Est
+		×
+		Skikda Refinery
+		[67] (864,742)<button >× />
+		Arzew Refinery
+		[68] (954,742)<button >× />
+		Algiers Refinery
+		[69] (288,793)<button >× />
+		Hassi Messaoud Refinery
+		[70] (419,793)<button >× />
+		Adrar Refinery
+		[71] (507,793)<button >× />
+		GL1Z Complex
+		[72] (596,793)<button >× />
+		GL2Z Complex
+		×
+		GL3Z Complex
+		×
+		GL1K Complex
+		[73] (863,793)<button >× />
+		GP1Z Plant
+		[74] (937,793)<button >× />
+		GP2Z Plant
+		[75] (269,844)<button >× />
+		Bejaia District
+		[76] (354,844)<button >× />
+		Oran District
+		[77] (434,844)<button >× />
+		Annaba District
+		[78] (526,844)<button >× />
+		Tiaret Hub
+		×
+		Djelfa Hub
+		×
+		Touggourt Hub
+		×
+		Biskra Hub
+		[79] (838,844)<button >× />
+		Laghouat Hub
+		[80] (926,844)<button >× />
+		Filter & Group Data
+
+</current_dom>

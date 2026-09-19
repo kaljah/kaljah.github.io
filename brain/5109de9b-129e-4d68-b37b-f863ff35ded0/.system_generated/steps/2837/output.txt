@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -407,20 +407,26 @@
+     if activity_changed:
+         factor = emission.emission_factor or 0.0
+         st = (emission.source_type or "").strip().lower()
+-        if st in ["electricity"]:
++        if st in ["electricity"] or "electric" in st:
+             emission.co2e = round((emission.electricity_kwh * factor) / 1000.0, 4)
+-        elif st in ["steam", "indirect_steam"]:
++        elif st in ["steam", "indirect_steam"] or "steam" in st:
+             # Authoritative thermodynamic indirect steam formula with enthalpy & efficiency
++            steam_ton_val = emission.steam_ton if (emission.steam_ton and emission.steam_ton > 0) else 0.0
++            is_ton = steam_ton_val > 0
+             temp_data = {
+-                "amount": emission.steam_ton if (emission.steam_ton and emission.steam_ton > 0) else emission.heat_mmbtu,
+-                "unit": "ton" if (emission.steam_ton and emission.steam_ton > 0) else "mmbtu",
++                "amount": steam_ton_val if is_ton else emission.heat_mmbtu,
++                "unit": "ton" if is_ton else "mmbtu",
+                 "calc_inputs": data.get("calc_inputs", {}),
+             }
+             if "indirect_steam" not in temp_data["calc_inputs"]:
++                boiler_eff_val = float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80)
++                trans_loss_val = float(data.get("trans_loss") or 0.0)
++                enthalpy_val = float(data.get("steam_enthalpy") or 2.0)
+                 temp_data["calc_inputs"]["indirect_steam"] = {
+-                    "boiler_eff": float(data.get("boiler_eff") or 0.80),
+-                    "trans_loss": float(data.get("trans_loss") or 0.0),
++                    "boiler_eff": boiler_eff_val,
++                    "trans_loss": trans_loss_val,
+                     "ef_co2": factor or _DEFAULT_BOILER_EF_KG_PER_MMBTU,
++                    "steam_enthalpy": enthalpy_val,
+                 }
+             try:
+                 co2e_val, heat_mmbtu, _ = _calc_indirect_steam(temp_data)
+@@ -427,12 +427,14 @@
+                 if heat_mmbtu:
+                     emission.heat_mmbtu = round(heat_mmbtu, 4)
+             except Exception:
+-                eff = 0.80
+-                mmbtu = (emission.steam_ton * 2.0) if (emission.steam_ton and emission.steam_ton > 0) else (emission.heat_mmbtu or 0.0)
+-                emission.co2e = round((mmbtu * factor) / (eff * 1000.0), 4)
+-        elif st in ["heat"]:
++                eff = float(data.get("boiler_eff") or data.get("boiler_efficiency") or 0.80)
++                enth = float(data.get("steam_enthalpy") or 2.0)
++                mmbtu = (emission.steam_ton * enth) if (emission.steam_ton and emission.steam_ton > 0) else (emission.heat_mmbtu or 0.0)
++                ef_kg = (factor * 1000.0) if (0 < factor < 1.0) else factor
++                emission.co2e = round((mmbtu * ef_kg) / (eff * 1000.0), 4)
++        elif st in ["heat"] or "heat" in st:
+             emission.co2e = round((emission.heat_mmbtu * factor) / 1000.0, 4)
+-        elif st in ["cooling"]:
++        elif st in ["cooling"] or "cool" in st:
+             emission.co2e = round((emission.cooling_ton * factor) / 1000.0, 4)
+ 
+     if "uncertainty" in data:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

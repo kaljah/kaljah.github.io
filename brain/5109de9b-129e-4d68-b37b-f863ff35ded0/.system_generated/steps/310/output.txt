@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":39,"LineContent":"def is_safe_image_url(url_str: str) -\u003e tuple[bool, str]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":526,"LineContent":"    is_safe, err_msg = is_safe_image_url(avatar_url)"}

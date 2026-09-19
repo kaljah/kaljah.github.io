@@ -1,0 +1,47 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":272,"LineContent":"                elif str(scope) == \"3_eeio\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":273,"LineContent":"                    emission_obj, row_errors = _process_row_scope3_eeio("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":758,"LineContent":"def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":760,"LineContent":"    from emission_factors.eeio_factors import get_eeio_factor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":797,"LineContent":"    factor_data = get_eeio_factor(naics)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":812,"LineContent":"        calculation_method=\"Spend-based (EEIO)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":814,"LineContent":"        notes=row.get(\"notes\", \"Bulk Imported via EEIO\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\__init__.py","LineNumber":3,"LineContent":"Re-exports everything from root emission_factors.py and exposes submodules like eeio_factors."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\__init__.py","LineNumber":7,"LineContent":"from .eeio_factors import EEIO_FACTORS, get_eeio_factor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":2,"LineContent":"EPA USEEIO Emission Factors v1.3"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":8,"LineContent":"EEIO_FACTORS = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":58,"LineContent":"def get_eeio_factor(naics_code: str) -\u003e dict:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":60,"LineContent":"    Returns the EEIO factor for a given 3-digit NAICS code."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":64,"LineContent":"        return EEIO_FACTORS[\"000\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":67,"LineContent":"    if code_str in EEIO_FACTORS:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":68,"LineContent":"        return EEIO_FACTORS[code_str]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":71,"LineContent":"    for key, value in EEIO_FACTORS.items():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":75,"LineContent":"    return EEIO_FACTORS[\"000\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":6,"LineContent":"eeio_processor = \"\"\"def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":8,"LineContent":"    from emission_factors.eeio_factors import get_eeio_factor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":45,"LineContent":"    factor_data = get_eeio_factor(naics)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":60,"LineContent":"        calculation_method=\"Spend-based (EEIO)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":62,"LineContent":"        notes=row.get(\"notes\", \"Bulk Imported via EEIO\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":70,"LineContent":"content = content.replace(\"def _process_row_scope3(\", eeio_processor)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":72,"LineContent":"routing = \"\"\"                elif str(scope) == \"3_eeio\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":73,"LineContent":"                    emission_obj, row_errors = _process_row_scope3_eeio("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":82,"LineContent":"print(\"Done inserting Scope 3 EEIO processor\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\erp_integration.py","LineNumber":27,"LineContent":"            \"calculation_method\": \"Spend-based (EEIO)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":215,"LineContent":"def test_scope3_eeio_and_fallback_calculation(client, admin_user, regular_user, test_facility_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":218,"LineContent":"    # 1. Test EEIO quick calculator endpoint"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":219,"LineContent":"    eeio_res = client.post(\"/api/scope3/eeio-calculate\", json={"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":223,"LineContent":"    assert eeio_res.status_code == 200"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":224,"LineContent":"    eeio_data = eeio_res.get_json()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":225,"LineContent":"    assert \"emission_factor\" in eeio_data"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":226,"LineContent":"    assert \"co2e\" in eeio_data"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":227,"LineContent":"    assert eeio_data[\"co2e\"] \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":7,"LineContent":"  3. Scope 3: Tier 1 (Spend-based EEIO), Tier 2 (Average-data), Tier 3 (Supplier-specific), Category 11"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":46,"LineContent":"from emission_factors.eeio_factors import EEIO_FACTORS, get_eeio_factor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":322,"LineContent":"# 3. SCOPE 3: TIER 1 (EEIO), TIER 2 (AVERAGE), TIER 3 (SUPPLIER) \u0026 CAT 11"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":326,"LineContent":"    \"\"\"Verifies Scope 3 across Tier 1 (Spend-based USEEIO), Tier 2 (Average-data), Tier 3 (Supplier-specific) and Category 11.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":328,"LineContent":"    def test_scope3_tier1_spend_based_eeio(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":330,"LineContent":"        Emissions = Spend ($) × EEIO Factor (kg CO2e / $1,000) / (1,000 * 1,000)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":335,"LineContent":"        factor_info = get_eeio_factor(\"211\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":474,"LineContent":"@scope3_bp.route(\"/eeio-calculate\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":476,"LineContent":"def calculate_eeio():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":488,"LineContent":"    from emission_factors.eeio_factors import get_eeio_factor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":489,"LineContent":"    factor_data = get_eeio_factor(naics_code)"}

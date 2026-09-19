@@ -1,0 +1,13 @@
+# Fix IndentationError in app.py
+
+I have fixed the `IndentationError` in [app.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py) around line 370.
+
+## Changes
+- **Indented** lines 349-367 to be inside the sidebar block.
+- **Dedented** lines 370-592 to be correctly aligned within the sidebar block (outside the "Advanced Technical" expander).
+
+This ensures that the "Advanced Technical" section and the subsequent project loading logic and inputs are correctly nested within the sidebar.
+
+## Verification
+- Checked the indentation of the modified blocks.
+- Verified that the logic structure (sidebar -> expanders -> inputs) is consistent.

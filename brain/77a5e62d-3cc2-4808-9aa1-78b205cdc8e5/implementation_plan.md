@@ -1,0 +1,41 @@
+# Implementation Plan - Refining Emissions Calculator Table
+
+This plan addresses layout issues, functional bugs, and UI enhancements for the Emissions Calculator table.
+
+## Proposed Changes
+
+### [Component] Emissions Calculator UI
+#### [MODIFY] [emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html)
+- Ensure the table has ✎ icons next to editable fields in the header (already present in some, will verify all).
+- Add a "Duplicate" header or ensure the "Action" column is wide enough for both buttons.
+
+#### [MODIFY] [calculator-grid.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/calculator-grid.css)
+- Set `min-width: 1200px` on `.excel-table` to prevent column squashing and overlapping.
+- Optimize table padding and font sizes for better readability.
+
+#### [MODIFY] [calculator.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/calculator.css)
+- Refine `.action-duplicate-btn` and `.action-delete-btn` styles for a more premium look.
+- Ensure consistent sizing and spacing for action buttons.
+
+### [Component] Emissions Logic
+#### [MODIFY] [emissions-calc.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calc.js)
+- Robustly handle the `tableBody` reference to avoid "not defined" errors.
+- Verify and potentially fix the filtering logic in `populateSourceSelect` to ensure it triggers correctly on process change.
+- Ensure `duplicateRecord` correctly generates a new unique ID and refreshes the UI.
+
+## Verification Plan
+
+### Automated Tests
+- I will use the browser tool to navigate to the Emissions Calculator and verify:
+    - The table is horizontally scrollable and doesn't squash columns.
+    - Changing the "Process Type" correctly updates the "Fuel / Gas Type" dropdown.
+    - Clicking the "Duplicate" button adds a new row with identical data.
+    - Clicking the "Delete" button removes the row after confirmation.
+
+### Manual Verification
+1. Open the Emissions Calculator.
+2. Select "Flaring" as the Process Type.
+3. Verify that only "Flaring" specific fuels (like "Natural Gas (Flaring)") are visible.
+4. Add a record and click "Duplicate" on it.
+5. Verify the duplicated record appears in the table.
+6. Verify the "Total CO2e" in the filter bar updates correctly.

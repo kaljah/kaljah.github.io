@@ -1,0 +1,6 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary":  "Detailed plan for cleaning up the h/ workspace by removing all unnecessary files (debug scripts, test scripts, old legacy Node.js app, PDFs, seed scripts, old databases) while keeping the new software (new/ folder with Flask + React/Vite app) and essential git/docker/config files intact.",
+  "updatedAt":  "2026-06-07T20:58:43.949270300Z",
+  "requestFeedback":  true
+}

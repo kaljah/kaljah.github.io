@@ -1,0 +1,28 @@
+# Cleanup Task List
+
+- [x] Identify active database in `server.js` <!-- id: 0 -->
+- [x] Create `_archive` directory <!-- id: 1 -->
+- [x] Move debug/test scripts and HTML files to `_archive` <!-- id: 2 -->
+- [x] Move unused database files to `_archive` <!-- id: 3 -->
+- [x] Move old fix documentation to `_archive` <!-- id: 4 -->
+- [x] Verify application still runs (optional/if requested) <!-- id: 5 -->
+
+# Compliance Check Task List
+
+- [x] Analyze `COMPLIANCE_AUDIT.js` and `FACT_CHECK.js` <!-- id: 6 -->
+- [x] Review `server.js` implementation against identified norms <!-- id: 7 -->
+- [x] Generate compliance report <!-- id: 8 -->
+
+# ISO 14064-1 Implementation Task List
+
+- [x] Identify and modify frontend form inputs <!-- id: 11 -->
+- [x] Verify database schema changes <!-- id: 12 -->
+- [x] Verify full workflow (Create Draft -> Approve) <!-- id: 13 -->
+- [x] Fix frontend rendering bugs and data synchronization <!-- id: 14 -->
+- [x] Remove Biogenic CO2 and automate Uncertainty <!-- id: 15 -->
+- [x] Fix Uncertainty auto-population for specific factors <!-- id: 16 -->
+- [x] Implement Organizational Boundaries (§4.5.1) <!-- id: 17 -->
+    - [x] Add Consolidation Approach to settings <!-- id: 18 -->
+    - [x] Add Boundary Notes to facilities <!-- id: 19 -->
+    - [x] Update backend schema and APIs <!-- id: 20 -->
+    - [x] Verify full ISO 14064-1 compliance status <!-- id: 21 -->

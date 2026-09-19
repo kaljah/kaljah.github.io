@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -369,10 +369,18 @@
+             eta_d = 0.98
+ 
+         # Normalize gas volume if actual temperature/pressure supplied
+-        vol_std = gas_volume
++        vol_std = float(gas_volume)
++        unit_norm = str(fuel_unit or "").strip().lower()
++        if unit_norm in ["mscf", "kscf"]:
++            vol_std *= 28.316846592
++        elif unit_norm in ["mmscf"]:
++            vol_std *= 28316.846592
++        elif unit_norm in ["scf", "cf"]:
++            vol_std *= 0.028316846592
++
+         if operating_temperature is not None or operating_pressure is not None:
+             vol_std = normalize_gas_volume_to_standard(
+-                volume=gas_volume,
++                volume=vol_std,
+                 operating_temp=operating_temperature,
+                 temp_unit=temp_unit,
+                 operating_press=operating_pressure,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

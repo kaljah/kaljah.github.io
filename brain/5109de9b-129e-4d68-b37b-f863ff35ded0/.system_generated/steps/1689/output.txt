@@ -1,0 +1,192 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -699,4 +699,186 @@
+     # Verified 0.0 record must yield actual == 0.0, NOT None
+     assert traj_test["actual"] == 0.0
+ 
++
++def test_unit_conversions_mscf_mcf_bidirectional():
++    """Verify bidirectional mscf, mcf, and mmscf conversions in units.py."""
++    from calculations.units import convert
++    import pytest
++
++    # 1 Mscf = 1,000 scf = 28.316846592 m3
++    m3_val = convert(10.0, "mscf", "m3")
++    assert pytest.approx(m3_val, 1e-4) == 283.1685
++    mscf_back = convert(m3_val, "m3", "mscf")
++    assert pytest.approx(mscf_back, 1e-5) == 10.0
++
++    # Mcf identical to Mscf
++    mcf_m3 = convert(5.0, "mcf", "m3")
++    assert pytest.approx(mcf_m3, 1e-4) == 141.5842
++    mcf_back = convert(mcf_m3, "m3", "mcf")
++    assert pytest.approx(mcf_back, 1e-5) == 5.0
++
++    # MMscf to scf
++    scf_val = convert(2.5, "mmscf", "scf")
++    assert pytest.approx(scf_val, 1e-3) == 2_500_000.0
++    mmscf_back = convert(scf_val, "scf", "mmscf")
++    assert pytest.approx(mmscf_back, 1e-6) == 2.5
++
++
++def test_dehydrator_stoichiometric_co2_combustion():
++    """Verify DehydratorCalculator accurately generates stoichiometric CO2 when gas is flared."""
++    from calculations.midstream import DehydratorCalculator
++
++    calc = DehydratorCalculator()
++    res = calc.calculate(
++        pump_rate=100.0,
++        pump_unit="gph",
++        hours=8760,
++        ch4_content=0.90,
++        has_flash_tank=False,
++        still_control_type="flare",
++        control_eff=0.98,
++    )
++    # 98% CH4 converted to CO2 stoichiometrically (44.01 / 16.04 = ~2.7438)
++    assert res["results"]["ch4"]["value"] > 0
++    assert res["results"]["co2"]["value"] > 0
++    assert res["inputs"]["combusted_co2_tonnes"] > 0
++    # CO2 mass should exceed the destroyed CH4 mass by roughly 2.74x
++    destroyed_ch4 = (res["results"]["ch4"]["value"] / 0.02) * 0.98
++    expected_co2 = destroyed_ch4 * (44.01 / 16.04)
++    assert abs(res["results"]["co2"]["value"] - expected_co2) < 0.01
++
++
++def test_dashboard_intensity_mmscf_scaling(client, test_users):
++    """Verify _query_intensity_stats properly normalizes MMscf gas and flaring volumes."""
++    from routes.dashboard import _query_intensity_stats
++    from models import ProductionData
++
++    with app.app_context():
++        fid = test_users["facility_id"]
++        # Clear existing production for test year 2029
++        ProductionData.query.filter_by(facility_id=fid, year=2029).delete()
++        Emission.query.filter_by(facility_id=fid, year=2029).delete()
++
++        # Add 10 MMscf gas production
++        prod = ProductionData(
++            facility_id=fid,
++            year=2029,
++            month=1,
++            oil_amount=100.0,
++            oil_unit="bbl",
++            gas_amount=10.0,
++            gas_unit="mmscf",
++        )
++        db.session.add(prod)
++
++        # Add 1 MMscf flaring emission
++        flare_e = Emission(
++            facility_id=fid,
++            year=2029,
++            month=1,
++            process_type="flaring",
++            fuel_type="Natural Gas",
++            quantity=1.0,
++            unit="mmscf",
++            co2e_total=50.0,
++            ch4_emissions=0.1,
++            status="Verified",
++        )
++        db.session.add(flare_e)
++        db.session.commit()
++
++        stats = _query_intensity_stats(facility_id=str(fid), year="2029", allowed_fids=[fid])
++        assert len(stats) > 0
++        fac_stat = stats[0]
++        # 10 MMscf = 283,168.0 m3
++        assert abs(fac_stat["total_gas_m3"] - 283168.0) < 1.0
++        # 10 MMscf = 10,000 Mscf -> BOE = 100 + (10,000 * 0.178) = 1,880 BOE
++        assert abs(fac_stat["total_boe"] - 1880.0) < 1.0
++        # 1 MMscf flaring = 28,316.8 m3
++        assert abs(fac_stat["flaring_volume"] - 28316.8) < 1.0
++        # Flaring rate % = 28,316.8 / 283,168.0 * 100 = 10.0%
++        assert abs(fac_stat["flaring_rate_pct"] - 10.0) < 0.01
++
++
++def test_dashboard_ogmp_target_status_segment_specific(client, test_users):
++    """Verify midstream facility with 0.15% loss rate is Non-Compliant while upstream is Compliant."""
++    from routes.dashboard import _query_intensity_stats
++    from models import ProductionData
++
++    with app.app_context():
++        fid = test_users["facility_id"]
++        fac = db.session.get(Facility, fid)
++        fac.segment = "Midstream Processing"
++        db.session.commit()
++
++        # Set gas production and CH4 emission to produce exactly ~0.15% loss rate
++        # 100,000 m3 gas -> 0.15% = 150 m3 CH4 -> 150 * 0.6785 / 1000 = 0.101775 tCH4
++        ProductionData.query.filter_by(facility_id=fid, year=2028).delete()
++        Emission.query.filter_by(facility_id=fid, year=2028).delete()
++
++        prod = ProductionData(
++            facility_id=fid,
++            year=2028,
++            month=1,
++            oil_amount=0.0,
++            oil_unit="bbl",
++            gas_amount=100000.0,
++            gas_unit="m3",
++        )
++        db.session.add(prod)
++
++        em = Emission(
++            facility_id=fid,
++            year=2028,
++            month=1,
++            process_type="fugitive",
++            quantity=100.0,
++            co2e_total=10.0,
++            ch4_emissions=0.1018,
++            status="Verified",
++        )
++        db.session.add(em)
++        db.session.commit()
++
++        # Midstream evaluation (Target = 0.05%)
++        stats_mid = _query_intensity_stats(facility_id=str(fid), year="2028", allowed_fids=[fid])
++        assert len(stats_mid) > 0
++        assert stats_mid[0]["ogmp_gold_standard_target"] == 0.05
++        # Loss rate is ~0.15%, which exceeds 0.05% midstream target -> must be Non-Compliant
++        assert stats_mid[0]["ogmp_target_status"] == "Non-Compliant"
++
++        # Change segment to Upstream Production (Target = 0.20%)
++        fac.segment = "Upstream Production"
++        db.session.commit()
++
++        stats_up = _query_intensity_stats(facility_id=str(fid), year="2028", allowed_fids=[fid])
++        assert len(stats_up) > 0
++        assert stats_up[0]["ogmp_gold_standard_target"] == 0.20
++        # Loss rate is ~0.15%, which is <= 0.20% upstream target -> must be Compliant
++        assert stats_up[0]["ogmp_target_status"] == "Compliant"
++
++
++def test_ogmp_survey_zero_top_down_no_false_discrepancy(client, test_users):
++    """Verify zero top-down survey observation does not trigger spurious -100% discrepancy flag."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    payload = {
++        "facility_id": test_users["facility_id"],
++        "year": 2025,
++        "survey_date": "2025-06-15",
++        "survey_type": "OGI Camera (FLIR GF320)",
++        "measured_rate_kg_hr": 0.0,  # Zero detection
++        "operating_hours": 8760,
++    }
++    resp = client.post("/api/data/ogmp-surveys", json=payload)
++    assert resp.status_code in [200, 201]
++    data = resp.get_json()
++    assert data["success"] is True
++    survey = data["survey"]
++    # Variance should be None and variance_flag False for zero reading
++    assert survey["variance_pct"] is None
++    assert survey["variance_flag"] is False
++
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

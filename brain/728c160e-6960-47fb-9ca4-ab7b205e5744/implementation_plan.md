@@ -1,0 +1,25 @@
+# PVGIS CSV Parsing Support
+
+The goal is to enhance the `csv-spreadsheet-converter` application to correctly parse PVGIS CSV files, which contain metadata headers and empty lines before the actual data table.
+
+## User Review Required
+
+> [!IMPORTANT]
+> The parser will automatically skip metadata lines in PVGIS files and use the `time,G(i)` row as the header. Metadata will be ignored for now, focusing on the tabular data.
+
+## Proposed Changes
+
+### CSV Spreadsheet Converter
+
+#### [MODIFY] [script.js](file:///C:/Users/samsung/.gemini/antigravity/scratch/csv-spreadsheet-converter/script.js)
+- Update `parseCSV` to detect and handle PVGIS-specific format.
+- Implement logic to find the start of the data table.
+- Filter out metadata and focus on the time-series data.
+
+## Verification Plan
+
+### Manual Verification
+1. Open the updated `index.html` in the browser.
+2. Upload the PVGIS CSV data provided by the user (I will create a local `.csv` file with that data for testing).
+3. Verify that the table displays rows starting from the data section (e.g., `20230101:0030`) and that the columns are correctly aligned under `time` and `G(i)`.
+4. Check that the row count and column count are correct for the tabular data.

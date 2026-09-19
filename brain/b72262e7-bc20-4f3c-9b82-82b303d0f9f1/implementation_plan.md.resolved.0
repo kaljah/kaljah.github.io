@@ -1,0 +1,27 @@
+# Refine Login Error Display Plan
+
+The goal is to remove toast notifications for login failures and ensure that errors are only displayed as visible messages directly on the login form.
+
+## Proposed Changes
+
+### [Frontend]
+
+#### [MODIFY] [script.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/script.js)
+- Remove calls to `toastError` within the login form submission handler.
+- Maintain and verify the logic that displays errors in the `#login-error` div.
+- Ensure the error message is clear and actionable.
+
+## Verification Plan
+
+### Automated Tests
+- None available for this UI change.
+
+### Manual Verification
+1. Open the login page.
+2. Attempt to login with an invalid user.
+3. Verify that **no** toast notification appears.
+4. Verify that a red error box appears above the login form with the message: "Account not found. Please check your username or register a new account."
+5. Attempt to login with a correct username but wrong password.
+6. Verify that **no** toast notification appears.
+7. Verify that a red error box appears with "Invalid credentials".
+8. Verify that the error box disappears when the form is submitted again.

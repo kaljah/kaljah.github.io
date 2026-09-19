@@ -1,0 +1,124 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -167,6 +167,101 @@
+ 
+ ---
+ 
++---
++
++## Full-Stack Systems & Computational Audit: 12 Remediations
++
++Following the 10-domain zero-assumption systems audit, all 12 detected defects across computational accuracy, concurrency, authentication/authorization (RBAC), and lifecycle management were fully resolved and verified.
++
++### Summary of Audit Remediations
++
++| # | Domain & Defect | Affected Component | Root Cause & Security/Numerical Impact | Remediated In | Regression Test |
++|---|-----------------|-------------------|----------------------------------------|---------------|-----------------|
++| **1** | **Crash on SSE Stream Launch** | `notifications.py` | `last_heartbeat` referenced in SSE loop before assignment; caused immediate `UnboundLocalError` (HTTP 500). | `new/server/routes/notifications.py` | `test_notifications_stream_heartbeat_init` |
++| **2** | **Distorted Indirect Steam Math** | `scope2.py` | Indirect steam assumed fixed 1.2 MMBtu/ton & 80% eff, ignoring custom enthalpy, efficiency, and factors. | `new/server/routes/scope2.py` | `test_scope2_indirect_steam_custom_efficiency_and_enthalpy` |
++| **3** | **Spend EEIO Scaling Discrepancy** | `scope3.py` | EEIO factor per-\$1,000 divided by $1,000,000$ instead of $1,000$, distorting Cat 1 emissions by $1,000\times$. | `new/server/routes/scope3.py` | `test_scope3_spend_based_scaling_integrity` |
++| **4** | **Custom Factor Uncertainty Scaling** | `emissions.py` | Custom factor uncertainty was scaled as fraction instead of percentage, distorting propagation. | `new/server/routes/emissions.py` | `test_custom_factor_uncertainty_scaling` |
++| **5** | **Update Emission Partial Payload Loss** | `emissions.py` | Partial update payload bypassed existing record activity data when recomputing emissions. | `new/server/routes/emissions.py` | `test_update_emission_partial_payload_recalc` |
++| **6** | **Bulk Import RBAC & Facility IDOR** | `scope2.py`, `scope3.py` | Bulk import accepted arbitrary facility IDs without checking user facility permissions; permitted IT Admin writes. | `new/server/routes/scope2.py`, `new/server/routes/scope3.py` | `test_bulk_import_scope2_and_3_rbac_isolation` |
++| **7** | **QA/QC Maker-Checker Segregation** | `qaqc.py` | Creators could approve/verify their own flagged records; IT Admin could perform compliance sign-offs. | `new/server/routes/qaqc.py` | `test_qaqc_maker_checker_segregation` |
++| **8** | **Base Year Recalculation RBAC & State** | `dashboard.py` | Missing admin/superuser check; IT Admin could mutate base year; singleton `BaseYear` was not updated. | `new/server/routes/dashboard.py` | `test_base_year_recalculation_rbac_and_singleton_update` |
++| **9** | **CBAM Export IDOR Vulnerability** | `data.py` | `save_cbam_export` allowed updating an existing report belonging to a different facility without permission. | `new/server/routes/data.py` | `test_cbam_export_facility_access_check` |
++| **10** | **Upload Job Registry Race Condition** | `background_processor.py` | `_upload_jobs` dictionary mutated concurrently across background threads without synchronization lock. | `new/server/background_processor.py` | `test_background_processor_job_lock_concurrency` |
++| **11** | **Mitigation Record Deletion RBAC** | `managedata.py` | Standard `user` role could delete corporate `MitigationRecord` entries. | `new/server/routes/managedata.py` | `test_mitigation_deletion_requires_admin_or_superuser` |
++| **12** | **User Role Mutation Privilege Escalation** | `auth.py` | `role` field was not validated against whitelist and permitted vertical privilege escalation. | `new/server/routes/auth.py` | `test_update_user_role_whitelist_and_hierarchy` |
++
++---
++
++## Detailed Implementation Walkthrough
++
++### 1. `notifications.py` — Stream Heartbeat Initialization
++- **Fix**: Declared `last_heartbeat = time.time()` directly before the generator `while True:` loop.
++- **Verification**: `test_notifications_stream_heartbeat_init` validates that connecting to `/api/notifications/stream` streams events and heartbeats without raising `UnboundLocalError`.
++
++### 2. `scope2.py` — Indirect Steam Custom Thermodynamics
++- **Fix**: Enhanced `_calc_indirect_steam` and `update_scope2_emission` to accept and prioritize custom steam parameters:
++  - Custom steam enthalpy (`steam_enthalpy`, defaulting to 1.2 MMBtu/ton).
++  - Custom boiler/distribution efficiency (`boiler_eff`, clamped within $(0.0, 1.0]$, defaulting to 0.80).
++  - Custom emission factor (`custom_factor` in kg/MMBtu or kg/ton).
++- **Verification**: `test_scope2_indirect_steam_custom_efficiency_and_enthalpy` tests a 1,000-ton steam input with custom enthalpy $1.35\text{ MMBtu/ton}$, custom efficiency $85\%$, and custom factor $60.0\text{ kg/MMBtu}$, verifying exact output $95.2941\text{ tCO}_2\text{e}$.
++
++### 3. `scope3.py` — Spend-Based EEIO Unit Normalization
++- **Fix**: Aligned Category 1 spend calculations across single-entry and bulk paths:
++  $$\text{Emissions (tCO}_2\text{e)} = \frac{\text{Spend (\$) } \times \text{Factor (kg CO}_2\text{e} / \$1,000)}{1,000 \times 1,000} = \frac{\text{Spend} \times \text{Factor}}{1,000,000}$$
++  Standardized factor definition to kg per \$1,000, dividing by $1,000,000$ to obtain metric tonnes $\text{tCO}_2\text{e}$.
++- **Verification**: `test_scope3_spend_based_scaling_integrity` confirms $\$250,000$ spend with factor $400.0\text{ kg CO}_2\text{e}/\$1\text{k}$ yields exactly $100.0\text{ tCO}_2\text{e}$.
++
++### 4. `emissions.py` — Custom Factor Uncertainty Scaling
++- **Fix**: Corrected custom factor percentage scaling (`float(cf.uncertainty or 0) / 100.0`) in `add_emission` when populating `ef_uncertainty`.
++- **Verification**: `test_custom_factor_uncertainty_scaling` validates that an emission factor configured with $7.5\%$ uncertainty propagates $0.075$ into calculation uncertainty tables.
++
++### 5. `emissions.py` — Update Emission Partial Payload Merging
++- **Fix**: In `update_emission`, before invoking `compute_emissions`, the update payload is merged with existing database attributes (`facility_id`, `scope`, `source_type`, `fuel_type`, `activity_amount`, `activity_unit`, `gwp_version`, `calculation_tier`, `custom_factor_id`, `custom_factor_value`). This ensures partial updates (e.g., updating only `activity_amount` or only `source_type`) accurately trigger full stoichiometric recalculation without missing context.
++- **Verification**: `test_update_emission_partial_payload_recalc` checks partial update of `activity_amount` on an existing emission record, ensuring total emissions update accordingly.
++
++### 6. `scope2.py` & `scope3.py` — Multi-Tenant Facility Isolation & RBAC
++- **Fix**: In both `bulk_import_scope2` and `bulk_import_scope3`:
++  - Enforced `user.role != "it_admin"` to prevent non-business IT operators from committing environmental accounting entries.
++  - Resolved user facility permissions (`allowed_fids = get_user_facilities(user)`).
++  - Validated that every record in the import batch maps to an authorized `facility_id` (`record_fid in allowed_fids`). Unpermitted records fail with HTTP 403.
++  - Added structured audit logging for all bulk ingestion operations.
++- **Verification**: `test_bulk_import_scope2_and_3_rbac_isolation` verifies rejection of unauthorized facility IDs and rejection of `it_admin` requests.
++
++### 7. `qaqc.py` — Maker-Checker Segregation & IT Admin Exemption
++- **Fix**: In `resolve_flagged_record` and `bulk_resolve`:
++  - Prohibited users with `it_admin` role from verifying or rejecting compliance incidents.
++  - Enforced Maker-Checker segregation of duties: `if record.created_by == user.id and new_status == "verified": return error_response("Maker-Checker violation: creators cannot verify their own records", 403)`.
++- **Verification**: `test_qaqc_maker_checker_segregation` verifies that a user attempting to verify their own flagged record is denied with HTTP 403, while an independent verifier succeeds.
++
++### 8. `dashboard.py` — Base Year Recalculation Authorization & State Persistence
++- **Fix**: In `create_base_year_recalculation`:
++  - Required `admin` or `superuser` role; blocked `it_admin` and standard `user`.
++  - Populated `created_by = user.id`.
++  - Updated the active `BaseYear` singleton model (`BaseYear.query.filter_by(facility_id=facility_id).first()`) with the recalculated base year emissions and policy justification.
++  - Recorded a persistent audit trail via `log_activity`.
++- **Verification**: `test_base_year_recalculation_rbac_and_singleton_update` validates authorization checks and state synchronization on the `BaseYear` entity.
++
++### 9. `data.py` — CBAM Export Facility IDOR Elimination
++- **Fix**: In `save_cbam_export`, when an `id` is provided to update an existing `CBAMExportRecord`, added `require_facility_access(user, existing.facility_id)` prior to mutating attributes.
++- **Verification**: `test_cbam_export_facility_access_check` verifies that a user assigned to Facility A cannot overwrite a CBAM report belonging to Facility B.
++
++### 10. `background_processor.py` — Thread-Safe Upload Job Registry
++- **Fix**: Introduced `upload_jobs_lock = threading.Lock()` and wrapped all access points to `_upload_jobs`:
++  - Job creation (`init_upload_job`), status updates (`update_upload_job`), error recording (`set_upload_job_error`), chunk completion (`append_upload_job_batch`), registry pruning (`_prune_old_jobs`), and status queries (`get_upload_job`).
++- **Verification**: `test_background_processor_job_lock_concurrency` simulates 50 concurrent worker threads updating batch progress simultaneously, verifying zero state corruption and exact final tally.
++
++### 11. `managedata.py` — Mitigation Record Deletion Protection
++- **Fix**: In `delete_mitigation`, restricted deletion privileges to users with `role in ["admin", "superuser"]`.
++- **Verification**: `test_mitigation_deletion_requires_admin_or_superuser` validates that standard users receive HTTP 403 upon deletion attempts, while administrators succeed.
++
++### 12. `auth.py` — User Role Mutation Whitelist & Hierarchy Check
++- **Fix**: In `update_user`:
++  - Enforced strict whitelist validation: `if role not in {"user", "superuser", "admin", "it_admin"}: return error_response("Invalid role", 400)`.
++  - Enforced hierarchical authority check: callers cannot assign a role ranking higher than their own, and cannot modify users of equal or higher rank unless they are `admin`.
++- **Verification**: `test_update_user_role_whitelist_and_hierarchy` verifies invalid roles return HTTP 400, unauthorized escalation is blocked with HTTP 403, and valid role assignments succeed.
++
++---
++
+ ## Final Verification Results
+ 
+ - **Complete Backend Test Suite**:
+@@ -173,7 +173,7 @@
+   pytest tests/ -v
+-  ====================== 148 passed, 45 warnings in 14.73s ======================
+-  ```
+-  - **148 passed, 0 failed (100% pass rate)**.
++  ====================== 160 passed, 45 warnings in 15.45s ======================
++  ```
++  - **160 passed, 0 failed (100% pass rate)** across 17 test modules.
+ - **Frontend Client Production Build**:
+   ```
+   npm run build (in new/client)
+@@ -187,4 +187,5 @@
+   Exit code: 0
+   ```
+ 
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

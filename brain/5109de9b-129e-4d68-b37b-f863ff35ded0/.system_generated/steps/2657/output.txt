@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":2,"LineContent":"Test suite for /api/qaqc/dashboard unified diagnostics \u0026 QA/QC endpoint."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":41,"LineContent":"def test_qaqc_unauthenticated(client):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":43,"LineContent":"    res = client.get(\"/api/qaqc/dashboard\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":47,"LineContent":"def test_qaqc_dashboard_unified_payload(client, admin_user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":55,"LineContent":"    res = client.get(\"/api/qaqc/dashboard\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":86,"LineContent":"def test_qaqc_export_csv(client, admin_user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":92,"LineContent":"    res = client.get(\"/api/qaqc/export\")"}

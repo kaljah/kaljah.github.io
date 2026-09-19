@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":16,"LineContent":"const QADashboard = React.lazy(() =\u003e import(\"./pages/QADashboard\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":110,"LineContent":"              \u003cQADashboard /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":11,"LineContent":"export default function QADashboard() {"}

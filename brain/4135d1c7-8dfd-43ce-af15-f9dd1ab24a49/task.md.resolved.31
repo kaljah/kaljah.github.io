@@ -1,0 +1,57 @@
+# Task: Settings Page Modernization
+
+- [x] Research and Planning
+- [x] Modernize Settings Page (General)
+- [x] Modernize Settings Dropdowns
+- [x] Add Save Button to Reporting
+- [x] Bug Fix: 500 Error on Save
+- [x] Bug Fix: Toast Notifications
+    - [x] Un-silence [toast.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/toast.js) (restore DOM logic)
+    - [x] Import [toast.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/toast.js) in [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html)
+- [x] Verify changes
+
+# Task:- [/] Restructure Dashboard Navigation
+    - [x] Update [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+    - [x] Update [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html)
+    - [x] Update [reports.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reports.html)
+    - [x] Update [reference-data.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/reference-data.html)
+    - [x] Update [uncertainty.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/uncertainty.html)
+    - [x] Update [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)
+    - [x] Update Calculator Pages:
+        - [x] [stationary-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/stationary-combustion.html)
+        - [x] [mobile-combustion.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/mobile-combustion.html)
+        - [x] [scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html)
+        - [x] [flaring.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/flaring.html)
+        - [x] [venting.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/venting.html)
+        - [x] [emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html)
+        - [x] [combustion-ef.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/combustion-ef.html)
+        - [x] [emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+        - [x] [scope1-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope1-selection.html)
+    - [x] Manual Verification
+
+# Task: Restructure Compliance and Login Report
+- [x] Analyze [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) and [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) structure
+- [x] Create Implementation Plan
+- [x] **Restructure [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html)**
+    - [x] Remove compliance score and checklist sections
+    - [x] Rename main header to "Base Year Recalculation History"
+    - [x] Ensure only the table remains
+- [x] **Update [index.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/index.html) (Login Page)**
+    - [x] Import necessary styles/scripts for compliance visualization
+    - [x] Add Compliance Score and Boxes to the layout
+    - [x] Blend styling with login page theme
+- [x] Verify changes
+
+# Task: Modernize Compliance Page & Rename to Audit History
+- [x] **Analysis & renaming strategy**
+    - [x] Check if [audit-trail.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-trail.html) exists
+    - [x] Rename [compliance.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/compliance.html) to [audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html)
+- [x] **Update Navigation & Links**
+    - [x] Update sidebar links in all pages ([Dashboard](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#230-334), `Calculations`, etc.) to point to [audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html)
+    - [x] Update sidebar text from "Compliance" to "Audit History"
+- [x] **Modernize [audit-history.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/audit-history.html)**
+    - [x] Update Page Title & Header
+    - [x] Apply glassmorphism to the table container
+    - [x] Enhance "Verification Report" button styling
+    - [x] Improve table typography and spacing
+- [x] Verify changes

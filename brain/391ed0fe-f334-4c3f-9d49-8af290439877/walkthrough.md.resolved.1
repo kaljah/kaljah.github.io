@@ -1,0 +1,44 @@
+# Auto-Create Facilities & Sources Walkthrough
+
+I have enhanced the CSV import features across the application to automatically create missing entities (Facilities and Emission Sources) when they are referenced in uploaded files.
+
+## Features
+
+### 1. Manage Data > Emission Sources
+**Behavior**: When importing a Sources CSV:
+- Checks if the **Facility** column matches an existing facility.
+- If not, it **automatically creates** the facility.
+- Then creates the source linked to that facility.
+
+### 2. Manage Data > Production Data
+**Behavior**: When importing a Production CSV:
+- Checks if the **Facility** column matches an existing facility.
+- If not, it **automatically creates** the facility.
+- Then adds the production record.
+
+### 3. Calculations > Emissions Activity Log
+**Behavior**: When importing an Activity CSV (using the new template with [Facility](file:///C:/Users/samsung/Desktop/h/public/manage-data.html#1315-1331) column):
+1.  **Auto-Create Facility**: Checks if the [Facility](file:///C:/Users/samsung/Desktop/h/public/manage-data.html#1315-1331) column exists; creates it if valid and missing.
+2.  **Auto-Create Source**: Checks if an equipment with the name in `Equipment` column exists in that facility.
+    - If missing, it creates a new **Emission Source** in the inventory with:
+        - Name: `Equipment` value
+        - Type: `ProcessType` value
+        - Fuel: [Fuel](file:///C:/Users/samsung/Desktop/h/public/manage-data.html#1000-1018) value
+        - Status: `Active`
+3.  **Create Record**: Adds the emissions calculation record linked to the facility.
+
+## templates
+The **Emissions Activity Template** has been updated to include the [Facility](file:///C:/Users/samsung/Desktop/h/public/manage-data.html#1315-1331) column as the first column:
+`Facility,Date,Group,Equipment,ProcessType,SourceType,Amount,Unit,HHV`
+
+## Testing the Logic
+1.  Create a CSV for **Emissions Activity** with a completely new Facility name and Equipment name:
+    ```csv
+    Facility,Date,Group,Equipment,ProcessType,SourceType,Amount,Unit
+    Galaxy Plant,2024-06-01,Power,Generator-X,combustion,Diesel,500,gal
+    ```
+2.  Import this file in **Calculations > Emissions Activity Log**.
+3.  Verify:
+    - "Galaxy Plant" appears in your **Facilities** list.
+    - "Generator-X" appears in your **Emission Sources** inventory.
+    - The record appears in the Activity Log grid.

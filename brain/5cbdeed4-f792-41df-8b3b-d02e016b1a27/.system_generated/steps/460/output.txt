@@ -1,0 +1,43 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -467,9 +467,9 @@
+ @login_required
+ def delete_ogmp_survey(record_id):
+     user = get_current_user()
+-    if user and user.role == 'it_admin':
+-        return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
+-    record = OgmpSurvey.query.get(record_id)
++    if user and user.role in ["viewer", "auditor"]:
++        return jsonify({'error': 'Forbidden: Read-only accounts cannot delete operational OGMP data.'}), 403
++    record = db.session.get(OgmpSurvey, record_id)
+     if not record:
+         return jsonify({'error': 'Record not found'}), 404
+     if not require_facility_access(user, record.facility_id):
+@@ -476,5 +476,23 @@
++    if user and user.role not in ["admin", "superuser"] and getattr(record, 'created_by', None) and record.created_by != user.id:
++        return jsonify({'error': 'Forbidden: You cannot delete survey records created by another user'}), 403
++
++    log_details = f"Deleted OGMP 2.0 survey ID {record.id} for facility #{record.facility_id} ({record.measured_rate_kg_hr} kg CH4/hr)"
+     db.session.delete(record)
+-    db.session.commit()
++    try:
++        log_activity_and_notify(
++            action="DELETE",
++            record_id=str(record_id),
++            user=user,
++            request=request,
++            entity="OgmpSurvey",
++            details=log_details,
++        )
++        db.session.commit()
++    except Exception as e:
++        db.session.rollback()
++        current_app.logger.error(f"Error deleting OGMP survey: {e}")
++        return jsonify({'error': 'Failed to delete survey record'}), 500
++
+     from routes.dashboard import clear_dashboard_cache
+     clear_dashboard_cache()
+     return jsonify({'message': 'OGMP survey record deleted'})
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

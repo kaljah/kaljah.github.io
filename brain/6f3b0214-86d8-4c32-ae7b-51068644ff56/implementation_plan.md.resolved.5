@@ -1,0 +1,30 @@
+# How-to Summary Implementation Plan
+
+## Goal
+Add a collapsible "How to use" summary section to the Scope 1, Scope 2, and Emission Factor calculator pages to guide users.
+
+## Proposed Changes
+
+### 1. New File: `public/guide-logic.js`
+- Create a simple script to handle the toggle visibility of the guide section.
+
+### 2. Update [public/emissions-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emissions-calculator.html)
+- Include `guide-logic.js`.
+- (HTML structure already exists, verify and preserve).
+
+### 3. Update [public/scope2-calculator.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/scope2-calculator.html)
+- Add "How to use" button and collapsible section.
+- Content: Instructions for electricity calculation.
+- Include `guide-logic.js`.
+
+### 4. Update [public/emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+- Add "How to use" button and collapsible section.
+- Content: Instructions for specific factor calculation types.
+- Include `guide-logic.js`.
+
+## Verification
+- Browser test:
+    - Open each page.
+    - Click "How to use".
+    - Verify section expands/collapses.
+    - Verify content is appropriate for the page.

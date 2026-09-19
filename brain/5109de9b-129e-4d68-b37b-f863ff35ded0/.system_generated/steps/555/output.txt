@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":598,"LineContent":"def recalculate_all_emissions_gwp(standard):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":753,"LineContent":"                recalculate_all_emissions_gwp(_app_settings[\"gwp_standard\"])"}

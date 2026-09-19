@@ -1,0 +1,40 @@
+# Walkthrough - API GHG Emissions Tool
+
+I have successfully created the **API Compendium GHG Emissions Calculator**. This tool allows you to calculate emissions for Combustion, Flaring, Venting, Fugitives, Storage Tanks, Glycol Dehydrators, and Truck Loading using methodologies and factors aligned with the API Compendium (2021/2023).
+
+## Features
+1.  **Combustion Calculator**: Calculates CO2, CH4, and N2O from stationary combustion.
+2.  **Flaring Calculator**: Estimates emissions based on flare volume and destruction efficiency.
+3.  **Venting Calculator**: Calculates emissions from pneumatic controllers.
+4.  **Fugitives Calculator**: Uses component count method (Valves, Connectors, etc.).
+5.  **Storage Tanks**: Estimates working and standing losses (Simplified API 19.1).
+6.  **Glycol Dehydrators**: Estimates emissions from TEG units.
+7.  **Truck Loading**: Calculates loading losses using saturation factors (AP-42/API).
+8.  **Unit Conversion**: Support for Metric (m3, kg, GJ) and Imperial (scf, gal, lb, MMBtu) units.
+9.  **Excel Export**: Download a comprehensive report of all calculations.
+
+## How to Run
+1.  Open a terminal in the project directory:
+    ```bash
+    cd ghg_tool
+    ```
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Run the application:
+    ```bash
+    streamlit run app.py
+    ```
+
+## Project Structure
+```
+ghg_tool/
+├── app.py                  # Main Application
+├── requirements.txt        # Dependencies
+└── src/
+    ├── factors.py          # Emission Factor Database (API 2021)
+    ├── calculations.py     # Calculation Logic
+    ├── units.py            # Unit Conversion Logic
+    └── export.py           # Excel Export Functionality
+```

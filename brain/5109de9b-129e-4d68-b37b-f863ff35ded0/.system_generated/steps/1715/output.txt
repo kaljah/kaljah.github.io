@@ -1,0 +1,64 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 27 items
+
+tests/test_audit_remediation.py::test_dispatcher_kg_per_tonne_factor PASSED [  3%]
+tests/test_audit_remediation.py::test_dispatcher_fraction_boundary PASSED [  7%]
+tests/test_audit_remediation.py::test_stoichiometry_short_ton PASSED     [ 11%]
+tests/test_audit_remediation.py::test_base_calculator_uncertainty_k_factor PASSED [ 14%]
+tests/test_audit_remediation.py::test_profile_location_immutability PASSED [ 18%]
+tests/test_audit_remediation.py::test_audit_sod_for_it_admin PASSED      [ 22%]
+tests/test_audit_remediation.py::test_scope3_server_side_calculation PASSED [ 25%]
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit PASSED [ 29%]
+tests/test_audit_remediation.py::test_scope2_rbac_and_creator_ownership PASSED [ 33%]
+tests/test_audit_remediation.py::test_scope2_case_insensitive_recalc_and_steam_amount PASSED [ 37%]
+tests/test_audit_remediation.py::test_bulk_anomaly_flag_persistence PASSED [ 40%]
+tests/test_audit_remediation.py::test_fugitive_screening_count_and_fraction PASSED [ 44%]
+tests/test_audit_remediation.py::test_agr_zero_removal_boundary PASSED   [ 48%]
+tests/test_audit_remediation.py::test_dispatcher_generic_volume_and_mass_conversions PASSED [ 51%]
+tests/test_audit_remediation.py::test_dispatcher_mmbtu_liquid_fuel_hhv PASSED [ 55%]
+tests/test_audit_remediation.py::test_dispatcher_gram_factor_numerator PASSED [ 59%]
+tests/test_audit_remediation.py::test_combustion_factor_prefix_tco2_and_gram PASSED [ 62%]
+tests/test_audit_remediation.py::test_sentinel5p_column_mass_flux PASSED [ 66%]
+tests/test_audit_remediation.py::test_uncertainty_combine_sum_negative_sinks PASSED [ 70%]
+tests/test_audit_remediation.py::test_anomaly_iqr_quantile_interpolation PASSED [ 74%]
+tests/test_audit_remediation.py::test_scope3_tonne_factor_handling PASSED [ 77%]
+tests/test_audit_remediation.py::test_dashboard_sbti_zero_actuals PASSED [ 81%]
+tests/test_audit_remediation.py::test_unit_conversions_mscf_mcf_bidirectional PASSED [ 85%]
+tests/test_audit_remediation.py::test_dehydrator_stoichiometric_co2_combustion PASSED [ 88%]
+tests/test_audit_remediation.py::test_dashboard_intensity_mmscf_scaling PASSED [ 92%]
+tests/test_audit_remediation.py::test_dashboard_ogmp_target_status_segment_specific PASSED [ 96%]
+tests/test_audit_remediation.py::test_ogmp_survey_zero_top_down_no_false_discrepancy PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_audit_remediation.py::test_profile_location_immutability
+  C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:435: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    user = User.query.get(user_id)
+
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit
+  C:\Users\samsung\Desktop\H2\new\server\routes\data.py:162: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    prod = ProductionData.query.get(record_id)
+
+tests/test_audit_remediation.py::test_ogmp_survey_zero_top_down_no_false_discrepancy
+  C:\Users\samsung\Desktop\H2\new\server\routes\data.py:406: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    fac = Facility.query.get(facility_id)
+
+tests/test_audit_remediation.py::test_ogmp_survey_zero_top_down_no_false_discrepancy
+  C:\Users\samsung\Desktop\H2\new\server\routes\data.py:482: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    user = User.query.get(user_id) if user_id else None
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 27 passed, 5 warnings in 2.85s ========================
+

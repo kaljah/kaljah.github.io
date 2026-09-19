@@ -1,0 +1,42 @@
+# Expanded Emissions MAP & Refined Data Entry
+
+This walkthrough documents the successful integration of over 40 Sonatrach assets into the **Emissions MAP**, along with a overhauled **Manage Data** interface for better consistency and user registration flow.
+
+## 1. Comprehensive Regional Map
+The map now accurately displays the major Sonatrach assets across Algeria.
+
+- **Dynamic Markers**: Markers are no longer hardcoded; they fetch coordinates directly from the backend.
+- **Performance Visualization**: Regions with recorded data pulse based on their emissions intensity (kgCO₂e/BOE).
+- **Search & Fly-To**: Integrated search allows you to instantly locate any region with a smooth transition.
+
+## 2. Refined Data Entry Flow
+I've updated the management interface to ensure consistency and a logical hierarchy.
+
+### Field Reordering
+The **Region Management** form now follows the natural organizational flow:
+1. **Activity** (Choose from high-level categories)
+2. **Division** (Filter based on the selected activity)
+3. **Region Name** 
+4. **Field**
+
+### Unified Descriptive Labels
+Internal codes have been replaced with descriptive corporate labels across the entire tool:
+- **EP** → Exploration & Production
+- **LQS** → Liquefaction & Separation
+- **RPC** → Refining & Petrochemicals
+- **TRC** → Transport (Pipeline)
+
+## 3. Map Integration via Data Entry
+You can now add new regions to the map directly through the UI.
+
+- **Coordinate Input**: Added Latitude and Longitude fields to the region creation form.
+- **Instant Mapping**: As soon as a region is added with coordinates, a marker appears on the map.
+- **Auto-Stats**: The map automatically calculates and displays performance stats as you enter emission and production data for those regions.
+
+---
+
+### Verification Results
+- [x] All 40+ Sonatrach assets appear correctly in the search and on the map.
+- [x] Dropdowns in Manage Data (all tabs) are synced with the new hierarchy.
+- [x] Calculation forms correctly auto-populate labels using the new descriptive names.
+- [x] Production Data calculations (BOE/Intensity) correctly reflect the regional totals.

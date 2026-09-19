@@ -1,0 +1,36 @@
+# Performance Optimization Plan
+
+The application is currently slow due to fetching all 140,000+ emission records for routine tasks like notification badges and full report displays. This plan introduces server-side pagination, specialized summary endpoints, and better indexing.
+
+## Proposed Changes
+
+### [Server-Side Optimizations]
+
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+- **New Endpoint**: `/api/emissions/summary` - Returns only the current year's total emissions and goal status for notifications.
+- **Paginate Endpoint**: Update `/api/emissions` to support pagination (`?limit=100&offset=0`).
+- **New Endpoint**: `/api/emissions/filters` - Returns unique years and other filter values without fetching full records.
+- **Index Optimization**: Add `idx_emissions_status` and `idx_emissions_process_type` (if possible) or at least `idx_emissions_combined` for year/facility.
+- **Refactor Summary Query**: Optimize the `LIKE` queries in `/api/dashboard/summary`.
+
+### [Frontend Optimizations]
+
+#### [MODIFY] [notification-logic.js](file:///c:/Users/samsung/Desktop/h/public/notification-logic.js)
+- Switch from [fetch('/api/emissions')](file:///c:/Users/samsung/Desktop/h/public/carbon-intensity.js#194-225) to the new `/api/emissions/summary` endpoint.
+- This will reduce the payload from ~50MB to a few bytes.
+
+#### [MODIFY] [reports-logic.js](file:///c:/Users/samsung/Desktop/h/public/reports-logic.js)
+- Implement server-side pagination.
+- Use the new `/api/emissions/filters` endpoint to populate filter dropdowns.
+- Avoid storing `rawData` with 140k items.
+
+## Verification Plan
+
+### Automated Tests
+- Monitor the `Network` tab in browser developer tools to verify payload size reductions.
+- Measure API response times for the new endpoints compared to the old ones.
+
+### Manual Verification
+- Verify that the dashboard loads significantly faster.
+- Verify that the notification badge still works correctly.
+- Verify that pagination in reports works smoothly.

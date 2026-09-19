@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\status.py","LineNumber":22,"LineContent":"PENDING_STATUS_SET = {STATUS_PENDING, \"Pending Approval\", \"Pending Review\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":139,"LineContent":"    # 2. Regular user submits for review (non-draft) -\u003e status should be \"Pending Approval\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":160,"LineContent":"        assert rec_pending.status == \"Pending Approval\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":200,"LineContent":"    # 2. Regular user calculates \u0026 submits for review -\u003e status \"Pending Approval\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":212,"LineContent":"    assert res_sub.get_json()[\"record\"][\"status\"] == \"Pending Approval\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":902,"LineContent":"                if bulk_status in (\"Pending\", \"Pending Approval\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3136,"LineContent":"        if record.status in (\"Pending\", \"Pending Approval\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4332,"LineContent":"    if emission.status not in [\"Pending\", \"Draft\", \"Pending Approval\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4433,"LineContent":"    pending_statuses = [\"Pending\", \"Draft\", \"Pending Approval\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4519,"LineContent":"    pending_statuses = [\"Pending\", \"Draft\", \"Pending Approval\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4615,"LineContent":"    pending_statuses = [\"Pending\", \"Draft\", \"Pending Approval\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":271,"LineContent":"        if initial_status == \"Pending Approval\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":157,"LineContent":"    if initial_status in (\"Pending\", \"Pending Approval\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":399,"LineContent":"    if bulk_status in (\"Pending\", \"Pending Approval\") and imported_count \u003e 0:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":730,"LineContent":"                        ) : (entry.status === \"Pending Approval\" || entry.status === \"Pending\") ? ("}

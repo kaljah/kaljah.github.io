@@ -1,0 +1,117 @@
+# Task: Renewable Energy Feasibility & EPC Platform (SolarEPC-Pro)
+
+- [x] **Phase 1: Foundation (MVP)** <!-- id: 0 -->
+    - [x] Project Setup & Architecture <!-- id: 1 -->
+    - [x] Core Simulation Engine (Basic) <!-- id: 2 -->
+    - [x] Financial Model (Basic) <!-- id: 3 -->
+    - [x] User Interface (Streamlit) <!-- id: 4 -->
+    - [x] BOM Generator <!-- id: 5 -->
+
+- [x] **Phase 2: Expert Engineering (Previous)** <!-- id: 6 -->
+    - [x] Advanced Simulation Engine ([pvlib](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase2.py#9-16)) <!-- id: 7 -->
+    - [x] Electrical Engineering Tools (Basic) <!-- id: 8 -->
+    - [x] Advanced Financials <!-- id: 9 -->
+
+- [x] **Phase 3: Professional EPC Modules** <!-- id: 10 -->
+    - [x] Refactor & Cleanup (Remove BESS) <!-- id: 11 -->
+    - [x] Module 2: Inverter Sizing & Matching <!-- id: 12 -->
+    - [x] Module 4: Shading & Geometry <!-- id: 13 -->
+    - [x] Module 8: Full Feasibility Report <!-- id: 14 -->
+
+- [x] **Phase 4: Advanced EPC Modules** <!-- id: 15 -->
+    - [x] Module 3: Cable Sizing & Voltage Drop <!-- id: 16 -->
+    - [x] Module 5: Thermal, Losses & PR <!-- id: 17 -->
+    - [x] Module 6 & 7: Degradation & Advanced Financials <!-- id: 18 -->
+
+- [x] **Phase 5: Enterprise Features** <!-- id: 19 -->
+    - [x] 1. Real-World Weather Data <!-- id: 20 -->
+    - [x] 2. Equipment Database <!-- id: 21 -->
+    - [x] 3. 3D/2D Layout Visualizer <!-- id: 22 -->
+    - [x] 4. Hybrid Systems (BESS 2.0) <!-- id: 23 -->
+    - [x] 5. White-Label Reporting <!-- id: 24 -->
+
+- [x] **Phase 6: SaaS & Advanced Features** <!-- id: 25 -->
+    - [x] 1. Optimization & Performance <!-- id: 26 -->
+    - [x] 2. Commercial & Database <!-- id: 27 -->
+    - [x] 3. Microgrid & Hydrogen <!-- id: 28 -->
+    - [x] 4. GIS & Mapping <!-- id: 29 -->
+    - [x] 5. AI & Automation <!-- id: 30 -->
+
+- [x] **Phase 7: Expert Engineering & UI Polish (Current)** <!-- id: 31 -->
+    - [x] **1. Horizon & Far Shading** <!-- id: 32 -->
+        - [x] Implement Horizon masking in [SolarSystem](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py#8-117) <!-- id: 33 -->
+        - [x] UI for simple Horizon input (degrees) <!-- id: 34 -->
+    - [x] **2. Electrical Mismatch** <!-- id: 35 -->
+        - [x] Implement Non-linear Shading Loss (Diode effect) <!-- id: 36 -->
+    - [x] **3. Complex Tariffs** <!-- id: 37 -->
+        - [x] Update [FinancialAnalyzer](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py#5-177) for TOU and Demand Charges <!-- id: 38 -->
+    - [x] **4. Battery Degradation Physics** <!-- id: 39 -->
+        - [x] Add Cycle Counting / Throughput degradation logic <!-- id: 40 -->
+    - [x] **5. Civil Engineering & BOM** <!-- id: 41 -->
+        - [x] Create [src/civil.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/civil.py) <!-- id: 42 -->
+        - [x] Calculate Trenching, Fencing, Concrete, Road length <!-- id: 43 -->
+    - [x] **6. UI & Graph Optimization** <!-- id: 44 -->
+        - [x] **Graphs**: Use Plotly Template, Custom Colors, Better Tooltips <!-- id: 45 -->
+        - [x] **Layout**: Improve [visualize_layout](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py#95-153) with realistic modules <!-- id: 46 -->
+        - [x] **UI**: Use `st.container`, `st.expander` for cleaner look <!-- id: 47 -->
+
+- [x] **Phase 8: Bankability & Advanced Engineering (Proposed)** <!-- id: 48 -->
+    - [x] **1. Risk Analysis (P50/P90)** <!-- id: 49 -->
+        - [x] Implement Monte Carlo Simulation for weather variability <!-- id: 50 -->
+        - [x] Calculate P50, P75, P90 Yields <!-- id: 51 -->
+    - [x] **2. Electrical Design 2.0** <!-- id: 52 -->
+        - [x] Generate Single Line Diagram (SLD) Schematic <!-- id: 53 -->
+        - [x] Sizing of Transformers & Protection (Fuses/Breakers) <!-- id: 54 -->
+    - [x] **3. Advanced Financials** <!-- id: 55 -->
+        - [x] Add Depreciation (MACRS) & Tax Incentives (ITC) <!-- id: 56 -->
+        - [x] Calculate Debt Service Coverage Ratio (DSCR) <!-- id: 57 -->
+    - [x] **4. Data Import** <!-- id: 58 -->
+        - [x] Add CSV Upload for Real Load Data <!-- id: 59 -->
+    - [x] **5. Bankable Reporting** <!-- id: 60 -->
+        - [x] Expand PDF Report to 10+ pages with detailed chapters <!-- id: 61 -->
+
+- [x] **Phase 9: 3D Realism (Current)** <!-- id: 62 -->
+    - [x] **1. Realistic Panel Rendering** <!-- id: 63 -->
+        - [x] Add Frame (Silver) and Cells (Dark Blue) to 3D Layout <!-- id: 64 -->
+        - [x] Improve lighting and material properties <!-- id: 65 -->
+    - [x] **2. Environment & Context** <!-- id: 66 -->
+        - [x] Add Textured Ground (Grass/Earth) & Sky Background <!-- id: 67 -->
+        - [x] Add 3D Human Scale Figure & Compass <!-- id: 68 -->
+        - [x] Add Ground Type Selection (Grass, Sand, Gravel, Snow) <!-- id: 75 -->
+    - [x] **3. Infrastructure** <!-- id: 69 -->
+        - [x] Add Inverter Stations (Concrete Pads + Boxes) <!-- id: 70 -->
+        - [x] Add Perimeter Fencing & Access Roads <!-- id: 71 -->
+    - [x] **4. Dynamic Elements** <!-- id: 72 -->
+        - [x] Add Interactive Sun Position Slider in UI <!-- id: 73 -->
+        - [x] Implement Real-Time Shadow Projection <!-- id: 74 -->
+
+- [x] **Phase 10: CAD Optimization (Performance)** <!-- id: 76 -->
+    - [x] **1. Batch Rendering Engine** <!-- id: 77 -->
+        - [x] Merge all module frames into a single Mesh3d trace <!-- id: 78 -->
+        - [x] Merge all cells into a single Mesh3d trace <!-- id: 79 -->
+        - [x] Merge all shadows into a single Mesh3d trace <!-- id: 80 -->
+    - [x] **2. Geometry Optimization** <!-- id: 81 -->
+        - [x] Use Numpy vectorization for coordinate transformations (faster than loops) <!-- id: 82 -->
+        - [x] Implement Level of Detail (LOD) check for massive arrays <!-- id: 83 -->
+
+- [x] **Phase 11: Ultra-Realistic Details (Visuals)** <!-- id: 84 -->
+    - [x] **1. Structural Detail (Racking)** <!-- id: 85 -->
+        - [x] Add 3D Piles/Posts (Cylinders) under rows <!-- id: 86 -->
+        - [x] Add Torque Tubes/Rails (Horizontal beams) <!-- id: 87 -->
+    - [x] **2. Material & Lighting Refinement** <!-- id: 88 -->
+        - [x] Tune Specular/Roughness for "Glassy" panels <!-- id: 89 -->
+        - [x] Tune Metallic look for Racking/Frames <!-- id: 90 -->
+    - [x] **3. Environmental Context** <!-- id: 91 -->
+        - [x] Add Low-Poly Trees (Green Cones) around perimeter <!-- id: 92 -->
+        - [x] Add detailed Inverter model (Vents/Doors) <!-- id: 93 -->
+
+- [ ] **Phase 12: Ultimate Optimization & Utility (Final Polish)** <!-- id: 94 -->
+    - [ ] **1. Max Performance (Face Coloring)** <!-- id: 95 -->
+        - [ ] Merge Frame and Cell traces into ONE mesh using `facecolor` <!-- id: 96 -->
+        - [ ] Reduces main geometry draw calls by 50% <!-- id: 97 -->
+    - [ ] **2. Engineering Utility (Terrain)** <!-- id: 98 -->
+        - [ ] Implement Terrain Slope (N-S and E-W sliders) <!-- id: 99 -->
+        - [ ] Make Piles automatically adjust height to follow terrain <!-- id: 100 -->
+    - [ ] **3. Electrical Utilities (eBOS)** <!-- id: 101 -->
+        - [ ] Add Cable Trays (running perpendicular to rows) <!-- id: 102 -->
+        - [ ] Add Combiner Boxes (at row ends) <!-- id: 103 -->

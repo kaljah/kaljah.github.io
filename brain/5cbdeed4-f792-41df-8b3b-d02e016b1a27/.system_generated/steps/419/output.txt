@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -17,6 +17,7 @@
+ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
+   const toast = useToast();
+   const fileInputRef = useRef(null);
++  const pollIntervalRef = useRef(null);
+   const [file, setFile] = useState(null);
+   const [csvData, setCsvData] = useState([]);
+   const [headers, setHeaders] = useState([]);
+@@ -23,6 +23,15 @@
+   const [step, setStep] = useState(1); // 1: Upload, 2: Mapping, 3: Preview
+   const [loading, setLoading] = useState(false);
+   const [uploadJobId, setUploadJobId] = useState(null);
++
++  useEffect(() => {
++    return () => {
++      if (pollIntervalRef.current) {
++        clearInterval(pollIntervalRef.current);
++        pollIntervalRef.current = null;
++      }
++    };
++  }, []);
+   const [uploadStatus, setUploadStatus] = useState(null);
+   const [showCheatSheet, setShowCheatSheet] = useState(false);
+   const [validationErrors, setValidationErrors] = useState([]);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,29 @@
+# Project Reorganization Plan
+
+The goal is to move from a "flat" structure to a professional, organized directory layout without breaking any functionality.
+
+## Proposed Changes
+
+### 1. New Directory Structure
+- `public/css/`: All [.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/style.css) files.
+- `public/js/`: All [.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) files.
+- `data/`: All [.db](file:///c:/Users/samsung/Desktop/ghg%20old/test.db) files.
+
+### 2. [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js)
+- Update `USERS_DB_PATH` and `USER_DBS_DIR` to point to the new `data/` directory.
+
+### 3. [MODIFY] [seed_script.js](file:///c:/Users/samsung/Desktop/ghg%20old/seed_script.js)
+- Update `USERS_DB_PATH` to point to `data/users_v2.db`.
+
+### 4. [MODIFY] All HTML Files in `public/`
+- Update `<link>` and `<script>` tags to use [css/](file:///c:/Users/samsung/Desktop/ghg%20old/public/style.css) and [js/](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) prefixes.
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm start` and verify that the server finds the databases in `data/`.
+- Use the browser agent to check if styles and scripts load correctly from subfolders.
+
+### Manual Verification
+- Confirm that the dashboard and audit history pages are still styled correctly and interactive.
+- Verify that data persistence works in the new `data/` location.

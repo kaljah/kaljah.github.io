@@ -1,0 +1,26 @@
+# Fix Region Fields for SQLite
+
+## Goal Description
+The user wants to ensure that "Region" (facility) fields like Activity, Division, and Field are saved and displayed correctly in both SQLite and PostgreSQL. This is to ensure a smooth transition/migration in the future. I will make the schema initialization and API endpoints cross-compatible.
+
+## Proposed Changes
+### Backend: Schema Initialization
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+- Update [runAsync](file:///c:/Users/samsung/Desktop/h/server.js#58-72) to log error messages (but still resolve) to help with future debugging.
+- Refactor [createSchema](file:///c:/Users/samsung/Desktop/h/server.js#73-269) to handle SQLite migrations:
+    - Instead of `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`, use a helper that checks for column existence first (via `PRAGMA table_info` for SQLite) or use standard `ALTER TABLE` and catch/ignore "duplicate column" errors.
+    - Ensure `CREATE TABLE facilities` uses `id INTEGER PRIMARY KEY AUTOINCREMENT` for SQLite compatibility if `DB_TYPE` is not `postgres`.
+
+### Backend: API Endpoints
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+- Fix `POST /api/facilities`: Implement conditional SQL based on `DB_TYPE`. Use `RETURNING id` for PostgreSQL and standard `INSERT` for SQLite (where `this.lastID` is used via the driver).
+- Update `POST /api/facilities/import`: Ensure it handles all new fields (`activity`, `division`, `field`, `boundary_notes`) and uses cross-compatible insertion logic.
+- Fix `POST /register`: Also ensure it handles `RETURNING id` vs `this.lastID` correctly for both DB types.
+
+## Verification Plan
+### Automated Tests
+- Run `node server.js` and verify logs show "Database schema verified/updated."
+- Use `node -e` to check `PRAGMA table_info(facilities)` again to ensure columns now exist.
+
+### Manual Verification
+- User attempts to save a Region with Activity, Division, and Field and verifies they are saved and displayed correctly.

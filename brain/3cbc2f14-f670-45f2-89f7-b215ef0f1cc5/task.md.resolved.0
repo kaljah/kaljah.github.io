@@ -1,0 +1,8 @@
+# Task: specificfix connection issues
+
+- [ ] Investigate database configuration <!-- id: 0 -->
+    - [ ] Check [db_config.js](file:///c:/Users/samsung/Desktop/h/db_config.js) <!-- id: 1 -->
+    - [ ] Check [pg-adapter.js](file:///c:/Users/samsung/Desktop/h/pg-adapter.js) <!-- id: 2 -->
+    - [ ] Check [start_postgres.bat](file:///c:/Users/samsung/Desktop/h/start_postgres.bat) <!-- id: 3 -->
+- [ ] Fix authentication error <!-- id: 4 -->
+- [ ] Verify connection <!-- id: 5 -->

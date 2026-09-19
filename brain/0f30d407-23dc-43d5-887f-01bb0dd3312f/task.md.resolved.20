@@ -1,0 +1,17 @@
+# Tasks
+
+- [x] Install dependencies <!-- id: 5 -->
+- [x] Analyze New Tool Dashboard Code <!-- id: 6 -->
+    - [x] Frontend: [new/client/src/pages/DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx) <!-- id: 7 -->
+    - [x] Backend: [new/server/routes/dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py) <!-- id: 8 -->
+- [x] Default Year to "All Years" (Fix Dropdown) <!-- id: 9 -->
+    - [x] Update [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx) to default to `'all'` <!-- id: 12 -->
+- [x] Simplify Loading Screen <!-- id: 11 -->
+    - [x] Update [LoadingSpinner.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.jsx) <!-- id: 13 -->
+    - [x] Update [LoadingSpinner.css](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.css) <!-- id: 14 -->
+- [x] Carbon Intensity Optimization <!-- id: 15 -->
+    - [x] Analyze [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx) <!-- id: 16 -->
+    - [x] Default Year to "All Years" <!-- id: 17 -->
+    - [x] Add Flaring Intensity to Hero Card <!-- id: 18 -->
+    - [x] Add Oil/Gas Intensity Charts <!-- id: 19 -->
+    - [x] Display Absolute Emission Numbers in Hero Card <!-- id: 20 -->

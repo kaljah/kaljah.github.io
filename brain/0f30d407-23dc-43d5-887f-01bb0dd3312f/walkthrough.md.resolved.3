@@ -1,0 +1,31 @@
+# Walkthrough - Dashboard Advancements & Logic Fixes
+
+I have implemented advanced analytical features and fixed critical bugs in the Carbon Intensity module.
+
+## 1. Advanced Dashboard Features
+*   **YoY Variance Indicators**: Added real-time comparison badges (Green/Red) in the Hero Card.
+*   **Target Trajectory**: Implemented a "Net Zero Path" line on the trend chart, interpolated from the Base Year to the 2030 Goal.
+*   **Comparison View**: Added a toggle to split the trend chart into regional/facility-level lines for side-by-side performance comparison.
+
+## 2. Carbon Intensity Module - Logic Fixes
+I conducted a deep audit and resolved several critical bugs:
+
+### Organizational Filter Support
+*   **Fix**: The `/intensity-stats` backend now supports `activity` and `division` filters by joining Production and Emission data with the Facility hierarchy.
+*   **Result**: Selecting an activity like "EP" now correctly updates all intensity KPIs and charts.
+
+### Unit Standardization (tCO2e/bbl → kg/BOE)
+*   **Fix**: Corrected a major unit discrepancy where backend kg/BOE values were labeled as tCO2e/bbl.
+*   **Result**: 
+    *   Industrial standard **kg CO₂e / BOE** is now the primary metric.
+    *   Methane is now displayed in **kg CH₄ / BOE**.
+    *   Precision adjusted to 2-4 decimals for better data granularity.
+
+### Performance & Calculation Accuracy
+*   **Fix**: Verified weighted average calculations `Σ(Intensity * Prod) / Σ(Prod)` remain accurate across all aggregation levels.
+*   **Optimization**: Grouped queries now execute more efficiently with filtered joins.
+
+## Verification Tips
+1.  Navigate to Carbon Intensity.
+2.  Select "EP" activity - observe that the "Intensity by Region" chart now filters correctly.
+3.  Check the Hero Card - verify units are `kg CO2e / BOE`.

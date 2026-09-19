@@ -1,0 +1,18 @@
+# Integrate Settings into Custom Factors
+- [x] Planning and Analysis <!-- id: 9 -->
+- [x] Add "Manage Facilities" HTML to [custom-factors.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.html) <!-- id: 10 -->
+- [x] Implement Facility Logic in [custom-factors.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/custom-factors.js) <!-- id: 11 -->
+- [x] Refine Styling and Theme Consistency <!-- id: 12 -->
+- [x] Verify Functionality and UI Adaptability <!-- id: 13 -->
+
+# Remove UI Notifications
+- [x] Remove `alert()` calls from all JS files <!-- id: 14 -->
+- [x] Silence global [toast.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/toast.js) notification system <!-- id: 15 -->
+- [x] Verify silent UI behavior <!-- id: 16 -->
+
+# Modernize Facility Selector
+- [x] Planning Modernization <!-- id: 17 -->
+- [x] Update [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) Structure <!-- id: 18 -->
+- [x] Refine [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js) Logic <!-- id: 19 -->
+- [x] Implement Premium CSS Styling <!-- id: 20 -->
+- [x] Verify UI and Functionality <!-- id: 21 -->

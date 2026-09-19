@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                             
+---------- ----                                                             
+        60 @dashboard_bp.route("/batch-all", methods=["GET"])               
+       213 @dashboard_bp.route("/intensity-trend", methods=["GET"])         
+       654 @dashboard_bp.route("/summary", methods=["GET"])                 
+       684 @dashboard_bp.route("/years", methods=["GET"])                   
+       699 @dashboard_bp.route("/mitigation", methods=["GET"])              
+       724 @dashboard_bp.route("/scope3/summary", methods=["GET"])          
+       751 @dashboard_bp.route("/goals/<int:year>", methods=["GET"])        
+       772 @dashboard_bp.route("/base-year", methods=["GET"])               
+       795 @dashboard_bp.route("/categorical-breakdown", methods=["GET"])   
+       823 @dashboard_bp.route("/base-year-recalculation", methods=["POST"])
+       852 @dashboard_bp.route("/ogmp-metrics", methods=["GET"])            
+      1004 @dashboard_bp.route("/intensity-stats", methods=["GET"])         
+      1937 @dashboard_bp.route("/uncertainty", methods=["GET"])             
+      2268 @dashboard_bp.route("/exclusions", methods=["GET"])              
+      2300 @dashboard_bp.route("/sbti-trajectory", methods=["GET"])         
+
+
+

@@ -1,0 +1,187 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -276,5 +276,180 @@
+         log = ActivityLog.query.filter_by(
+             entity="ProductionData", action="DELETE", record_id=str(prod_id)
+         ).first()
+-        assert log is not None
++        assert log is not None
++
++
++def test_scope2_rbac_and_creator_ownership(client, test_users):
++    """Verify viewer/auditor blocked from mutate on Scope 2, and creator ownership enforced."""
++    with app.app_context():
++        viewer = User.query.filter_by(email="audit_viewer@test.com").first()
++        if not viewer:
++            viewer = User(
++                email="audit_viewer@test.com",
++                fullName="Audit Viewer",
++                orgName="AuditCorp",
++                sector="Energy",
++                role="viewer",
++                location="Hassi Messaoud",
++            )
++            viewer.set_password("AuditViewer123!")
++            db.session.add(viewer)
++
++        other_user = User.query.filter_by(email="audit_user2@test.com").first()
++        if not other_user:
++            other_user = User(
++                email="audit_user2@test.com",
++                fullName="Other Standard User",
++                orgName="AuditCorp",
++                sector="Energy",
++                role="user",
++                location="Hassi Messaoud",
++            )
++            other_user.set_password("OtherUser123!")
++            db.session.add(other_user)
++
++        db.session.commit()
++        viewer_id = viewer.id
++        other_user_id = other_user.id
++
++    # 1. Viewer cannot create Scope 2 emission
++    with client.session_transaction() as sess:
++        sess["user_id"] = viewer_id
++
++    res_v = client.post(
++        "/api/scope2",
++        json={
++            "facility_id": test_users["facility_id"],
++            "year": 2026,
++            "month": 6,
++            "source_type": "electricity",
++            "electricity_kwh": 5000,
++            "emission_factor": 0.5,
++        },
++    )
++    assert res_v.status_code == 403
++
++    # 2. Standard user creates Scope 2 emission
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["user"]
++
++    res_u = client.post(
++        "/api/scope2",
++        json={
++            "facility_id": test_users["facility_id"],
++            "year": 2026,
++            "month": 6,
++            "source_type": "electricity",
++            "electricity_kwh": 5000,
++            "emission_factor": 0.5,
++        },
++    )
++    assert res_u.status_code == 201
++    rec_id = res_u.get_json()["id"]
++
++    # 3. Viewer cannot update Scope 2 emission
++    with client.session_transaction() as sess:
++        sess["user_id"] = viewer_id
++    res_vu = client.put(f"/api/scope2/{rec_id}", json={"electricity_kwh": 6000})
++    assert res_vu.status_code == 403
++
++    # 4. Other standard user cannot update another user's Scope 2 emission
++    with client.session_transaction() as sess:
++        sess["user_id"] = other_user_id
++    res_other = client.put(f"/api/scope2/{rec_id}", json={"electricity_kwh": 6000})
++    assert res_other.status_code == 403
++
++    # 5. Record creator CAN update own Scope 2 emission
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["user"]
++    res_own = client.put(f"/api/scope2/{rec_id}", json={"electricity_kwh": 6000, "emission_factor": 0.5})
++    assert res_own.status_code == 200
++
++
++def test_scope2_case_insensitive_recalc_and_steam_amount(client, test_users):
++    """Verify case-insensitive recalculation and steam_ton mapping in Scope 2."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    # 1. Create with source_type="electricity" (lowercase) and verify recalculation on update
++    res_el = client.post(
++        "/api/scope2",
++        json={
++            "facility_id": test_users["facility_id"],
++            "year": 2026,
++            "month": 7,
++            "source_type": "electricity",
++            "amount": 10000,
++            "unit": "kWh",
++            "emission_factor": 0.5,
++        },
++    )
++    assert res_el.status_code == 201
++    el_id = res_el.get_json()["id"]
++
++    # Update electricity usage and factor - should recalculate co2e even if source_type is stored lowercase
++    res_up = client.put(
++        f"/api/scope2/{el_id}",
++        json={
++            "electricity_kwh": 20000,
++            "emission_factor": 0.6,
++        },
++    )
++    assert res_up.status_code == 200
++    with app.app_context():
++        rec_el = db.session.get(Scope2Emission, el_id)
++        # 20,000 kWh * 0.6 kgCO2/kWh / 1000 = 12.0 tCO2e
++        assert abs(rec_el.co2e - 12.0) < 1e-4
++
++    # 2. Create indirect steam entry with amount and unit="ton"
++    res_steam = client.post(
++        "/api/scope2",
++        json={
++            "facility_id": test_users["facility_id"],
++            "year": 2026,
++            "month": 8,
++            "source_type": "indirect_steam",
++            "amount": 250.0,
++            "unit": "ton",
++        },
++    )
++    assert res_steam.status_code == 201
++    steam_id = res_steam.get_json()["id"]
++    with app.app_context():
++        rec_steam = db.session.get(Scope2Emission, steam_id)
++        assert rec_steam.steam_ton == 250.0
++
++
++def test_bulk_anomaly_flag_persistence(client, test_users):
++    """Verify that background anomaly detection flags are stored in emission.qa_flag."""
++    from background_processor import anomaly_detector
++    with app.app_context():
++        # High value that triggers outlier flag
++        emission = Emission(
++            facility_id=test_users["facility_id"],
++            year=2026,
++            month=9,
++            process_type="combustion",
++            fuel_type="Diesel",
++            quantity=999999999.0,
++            co2e_total=5000000.0,
++            status="Pending",
++        )
++        anomaly = anomaly_detector.check_scope1(
++            emission.facility_id,
++            emission.process_type,
++            emission.co2e_total,
++            emission.year,
++            emission.month,
++        )
++        assert anomaly.get("flagged") is True
++        flag_msg = anomaly.get("message") or "Statistical Anomaly"
++        emission.qa_flag = flag_msg[:255]
++        db.session.add(emission)
++        db.session.commit()
++
++        saved = db.session.get(Emission, emission.id)
++        assert saved.qa_flag is not None
++        assert "Anomaly" in saved.qa_flag or "Z-score" in saved.qa_flag or "threshold" in saved.qa_flag
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

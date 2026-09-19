@@ -1,0 +1,45 @@
+# Adaptive and Responsive Design Implementation Plan
+
+The objective is to ensure the GHG Reporting application is fully functional and visually appealing on tablets and mobile devices.
+
+## Proposed Changes
+
+### [CSS Layer]
+
+#### [MODIFY] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard-dark.css)
+- **Global Reset**: Ensure `box-sizing: border-box` is applied to all elements to prevent padding from increasing element sizes beyond their container.
+- **Fluid Layout**:
+    - Change fixed widths and paddings to use relative units or more flexible grid values.
+    - Fix the `.app-container` and `.main-content` to ensure they fit exactly within `100vh` without causing vertical/horizontal scrollbars on the body.
+    - Adjust `.dashboard-grid` columns for smaller desktops (e.g., laptop screens) using `minmax` or percentages instead of fixed `2fr 1fr` if it's too cramped.
+- **Mobile Responsiveness**:
+    - Add media queries for Tablet (`max-width: 1024px`) and Mobile (`max-width: 768px`).
+    - **Sidebar**: Switch to a drawer (overlay) mode on tablets and mobile.
+    - **Grid**: Stack dashboard cards into a single column on mobile.
+- **Components**:
+    - Ensure tables have `overflow-x: auto` containers.
+    - Make card heights more flexible.
+
+### [Javascript Layer]
+
+#### [NEW] [mobile-menu.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/mobile-menu.js)
+- Implement a script to toggle the mobile sidebar.
+- Add window resize listeners to handle state transitions between desktop/mobile layouts.
+
+### [HTML Layer]
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html), [emission-selection.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-selection.html), [emission-factor.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/emission-factor.html)
+- Add a hamburger menu icon to the top bar.
+- Ensure consistent viewport meta tag (already present).
+- Link `mobile-menu.js`.
+
+## Verification Plan
+
+### Automated Tests
+- Use the browser tool to verify the presence of the toggle button and test clicking it on mobile resolutions.
+
+### Manual Verification
+- Resize the browser window to verify all breakpoints.
+- Check that the dashboard grid stacks correctly.
+- Ensure the sidebar drawer opens and closes as expected on mobile.
+- Verify horizontal scrolling for tables.

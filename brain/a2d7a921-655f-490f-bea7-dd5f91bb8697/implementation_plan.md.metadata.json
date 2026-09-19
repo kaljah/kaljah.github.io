@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary": "Implementation plan for Cement GHG Emissions Calculator.\nStack: Django (Backend), Next.js (Frontend).\nKey Features: WBSCD/ISO 14064-1 compliance, complex calculation engine, secure auth, dashboard.\nDesign: Environmental/Cement theme, SVG icons, Premium UI.",
+  "updatedAt": "2026-01-17T13:37:00.315065Z"
+}

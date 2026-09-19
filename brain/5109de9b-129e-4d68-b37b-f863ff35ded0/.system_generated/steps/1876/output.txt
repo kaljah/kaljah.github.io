@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -265,11 +265,11 @@
+             if is_gas_fuel:
+                 # Convert quantity to standard m3
+                 vol_m3 = raw_quantity
+-                if u in ["scf"]:
+-                    vol_m3 = raw_quantity * CONVERSIONS.get("scf_to_m3", 0.0283168)
+-                elif u in ["mscf"]:
+-                    vol_m3 = (
+-                        raw_quantity * 1_000.0 * CONVERSIONS.get("scf_to_m3", 0.0283168)
++                if u in ["scf", "cf", "ft3"]:
++                    vol_m3 = raw_quantity * CONVERSIONS.get("scf_to_m3", 0.028316846592)
++                elif u in ["mscf", "mcf"]:
++                    vol_m3 = (
++                        raw_quantity * 1_000.0 * CONVERSIONS.get("scf_to_m3", 0.028316846592)
+                     )
+                 elif u in ["mmscf"]:
+                     vol_m3 = (
+@@ -276,5 +276,5 @@
+                         * 1_000_000.0
+-                        * CONVERSIONS.get("scf_to_m3", 0.0283168)
++                        * CONVERSIONS.get("scf_to_m3", 0.028316846592)
+                     )
+ 
+                 density_co2 = CONVERSIONS.get("density_co2", 1.861)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

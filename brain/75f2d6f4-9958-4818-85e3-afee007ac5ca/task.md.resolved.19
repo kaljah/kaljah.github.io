@@ -1,0 +1,52 @@
+# Task: Renewable Energy Feasibility & EPC Platform (SolarEPC-Pro)
+
+- [x] **Phase 1: Foundation (MVP)** <!-- id: 0 -->
+    - [x] Project Setup & Architecture <!-- id: 1 -->
+    - [x] Core Simulation Engine (Basic) <!-- id: 2 -->
+    - [x] Financial Model (Basic) <!-- id: 3 -->
+    - [x] User Interface (Streamlit) <!-- id: 4 -->
+    - [x] BOM Generator <!-- id: 5 -->
+
+- [x] **Phase 2: Expert Engineering (Previous)** <!-- id: 6 -->
+    - [x] Advanced Simulation Engine ([pvlib](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_phase2.py#9-16)) <!-- id: 7 -->
+    - [x] Electrical Engineering Tools (Basic) <!-- id: 8 -->
+    - [x] Advanced Financials <!-- id: 9 -->
+
+- [x] **Phase 3: Professional EPC Modules** <!-- id: 10 -->
+    - [x] Refactor & Cleanup (Remove BESS) <!-- id: 11 -->
+    - [x] Module 2: Inverter Sizing & Matching <!-- id: 12 -->
+    - [x] Module 4: Shading & Geometry <!-- id: 13 -->
+    - [x] Module 8: Full Feasibility Report <!-- id: 14 -->
+
+- [x] **Phase 4: Advanced EPC Modules** <!-- id: 15 -->
+    - [x] Module 3: Cable Sizing & Voltage Drop <!-- id: 16 -->
+    - [x] Module 5: Thermal, Losses & PR <!-- id: 17 -->
+    - [x] Module 6 & 7: Degradation & Advanced Financials <!-- id: 18 -->
+
+- [x] **Phase 5: Enterprise Features** <!-- id: 19 -->
+    - [x] 1. Real-World Weather Data <!-- id: 20 -->
+    - [x] 2. Equipment Database <!-- id: 21 -->
+    - [x] 3. 3D/2D Layout Visualizer <!-- id: 22 -->
+    - [x] 4. Hybrid Systems (BESS 2.0) <!-- id: 23 -->
+    - [x] 5. White-Label Reporting <!-- id: 24 -->
+
+- [x] **Phase 6: SaaS & Advanced Features** <!-- id: 25 -->
+    - [x] 1. Optimization & Performance <!-- id: 26 -->
+    - [x] 2. Commercial & Database <!-- id: 27 -->
+    - [x] 3. Microgrid & Hydrogen <!-- id: 28 -->
+    - [x] 4. GIS & Mapping <!-- id: 29 -->
+    - [x] 5. AI & Automation <!-- id: 30 -->
+
+- [ ] **Phase 7: Expert Engineering (Current)** <!-- id: 31 -->
+    - [ ] **1. Horizon & Far Shading** <!-- id: 32 -->
+        - [ ] Implement Horizon masking in [SolarSystem](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py#8-105) <!-- id: 33 -->
+        - [ ] UI for simple Horizon input (degrees) <!-- id: 34 -->
+    - [ ] **2. Electrical Mismatch** <!-- id: 35 -->
+        - [ ] Implement Non-linear Shading Loss (Diode effect) <!-- id: 36 -->
+    - [ ] **3. Complex Tariffs** <!-- id: 37 -->
+        - [ ] Update [FinancialAnalyzer](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/financial_model.py#5-112) for TOU and Demand Charges <!-- id: 38 -->
+    - [ ] **4. Battery Degradation Physics** <!-- id: 39 -->
+        - [ ] Add Cycle Counting / Throughput degradation logic <!-- id: 40 -->
+    - [ ] **5. Civil Engineering & BOM** <!-- id: 41 -->
+        - [ ] Create `src/civil.py` <!-- id: 42 -->
+        - [ ] Calculate Trenching, Fencing, Concrete, Road length <!-- id: 43 -->

@@ -1,0 +1,84 @@
+
+The command exited with code 0.
+Output:
+<truncated 119 lines>
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py:151: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    if not Facility.query.get(1):
+
+tests/test_api_security.py::TestIDOR::test_user_can_delete_own_emission
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py:187: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    if not Facility.query.get(1):
+
+tests/test_audit_remediation.py::test_profile_location_immutability
+  C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:435: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    user = User.query.get(user_id)
+
+tests/test_audit_remediation.py::test_production_upsert_and_delete_audit
+  C:\Users\samsung\Desktop\H2\new\server\routes\data.py:162: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    prod = ProductionData.query.get(record_id)
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3123: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    facility = Facility.query.get(data["facility_id"])
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3167: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    goal = Goal.query.get(current_year)
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3226: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    and Facility.query.get(data["facility_id"])
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3224: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Facility.query.get(data["facility_id"]).name
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:135: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rec = Emission.query.get(record_id)
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:159: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rec_pending = Emission.query.get(res_submit.get_json()["id"])
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:167: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rec_admin = Emission.query.get(res_admin.get_json()["id"])
+
+tests/test_calculations_page.py::test_scope2_authoritative_calculation_and_draft
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:194: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rec = Scope2Emission.query.get(rec_id)
+
+tests/test_calculations_page.py::test_scope3_eeio_and_fallback_calculation
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:252: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    s3_rec = Scope3Emission.query.get(s3_data["record"]["id"])
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\packaging\core.py:99: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.datetime.utcnow()
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\writer\excel.py:292: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    workbook.properties.modified = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 91 passed, 43 warnings in 16.32s =======================
+

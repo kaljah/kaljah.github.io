@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":308,"LineContent":"class MitigationRecord(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":9,"LineContent":"    MitigationRecord,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":436,"LineContent":"    rec_query = MitigationRecord.query"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":438,"LineContent":"        rec_query = rec_query.filter(MitigationRecord.year == int(year))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2368,"LineContent":"    query = MitigationRecord.query.filter(MitigationRecord.type.ilike(\"%exclusion%\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2371,"LineContent":"        query = query.filter(MitigationRecord.year == int(year))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":4,"LineContent":"    MitigationRecord,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":235,"LineContent":"    records = MitigationRecord.query.all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":338,"LineContent":"        # Create generic MitigationRecord"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":339,"LineContent":"        mitigation = MitigationRecord("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":371,"LineContent":"        item = MitigationRecord.query.get(rid)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":375,"LineContent":"            item = MitigationRecord.query.get(int(mitigation_id))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":517,"LineContent":"        db.session.query(distinct(MitigationRecord.year)),"}

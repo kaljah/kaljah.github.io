@@ -1,0 +1,41 @@
+# Sonatrach Theme Implementation Plan
+
+**Goal**: Re-theme the entire platform to match Sonatrach's branding: Orange and White with distinct **Orange Contours** (borders) around UI elements.
+
+## User Review Required
+> [!IMPORTANT]
+> This change will completely replace the existing "Dark Mode" / "Industrial" theme. The application will become primarily Light Mode (White/Orange).
+
+## Proposed Changes
+
+### Global Theme Variables ([dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css))
+I will redefine the `:root` variables to establish the new color palette.
+
+| Variable | New Value | Description |
+| :--- | :--- | :--- |
+| `--bg-dark` | `#ffffff` | Pure White Background |
+| `--bg-card` | `#ffffff` | Pure White Cards |
+| `--text-primary` | `#000000` | Pure Black Text |
+| `--text-secondary` | `#4b5563` | Dark Grey Text |
+| `--accent-color` | `#ff6600` | Sonatrach Orange |
+| `--border-color` | `#ff6600` | **Solid Orange Borders** |
+
+### Styling Updates
+
+#### [MODIFY] [dashboard-dark.css](file:///c:/Users/samsung/Desktop/h/public/dashboard-dark.css)
+- **Borders**: Enforce `border: 1px solid var(--border-color)` on `.card`, `.sidebar`, `.nav-link`, `.btn`, `input`, `select`.
+- **SVGs**: Ensure all icons/SVGs use `var(--accent-color)` (Orange).
+- **Sidebar**: White background, Orange border right.
+
+#### [MODIFY] [login.css](file:///c:/Users/samsung/Desktop/h/public/login.css)
+- **Brand Panel**: Change background to Orange (`#ff6600`).
+- **Login Card**: White background, Orange border.
+- **Inputs**: White background, Orange border.
+
+## Verification Plan
+
+### Manual Verification
+1.  **Open Browser**: Launch the application.
+2.  **Login Page**: Verify the Orange brand panel and White login card with **Orange borders**.
+3.  **Dashboard**: Verify the White background, White cards, and Orange accents/borders.
+4.  **Components**: Check Inputs, Buttons, and Sidebar links for the specific "Orange Contour" look.

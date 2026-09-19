@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_numerical_invariants.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -191,7 +191,7 @@
+         assert TankFlashingCalculator().calculate(0.0, 50.0, 0.85, 0.0, {})["total_co2e"] == 0.0
+ 
+         # 14. Pneumatics
+-        assert PneumaticDeviceCalculator().calculate(0, 1.0, 0.85, {})["total_co2e"] == 0.0
++        assert PneumaticDeviceCalculator().calculate(0, hours=1.0, bleed_rate=0.85, ch4_content=0.85, uncertainties={})["total_co2e"] == 0.0
+ 
+         # 15. AGR
+         assert AGRCalculator().calculate(0.0, 0.04, 0.001, {})["total_co2e"] == 0.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

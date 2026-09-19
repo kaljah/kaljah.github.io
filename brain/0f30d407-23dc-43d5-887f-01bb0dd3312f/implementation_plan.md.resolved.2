@@ -1,0 +1,33 @@
+# Implementation Plan - Dashboard Optimization (New Tool)
+
+The goal is to optimize the "New Tool" dashboard ([DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx)), ensure "All Years" is the default view, and simplify the loading experience.
+
+## User Review Required
+
+> [!NOTE]
+> This plan targets the **New Tool** (`new/client` and `new/server`), as clarified by the user.
+
+## Proposed Changes
+
+### Frontend (`new/client/src/pages/DashboardEnhanced.jsx`)
+
+#### [MODIFY] [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/DashboardEnhanced.jsx)
+- **Fix Default Year**: Remove the logic in `useEffect` that forces `currentYear` to the most recent year on initial load. It will now stay as `'all'` (default state).
+- **Parallel Loading**: The `Promise.allSettled` block is already in place, but we will ensure that the initial call to `loadDashboardData` happens correctly with `year='all'`.
+
+### Components (`new/client/src/components`)
+
+#### [MODIFY] [LoadingSpinner.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.jsx)
+- **Simplify**: Remove the "Initializing secure connection..." text.
+- **Visuals**: Reduce the visual noise (simpler structure).
+
+#### [MODIFY] [LoadingSpinner.css](file:///c:/Users/samsung/Desktop/h/new/client/src/components/LoadingSpinner.css)
+- **Styling**: Make the overlay background lighter/translucent rather than opaque/blurred dark mode if it's too heavy. Simplify the spinner animation.
+
+## Verification Plan
+
+### Manual Verification
+1.  **Start App**: Run `npm run dev` in `new/client` (and ensure server is running).
+2.  **Initial Load**: Open Dashboard. Verify the "Year" dropdown says "All Years" immediately.
+3.  **Data Check**: Verify "Gross Emissions" matches the total of all years (compare with known totals).
+4.  **Loading Experience**: Refresh the page. Verify the loading screen is minimal, fast, and doesn't show "Initializing secure connection...".

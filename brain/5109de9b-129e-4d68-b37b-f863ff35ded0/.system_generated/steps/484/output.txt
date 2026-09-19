@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -289,6 +289,12 @@
+ 
+                 co2_val = (co2_combusted_kg + co2_native_kg) / 1000.0
+ 
++                # Uncombusted methane slip per stoichiometry & combustion efficiency
++                if c_fractions["c1"] > 0:
++                    density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
++                    ch4_slip_vol = vol_m3 * c_fractions["c1"] * max(0.0, 1.0 - eta_c)
++                    ch4_val = (ch4_slip_vol * density_ch4) / 1000.0
++
+         # Resolve tier from factor_source (passed via uncertainties dict sidecar or defaults)
+         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+         _cat = "combustion"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

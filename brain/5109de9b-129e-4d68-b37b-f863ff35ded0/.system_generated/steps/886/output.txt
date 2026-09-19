@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":63,"LineContent":"    if user and user.role in ['viewer', 'auditor', 'it_admin']:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":160,"LineContent":"    if user and user.role in ['viewer', 'auditor', 'it_admin']:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":193,"LineContent":"    if user and user.role in ['viewer', 'auditor', 'it_admin']:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":501,"LineContent":"    if user and user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":76,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":208,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":296,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":212,"LineContent":"    if user.role == \"viewer\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":215,"LineContent":"                {\"error\": \"Forbidden: Read-only viewers cannot create OGMP survey records\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":420,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3255,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3306,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4398,"LineContent":"    reason = req_data.get(\"reason\", \"Rejected by reviewer\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4539,"LineContent":"    reason = data.get(\"reason\", \"Batch rejected by reviewer\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4654,"LineContent":"    \"\"\"Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard."}

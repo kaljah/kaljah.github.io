@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_TASK",
+  "summary": "Task checklist for implementing user-specific database isolation, integrating login page as index, adding user icon with login dropdown, and cleaning up existing databases and users.",
+  "updatedAt": "2025-12-19T17:47:45.569052100Z"
+}

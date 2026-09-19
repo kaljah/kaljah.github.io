@@ -1,0 +1,34 @@
+# Registration Fixes and Enhancements Walkthrough
+
+I have enhanced the registration process to ensure stability and collect more user information upfront.
+
+## Changes Made
+
+### Backend
+- **server.js**: Updated the `/register` endpoint to accept and store optional profile fields:
+    - Email Address
+    - Job Title
+    - Department
+    - Phone Number
+    - Office Location
+    - Biography / Notes
+- The database storage logic now correctly maps these fields to the `users` table.
+
+### Frontend
+- **index.html**: Added a new section to the registration form for "Professional Profile" with all the fields mentioned above.
+- **login.css**: 
+    - Added styling for success and error messages specifically for the registration form.
+    - Improved the layout to allow the registration panel to scroll when the form is long.
+- **script.js**: 
+    - Updated the registration handler to collect data from the new fields.
+    - Implemented a success message display: "Registered successfully" appears directly on the form after a successful submission.
+    - Added a 3-second delay before automatically switching back to the login tab, allowing the user to see the success message.
+
+## How to Test
+1.  Open the login page.
+2.  Click on "Request Access" to see the expanded registration form.
+3.  Fill in the required fields (Full Name, Organization, Sector, Password) and any optional profile fields.
+4.  Click "Submit Request".
+5.  Observe the "Registered successfully" message.
+6.  The form will reset and return to the login tab after 3 seconds.
+7.  Login with the new credentials to verify the account was created.

@@ -1,0 +1,119 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+>           assert rec_pending.status == "Pending Approval"
+E           AssertionError: assert 'Pending' == 'Pending Approval'
+E             
+E             - Pending Approval
+E             + Pending
+
+new\server\tests\test_calculations_page.py:160: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:152 POST /api/auth/login 200 [0.098s] [ReqID: 4a6e649d-a3e7-4a39-b3df-bdccbb2b0584]
+INFO     app:app.py:152 POST /api/emissions 201 [0.027s] [ReqID: 0b04a186-8877-40bf-835a-24073d66c12b]
+INFO     app:app.py:152 POST /api/emissions 201 [0.015s] [ReqID: 1f37bba0-5659-4125-916a-9b8cfa0e433c]
+_______________ test_scope2_authoritative_calculation_and_draft _______________
+
+client = <FlaskClient <Flask 'app'>>, admin_user = <User 13>
+regular_user = <User 11>, test_facility_id = 8
+
+    def test_scope2_authoritative_calculation_and_draft(client, admin_user, regular_user, test_facility_id):
+        # 1. Maker Mode: Regular user saves Scope 2 as Draft with authoritative calculation fallback
+        client.post("/api/auth/login", json={"email": "maker_calc@test.com", "password": "password"})
+        payload_draft = {
+            "year": 2024,
+            "month": 7,
+            "facility_id": test_facility_id,
+            "source_type": "electricity",
+            "electricity_kwh": 50000,
+            "grid_region": "US Average",
+            "status": "Draft",
+            # client omitted co2e or sent 0
+            "co2e": 0,
+        }
+        res = client.post("/api/scope2", json=payload_draft)
+        assert res.status_code == 201
+        data = res.get_json()
+        assert "emissions" in data
+        assert data["emissions"]["totalCo2e"] > 0
+        assert data["record"]["status"] == "Draft"
+    
+        rec_id = data["record"]["id"]
+        with app.app_context():
+            rec = Scope2Emission.query.get(rec_id)
+            assert rec is not None
+            assert rec.status == "Draft"
+            # Verify co2e was calculated from grid factors rather than saved as 0.0
+            assert rec.co2e > 0.0
+    
+        # 2. Regular user calculates & submits for review -> status "Pending Approval"
+        payload_submit = {
+            "year": 2024,
+            "month": 8,
+            "facility_id": test_facility_id,
+            "source_type": "electricity",
+            "electricity_kwh": 20000,
+            "grid_region": "US Average",
+            "status": "Verified",
+        }
+        res_sub = client.post("/api/scope2", json=payload_submit)
+        assert res_sub.status_code == 201
+>       assert res_sub.get_json()["record"]["status"] == "Pending Approval"
+E       AssertionError: assert 'Pending' == 'Pending Approval'
+E         
+E         - Pending Approval
+E         + Pending
+
+new\server\tests\test_calculations_page.py:212: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:152 POST /api/auth/login 200 [0.130s] [ReqID: e77455fb-d6ab-4500-82d3-77f7afc6af2b]
+INFO     app:app.py:152 POST /api/scope2 201 [0.026s] [ReqID: 152f9a15-8b5f-4a4d-a05f-ed5915b08dc3]
+INFO     app:app.py:152 POST /api/scope2 201 [0.016s] [ReqID: a7d8521e-e838-4ebb-b598-9967ca9d54d5]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3123: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    facility = Facility.query.get(data["facility_id"])
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3167: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    goal = Goal.query.get(current_year)
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3226: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    and Facility.query.get(data["facility_id"])
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3224: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Facility.query.get(data["facility_id"]).name
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:135: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rec = Emission.query.get(record_id)
+
+tests/test_calculations_page.py::test_scope1_calculation_and_maker_checker
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:159: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rec_pending = Emission.query.get(res_submit.get_json()["id"])
+
+tests/test_calculations_page.py::test_scope2_authoritative_calculation_and_draft
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:194: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rec = Scope2Emission.query.get(rec_id)
+
+tests/test_calculations_page.py::test_scope3_eeio_and_fallback_calculation
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py:252: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    s3_rec = Scope3Emission.query.get(s3_data["record"]["id"])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_calculations_page.py::test_scope1_calculation_and_maker_checker
+FAILED new\server\tests\test_calculations_page.py::test_scope2_authoritative_calculation_and_draft
+================== 2 failed, 2 passed, 13 warnings in 4.53s ===================
+

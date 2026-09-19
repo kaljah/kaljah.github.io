@@ -1,0 +1,52 @@
+# Walkthrough - Region Saving and Database Restoration
+
+ I've restored SQLite support and fixed the "Region" (Facilities) saving issues so they work in both local (SQLite) and migration (Postgres) modes.
+
+## Changes Made
+
+### 1. SQLite Support Restored
+- Updated [server.js](file:///c:/Users/samsung/Desktop/h/server.js) to dynamically choose between SQLite and PostgreSQL based on the `DB_TYPE` environment variable.
+- Defaulted to SQLite for [start_local.bat](file:///c:/Users/samsung/Desktop/h/start_local.bat) to ensure the app runs even if PostgreSQL is not configured.
+
+### 2. Fixed Region Saving (Activity/Division/Field)
+- **Schema Migration**: Fixed a bug where new columns (Activity, Division, Field) were not being added to the SQLite database because of incompatible syntax.
+- **Cross-Compatible API**: Updated the backend registration and facility creation logic to handle ID generation correctly for both database types:
+    - PostgreSQL uses `RETURNING id`.
+    - SQLite uses the standard `INSERT` and retrieves the ID from the driver.
+
+### Bug Fixes & Stability
+- **Fixed Initialization Errors**: Resolved a `ReferenceError` where the dashboard attempted to access the Activity-Division hierarchy before it was initialized.
+- **Trend Chart Variables**: Defined missing visual constants (`textColor`, `gridColor`) in the new multi-line trend chart logic.
+- **Scoping & Variable Fixes**: Resolved a persistent `ReferenceError` for `currentActivity` by completely rewriting [updateBreakdownTable](file:///c:/Users/samsung/Desktop/h/public/dashboard.js#588-654) to strictly use the local `activity` and `division` arguments, ensuring stability during all data refresh cycles.
+- **Fixed Undefined Variables**: Corrected typos in the Goal and Base Year handlers where `currentFacilityId` was being called instead of the new hierarchical filter variables.
+- **Synchronization**: Verified that the dashboard now loads, filters, and updates historical years correctly without any console errors.
+
+### 6. Advanced Hierarchical Visuals
+- **Activity Trends**: The "Emission over Time" chart now shows separate lines for **EP, LQS, RPC, and TRC** when "All Activities" is selected, providing an immediate comparison of activity performance.
+- **Hierarchical Table**: The Detailed Breakdown table now includes an **Organizational Breakdown** section that dynamically displays the Activity > Division > Region hierarchy for the target year.
+- **Year-Variable Source Breakdown**: The "Emissions by Source" doughnut chart is now synchronized with the table's year selector, allowing you to see the source distribution for any historical year.
+- **Backend Granularity**: Optimized the aggregation APIs to support these multi-dimensional views while maintaining performance.
+
+## Verification Results
+- **Synchronization**: Confirmed that selecting a year in the breakdown table correctly updates the source chart and the organizational table details.
+- **Multi-Line Trends**: Verified that the trend chart correctly plots all 4 activities when no specific filter is applied.
+- **Data Accuracy**: Cross-referenced totals between the hero metrics, the categorical overview cards, and the hierarchical table rows.
+
+### 2. Fixed Region Saving (Activity/Division/Field)
+- **Schema Migration**: Fixed a bug where new columns (Activity, Division, Field) were not being added to the SQLite database because of incompatible syntax.
+- **Cross-Compatible API**: Updated the backend registration and facility creation logic to handle ID generation correctly for both database types:
+    - PostgreSQL uses `RETURNING id`.
+    - SQLite uses the standard `INSERT` and retrieves the ID from the driver.
+
+## Verification Results
+- **Filtering**: Verified that selecting "EP" correctly restricts the Division dropdown to "Production" and "Association" in both filters and forms.
+- **Visual Accuracy**: The new Activity Chart accurately aggregates data from all regions within each of the 4 main activities.
+- **Data Integrity**: The [seedHierarchy](file:///c:/Users/samsung/Desktop/h/server.js#1269-1298) logic was updated to use clean keys and correct division mappings (e.g., TRC -> Make).
+- The server starts successfully in SQLite mode: `Initializing Database (sqlite)...`
+- API endpoints for `/api/facilities` are now compatible with both database engines.
+
+## How to Test
+1.  Run [start_local.bat](file:///c:/Users/samsung/Desktop/h/start_local.bat) (or `node server.js`).
+2.  Go to the **Region/Facility Management** page.
+3.  Add or Edit a region and fill in the **Activity**, **Division**, and **Field** fields.
+4.  Save and verify that the data persists and displays in the list correctly.

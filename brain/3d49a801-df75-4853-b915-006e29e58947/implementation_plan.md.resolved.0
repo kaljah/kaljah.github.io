@@ -1,0 +1,98 @@
+# Solar PV System Analysis Calculator - Implementation Plan
+
+## Goal Description
+Create a comprehensive web application that analyzes the uploaded solar PV system report image, identifies all calculation parameters, and builds a tool allowing users to input parameters and generate professional reports matching the reference format. The application will feature a premium UI with calculation engine, data visualizations, and PDF export capability.
+
+## User Review Required
+
+> [!IMPORTANT]
+> Based on the uploaded image analysis, the report appears to be a **PVGIS (Photovoltaic Geographical Information System) analysis report** containing:
+> - Project metadata (location, system specs, orientation)
+> - Solar radiation and performance data tables
+> - Scatter plots for correlation analysis
+> - Polar sun path diagrams (yellow shaded areas)
+> - Monthly energy production bar charts (red bars)
+> - Statistical summaries
+> 
+> Please confirm if this matches your requirements or if you need specific calculations/sections prioritized.
+
+## Proposed Changes
+
+### Application Structure
+
+The application will be a single-page web application with the following components:
+
+#### [NEW] [index.html](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/index.html)
+Main HTML structure containing:
+- Input form section for all solar PV parameters
+- Live calculation display area
+- Report generation and preview section
+- Export to PDF functionality
+
+#### [NEW] [styles.css](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/styles.css)
+Premium design system featuring:
+- Modern color palette with gradients (blues/oranges for solar theme)
+- Glassmorphism effects for cards/inputs
+- Smooth animations and transitions
+- Responsive grid layouts
+- Professional report styling matching the reference image
+
+#### [NEW] [app.js](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/app.js)
+Core application logic including:
+- Input parameter management
+- Solar PV calculation engine (irradiance, energy yield, performance ratio, etc.)
+- Dynamic chart generation using Chart.js
+- Polar diagram visualization
+- Report generation and formatting
+- PDF export using jsPDF
+
+---
+
+### Key Features
+
+**Input Parameters (Based on Report Analysis)**:
+- **Location Data**: Latitude, Longitude, Elevation, Time zone
+- **System Configuration**: 
+  - PV module type and rating (kWp)
+  - System losses (%)
+  - Array orientation (azimuth, tilt angle)
+  - Mounting type (fixed, tracking)
+- **Database Selection**: Climate/irradiation database choice
+- **Time Period**: Start/end dates for analysis
+
+**Calculations**:
+- Monthly solar irradiation (kWh/m²)
+- Monthly energy production (kWh)
+- Performance ratio (PR)
+- Temperature effects
+- System efficiency
+- Annual totals and averages
+
+**Visualizations**:
+- Scatter plots (irradiation vs production correlation)
+- Polar sun path diagrams with shading analysis
+- Monthly bar charts (production/irradiation)
+- Summary tables with statistics
+
+**Report Sections** (matching uploaded image):
+1. Header with project info and logo area
+2. Input parameters summary table
+3. Monthly performance data grid
+4. Scatter plot analysis
+5. Sun path polar diagrams (dual views)
+6. Monthly production bar charts
+7. Statistical summary table
+
+## Verification Plan
+
+### Automated Tests
+- Load the application in browser using `browser_subagent`
+- Test input validation for all parameter fields
+- Verify calculations produce reasonable results
+- Confirm all charts render correctly
+- Test PDF export functionality
+
+### Manual Verification
+- Review the generated report against the uploaded reference image
+- Verify aesthetic quality matches modern premium standards
+- Ensure responsive design works on different screen sizes

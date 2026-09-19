@@ -1,0 +1,42 @@
+# Plan: Revert to Emission Style Inputs
+
+## Goal
+Replace the "Premium Floating Label" inputs with the standard, proven style from [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html) as requested by the user.
+
+## Proposed Changes
+
+### 1. Styles (manage-data.html)
+- [DELETE] `.input-group-premium`, `.mole-input-premium`, `.floating-label`.
+- [NEW/UPDATE] Enforce `.mole-input` style:
+    ```css
+    .mole-input {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border-color);
+        padding: 10px 12px;
+        border-radius: 8px;
+        /* ... focus states ... */
+    }
+    ```
+- [UPDATE] Label styling to `display: block; margin-bottom: 8px; font-weight: 500;`.
+
+### 2. Markup (manage-data.html)
+- [MODIFY] Revert HTML structure:
+    - From:
+        ```html
+        <div class="input-group-premium">
+            <input ...>
+            <label class="floating-label">...</label>
+        </div>
+        ```
+    - To:
+        ```html
+        <div class="input-group">
+            <label>Title case label</label>
+            <input class="mole-input" placeholder="e.g. Value">
+        </div>
+        ```
+- [MODIFY] Apply to both "Custom Factors" and "Facilities" forms.
+
+## Verification
+- Visually match [emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html).
+- Verify inputs have solid background (no transparency).

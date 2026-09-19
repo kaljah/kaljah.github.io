@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary": "Refactor Facility Management to Region-based hierarchy (Activity > Division > Region > Field).",
+  "updatedAt": "2026-01-28T20:28:25.213364600Z",
+  "version": "1"
+}

@@ -1,0 +1,88 @@
+# Correcting Organizational Hierarchy & Syncing Data
+
+The user identified incorrect Activity-Division mappings. This plan corrects those mappings globally and ensures existing database records are updated to match.
+
+## User Review Required
+
+> [!IMPORTANT]
+> This change will update existing "Facility/Region" records in the database. Any record with an old division (e.g., "Oil" or "Gas" under EP) will be migrated to the new mapping if possible, or may require manual adjustment if the mapping is ambiguous.
+
+## Proposed Changes
+
+### [Frontend] Hierarchy Correction
+
+#### [MODIFY] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+- Update `HIERARCHY` constant to:
+    - EP: Production, Association
+    - LQS: LNG, LPG
+    - RPC: Refining, Petrochemicals
+    - TRC: TRC
+- Ensure `ACTIVITY_MAP` and other UI references reflect the user's naming convention.
+
+#### [MODIFY] [BulkImportModal.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx)
+- Update `HIERARCHY` constant to match [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx).
+- Update [downloadTemplate](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#73-121) logic to use the new sample data (Production/Association instead of Oil/Gas).
+
+### [Backend] Data Synchronization
+
+#### [NEW] [Sync Hierarchy Script](file:///c:/Users/samsung/Desktop/h/sync_hierarchy.py) [DELETE]
+- A one-time script (or temporary route/task) to scan existing [Region](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx#197-211) (Facilities) and [EmissionSource](file:///c:/Users/samsung/Desktop/h/new/server/models.py#123-145) records.
+- Rename Divisions:
+    - [Oil](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx#261-269) -> [Production](file:///c:/Users/samsung/Desktop/h/new/server/models.py#101-122)
+    - [Gas](file:///c:/Users/samsung/Desktop/h/new/client/src/components/Scope1Form.jsx#624-635) -> `Association` (or as per user specific intent if disambiguation is needed)
+    - `Transport` -> `TRC`
+- Update Activity names if necessary.
+
+---
+The user reported that the Activity, Division, and Region dropdowns on the Manage Data page (Production tab) don't match the rest of the tool. Additionally, the field order in Region Management needs to be updated to match the requested flow: Activity -> Division -> Region.
+
+## User Review Required
+
+> [!IMPORTANT]
+> I will be implementing a **Bulk CSV Import** feature. Users will need to follow a specific CSV template to ensure data (Regions, Equipment, Activity) is mapped correctly.
+
+> [!NOTE]
+> The automated calculation will use the **latest available emission factors** in the database for each imported record. If a factor is missing, the record will be flagged for review.
+
+## Proposed Changes
+
+### [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+
+#### [NEW] [BulkImportModal.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx)
+- Added [downloadTemplate](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#73-121) function to provide users with example CSV structures with all process types.
+- **Expanded Schema**: Updated templates and preview tables to include mandatory fields: **Activity, Division, Region, Field, Year, Month, Quantity (Amount), and Unit**.
+- **Engineering Parameters**: Added optional fields for high-accuracy calculations:
+    - **Flaring**: Flare Type (Elevated/Enclosed), CH4 %
+    - **Combustion**: HHV, Combustion Efficiency
+    - **Equipment**: Device Count, Operating Hours
+    - **Tanks**: GOR, API Gravity
+- **Validation Logic**: Added logic to scan mapped data for invalid fuel/process types and organizational hierarchy mismatches.
+- **Reference UI**: Added a "System Identifiers" toggle to show valid names for CSV preparation.
+
+#### [MODIFY] [BulkImportModal.css](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.css)
+- Styled validation error states (red highlights) and the reference guide container.
+- A reusable modal for uploading and parsing CSV files.
+- Visual mapping of CSV columns to database fields.
+- Preview of records before final submission.
+
+#### [MODIFY] [ManageData.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/ManageData.jsx)
+- Add "Import CSV" buttons to **Sources** and **Activity Data** tabs.
+- Integrate the [BulkImportModal](file:///c:/Users/samsung/Desktop/h/new/client/src/components/BulkImportModal.jsx#9-428) for both inventory and emissions data.
+
+#### [MODIFY] [managedata.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/managedata.py)
+- Add `/api/sources/bulk-import` endpoint to handle bulk equipment inventory uploads.
+
+### [Calculation Engine Fixes]
+#### [MODIFY] [emissions.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py)
+- Update [import_emissions](file:///c:/Users/samsung/Desktop/h/new/server/routes/emissions.py#306-384) to lookup `facility_id` by name if the CSV provides a string.
+- Ensure the payload passed to [compute_emissions](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py#297-666) matches the structure expected by Tier 3 calculators.
+
+#### [MODIFY] [legacy_engine.py](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py)
+- Update [compute_emissions](file:///c:/Users/samsung/Desktop/h/new/server/calculations/legacy_engine.py#297-666) to merge root payload into `inputs` if `calc_inputs` is missing, allowing flat CSV data to drive engineering calculations.
+
+## Verification Plan
+
+### Manual Verification
+- Navigate to **Manage Data** -> **Regions**. Verify the field order is Activity -> Division -> Region.
+- Navigate to **Manage Data** -> **Production Data**. Verify that selecting an Activity (e.g., "Exploration & Production") updates the Division list correctly and that the Region list displays the appropriate assets.
+- Verify that adding a new region with the new labels works correctly and it appears on the map.

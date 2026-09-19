@@ -1,0 +1,10 @@
+# Tasks
+
+- [x] Initial Dashboard Enhancements <!-- id: 1 -->
+- [/] Deep Analysis: Carbon Intensity Dashboard <!-- id: 50 -->
+    - [x] Research frontend implementation ([CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx)) <!-- id: 51 -->
+    - [x] Research backend implementation ([dashboard.py](file:///c:/Users/samsung/Desktop/h/new/server/routes/dashboard.py)) <!-- id: 52 -->
+    - [ ] Audit Intensity Logic (Weighting vs Averaging) <!-- id: 53 -->
+    - [ ] Audit Production Unit Scaling <!-- id: 54 -->
+    - [ ] Perform Performance Benchmarking (Query analysis) <!-- id: 55 -->
+    - [ ] Document findings and proposed fixes <!-- id: 56 -->

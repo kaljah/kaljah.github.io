@@ -1,0 +1,19 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-1034
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-1034.log
+Log output:
+<truncated 84 lines>
+authenticated PASSED [ 79%]
+tests/test_satellite.py::test_sentinel5p_strict_no_fake_data_when_unconfigured PASSED [ 80%]
+tests/test_satellite.py::test_sentinel5p_connection_test_mocked_success PASSED [ 81%]
+tests/test_satellite.py::test_sentinel5p_connection_test_mocked_failure PASSED [ 82%]
+tests/test_sbti.py::test_manage_sbti_security PASSED                     [ 84%]
+tests/test_sbti.py::test_manage_sbti_validation_and_creation PASSED      [ 85%]
+tests/test_sbti.py::test_sbti_trajectory_math_and_aliases PASSED         [ 86%]
+tests/test_uncertainty.py::test_uncertainty_unauthenticated PASSED       [ 87%]
+tests/test_uncertainty.py::test_uncertainty_it_admin_blocked PASSED      [ 88%]
+tests/test_uncertainty.py::test_uncertainty_default_response PASSED      [ 89%]
+tests/test_uncertainty.py::test_uncertainty_year_filter PASSED           [ 90%]
+tests/test_uncertainty.py::test_uncertainty_scope_filter PASSED          [ 91%]
+tests/test_uncertainty.py::test_uncertainty_csv_export 
+Last progress: 0s ago

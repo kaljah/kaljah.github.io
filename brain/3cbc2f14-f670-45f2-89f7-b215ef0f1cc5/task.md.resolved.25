@@ -1,0 +1,9 @@
+# Task: Advanced Hierarchical Dashboard Visuals
+
+- [/] Align Dashboard Components with Hierarchy
+    - [ ] Update `GET /api/dashboard/summary` to group by activity
+    - [ ] Update `processedData` to handle activity-wise trend markers
+    - [ ] Update `Emissions Over Time` to show activity-specific lines (EP, LQS, RPC, TRC)
+    - [ ] Update `Emissions by Source` to be year-sensitive
+    - [ ] Transform `Detailed Breakdown` into a hierarchical table (Activity > Division > Region)
+- [ ] Proof of work & Verification

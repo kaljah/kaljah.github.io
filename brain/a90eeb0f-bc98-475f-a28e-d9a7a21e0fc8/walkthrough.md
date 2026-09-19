@@ -1,0 +1,64 @@
+# Walkthrough - Advanced Emission Models
+
+I have successfully implemented the "Gap Analysis" capabilities, bringing standard API Compendium advanced models into the tool.
+
+## New Capabilities
+
+### 1. Loading Loss Calculator (API Eq 5-1)
+**Purpose**: Calculate evaporative losses from truck/rail loading operations.
+- **Inputs**:
+    - Saturation Factor (Dropdown: Splash/Submerged)
+    - True Vapor Pressure (psia/kPa/bar)
+    - Vapor Molecular Weight (Dropdown: Gasoline/Crude/Jet defaults)
+    - Temperature (°F/°C)
+- **Outputs**:
+    - Loss Factor in `lb/1000 gal`
+    - Metric equivalent in `kg/m³`
+
+### 2. Tank Flashing Calculator (Vasquez-Beggs)
+**Purpose**: Estimate methane flashing from oil/condensate separators.
+- **Inputs**:
+    - Separator Pressure (psig/kPa/bar)
+    - Separator Temp (°F/°C)
+    - Oil Gravity (API)
+    - Gas Specific Gravity
+- **Outputs**:
+    - Solution Gas Ratio (Rs) in `scf/bbl`
+    - Flash Emission Factor in `lb CH4/bbl` and `kg CH4/m³`
+
+### 3. Glycol Dehydrator Calculator
+**Purpose**: Estimate methane venting from glycol circulation.
+- **Inputs**:
+    - Pump Rate (gal/hr, L/hr, m³/hr)
+    - Annual Hours
+    - Control Efficiency (%)
+- **Outputs**:
+    - Annual Methane Emissions (Tonnes)
+    - Standard Volume (scf)
+
+## Verification
+- **Unit Conversions**: Verified that inputs (e.g. kPa, °C) are correctly normalized to base units (psia, °F) before calculation.
+- **Output Formats**: Confirmed that all new cards use the standardized Table layout with multiple unit options (Imperial/Metric).
+- **Bug Fixes**: Resolved previous `ReferenceError` and duplicate field issues.
+
+The tool is now ready for end-to-end testing of these specific oil & gas sources.
+
+### 4. Sentinel-5P Multi-Pollutant Integration
+Expanded the Methane Explorer to a full **Sentinel-5P Emissions Monitor**.
+
+#### Features:
+- **Pollutant Selector**: Switch between CH4, NO2, CO, SO2, and O3.
+- **Dynamic Simulation**: Each pollutant has unique simulation parameters:
+    - **CH4**: Sporadic high-rate plumes (Red).
+    - **NO2**: Widespread combustion indicators (Amber).
+    - **CO**: Concentrated incomplete combustion (Emerald).
+    - **SO2**: Rare, high-intensity events (Purple).
+    - **O3**: Broad atmospheric monitoring (Blue).
+- **Interactive UI**:
+    - Counters update to reflect detection count.
+    - Legends and units update dynamically (kg/hr, µmol/m², DU).
+    - Distinct visual themes for each pollutant.
+
+#### Verification
+- **Test**: Open `mars-map.html` and use the dropdown selector.
+- **Expected**: Map clears and re-renders with new colors and plume sizes. Popups show correct chemical name and unit.

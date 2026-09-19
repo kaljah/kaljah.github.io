@@ -1,0 +1,74 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 22 items
+
+tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier1_combustion_default_ef PASSED [  4%]
+tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier2_combustion_custom_hhv_and_density PASSED [  9%]
+tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier3_gas_composition_stoichiometric_balance PASSED [ 13%]
+tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier2_flaring_dual_efficiency FAILED [ 18%]
+tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier1_and_tier3_pneumatic_bleed PASSED [ 22%]
+tests/test_tier_scope_kpi_numerical.py::TestScope2Methods::test_scope2_location_based_grid_averages PASSED [ 27%]
+tests/test_tier_scope_kpi_numerical.py::TestScope2Methods::test_scope2_market_based_contractual_instruments PASSED [ 31%]
+tests/test_tier_scope_kpi_numerical.py::TestScope2Methods::test_scope2_indirect_steam_thermodynamic_equation PASSED [ 36%]
+tests/test_tier_scope_kpi_numerical.py::TestScope2Methods::test_scope2_cogen_allocation_wri_efficiency_and_energy_methods PASSED [ 40%]
+tests/test_tier_scope_kpi_numerical.py::TestScope3Tiers::test_scope3_tier1_spend_based_eeio PASSED [ 45%]
+tests/test_tier_scope_kpi_numerical.py::TestScope3Tiers::test_scope3_tier2_average_data_transport PASSED [ 50%]
+tests/test_tier_scope_kpi_numerical.py::TestScope3Tiers::test_scope3_tier3_supplier_specific_pcf PASSED [ 54%]
+tests/test_tier_scope_kpi_numerical.py::TestScope3Tiers::test_scope3_category11_use_of_sold_products_oil_and_gas PASSED [ 59%]
+tests/test_tier_scope_kpi_numerical.py::TestKPIsAndIntensities::test_boe_production_normalization_exactness PASSED [ 63%]
+tests/test_tier_scope_kpi_numerical.py::TestKPIsAndIntensities::test_carbon_intensity_metric_equations PASSED [ 68%]
+tests/test_tier_scope_kpi_numerical.py::TestKPIsAndIntensities::test_methane_loss_rate_ogmp_equation PASSED [ 72%]
+tests/test_tier_scope_kpi_numerical.py::TestKPIsAndIntensities::test_flaring_rate_percentage_equation PASSED [ 77%]
+tests/test_tier_scope_kpi_numerical.py::TestKPIsAndIntensities::test_epa_wec_part99_fee_schedules_and_thresholds PASSED [ 81%]
+tests/test_tier_scope_kpi_numerical.py::TestUncertaintyQuantificationMath::test_multiplicative_product_propagation_formula PASSED [ 86%]
+tests/test_tier_scope_kpi_numerical.py::TestUncertaintyQuantificationMath::test_additive_sum_propagation_formula PASSED [ 90%]
+tests/test_tier_scope_kpi_numerical.py::TestUncertaintyQuantificationMath::test_srss_inventory_aggregation_approach1 PASSED [ 95%]
+tests/test_tier_scope_kpi_numerical.py::TestUncertaintyQuantificationMath::test_coverage_factor_and_non_negative_bounds PASSED [100%]
+
+================================== FAILURES ===================================
+__________ TestScope1Tiers.test_scope1_tier2_flaring_dual_efficiency __________
+
+self = <test_tier_scope_kpi_numerical.TestScope1Tiers object at 0x000002B0072D38F0>
+
+    def test_scope1_tier2_flaring_dual_efficiency(self):
+        """Tier 2 Flaring: Dual efficiency model (combustion efficiency vs destruction efficiency).
+        Gas flared: 50,000 m3 of gas with 90% CH4 (0.90 mol fraction).
+        Combustion efficiency eta_c = 98.0%, Destruction efficiency eta_d = 98.5%.
+        Combusted CH4 -> CO2: 50,000 * 0.90 * 0.980 = 44,100 m3 CH4 combusted.
+        CO2 mass = 44,100 m3 * 1.861 kg/m3 = 82,070.1 kg = 82.0701 tCO2.
+        Uncombusted CH4 emitted: 50,000 * 0.90 * (1.0 - 0.985) = 675 m3 CH4.
+        CH4 mass = 675 m3 * 0.6785 kg/m3 = 457.9875 kg = 0.45799 tCH4.
+        """
+        calc = FlaringCalculator()
+        res = calc.calculate(
+            gas_volume=50000.0,
+            ch4_fraction=0.90,
+            flare_type="elevated",
+            uncertainties={"_factor_source": "custom"},
+            combustion_efficiency=0.980,
+            destruction_efficiency=0.985,
+            fuel_unit="m3",
+        )
+>       assert abs(res["results"]["co2"]["value"] - 82.0701) < 0.05
+E       assert 0.3349800000000016 < 0.05
+E        +  where 0.3349800000000016 = abs((82.40508 - 82.0701))
+
+tests\test_tier_scope_kpi_numerical.py:171: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_tier_scope_kpi_numerical.py::TestScope1Tiers::test_scope1_tier2_flaring_dual_efficiency
+=================== 1 failed, 21 passed, 1 warning in 3.24s ===================
+

@@ -1,0 +1,73 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 1 item
+
+new\server\tests\test_api_security.py::TestIDOR::test_user_can_delete_own_emission FAILED [100%]
+
+================================== FAILURES ===================================
+_________________ TestIDOR.test_user_can_delete_own_emission __________________
+
+self = <test_api_security.TestIDOR object at 0x000001C547832390>
+client = <FlaskClient <Flask 'app'>>, app = <Flask 'app'>, regular_user = 3
+
+    def test_user_can_delete_own_emission(self, client, app, regular_user):
+        """User should be able to delete their own emission record."""
+        with app.app_context():
+            from models import Facility
+            if not Facility.query.get(1):
+                f = Facility(id=1, name="Test Facility")
+                db.session.add(f)
+                db.session.commit()
+    
+            # Clean up prior test record if any
+            Emission.query.filter_by(record_id="test-own-001").delete()
+            db.session.commit()
+            em = Emission(
+                record_id="test-own-001",
+                year=2024,
+                month=1,
+                facility_id=1,
+                process_type="combustion",
+                co2_emissions=1.0,
+                ch4_emissions=0.0,
+                n2o_emissions=0.0,
+                co2e_total=1.0,
+                created_by=regular_user,
+            )
+            db.session.add(em)
+            db.session.commit()
+            em_id = em.id
+    
+        login(client, "user@test.com", "User@123!")
+        res = client.delete(f"/api/emissions/{em_id}")
+>       assert res.status_code == 200
+E       assert 403 == 200
+E        +  where 403 = <WrapperTestResponse streamed [403 FORBIDDEN]>.status_code
+
+new\server\tests\test_api_security.py:213: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.090s] [ReqID: 17295c77-83b2-471b-bbe9-a4bb17aedb0c]
+INFO     app:app.py:153 DELETE /api/emissions/157 403 [0.008s] [ReqID: f2e7d263-8f9f-4ab2-bc74-494a3952d5a2]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_api_security.py::TestIDOR::test_user_can_delete_own_emission
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py:187: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    if not Facility.query.get(1):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_api_security.py::TestIDOR::test_user_can_delete_own_emission - assert 403 == 200
+ +  where 403 = <WrapperTestResponse streamed [403 FORBIDDEN]>.status_code
+======================== 1 failed, 2 warnings in 2.76s ========================
+

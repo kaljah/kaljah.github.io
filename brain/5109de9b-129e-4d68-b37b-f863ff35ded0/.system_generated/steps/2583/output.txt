@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":479,"LineContent":"        # The caller (log_activity_and_notify → route handler) commits the full"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":6,"LineContent":"from utils import log_activity_and_notify, get_current_user"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":117,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":201,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":250,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":327,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":76,"LineContent":"def log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":10,"LineContent":"from utils import get_current_user, log_activity_and_notify"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":300,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":4,"LineContent":"from utils import get_allowed_facility_ids, log_activity_and_notify, is_unrestricted_location"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":174,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":292,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":352,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":11,"LineContent":"from utils import log_activity_and_notify"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":212,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":273,"LineContent":"            log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":336,"LineContent":"            log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":373,"LineContent":"                log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":491,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":781,"LineContent":"            log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":984,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":601,"LineContent":"        from utils import log_activity_and_notify"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":602,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":686,"LineContent":"        from utils import log_activity_and_notify"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":687,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":5,"LineContent":"from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":124,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":170,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":483,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":517,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":753,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":785,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":7,"LineContent":"from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":153,"LineContent":"    log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":328,"LineContent":"        from utils import log_activity_and_notify"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":329,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":16,"LineContent":"from utils import log_activity_and_notify"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3127,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3280,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3516,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3559,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3856,"LineContent":"            log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4373,"LineContent":"    log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4424,"LineContent":"    log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4506,"LineContent":"    log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4566,"LineContent":"            log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4607,"LineContent":"    log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":18,"LineContent":"from utils import log_activity_and_notify, get_current_user, get_allowed_facility_ids"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":100,"LineContent":"        log_activity_and_notify("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":131,"LineContent":"        log_activity_and_notify("}
+(...7 more results not shown)

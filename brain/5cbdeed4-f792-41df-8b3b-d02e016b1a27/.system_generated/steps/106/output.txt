@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":251,"LineContent":"@reports_bp.route(\"/generate\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":439,"LineContent":"@reports_bp.route(\"/export\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":668,"LineContent":"@reports_bp.route(\"/ogmp-export\", methods=[\"GET\"])"}

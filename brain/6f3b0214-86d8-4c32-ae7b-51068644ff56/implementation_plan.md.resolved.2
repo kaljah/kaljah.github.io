@@ -1,0 +1,29 @@
+# Modernize and Compact Profile Page
+
+Redesign the profile page to be more efficient, visually appealing, and compact by using a tabbed two-column layout.
+
+## Proposed Changes
+
+### Frontend
+
+#### [MODIFY] [profile.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile.html)
+- **Layout Change**: Implement a two-column layout with a vertical navigation sidebar on the left and a content area on the right.
+- **Tab System**: Group settings into "Personal Information", "Professional Details", and "Security".
+- **Compact Styling**: 
+    - Reduce whitespace and margin in cards.
+    - Use glassmorphism and subtle borders.
+    - Modernize the "Danger Zone" with a more refined alert style.
+- **Enhanced Header**: Create a profile "Hero" section with a large avatar and key user info.
+
+#### [MODIFY] [user-profile.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/user-profile.js)
+- Add tab switching logic to handle the new UI navigation.
+- Ensure all form submission logic is preserved and integrated into the new layout.
+
+## Verification Plan
+
+### Manual Verification
+- Navigate to the profile page.
+- Verify the new tabbed layout is responsive and visually compact.
+- Test tab switching functionality.
+- Verify all forms (Personal, Professional, Security) still correctly save data to the backend.
+- Confirm the "Danger Zone" delete functionality is preserved.

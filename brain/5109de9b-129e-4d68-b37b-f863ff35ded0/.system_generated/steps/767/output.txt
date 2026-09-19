@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -113,9 +113,14 @@
+ 
+ def test_stoichiometry_short_ton():
+     """Verify short ton conversion to kg (907.185 kg)."""
+-    assert abs(norm_mass(1.0, "ton") - 907.185) < 0.01
+-    assert abs(norm_mass(1.0, "short_ton") - 907.185) < 0.01
+-    assert abs(norm_mass(1.0, "tonne") - 1000.0) < 0.01
++    calc = StoichiometricCalculator()
++    res_short = calc.calculate(1.0, 1.0, {}, mass_unit="ton")
++    expected_short_co2 = 907.185 * (44.01 / 12.011) / 1000.0
++    assert abs(res_short["co2_emissions"] - expected_short_co2) < 0.01
++
++    res_metric = calc.calculate(1.0, 1.0, {}, mass_unit="tonne")
++    expected_metric_co2 = 1000.0 * (44.01 / 12.011) / 1000.0
++    assert abs(res_metric["co2_emissions"] - expected_metric_co2) < 0.01
+ 
+ 
+ def test_base_calculator_uncertainty_k_factor():
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,32 @@
+# Implementation Plan - Carbon Intensity Enhancements
+
+The goal is to enhance the **Carbon Intensity** page to show separate intensities for Oil and Gas production per region, and to display Flaring Intensity in the Hero Card.
+
+## User Review Required
+
+> [!NOTE]
+> We will derive "Oil Intensity" and "Gas Intensity" by attributing total facility emissions to the specific fuel type production volume. This presumes a rudimentary allocation (Total Emissions / Total Oil) for visualization purposes, which is standard for high-level dashboards unless specific allocation methods are provided.
+
+## Proposed Changes
+
+### Frontend ([new/client/src/pages/CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx))
+
+#### [MODIFY] [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/h/new/client/src/pages/CarbonIntensity.jsx)
+- **Hero Card**: Replace "Flaring Efficiency" with "Flaring Intensity".
+    - Metric: `stats.avgFlaringIntensity` (Weighted Average of `api_flaring_intensity`).
+    - Unit: `kg CO2e / BOE`.
+- **Data Processing**:
+    - Calculate `oilIntensity` = [(co2_intensity * total_boe) / total_oil](file:///c:/Users/samsung/Desktop/h/server.js#2285-2290) (Handle divide by zero).
+    - Calculate `gasIntensity` = [(co2_intensity * total_boe) / total_gas](file:///c:/Users/samsung/Desktop/h/server.js#2285-2290) (Handle divide by zero).
+- **New Charts**: Add two new Bar Charts (or a tabbed view) below the existing charts:
+    - "Carbon Intensity per Oil Production (kg CO2e / bbl)"
+    - "Carbon Intensity per Gas Production (kg CO2e / mcf)"
+
+## Verification Plan
+
+### Manual Verification
+1.  **Hero Card**: Check that "Flaring Intensity" is reasonable (likely a small number < 10 kg/BOE).
+2.  **Charts**: Verify new charts appear.
+3.  **Logic**: specific check:
+    - If a facility has 0 Oil, Oil Intensity should be 0 (or N/A).
+    - If a facility has 0 Gas, Gas Intensity should be 0 (or N/A).

@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":370,"LineContent":"def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):"}

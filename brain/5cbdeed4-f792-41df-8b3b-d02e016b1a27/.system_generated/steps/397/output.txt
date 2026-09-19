@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\api.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -39,17 +39,21 @@
+     const status = error.response?.status;
+     const msg = error.response?.data?.error || "";
+ 
+-    // CSRF token expired/missing — refresh it and retry the request ONCE
++    // CSRF token expired/missing — refresh it and retry the request strictly ONCE
++    const originalConfig = error.config;
+     if (
+       status === 400 &&
++      originalConfig &&
++      !originalConfig._retry &&
+       (msg.toLowerCase().includes("csrf") ||
+-        msg.toLowerCase().includes("token"))
+-    ) {
++        msg.toLowerCase().includes("csrf token") ||
++        msg.toLowerCase().includes("token missing"))
++    ) {
++      originalConfig._retry = true;
+       try {
+-        await fetchCsrfToken();
+-        // Retry with the fresh token
+-        const originalConfig = error.config;
+-        originalConfig.headers["X-CSRFToken"] = csrfToken;
++        const freshToken = await fetchCsrfToken();
++        originalConfig.headers = originalConfig.headers || {};
++        originalConfig.headers["X-CSRFToken"] = freshToken || csrfToken;
+         return api(originalConfig);
+       } catch (_) {
+         /* retry also failed — fall through to rejection */
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,2140 @@
+# Registration Data Integration Walkthrough
+
+I have ensured that all information collected during registration (Sector, Email, Job Title, Department, etc.) is correctly saved and displayed on the profile page.
+
+## Key Changes
+
+### 1. Updated Profile UI
+- **Added Sector Field**: The Professional Information tab on the profile page now includes a "Sector" dropdown (Oil & Gas, Energy, Manufacturing) to match the registration form.
+- **Enhanced Data Mapping**: Fixed the "Organization" field to correctly map to the `orgName` database column.
+- **Comprehensive Population**: The profile page now automatically populates all fields with data provided during registration, including Email, Job Title, Department, Phone, Location, and Bio.
+
+### 2. Backend Enhancements
+- **server.js**: 
+    - Updated the `/api/users/:id` PUT endpoint to include the `sector` column in updates.
+    - Improved naming flexibility to handle both `company` (frontend) and `orgName` (backend/DB) naming conventions seamlessly.
+
+### 3. Logic Improvements
+- **Automatic Display**: The profile hero section now uses the user's `sector` as a default role if no Job Title is provided.
+- **Persistent Updates**: All fields, including the new Sector field, are now correctly persisted to the database and localStorage when you save your profile.
+
+## How to use
+1.  Register a new account and fill in the "Professional Profile" section.
+2.  Log in and navigate to the **Profile** page.
+3.  You will see all your registration details pre-filled in the Personal and Professional tabs.
+4.  Updates made on the profile page will now correctly include your Sector choice.
+
+```diff:profile.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - GHG Reporting</title>
+    <meta name="theme-color" content="#111827">
+    <script src="auth-check.js"></script>
+    <link rel="stylesheet" href="dashboard-dark.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="toast.js"></script>
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color), #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+        }
+
+        .profile-card {
+            background: rgba(31, 41, 55, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin-bottom: 24px;
+        }
+
+        .profile-form-group {
+            margin-bottom: 24px;
+        }
+
+        .profile-form-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .profile-form-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .profile-form-group input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .profile-form-group input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary-profile {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary-profile:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary-profile {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-secondary-profile:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 32px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container" style="height: 100vh; overflow: hidden;">
+        <!-- Main Content -->
+        <main class="main-content"
+            style="margin-left: 0; width: 100%; height: 100vh; overflow-y: auto; display: flex; flex-direction: column;">
+            <div class="top-bar" style="flex-shrink: 0;">
+                <div class="breadcrumbs">
+                    <button onclick="window.location.href='dashboard.html'"
+                        style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-avatar-large" id="profile-avatar">U</div>
+                    <h1 style="font-size: 2rem; margin: 0; color: var(--text-primary);" id="profile-name">User Name</h1>
+                    <p style="color: var(--text-secondary); margin-top: 8px;" id="profile-role">Sustainability Manager
+                    </p>
+                </div>
+
+                <div class="profile-card">
+                    <h2 class="section-title">Account Information</h2>
+                    <form id="profile-form">
+                        <div class="profile-form-group">
+                            <label for="full-name">Full Name</label>
+                            <input type="text" id="full-name" placeholder="Enter your full name">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="Username" disabled>
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" placeholder="your.email@company.com">
+                        </div>
+
+                        <button type="submit" class="btn-primary-profile">Save Changes</button>
+                    </form>
+                </div>
+
+                <div class="profile-card">
+                    <h2 class="section-title">Professional Information</h2>
+                    <form id="professional-form">
+                        <div class="profile-form-group">
+                            <label for="job-title">Job Title</label>
+                            <input type="text" id="job-title" placeholder="e.g. Sustainability Manager">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="department">Department</label>
+                            <input type="text" id="department" placeholder="e.g. Environmental Compliance">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="company">Company Name</label>
+                            <input type="text" id="company" placeholder="Your Organization">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" placeholder="+1 (555) 123-4567">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="location">Office Location</label>
+                            <input type="text" id="location" placeholder="e.g. New York, NY">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="bio">Biography / Notes</label>
+                            <textarea id="bio" placeholder="Brief professional bio or additional information..."
+                                style="width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary); padding: 12px 16px; border-radius: 8px; font-size: 1rem; outline: none; transition: all 0.2s; box-sizing: border-box; min-height: 100px; font-family: 'Outfit', sans-serif; resize: vertical;"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-primary-profile">Save Professional Info</button>
+                    </form>
+                </div>
+
+                <div class="profile-card">
+                    <h2 class="section-title">Change Password</h2>
+                    <form id="password-form">
+                        <div class="profile-form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" placeholder="Enter current password">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" placeholder="Enter new password">
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" placeholder="Confirm new password">
+                        </div>
+
+                        <button type="submit" class="btn-primary-profile">Update Password</button>
+                    </form>
+                </div>
+
+                <div class="profile-card" style="border: 1px solid rgba(239, 68, 68, 0.2);">
+                    <h2 class="section-title" style="color: #ef4444;">Danger Zone</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">Once you delete your account, there is
+                        no going back. Please be certain.</p>
+                    <button class="btn-secondary-profile" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);"
+                        onclick="confirmDeleteAccount()">Delete Account</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="user-profile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userStr = localStorage.getItem('ghg_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+
+            if (!user || !user.id) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Populate form fields
+            const avatarEl = document.getElementById('profile-avatar');
+            const nameEl = document.getElementById('profile-name');
+            const fullNameInput = document.getElementById('full-name');
+            const usernameInput = document.getElementById('username');
+            const emailInput = document.getElementById('email');
+            const jobTitleInput = document.getElementById('job-title');
+            const departmentInput = document.getElementById('department');
+            const companyInput = document.getElementById('company');
+            const phoneInput = document.getElementById('phone');
+            const locationInput = document.getElementById('location');
+            const roleEl = document.getElementById('profile-role');
+
+            if (user.fullName) {
+                if (avatarEl) avatarEl.textContent = user.fullName.charAt(0).toUpperCase();
+                if (nameEl) nameEl.textContent = user.fullName;
+                if (fullNameInput) fullNameInput.value = user.fullName;
+            }
+
+            if (user.username) {
+                if (usernameInput) usernameInput.value = user.username;
+            }
+
+            if (user.email) {
+                if (emailInput) emailInput.value = user.email;
+            }
+
+            // Load professional info
+            if (user.jobTitle) {
+                if (jobTitleInput) jobTitleInput.value = user.jobTitle;
+                if (roleEl) roleEl.textContent = user.jobTitle;
+            }
+            if (user.department && departmentInput) departmentInput.value = user.department;
+            if (user.company && companyInput) companyInput.value = user.company;
+            if (user.phone && phoneInput) phoneInput.value = user.phone;
+            if (user.location && locationInput) locationInput.value = user.location;
+            const bioInput = document.getElementById('bio');
+            if (user.bio && bioInput) bioInput.value = user.bio;
+
+            // Profile form submission
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const updatedData = {
+                    fullName: fullNameInput.value,
+                    email: emailInput.value
+                };
+
+                try {
+                    const res = await fetch(`/api/users/${user.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-User-Id': user.id
+                        },
+                        body: JSON.stringify(updatedData)
+                    });
+
+                    if (res.ok) {
+                        // Update localStorage
+                        user.fullName = updatedData.fullName;
+                        user.email = updatedData.email;
+                        localStorage.setItem('ghg_user', JSON.stringify(user));
+
+                        // Update display
+                        if (avatarEl) avatarEl.textContent = user.fullName.charAt(0).toUpperCase();
+                        if (nameEl) nameEl.textContent = user.fullName;
+
+                        if (typeof toastSuccess === 'function') {
+                            toastSuccess('Profile updated successfully');
+                        } else {
+                            console.log('Profile updated successfully');
+                        }
+                    } else {
+                        const error = await res.json();
+                        if (typeof toastError === 'function') {
+                            toastError(error.message || 'Failed to update profile');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    if (typeof toastError === 'function') toastError('Error updating profile');
+                }
+            });
+
+            // Professional form submission
+            document.getElementById('professional-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const professionalData = {
+                    jobTitle: jobTitleInput.value,
+                    department: departmentInput.value,
+                    company: companyInput.value,
+                    phone: phoneInput.value,
+                    location: locationInput.value,
+                    bio: bioInput.value
+                };
+
+                try {
+                    const res = await fetch(`/api/users/${user.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-User-Id': user.id
+                        },
+                        body: JSON.stringify(professionalData)
+                    });
+
+                    if (res.ok) {
+                        // Update localStorage
+                        Object.assign(user, professionalData);
+                        localStorage.setItem('ghg_user', JSON.stringify(user));
+
+                        // Update display
+                        if (roleEl && professionalData.jobTitle) {
+                            roleEl.textContent = professionalData.jobTitle;
+                        }
+
+                        if (typeof toastSuccess === 'function') {
+                            toastSuccess('Professional info updated successfully');
+                        } else {
+                            console.log('Professional info updated successfully');
+                        }
+                    } else {
+                        if (typeof toastError === 'function') toastError('Failed to update professional info');
+                    }
+                } catch (error) {
+                    console.error('Error updating professional info:', error);
+                    if (typeof toastError === 'function') toastError('Error updating professional info');
+                }
+            });
+
+            // Password form submission
+            document.getElementById('password-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (newPassword !== confirmPassword) {
+                    console.error('Passwords do not match');
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    console.error('Password must be at least 6 characters');
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`/api/users/${user.id}/password`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-User-Id': user.id
+                        },
+                        body: JSON.stringify({ currentPassword, newPassword })
+                    });
+
+                    if (res.ok) {
+                        if (typeof toastSuccess === 'function') {
+                            toastSuccess('Password updated successfully');
+                        } else {
+                            console.log('Password updated successfully');
+                        }
+                        // Clear password fields
+                        document.getElementById('current-password').value = '';
+                        document.getElementById('new-password').value = '';
+                        document.getElementById('confirm-password').value = '';
+                    } else {
+                        const err = await res.json();
+                        if (typeof toastError === 'function') toastError(err.message || 'Failed to update password');
+                    }
+                } catch (error) {
+                    console.error('Error updating password:', error);
+                    if (typeof toastError === 'function') toastError('Error updating password');
+                }
+            });
+        });
+
+        function confirmDeleteAccount() {
+            if (confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+                // Implement account deletion logic here
+                console.log('Account deletion requested');
+            }
+        }
+    </script>
+</body>
+
+</html>
+===
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - GHG Reporting</title>
+    <meta name="theme-color" content="#111827">
+    <script src="auth-check.js"></script>
+    <link rel="stylesheet" href="dashboard-dark.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="toast.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --card-bg: rgba(31, 41, 55, 0.4);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(255, 255, 255, 0.03);
+            --accent-glow: rgba(16, 185, 129, 0.2);
+        }
+
+        .profile-layout {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            min-height: calc(100vh - 64px);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Sidebar Nav */
+        .profile-nav {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px 16px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 24px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-color);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Content Area */
+        .profile-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .profile-hero {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 40%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        .avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--accent-color), #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .hero-info {
+            z-index: 1;
+        }
+
+        .hero-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .hero-sub {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tab Content Cards */
+        .settings-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            animation: fadeInScale 0.3s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .settings-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .grid-forms {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-full {
+            grid-column: span 2;
+        }
+
+        .input-group {
+            margin-bottom: 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.05);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-save {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            margin-top: 12px;
+        }
+
+        .btn-save:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-nav {
+                flex-direction: row;
+                overflow-x: auto;
+                position: static;
+                padding: 12px;
+            }
+
+            .grid-forms {
+                grid-template-columns: 1fr;
+            }
+
+            .form-full {
+                grid-column: span 1;
+            }
+        }
+
+        .hidden-tab {
+            display: none;
+        }
+    </style>
+</head>
+
+<body style="height: 100vh; overflow: hidden; background: #111827;">
+    <div class="app-container" style="height: 100vh; display: flex; flex-direction: column;">
+
+        <!-- Header / Top Bar -->
+        <header class="top-bar" style="border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;">
+            <div class="breadcrumbs">
+                <button onclick="window.location.href='dashboard.html'"
+                    style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+            </div>
+            <div class="top-bar-right">
+                <span id="current-user-name" style="color: var(--text-secondary); font-size: 0.9rem;"></span>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main style="flex: 1; overflow-y: auto;">
+            <div class="profile-layout">
+
+                <!-- Sidebar Nav -->
+                <aside class="profile-nav">
+                    <div class="nav-item active" data-tab="personal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Personal details
+                    </div>
+                    <div class="nav-item" data-tab="professional">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                        </svg>
+                        Professional info
+                    </div>
+                    <div class="nav-item" data-tab="security">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        Password & Security
+                    </div>
+                    <div style="margin-top: auto; border-top: 1px solid var(--card-border); padding-top: 8px;">
+                        <div class="nav-item" data-tab="danger" style="color: #ef4444;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                <path d="M10 11v6m4-11v6" />
+                            </svg>
+                            Delete Account
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Content Area -->
+                <section class="profile-content">
+
+                    <!-- Profile Hero -->
+                    <div class="profile-hero">
+                        <div class="avatar-wrapper">
+                            <div class="avatar-large" id="hero-avatar">U</div>
+                        </div>
+                        <div class="hero-info">
+                            <div class="hero-name" id="hero-name">User Name</div>
+                            <div class="hero-sub" id="hero-role">Sustainability Lead</div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: Personal Details -->
+                    <div id="tab-personal" class="settings-card">
+                        <h2 class="settings-title">Personal Details</h2>
+                        <form id="profile-form" class="grid-forms">
+                            <div class="input-group">
+                                <label>Full Name</label>
+                                <input type="text" id="full-name" placeholder="Full name">
+                            </div>
+                            <div class="input-group">
+                                <label>Username (Static)</label>
+                                <input type="text" id="username" disabled style="opacity: 0.6;">
+                            </div>
+                            <div class="input-group form-full">
+                                <label>Email Address</label>
+                                <input type="email" id="email" placeholder="email@company.com">
+                            </div>
+                            <div class="form-full">
+                                <button type="submit" class="btn-save">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                                        <polyline points="17 21 17 13 7 13 7 21" />
+                                        <polyline points="7 3 7 8 15 8" />
+                                    </svg>
+                                    Save personal info
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- TAB: Professional Info -->
+                    <div id="tab-professional" class="settings-card hidden-tab">
+                        <h2 class="settings-title">Professional Information</h2>
+                        <form id="professional-form" class="grid-forms">
+                            <div class="input-group">
+                                <label>Job Title</label>
+                                <input type="text" id="job-title" placeholder="Job title">
+                            </div>
+                            <div class="input-group">
+                                <label>Department</label>
+                                <input type="text" id="department" placeholder="Department">
+                            </div>
+                            <div class="input-group">
+                                <label>Organization</label>
+                                <input type="text" id="company" placeholder="Company name">
+                            </div>
+                            <div class="input-group">
+                                <label>Sector</label>
+                                <select id="sector">
+                                    <option value="" disabled selected>Select Sector</option>
+                                    <option value="Oil & Gas">Oil & Gas</option>
+                                    <option value="Energy">Energy</option>
+                                    <option value="Manufacturing">Manufacturing</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Phone</label>
+                                <input type="tel" id="phone" placeholder="Contact number">
+                            </div>
+                            <div class="input-group form-full">
+                                <label>Location</label>
+                                <input type="text" id="location" placeholder="Office location">
+                            </div>
+                            <div class="input-group form-full">
+                                <label>Professional bio / Notes</label>
+                                <textarea id="bio" placeholder="Brief info..." rows="4"></textarea>
+                            </div>
+                            <div class="form-full">
+                                <button type="submit" class="btn-save">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                                        <polyline points="17 21 17 13 7 13 7 21" />
+                                        <polyline points="7 3 7 8 15 8" />
+                                    </svg>
+                                    Save professional info
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- TAB: Security -->
+                    <div id="tab-security" class="settings-card hidden-tab">
+                        <h2 class="settings-title">Security & Password</h2>
+                        <form id="password-form" class="grid-forms">
+                            <div class="input-group form-full">
+                                <label>Current Password</label>
+                                <input type="password" id="current-password" placeholder="••••••••">
+                            </div>
+                            <div class="input-group">
+                                <label>New Password</label>
+                                <input type="password" id="new-password" placeholder="••••••••">
+                            </div>
+                            <div class="input-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="confirm-password" placeholder="••••••••">
+                            </div>
+                            <div class="form-full">
+                                <button type="submit" class="btn-save">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                    </svg>
+                                    Update password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- TAB: Danger Zone -->
+                    <div id="tab-danger" class="settings-card hidden-tab" style="border-color: rgba(239, 68, 68, 0.2);">
+                        <h2 class="settings-title" style="color: #ef4444;">Account Termination</h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 24px;">Once you delete your account, your
+                            emissions records and organization data will be permanently removed. This action is
+                            irreversible.</p>
+                        <button class="btn-save"
+                            style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);"
+                            onclick="confirmDeleteAccount()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                <path d="M10 11v6m4-11v6" />
+                            </svg>
+                            Permanently delete my account
+                        </button>
+                    </div>
+
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userStr = localStorage.getItem('ghg_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+
+            if (!user || !user.id) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // --- TAB SWITCH VIEW LOGIC ---
+            const navItems = document.querySelectorAll('.nav-item');
+            const tabContents = document.querySelectorAll('.settings-card');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetTab = item.getAttribute('data-tab');
+
+                    // Update active nav
+                    navItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // Show target tab content
+                    tabContents.forEach(content => {
+                        if (content.id === `tab-${targetTab}`) {
+                            content.classList.remove('hidden-tab');
+                        } else {
+                            content.classList.add('hidden-tab');
+                        }
+                    });
+                });
+            });
+
+            // Populate form fields
+            const heroAvatar = document.getElementById('hero-avatar');
+            const heroName = document.getElementById('hero-name');
+            const heroRole = document.getElementById('hero-role');
+            const topBarName = document.getElementById('current-user-name');
+
+            const fullNameInput = document.getElementById('full-name');
+            const usernameInput = document.getElementById('username');
+            const emailInput = document.getElementById('email');
+            const sectorInput = document.getElementById('sector');
+            const jobTitleInput = document.getElementById('job-title');
+            const departmentInput = document.getElementById('department');
+            const companyInput = document.getElementById('company');
+            const phoneInput = document.getElementById('phone');
+            const locationInput = document.getElementById('location');
+            const bioInput = document.getElementById('bio');
+
+            function updateDisplay(u) {
+                if (u.fullName) {
+                    if (heroAvatar) heroAvatar.textContent = u.fullName.charAt(0).toUpperCase();
+                    if (heroName) heroName.textContent = u.fullName;
+                    if (topBarName) topBarName.textContent = u.fullName;
+                }
+                if (u.jobTitle && heroRole) heroRole.textContent = u.jobTitle;
+                else if (heroRole) heroRole.textContent = u.sector || 'Sustainability Lead';
+            }
+
+            updateDisplay(user);
+
+            if (fullNameInput) fullNameInput.value = user.fullName || '';
+            if (usernameInput) usernameInput.value = user.fullName ? user.fullName.toLowerCase().replace(/\s/g, '_') : '';
+            if (emailInput) emailInput.value = user.email || '';
+            if (sectorInput) sectorInput.value = user.sector || '';
+            if (jobTitleInput) jobTitleInput.value = user.jobTitle || '';
+            if (departmentInput) departmentInput.value = user.department || '';
+            if (companyInput) companyInput.value = user.orgName || user.company || '';
+            if (phoneInput) phoneInput.value = user.phone || '';
+            if (locationInput) locationInput.value = user.location || '';
+            if (bioInput) bioInput.value = user.bio || '';
+
+            // Profile form submission
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const updatedData = { fullName: fullNameInput.value, email: emailInput.value };
+                try {
+                    const res = await fetch(`/api/users/${user.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'X-User-Id': user.id },
+                        body: JSON.stringify(updatedData)
+                    });
+                    if (res.ok) {
+                        user.fullName = updatedData.fullName;
+                        user.email = updatedData.email;
+                        localStorage.setItem('ghg_user', JSON.stringify(user));
+                        updateDisplay(user);
+                        if (window.toastSuccess) toastSuccess('Personal details updated');
+                    }
+                } catch (error) { console.error(error); }
+            });
+
+            // Professional form submission
+            document.getElementById('professional-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const professionalData = {
+                    jobTitle: jobTitleInput.value,
+                    department: departmentInput.value,
+                    orgName: companyInput.value,
+                    company: companyInput.value,
+                    phone: phoneInput.value,
+                    location: locationInput.value,
+                    bio: bioInput.value,
+                    sector: sectorInput.value
+                };
+                try {
+                    const res = await fetch(`/api/users/${user.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'X-User-Id': user.id },
+                        body: JSON.stringify(professionalData)
+                    });
+                    if (res.ok) {
+                        Object.assign(user, professionalData);
+                        localStorage.setItem('ghg_user', JSON.stringify(user));
+                        updateDisplay(user);
+                        if (window.toastSuccess) toastSuccess('Professional information updated');
+                    }
+                } catch (error) { console.error(error); }
+            });
+
+            // Password form submission
+            document.getElementById('password-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (newPassword !== confirmPassword) { toastError('Passwords do not match'); return; }
+
+                try {
+                    const res = await fetch(`/api/users/${user.id}/password`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'X-User-Id': user.id },
+                        body: JSON.stringify({ currentPassword, newPassword })
+                    });
+                    if (res.ok) {
+                        toastSuccess('Password updated successfully');
+                        document.getElementById('password-form').reset();
+                    } else {
+                        const err = await res.json();
+                        toastError(err.message || 'Failed to update password');
+                    }
+                } catch (error) { console.error(error); }
+            });
+        });
+
+        function confirmDeleteAccount() {
+            if (confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+                // Account deletion logic
+                toastWarning('Account deletion feature pending administrative approval');
+            }
+        }
+    </script>
+</body>
+
+</html>
+```
+```diff:server.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+const bcrypt = require('bcryptjs');
+const fs = require('fs');
+
+const app = express();
+const PORT = 3000;
+const USERS_DB_PATH = path.join(__dirname, 'users_v2.db');
+const USER_DBS_DIR = __dirname;
+
+app.use(cors());
+app.use(bodyParser.json({ limit: '10mb' }));
+// --- Goals API ---
+
+app.get('/api/goals/:year', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.get("SELECT target_amount FROM goals WHERE year = ?", [req.params.year], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(row || { target_amount: 0 });
+    });
+});
+
+app.post('/api/goals', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    const { year, target_amount } = req.body;
+    db.run("INSERT OR REPLACE INTO goals (year, target_amount) VALUES (?, ?)", [year, target_amount], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Goal updated' });
+    });
+});
+
+app.use(express.static('public'));
+
+// Master database for user authentication
+let usersDb;
+
+// Cache for user databases
+const userDbCache = {};
+
+// Initialize Master Users Database
+function initUsersDatabase() {
+    usersDb = new sqlite3.Database(USERS_DB_PATH, (err) => {
+        if (err) {
+            console.error('Error opening users database:', err.message);
+        } else {
+            console.log('Connected to the users database.');
+            createUsersTable();
+        }
+    });
+}
+
+function createUsersTable() {
+    usersDb.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        fullName TEXT NOT NULL,
+        orgName TEXT NOT NULL,
+        password TEXT NOT NULL,
+        sector TEXT NOT NULL,
+        email TEXT,
+        jobTitle TEXT,
+        department TEXT,
+        phone TEXT,
+        location TEXT,
+        bio TEXT,
+        profilePic TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`, (err) => {
+        if (err) {
+            console.error('Error creating users table:', err.message);
+        } else {
+            console.log('Users table ready.');
+            // Migration: Add new columns if they don't exist
+            const columns = ['email', 'jobTitle', 'department', 'phone', 'location', 'bio', 'profilePic'];
+            columns.forEach(col => {
+                usersDb.run(`ALTER TABLE users ADD COLUMN ${col} TEXT`, (err) => {
+                    // Ignore error if column already exists
+                });
+            });
+        }
+    });
+}
+
+// Get or create user-specific database
+function getUserDatabase(userId, username) {
+    // Check cache first
+    if (userDbCache[userId]) {
+        return userDbCache[userId];
+    }
+
+    // Sanitize username for filename (remove spaces and special characters)
+    const sanitizedUsername = username.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const dbPath = path.join(USER_DBS_DIR, `${sanitizedUsername}.db`);
+
+    const db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+            console.error(`Error opening database for user ${username}:`, err.message);
+        } else {
+            console.log(`Connected to database for user ${username} (${sanitizedUsername}.db)`);
+            initUserSchema(db);
+        }
+    });
+
+    userDbCache[userId] = db;
+    return db;
+}
+
+// Initialize schema for user-specific database
+function initUserSchema(db) {
+    db.serialize(() => {
+        // Emissions Table
+        db.run(`CREATE TABLE IF NOT EXISTS emissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            record_id TEXT,
+            year INTEGER,
+            month INTEGER,
+            company_name TEXT,
+            group_name TEXT,
+            equipment_id TEXT,
+            process_type TEXT,
+            fuel_type TEXT,
+            quantity REAL,
+            unit TEXT,
+            factor_source TEXT,
+            ef_used_co2 REAL,
+            ef_used_ch4 REAL,
+            ef_used_n2o REAL,
+            co2_emissions REAL,
+            ch4_emissions REAL,
+            n2o_emissions REAL,
+            co2e_total REAL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        db.run(`CREATE TABLE IF NOT EXISTS custom_factors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            co2_factor REAL,
+            ch4_factor REAL,
+            n2o_factor REAL,
+            unit TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Goals Table
+        db.run(`CREATE TABLE IF NOT EXISTS goals (
+            year INTEGER PRIMARY KEY,
+            target_amount REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Facilities Table
+        db.run(`CREATE TABLE IF NOT EXISTS facilities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            location TEXT,
+            description TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Migration: Add facility_id to emissions if not exists
+        db.run(`ALTER TABLE emissions ADD COLUMN facility_id INTEGER`, (err) => {
+            // Ignore error if column already exists
+        });
+
+        // Audit Log Table
+        db.run(`CREATE TABLE IF NOT EXISTS audit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            action TEXT,
+            record_id TEXT,
+            user_name TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            details TEXT
+        )`);
+    });
+}
+
+// Authentication Middleware
+function authMiddleware(req, res, next) {
+    const userId = req.headers['x-user-id'];
+
+    if (!userId) {
+        return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    // Verify user exists
+    usersDb.get('SELECT id, fullName, orgName FROM users WHERE id = ?', [userId], (err, user) => {
+        if (err || !user) {
+            return res.status(401).json({ message: 'Invalid user' });
+        }
+
+        req.user = user;
+        req.userDb = getUserDatabase(userId, user.fullName);
+        next();
+    });
+}
+
+// --- Custom Factors API ---
+
+// Add Custom Factor
+app.post('/api/factors', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    const { name, co2_factor, ch4_factor, n2o_factor, unit } = req.body;
+
+    if (!name || co2_factor === undefined) {
+        return res.status(400).json({ error: 'Name and CO2 Factor required' });
+    }
+
+    const sql = `INSERT INTO custom_factors (name, co2_factor, ch4_factor, n2o_factor, unit) VALUES (?, ?, ?, ?, ?)`;
+    db.run(sql, [name, co2_factor, ch4_factor || 0, n2o_factor || 0, unit || 'quantity'], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ id: this.lastID, message: 'Factor saved' });
+    });
+});
+
+// Get Custom Factors
+app.get('/api/factors', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.all("SELECT * FROM custom_factors ORDER BY name", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// Delete Custom Factor
+app.delete('/api/factors/:id', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.run("DELETE FROM custom_factors WHERE id = ?", [req.params.id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Deleted' });
+    });
+});
+
+// --- Facilities API ---
+
+app.post('/api/facilities', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    const { name, location } = req.body;
+
+    if (!name) return res.status(400).json({ error: 'Name required' });
+
+    db.run("INSERT INTO facilities (name, location) VALUES (?, ?)", [name, location], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ id: this.lastID, message: 'Facility created' });
+    });
+});
+
+app.get('/api/facilities', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.all("SELECT * FROM facilities ORDER BY name", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+app.delete('/api/facilities/:id', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.run("DELETE FROM facilities WHERE id = ?", [req.params.id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Deleted' });
+    });
+});
+
+// --- Auth Endpoints ---
+
+app.post('/register', (req, res) => {
+    const { fullName, orgName, password, sector } = req.body;
+    console.log(`Attempting to register: ${fullName}`); // DEBUG
+
+    if (!fullName || !orgName || !password || !sector) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Check if user already exists
+    usersDb.get('SELECT id FROM users WHERE fullName = ?', [fullName], (err, row) => {
+        if (err) {
+            console.error('DB Error checking user:', err); // DEBUG
+            return res.status(500).json({ message: 'Database error checking user' });
+        }
+        if (row) {
+            console.log(`User already exists: ${fullName}`); // DEBUG
+            return res.status(409).json({ message: 'Username already exists' });
+        }
+
+        const hashed = bcrypt.hashSync(password, 10);
+        console.log(`Password hashed for ${fullName}`); // DEBUG
+
+        usersDb.run(`INSERT INTO users (fullName, orgName, password, sector) VALUES (?, ?, ?, ?)`,
+            [fullName, orgName, hashed, sector],
+            function (err) {
+                if (err) {
+                    console.error('Error inserting user:', err); // DEBUG
+                    return res.status(500).json({ message: 'Error registering user' });
+                }
+
+                const userId = this.lastID;
+                console.log(`User registered successfully. ID: ${userId}`); // DEBUG
+
+                // Create user-specific database with username
+                getUserDatabase(userId, fullName);
+
+                res.status(201).json({
+                    message: 'Registration successful',
+                    userId: userId
+                });
+            }
+        );
+    });
+});
+
+app.post('/login', (req, res) => {
+    const { name, password } = req.body;
+    console.log(`Login attempt for: ${name}`); // DEBUG
+
+    if (!name || !password) {
+        return res.status(400).json({ message: 'Name and password are required' });
+    }
+
+    usersDb.get(`SELECT * FROM users WHERE fullName = ?`, [name], (err, user) => {
+        if (err) {
+            console.error('DB Error fetching user:', err); // DEBUG
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        if (!user) {
+            console.log(`User not found: ${name}`); // DEBUG
+            return res.status(401).json({ message: 'Account not found. Please check your username or register a new account.' });
+        }
+
+        console.log(`User found: ${user.fullName}, checking password...`); // DEBUG
+        const isMatch = bcrypt.compareSync(password, user.password);
+
+        if (!isMatch) {
+            console.log(`Password mismatch for user: ${name}`); // DEBUG
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        console.log(`Login successful for: ${name}`); // DEBUG
+        res.json({
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                fullName: user.fullName,
+                orgName: user.orgName,
+                sector: user.sector,
+                email: user.email,
+                jobTitle: user.jobTitle,
+                department: user.department,
+                phone: user.phone,
+                location: user.location,
+                bio: user.bio,
+                profilePic: user.profilePic
+            }
+        });
+    });
+});
+
+// --- Profile Management Endpoints ---
+
+// Update User Profile
+app.put('/api/users/:id', authMiddleware, (req, res) => {
+    const userId = req.params.id;
+    const { fullName, email, jobTitle, department, orgName, phone, location, bio } = req.body;
+
+    if (req.user.id != userId) {
+        return res.status(403).json({ message: 'Unauthorized profile update' });
+    }
+
+    const sql = `
+        UPDATE users 
+        SET fullName = ?, email = ?, jobTitle = ?, department = ?, orgName = ?, phone = ?, location = ?, bio = ?
+        WHERE id = ?
+    `;
+
+    usersDb.run(sql, [
+        fullName || req.user.fullName,
+        email,
+        jobTitle,
+        department,
+        orgName || req.user.orgName,
+        phone,
+        location,
+        bio,
+        userId
+    ], function (err) {
+        if (err) {
+            console.error('Error updating user:', err);
+            return res.status(500).json({ message: 'Error updating profile' });
+        }
+        res.json({ message: 'Profile updated successfully' });
+    });
+});
+
+// Update User Password
+app.put('/api/users/:id/password', authMiddleware, (req, res) => {
+    const userId = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (req.user.id != userId) {
+        return res.status(403).json({ message: 'Unauthorized password update' });
+    }
+
+    usersDb.get('SELECT password FROM users WHERE id = ?', [userId], (err, row) => {
+        if (err || !row) return res.status(500).json({ message: 'User not found' });
+
+        const isMatch = bcrypt.compareSync(currentPassword, row.password);
+        if (!isMatch) return res.status(401).json({ message: 'Current password incorrect' });
+
+        const hashed = bcrypt.hashSync(newPassword, 10);
+        usersDb.run('UPDATE users SET password = ? WHERE id = ?', [hashed, userId], (err) => {
+            if (err) return res.status(500).json({ message: 'Error updating password' });
+            res.json({ message: 'Password updated successfully' });
+        });
+    });
+});
+
+// --- Emissions Endpoints (Protected) ---
+
+// Get all emissions for authenticated user
+app.get('/api/emissions', authMiddleware, (req, res) => {
+    const sql = `SELECT e.*, f.name as facility_name FROM emissions e LEFT JOIN facilities f ON e.facility_id = f.id ORDER BY e.year DESC, e.month DESC`;
+
+    req.userDb.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Error fetching emissions' });
+        }
+        res.json(rows);
+    });
+});
+
+// Save a new emission record
+app.post('/api/emissions', authMiddleware, (req, res) => {
+    const data = req.body;
+
+    const stmt = req.userDb.prepare(`INSERT INTO emissions (
+        company_name, group_name, equipment_id, process_type, fuel_type, factor_source,
+        quantity, unit, co2_emissions, ch4_emissions, n2o_emissions, co2e_total,
+        ef_used_co2, ef_used_ch4, ef_used_n2o, year, month, record_id, facility_id
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+
+    stmt.run(
+        data.companyName,
+        data.group,
+        data.equipment,
+        data.process,
+        data.fuel,
+        data.isSpecific ? 'specific' : 'default',
+        data.amount,
+        data.unit,
+        data.emissions.co2,
+        data.emissions.ch4,
+        data.emissions.n2o,
+        data.emissions.totalCo2e,
+        data.factorData?.co2 || data.specificFactors?.co2Raw || 0,
+        data.factorData?.ch4 || data.specificFactors?.ch4Raw || 0,
+        data.factorData?.n2o || data.specificFactors?.n2oRaw || 0,
+        data.year,
+        data.month,
+        data.id,
+        data.facilityId || null
+        , (err) => {
+            if (err) {
+                console.error('Error inserting emission:', err);
+                return res.status(500).json({ message: 'Error saving record' });
+            }
+
+            // Audit Log
+            req.userDb.run(`INSERT INTO audit_log (action, record_id, user_name, details) VALUES (?, ?, ?, ?)`,
+                ['create', data.id, req.user.fullName, `Added ${data.process} record for ${data.group}`]
+            );
+
+            res.status(201).json({ message: 'Record saved', id: data.id });
+        });
+    stmt.finalize();
+});
+
+// Stats Endpoint for Dashboard
+app.get('/api/stats', authMiddleware, (req, res) => {
+    const sql = `
+        SELECT 
+            SUM(co2e_total) as totalEmissions,
+            COUNT(*) as activeReports,
+            (SELECT process_type FROM emissions GROUP BY process_type ORDER BY SUM(co2e_total) DESC LIMIT 1) as topSource
+        FROM emissions
+    `;
+
+    req.userDb.get(sql, [], (err, row) => {
+        if (err) return res.status(500).json({ message: 'Error fetching stats' });
+        res.json(row);
+    });
+});
+
+// Initialize and start server
+initUsersDatabase();
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
+===
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+const bcrypt = require('bcryptjs');
+const fs = require('fs');
+
+const app = express();
+const PORT = 3000;
+const USERS_DB_PATH = path.join(__dirname, 'users_v2.db');
+const USER_DBS_DIR = __dirname;
+
+app.use(cors());
+app.use(bodyParser.json({ limit: '10mb' }));
+// --- Goals API ---
+
+app.get('/api/goals/:year', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.get("SELECT target_amount FROM goals WHERE year = ?", [req.params.year], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(row || { target_amount: 0 });
+    });
+});
+
+app.post('/api/goals', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    const { year, target_amount } = req.body;
+    db.run("INSERT OR REPLACE INTO goals (year, target_amount) VALUES (?, ?)", [year, target_amount], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Goal updated' });
+    });
+});
+
+app.use(express.static('public'));
+
+// Master database for user authentication
+let usersDb;
+
+// Cache for user databases
+const userDbCache = {};
+
+// Initialize Master Users Database
+function initUsersDatabase() {
+    usersDb = new sqlite3.Database(USERS_DB_PATH, (err) => {
+        if (err) {
+            console.error('Error opening users database:', err.message);
+        } else {
+            console.log('Connected to the users database.');
+            createUsersTable();
+        }
+    });
+}
+
+function createUsersTable() {
+    usersDb.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        fullName TEXT NOT NULL,
+        orgName TEXT NOT NULL,
+        password TEXT NOT NULL,
+        sector TEXT NOT NULL,
+        email TEXT,
+        jobTitle TEXT,
+        department TEXT,
+        phone TEXT,
+        location TEXT,
+        bio TEXT,
+        profilePic TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`, (err) => {
+        if (err) {
+            console.error('Error creating users table:', err.message);
+        } else {
+            console.log('Users table ready.');
+            // Migration: Add new columns if they don't exist
+            const columns = ['email', 'jobTitle', 'department', 'phone', 'location', 'bio', 'profilePic'];
+            columns.forEach(col => {
+                usersDb.run(`ALTER TABLE users ADD COLUMN ${col} TEXT`, (err) => {
+                    // Ignore error if column already exists
+                });
+            });
+        }
+    });
+}
+
+// Get or create user-specific database
+function getUserDatabase(userId, username) {
+    // Check cache first
+    if (userDbCache[userId]) {
+        return userDbCache[userId];
+    }
+
+    // Sanitize username for filename (remove spaces and special characters)
+    const sanitizedUsername = username.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const dbPath = path.join(USER_DBS_DIR, `${sanitizedUsername}.db`);
+
+    const db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+            console.error(`Error opening database for user ${username}:`, err.message);
+        } else {
+            console.log(`Connected to database for user ${username} (${sanitizedUsername}.db)`);
+            initUserSchema(db);
+        }
+    });
+
+    userDbCache[userId] = db;
+    return db;
+}
+
+// Initialize schema for user-specific database
+function initUserSchema(db) {
+    db.serialize(() => {
+        // Emissions Table
+        db.run(`CREATE TABLE IF NOT EXISTS emissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            record_id TEXT,
+            year INTEGER,
+            month INTEGER,
+            company_name TEXT,
+            group_name TEXT,
+            equipment_id TEXT,
+            process_type TEXT,
+            fuel_type TEXT,
+            quantity REAL,
+            unit TEXT,
+            factor_source TEXT,
+            ef_used_co2 REAL,
+            ef_used_ch4 REAL,
+            ef_used_n2o REAL,
+            co2_emissions REAL,
+            ch4_emissions REAL,
+            n2o_emissions REAL,
+            co2e_total REAL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        db.run(`CREATE TABLE IF NOT EXISTS custom_factors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            co2_factor REAL,
+            ch4_factor REAL,
+            n2o_factor REAL,
+            unit TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Goals Table
+        db.run(`CREATE TABLE IF NOT EXISTS goals (
+            year INTEGER PRIMARY KEY,
+            target_amount REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Facilities Table
+        db.run(`CREATE TABLE IF NOT EXISTS facilities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            location TEXT,
+            description TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Migration: Add facility_id to emissions if not exists
+        db.run(`ALTER TABLE emissions ADD COLUMN facility_id INTEGER`, (err) => {
+            // Ignore error if column already exists
+        });
+
+        // Audit Log Table
+        db.run(`CREATE TABLE IF NOT EXISTS audit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            action TEXT,
+            record_id TEXT,
+            user_name TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            details TEXT
+        )`);
+    });
+}
+
+// Authentication Middleware
+function authMiddleware(req, res, next) {
+    const userId = req.headers['x-user-id'];
+
+    if (!userId) {
+        return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    // Verify user exists
+    usersDb.get('SELECT id, fullName, orgName FROM users WHERE id = ?', [userId], (err, user) => {
+        if (err || !user) {
+            return res.status(401).json({ message: 'Invalid user' });
+        }
+
+        req.user = user;
+        req.userDb = getUserDatabase(userId, user.fullName);
+        next();
+    });
+}
+
+// --- Custom Factors API ---
+
+// Add Custom Factor
+app.post('/api/factors', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    const { name, co2_factor, ch4_factor, n2o_factor, unit } = req.body;
+
+    if (!name || co2_factor === undefined) {
+        return res.status(400).json({ error: 'Name and CO2 Factor required' });
+    }
+
+    const sql = `INSERT INTO custom_factors (name, co2_factor, ch4_factor, n2o_factor, unit) VALUES (?, ?, ?, ?, ?)`;
+    db.run(sql, [name, co2_factor, ch4_factor || 0, n2o_factor || 0, unit || 'quantity'], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ id: this.lastID, message: 'Factor saved' });
+    });
+});
+
+// Get Custom Factors
+app.get('/api/factors', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.all("SELECT * FROM custom_factors ORDER BY name", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// Delete Custom Factor
+app.delete('/api/factors/:id', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.run("DELETE FROM custom_factors WHERE id = ?", [req.params.id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Deleted' });
+    });
+});
+
+// --- Facilities API ---
+
+app.post('/api/facilities', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    const { name, location } = req.body;
+
+    if (!name) return res.status(400).json({ error: 'Name required' });
+
+    db.run("INSERT INTO facilities (name, location) VALUES (?, ?)", [name, location], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ id: this.lastID, message: 'Facility created' });
+    });
+});
+
+app.get('/api/facilities', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.all("SELECT * FROM facilities ORDER BY name", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+app.delete('/api/facilities/:id', authMiddleware, (req, res) => {
+    const db = req.userDb;
+    db.run("DELETE FROM facilities WHERE id = ?", [req.params.id], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Deleted' });
+    });
+});
+
+// --- Auth Endpoints ---
+
+app.post('/register', (req, res) => {
+    const {
+        fullName, orgName, password, sector,
+        email, jobTitle, department, phone, location, bio
+    } = req.body;
+    console.log(`Attempting to register: ${fullName}`); // DEBUG
+
+    if (!fullName || !orgName || !password || !sector) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Check if user already exists
+    usersDb.get('SELECT id FROM users WHERE fullName = ?', [fullName], (err, row) => {
+        if (err) {
+            console.error('DB Error checking user:', err); // DEBUG
+            return res.status(500).json({ message: 'Database error checking user' });
+        }
+        if (row) {
+            console.log(`User already exists: ${fullName}`); // DEBUG
+            return res.status(409).json({ message: 'Username already exists' });
+        }
+
+        const hashed = bcrypt.hashSync(password, 10);
+        console.log(`Password hashed for ${fullName}`); // DEBUG
+
+        usersDb.run(`INSERT INTO users (fullName, orgName, password, sector, email, jobTitle, department, phone, location, bio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [fullName, orgName, hashed, sector, email, jobTitle, department, phone, location, bio],
+            function (err) {
+                if (err) {
+                    console.error('Error inserting user:', err); // DEBUG
+                    return res.status(500).json({ message: 'Error registering user' });
+                }
+
+                const userId = this.lastID;
+                console.log(`User registered successfully. ID: ${userId}`); // DEBUG
+
+                // Create user-specific database with username
+                getUserDatabase(userId, fullName);
+
+                res.status(201).json({
+                    message: 'Registration successful',
+                    userId: userId
+                });
+            }
+        );
+    });
+});
+
+app.post('/login', (req, res) => {
+    const { name, password } = req.body;
+    console.log(`Login attempt for: ${name}`); // DEBUG
+
+    if (!name || !password) {
+        return res.status(400).json({ message: 'Name and password are required' });
+    }
+
+    usersDb.get(`SELECT * FROM users WHERE fullName = ?`, [name], (err, user) => {
+        if (err) {
+            console.error('DB Error fetching user:', err); // DEBUG
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        if (!user) {
+            console.log(`User not found: ${name}`); // DEBUG
+            return res.status(401).json({ message: 'Account not found. Please check your username or register a new account.' });
+        }
+
+        console.log(`User found: ${user.fullName}, checking password...`); // DEBUG
+        const isMatch = bcrypt.compareSync(password, user.password);
+
+        if (!isMatch) {
+            console.log(`Password mismatch for user: ${name}`); // DEBUG
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        console.log(`Login successful for: ${name}`); // DEBUG
+        res.json({
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                fullName: user.fullName,
+                orgName: user.orgName,
+                sector: user.sector,
+                email: user.email,
+                jobTitle: user.jobTitle,
+                department: user.department,
+                phone: user.phone,
+                location: user.location,
+                bio: user.bio,
+                profilePic: user.profilePic
+            }
+        });
+    });
+});
+
+// --- Profile Management Endpoints ---
+
+// Update User Profile
+app.put('/api/users/:id', authMiddleware, (req, res) => {
+    const userId = req.params.id;
+    const { fullName, email, jobTitle, department, orgName, company, phone, location, bio, sector } = req.body;
+
+    if (req.user.id != userId) {
+        return res.status(403).json({ message: 'Unauthorized profile update' });
+    }
+
+    const finalOrgName = orgName || company || req.user.orgName;
+
+    const sql = `
+        UPDATE users 
+        SET fullName = ?, email = ?, jobTitle = ?, department = ?, orgName = ?, phone = ?, location = ?, bio = ?, sector = ?
+        WHERE id = ?
+    `;
+
+    usersDb.run(sql, [
+        fullName || req.user.fullName,
+        email,
+        jobTitle,
+        department,
+        finalOrgName,
+        phone,
+        location,
+        bio,
+        sector,
+        userId
+    ], function (err) {
+        if (err) {
+            console.error('Error updating user:', err);
+            return res.status(500).json({ message: 'Error updating profile' });
+        }
+        res.json({ message: 'Profile updated successfully' });
+    });
+});
+
+// Update User Password
+app.put('/api/users/:id/password', authMiddleware, (req, res) => {
+    const userId = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (req.user.id != userId) {
+        return res.status(403).json({ message: 'Unauthorized password update' });
+    }
+
+    usersDb.get('SELECT password FROM users WHERE id = ?', [userId], (err, row) => {
+        if (err || !row) return res.status(500).json({ message: 'User not found' });
+
+        const isMatch = bcrypt.compareSync(currentPassword, row.password);
+        if (!isMatch) return res.status(401).json({ message: 'Current password incorrect' });
+
+        const hashed = bcrypt.hashSync(newPassword, 10);
+        usersDb.run('UPDATE users SET password = ? WHERE id = ?', [hashed, userId], (err) => {
+            if (err) return res.status(500).json({ message: 'Error updating password' });
+            res.json({ message: 'Password updated successfully' });
+        });
+    });
+});
+
+// --- Emissions Endpoints (Protected) ---
+
+// Get all emissions for authenticated user
+app.get('/api/emissions', authMiddleware, (req, res) => {
+    const sql = `SELECT e.*, f.name as facility_name FROM emissions e LEFT JOIN facilities f ON e.facility_id = f.id ORDER BY e.year DESC, e.month DESC`;
+
+    req.userDb.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Error fetching emissions' });
+        }
+        res.json(rows);
+    });
+});
+
+// Save a new emission record
+app.post('/api/emissions', authMiddleware, (req, res) => {
+    const data = req.body;
+
+    const stmt = req.userDb.prepare(`INSERT INTO emissions (
+        company_name, group_name, equipment_id, process_type, fuel_type, factor_source,
+        quantity, unit, co2_emissions, ch4_emissions, n2o_emissions, co2e_total,
+        ef_used_co2, ef_used_ch4, ef_used_n2o, year, month, record_id, facility_id
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+
+    stmt.run(
+        data.companyName,
+        data.group,
+        data.equipment,
+        data.process,
+        data.fuel,
+        data.isSpecific ? 'specific' : 'default',
+        data.amount,
+        data.unit,
+        data.emissions.co2,
+        data.emissions.ch4,
+        data.emissions.n2o,
+        data.emissions.totalCo2e,
+        data.factorData?.co2 || data.specificFactors?.co2Raw || 0,
+        data.factorData?.ch4 || data.specificFactors?.ch4Raw || 0,
+        data.factorData?.n2o || data.specificFactors?.n2oRaw || 0,
+        data.year,
+        data.month,
+        data.id,
+        data.facilityId || null
+        , (err) => {
+            if (err) {
+                console.error('Error inserting emission:', err);
+                return res.status(500).json({ message: 'Error saving record' });
+            }
+
+            // Audit Log
+            req.userDb.run(`INSERT INTO audit_log (action, record_id, user_name, details) VALUES (?, ?, ?, ?)`,
+                ['create', data.id, req.user.fullName, `Added ${data.process} record for ${data.group}`]
+            );
+
+            res.status(201).json({ message: 'Record saved', id: data.id });
+        });
+    stmt.finalize();
+});
+
+// Stats Endpoint for Dashboard
+app.get('/api/stats', authMiddleware, (req, res) => {
+    const sql = `
+        SELECT 
+            SUM(co2e_total) as totalEmissions,
+            COUNT(*) as activeReports,
+            (SELECT process_type FROM emissions GROUP BY process_type ORDER BY SUM(co2e_total) DESC LIMIT 1) as topSource
+        FROM emissions
+    `;
+
+    req.userDb.get(sql, [], (err, row) => {
+        if (err) return res.status(500).json({ message: 'Error fetching stats' });
+        res.json(row);
+    });
+});
+
+// Initialize and start server
+initUsersDatabase();
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
+```

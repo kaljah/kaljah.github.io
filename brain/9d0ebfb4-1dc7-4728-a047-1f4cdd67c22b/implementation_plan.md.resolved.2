@@ -1,0 +1,54 @@
+# Implementation Plan - Database Reset and Comprehensive Seeding
+
+## Goal Description
+Reset the database completely and seed it with a comprehensive dataset for "Ramzi Dalil". This includes creating a hierarchy of Activity -> Division -> Region based on Sonatrach's real-world structure, and generating 50,000 emission records across 10 years (2015-2024), along with base year data, goals, mitigation actions, and production data.
+
+## User Review Required
+> [!IMPORTANT]
+> This operation will **DELETE ALL EXISTING DATA** in the database. Ensure this is the intended action.
+
+## Proposed Changes
+
+### Database Seeding Script
+#### [NEW] [seed_sonatrach_full.js](file:///c:/Users/samsung/Desktop/h/seed_sonatrach_full.js)
+Create a new comprehensive seeding script that:
+1.  **Cleans Data**: Truncates all tables (`users`, `emissions`, `facilities`, etc.).
+2.  **Creates User**: Inserts user "Ramzi Dalil" with password "test" (bcrypt hashed).
+3.  **Establishes Hierarchy**:
+    *   **EP (Exploration & Production)**:
+        *   Divisions: 'Production', 'Association'.
+        *   Regions: Hassi Messaoud, Hassi R'Mel, In Amenas, etc.
+    *   **TRC (Transport)**:
+        *   Divisions: 'Make'.
+        *   Regions: RTO, RTE, RTC.
+    *   **LQS (Liquefaction)**:
+        *   Divisions: 'LSH'.
+        *   Regions: GL1Z, GL2Z, GL3Z, GL1K, GP1Z, GP2Z.
+    *   **RPC (Raffinage & Pétrochimie)**:
+        *   Divisions: 'Raffinage', 'Petrochimie'.
+        *   Regions: RA1Z, RA1K, RAF, CP1Z, CP1K.
+4.  **Generates Data (100k entries)**:
+    *   Timeframe: 2015-2024 (10 years).
+    *   Scopes: 
+        *   Scope 1: Combustion, Flaring, Venting, Fugitive.
+        *   **New Sources**: Pneumatic Devices, Storage Tanks, Dehydrators.
+    *   Scope 2: Electricity, Heat.
+    *   Scope 3: Use of Sold Products etc.
+    *   Calculated fields: `co2`, `ch4`, `n2o`, `co2e`, `combustion_efficiency`, `co_emissions`.
+5.  **Adds Supporting Data**:
+    *   **Base Year**: 2015 (Locked).
+    *   **Goals**: Reduction targets for 2015-2030.
+    *   **Mitigation Actions**: Sample CCUS and offset projects.
+    *   **Production Data**: Oil and Gas volumes for EP regions; Product volumes for others.
+    *   **Custom Factors**: Specific emission factors for different gas compositions.
+
+### Verification Plan
+1.  **Run the Script**: Execute `node seed_sonatrach_full.js`.
+2.  **Check Output**: Verify script completes with "Seeding Complete" and reports entry counts (approx 100k).
+3.  **Manual Verification**:
+    *   Start server (`node server.js`).
+    *   Login as `Ramzi Dalil` / `test`.
+    *   Check Dashboard for populated charts.
+    *   Check "Manage Data" for entries (should be ~100k).
+    *   Check "Facilities" (Regions) to see the Sonatrach hierarchy.
+    *   Check "Goals" and "Mitigation" sections.

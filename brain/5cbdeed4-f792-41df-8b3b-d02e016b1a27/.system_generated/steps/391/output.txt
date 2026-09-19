@@ -1,0 +1,2 @@
+Created file file:///C:/Users/samsung/.gemini/antigravity/brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md with requested content.
+If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.

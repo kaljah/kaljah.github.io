@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":218,"LineContent":"def get_intensity_trend():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":241,"LineContent":"    bulk = _query_intensity_trend_bulk("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1036,"LineContent":"# BULK INTENSITY TREND (replaces per-year N+1 loop in get_intensity_trend)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1042,"LineContent":"    key=make_cache_key(\"_query_intensity_trend_bulk\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1045,"LineContent":"def _query_intensity_trend_bulk("}

@@ -1,0 +1,236 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -468,4 +468,230 @@
+         assert saved.qa_flag is not None
+         assert len(saved.qa_flag) > 0
+         assert "5000000" in saved.qa_flag or "constant" in saved.qa_flag or "Z-score" in saved.qa_flag
++
++
++def test_fugitive_screening_count_and_fraction():
++    """Finding 1: Verify fugitive screening calculation handles component count and ch4_fraction."""
++    dispatcher = CalculationDispatcher()
++    payload = {
++        "process_type": "fugitive",
++        "fugitive_method": "screening",
++        "fugitive_ppm": 15000,  # >= 10000 -> multiplier 2.5
++        "amount": 20,           # 20 components
++        "hours": 1000,          # 1000 hours
++        "ch4_fraction": 0.8,    # 80% CH4
++    }
++    factor_data = {
++        "factor": 0.01,         # 0.01 kg CH4/hr/comp
++        "unit": "kg/hr",
++    }
++    res = dispatcher.dispatch("fugitive", payload, factor_data, {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
++    assert res is not None
++    # Expected: 20 * 0.01 * 2.5 * 1000 * 0.8 = 400 kg CH4 = 0.4 tonnes CH4
++    assert abs(res["results"]["ch4"]["value"] - 0.4) < 1e-5
++    assert abs(res["total_co2e"] - (0.4 * 28.0)) < 1e-4
++
++
++def test_agr_zero_removal_boundary():
++    """Finding 2: Verify AGR zero removal boundary condition does not create false 99% removal."""
++    dispatcher = CalculationDispatcher()
++    payload = {
++        "process_type": "agr",
++        "factor_source": "specific",
++        "amount": 100,  # 100 MMscf/yr
++        "unit": "mmscf",
++        "agr_co2_in": 0.04,   # 4%
++        "agr_co2_out": 0.04,  # 4% (equal inlet and outlet, zero true removal)
++        "agr_ch4_in": 0.85,
++        "agr_ch4_slip": 0.0,
++        "agr_control_eff": 0.0,
++    }
++    res = dispatcher.dispatch("agr", payload, {}, {})
++    assert res is not None
++    # With equal inlet and outlet, CO2 removed should be 0.0
++    assert abs(res["results"]["co2"]["value"] - 0.0) < 1e-6
++
++
++def test_dispatcher_generic_volume_and_mass_conversions():
++    """Finding 3: Verify _generic_calculation converts when factor denominator is scf, bbl, gal."""
++    dispatcher = CalculationDispatcher()
++    # 10 barrels input with factor in kg/gal
++    calc_data = {
++        "process_type": "custom",
++        "calc_method": "custom",
++        "quantity": 10.0,
++        "unit": "bbl",
++    }
++    factor_data = {
++        "co2": 5.0,
++        "unit": "kg/gal",
++    }
++    res = dispatcher.dispatch("custom", calc_data, factor_data, {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
++    # 10 bbl = 420 gal; 420 * 5.0 kg = 2100 kg = 2.1 tonnes
++    assert abs(res["results"]["co2"]["value"] - 2.1) < 0.05
++
++
++def test_dispatcher_mmbtu_liquid_fuel_hhv():
++    """Finding 4: Verify liquid fuel uses ~138,000 Btu/gal HHV under mmbtu factor, not gas 1020 Btu/scf."""
++    dispatcher = CalculationDispatcher()
++    calc_data = {
++        "process_type": "combustion",
++        "fuel_type": "Diesel",
++        "quantity": 1000.0,  # 1000 gallons
++        "unit": "gal",
++    }
++    factor_data = {
++        "co2": 74.0,  # 74 kg CO2 / MMBtu
++        "unit": "kg/mmbtu",
++    }
++    res = dispatcher.dispatch("combustion", calc_data, factor_data, {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
++    # 1000 gal * 138,000 Btu/gal = 138 MMBtu
++    # 138 MMBtu * 74 kg/MMBtu = 10,212 kg = 10.212 tonnes
++    assert abs(res["results"]["co2"]["value"] - 10.212) < 0.1
++
++
++def test_dispatcher_gram_factor_numerator():
++    """Finding 5: Verify factors in g/unit (e.g. g/kWh) are divided by 1,000,000 to yield metric tonnes."""
++    dispatcher = CalculationDispatcher()
++    calc_data = {
++        "process_type": "custom",
++        "quantity": 10000.0,  # 10,000 kWh
++        "unit": "kwh",
++    }
++    factor_data = {
++        "co2": 500.0,  # 500 g CO2 / kWh
++        "unit": "g/kwh",
++    }
++    res = dispatcher.dispatch("custom", calc_data, factor_data, {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0})
++    # 10,000 kWh * 500 g/kWh = 5,000,000 grams = 5.0 tonnes
++    assert abs(res["results"]["co2"]["value"] - 5.0) < 1e-5
++
++
++def test_combustion_factor_prefix_tco2_and_gram():
++    """Finding 6: Verify convert_factor_to_kg_per_unit handles tco2, tch4, tn2o and g/ prefixes."""
++    from calculations.combustion import convert_factor_to_kg_per_unit
++    # 2.5 tCO2/m3 -> 2500 kg/m3
++    assert abs(convert_factor_to_kg_per_unit(2.5, "tco2/m3", "m3") - 2500.0) < 1e-4
++    # 1.8 mt/m3 -> 1800 kg/m3
++    assert abs(convert_factor_to_kg_per_unit(1.8, "mt/m3", "m3") - 1800.0) < 1e-4
++    # 500 g/kwh -> 0.5 kg/kwh
++    assert abs(convert_factor_to_kg_per_unit(500.0, "g/kwh", "kwh") - 0.5) < 1e-4
++
++
++def test_sentinel5p_column_mass_flux():
++    """Finding 7: Verify Sentinel-5P flux calculation uses full atmospheric column air mass (~10,332 kg/m2)."""
++    from services.sentinel5p import sentinel5p_service, TOTAL_COLUMN_AIR_MASS_KG_M2
++    # Check physical constant
++    assert 10300 < TOTAL_COLUMN_AIR_MASS_KG_M2 < 10350
++
++    rate = sentinel5p_service.estimate_emission_rate_from_anomaly(
++        delta_ch4_ppb=100.0,
++        wind_speed_m_s=3.0,
++        box_width_km=10.0,
++    )
++    # Expected: 100e-9 * (16.042 / 28.97) * 10332.27 * 10000 * 3.0 * 3600 = ~6180 kg CH4/hr
++    assert 5500 < rate < 7000
++
++
++def test_uncertainty_combine_sum_negative_sinks():
++    """Finding 8: Verify combine_uncertainties_sum returns non-negative relative uncertainty on net sinks."""
++    from calculations.uncertainty import combine_uncertainties_sum
++    # Net negative sink: -100 tCO2e offset and +20 tCO2e residual = -80 tCO2e net
++    u_rel = combine_uncertainties_sum(-100.0, 0.10, 20.0, 0.05)
++    assert u_rel > 0.0
++    # Absolute zero sum guard
++    u_zero = combine_uncertainties_sum(50.0, 0.10, -50.0, 0.10)
++    assert u_zero == 0.0
++
++
++def test_anomaly_iqr_quantile_interpolation():
++    """Finding 9: Verify IQR quantile calculation does not distort on small N >= 4."""
++    from calculations.anomaly import AnomalyDetector
++    detector = AnomalyDetector()
++    # 4 historical values: [100, 102, 104, 106]
++    hist = [100.0, 102.0, 104.0, 106.0]
++    res_normal = detector._check_statistical_anomaly(105.0, hist)
++    assert res_normal["flagged"] is False
++
++    # Extreme outlier
++    res_outlier = detector._check_statistical_anomaly(500.0, hist)
++    assert res_outlier["flagged"] is True
++
++
++def test_scope3_tonne_factor_handling(client, test_users):
++    """Finding 10: Verify Scope 3 does not divide by 1000 when factor is in tCO2e/unit."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    resp = client.post(
++        "/api/scope3",
++        json={
++            "facility_id": test_users["facility_id"],
++            "year": 2026,
++            "category": "Category 1",
++            "activity_data": 50.0,
++            "emission_factor": 2.0,
++            "factor_unit": "tCO2e/unit",
++            "unit": "tonnes",
++        },
++    )
++    assert resp.status_code in [200, 201]
++
++    with app.app_context():
++        rec = Scope3Emission.query.filter_by(
++            facility_id=test_users["facility_id"], year=2026, category="Category 1"
++        ).order_by(Scope3Emission.id.desc()).first()
++        assert rec is not None
++        # 50.0 * 2.0 = 100.0 tCO2e (not 0.1 tCO2e)
++        assert abs(rec.co2e - 100.0) < 1e-4
++
++
++def test_dashboard_sbti_zero_actuals(client, test_users):
++    """Finding 11: Verify SBTi net-zero endpoint preserves legitimate 0.0 tCO2e actuals."""
++    from models import EmissionTarget
++    with app.app_context():
++        target = EmissionTarget.query.filter_by(facility_id=test_users["facility_id"]).first()
++        if not target:
++            target = EmissionTarget(
++                facility_id=test_users["facility_id"],
++                target_type="Net Zero",
++                base_year=2020,
++                target_year=2030,
++                base_year_emissions=1000.0,
++                target_emissions=100.0,
++                reduction_rate_pct=9.0,
++            )
++            db.session.add(target)
++            db.session.commit()
++
++        # Add a verified emission with 0.0 tCO2e for 2020
++        e_zero = Emission.query.filter_by(
++            facility_id=test_users["facility_id"], year=2020
++        ).first()
++        if not e_zero:
++            e_zero = Emission(
++                facility_id=test_users["facility_id"],
++                year=2020,
++                month=1,
++                process_type="combustion",
++                fuel_type="Diesel",
++                quantity=0.0,
++                co2e_total=0.0,
++                status="Verified",
++            )
++            db.session.add(e_zero)
++            db.session.commit()
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    resp = client.get(f"/api/dashboard/sbti?facility_id={test_users['facility_id']}")
++    assert resp.status_code == 200
++    data = resp.get_json()
++    assert "trajectory" in data
++    traj_2020 = next((t for t in data["trajectory"] if t["year"] == "2020"), None)
++    assert traj_2020 is not None
++    # 2020 had a verified 0.0 record, actual must be 0.0, NOT None
++    assert traj_2020["actual"] == 0.0
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

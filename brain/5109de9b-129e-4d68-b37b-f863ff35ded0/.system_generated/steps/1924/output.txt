@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_tier_scope_kpi_numerical.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -217,11 +217,11 @@
+         """Scope 2 Location-Based Method:
+         Emissions (tCO2e) = Electricity (kWh) × Grid Emission Factor (kg CO2e / kWh) / 1,000.
+         Test regional factors from electricity_factors.GRID_FACTORS:
+-        - US Average: 0.386 kg/kWh
+-        - France: 0.052 kg/kWh (nuclear baseload)
+-        - Algeria: 0.518 kg/kWh (gas-dominated)
+-        """
+-        for region, expected_factor in [("US Average", 0.386), ("France", 0.052), ("Algeria", 0.518)]:
++        - US Average: 0.385 kg/kWh
++        - EU Grid Average: 0.295 kg/kWh
++        - Algerian National Grid: 0.522 kg/kWh
++        """
++        for region, expected_factor in [("US Average", 0.385), ("EU Grid Average", 0.295), ("Algerian National Grid", 0.522)]:
+             factor = GRID_FACTORS[region]["factor"]
+             assert abs(factor - expected_factor) < 1e-4
+ 
+@@ -228,8 +228,8 @@
+             expected_tco2e = (kwh * factor) / 1000.0
+             assert expected_tco2e > 0
+-            if region == "France":
+-                assert expected_tco2e < 100.0
+-            elif region == "Algeria":
++            if region == "EU Grid Average":
++                assert expected_tco2e < 300.0
++            elif region == "Algerian National Grid":
+                 assert expected_tco2e > 500.0
+ 
+     def test_scope2_market_based_contractual_instruments(self):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

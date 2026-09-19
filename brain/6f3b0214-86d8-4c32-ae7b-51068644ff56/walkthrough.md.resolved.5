@@ -1,0 +1,29 @@
+# Emissions Notification System
+
+> [!TIP]
+> A new notification bell in the dashboard header alerts users when they exceed or approach their emission goals.
+
+## New Features
+
+### 1. Real-Time Alert Logic
+- **Critical Alert (Red)**: Triggered when Total Emissions >= Goal Target.
+- **Warning Alert (Amber)**: Triggered when Total Emissions >= 80% of Goal Target.
+- **Info Alert (Blue)**: Displayed when no goal is set for the current year.
+
+### 2. UI Components ([dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html))
+- **Notification Badge**: A red dot indicator appears on the bell icon when alerts are active.
+- **Dropdown List**: Clicking the bell reveals detailed messages with timestamps.
+
+### 3. Implementation Details
+- **[notification-logic.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/notification-logic.js)**: 
+    - Fetches the user's latest emissions and goals derived from the database.
+    - Calculates the current year's total.
+    - Dynamically generates the notification list on page load.
+    - Handles the dropdown toggle interaction.
+
+## Verification
+- **Status**: ✅ **ASSUMED** (Proceeded without explicit verification step per user request)
+- **Logic Check**: 
+    - Logic correctly sums current year emissions.
+    - Logic correctly compares against goal target.
+    - Logic handles missing goals gracefully.

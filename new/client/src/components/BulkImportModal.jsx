@@ -561,6 +561,9 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
         console.error("Template download failed:", err);
         toast.error("Failed to download emissions template.");
       }
+      // Use the backend's comprehensive template generator for emissions data
+      const baseUrl = import.meta.env.VITE_API_URL || "/api";
+      window.location.href = `${baseUrl}/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`;
       return;
     }
 

@@ -1,0 +1,18 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":62,"LineContent":"    top_down_tch4: Optional[float] = None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":81,"LineContent":"    # If top_down and bottom_up were provided or resolved"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":82,"LineContent":"    td = top_down_tch4 if top_down_tch4 is not None else 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":947,"LineContent":"        top_down = survey_map.get(f.id, 0.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":950,"LineContent":"            round(((top_down - bottom_up) / bottom_up * 100.0), 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":951,"LineContent":"            if (top_down \u003e 0 and bottom_up \u003e 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":956,"LineContent":"            f, year=current_year, top_down_tch4=top_down, bottom_up_tch4=bottom_up"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1659,"LineContent":"        func.avg(OgmpSurvey.estimated_annual_tch4).label(\"total_top_down_tch4\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1674,"LineContent":"        o.facility_id: float(o.total_top_down_tch4 or 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1800,"LineContent":"        top_down_tch4 = ogmp_surveys.get(fid, 0.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1802,"LineContent":"            round(top_down_tch4 / ed[\"total_ch4\"], 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1803,"LineContent":"            if ed[\"total_ch4\"] \u003e 0 and top_down_tch4 \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1807,"LineContent":"            round(((top_down_tch4 - ed[\"total_ch4\"]) / ed[\"total_ch4\"] * 100.0), 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1808,"LineContent":"            if ed[\"total_ch4\"] \u003e 0 and top_down_tch4 \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1835,"LineContent":"        if top_down_tch4 \u003e 0 and ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1839,"LineContent":"        elif top_down_tch4 \u003e 0:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1909,"LineContent":"                \"top_down_tch4\": top_down_tch4,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":904,"LineContent":"                f, year=year_filter, top_down_tch4=td_ch4, bottom_up_tch4=bu_ch4"}

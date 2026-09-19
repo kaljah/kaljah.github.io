@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\data.py:20:@data_bp.route('/production', methods=['GET'])
+new\server\routes\data.py:21:@data_bp.route('/production/', methods=['GET'])
+new\server\routes\data.py:57:@data_bp.route('/production', methods=['POST'])
+new\server\routes\data.py:58:@data_bp.route('/production/', methods=['POST'])
+new\server\routes\data.py:138:@data_bp.route('/production/<int:record_id>', methods=['DELETE'])
+new\server\routes\data.py:158:@data_bp.route('/production/bulk-import', methods=['POST'])
+new\server\routes\data.py:258:@data_bp.route('/methane-sources', methods=['GET'])
+new\server\routes\data.py:274:@data_bp.route('/ogmp-surveys', methods=['GET'])
+new\server\routes\data.py:275:@data_bp.route('/ogmp-surveys/', methods=['GET'])
+new\server\routes\data.py:344:@data_bp.route('/ogmp-surveys', methods=['POST'])
+new\server\routes\data.py:345:@data_bp.route('/ogmp-surveys/', methods=['POST'])
+new\server\routes\data.py:466:@data_bp.route('/ogmp-surveys/<int:record_id>', methods=['DELETE'])
+new\server\routes\data.py:501:@data_bp.route('/ogmp/level-upgrade', methods=['POST'])
+new\server\routes\data.py:538:@data_bp.route('/ogmp/level-logs', methods=['GET'])
+new\server\routes\data.py:574:@data_bp.route('/cbam-exports', methods=['GET'])
+new\server\routes\data.py:575:@data_bp.route('/cbam-exports/', methods=['GET'])
+new\server\routes\data.py:631:@data_bp.route('/cbam-exports', methods=['POST'])
+new\server\routes\data.py:632:@data_bp.route('/cbam-exports/', methods=['POST'])
+new\server\routes\data.py:736:@data_bp.route('/cbam-exports/<int:record_id>', methods=['DELETE'])
+
+
+

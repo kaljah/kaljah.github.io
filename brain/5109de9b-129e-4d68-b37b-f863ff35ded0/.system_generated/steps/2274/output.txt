@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":846,"LineContent":"        assert stats_mid[0][\"ogmp_gold_standard_target\"] == 0.05"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":856,"LineContent":"        assert stats_up[0][\"ogmp_gold_standard_target\"] == 0.20"}

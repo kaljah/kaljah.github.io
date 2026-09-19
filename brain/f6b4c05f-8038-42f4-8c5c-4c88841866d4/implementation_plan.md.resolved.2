@@ -1,0 +1,39 @@
+# Implementation Plan - 3D Layout Overhaul & Interaction
+
+## Goal
+Reimagine the 3D layout engine to be adaptable (Ground/Roof), interactive (Manual Add/Remove), and visually superior (Real Textures).
+
+## User Review Required
+> [!IMPORTANT]
+> **Manual Editing Approach**: Direct 3D clicking is limited in Streamlit. I will implement a **2D Matrix Editor** (Row x Column grid) which is robust and allows precise pattern creation (e.g., walkways, chimneys).
+
+## Proposed Changes
+
+### 1. Interactive Layout Editor ([app.py](file:///c:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/app.py))
+- **New Feature**: "Layout Manager" Expander.
+- **UI Component**: `st.data_editor` showing a grid of checkboxes representing the array.
+- **Logic**: 
+    - Initialize a DataFrame [(n_rows x n_cols)](file:///c:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_pvsyst_validation.py#20-31) with all True.
+    - User toggles checkboxes to False to "remove" panels.
+    - Pass the `active_modules` mask to the visualizer.
+
+### 2. Unified Rendering Engine ([src/design.py](file:///c:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py))
+- **Refactor**: Split [visualize_layout_3d](file:///c:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py#207-1108) to handle `mounting_type`.
+- **Modes**:
+    - `Ground (Ballast)`: Current detailed concrete blocks + clamps.
+    - `Roof (Flush)`: New mode. Modules parallel to surface, simple rails, no heavy blocks.
+- **Logic Update**:
+    - Iterate through the `active_modules` mask.
+    - Only generate geometry for active modules.
+    - Adapt racking geometry based on `mounting_type`.
+
+### 3. Realistic Environment ([src/design.py](file:///c:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/design.py))
+- **Ground Texture**: 
+    - Improve the default ground plane to use a noise-based texture or high-res pattern instead of flat color.
+    - Better integration with the "Drone Imagery" overlay.
+
+## Verification Plan
+### Manual Verification
+- **Test Editing**: Uncheck specific modules in the grid -> Verify they disappear in 3D.
+- **Test Modes**: Switch between "Ground" and "Roof" -> Verify racking changes from Concrete Blocks to Flush Rails.
+- **Test Visuals**: Verify the "Pro" details (frames, clamps) persist in all modes.

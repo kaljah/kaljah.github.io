@@ -1,0 +1,73 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -121,25 +121,51 @@
+             f"Missing required parameter for Tier 3 specific calculation: '{keys[0]}' ({desc})"
+         )
+ 
++    def _parse_fraction_value(self, val, key_name="", is_percent=False):
++        """Cleanly parses a percentage (0-100) or fraction (0-1) into a 0.0 - 1.0 ratio."""
++        if val in [None, "", "-"]:
++            return None
++        s = str(val).strip()
++        has_percent_sign = "%" in s
++        clean_str = s.replace("%", "").strip()
++        try:
++            num = float(clean_str)
++        except (ValueError, TypeError):
++            return None
++
++        key_lower = str(key_name).lower()
++        is_pct_key = "pct" in key_lower or "percent" in key_lower
++        if is_percent or has_percent_sign or is_pct_key:
++            return max(0.0, num / 100.0)
++        if num > 1.0:
++            return max(0.0, num / 100.0)
++        return max(0.0, num)
++
+     def _require_fraction(self, flat_inputs, keys, desc, is_percent=False):
+-        """Extracts a percentage (0-100) or fraction (0-1) strictly and converts to 0-1."""
+-        raw = self._require_float(flat_inputs, keys, desc)
+-        if is_percent or raw > 1.0:
+-            return raw / 100.0
+-        return raw
++        """Extracts a percentage or fraction strictly and normalizes to 0.0 - 1.0."""
++        if isinstance(keys, str):
++            keys = [keys]
++        for k in keys:
++            val = flat_inputs.get(k)
++            if val not in [None, "", "-"]:
++                res = self._parse_fraction_value(val, key_name=k, is_percent=is_percent)
++                if res is not None:
++                    return res
++                raise ValueError(f"Invalid numeric fraction/percentage for '{k}' ({desc}): {val}")
++        raise ValueError(
++            f"Missing required parameter for Tier 3 specific calculation: '{keys[0]}' ({desc})"
++        )
+ 
+     def _optional_fraction(self, flat_inputs, keys, default=0.0, is_percent=False):
+-        """Extracts an optional percentage (0-100) or fraction (0-1) converted to 0-1."""
+-        if isinstance(keys, str):
+-            keys = [keys]
+-        for k in keys:
+-            val = flat_inputs.get(k)
+-            if val not in [None, "", "-"]:
+-                try:
+-                    num = float(val)
+-                    return num / 100.0 if (is_percent or num > 1.0) else num
+-                except (ValueError, TypeError):
+-                    pass
++        """Extracts an optional percentage or fraction normalized to 0.0 - 1.0."""
++        if isinstance(keys, str):
++            keys = [keys]
++        for k in keys:
++            val = flat_inputs.get(k)
++            if val not in [None, "", "-"]:
++                res = self._parse_fraction_value(val, key_name=k, is_percent=is_percent)
++                if res is not None:
++                    return res
+         return default
+ 
+     def dispatch(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

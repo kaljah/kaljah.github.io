@@ -1,0 +1,111 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 39 items / 34 deselected / 5 selected
+
+tests/test_audit_remediation.py::test_scope2_steam_recalculation_enthalpy PASSED [ 20%]
+tests/test_audit_remediation.py::test_scope3_eeio_per_thousand_scaling_defect PASSED [ 40%]
+tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission FAILED [ 60%]
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload PASSED [ 80%]
+tests/test_audit_remediation.py::test_delete_mitigation_record_admin_required PASSED [100%]
+
+================================== FAILURES ===================================
+__________ test_custom_factor_percentage_uncertainty_in_add_emission __________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):
+        """Defect 4: Verify custom factor with general uncertainty 5.0 is divided by 100 to 0.05."""
+        from models import CustomFactor
+        with app.app_context():
+            cf = CustomFactor.query.filter_by(name="Test 5% Factor Audit").first()
+            if not cf:
+                cf = CustomFactor(
+                    name="Test 5% Factor Audit",
+                    co2_factor=1.5,
+                    ch4_factor=0.01,
+                    n2o_factor=0.001,
+                    unit="m3",
+                    uncertainty=5.0,  # 5%
+                    created_by=test_users["admin"],
+                )
+                db.session.add(cf)
+                db.session.commit()
+            cf_id = cf.id
+    
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        payload = {
+            "facility_id": test_users["facility_id"],
+            "year": 2024,
+            "month": 7,
+            "process_type": "Combustion",
+            "quantity": 100.0,
+            "unit": "m3",
+            "custom_factor_id": cf_id,
+            "status": "Draft",
+        }
+        res = client.post("/api/emissions", json=payload)
+        assert res.status_code == 201
+        data = res.get_json()
+        with app.app_context():
+            # Propagated uncertainty with 5% EF uncertainty is ~0.0559 (5.59%), not > 5.0 (500%)
+>           assert em.uncertainty is not None
+                   ^^
+E           NameError: name 'em' is not defined
+
+tests\test_audit_remediation.py:1008: NameError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/emissions 201 [0.019s] [ReqID: eb7b6f13-6575-4cb2-951b-55a85614edd4]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:2963: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    cf = CustomFactor.query.get(custom_factor_id)
+
+tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3123: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    facility = Facility.query.get(data["facility_id"])
+
+tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3167: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    goal = Goal.query.get(current_year)
+
+tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3226: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    and Facility.query.get(data["facility_id"])
+
+tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3224: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Facility.query.get(data["facility_id"]).name
+
+tests/test_audit_remediation.py::test_update_emission_preserves_calc_payload
+  C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3504: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    record.updated_at = datetime.datetime.utcnow()
+
+tests/test_audit_remediation.py::test_delete_mitigation_record_admin_required
+tests/test_audit_remediation.py::test_delete_mitigation_record_admin_required
+  C:\Users\samsung\Desktop\H2\new\server\routes\managedata.py:371: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    item = MitigationRecord.query.get(rid)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission
+=========== 1 failed, 4 passed, 34 deselected, 13 warnings in 2.90s ===========
+

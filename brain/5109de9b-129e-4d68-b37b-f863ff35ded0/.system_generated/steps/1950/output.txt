@@ -1,0 +1,18 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-1944
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-1944.log
+Log output:
+<truncated 103 lines>
+thematics::test_z_score_small_sample_guard PASSED [ 63%]
+tests/test_numerical_invariants.py::TestSatelliteFluxMathematics::test_column_mass_flux_linearity PASSED [ 64%]
+tests/test_numerical_invariants.py::TestSatelliteFluxMathematics::test_zero_and_negative_anomaly_returns_zero PASSED [ 64%]
+tests/test_qaqc_diagnostics.py::test_qaqc_unauthenticated PASSED         [ 65%]
+tests/test_qaqc_diagnostics.py::test_qaqc_dashboard_unified_payload PASSED [ 66%]
+tests/test_qaqc_diagnostics.py::test_qaqc_export_csv PASSED              [ 66%]
+tests/test_reports.py::test_reports_unauthenticated PASSED               [ 67%]
+tests/test_reports.py::test_reports_it_admin_forbidden PASSED            [ 68%]
+tests/test_reports.py::test_emissions_excel_export_multi_scope PASSED    [ 68%]
+tests/test_reports.py::test_excel_formula_injection_defense PASSED       [ 69%]
+tests/test_reports.py::test_reports_pdf_export_get_and_post PASSED       [ 70%]
+tests/test_reports.py::test_reports_ogmp_excel_export 
+Last progress: 0s ago

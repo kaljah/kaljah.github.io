@@ -1,0 +1,4 @@
+# Tasks
+
+- [ ] Fix `TypeError` in `server.js` at line 264 <!-- id: 0 -->
+- [ ] Verify server startup <!-- id: 1 -->

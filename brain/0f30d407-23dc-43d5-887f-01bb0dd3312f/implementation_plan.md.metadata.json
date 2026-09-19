@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary": "Updated implementation plan for Bulk Data Import & Auto-Calculation feature, including frontend CSV parsing and backend batch processing with emission factor lookups.",
+  "updatedAt": "2026-02-13T16:39:28.909352Z",
+  "version": "15"
+}

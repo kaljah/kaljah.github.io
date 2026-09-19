@@ -1,0 +1,18 @@
+Task: 5109de9b-129e-4d68-b37b-f863ff35ded0/task-1183
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\5109de9b-129e-4d68-b37b-f863ff35ded0\.system_generated\tasks\task-1183.log
+Log output:
+<truncated 27 lines>
+t_api_security.py::TestIDOR::test_user_can_delete_own_emission PASSED [ 19%]
+tests/test_api_security.py::TestInputLimits::test_limit_all_capped_at_5000 PASSED [ 20%]
+tests/test_api_security.py::TestInputLimits::test_large_payload_rejected PASSED [ 21%]
+tests/test_api_security.py::TestInputLimits::test_wildcard_search_does_not_crash PASSED [ 22%]
+tests/test_api_security.py::TestRateLimiting::test_login_rate_limit PASSED [ 23%]
+tests/test_api_security.py::TestCalculationIntegrity::test_calculation_error_returns_422_not_zero PASSED [ 24%]
+tests/test_audit.py::test_audit_rbac_unauthenticated PASSED              [ 25%]
+tests/test_audit.py::test_audit_rbac_regular_user_forbidden PASSED       [ 26%]
+tests/test_audit.py::test_audit_admin_and_it_admin_authorized PASSED     [ 27%]
+tests/test_audit.py::test_audit_search_and_filtering PASSED              [ 28%]
+tests/test_audit.py::test_audit_entity_id_fallback PASSED                [ 29%]
+tests/test_audit.py::test_audit_stats_endpoint 
+Last progress: 0s ago

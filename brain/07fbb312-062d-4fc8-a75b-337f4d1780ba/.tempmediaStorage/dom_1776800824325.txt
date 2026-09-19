@@ -1,0 +1,63 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+[0] (500,500)<div  />
+	GHG Reporting
+	[1] (96,224)<li  />
+		[2] (79,221)<a class='nav-link ' href='/'>Dashboard />
+	[3] (96,351)<li  />
+		[4] (93,348)<a class='nav-link ' href='/carbon-intensity'>Carbon Intensity />
+	[5] (96,478)<li  />
+		[6] (81,475)<a class='nav-link ' href='/emissions'>Calculations />
+	[7] (96,605)<li  />
+		[8] (89,602)<a class='nav-link ' href='/methane-explorer'>Emissions MAP />
+	[9] (96,733)<li  />
+		[10] (85,729)<a class='nav-link ' href='/manage-data'>Manage Data />
+	[11] (96,860)<li  />
+		[12] (72,857)<a class='nav-link active' href='/reports'>Reports />
+	[13] (96,987)<li  />
+		[14] (89,984)<a class='nav-link ' href='/reference-data'>Reference Data />
+	Dashboard
+	[15] (908,53)<button class='icon-button' title='Notifications' />
+		[16] (911,47)<span  />
+	[17] (941,53)<button class='icon-button' />
+	Test
+	[18] (597,555)<div scrollable='true' />
+		Dashboard
+		/
+		Reports
+		Test User
+		Emission Database
+		Complete history of all recorded emissions and compliance data.
+		[19] (825,289)<button class='btn-action btn-excel'>Excel Export />
+		[20] (938,289)<button class='btn-action btn-pdf'>PDF Report />
+		Create New Report
+		[21] (301,508)<label class='input-label'>Reporting Year
+* />
+			*
+		[22] (301,566)<select class='component-select' />
+		[23] (495,508)<label class='input-label'>Compare With />
+		[24] (495,566)<select class='component-select' />
+		[25] (690,508)<label class='input-label'>Regions / Facilities
+* />
+			*
+		[26] (690,566)<div  />
+			[27] (632,566)<span >1 Selected />
+		Generating...
+		Hassi Messaoud
+		[28] (291,640)<button >× />
+		Filter & Group Data
+		[29] (281,886)<label class='input-label'>Inventory Scope />
+		[30] (281,944)<select class='component-select' />
+		[31] (437,886)<label class='input-label'>Reporting Year />
+		[32] (592,886)<label class='input-label'>Month />
+		[33] (592,944)<select class='component-select' />
+		[34] (748,886)<label class='input-label'>Region (Grid) />
+		[35] (748,944)<select class='component-select' />
+		[36] (903,886)<label class='input-label'>Group By />
+		[37] (903,944)<select class='component-select' />
+	Generating ISO 14064-1 Report...
+	[38] (961,174)<button class='toast-close'>× />
+
+</current_dom>

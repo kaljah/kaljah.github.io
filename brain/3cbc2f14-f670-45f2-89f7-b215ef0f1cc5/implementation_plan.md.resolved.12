@@ -1,0 +1,63 @@
+# Implementation Plan: API Guidance 2.0 Compliance
+
+This plan outlines the steps to upgrade the application to fully comply with the **API Guidance for GHG Reporting 2.0 (2023)**.
+
+## 1. Core Calculation & Standards
+### Global Warming Potential (GWP) Standardization
+- **Requirement**: Enforce IPCC AR4 values (CH4 = 25, N2O = 298).
+- **Changes**: 
+    - Update [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js) and [emissions-calc.js](file:///c:/Users/samsung/Desktop/h/public/emissions-calc.js) to strictly use these constants.
+    - Add a "GWP Version" toggle (Settings) if users need to switch between AR4/AR5, defaulting to AR4.
+
+### Flaring Intensity Metrics
+- **Requirement**: Report `Upstream Flaring Intensity = Flaring Emissions / Total Production (BOE)`.
+- **Changes**:
+    - **Rename**: Change current "Flaring Intensity" label to "Flaring Efficiency (Emissions/Volume)".
+    - **Add New KPI**: "API Flaring Intensity" on the dashboard.
+    - **Logic**: Ensure `total_boe` is available in the dashboard aggregation logic.
+
+## 2. New Data Modules (Manage Data)
+### Mitigation Tab (Section 3)
+- **Goal**: Allow users to input negative emission credits.
+- **UI**: New tab "GHG Mitigation" with 3 sub-sections:
+    1.  **CCUS**: Carbon Capture, Utilization, and Storage (Scope 1 reduction).
+    2.  **RECs**: Renewable Energy Credits (Scope 2 reduction).
+    3.  **Offsets**: Carbon Offsets (Total Inventory reduction).
+- **Schema**: New table `mitigation_data` (year, type, quantity_tco2e, reference_id).
+
+### Scope 3 Tab (Section 5)
+- **Goal**: Calculate Category 11 (Use of Sold Products).
+- **UI**: New tab "Scope 3 Calculator".
+- **Inputs**: 
+    - Sales Volumes (Crude Oil, Natural Gas, etc.).
+    - Calculation Method Selector (Production vs. Sales).
+- **Logic**: `Emissions = Volume * End-Use Emission Factor`.
+
+### Targets & Verification Tab (Section 6 & 7)
+- **Goal**: Capture metadata for the report.
+- **UI**: New tab "Reporting Metadata".
+- **Inputs**: 
+    - GHG Reduction Targets (Yes/No, Description).
+    - Assurance Provider (Text).
+    - Assurance Level (Limited/Reasonable).
+
+## 3. Database Schema Updates
+- **New Tables**:
+    - `mitigation_records`: Stores CCUS/REC/Offset entries.
+    - `scope3_data`: Stores sales volumes for Category 11.
+    - `reporting_metadata`: Stores verification details per year.
+
+## 4. Dashboard & Reporting Updates
+- **Dashboard**: 
+    - Show "Net Emissions" (Gross - Mitigation).
+    - Display Scope 3 Category 11 as a separate card (do not add to Scope 1+2).
+- **Verification Report**: 
+    - Fetch and display the new Assurance Level/Provider.
+    - Include the Mitigation and Scope 3 tables in the PDF.
+
+## 5. Execution Order
+1.  **GWP & Formulas**: Quick fix to ensure calculations are compliant.
+2.  **Schema Migration**: Create new tables.
+3.  **UI - "Manage Data" Expansion**: Build the new tabs.
+4.  **Dashboard Integration**: Visualize the new data.
+5.  **Report Update**: Finalize the PDF generation.

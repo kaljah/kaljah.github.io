@@ -1,0 +1,34 @@
+# SolarEPC-Pro Expert Edition Walkthrough
+
+I have upgraded the platform to the **Expert Edition**, featuring physical realism, commercial depth, and a premium UI.
+
+## New Features (Phase 7)
+- **Horizon Shading**: Model mountains/buildings blocking the sun.
+- **Complex Tariffs**: Time-of-Use (TOU) and Demand Charges.
+- **Civil BOM**: Estimate Fence, Trenching, Concrete, and Roads.
+- **Battery Physics**: SOH degradation based on throughput.
+- **Premium UI**:
+    - **CAD Layout**: Visualizes individual modules.
+    - **Professional Graphs**: Stacked Area, Waterfall charts.
+    - **Dashboard**: Cleaner metrics and layout.
+
+## Previous Features (Phases 1-6)
+- **SaaS**: Database, Optimization, Microgrid, GIS, AI.
+- **Enterprise**: Real-World Weather, Equipment DB.
+- **Professional**: Inverter/Cable Sizing, Geometry, Financials.
+
+## Verification
+I ran [tests/test_expert.py](file:///C:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/tests/test_expert.py) to verify:
+- **Civil**: BOM quantities are calculated correctly.
+- **TOU**: Revenue increases when generation matches peak hours.
+- **Horizon**: Logic accepts profile without errors.
+
+## How to Run
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Launch the Expert Dashboard:
+   ```bash
+   streamlit run app.py
+   ```

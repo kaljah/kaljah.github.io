@@ -1,0 +1,26 @@
+# Comprehensive Fix Execution Tracker
+
+- `[x]` **Phase 1: Security**
+  - `[x]` Fix `config.py` SECRET_KEY fallback
+  - `[x]` Fix `auth.py` Rate Limiting Memory Leak
+  - `[x]` Fix `auth.py` Password Strength on Registration
+  - `[x]` Create `@admin_required` decorator
+  - `[x]` Secure `audit.py` and `notifications.py` (Unauthenticated routes)
+  - `[x]` Apply `@admin_required` to all destructive backend routes
+  - `[x]` Add CSRF Protection Header Check in `app.py`
+  - `[x]` Attach CSRF Header in frontend `api.js`
+- `[x]` **Phase 2: Data Integrity**
+  - `[x]` Fix Bulk Import crashing on invalid strings
+  - `[x]` Add DB Cascade Deletes to `models.py`
+  - `[x]` Fix Non-Atomic Transactions (Audit logs)
+- `[x]` **Phase 3: Compliance & Code Quality**
+  - `[x]` Prevent Audit Logs from failing silently
+  - `[x]` Clean up broad exceptions where possible
+- `[ ]` **Phase 4: Infrastructure & Architecture**
+  - `[ ]` Enforce `DATABASE_URL` in production
+  - `[ ]` Restrict CORS via `ALLOWED_ORIGINS`
+  - `[ ]` Refactor `/api/emissions` pagination to use DB `.offset().limit()`
+- `[ ]` **Phase 5: UI / UX**
+  - `[ ]` Add Skeleton Loaders / improve loading states
+  - `[ ]` Fix form accessibility (labels, ARIA)
+  - `[ ]` Improve mobile responsiveness using Tailwind classes

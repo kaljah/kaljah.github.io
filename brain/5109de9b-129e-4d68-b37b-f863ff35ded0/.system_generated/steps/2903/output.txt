@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -899,8 +899,11 @@
+     with client.session_transaction() as sess:
+         sess["user_id"] = test_users["admin"]
+     res = client.get("/api/notifications/stream")
+-    assert res.status_code == 200
+-    assert "text/event-stream" in res.content_type
++    try:
++        assert res.status_code == 200
++        assert "text/event-stream" in res.content_type
++    finally:
++        res.close()
+ 
+ 
+ def test_scope2_steam_recalculation_enthalpy(client, test_users):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

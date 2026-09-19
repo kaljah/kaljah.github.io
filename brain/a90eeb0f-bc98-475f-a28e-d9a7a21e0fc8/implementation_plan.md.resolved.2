@@ -1,0 +1,21 @@
+# Implementation Plan - Specific Emission Factor Calculator
+
+## Goal Description
+Implement the Specific Emission Factor Calculator logic by porting the Python script to JavaScript and appending it to [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js) as requested.
+
+## User Review Required
+> [!NOTE]
+> The HTML interface ([emissions-calculator.html](file:///c:/Users/samsung/Desktop/h/public/emissions-calculator.html)) remains unchanged per user request.
+> The logic will be available globally for specific factor calculations.
+
+## Proposed Changes
+
+### Logic Layer
+#### [MODIFY] [emission-factors.js](file:///c:/Users/samsung/Desktop/h/public/emission-factors.js)
+- Append the `GHGCalculator` class to this file.
+- Ensure it handles all the unit conversions and formulas from the Python script.
+- Export it globally as `window.GHGCalculator`.
+
+## Verification Plan
+### Automated Tests
+- Create a test script `tests/test-ghg-calc.js` to verify the logic.

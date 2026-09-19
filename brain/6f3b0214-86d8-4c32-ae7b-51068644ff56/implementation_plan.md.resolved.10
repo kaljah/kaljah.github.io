@@ -1,0 +1,49 @@
+# Top-Bar Profile Dropdown Implementation
+
+## Goal
+Implement a functional profile dropdown menu for the top-right user icon across all pages, behaving similarly to the notification bell.
+
+## Implementation Steps
+
+### 1. Create [public/profile-logic.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/profile-logic.js)
+- **Toggle Logic**: Handle click on the new `#top-profile-btn` to show/hide `#top-profile-dropdown`.
+- **Logout Logic**: Handle click on `#top-logout-btn` to clear session and redirect.
+
+### 2. Batch HTML Update
+Inject the Profile Dropdown HTML snippet into the `header class="top-bar"` section of all 9 pages, replacing the existing static profile button.
+
+**Notification Improvements:**
+- [ ] Check if user set a goal for current year, if not, prompt to set one.
+- [ ] Show critical/warning alerts if emissions exceed or approach goal.
+- [ ] Add "Custom Emission Factor" informational notification.
+- [x] **[NEW]** Implement persistence for dismissed notifications (localStorage). -- *Wait, this is done*
+- [x] **[NEW]** Add "Remove" (X) button to notification items. -- *Done*
+- [x] **[NEW]** Ensure badge reflects only active (non-dismissed) notifications. -- *Done*
+
+**ISO 14064-1 Compliance Report Page:**
+- [ ] Create `public/compliance.html` using [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) as a template.
+- [ ] Implement UI for EPA, ISO 14064-1, and GHG Protocol compliance status.
+- [ ] Add "Compliance" link to the sidebar of all 15 HTML pages.
+- [ ] Ensure the theme matches the dark dashboard theme.
+
+**HTML Snippet to Inject:**
+```html
+<div style="position: relative;">
+    <button id="top-profile-btn" style="...">
+        <!-- User Icon -->
+    </button>
+    <div id="top-profile-dropdown" style="display: none; ...">
+        <a href="profile.html" ...>My Profile</a>
+        <a href="settings.html" ...>Settings</a>
+        <div class="dropdown-divider"></div>
+        <button id="top-logout-btn" ...>Sign Out</button>
+    </div>
+</div>
+```
+
+### 3. Script Injection
+Add `<script src="profile-logic.js"></script>` to the bottom of the body in all modified files.
+
+## Verification
+- **Code Check**: Verify the snippet logic and IDs match the new script.
+- **Consistency**: Ensure it exists alongside the notification bell.

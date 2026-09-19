@@ -1,0 +1,41 @@
+# Implementation Plan - Finish Facility Page
+
+The goal is to implement a fully functional Facility Management page in the frontend, allowing users to view, create, edit, and delete facilities. The backend API for facilities already exists.
+
+## User Review Required
+
+> [!NOTE]
+> I will be creating a new `types` directory in `frontend/src` to store TypeScript interfaces, starting with the `Facility` interface.
+
+## Proposed Changes
+
+### Frontend
+
+#### [NEW] [types/index.ts](file:///c:/Users/samsung/Desktop/cement/frontend/src/types/index.ts)
+- Define `Facility` interface matching the backend model.
+- Define `FacilityType` enum/union type.
+
+#### [NEW] [components/facilities/FacilityList.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityList.tsx)
+- Component to fetch and list facilities.
+- Uses `api.get('/emissions/facilities/')`.
+- Displays facilities in a grid or list card layout.
+- Includes "Edit" and "Delete" buttons for each item.
+
+#### [NEW] [components/facilities/FacilityForm.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/facilities/FacilityForm.tsx)
+- component for creating and editing a facility.
+- Fields: Name, Organization (auto-handled by backend context usually, but checking if needed), Facility Type, Country, Latitude, Longitude, Description.
+- Validation: Basic required fields.
+
+#### [MODIFY] [app/dashboard/facilities/page.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/app/dashboard/facilities/page.tsx)
+- Replace placeholder content with `FacilityList` and `FacilityForm` (in a modal or toggle).
+- Add "Create Facility" button to trigger the form.
+
+## Verification Plan
+
+### Manual Verification
+1.  **Start the app**: `npm run dev` in `frontend` and ensure backend is running (I'll need to check if backend is running, if not start it).
+2.  **Login**: accessing `/login` (using the test user if available or registering).
+3.  **Navigate directly**: Go to `/dashboard/facilities` or use navigation if available.
+4.  **Test Create**: Click "Create Facility", fill form, submit. Verify it appears in the list.
+5.  **Test Edit**: Edit the created facility, change name, save. Verify update.
+6.  **Test Delete**: Delete the facility. Verify removal.

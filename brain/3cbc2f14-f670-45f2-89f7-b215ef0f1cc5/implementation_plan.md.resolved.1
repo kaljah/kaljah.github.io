@@ -1,0 +1,25 @@
+# Restore SQLite Support
+
+## Goal Description
+The user wants to restore SQLite support after failing to configure PostgreSQL. This involves re-enabling `sqlite3` in [server.js](file:///c:/Users/samsung/Desktop/h/server.js) and allowing the application to choose between SQLite and PostgreSQL based on configuration, defaulting to SQLite if PostgreSQL fails or is not selected.
+
+## Proposed Changes
+### Backend
+#### [MODIFY] [server.js](file:///c:/Users/samsung/Desktop/h/server.js)
+- Uncomment `sqlite3` requirement.
+- Modify [initDatabase](file:///c:/Users/samsung/Desktop/h/server.js#22-49) to accept a `type` parameter or check `process.env.DB_TYPE`.
+- Implement a switch/if block to initialize [PgAdapter](file:///c:/Users/samsung/Desktop/h/pg-adapter.js#3-60) OR `sqlite3.Database`.
+- Ensure [db](file:///c:/Users/samsung/Desktop/h/ghg_shared.db) object has a compatible API ([run](file:///c:/Users/samsung/Desktop/h/pg-adapter.js#27-41), [all](file:///c:/Users/samsung/Desktop/h/pg-adapter.js#42-48), [get](file:///c:/Users/samsung/Desktop/h/pg-adapter.js#49-55), [serialize](file:///c:/Users/samsung/Desktop/h/pg-adapter.js#22-26)) for both adapters.
+
+### Configuration
+#### [MODIFY] [db_config.js](file:///c:/Users/samsung/Desktop/h/db_config.js)
+- Ensure it exports valid config for both or handles the `DB_TYPE` flag. (Likely handled in [server.js](file:///c:/Users/samsung/Desktop/h/server.js) logic).
+
+## Verification Plan
+### Automated Tests
+- Run [start_local.bat](file:///c:/Users/samsung/Desktop/h/start_local.bat).
+- Verify application starts without "PostgreSQL Connection FAILED".
+
+### Manual Verification
+- User accesses `localhost:3000`.
+- User checks if data loads (from [ghg_shared.db](file:///c:/Users/samsung/Desktop/h/ghg_shared.db)).

@@ -1,0 +1,11 @@
+# Modernize Dashboard Features
+- [x] Modernize Dashboard Graph <!-- id: 22 -->
+- [x] Modernize Emissions by Source Chart <!-- id: 26 -->
+- [x] Modernize Emissions Breakdown Table <!-- id: 31 -->
+
+# Interactive Account Navigation
+- [x] Planning Modernization <!-- id: 36 -->
+- [x] Implement Account Toggle in [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js) <!-- id: 37 -->
+- [x] Create Dropdown HTML Structure in [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html) <!-- id: 38 -->
+- [x] Apply Premium Glassmorphism CSS <!-- id: 39 -->
+- [x] Verify Interactivity and Links <!-- id: 40 -->

@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+ M new/client/src/api.js
+ M new/client/src/components/BulkImportModal.jsx
+ M new/client/src/pages/AuditTrail.jsx
+ M new/server/app.py
+ M new/server/calculations/combustion.py
+ M new/server/calculations/dispatcher.py
+ M new/server/config.py
+ M new/server/routes/audit.py
+ M new/server/routes/auth.py
+ M new/server/routes/custom_factors.py
+ M new/server/routes/dashboard.py
+ M new/server/routes/data.py
+ M new/server/routes/emissions.py
+ M new/server/routes/facilities.py
+ M new/server/routes/reports.py
+ M new/server/routes/scope2.py
+ M new/server/routes/scope3.py
+ M new/server/tests/test_calculations_page.py
+

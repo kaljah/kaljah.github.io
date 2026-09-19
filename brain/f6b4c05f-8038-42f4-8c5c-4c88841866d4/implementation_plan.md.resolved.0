@@ -1,0 +1,32 @@
+# Gap Analysis: SolarEPC-Pro vs. Industry Standards
+
+## Goal Description
+To determine if SolarEPC-Pro is the "most perfect" tool for real-world engineering, we compare it against industry benchmarks (PVSyst, Helioscope). This document outlines the current capabilities and the specific features required to close the gap.
+
+## Current Status: Tier 1 Consulting Tool
+The tool is currently **excellent for Sales Engineering and Feasibility Studies**.
+- **Strengths**: Speed, Interactivity, Python-based flexibility, Financial/Physics integration.
+- **Weaknesses**: Lack of deep electrical physics (mismatch), limited database, hourly resolution.
+
+## Proposed Upgrades (The "Road to Perfection")
+
+### 1. Advanced Physics Engine
+#### [MODIFY] src/solar_model.py
+- **Sub-hourly Resolution**: Update [calculate_generation](file:///c:/Users/samsung/.gemini/antigravity/scratch/SolarEPC-Pro/src/solar_model.py#26-153) to support 15-min or 1-min intervals. This is critical for:
+    - Accurate inverter clipping analysis (clouds).
+    - Battery peak shaving accuracy.
+- **Mismatch Modeling**: Implement a "diode model" to calculate non-linear shading losses, rather than the current linear `shading_mask`.
+
+### 2. Enterprise Database Integration
+#### [NEW] src/pvsyst_parser.py
+- Create a parser to read `.pan` (Module) and `.ond` (Inverter) files.
+- This allows users to use *any* component from the PVSyst database, removing the limitation of our hardcoded dictionary.
+
+### 3. Bankability Validation
+#### [NEW] tests/test_bankability.py
+- Create a regression test suite that runs a simulation with identical parameters to a standard PVSyst report.
+- Assert that Annual Generation is within 1.0% of the PVSyst value.
+
+## Verification Plan
+- **User Review**: Review this roadmap to decide which features are critical for your specific use case.
+- **Prototype**: If approved, we can implement the `.pan` file parser first, as it's the most requested feature for "real" engineering.

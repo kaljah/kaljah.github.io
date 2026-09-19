@@ -1,0 +1,9 @@
+# Task: Settings Page Modernization
+
+- [x] Research and Planning
+- [/] Modernize Settings Page
+    - [/] Update [settings.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.html) (UI changes)
+    - [ ] Update [settings.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/settings.js) (Logic cleanup & notifications)
+    - [ ] Update [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js) (Timezone logic)
+    - [ ] Update [notification-logic.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/notification-logic.js) (Notification filtering)
+- [ ] Verify changes

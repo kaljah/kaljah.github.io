@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\anomaly.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -63,16 +63,27 @@
+ 
+         z = (value - mean) / std
+ 
+-        # IQR fence as secondary check
++        # IQR fence as secondary check (requires at least 4 observations for quartiles)
+         sorted_h = sorted(historical)
+-        q1 = sorted_h[len(sorted_h) // 4]
+-        q3 = sorted_h[(3 * len(sorted_h)) // 4]
+-        iqr = q3 - q1
+-        lower_fence = q1 - 3 * iqr
+-        upper_fence = q3 + 3 * iqr
++        flagged_iqr = False
++        if len(sorted_h) >= 4:
++            def _quantile(sorted_vals, p):
++                n = len(sorted_vals)
++                pos = p * (n - 1)
++                idx = int(pos)
++                frac = pos - idx
++                if idx + 1 < n:
++                    return sorted_vals[idx] + frac * (sorted_vals[idx + 1] - sorted_vals[idx])
++                return sorted_vals[idx]
++
++            q1 = _quantile(sorted_h, 0.25)
++            q3 = _quantile(sorted_h, 0.75)
++            iqr = q3 - q1
++            lower_fence = q1 - 3 * iqr
++            upper_fence = q3 + 3 * iqr
++            flagged_iqr = iqr > 0 and (value < lower_fence or value > upper_fence)
+ 
+         flagged_z = abs(z) > 3
+-        flagged_iqr = iqr > 0 and (value < lower_fence or value > upper_fence)
+ 
+         flagged = flagged_z or flagged_iqr
+         expected_low = max(0, mean - 3 * std)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,26 @@
+# Modernize Emissions by Source Chart
+
+Transform the existing donut chart into a high-end visualization with rounded segments, vibrant colors, and a dynamic center label.
+
+## Proposed Changes
+
+### Dashboard
+
+#### [MODIFY] [dashboard.js](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js)
+- Refactor [renderSourceChart](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.js#423-464) to include:
+    - **Cutout**: Increase to 80% for a sleeker "ring" look.
+    - **Rounded Segments**: Use `borderRadius` (typically 10-15px) for a modern, soft aesthetic.
+    - **Premium Colors**: Use a refined color palette aligned with the GHG brand.
+    - **Center Label Plugin**: Implement a custom Chart.js plugin to display the total tCO2e value in the center of the donut.
+    - **Enhanced Tooltips**: Show both the absolute value and the percentage contribution of each source.
+    - **Clean Legend**: Improve legend spacing and typography.
+
+#### [MODIFY] [dashboard.html](file:///c:/Users/samsung/Desktop/ghg%20old/public/dashboard.html)
+- Adjust the donut-card container height to accommodate the refined chart and legend.
+
+## Verification Plan
+
+### Manual Verification
+- Verify the donut chart displays correctly with rounded segments.
+- Confirm the total emission value is visible in the center.
+- Test hover tooltips to ensure they display both tCO2e and percentages.

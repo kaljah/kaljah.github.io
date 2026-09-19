@@ -1,0 +1,33 @@
+# Plan: Modern "Sonatrach Premium" Theme
+
+## Goal
+Modernize the entire application aesthetic while strictly preserving the Sonatrach Orange (`#ff6600`) identity. Move from a "Flat & Rigid" look (hard borders) to a "Depth & Clean" look (soft shadows, neutral borders, vibrant accents).
+
+## Core Philosophy
+- **Orange is Precious**: Use Orange for *actions* and *focus*, not for structural borders.
+- **Depth over Lines**: Use shadows and background shades to define structure instead of hard colored lines.
+- **Whitespace**: Increase breathing room.
+
+## Proposed Changes (dashboard-dark.css)
+
+### 1. Global Variables (The Foundation)
+- [MODIFY] `--bg-dark`: `#f8fafc` (Soft Slate) — Creates contrast with white cards.
+- [MODIFY] `--border-color`: `#e2e8f0` (Neutral Grey) — Replaces the aggressive Orange border.
+- [NEW] `--shadow-card`: `0 4px 6px -1px rgba(0, 0, 0, 0.05)` — Soft, modern shadow.
+- [NEW] `--gradient-primary`: `linear-gradient(135deg, #ff6600 0%, #ff8533 100%)` — Vibrant orange gradient.
+
+### 2. Component Updates
+- [MODIFY] **Sidebar**: Remove the orange right border. Use a subtle shadow and white background.
+- [MODIFY] **Cards**: Pure white, rounded (`24px`), with soft shadows and neutral borders.
+- [MODIFY] **Navigation**:
+    - "Pill" shape for active items (already started, will startdardize).
+    - Orange Glow only on active items.
+- [MODIFY] **Buttons**: Switch to Gradient backgrounds for primary actions.
+
+### 3. Login Page (login.css)
+- [MODIFY] Standardize inputs to match the new "Premium" look.
+- [MODIFY] Ensure the Green branding matches or complements the specific "Sonatrach" identity (if the user wants the green kept, we keep it, otherwise we might align it to Orange/Dark Grey). *Assumption: Keep Green to be safe, but polish it.*
+
+## Verification
+- **Visual Check**: Does it look "ugly" or "cramped"? -> Should look expansive and clean.
+- **Brand Check**: Is it still Sonatrach? -> Yes, Orange is the primary accent.
