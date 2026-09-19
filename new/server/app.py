@@ -171,6 +171,7 @@ from routes.satellite import satellite_bp
 from routes.qaqc import qaqc_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
+csrf.exempt(auth_bp)
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
 app.register_blueprint(facilities_bp, url_prefix="/api/facilities")
 app.register_blueprint(data_bp, url_prefix="/api/data")
