@@ -8,7 +8,10 @@ import "./Scope1Form.css";
 
 // Sub-components
 import Scope1ImportWizard from "./Scope1ImportWizard";
-import { Upload, Trash2 } from "lucide-react";
+import ConfirmModal from "./ConfirmModal";
+import { Upload, Trash2, Eye } from "lucide-react";
+import EmissionResult from "./EmissionResult";
+import CalculationDetails from "./CalculationDetails";
 import CombustionForm from "./scope1/CombustionForm";
 import DrillingForm from "./scope1/DrillingForm";
 import CompletionsForm from "./scope1/CompletionsForm";
@@ -38,6 +41,7 @@ const PROCESS_TYPES = PROCESS_TYPES_MAP;
 const Scope1Form = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   // Core Identity State
   const [year, setYear] = useState(new Date().getFullYear());
@@ -51,6 +55,7 @@ const Scope1Form = () => {
   const [streamType, setStreamType] = useState("Upstream"); // 'Upstream', 'Midstream', 'Downstream'
   const [groupName, setGroupName] = useState("");
   const [equipmentId, setEquipmentId] = useState("");
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   // Dynamic Form Data State
   const [formData, setFormData] = useState({});
@@ -94,6 +99,8 @@ const Scope1Form = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [showGasCalc, setShowGasCalc] = useState(false);
+  const [calculationResult, setCalculationResult] = useState(null);
+  const [inspectRecord, setInspectRecord] = useState(null);
   const [processTypesAvailable, setProcessTypesAvailable] = useState([]); // API 2021: Dynamic process types
   const [importModal, setImportModal] = useState({
     isOpen: false,
@@ -726,6 +733,7 @@ const Scope1Form = () => {
     }
 
     try {
+      setSubmitting(true);
       // Construct calc_inputs based on process type
       // This wraps all process-specific parameters as backend expects
       const processInputs = {};
@@ -984,12 +992,15 @@ const Scope1Form = () => {
 
       // payload logging removed — do not log emission data in production
 
-      await api.post("/emissions", finalPayload);
+      const res = await api.post("/emissions", finalPayload);
       toast.success(
         status === "Draft"
           ? "Entry saved as draft"
           : "Scope 1 entry added successfully",
       );
+      if (res.data?.emissions) {
+        setCalculationResult(res.data);
+      }
 
       // Reset Form (keep identity)
       setFormData({});
@@ -1015,20 +1026,140 @@ const Scope1Form = () => {
       console.error("Failed to add entry:", error);
       const msg = error.response?.data?.error || "Failed to add entry";
       toast.error(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this entry?")) return;
+  const handleInspect = (entry) => {
+    const pType = entry.process || entry.process_type || "Scope 1";
+    const fuelVal = entry.fuel || entry.fuel_type || "N/A";
+    const qty = entry.amount || entry.quantity || 0;
+    const unitVal = entry.unit || "unit";
+
+    let payload = {};
+    if (entry.source_payload) {
+      try {
+        payload =
+          typeof entry.source_payload === "string"
+            ? JSON.parse(entry.source_payload)
+            : entry.source_payload;
+      } catch (e) {}
+    }
+
+    const co2Val = Number(entry.co2_emissions || 0);
+    const ch4Val = Number(entry.ch4_emissions || 0);
+    const n2oVal = Number(entry.n2o_emissions || 0);
+    const co2eVal = Number(entry.co2e_total || 0);
+
+    const numQty = Number(qty) || 0;
+    const efCo2 =
+      entry.ef_used_co2 ??
+      payload.ef_used_co2 ??
+      payload.factor_co2 ??
+      (numQty > 0 ? (co2Val * 1000) / numQty : null);
+    const efCh4 =
+      entry.ef_used_ch4 ??
+      payload.ef_used_ch4 ??
+      payload.factor_ch4 ??
+      (numQty > 0 ? (ch4Val * 1000) / numQty : null);
+    const efN2o =
+      entry.ef_used_n2o ??
+      payload.ef_used_n2o ??
+      payload.factor_n2o ??
+      (numQty > 0 ? (n2oVal * 1000) / numQty : null);
+
+    const fSource =
+      entry.factor_source ||
+      entry.factor_type ||
+      payload.factor_source ||
+      "API Compendium 2021 (Default)";
+    const facName =
+      entry.facility_name ||
+      facilities.find((f) => f.id === entry.facility_id)?.name ||
+      `Facility #${entry.facility_id || "N/A"}`;
+    const pLabel =
+      PROCESS_TYPES[entry.process || entry.process_type]?.label || pType;
+
+    setInspectRecord({
+      process_type: `Scope 1 - ${pLabel}`,
+      fuel: fuelVal,
+      amount: qty,
+      unit: unitVal,
+      facility: facName,
+      year: entry.year,
+      month: entry.month,
+      equipment_id: entry.equipment_id || "-",
+      status: entry.status || "Verified",
+      factor_source: fSource,
+      method:
+        entry.calc_method ||
+        entry.calculation_method ||
+        (fSource.toLowerCase().includes("specific")
+          ? "Tier 3 Engineering / CEMS"
+          : "API Compendium / Tier 1-2"),
+      emissions: {
+        totalCo2e: co2eVal,
+        co2: co2Val,
+        ch4: ch4Val,
+        n2o: n2oVal,
+      },
+      factors: {
+        co2: efCo2,
+        ch4: efCh4,
+        n2o: efN2o,
+        gwp_ch4: 28.0,
+        gwp_n2o: 265.0,
+        source: fSource,
+      },
+      uncertainty: {
+        co2: entry.uncertainty_co2,
+        ch4: entry.uncertainty_ch4,
+        n2o: entry.uncertainty_n2o,
+      },
+      steps: [
+        {
+          name: "1. Operational Activity & Facility Scope",
+          desc: `Logged consumption / activity of ${formatNumber(qty, 2)} ${unitVal} for ${fuelVal} at ${facName} (${entry.year}-${String(entry.month || 1).padStart(2, "0")}).`,
+          formula: `Activity = ${formatNumber(qty, 2)} ${unitVal}`,
+        },
+        {
+          name: "2. Emission Factor Application & Species Mass",
+          desc: `Calculated direct chemical emission masses using ${fSource} methodology:`,
+          formula: `CO₂: ${formatNumber(co2Val, 4)} t | CH₄: ${formatNumber(ch4Val, 6)} t | N₂O: ${formatNumber(n2oVal, 6)} t`,
+        },
+        {
+          name: "3. Global Warming Potential (GWP AR5) Weighting",
+          desc: `Weighted summation to CO₂ equivalent using standard IPCC AR5 factors (CO₂: 1.0, CH₄: 28.0, N₂O: 265.0):`,
+          formula: `CO₂e = (${formatNumber(co2Val, 4)} × 1.0) + (${formatNumber(ch4Val, 6)} × 28.0) + (${formatNumber(n2oVal, 6)} × 265.0)`,
+          result: co2eVal,
+          unit: "tCO₂e",
+        },
+        {
+          name: "4. Quality Assurance & Uncertainty Profile",
+          desc: `Standard combined uncertainty (1σ): CO₂ ${entry.uncertainty_co2 != null ? '±' + (entry.uncertainty_co2 * 100).toFixed(0) + '%' : '—'}, CH₄ ${entry.uncertainty_ch4 != null ? '±' + (entry.uncertainty_ch4 * 100).toFixed(0) + '%' : '—'}, N₂O ${entry.uncertainty_n2o != null ? '±' + (entry.uncertainty_n2o * 100).toFixed(0) + '%' : '—'}. Verification Status: ${entry.status || 'Verified'}.`,
+        },
+      ],
+    });
+  };
+
+  const handleDelete = (id) => {
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
     try {
       // Strip prefix (e.g. "s1_17" -> "17")
-      const realId = id.toString().replace(/^[s]\d+_/, "");
+      const realId = deleteConfirmId.toString().replace(/^[s]\d+_/, "");
       await api.delete(`/emissions/${realId}`);
       toast.success("Entry deleted");
       loadEntries();
     } catch (error) {
       console.error("Failed to delete:", error);
       toast.error("Failed to delete entry");
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -1926,13 +2057,95 @@ const Scope1Form = () => {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div
+          className="formula-inspector-card"
+          style={{
+            background: "rgba(255, 247, 237, 0.7)",
+            border: "1px solid rgba(255, 102, 0, 0.25)",
+            borderRadius: "14px",
+            padding: "16px 20px",
+            marginBottom: "24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--accent-color, #ff6600)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                📐 Live Equation Inspector (Tier 2/3 GHG Protocol)
+              </span>
+            </div>
+            <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600 }}>
+              GWP Standard: IPCC AR6 (CO₂:1, CH₄:28, N₂O:265)
+            </span>
+          </div>
+
+          <div
+            style={{
+              fontFamily: "monospace",
+              fontSize: "0.88rem",
+              background: "#ffffff",
+              padding: "10px 14px",
+              borderRadius: "8px",
+              border: "1px solid #fed7aa",
+              color: "#0f172a",
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "6px",
+            }}
+          >
+            <span style={{ color: "#ea580c", fontWeight: 700 }}>
+              {formData.amount || formData.quantity ? `${formData.amount || formData.quantity} ${formData.unit || "units"}` : "[Activity Data]"}
+            </span>
+            <span style={{ color: "#94a3b8" }}>×</span>
+            <span style={{ color: "#2563eb", fontWeight: 600 }}>
+              {formData.fuel ? `${formData.fuel} Factor` : "[Emission Factor]"}
+            </span>
+            <span style={{ color: "#94a3b8" }}>×</span>
+            <span style={{ color: "#16a34a", fontWeight: 600 }}>
+              {formData.hhv ? `${formData.hhv} HHV` : "1.0 HHV"}
+            </span>
+            <span style={{ color: "#94a3b8" }}>×</span>
+            <span style={{ color: "#9333ea", fontWeight: 600 }}>GWP</span>
+            <span style={{ color: "#94a3b8" }}>=</span>
+            <span style={{ color: "#0f172a", fontWeight: 800, background: "#fef08a", padding: "2px 6px", borderRadius: "4px" }}>
+              CO₂e Total (tCO₂e)
+            </span>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            className="btn-add-draft"
+            disabled={submitting}
+            onClick={() => handleAddEntry("Draft")}
+            style={{
+              flex: 1,
+              background: "rgba(255, 255, 255, 0.9)",
+              border: "1px solid var(--border-color)",
+              color: "var(--text-primary)",
+              fontWeight: 600,
+              padding: "10px 16px",
+              borderRadius: "10px",
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+            }}
+          >
+            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
+          </button>
           <button
             className="btn-add-activity"
+            disabled={submitting}
             onClick={() => handleAddEntry("Verified")}
-            style={{ flex: 1 }}
+            style={{
+              flex: 1.5,
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+            }}
           >
-            + Add Activity
+            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
           </button>
         </div>
       </div>
@@ -2155,7 +2368,7 @@ const Scope1Form = () => {
                   return (
                     <tr>
                       <td
-                        colSpan="19"
+                        colSpan="22"
                         style={{
                           textAlign: "center",
                           color: "var(--text-secondary)",
@@ -2328,7 +2541,15 @@ const Scope1Form = () => {
                           ? `±${(entry.uncertainty_n2o * 200).toFixed(0)}%`
                           : "—"}
                       </td>
-                      <td style={{ textAlign: "center" }}>
+                      <td style={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                        <button
+                          className="icon-button"
+                          onClick={() => handleInspect(entry)}
+                          style={{ color: "#3b82f6", marginRight: "6px" }}
+                          title="Inspect Calculation Details"
+                        >
+                          <Eye size={16} />
+                        </button>
                         <button
                           className="icon-button"
                           onClick={() => handleDelete(entry.id)}
@@ -2346,7 +2567,7 @@ const Scope1Form = () => {
             <tfoot>
               <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
                 <td
-                  colSpan="18"
+                  colSpan="14"
                   style={{ textAlign: "right", paddingRight: "15px" }}
                 >
                   Total (
@@ -2383,7 +2604,7 @@ const Scope1Form = () => {
                     3,
                   )}
                 </td>
-                <td></td>
+                <td colSpan="7"></td>
               </tr>
             </tfoot>
           </table>
@@ -2415,6 +2636,30 @@ const Scope1Form = () => {
         onClose={() => setShowGasCalc(false)}
         onApply={handleGasApply}
         processType={processType}
+      />
+
+      {calculationResult && (
+        <EmissionResult
+          result={calculationResult}
+          onClose={() => setCalculationResult(null)}
+        />
+      )}
+
+      {inspectRecord && (
+        <CalculationDetails
+          calculation={inspectRecord}
+          onClose={() => setInspectRecord(null)}
+        />
+      )}
+
+      <ConfirmModal
+        isOpen={Boolean(deleteConfirmId)}
+        title="Delete Scope 1 Emission"
+        message="Are you sure you want to delete this emission entry? This action cannot be undone."
+        confirmLabel="Delete"
+        confirmVariant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteConfirmId(null)}
       />
     </div>
   );

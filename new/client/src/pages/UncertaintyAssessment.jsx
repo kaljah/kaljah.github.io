@@ -2,393 +2,334 @@ import React, { useState, useEffect } from "react";
 import {
   Info,
   ShieldCheck,
+  Download,
   Database,
-  Layers,
-  BarChart,
-  TrendingUp,
-  AlertTriangle,
 } from "lucide-react";
 import api from "../api";
+import { useAuth } from "../context/AuthContext";
+import { useLayout } from "../context/LayoutContext";
+import { useToast } from "../components/Toast";
+import LoadingSpinner from "../components/LoadingSpinner";
+import CustomDropdown from "../components/CustomDropdown";
 import "./UncertaintyAssessment.css";
 
 const UncertaintyAssessment = () => {
+  const { user } = useAuth();
+  const toast = useToast();
+  const { setTopBarLeft, setTopBarRight } = useLayout();
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedScope, setSelectedScope] = useState("all");
+  const [selectedFacility, setSelectedFacility] = useState("all");
   const [availableYears, setAvailableYears] = useState([]);
+  const [facilities, setFacilities] = useState([]);
+  const [exporting, setExporting] = useState(false);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      // First load filters if not loaded
-      if (availableYears.length === 0) {
-        const filterRes = await api.get("/filters/available");
-        if (
-          filterRes.data &&
-          filterRes.data.years &&
-          filterRes.data.years.length > 0
-        ) {
+  // Load filter options on mount
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        const [filterRes, facRes] = await Promise.all([
+          api.get("/filters/available"),
+          api.get("/facilities"),
+        ]);
+        if (filterRes.data?.years?.length > 0) {
           setAvailableYears(filterRes.data.years);
-          // If current selection is default, set to latest year
           if (selectedYear === "all") {
             setSelectedYear(filterRes.data.years[0].toString());
-            return; // Effect will trigger again
           }
+        } else {
+          setLoading(false);
         }
+        if (facRes.data) {
+          setFacilities(
+            Array.isArray(facRes.data) ? facRes.data : facRes.data.facilities || []
+          );
+        }
+      } catch (err) {
+        console.error("Failed to load filters:", err);
+        setLoading(false);
       }
+    };
+    loadFilters();
+  }, []);
 
-      const res = await api.get(
-        `/dashboard/uncertainty?year=${selectedYear === "all" ? "" : selectedYear}`,
-      );
-      setData(res.data);
+  // Fetch uncertainty data when filters change
+  useEffect(() => {
+    if (selectedYear === "all") {
       setLoading(false);
-    } catch (error) {
-      console.error("Failed to load uncertainty data:", error);
-      setLoading(false);
+      return;
+    }
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        params.set("year", selectedYear);
+        if (selectedScope !== "all") params.set("scope", selectedScope);
+        if (selectedFacility !== "all") params.set("facility_id", selectedFacility);
+
+        const res = await api.get(`/dashboard/uncertainty?${params.toString()}`);
+        setData(res.data);
+      } catch (error) {
+        console.error("Failed to load uncertainty data:", error);
+        toast.error("Failed to load uncertainty data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [selectedYear, selectedScope, selectedFacility]);
+
+  // TopBar layout integration — breadcrumb
+  useEffect(() => {
+    setTopBarLeft(
+      <div className="breadcrumbs" style={{ borderRight: "none", paddingRight: 0 }}>
+        <ShieldCheck
+          size={16}
+          style={{ color: "var(--accent-color, #ff6600)" }}
+        />
+        <span>Compliance</span>
+        <span style={{ margin: "0 8px", color: "var(--text-secondary)" }}>/</span>
+        <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+          Uncertainty Assessment
+        </span>
+      </div>
+    );
+
+    return () => {
+      setTopBarLeft(null);
+      setTopBarRight(null);
+    };
+  }, [setTopBarLeft, setTopBarRight]);
+
+  // CSV export handler
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const params = new URLSearchParams();
+      params.set("year", selectedYear);
+      params.set("export", "csv");
+      if (selectedScope !== "all") params.set("scope", selectedScope);
+      if (selectedFacility !== "all") params.set("facility_id", selectedFacility);
+
+      const res = await api.get(`/dashboard/uncertainty?${params.toString()}`, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `uncertainty_${selectedYear}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("Uncertainty assessment exported successfully");
+    } catch (err) {
+      console.error("Export failed:", err);
+      toast.error("Export failed");
+    } finally {
+      setExporting(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedYear]);
+  // Tier color utility
+  const getTierColorClass = (tierName) => {
+    if (tierName === "Tier 3") return "tier-3-color";
+    if (tierName === "Tier 2") return "tier-2-color";
+    return "tier-1-color";
+  };
 
-  if (loading)
+  // Inventory uncertainty level
+  const getUncertaintyLevel = (decimal) => {
+    if (decimal < 0.1) return "level-low";
+    if (decimal < 0.2) return "level-medium";
+    return "level-high";
+  };
+
+  // Build dropdown options
+  const yearOptions = [
+    { value: "all", label: "Select Year" },
+    ...availableYears.map((y) => ({ value: y.toString(), label: y.toString() })),
+  ];
+
+  const scopeOptions = [
+    { value: "all", label: "All Scopes" },
+    { value: "1", label: "Scope 1" },
+    { value: "2", label: "Scope 2" },
+    { value: "3", label: "Scope 3" },
+  ];
+
+  const facilityOptions = [
+    { value: "all", label: "All Facilities" },
+    ...facilities.map((f) => ({
+      value: (f.id || f.facility_id || "").toString(),
+      label: f.name || f.facility_name || `Facility ${f.id}`,
+    })),
+  ];
+
+  if (loading) {
     return (
-      <div
-        className="loading-container"
-        style={{ color: "#fff", padding: "50px", textAlign: "center" }}
-      >
-        Quantifying Inventory Uncertainty...
+      <div className="uncertainty-assessment">
+        <LoadingSpinner message="Quantifying Inventory Uncertainty..." />
       </div>
     );
-  if (!data)
-    return (
-      <div className="error-container">No uncertainty data available.</div>
-    );
+  }
 
   return (
     <div className="uncertainty-assessment">
-      <header
-        className="top-bar"
-        style={{
-          padding: "0 0 30px 0",
-          border: "none",
-          background: "transparent",
-        }}
-      >
-        <div className="breadcrumbs">
-          <ShieldCheck
-            size={14}
-            style={{ marginRight: "8px", color: "var(--text-secondary)" }}
-          />
-          <span>Compliance</span>
-          <span style={{ margin: "0 8px", color: "var(--text-secondary)" }}>
-            /
-          </span>
-          <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-            Uncertainty Assessment
-          </span>
-        </div>
-      </header>
-
-      <div
-        style={{
-          marginBottom: "40px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-        }}
-      >
+      {/* ── Page Header ── */}
+      <div className="ua-page-header">
         <div>
-          <h1
-            style={{
-              fontSize: "2.5rem",
-              fontWeight: 800,
-              color: "#1e293b",
-              margin: "0 0 10px 0",
-            }}
-          >
-            Data Reliability Analysis
-          </h1>
-          <p
-            style={{ fontSize: "1.1rem", color: "#64748b", maxWidth: "800px" }}
-          >
+          <h1 className="ua-title">Data Reliability Analysis</h1>
+          <p className="ua-subtitle">
             Dynamic uncertainty quantification across the complete GHG
-            inventory.
+            inventory, compliant with ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
+            §3.3.
           </p>
+          {data && (
+            <div className="ua-inventory-badge">
+              <div className="ua-inventory-label">Inventory Uncertainty</div>
+              <div
+                className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
+              >
+                {data.inventory_uncertainty_pct}
+              </div>
+              {data.confidence_level_pct && (
+                <div className="ua-confidence-badge">
+                  {data.confidence_level_pct}% CI (k={data.coverage_factor})
+                </div>
+              )}
+            </div>
+          )}
         </div>
-        <div style={{ display: "flex", gap: "20px", alignItems: "flex-end" }}>
-          <div className="filter-group-alt">
-            <label
-              style={{
-                display: "block",
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: "#94a3b8",
-                marginBottom: "8px",
-                textTransform: "uppercase",
-              }}
-            >
-              Select Reporting Year
-            </label>
-            <select
+
+        <div className="ua-controls">
+          <div className="ua-filter-group" style={{ width: "130px" }}>
+            <CustomDropdown
+              options={yearOptions}
               value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              style={{
-                padding: "10px 16px",
-                borderRadius: "10px",
-                border: "1px solid #e2e8f0",
-                background: "#fff",
-                fontSize: "0.9rem",
-                fontWeight: 600,
-                color: "#334155",
-                minWidth: "120px",
-              }}
-            >
-              <option value="all">Select Year</option>
-              {availableYears.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+              onChange={setSelectedYear}
+              placeholder="Year"
+            />
           </div>
-          <div
-            style={{
-              background: "rgba(30, 41, 59, 0.05)",
-              padding: "20px",
-              borderRadius: "16px",
-              border: "1px solid rgba(0,0,0,0.05)",
-              textAlign: "right",
-            }}
+          <div className="ua-filter-group" style={{ width: "150px" }}>
+            <CustomDropdown
+              options={scopeOptions}
+              value={selectedScope}
+              onChange={setSelectedScope}
+              placeholder="Scope"
+            />
+          </div>
+          <div className="ua-filter-group" style={{ width: "200px" }}>
+            <CustomDropdown
+              options={facilityOptions}
+              value={selectedFacility}
+              onChange={setSelectedFacility}
+              placeholder="Facility"
+            />
+          </div>
+
+          <button
+            className="ua-export-btn"
+            onClick={handleExport}
+            disabled={exporting || !data}
+            title="Export uncertainty assessment as CSV"
           >
-            <div
-              style={{
-                fontSize: "0.85rem",
-                color: "#64748b",
-                marginBottom: "4px",
-              }}
-            >
-              Inventory Uncertainty
-            </div>
-            <div
-              style={{
-                fontSize: "2rem",
-                fontWeight: 800,
-                color:
-                  data.inventory_uncertainty_decimal < 0.1
-                    ? "#10b981"
-                    : data.inventory_uncertainty_decimal < 0.2
-                      ? "#f59e0b"
-                      : "#ef4444",
-              }}
-            >
-              {data.inventory_uncertainty_pct}
-            </div>
-          </div>
+            <Download size={16} />
+            {exporting ? "Exporting..." : "Export CSV"}
+          </button>
         </div>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "20px",
-          marginBottom: "40px",
-        }}
-      >
+      {!data ? (
+        <div className="ua-methodology-box" style={{ marginTop: "24px" }}>
+          <Info size={24} className="ua-methodology-icon" />
+          <div>
+            <h4>No Uncertainty Data Available</h4>
+            <p>
+              No verified emission records found for the selected filters.
+              Ensure emissions have been submitted and verified before running
+              the uncertainty assessment.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* ── Tier Breakdown Cards ── */}
+      <div className="ua-tier-grid">
         {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
-          <div
-            key={tier}
-            style={{
-              background: "#fff",
-              padding: "20px",
-              borderRadius: "12px",
-              border: "1px solid #f1f5f9",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-            }}
-          >
-            <div
-              style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}
-            >
-              {tier} (Data Quality)
-            </div>
-            <div
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: 700,
-                margin: "8px 0",
-                color:
-                  tier === "Tier 3"
-                    ? "#10b981"
-                    : tier === "Tier 2"
-                      ? "#3b82f6"
-                      : "#f59e0b",
-              }}
-            >
+          <div key={tier} className="ua-tier-card">
+            <div className="ua-tier-label">{tier} (Data Quality)</div>
+            <div className={`ua-tier-value ${getTierColorClass(tier)}`}>
               {pct}%
             </div>
-            <div
-              style={{
-                width: "100%",
-                height: "4px",
-                background: "#f1f5f9",
-                borderRadius: "2px",
-              }}
-            >
+            <div className="ua-tier-bar">
               <div
-                style={{
-                  width: `${pct}%`,
-                  height: "100%",
-                  background:
-                    tier === "Tier 3"
-                      ? "#10b981"
-                      : tier === "Tier 2"
-                        ? "#3b82f6"
-                        : "#f59e0b",
-                  borderRadius: "2px",
-                }}
-              ></div>
+                className={`ua-tier-bar-fill ${getTierColorClass(tier)}`}
+                style={{ width: `${pct}%` }}
+              />
             </div>
           </div>
         ))}
       </div>
 
+      {/* ── Legend ── */}
       <div className="legend-bar">
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "#10b981" }}></div>
-          Low Uncertainty (≤ ±5%)
+          <div className="legend-dot" style={{ background: "#10b981" }} />
+          Low Uncertainty (≤ ±10%)
         </div>
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "#f59e0b" }}></div>
-          Medium Uncertainty (±5% to ±15%)
+          <div className="legend-dot" style={{ background: "#f59e0b" }} />
+          Medium Uncertainty (±10% to ±30%)
         </div>
         <div className="legend-item">
-          <div className="legend-dot" style={{ background: "#ef4444" }}></div>
-          High Uncertainty (&gt; ±15%)
+          <div className="legend-dot" style={{ background: "#ef4444" }} />
+          High Uncertainty (&gt; ±30%)
         </div>
       </div>
 
+      {/* ── Category Sections ── */}
       <div className="category-grid">
         {data.categories.map((section, idx) => (
-          <div
-            key={idx}
-            className="category-section"
-            style={{ marginBottom: "40px" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "20px",
-              }}
-            >
-              <h3 className="category-title" style={{ margin: 0 }}>
-                {section.category}
-              </h3>
-              <div className={`uncertainty-badge uncertainty-${section.level}`}>
+          <div key={idx} className="category-section">
+            <div className="category-header">
+              <h3 className="category-title">{section.category}</h3>
+              <div
+                className={`uncertainty-badge uncertainty-${section.level}`}
+              >
                 {section.uncertainty_pct}
               </div>
             </div>
 
-            <div
-              className="uncertainty-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
-                gap: "20px",
-              }}
-            >
+            <div className="uncertainty-grid">
               {section.top_contributors.map((factor, fIdx) => (
-                <div
-                  key={fIdx}
-                  className="factor-card"
-                  style={{
-                    background: "#fff",
-                    borderRadius: "12px",
-                    padding: "20px",
-                    boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <div
-                    className="factor-header"
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "15px",
-                    }}
-                  >
+                <div key={fIdx} className="factor-card">
+                  <div className="factor-header">
                     <div>
-                      <div
-                        className="factor-name"
-                        style={{
-                          fontWeight: 700,
-                          fontSize: "1.1rem",
-                          color: "#1e293b",
-                        }}
-                      >
-                        {factor.name}
-                      </div>
-                      <div
-                        className="factor-source"
-                        style={{ fontSize: "0.8rem", color: "#64748b" }}
-                      >
-                        Primary Contributor
-                      </div>
+                      <div className="factor-name">{factor.name}</div>
+                      <div className="factor-source">Primary Contributor</div>
                     </div>
-                    <div
-                      style={{
-                        fontSize: "0.9rem",
-                        fontWeight: 600,
-                        color: "#64748b",
-                        padding: "4px 8px",
-                        background: "#f1f5f9",
-                        borderRadius: "6px",
-                      }}
-                    >
+                    <div className="factor-uncertainty-tag">
                       {factor.uncertainty}
                     </div>
                   </div>
-                  <div
-                    className="factor-stats"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "15px",
-                    }}
-                  >
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          fontSize: "0.75rem",
-                          marginBottom: "4px",
-                          color: "#64748b",
-                        }}
-                      >
+                  <div className="factor-stats">
+                    <div className="factor-stat-bar-wrapper">
+                      <div className="factor-stat-labels">
                         <span>Impact on Category</span>
-                        <span style={{ fontWeight: 600 }}>
+                        <span className="factor-stat-value">
                           {factor.contribution}%
                         </span>
                       </div>
-                      <div
-                        style={{
-                          width: "100%",
-                          height: "6px",
-                          background: "#f1f5f9",
-                          borderRadius: "3px",
-                          overflow: "hidden",
-                        }}
-                      >
+                      <div className="factor-stat-track">
                         <div
-                          style={{
-                            width: `${factor.contribution}%`,
-                            height: "100%",
-                            background: "#3b82f6",
-                          }}
-                        ></div>
+                          className="factor-stat-fill"
+                          style={{ width: `${factor.contribution}%` }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -398,38 +339,23 @@ const UncertaintyAssessment = () => {
           </div>
         ))}
       </div>
+      </>
+      )}
 
-      <div
-        style={{
-          marginTop: "60px",
-          padding: "30px",
-          background: "rgba(30, 41, 59, 0.03)",
-          borderRadius: "20px",
-          border: "1px dashed #cbd5e1",
-        }}
-      >
-        <div style={{ display: "flex", gap: "20px" }}>
-          <Info size={24} style={{ color: "#64748b" }} />
-          <div>
-            <h4 style={{ margin: "0 0 8px 0", color: "#1e293b" }}>
-              Calculation Methodology
-            </h4>
-            <p
-              style={{
-                margin: 0,
-                color: "#64748b",
-                fontSize: "0.95rem",
-                lineHeight: "1.6",
-              }}
-            >
-              Uncertainty is quantified using the Square Root of Sum of Squares
-              (SRSS) propagation method. Individual emission factor
-              uncertainties are derived from the calculation tiers (IPCC/API):
-              Tier 3 (±3%), Tier 2 (±8%), and Tier 1 (±20-40%). The final
-              results represent the 95% confidence interval for the reported
-              inventory.
-            </p>
-          </div>
+      {/* ── Methodology Footer ── */}
+      <div className="ua-methodology-box">
+        <Info size={24} className="ua-methodology-icon" />
+        <div>
+          <h4>Calculation Methodology</h4>
+          <p>
+            Uncertainty is quantified using the Square Root of Sum of Squares
+            (SRSS) propagation method per IPCC 2006 GL Vol.1 §3.3 Eq. 3.3.
+            Individual emission factor uncertainties are derived from the
+            calculation tiers (IPCC/API). The coverage factor k=2 is applied
+            per GUM §6.2 to derive the expanded uncertainty at the 95%
+            confidence interval. Activity data uncertainties are tier-specific
+            per IPCC GL Vol.1 Table 3.1.
+          </p>
         </div>
       </div>
     </div>

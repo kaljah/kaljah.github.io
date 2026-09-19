@@ -2,7 +2,7 @@ from routes.auth import login_required
 from flask import request, jsonify, session
 import json
 from . import data_bp
-from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
+from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
 from sqlalchemy import func
 from models import (
     ProductionData, ActivityLog, User, Facility, OgmpSurvey, 
@@ -18,14 +18,24 @@ NON_OG_ACTIVITIES = [
 ]
 
 @data_bp.route('/production', methods=['GET'])
+@data_bp.route('/production/', methods=['GET'])
 @login_required
 def get_production():
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to access operational production data.'}), 403
     query = ProductionData.query
-    allowed_fids = get_allowed_facility_ids(get_current_user())
+    allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(ProductionData.facility_id.in_(allowed_fids))
     if request.args.get('facilityId'):
-        query = query.filter_by(facility_id=request.args.get('facilityId'))
+        try:
+            fid = int(request.args.get('facilityId'))
+            if not require_facility_access(user, fid):
+                return jsonify({'error': 'Access to requested facility is denied'}), 403
+            query = query.filter_by(facility_id=fid)
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid facilityId'}), 400
     if request.args.get('year'):
         query = query.filter_by(year=request.args.get('year'))
         
@@ -45,50 +55,72 @@ def get_production():
     } for d in data])
 
 @data_bp.route('/production', methods=['POST'])
+@data_bp.route('/production/', methods=['POST'])
 @login_required
 def add_production():
-    data = request.get_json()
-    
-    # Check if exists
-    existing = ProductionData.query.filter_by(
-        facility_id=data.get('facility_id'),
-        year=data.get('year'),
-        month=data.get('month')
-    ).first()
-    
-    if existing:
-        existing.oil_amount = data.get('oil_amount', 0)
-        existing.gas_amount = data.get('gas_amount', 0)
-        existing.oil_unit = data.get('oil_unit', 'bbl')
-        existing.gas_unit = data.get('gas_unit', 'mscf')
-        existing.activity = data.get('activity')
-        existing.division = data.get('division')
-        existing.field = data.get('field')
-    else:
-        prod = ProductionData(
-            facility_id=data.get('facility_id'),
-            year=data.get('year'),
-            month=data.get('month'),
-            oil_amount=data.get('oil_amount', 0),
-            gas_amount=data.get('gas_amount', 0),
-            oil_unit=data.get('oil_unit', 'bbl'),
-            gas_unit=data.get('gas_unit', 'mscf'),
-            activity=data.get('activity'),
-            division=data.get('division'),
-            field=data.get('field')
-        )
-        db.session.add(prod)
-    
-    # Audit + commit atomically
+    from sqlalchemy.exc import IntegrityError
+    user = get_current_user()
+    if user and user.role in ['viewer', 'auditor', 'it_admin']:
+        return jsonify({'error': 'Read-only or IT administrative role cannot modify operational production data.'}), 403
+    data = request.get_json() or {}
+    fid = data.get('facility_id') or data.get('facilityId')
+    if not fid:
+        return jsonify({'error': 'Facility ID is required'}), 400
     try:
-        user_id = session.get('user_id')
-        user = User.query.get(user_id) if user_id else None
+        fid = int(fid)
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid facility ID'}), 400
         
-        rec_id = existing.id if existing else prod.id
-        action = 'UPDATE' if existing else 'CREATE'
+    if not require_facility_access(user, fid):
+        return jsonify({'error': 'Access to this facility is denied'}), 403
+
+    year = data.get('year')
+    month = data.get('month')
+    oil_amount = data.get('oil_amount', 0)
+    gas_amount = data.get('gas_amount', 0)
+    oil_unit = data.get('oil_unit', 'bbl')
+    gas_unit = data.get('gas_unit', 'mscf')
+    activity = data.get('activity')
+    division = data.get('division')
+    field = data.get('field')
+
+    # Atomic upsert pattern: try update if existing, handle race condition gracefully
+    def perform_upsert():
+        existing = ProductionData.query.filter_by(
+            facility_id=fid,
+            year=year,
+            month=month
+        ).first()
         
-        log_details = f"{action.title()} Production Data for {data.get('year')}-{data.get('month')}: {data.get('oil_amount')} {data.get('oil_unit', 'bbl')} oil, {data.get('gas_amount')} {data.get('gas_unit', 'mscf')} gas"
-        
+        if existing:
+            existing.oil_amount = oil_amount
+            existing.gas_amount = gas_amount
+            existing.oil_unit = oil_unit
+            existing.gas_unit = gas_unit
+            existing.activity = activity
+            existing.division = division
+            existing.field = field
+            rec_id = existing.id
+            action = 'UPDATE'
+        else:
+            prod = ProductionData(
+                facility_id=fid,
+                year=year,
+                month=month,
+                oil_amount=oil_amount,
+                gas_amount=gas_amount,
+                oil_unit=oil_unit,
+                gas_unit=gas_unit,
+                activity=activity,
+                division=division,
+                field=field
+            )
+            db.session.add(prod)
+            db.session.flush()
+            rec_id = prod.id
+            action = 'CREATE'
+
+        log_details = f"{action.title()} Production Data for {year}-{month}: {oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas"
         log_activity_and_notify(
             action=action,
             record_id=str(rec_id),
@@ -97,29 +129,71 @@ def add_production():
             entity='ProductionData',
             details=log_details
         )
-        db.session.commit()  # commits: data + activity log + notification
+        db.session.commit()
+
+    try:
+        perform_upsert()
+    except IntegrityError:
+        # Concurrent insert occurred between check and insert; retry once as update
+        db.session.rollback()
+        try:
+            perform_upsert()
+        except Exception as retry_err:
+            db.session.rollback()
+            return jsonify({'error': f'Concurrency conflict: {str(retry_err)}'}), 409
     except Exception as e:
         db.session.rollback()
-        print(f"Audit Log Error: {e}")
+        import traceback
+        from flask import current_app
+        if current_app:
+            current_app.logger.error(f"Production save error: {traceback.format_exc()}")
+        return jsonify({'error': 'Failed to save production data'}), 500
 
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
     return jsonify({'message': 'Production data saved'})
 
 @data_bp.route('/production/<int:record_id>', methods=['DELETE'])
 @login_required
 def delete_production(record_id):
-    prod = ProductionData.query.get(record_id)
+    user = get_current_user()
+    if user and user.role in ['viewer', 'auditor', 'it_admin']:
+        return jsonify({'error': 'Read-only or IT administrative role cannot delete operational production data.'}), 403
+    prod = db.session.get(ProductionData, record_id)
     if not prod:
         return jsonify({'error': 'Production record not found'}), 404
     
-    db.session.delete(prod)
-    db.session.commit()
+    if not require_facility_access(user, prod.facility_id):
+        return jsonify({'error': 'Access to this facility is denied'}), 403
+
+    try:
+        log_activity_and_notify(
+            action='DELETE',
+            record_id=str(record_id),
+            user=user,
+            request=request,
+            entity='ProductionData',
+            details=f"Deleted Production Data for facility {prod.facility_id} ({prod.year}-{prod.month})"
+        )
+        db.session.delete(prod)
+        db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to delete production record'}), 500
+
     return jsonify({'message': 'Production record deleted'})
 
 
 @data_bp.route('/production/bulk-import', methods=['POST'])
 @login_required
 def bulk_import_production():
-    data = request.get_json()
+    user = get_current_user()
+    if user and user.role in ['viewer', 'auditor', 'it_admin']:
+        return jsonify({'error': 'Read-only or IT administrative role cannot modify operational production data.'}), 403
+    allowed_fids = get_allowed_facility_ids(user)
+    data = request.get_json() or {}
     records = data.get('records', [])
     if not records:
         return jsonify({'error': 'No records provided'}), 400
@@ -144,12 +218,15 @@ def bulk_import_production():
                 if fid in facility_cache:
                     facility = facility_cache[fid]
                 else:
-                    facility = Facility.query.get(fid)
+                    facility = db.session.get(Facility, fid)
                     facility_cache[fid] = facility
             except (ValueError, TypeError):
                 facility = None
 
         if not facility:
+            continue
+
+        if allowed_fids is not None and facility.id not in allowed_fids:
             continue
 
         year = rec.get('year')
@@ -169,8 +246,9 @@ def bulk_import_production():
             month=month
         ).first()
 
-        oil_amount = float(rec.get('oil_amount') or 0)
-        gas_amount = float(rec.get('gas_amount') or 0)
+        from background_processor import _clean_float
+        oil_amount = _clean_float(rec.get('oil_amount'), default=0.0)
+        gas_amount = _clean_float(rec.get('gas_amount'), default=0.0)
 
         if existing:
             existing.oil_amount = oil_amount
@@ -197,7 +275,14 @@ def bulk_import_production():
         
         imported_count += 1
     
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Failed to import production records: {str(e)}'}), 500
+
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
     return jsonify({'message': f'{imported_count} production records imported'}), 201
 
 
@@ -210,6 +295,9 @@ def bulk_import_production():
 @data_bp.route('/methane-sources', methods=['GET'])
 @login_required
 def get_methane_sources():
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to view operational data.'}), 403
     sources = MethaneSourceType.query.order_by(MethaneSourceType.id.asc()).all()
     return jsonify([{
         'id': s.id,
@@ -221,23 +309,40 @@ def get_methane_sources():
     } for s in sources])
 
 @data_bp.route('/ogmp-surveys', methods=['GET'])
+@data_bp.route('/ogmp-surveys/', methods=['GET'])
 @login_required
 def get_ogmp_surveys():
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to view operational OGMP data.'}), 403
     query = OgmpSurvey.query
-    allowed_fids = get_allowed_facility_ids(get_current_user())
+    allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
-    if request.args.get('facilityId'):
-        query = query.filter_by(facility_id=request.args.get('facilityId'))
+    if request.args.get('facilityId') and request.args.get('facilityId') != 'all':
+        try:
+            fid = int(request.args.get('facilityId'))
+            if allowed_fids is not None and fid not in allowed_fids:
+                return jsonify({'error': 'Access to requested facility is denied'}), 403
+            query = query.filter_by(facility_id=fid)
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid facilityId'}), 400
     # Single join to Facility — needed for O&G scope filter and optional segment filter
     query = query.join(Facility, OgmpSurvey.facility_id == Facility.id)
     # Restrict to Oil & Gas facilities only (OGMP 2.0 scope)
     query = query.filter(~Facility.activity.in_(NON_OG_ACTIVITIES))
-    if request.args.get('segment'):
+    if request.args.get('segment') and request.args.get('segment') != 'all':
         query = query.filter(Facility.segment == request.args.get('segment'))
-    if request.args.get('year'):
-        query = query.filter(OgmpSurvey.year == int(request.args.get('year')))
-    if request.args.get('survey_type'):
+    if request.args.get('activity') and request.args.get('activity') != 'all':
+        query = query.filter(Facility.activity == request.args.get('activity'))
+    if request.args.get('division') and request.args.get('division') != 'all':
+        query = query.filter(Facility.division == request.args.get('division'))
+    if request.args.get('year') and request.args.get('year') != 'all':
+        try:
+            query = query.filter(OgmpSurvey.year == int(request.args.get('year')))
+        except (ValueError, TypeError):
+            pass
+    if request.args.get('survey_type') and request.args.get('survey_type') != 'all':
         query = query.filter(OgmpSurvey.survey_type == request.args.get('survey_type'))
 
     data = query.order_by(OgmpSurvey.survey_date.desc()).all()
@@ -256,8 +361,8 @@ def get_ogmp_surveys():
         'measuredRateKgHr': d.measured_rate_kg_hr,
         'operating_hours_year': d.operating_hours_year or 8760.0,
         'operatingHoursYear': d.operating_hours_year or 8760.0,
-        'estimated_annual_tch4': d.estimated_annual_tch4 or round(d.measured_rate_kg_hr * (d.operating_hours_year or 8760) / 1000.0, 2),
-        'estimatedAnnualTch4': d.estimated_annual_tch4 or round(d.measured_rate_kg_hr * (d.operating_hours_year or 8760) / 1000.0, 2),
+        'estimated_annual_tch4': d.estimated_annual_tch4 or (round(d.measured_rate_kg_hr * (d.operating_hours_year or 8760.0) / 1000.0, 2) if d.measured_rate_kg_hr is not None else 0.0),
+        'estimatedAnnualTch4': d.estimated_annual_tch4 or (round(d.measured_rate_kg_hr * (d.operating_hours_year or 8760.0) / 1000.0, 2) if d.measured_rate_kg_hr is not None else 0.0),
         'detection_threshold': d.detection_threshold,
         'detectionThreshold': d.detection_threshold,
         'instrument_vendor': d.instrument_vendor or '',
@@ -274,8 +379,12 @@ def get_ogmp_surveys():
     } for d in data])
 
 @data_bp.route('/ogmp-surveys', methods=['POST'])
+@data_bp.route('/ogmp-surveys/', methods=['POST'])
 @login_required
 def save_ogmp_survey():
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
     record_id = data.get('id')
     facility_id = data.get('facility_id') or data.get('facilityId')
@@ -291,9 +400,16 @@ def save_ogmp_survey():
 
     if not facility_id or not survey_date or measured_rate_kg_hr < 0:
         return jsonify({'error': 'Facility, survey date, and measured emission rate are required'}), 400
+    try:
+        facility_id = int(facility_id)
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid facility ID'}), 400
+
+    if not require_facility_access(user, facility_id):
+        return jsonify({'error': 'Access to this facility is denied'}), 403
 
     # Validate facility is Oil & Gas scope
-    fac = Facility.query.get(facility_id)
+    fac = db.session.get(Facility, facility_id)
     if not fac:
         return jsonify({'error': 'Facility not found'}), 404
     if fac.activity in NON_OG_ACTIVITIES:
@@ -302,23 +418,34 @@ def save_ogmp_survey():
     estimated_annual_tch4 = round(measured_rate_kg_hr * operating_hours / 1000.0, 2)
 
     # Compute bottom-up methane total for facility & year to compute variance
-    fac = Facility.query.get(facility_id)
     bottom_up_sum = db.session.query(func.sum(Emission.ch4_emissions)).filter(
         Emission.facility_id == facility_id,
         Emission.year == year,
-        Emission.status != 'Draft'
+        Emission.status == 'Verified'
     ).scalar() or 0.0
     bottom_up_tch4 = round(float(bottom_up_sum), 2)
 
     # Compute variance %
-    variance_pct = round(((estimated_annual_tch4 - bottom_up_tch4) / bottom_up_tch4 * 100.0), 2) if bottom_up_tch4 > 0 else 0.0
     threshold = (fac.reconciliation_threshold if fac and fac.reconciliation_threshold else 20.0)
-    variance_flag = abs(variance_pct) > threshold
+    if bottom_up_tch4 > 0 and estimated_annual_tch4 > 0:
+        variance_pct = round(((estimated_annual_tch4 - bottom_up_tch4) / bottom_up_tch4 * 100.0), 2)
+        variance_flag = abs(variance_pct) > threshold
+    elif bottom_up_tch4 > 0 and estimated_annual_tch4 == 0:
+        variance_pct = None
+        variance_flag = False
+    elif estimated_annual_tch4 > 0 and bottom_up_tch4 == 0:
+        variance_pct = None
+        variance_flag = True
+    else:
+        variance_pct = None
+        variance_flag = False
 
     if record_id:
-        record = OgmpSurvey.query.get(record_id)
+        record = db.session.get(OgmpSurvey, record_id)
         if not record:
             return jsonify({'error': 'Record not found'}), 404
+        if not require_facility_access(user, record.facility_id):
+            return jsonify({'error': 'Access to this existing survey record facility is denied'}), 403
         record.facility_id = facility_id
         record.year = year
         record.survey_date = survey_date
@@ -353,20 +480,23 @@ def save_ogmp_survey():
             created_by=session.get('user_id')
         )
         db.session.add(record)
+        db.session.flush()
         action = 'CREATE'
 
     try:
         user_id = session.get('user_id')
-        user = User.query.get(user_id) if user_id else None
+        user = db.session.get(User, user_id) if user_id else None
         log_activity_and_notify(
             action=action,
-            record_id=str(record.id or 'new'),
+            record_id=str(record.id),
             user=user,
             request=request,
             entity='OgmpSurvey',
             details=f"{action.title()} OGMP 2.0 top-down survey: {measured_rate_kg_hr} kg CH4/hr via {survey_type} at {record.facility.name if record.facility else facility_id}"
         )
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
@@ -376,16 +506,44 @@ def save_ogmp_survey():
 @data_bp.route('/ogmp-surveys/<int:record_id>', methods=['DELETE'])
 @login_required
 def delete_ogmp_survey(record_id):
-    record = OgmpSurvey.query.get(record_id)
+    user = get_current_user()
+    if user and user.role in ["viewer", "auditor"]:
+        return jsonify({'error': 'Forbidden: Read-only accounts cannot delete operational OGMP data.'}), 403
+    record = db.session.get(OgmpSurvey, record_id)
     if not record:
         return jsonify({'error': 'Record not found'}), 404
+    if not require_facility_access(user, record.facility_id):
+        return jsonify({'error': 'Access to this facility is denied'}), 403
+    if user and user.role not in ["admin", "superuser"] and getattr(record, 'created_by', None) and record.created_by != user.id:
+        return jsonify({'error': 'Forbidden: You cannot delete survey records created by another user'}), 403
+
+    log_details = f"Deleted OGMP 2.0 survey ID {record.id} for facility #{record.facility_id} ({record.measured_rate_kg_hr} kg CH4/hr)"
     db.session.delete(record)
-    db.session.commit()
+    try:
+        log_activity_and_notify(
+            action="DELETE",
+            record_id=str(record_id),
+            user=user,
+            request=request,
+            entity="OgmpSurvey",
+            details=log_details,
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error deleting OGMP survey: {e}")
+        return jsonify({'error': 'Failed to delete survey record'}), 500
+
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
     return jsonify({'message': 'OGMP survey record deleted'})
 
 @data_bp.route('/ogmp/level-upgrade', methods=['POST'])
 @login_required
 def log_level_upgrade():
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
     facility_id = data.get('facility_id')
     old_level = int(data.get('old_level', 3))
@@ -396,6 +554,13 @@ def log_level_upgrade():
 
     if not facility_id or new_level < 1 or new_level > 5:
         return jsonify({'error': 'Valid facility ID and level (1-5) required'}), 400
+    try:
+        facility_id = int(facility_id)
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid facility ID'}), 400
+
+    if not require_facility_access(user, facility_id):
+        return jsonify({'error': 'Access to this facility is denied'}), 403
 
     log = LevelUpgradeLog(
         facility_id=facility_id,
@@ -406,17 +571,34 @@ def log_level_upgrade():
         justification=justification,
         created_by=session.get('user_id')
     )
-    db.session.add(log)
-    db.session.commit()
+    try:
+        db.session.add(log)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Failed to log level upgrade: {str(e)}'}), 500
+
     return jsonify({'message': 'Level upgrade logged successfully', 'id': log.id}), 201
 
 @data_bp.route('/ogmp/level-logs', methods=['GET'])
 @login_required
 def get_level_logs():
-    facility_id = request.args.get('facility_id')
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to view operational OGMP data.'}), 403
     query = LevelUpgradeLog.query
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None:
+        query = query.filter(LevelUpgradeLog.facility_id.in_(allowed_fids))
+    facility_id = request.args.get('facility_id')
     if facility_id:
-        query = query.filter_by(facility_id=facility_id)
+        try:
+            fid = int(facility_id)
+            if allowed_fids is not None and fid not in allowed_fids:
+                return jsonify({'error': 'Access to requested facility is denied'}), 403
+            query = query.filter_by(facility_id=fid)
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid facility_id'}), 400
     logs = query.order_by(LevelUpgradeLog.changed_at.desc()).all()
     return jsonify([{
         'id': l.id,
@@ -435,18 +617,41 @@ def get_level_logs():
 # CBAM PRODUCT EXPORTS
 # ==========================================
 @data_bp.route('/cbam-exports', methods=['GET'])
+@data_bp.route('/cbam-exports/', methods=['GET'])
 @login_required
 def get_cbam_exports():
-    from models import CbamProductExport
-    from flask import request, jsonify
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to view operational CBAM data.'}), 403
     query = CbamProductExport.query
-    allowed_fids = get_allowed_facility_ids(get_current_user())
+    allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(CbamProductExport.facility_id.in_(allowed_fids))
-    if request.args.get('facilityId'):
-        query = query.filter_by(facility_id=request.args.get('facilityId'))
-    if request.args.get('year'):
-        query = query.filter_by(year=request.args.get('year'))
+    if request.args.get('facilityId') and request.args.get('facilityId') != 'all':
+        try:
+            fid = int(request.args.get('facilityId'))
+            if allowed_fids is not None and fid not in allowed_fids:
+                return jsonify({'error': 'Access to requested facility is denied'}), 403
+            query = query.filter_by(facility_id=fid)
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid facilityId'}), 400
+    if request.args.get('year') and request.args.get('year') != 'all':
+        try:
+            query = query.filter_by(year=int(request.args.get('year')))
+        except (ValueError, TypeError):
+            pass
+
+    activity = request.args.get('activity')
+    division = request.args.get('division')
+    segment = request.args.get('segment')
+    if (activity and activity != 'all') or (division and division != 'all') or (segment and segment != 'all'):
+        query = query.join(Facility, CbamProductExport.facility_id == Facility.id)
+        if activity and activity != 'all':
+            query = query.filter(Facility.activity == activity)
+        if division and division != 'all':
+            query = query.filter(Facility.division == division)
+        if segment and segment != 'all':
+            query = query.filter(Facility.segment == segment)
     
     records = query.order_by(CbamProductExport.created_at.desc()).all()
     return jsonify([{
@@ -460,16 +665,22 @@ def get_cbam_exports():
         'export_destination': r.export_destination,
         'specific_embedded_direct': r.specific_embedded_direct,
         'specific_embedded_indirect': r.specific_embedded_indirect,
+        'total_embedded_emissions': round(
+            (r.quantity_tonnes or 0.0) * ((r.specific_embedded_direct or 0.0) + (r.specific_embedded_indirect or 0.0)),
+            2
+        ),
         'notes': r.notes,
         'created_at': r.created_at.isoformat() if r.created_at else None
     } for r in records])
 
 @data_bp.route('/cbam-exports', methods=['POST'])
+@data_bp.route('/cbam-exports/', methods=['POST'])
 @login_required
 def save_cbam_export():
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
     try:
-        from models import CbamProductExport, Emission, Scope2Emission
-        from flask import request, jsonify, session
         data = request.get_json() or {}
         record_id = data.get('id')
         facility_id = data.get('facility_id') or data.get('facilityId')
@@ -485,24 +696,43 @@ def save_cbam_export():
 
         if not facility_id or not product_name or not cn_code or quantity_tonnes <= 0:
             return jsonify({'error': 'Facility, product name, valid CN code, and positive tonnage are required'}), 400
+        try:
+            facility_id = int(facility_id)
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid facility ID'}), 400
+
+        if not require_facility_access(user, facility_id):
+            return jsonify({'error': 'Access to this facility is denied'}), 403
 
         total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter(
             Emission.facility_id == facility_id,
             Emission.year == year,
-            Emission.status != 'Draft'
+            Emission.status == 'Verified'
         ).scalar()
         
+        from models import Scope2Emission
         total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter(
             Scope2Emission.facility_id == facility_id,
             Scope2Emission.year == year,
-            Scope2Emission.status != 'Draft'
+            Scope2Emission.status == 'Verified'
         ).scalar()
 
-        se_dir = round(total_direct_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
-        se_ind = round(total_indirect_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+        if specific_embedded_direct > 0:
+            se_dir = specific_embedded_direct
+        else:
+            se_dir = round(total_direct_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+
+        if specific_embedded_indirect > 0:
+            se_ind = specific_embedded_indirect
+        else:
+            se_ind = round(total_indirect_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
 
         if record_id:
-            record = CbamProductExport.query.get_or_404(record_id)
+            record = db.session.get(CbamProductExport, record_id)
+            if not record:
+                return jsonify({'error': 'Record not found'}), 404
+            if not require_facility_access(user, record.facility_id):
+                return jsonify({'error': 'Access to this facility is denied'}), 403
             record.facility_id = facility_id
             record.year = year
             record.month = month
@@ -530,14 +760,12 @@ def save_cbam_export():
                 created_by=user_id
             )
             db.session.add(record)
+            db.session.flush()
             action = 'CREATE'
-
-        user_id = session.get('user_id') if session else None
-        user = db.session.get(User, user_id) if user_id else None
 
         log_activity_and_notify(
             action=action,
-            record_id=str(record.id or 'new'),
+            record_id=str(record.id),
             user=user,
             request=request,
             entity='CbamProductExport',
@@ -547,34 +775,39 @@ def save_cbam_export():
         return jsonify({'message': 'CBAM Export saved successfully', 'id': record.id})
     except Exception as e:
         import traceback
-        with open('trace.log', 'a') as f:
-            f.write(traceback.format_exc() + '\n')
+        from flask import current_app
+        current_app.logger.error(f"CBAM Export save error: {traceback.format_exc()}")
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
 @data_bp.route('/cbam-exports/<int:record_id>', methods=['DELETE'])
 @login_required
 def delete_cbam_export(record_id):
+    user = get_current_user()
+    if user and user.role == 'it_admin':
+        return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
     try:
-        from models import CbamProductExport
-        from flask import request, jsonify, session
-        record = CbamProductExport.query.get_or_404(record_id)
+        record = db.session.get(CbamProductExport, record_id)
+        if not record:
+            return jsonify({'error': 'Record not found'}), 404
+        if not require_facility_access(user, record.facility_id):
+            return jsonify({'error': 'Access to this facility is denied'}), 403
+        prod_name = record.product_name
+        rec_id = record.id
         db.session.delete(record)
-        user_id = session.get('user_id') if session else None
-        user = db.session.get(User, user_id) if user_id else None
         log_activity_and_notify(
             action='DELETE',
-            record_id=str(record.id),
+            record_id=str(rec_id),
             user=user,
             request=request,
             entity='CbamProductExport',
-            details=f'Deleted CBAM Export: {record.product_name}'
+            details=f'Deleted CBAM Export: {prod_name}'
         )
         db.session.commit()
         return jsonify({'message': 'CBAM export deleted successfully'})
     except Exception as e:
         import traceback
-        with open('trace.log', 'a') as f:
-            f.write(traceback.format_exc() + '\n')
+        from flask import current_app
+        current_app.logger.error(f"CBAM Export delete error: {traceback.format_exc()}")
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

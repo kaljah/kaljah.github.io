@@ -57,23 +57,25 @@
 .scope-card {
   display: flex;
   flex-direction: column;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 18px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  border-radius: 20px;
   padding: 0;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
   transition:
-    border-color 0.22s,
-    box-shadow 0.22s,
-    transform 0.2s;
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   min-height: 280px;
 }
 
 .scope-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-elevated);
 }
 
 /* Top accent bar */
@@ -84,8 +86,8 @@
   left: 0;
   right: 0;
   height: 4px;
-  border-radius: 18px 18px 0 0;
-  transition: height 0.22s;
+  border-radius: 20px 20px 0 0;
+  transition: height 0.22s ease;
 }
 
 .scope-card:hover::before {
@@ -94,11 +96,11 @@
 
 /* Per-scope accent colours */
 .scope-1-card::before {
-  background: #10b981;
+  background: var(--accent-color, #ff6600);
 }
 .scope-1-card:hover {
-  border-color: #10b981;
-  box-shadow: 0 8px 28px rgba(16, 185, 129, 0.12);
+  border-color: var(--accent-color, #ff6600);
+  box-shadow: 0 12px 32px rgba(255, 102, 0, 0.15);
 }
 
 .scope-2-card::before {
@@ -106,7 +108,7 @@
 }
 .scope-2-card:hover {
   border-color: #3b82f6;
-  box-shadow: 0 8px 28px rgba(59, 130, 246, 0.12);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
 }
 
 .scope-3-card::before {
@@ -114,7 +116,7 @@
 }
 .scope-3-card:hover {
   border-color: #8b5cf6;
-  box-shadow: 0 8px 28px rgba(139, 92, 246, 0.12);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.15);
 }
 
 /* CARD CONTENT — vertical layout */
@@ -531,57 +533,144 @@
 .action-row {
   display: flex;
   justify-content: flex-end;
-  gap: 15px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-color, rgba(226, 232, 240, 0.6));
 }
 
 .action-btn {
-  padding: 12px 30px;
-  border-radius: 8px;
+  padding: 10px 24px;
+  border-radius: 10px;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   border: none;
   font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .action-btn.primary {
-  background: var(--accent-color);
+  background: var(--accent-gradient, linear-gradient(135deg, #ff6600 0%, #ff8533 100%));
   color: white;
+  box-shadow: 0 4px 14px rgba(255, 102, 0, 0.25);
 }
 
-.action-btn.primary:hover {
-  background: #059669;
-  /* Or adjust to hover color var */
+.action-btn.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e65c00 0%, #ff7519 100%);
   transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 102, 0, 0.35);
+}
+
+.action-btn.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .action-btn.secondary {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-primary, #0f172a);
 }
 
 .action-btn.secondary:hover {
-  background: var(--bg-hover);
+  background: var(--bg-hover, rgba(255, 247, 237, 0.85));
+  border-color: var(--accent-color, #ff6600);
   transform: translateY(-1px);
 }
 
 .form-section {
   background: var(--bg-card);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 25px;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
 }
 
 .section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--accent-color);
-  margin-bottom: 20px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  margin-bottom: 18px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
+/* ============================================================
+   SCOPE SWITCHER TABS (In-form Quick Switcher)
+   ============================================================ */
+.scope-switcher-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 4px;
+  background: var(--bg-hover, #f1f5f9);
+  border-radius: 12px;
+  width: fit-content;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.scope-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.scope-tab-btn:hover {
+  color: var(--text-primary, #0f172a);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.scope-tab-btn.active {
+  background: #ffffff;
+  color: var(--text-primary, #0f172a);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.scope-tab-btn.active.s1 {
+  border-left: 3px solid #10b981;
+}
+
+.scope-tab-btn.active.s2 {
+  border-left: 3px solid #3b82f6;
+}
+
+.scope-tab-btn.active.s3 {
+  border-left: 3px solid #8b5cf6;
+}
+
+.scope-tab-btn .tab-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.scope-tab-btn.back-btn {
+  margin-left: 8px;
+  border-left: 1px solid var(--border-color, #cbd5e1);
+  border-radius: 0 8px 8px 0;
+  color: var(--accent-color, #ff6600);
+}
+

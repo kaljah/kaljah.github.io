@@ -33,25 +33,33 @@ class TestCSVUploaderE2E(unittest.TestCase):
 
         db.create_all()
 
-        # 1. Create a test user
-        cls.user = User(
-            fullName="Test Uploader Admin",
-            orgName="Org",
-            sector="IT",
-            email="uploader@test.com",
-            role="admin",
-        )
+        # 1. Get or create test user
+        cls.user = User.query.filter_by(email="uploader@test.com").first()
+        if not cls.user:
+            cls.user = User(
+                fullName="Test Uploader Admin",
+                orgName="Org",
+                sector="IT",
+                email="uploader@test.com",
+                role="admin",
+            )
+            db.session.add(cls.user)
         cls.user.set_password("ComplexPassword123!")
-        db.session.add(cls.user)
 
-        # 2. Create test facilities that match our CSV names
-        cls.fac_alpha = Facility(
-            name="Test Plant Alpha", region="North", activity="Production"
-        )
-        cls.fac_beta = Facility(
-            name="Test Plant Beta", region="South", activity="Refining"
-        )
-        db.session.add_all([cls.fac_alpha, cls.fac_beta])
+        # 2. Get or create test facilities that match our CSV names
+        cls.fac_alpha = Facility.query.filter_by(name="Test Plant Alpha").first()
+        if not cls.fac_alpha:
+            cls.fac_alpha = Facility(
+                name="Test Plant Alpha", region="North", activity="Production"
+            )
+            db.session.add(cls.fac_alpha)
+
+        cls.fac_beta = Facility.query.filter_by(name="Test Plant Beta").first()
+        if not cls.fac_beta:
+            cls.fac_beta = Facility(
+                name="Test Plant Beta", region="South", activity="Refining"
+            )
+            db.session.add(cls.fac_beta)
 
         db.session.commit()
 
@@ -64,20 +72,34 @@ class TestCSVUploaderE2E(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        db.session.remove()
-        db.drop_all()
-        cls.app_context.pop()
-        if os.path.exists(cls.db_file):
-            try:
-                os.remove(cls.db_file)
-            except:
-                pass
+        try:
+            Emission.query.filter(
+                Emission.facility_id.in_([cls.fac_alpha.id, cls.fac_beta.id])
+            ).delete(synchronize_session=False)
+            Facility.query.filter(
+                Facility.id.in_([cls.fac_alpha.id, cls.fac_beta.id])
+            ).delete(synchronize_session=False)
+            User.query.filter(User.email == "uploader@test.com").delete(
+                synchronize_session=False
+            )
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        finally:
+            db.session.remove()
+            cls.app_context.pop()
 
     def test_upload_csv_end_to_end(self):
         """
         Tests the CSV upload endpoint with a mock CSV containing mixed scenarios.
         Validates the background job progress and the final saved database records.
         """
+        # Clean any prior emissions for these facilities
+        Emission.query.filter(
+            Emission.facility_id.in_([self.fac_alpha.id, self.fac_beta.id])
+        ).delete(synchronize_session=False)
+        db.session.commit()
+
         # 1. Prepare CSV Content covering multiple process types (Tier 1 & Tier 3)
         # Note: We must use the exact UI headers that _build_mapping expects (e.g. Region maps to facility).
         csv_content = (
@@ -143,7 +165,13 @@ class TestCSVUploaderE2E(unittest.TestCase):
         )
 
         # 4. Verify Database Records
-        emissions = Emission.query.order_by(Emission.month).all()
+        emissions = (
+            Emission.query.filter(
+                Emission.facility_id.in_([self.fac_alpha.id, self.fac_beta.id])
+            )
+            .order_by(Emission.month)
+            .all()
+        )
         self.assertEqual(
             len(emissions), 4, "4 valid rows should have been saved in the database"
         )
@@ -174,6 +202,23 @@ class TestCSVUploaderE2E(unittest.TestCase):
         self.assertEqual(row4.quantity, 12)
         self.assertEqual(row4.unit, "events")
 
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            Emission.query.filter(Emission.facility_id.in_([cls.fac_alpha.id, cls.fac_beta.id])).delete()
+            Facility.query.filter(Facility.id.in_([cls.fac_alpha.id, cls.fac_beta.id])).delete()
+            User.query.filter_by(email="uploader@test.com").delete()
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        cls.app_context.pop()
+        if os.path.exists(cls.db_file):
+            try:
+                os.remove(cls.db_file)
+            except Exception:
+                pass
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+

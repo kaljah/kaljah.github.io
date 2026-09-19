@@ -1,57 +1,50 @@
 .top-bar {
-  min-height: 70px;
+  min-height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 24px;
-  z-index: 100;
+  padding: 8px 24px;
+  z-index: 500;
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--bg-card, rgba(255, 255, 255, 0.88));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-  flex-wrap: wrap;
-  gap: 12px;
+  border-bottom: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  gap: 16px;
 }
 
 .top-bar-left-section {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 14px;
   flex: 1;
+  min-width: 0;
 }
 
 .breadcrumbs {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   color: var(--text-secondary);
-  font-size: 0.9rem;
-  padding-right: 20px;
-  border-right: 1px solid var(--border-color);
+  font-size: 0.88rem;
+  padding-right: 14px;
+  border-right: 1px solid var(--border-color, #e2e8f0);
+  white-space: nowrap;
 }
 
 .top-bar-injected-left {
   display: flex;
   align-items: center;
   flex: 1;
-}
-
-.location-badge {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 6px 12px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
+  min-width: 0;
 }
 
 .top-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
+  white-space: nowrap;
 }
 
 .icon-button {

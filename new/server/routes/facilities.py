@@ -1,13 +1,14 @@
 from flask import request, jsonify, session
 import json
 from . import facilities_bp
-from utils import get_allowed_facility_ids, log_activity_and_notify
+from utils import get_allowed_facility_ids, log_activity_and_notify, is_unrestricted_location
 from models import Facility, User
 from extensions import db
 from routes.auth import login_required
 import json
 
 
+@facilities_bp.route("", methods=["GET"])
 @facilities_bp.route("/", methods=["GET"])
 @login_required
 def get_facilities():
@@ -15,14 +16,25 @@ def get_facilities():
     user = (
         db.session.get(User, user_id) if user_id else None
     )  # API-02 FIX: replaced deprecated query.get
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role == "it_admin":
+        return (
+            jsonify(
+                {"error": "Forbidden: IT Administrators cannot access operational facility data"}
+            ),
+            403,
+        )
 
     query = Facility.query
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None:
         query = query.filter(Facility.id.in_(allowed_fids))
 
-    if request.args.get("search"):
-        query = query.filter(Facility.name.contains(request.args.get("search")))
+    search_term = request.args.get("search")
+    if search_term:
+        escaped_search = search_term.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        query = query.filter(Facility.name.ilike(f"%{escaped_search}%", escape="\\"))
 
     facilities = query.all()
     return jsonify(
@@ -98,9 +110,34 @@ def get_all_regions():
     return jsonify(sorted(identifiers))
 
 
+@facilities_bp.route("", methods=["POST"])
 @facilities_bp.route("/", methods=["POST"])
+@login_required
 def add_facility():
-    data = request.get_json()
+    user_id = session.get("user_id")
+    user = db.session.get(User, user_id) if user_id else None
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role not in ["admin", "superuser"]:
+        return (
+            jsonify({"error": "Forbidden: Only Administrators can create facilities"}),
+            403,
+        )
+
+    data = request.get_json() or {}
+
+    if user.role == "superuser" and not is_unrestricted_location(user.location):
+        user_loc = (user.location or "").strip().lower()
+        fac_region = (data.get("region") or "").strip().lower()
+        fac_location = (data.get("location") or "").strip().lower()
+        fac_name = (data.get("name") or "").strip().lower()
+        if user_loc not in (fac_region, fac_location, fac_name):
+            return (
+                jsonify(
+                    {"error": f"Superusers can only create facilities in their assigned region: {user.location}"}
+                ),
+                403,
+            )
 
     fac = Facility(
         name=data.get("name"),
@@ -128,7 +165,7 @@ def add_facility():
     # Audit
     try:
         user_id = session.get("user_id")
-        user = User.query.get(user_id) if user_id else None
+        user = db.session.get(User, user_id) if user_id else None
 
         log_details = (
             f"Created facility: {fac.name} (Code: {fac.code}, Segment: {fac.segment})"
@@ -163,6 +200,15 @@ def add_facility():
 def update_facility(facility_id):
     user_id = session.get("user_id")
     user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role not in ["admin", "superuser"]:
+        return (
+            jsonify(
+                {"error": "Forbidden: Administrative privileges required to manage facility configuration"}
+            ),
+            403,
+        )
 
     facility = db.session.get(
         Facility, facility_id
@@ -216,7 +262,7 @@ def update_facility(facility_id):
 
     import datetime
 
-    facility.updated_at = datetime.datetime.utcnow()
+    facility.updated_at = datetime.datetime.now(datetime.timezone.utc)
     db.session.flush()
 
     # Audit
@@ -277,6 +323,13 @@ def update_facility(facility_id):
 def delete_facility(facility_id):
     user_id = session.get("user_id")
     user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role not in ["admin", "superuser"]:
+        return (
+            jsonify({"error": "Forbidden: Only Administrators can delete facilities"}),
+            403,
+        )
 
     facility = db.session.get(
         Facility, facility_id
@@ -288,11 +341,11 @@ def delete_facility(facility_id):
     if allowed_fids is not None and facility.id not in allowed_fids:
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
 
-    db.session.delete(facility)
-    db.session.flush()
-
-    # Audit
     try:
+        db.session.delete(facility)
+        db.session.flush()
+
+        # Audit
         user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
         log_details = f"Deleted facility: {facility.name} (Code: {facility.code})"
 
@@ -314,21 +367,46 @@ def delete_facility(facility_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        raise e
+        return jsonify({"error": f"Failed to delete facility: {str(e)}"}), 500
 
     return jsonify({"message": "Facility deleted"})
 
 
 @facilities_bp.route("/import", methods=["POST"])
+@login_required
 def import_facilities():
     """Bulk import facilities"""
     user_id = session.get("user_id")
+    user = db.session.get(User, user_id) if user_id else None
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user.role not in ["admin", "superuser"]:
+        return (
+            jsonify({"error": "Forbidden: Only Administrators can bulk import facilities"}),
+            403,
+        )
 
-    data = request.get_json()
+    data = request.get_json() or {}
     facilities_data = data.get("facilities", [])
 
     if not facilities_data:
         return jsonify({"error": "No facilities provided"}), 400
+
+    if user.role == "superuser" and not is_unrestricted_location(user.location):
+        user_loc = (user.location or "").strip().lower()
+        for fac_data in facilities_data:
+            fac_region = (fac_data.get("region") or "").strip().lower()
+            fac_location = (fac_data.get("location") or "").strip().lower()
+            fac_name = (fac_data.get("name") or "").strip().lower()
+            if user_loc not in (fac_region, fac_location, fac_name):
+                return (
+                    jsonify(
+                        {
+                            "error": f"Superusers can only import facilities in their assigned region: {user.location}"
+                        }
+                    ),
+                    403,
+                )
 
     imported_count = 0
     for fac_data in facilities_data:
@@ -349,6 +427,10 @@ def import_facilities():
         db.session.add(facility)
         imported_count += 1
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to import facilities"}), 500
 
     return jsonify({"message": f"{imported_count} facilities imported"})

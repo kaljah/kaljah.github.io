@@ -33,6 +33,9 @@ DEFAULT_QA_THRESHOLD = 0.5
 MOLAR_MASS_CH4 = 16.042  # g/mol
 AIR_MOLAR_MASS = 28.97  # g/mol
 STD_AIR_DENSITY_SURFACE = 1.225  # kg/m3
+STD_SURFACE_PRESSURE_PA = 101325.0  # Pa (standard 1 atm surface pressure)
+STD_GRAVITY = 9.80665  # m/s2
+TOTAL_COLUMN_AIR_MASS_KG_M2 = STD_SURFACE_PRESSURE_PA / STD_GRAVITY  # ~10,332.27 kg air/m2
 
 
 class Sentinel5PService:
@@ -366,68 +369,21 @@ class Sentinel5PService:
             latest_prod_name = latest_obs.get("product_name", "")
             is_nrti = "NRTI" in latest_prod_name
 
-            # Anomaly & flux estimation (calibrated to facility-specific coordinates and local atmospheric conditions)
             num_obs = len(observations)
-
-            import hashlib
-
-            facility_entropy = f"{lat:.6f}_{lon:.6f}_{latest_date}_{num_obs}"
-            h = hashlib.sha256(facility_entropy.encode("utf-8")).hexdigest()
-            v1 = int(h[0:8], 16)
-            v2 = int(h[8:16], 16)
-            v3 = int(h[16:24], 16)
-
-            # Base column background varied by location (1820.0 to 1865.0 ppb)
-            base_col = 1820.0 + (v1 % 40) + ((v2 % 10) * 0.1)
-
-            # Anomaly (plume concentration delta) tailored to facility (8.0 to 48.0 ppb)
-            anomaly_ppb = 8.0 + (v2 % 38) + ((v3 % 10) * 0.1)
-
             if num_obs == 0:
-                anomaly_ppb = 0.0
-                mean_column = round(base_col, 1)
-                est_rate = 0.0
-                annualized_t = 0.0
-            else:
-                anomaly_ppb = round(anomaly_ppb, 1)
-                mean_column = round(base_col + anomaly_ppb, 1)
-                # Local wind speed variation (2.8 to 4.6 m/s)
-                local_wind = 2.8 + (v3 % 18) * 0.1
-                # Local PBL height (950m to 1450m)
-                local_pbl = 950.0 + (v1 % 500)
-                est_rate = self.estimate_emission_rate_from_anomaly(
-                    delta_ch4_ppb=anomaly_ppb,
-                    wind_speed_m_s=local_wind,
-                    pbl_height_m=local_pbl,
-                )
-                annualized_t = round((est_rate * 8760.0) / 1000.0, 1)
+                return {
+                    "status": "no_acquisitions",
+                    "authenticated": True,
+                    "facility_coordinates": {"latitude": lat, "longitude": lon},
+                    "total_acquisitions_found": 0,
+                    "observations": [],
+                    "summary": None,
+                    "message": "No Sentinel-5P TROPOMI methane overpasses found in Copernicus catalog for these coordinates.",
+                }
 
-            # QA score tailored around 0.78 to 0.94
-            qa_score = (
-                round(0.78 + (v2 % 16) * 0.01, 2)
-                if num_obs > 0
-                else float(qa_threshold)
-            )
-
-            summary = {
-                "latest_observation_date": latest_date,
-                "latest_observation_time": latest_time,
-                "latest_product_name": latest_prod_name,
-                "stream_type": (
-                    "Near Real-Time (NRTI)"
-                    if is_nrti
-                    else "Standard Reprocessed (OFFL)"
-                ),
-                "mean_ch4_column_ppb": mean_column,
-                "max_anomaly_ppb": anomaly_ppb,
-                "estimated_emission_rate_kg_hr": est_rate,
-                "annualized_ch4_tonnes": annualized_t,
-                "mean_qa_score": qa_score,
-                "total_recent_passes": num_obs,
-            }
-
+            # Per Decision D-06: Zero synthetic/fabricated numbers. Return catalog observation metadata.
             return {
-                "status": "success",
+                "status": "metadata_only",
                 "authenticated": True,
                 "facility_coordinates": {"latitude": lat, "longitude": lon},
                 "bounding_box": {
@@ -438,7 +394,8 @@ class Sentinel5PService:
                 },
                 "total_acquisitions_found": len(observations),
                 "observations": observations,
-                "summary": summary,
+                "summary": None,
+                "message": "Sentinel-5P observations found in Copernicus catalog. Quantitative pixel raster retrieval is not configured (metadata only).",
                 "date_range": {
                     "start": start_date or "latest",
                     "end": end_date or latest_date,
@@ -461,13 +418,21 @@ class Sentinel5PService:
         wind_speed_m_s: float = 3.5,
         pbl_height_m: float = 1200.0,
         box_width_km: float = 7.0,
+        surface_pressure_pa: float = STD_SURFACE_PRESSURE_PA,
     ) -> float:
         """
         Estimates methane mass emission rate (kg CH4/hr) from a Sentinel-5P column concentration anomaly (delta ppb)
         using the integrated mass-balance / 1D Gauss-box flux approach.
 
         Formula:
-          Q = Delta_X (ppb) * 10^-9 * (P_surface / (R_spec_air * T)) * (M_CH4 / M_air) * Box_Width * Wind_Speed * PBL_Height
+          Total Column Air Mass = P_surface / g (~ 10,332.27 kg air / m2)
+          Delta_Mass_CH4 = (delta_ch4_ppb * 1e-9) * (M_CH4 / M_air) * Total_Column_Air_Mass
+          Q = Delta_Mass_CH4 * Box_Width_m * Wind_Speed_m_s * 3600
+
+        Note on Column Physics & PBL Height:
+          TROPOMI measures the column-averaged dry-air mixing ratio (XCH4) across the entire atmospheric column.
+          The column mass enhancement is strictly governed by surface pressure Ps / g. The parameter `pbl_height_m`
+          is accepted for boundary-layer transport profile scaling and downstream API compatibility.
         """
         if delta_ch4_ppb <= 0:
             return 0.0
@@ -478,11 +443,11 @@ class Sentinel5PService:
         # Volume mixing ratio fraction
         vmr_fraction = delta_ch4_ppb * 1e-9
 
-        # Column mass density anomaly (kg CH4 / m2 in boundary layer)
-        # Delta_Mass_CH4 = vmr_fraction * mass_ratio * Air_Density_Surface * PBL_Height
-        delta_column_mass_kg_m2 = (
-            vmr_fraction * mass_ratio * STD_AIR_DENSITY_SURFACE * pbl_height_m
-        )
+        # Total dry air column mass density (kg air / m2 across full atmospheric column)
+        total_col_air_mass = (surface_pressure_pa or STD_SURFACE_PRESSURE_PA) / STD_GRAVITY
+
+        # Column mass density anomaly (kg CH4 / m2 across atmospheric column)
+        delta_column_mass_kg_m2 = vmr_fraction * mass_ratio * total_col_air_mass
 
         # Flux across downwind cross-section = Column_Mass * Box_Width_m * Wind_Speed_m_s (kg/s)
         box_width_m = box_width_km * 1000.0

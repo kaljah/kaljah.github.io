@@ -11,6 +11,8 @@ export default defineConfig({
     visualizer({ filename: "stats.html", open: false })
   ],
   server: {
+    host: '0.0.0.0',
+    port: 5173,
     proxy: {
       // SSE stream — must NOT compress or buffer, otherwise events are held
       // until the connection closes and real-time delivery is lost.

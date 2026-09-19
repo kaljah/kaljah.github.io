@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import "./CustomDropdown.css";
 
 const MultiSelectDropdown = ({
   options,

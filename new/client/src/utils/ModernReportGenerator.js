@@ -29,20 +29,29 @@ const THEME = {
 
 const toRgba = (c, a = 0.85) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
 
-// --- HELPER: Load Image ---
+// --- HELPER: Load Image with Timeout ---
 function loadImage(url) {
   return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(null), 3000);
     const img = new Image();
     img.crossOrigin = "Anonymous";
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      resolve(canvas.toDataURL("image/jpeg"));
+      clearTimeout(timer);
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/jpeg"));
+      } catch (e) {
+        resolve(null);
+      }
     };
-    img.onerror = () => resolve(null);
+    img.onerror = () => {
+      clearTimeout(timer);
+      resolve(null);
+    };
     img.src = url;
   });
 }
@@ -67,6 +76,13 @@ export async function generateModernPDF(api, filters) {
     process_type:
       processType && processType !== "all" ? processType : undefined,
   };
+
+  const targetFacilityId =
+    regionId && regionId !== "all" && !Array.isArray(regionId)
+      ? regionId
+      : Array.isArray(regionId) && regionId.length === 1
+        ? regionId[0]
+        : undefined;
 
   if (import.meta.env.DEV)
     console.log(
@@ -94,20 +110,40 @@ export async function generateModernPDF(api, filters) {
       api.get("/emissions", { params }),
       api.get("/facilities").catch(() => ({ data: [] })),
       api
-        .get("/dashboard/mitigation", { params: { year: subFetchYear } })
+        .get("/dashboard/mitigation", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facilityId: targetFacilityId }),
+          },
+        })
         .catch(() => ({ data: [] })),
       api
-        .get("/dashboard/intensity-stats", { params: { year: subFetchYear } })
+        .get("/dashboard/intensity-stats", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facilityId: targetFacilityId }),
+          },
+        })
         .catch(() => ({ data: [] })),
       api
         .get(`/dashboard/goals/${subFetchYear || new Date().getFullYear()}`)
         .catch(() => ({ data: null })),
       api
-        .get("/dashboard/uncertainty", { params: { year: subFetchYear } })
+        .get("/dashboard/uncertainty", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facilityId: targetFacilityId }),
+          },
+        })
         .catch(() => ({ data: null })),
       api.get("/dashboard/base-year").catch(() => ({ data: null })),
       api
-        .get("/dashboard/exclusions", { params: { year: subFetchYear } })
+        .get("/dashboard/exclusions", {
+          params: {
+            year: subFetchYear,
+            ...(targetFacilityId && { facilityId: targetFacilityId }),
+          },
+        })
         .catch(() => ({ data: [] })),
       api.get("/auth/settings").catch(() => ({ data: { gwp_standard: 'IPCC AR5' } })),
       loadImage("/company_profile.jpg").catch(() => null),
@@ -928,7 +964,7 @@ Email: ${personResponsible.email || "N/A"}`;
         curY = doc.lastAutoTable.finalY + 10;
     }
     
-    if (charts.scopeChart || charts.trendChart) {
+    if (charts.scopeSplit || charts.sourceBreakdown || charts.trendChart || charts.comparisonChart) {
       if (curY > pageHeight - 80) {
           doc.addPage();
           drawBackground();
@@ -958,17 +994,17 @@ Email: ${personResponsible.email || "N/A"}`;
       
       curY = checkPageBreak(curY, 150);
 
-      // Row 1: Scope Split and Source Breakdown (Pies)
-      if (charts.scopeChart) doc.addImage(charts.scopeChart, "PNG", margin, curY, chartW, 60);
-      if (charts.sourceChart) doc.addImage(charts.sourceChart, "PNG", margin + chartW + 10, curY, chartW, 60);
-      curY += 70;
+      // Row 1: Scope Split and Source Breakdown (Pies/Bars)
+      if (charts.scopeSplit) doc.addImage(charts.scopeSplit, "JPEG", margin, curY, chartW, 60);
+      if (charts.sourceBreakdown) doc.addImage(charts.sourceBreakdown, "JPEG", margin + chartW + 10, curY, chartW, 60);
+      if (charts.scopeSplit || charts.sourceBreakdown) curY += 70;
       
       // Row 2: Trend Chart and Comparison Chart
-      if (charts.trendChart) doc.addImage(charts.trendChart, "PNG", margin, curY, chartW, 60);
+      if (charts.trendChart) doc.addImage(charts.trendChart, "JPEG", margin, curY, chartW, 60);
       if (charts.comparisonChart) {
-         doc.addImage(charts.comparisonChart, "PNG", margin + chartW + 10, curY, chartW, 60);
+         doc.addImage(charts.comparisonChart, "JPEG", margin + chartW + 10, curY, chartW, 60);
       }
-      curY += 70;
+      if (charts.trendChart || charts.comparisonChart) curY += 70;
     }
 
     drawFooter();
@@ -1106,7 +1142,7 @@ Email: ${personResponsible.email || "N/A"}`;
       ],
       body: fullData.scope1Rows.map((r) => [
         r[1], // date
-        r[0] ? String(r[0]).split("_")[0] : "-", // id/equip (trimmed)
+        r[13] || "-", // facility name (was r[0] equipment id)
         r[12] || "1", // scope
         r[2], // process_type
         r[3], // fuel/source
@@ -1450,66 +1486,81 @@ async function generateReportCharts(
 
 function createChartImage(type, data, width = 600, height = 400) {
   return new Promise((resolve) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    canvas.style.display = "none";
-    document.body.appendChild(canvas);
+    let canvas = null;
+    let chart = null;
+    try {
+      canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.display = "none";
+      document.body.appendChild(canvas);
 
-    // WHITE BACKGROUND PLUGIN — JPEG doesn't support transparency;
-    // without this, transparent areas render as black in the exported PDF.
-    const whiteBgPlugin = {
-      id: "whiteBg",
-      beforeDraw(chart) {
-        const c = chart.canvas.getContext("2d");
-        c.save();
-        c.globalCompositeOperation = "destination-over";
-        c.fillStyle = "#ffffff";
-        c.fillRect(0, 0, chart.canvas.width, chart.canvas.height);
-        c.restore();
-      },
-    };
-
-    const ctx = canvas.getContext("2d");
-    const chart = new Chart(ctx, {
-      type: type,
-      data: data,
-      plugins: [whiteBgPlugin],
-      options: {
-        animation: false,
-        responsive: false,
-        devicePixelRatio: 1.5,
-        plugins: {
-          legend: {
-            position: "bottom",
-            labels: {
-              font: { size: 14 },
-              color: "#1e293b", // dark text on white bg
-            },
-          },
-          tooltip: { enabled: false },
+      // WHITE BACKGROUND PLUGIN — JPEG doesn't support transparency;
+      // without this, transparent areas render as black in the exported PDF.
+      const whiteBgPlugin = {
+        id: "whiteBg",
+        beforeDraw(cInst) {
+          const c = cInst.canvas.getContext("2d");
+          c.save();
+          c.globalCompositeOperation = "destination-over";
+          c.fillStyle = "#ffffff";
+          c.fillRect(0, 0, cInst.canvas.width, cInst.canvas.height);
+          c.restore();
         },
-        scales:
-          type !== "doughnut" && type !== "pie"
-            ? {
-                y: {
-                  ticks: { font: { size: 12 }, color: "#475569" },
-                  grid: { color: "#e2e8f0" },
-                },
-                x: {
-                  ticks: { font: { size: 12 }, color: "#475569" },
-                  grid: { color: "#e2e8f0" },
-                },
-              }
-            : {},
-      },
-    });
+      };
 
-    setTimeout(() => {
-      const imgData = canvas.toDataURL("image/jpeg", 0.9);
-      chart.destroy();
-      document.body.removeChild(canvas);
-      resolve(imgData);
-    }, 400);
+      const ctx = canvas.getContext("2d");
+      chart = new Chart(ctx, {
+        type: type,
+        data: data,
+        plugins: [whiteBgPlugin],
+        options: {
+          animation: false,
+          responsive: false,
+          devicePixelRatio: 1.5,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                font: { size: 14 },
+                color: "#1e293b", // dark text on white bg
+              },
+            },
+            tooltip: { enabled: false },
+          },
+          scales:
+            type !== "doughnut" && type !== "pie"
+              ? {
+                  y: {
+                    ticks: { font: { size: 12 }, color: "#475569" },
+                    grid: { color: "#e2e8f0" },
+                  },
+                  x: {
+                    ticks: { font: { size: 12 }, color: "#475569" },
+                    grid: { color: "#e2e8f0" },
+                  },
+                }
+              : {},
+        },
+      });
+
+      setTimeout(() => {
+        try {
+          const imgData = canvas.toDataURL("image/jpeg", 0.9);
+          if (chart) chart.destroy();
+          if (canvas && canvas.parentNode) document.body.removeChild(canvas);
+          resolve(imgData);
+        } catch (e) {
+          if (chart) chart.destroy();
+          if (canvas && canvas.parentNode) document.body.removeChild(canvas);
+          resolve(null);
+        }
+      }, 400);
+    } catch (err) {
+      console.warn("createChartImage failed:", err);
+      if (chart) chart.destroy();
+      if (canvas && canvas.parentNode) document.body.removeChild(canvas);
+      resolve(null);
+    }
   });
 }

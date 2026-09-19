@@ -151,7 +151,7 @@ class Emission(db.Model):
     uncertainty_n2o = db.Column(db.Float, nullable=True)  # N₂O uncertainty
     uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
     qa_flag = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(20), default="Verified", index=True)
+    status = db.Column(db.String(20), default="Pending", index=True)
 
     facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
     facility = db.relationship("Facility", overlaps="emissions,facility_parent")
@@ -183,6 +183,8 @@ class Emission(db.Model):
     __table_args__ = (
         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_emissions_act_div", "activity", "division"),
+        db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
+        db.Index("ix_emissions_yr_status_proc", "year", "status", "process_type"),
     )
 
 
@@ -213,6 +215,7 @@ class ProductionData(db.Model):
         db.UniqueConstraint(
             "facility_id", "month", "year", name="_facility_month_year_uc"
         ),
+        db.Index("ix_prod_yr_fac_units", "year", "facility_id", "oil_unit", "gas_unit"),
     )
 
 
@@ -272,6 +275,8 @@ class ActivityLog(db.Model):
     record_id = db.Column(db.String(50))
     user_name = db.Column(db.String(120))
     details = db.Column(db.Text)
+    old_values = db.Column(db.Text, nullable=True)  # JSON before-state diff
+    new_values = db.Column(db.Text, nullable=True)  # JSON after-state diff
     ip_address = db.Column(db.String(50))
     user_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), index=True
@@ -280,6 +285,7 @@ class ActivityLog(db.Model):
     entity_id = db.Column(db.String(50))
     metadata_json = db.Column("metadata", db.Text)
     timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+
 
 
 class Goal(db.Model):
@@ -356,7 +362,7 @@ class Scope2Emission(db.Model):
     field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / Pétrochimie
 
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    status = db.Column(db.String(20), default="Verified", index=True)
+    status = db.Column(db.String(20), default="Pending", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
@@ -364,6 +370,7 @@ class Scope2Emission(db.Model):
 
     __table_args__ = (
         db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
+        db.Index("ix_scope2_status_yr_co2e", "status", "year", "co2e", "electricity_kwh"),
     )
 
 
@@ -387,7 +394,7 @@ class Scope3Emission(db.Model):
     data_quality = db.Column(db.String(50))
     notes = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
-    status = db.Column(db.String(20), default="Verified", index=True)
+    status = db.Column(db.String(20), default="Pending", index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
     # Maker-Checker Approval
     approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
@@ -395,6 +402,7 @@ class Scope3Emission(db.Model):
 
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
+        db.Index("ix_scope3_status_yr_co2e", "status", "year", "co2e"),
     )
 
 
@@ -567,3 +575,16 @@ class SbtiTarget(db.Model):
     pathway_type = db.Column(db.String(20), default="1.5C")  # 1.5C, WB2C
     created_at = db.Column(db.DateTime, default=utc_now)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+
+class SystemSetting(db.Model):
+    """
+    Persistent key-value store for application-wide settings
+    (GWP standard, OGMP parameters, WEC fees, Copernicus credentials, etc.)
+    Survives server restarts and multi-worker deployments.
+    """
+    __tablename__ = "system_settings"
+    key = db.Column(db.String(100), primary_key=True)
+    value = db.Column(db.Text, nullable=False)  # JSON-encoded value
+    updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+

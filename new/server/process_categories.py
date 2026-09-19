@@ -338,3 +338,20 @@ def get_process_types_by_category(segment=None):
             )
 
     return {k: v for k, v in organized.items() if v}  # Remove empty categories
+
+
+# Canonical set of non-combustion processes where fuel_type is not physical and not required
+NON_COMBUSTION_PROCESSES = {
+    "pneumatics", "pneumatic", "pneumatic_devices", "pneumatic_device",
+    "vented", "venting", "blowdown", "blowdowns", "unloading", "liquids_unloading",
+    "tank", "tanks", "tank_flashing", "tank_working", "tank_breathing", "storage_tanks",
+    "fugitive", "fugitives", "equipment_fugitive", "component_fugitive", "fugitive_component",
+    "wellhead_fugitive", "separator_fugitive", "gathering_boosting", "gas_processing",
+    "transmission_storage", "refinery_fugitive", "distribution_fugitive", "lng_operations",
+    "compressor_seal", "compressor_fugitive",
+    "drilling", "mud_degassing", "completions", "well_completions", "completion_flowback",
+    "dehydrator", "dehydrators", "agr", "acid_gas_removal",
+    "chemical_production", "nitric_acid_production", "adipic_acid_production",
+    "indirect_steam", "cogen_allocation", "stoichiometry",
+}
+

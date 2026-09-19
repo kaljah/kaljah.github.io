@@ -24,9 +24,12 @@ managedata_bp = Blueprint("managedata", __name__)
 
 # --- Emission Sources ---
 @managedata_bp.route("/sources", methods=["GET"])
+@managedata_bp.route("/sources/", methods=["GET"])
 @login_required
 def get_sources():
     user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to view operational emission sources."}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
     query = EmissionSource.query
@@ -58,11 +61,27 @@ def get_sources():
 
 
 @managedata_bp.route("/sources", methods=["POST"])
+@managedata_bp.route("/sources/", methods=["POST"])
 @login_required
 def add_source():
-    data = request.get_json()
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
+    data = request.get_json() or {}
+    fid = data.get("facility_id")
+    if not fid:
+        return jsonify({"error": "Facility ID is required"}), 400
+    try:
+        fid = int(fid)
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid facility ID"}), 400
+
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None and fid not in allowed_fids:
+        return jsonify({"error": "Access to this facility is denied"}), 403
+
     source = EmissionSource(
-        facility_id=data.get("facility_id"),
+        facility_id=fid,
         name=data.get("name"),
         type=data.get("type"),
         equipment_id=data.get("equipment_id"),
@@ -75,14 +94,19 @@ def add_source():
         division=data.get("division"),
         field=data.get("field"),
     )
-    db.session.add(source)
-    db.session.commit()
+    try:
+        db.session.add(source)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to add source: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "CREATE",
             source.id,
             f"Added emission source {source.name}",
-            user=get_current_user(),
+            user=user,
             request=request,
             entity="EmissionSource",
         )
@@ -95,17 +119,30 @@ def add_source():
 @managedata_bp.route("/sources/<int:source_id>", methods=["DELETE"])
 @login_required
 def delete_source(source_id):
-    source = EmissionSource.query.get(source_id)
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
+    source = db.session.get(EmissionSource, source_id)
     if not source:
         return jsonify({"error": "Source not found"}), 404
-    db.session.delete(source)
-    db.session.commit()
+
+    allowed_fids = get_allowed_facility_ids(user)
+    if allowed_fids is not None and source.facility_id not in allowed_fids:
+        return jsonify({"error": "Access to this facility is denied"}), 403
+
+    try:
+        db.session.delete(source)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete source: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "DELETE",
             source_id,
             f"Deleted emission source",
-            user=get_current_user(),
+            user=user,
             request=request,
             entity="EmissionSource",
         )
@@ -118,7 +155,11 @@ def delete_source(source_id):
 @managedata_bp.route("/sources/bulk-import", methods=["POST"])
 @login_required
 def bulk_import_sources():
-    data = request.get_json()
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
+    allowed_fids = get_allowed_facility_ids(user)
+    data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
@@ -146,12 +187,15 @@ def bulk_import_sources():
                 if fid in facility_cache:
                     facility = facility_cache[fid]
                 else:
-                    facility = Facility.query.get(fid)
+                    facility = db.session.get(Facility, fid)
                     facility_cache[fid] = facility
             except (ValueError, TypeError):
                 facility = None
 
         if not facility:
+            continue
+
+        if allowed_fids is not None and facility.id not in allowed_fids:
             continue
 
         source = EmissionSource(
@@ -171,13 +215,18 @@ def bulk_import_sources():
         db.session.add(source)
         imported_count += 1
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk import sources: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "CREATE",
             "bulk",
             f"Bulk imported {imported_count} emission sources",
-            user=get_current_user(),
+            user=user,
             request=request,
             entity="EmissionSource",
         )
@@ -189,9 +238,12 @@ def bulk_import_sources():
 
 # --- Mitigation Records ---
 @managedata_bp.route("/mitigation", methods=["GET"])
+@managedata_bp.route("/mitigation/", methods=["GET"])
 @login_required
 def get_mitigations():
     user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to view operational mitigation data."}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
     # Fetch Records (Legacy/Generic) — not facility-linked, visible to all
@@ -238,6 +290,8 @@ def get_mitigations():
             {
                 "id": f"proj_{p.id}",
                 "type": "project",
+                "facility_id": p.facility_id,
+                "facility_name": f.name if f else "-",
                 "year": p.year,
                 "name": p.name,
                 "mitigation_type": p.project_type,
@@ -247,7 +301,7 @@ def get_mitigations():
                 "reference_id": "-",
                 "activity": f.activity if f else "-",
                 "division": f.division if f else "-",
-                "region": f.name if f else "-",
+                "region": (f.location or f.region or f.name) if f else "-",
                 "status": p.status,
             }
         )
@@ -256,13 +310,25 @@ def get_mitigations():
 
 
 @managedata_bp.route("/mitigation", methods=["POST"])
+@managedata_bp.route("/mitigation/", methods=["POST"])
 @login_required
 def add_mitigation():
-    data = request.get_json()
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
+    data = request.get_json() or {}
 
     facility_id = data.get("facility_id")
 
     if facility_id:
+        try:
+            fid = int(facility_id)
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid facility ID"}), 400
+        allowed_fids = get_allowed_facility_ids(user)
+        if allowed_fids is not None and fid not in allowed_fids:
+            return jsonify({"error": "Access to this facility is denied"}), 403
+
         # Create MitigationProject
         project = MitigationProject(
             name=data.get("name") or f"{data.get('type')} Project",
@@ -271,10 +337,17 @@ def add_mitigation():
             quantity_tco2e=data.get("quantity_tco2e", 0),
             status=data.get("status", "active"),
             description=data.get("notes"),
-            facility_id=facility_id,
+            facility_id=fid,
         )
         db.session.add(project)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": f"Failed to add mitigation project: {str(e)}"}), 500
+
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return (
             jsonify(
                 {"message": "Mitigation Project added", "id": f"proj_{project.id}"}
@@ -292,7 +365,14 @@ def add_mitigation():
             reference_id=data.get("reference_id"),
         )
         db.session.add(mitigation)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": f"Failed to add mitigation record: {str(e)}"}), 500
+
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return (
             jsonify(
                 {"message": "Mitigation record added", "id": f"rec_{mitigation.id}"}
@@ -304,22 +384,49 @@ def add_mitigation():
 @managedata_bp.route("/mitigation/<string:mitigation_id>", methods=["DELETE"])
 @login_required
 def delete_mitigation(mitigation_id):
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
     # Determine type from ID prefix
     if mitigation_id.startswith("proj_"):
-        pid = int(mitigation_id.split("_")[1])
-        item = MitigationProject.query.get(pid)
+        try:
+            pid = int(mitigation_id.split("_")[1])
+        except (IndexError, ValueError):
+            return jsonify({"error": "Invalid project ID format"}), 400
+        item = db.session.get(MitigationProject, pid)
     elif mitigation_id.startswith("rec_"):
-        rid = int(mitigation_id.split("_")[1])
-        item = MitigationRecord.query.get(rid)
+        try:
+            rid = int(mitigation_id.split("_")[1])
+        except (IndexError, ValueError):
+            return jsonify({"error": "Invalid record ID format"}), 400
+        item = db.session.get(MitigationRecord, rid)
     else:
         # Fallback for old IDs (assume record)
-        item = MitigationRecord.query.get(int(mitigation_id))
+        try:
+            item = db.session.get(MitigationRecord, int(mitigation_id))
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid ID format"}), 400
 
     if not item:
         return jsonify({"error": "Record not found"}), 404
 
-    db.session.delete(item)
-    db.session.commit()
+    if isinstance(item, MitigationProject) and item.facility_id:
+        allowed_fids = get_allowed_facility_ids(user)
+        if allowed_fids is not None and item.facility_id not in allowed_fids:
+            return jsonify({"error": "Access to this facility is denied"}), 403
+    elif isinstance(item, MitigationRecord):
+        if not user or user.role not in ["admin", "superuser"]:
+            return jsonify({"error": "Admin or Superuser privileges required to delete corporate mitigation records"}), 403
+
+    try:
+        db.session.delete(item)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete mitigation item: {str(e)}"}), 500
+
+    from routes.dashboard import clear_dashboard_cache
+    clear_dashboard_cache()
     return jsonify({"message": "Mitigation record deleted"})
 
 
@@ -327,6 +434,9 @@ def delete_mitigation(mitigation_id):
 @managedata_bp.route("/reporting-metadata", methods=["GET"])
 @login_required
 def get_reporting_metadata():
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to view reporting metadata."}), 403
     year = request.args.get("year")
     if not year:
         return jsonify({"error": "Year required"}), 400
@@ -362,7 +472,13 @@ def get_reporting_metadata():
 @managedata_bp.route("/reporting-metadata", methods=["POST"])
 @login_required
 def save_reporting_metadata():
-    data = request.get_json()
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify reporting metadata."}), 403
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Administrator privileges required to modify reporting metadata."}), 403
+
+    data = request.get_json() or {}
     year = data.get("year")
     if not year:
         return jsonify({"error": "Year required"}), 400
@@ -393,18 +509,19 @@ def save_reporting_metadata():
         )
         db.session.add(metadata)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to save reporting metadata: {str(e)}"}), 500
 
     # --- Audit Notification ---
     try:
-        user_id = request.headers.get("X-User-ID")  # Or session
-        # If we had a current_user helper here:
-        # For now, just create a system/audit notif
         Notification.create(
             title="Reporting Metadata Updated",
             message=f"Reporting metadata for {year} was updated.",
             type="audit",
-            user_id=None,  # Global audit log
+            user_id=None,
         )
     except Exception as e:
         print(f"Audit Notif Error: {e}")
@@ -416,6 +533,9 @@ def save_reporting_metadata():
 @managedata_bp.route("/production/years", methods=["GET"])
 @login_required
 def get_production_years():
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to view operational data."}), 403
     years = (
         db.session.query(ProductionData.year)
         .distinct()
@@ -429,7 +549,11 @@ def get_production_years():
 @managedata_bp.route("/filters/available", methods=["GET"])
 @login_required
 def get_available_filters():
-    # Helper to get distinct years from various tables
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to view operational filters."}), 403
+    allowed_fids = get_allowed_facility_ids(user)
+
     year_queries = [
         db.session.query(distinct(Emission.year)),
         db.session.query(distinct(ProductionData.year)),
@@ -448,11 +572,6 @@ def get_available_filters():
         except Exception:
             continue
 
-    user = get_current_user()
-    allowed_fids = get_allowed_facility_ids(user)
-
-    # Also include regions that have data
-    # (Simplified: just return all active facilities for now, or those referenced in Emission rows)
     em_query = db.session.query(distinct(Emission.facility_id))
     if allowed_fids is not None:
         em_query = em_query.filter(Emission.facility_id.in_(allowed_fids))
@@ -472,12 +591,18 @@ def get_available_filters():
     segment_query = db.session.query(distinct(Facility.segment))
     if allowed_fids is not None:
         segment_query = segment_query.filter(Facility.id.in_(allowed_fids))
-    segments = [r[0] for r in segment_query.all() if r[0]]
+    
+    # Strictly enforce only valid supply chain keywords: Upstream, Midstream, Downstream
+    VALID_SEGMENTS = {"upstream", "midstream", "downstream"}
+    raw_segments = [r[0] for r in segment_query.all() if r[0]]
+    segments = sorted(list({s.strip().title() for s in raw_segments if s.strip().lower() in VALID_SEGMENTS}))
+    if not segments:
+        segments = ["Downstream", "Midstream", "Upstream"]
 
     return jsonify(
         {
             "years": sorted(list(available_years), reverse=True),
-            "segments": sorted(segments),
+            "segments": segments,
             "regions": [
                 {
                     "id": f.id,
@@ -496,7 +621,11 @@ def get_available_filters():
 @managedata_bp.route("/mitigation/bulk-import", methods=["POST"])
 @login_required
 def bulk_import_mitigation():
-    data = request.get_json()
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
+    allowed_fids = get_allowed_facility_ids(user)
+    data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
@@ -529,12 +658,15 @@ def bulk_import_mitigation():
                 if fid in facility_cache:
                     facility = facility_cache[fid]
                 else:
-                    facility = Facility.query.get(fid)
+                    facility = db.session.get(Facility, fid)
                     facility_cache[fid] = facility
             except (ValueError, TypeError):
                 facility = None
 
         if not facility:
+            continue
+
+        if allowed_fids is not None and facility.id not in allowed_fids:
             continue
 
         try:
@@ -578,22 +710,29 @@ def bulk_import_mitigation():
             end_date=end_date,
             investment_amount=investment,
             description=rec.get("description"),
-            created_by=get_current_user().id,
+            created_by=user.id if user else None,
         )
         db.session.add(proj)
         imported_count += 1
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk import mitigation projects: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "CREATE",
             "bulk",
             f"Bulk imported {imported_count} mitigation projects",
-            user=get_current_user(),
+            user=user,
             request=request,
             entity="MitigationProject",
         )
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
     except Exception:
         db.session.rollback()
     return jsonify({"message": f"{imported_count} mitigation projects imported"}), 201
@@ -601,8 +740,12 @@ def bulk_import_mitigation():
 
 # --- Yearly Emission Goals ---
 @managedata_bp.route("/goals", methods=["GET"])
+@managedata_bp.route("/goals/", methods=["GET"])
 @login_required
 def get_all_goals():
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to view corporate emission targets."}), 403
     try:
         goals = Goal.query.order_by(Goal.year.desc()).all()
         return jsonify(
@@ -622,8 +765,14 @@ def get_all_goals():
 
 
 @managedata_bp.route("/goals", methods=["POST"])
+@managedata_bp.route("/goals/", methods=["POST"])
 @login_required
 def add_or_update_goal():
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Administrator privileges required to modify corporate emission targets."}), 403
     try:
         data = request.get_json() or {}
         if not data.get("year") or data.get("target_amount") is None:
@@ -658,6 +807,11 @@ def add_or_update_goal():
 @managedata_bp.route("/goals/<int:year>", methods=["DELETE"])
 @login_required
 def delete_goal(year):
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Administrator privileges required to modify corporate emission targets."}), 403
     try:
         goal = Goal.query.filter_by(year=year).first()
         if not goal:
@@ -672,13 +826,17 @@ def delete_goal(year):
 
 # --- Base Years & Recalculations ---
 @managedata_bp.route("/base-years", methods=["GET"])
+@managedata_bp.route("/base-years/", methods=["GET"])
 @login_required
 def get_base_years():
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to view base year recalculation data."}), 403
     try:
         active_rec = BaseYearRecalculation.query.order_by(
             BaseYearRecalculation.recalc_date.desc()
         ).first()
-        base_year_entry = BaseYear.query.get(1)
+        base_year_entry = db.session.get(BaseYear, 1)
 
         active_year = None
         if active_rec:
@@ -727,8 +885,14 @@ def get_base_years():
 
 
 @managedata_bp.route("/base-years", methods=["POST"])
+@managedata_bp.route("/base-years/", methods=["POST"])
 @login_required
 def add_base_year_recalculation():
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
     try:
         data = request.get_json() or {}
         if not data.get("year") or not data.get("reason"):
@@ -747,7 +911,6 @@ def add_base_year_recalculation():
             else None
         )
 
-        user = get_current_user()
         user_id = user.id if user else None
 
         recalc = BaseYearRecalculation(
@@ -760,7 +923,7 @@ def add_base_year_recalculation():
         db.session.add(recalc)
 
         # Keep BaseYear singleton synchronized
-        base_year_singleton = BaseYear.query.get(1)
+        base_year_singleton = db.session.get(BaseYear, 1)
         if base_year_singleton:
             base_year_singleton.year = year
         else:
@@ -768,6 +931,8 @@ def add_base_year_recalculation():
             db.session.add(base_year_singleton)
 
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return (
             jsonify(
                 {"message": "Base year recalculated successfully", "id": recalc.id}
@@ -782,8 +947,13 @@ def add_base_year_recalculation():
 @managedata_bp.route("/base-years/<int:rec_id>", methods=["DELETE"])
 @login_required
 def delete_base_year_recalculation(rec_id):
+    user = get_current_user()
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
     try:
-        rec = BaseYearRecalculation.query.get(rec_id)
+        rec = db.session.get(BaseYearRecalculation, rec_id)
         if not rec:
             return jsonify({"error": "Recalculation record not found"}), 404
         db.session.delete(rec)
@@ -794,49 +964,113 @@ def delete_base_year_recalculation(rec_id):
             BaseYearRecalculation.recalc_date.desc()
         ).first()
         if latest:
-            singleton = BaseYear.query.get(1)
+            singleton = db.session.get(BaseYear, 1)
             if singleton:
                 singleton.year = latest.year
                 db.session.commit()
 
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return jsonify({"message": "Recalculation record deleted"})
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+
 @managedata_bp.route("/sbti", methods=["GET", "POST"])
+@managedata_bp.route("/manage/sbti", methods=["GET", "POST"])
 @login_required
 def manage_sbti():
-    from models import SbtiTarget
+    from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission, BaseYearRecalculation
+    from routes.dashboard import clear_dashboard_cache
     user = get_current_user()
-    
+    if user and user.role == "it_admin":
+        return jsonify({"error": "IT administrators are not authorized to access SBTi targets."}), 403
+
     if request.method == "GET":
         target = SbtiTarget.query.order_by(SbtiTarget.created_at.desc()).first()
+        
+        # Calculate suggested base year baseline from verified emissions or BaseYearRecalculation
+        requested_by = request.args.get("base_year")
+        if requested_by:
+            try:
+                calc_year = int(requested_by)
+            except ValueError:
+                calc_year = target.base_year if target else 2024
+        else:
+            calc_year = target.base_year if target else 2024
+
+        recalc = BaseYearRecalculation.query.filter_by(year=calc_year).order_by(BaseYearRecalculation.recalc_date.desc()).first()
+        if recalc and recalc.adjusted_emissions:
+            suggested_emissions = float(recalc.adjusted_emissions)
+        else:
+            s1 = sum(float(e.co2e_total or e.co2_emissions or 0) for e in Emission.query.filter_by(status="Verified", year=calc_year).all())
+            s2 = sum(float(e.co2e or 0) for e in Scope2Emission.query.filter_by(status="Verified", year=calc_year).all())
+            s3 = sum(float(e.co2e or 0) for e in Scope3Emission.query.filter_by(status="Verified", year=calc_year).all())
+            suggested_emissions = s1 + s2 + s3
+
         if not target:
-            return jsonify({"has_target": False})
+            return jsonify({
+                "has_target": False,
+                "suggested_base_year": calc_year,
+                "suggested_base_year_emissions": round(suggested_emissions, 2)
+            })
+
         return jsonify({
             "has_target": True,
             "base_year": target.base_year,
             "base_year_emissions": target.base_year_emissions,
             "target_year": target.target_year,
             "reduction_rate_pct": target.reduction_rate_pct,
-            "pathway_type": target.pathway_type
+            "pathway_type": target.pathway_type,
+            "suggested_base_year": calc_year,
+            "suggested_base_year_emissions": round(suggested_emissions, 2)
         })
-        
+
     # POST
-    data = request.get_json()
+    if not user or user.role not in ["admin", "superuser"]:
+        return jsonify({"error": "Administrator privileges required to modify SBTi targets."}), 403
+    data = request.get_json() or {}
+    try:
+        base_year = int(data.get("base_year"))
+        base_year_emissions = float(data.get("base_year_emissions"))
+        target_year = int(data.get("target_year", 2050))
+        reduction_rate_pct = float(data.get("reduction_rate_pct", 4.2))
+        pathway_type = str(data.get("pathway_type", "1.5C")).strip()
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid format: base_year, base_year_emissions, target_year, and reduction_rate_pct must be valid numbers."}), 400
+
+    if base_year < 2015 or base_year > 2035:
+        return jsonify({"error": "Base year must be between 2015 and 2035 per SBTi Corporate Net-Zero guidelines."}), 400
+    if target_year <= base_year or target_year > 2070:
+        return jsonify({"error": f"Target year must be greater than base year ({base_year}) and not exceed 2070."}), 400
+    if base_year_emissions <= 0:
+        return jsonify({"error": "Base year baseline emissions must be greater than 0 tCO2e."}), 400
+    if reduction_rate_pct <= 0 or reduction_rate_pct > 25.0:
+        return jsonify({"error": "Annual reduction rate must be between 0.1% and 25.0%."}), 400
+
     try:
         new_target = SbtiTarget(
-            base_year=int(data.get("base_year")),
-            base_year_emissions=float(data.get("base_year_emissions")),
-            target_year=int(data.get("target_year", 2050)),
-            reduction_rate_pct=float(data.get("reduction_rate_pct", 4.2)),
-            pathway_type=data.get("pathway_type", "1.5C"),
+            base_year=base_year,
+            base_year_emissions=base_year_emissions,
+            target_year=target_year,
+            reduction_rate_pct=reduction_rate_pct,
+            pathway_type=pathway_type,
             created_by=user.id if user else None
         )
         db.session.add(new_target)
         db.session.commit()
+        clear_dashboard_cache()
         return jsonify({"message": "SBTi Target saved successfully"}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
+
+
+# --- Audit Stats Alias (/api/audit/stats) ---
+@managedata_bp.route("/audit/stats", methods=["GET"])
+@managedata_bp.route("/audit/stats/", methods=["GET"])
+def managedata_audit_stats():
+    from routes.audit import get_audit_stats
+    return get_audit_stats()
+
