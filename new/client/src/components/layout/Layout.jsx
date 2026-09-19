@@ -5,11 +5,13 @@ import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import LoadingSpinner from "../LoadingSpinner";
 import { useAuth } from "../../context/AuthContext";
+import { useLayout } from "../../context/LayoutContext";
 import "./Layout.css";
 
 const Layout = () => {
   const location = useLocation();
   const { sessionWarning } = useAuth() || {};
+  const { isMobileNavOpen, closeMobileNav } = useLayout();
   const [isOnline, setIsOnline] = React.useState(
     typeof navigator !== "undefined" ? navigator.onLine : true
   );
@@ -27,8 +29,25 @@ const Layout = () => {
     };
   }, []);
 
+  const prevPathnameRef = React.useRef(location.pathname);
+  React.useEffect(() => {
+    if (prevPathnameRef.current !== location.pathname) {
+      prevPathnameRef.current = location.pathname;
+      if (closeMobileNav) {
+        closeMobileNav();
+      }
+    }
+  }, [location.pathname, closeMobileNav]);
+
   return (
     <div className="app-container">
+      {isMobileNavOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={closeMobileNav}
+          aria-label="Close navigation"
+        />
+      )}
       {!isOnline && (
         <div
           id="offline-banner"

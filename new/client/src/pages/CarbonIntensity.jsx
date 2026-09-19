@@ -8,6 +8,7 @@ import { useLayout } from "../context/LayoutContext";
 import CustomDropdown from "../components/CustomDropdown";
 import { formatNumber } from "../utils/formatters";
 import { getActiveGwpFactors } from "../constants";
+import { getUserOperationalDefaults } from "../utils/userDefaults";
 import {
   Cloud,
   Flame,
@@ -101,12 +102,19 @@ const CarbonIntensity = () => {
           setAvailableSegments(filterRes.data.segments);
         }
         setSelectedYear("all");
+
+        const opDefaults = getUserOperationalDefaults(user, facilitiesData);
+        if (opDefaults.isRestricted || facilitiesData.length === 1) {
+          if (opDefaults.defaultActivity) setCurrentActivity(opDefaults.defaultActivity);
+          if (opDefaults.defaultDivision) setCurrentDivision(opDefaults.defaultDivision);
+          if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);
+        }
       } catch (error) {
         console.error("Initialization error:", error);
       }
     };
     init();
-  }, []);
+  }, [user]);
 
   // Load data on filter changes
   useEffect(() => {

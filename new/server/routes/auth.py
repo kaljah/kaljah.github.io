@@ -6,9 +6,46 @@ from urllib.parse import urlparse
 from functools import wraps
 from flask import request, jsonify, session, current_app
 from . import auth_bp
-from models import User, Notification
+from models import User, Notification, Facility
 from extensions import db, limiter
-from utils import log_activity_and_notify
+from utils import log_activity_and_notify, is_unrestricted_location
+
+
+def get_user_operational_defaults(user):
+    """
+    Computes default region, division, activity, and facility for a user.
+    For regional users and superusers tied to a location/region,
+    resolves the matching facility attributes.
+    """
+    defaults = {
+        "region": None,
+        "division": None,
+        "activity": None,
+        "facility_id": None,
+        "facility_name": None,
+    }
+    if not user:
+        return defaults
+
+    user_loc = str(user.location).strip() if user.location else ""
+    if user_loc and not is_unrestricted_location(user_loc):
+        defaults["region"] = user_loc
+        fac = Facility.query.filter(
+            db.or_(
+                Facility.region.ilike(user_loc),
+                Facility.location.ilike(user_loc),
+                Facility.name.ilike(user_loc),
+            )
+        ).first()
+        if fac:
+            defaults["region"] = fac.region or fac.location or user_loc
+            defaults["division"] = fac.division
+            defaults["activity"] = fac.activity
+            defaults["facility_id"] = str(fac.id)
+            defaults["facility_name"] = fac.name
+
+    return defaults
+
 
 
 def validate_password_complexity(password: str):
@@ -118,6 +155,29 @@ def it_admin_required(f):
             return jsonify({"error": "Account disabled"}), 403
         if user.role != "it_admin":
             return jsonify({"error": "IT Admin privileges required"}), 403
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def it_access_required(f):
+    """Allows IT Admin and IT roles — for accessing user list and resetting passwords."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if request.method == "OPTIONS":
+            return ("", 204)
+        user_id = session.get("user_id")
+        if not user_id:
+            return jsonify({"error": "Not authenticated"}), 401
+        user = db.session.get(User, user_id)
+        if not user:
+            session.pop("user_id", None)
+            return jsonify({"error": "User not found"}), 401
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
+        if user.role not in ["it_admin", "it"]:
+            return jsonify({"error": "IT privileges required"}), 403
         return f(*args, **kwargs)
 
     return decorated_function
@@ -281,6 +341,8 @@ def login():
         except Exception as e:
             current_app.logger.error(f"Audit Log Error on login: {e}")
 
+        user_defaults = get_user_operational_defaults(user)
+
         return jsonify(
             {
                 "message": "Login successful",
@@ -290,6 +352,17 @@ def login():
                     "email": user.email,
                     "role": user.role,
                     "orgName": user.orgName,
+                    "jobTitle": user.jobTitle,
+                    "department": user.department,
+                    "sector": user.sector,
+                    "phone": user.phone,
+                    "location": user.location,
+                    "status": user.status,
+                    "default_region": user_defaults["region"],
+                    "default_division": user_defaults["division"],
+                    "default_activity": user_defaults["activity"],
+                    "default_facility_id": user_defaults["facility_id"],
+                    "default_facility_name": user_defaults["facility_name"],
                 },
             }
         )
@@ -411,6 +484,8 @@ def me():
         session.pop("user_id", None)
         return jsonify({"authenticated": False, "user": None}), 200
 
+    user_defaults = get_user_operational_defaults(user)
+
     return jsonify(
         {
             "authenticated": True,
@@ -427,6 +502,12 @@ def me():
             "bio": user.bio,
             "profilePic": user.profilePic,
             "consolidationApproach": user.consolidationApproach,
+            "status": user.status,
+            "default_region": user_defaults["region"],
+            "default_division": user_defaults["division"],
+            "default_activity": user_defaults["activity"],
+            "default_facility_id": user_defaults["facility_id"],
+            "default_facility_name": user_defaults["facility_name"],
         }
     )
 
@@ -707,6 +788,9 @@ def update_settings():
     }
     has_operational_keys = any(k in data for k in operational_keys)
 
+    if user and user.role == "it":
+        return jsonify({"error": "IT role is not authorized to modify settings."}), 403
+
     if user and user.role == "it_admin" and has_operational_keys:
         return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
 
@@ -816,7 +900,7 @@ def update_settings():
 
 
 @auth_bp.route("/users", methods=["GET"])
-@it_admin_required
+@it_access_required
 def get_users():
     # Force expire session cache so we always read fresh data from DB
     db.session.expire_all()
@@ -857,7 +941,7 @@ def update_user(id):
 
     data = request.get_json()
 
-    ROLE_RANK = {"user": 0, "superuser": 1, "admin": 2, "it_admin": 3}
+    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4}
     VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
 
@@ -869,6 +953,25 @@ def update_user(id):
         if target_new_rank > requester_rank:
             return jsonify({"error": "Cannot assign a role higher than your own"}), 403
         user.role = new_role
+
+    if "fullName" in data and data["fullName"]:
+        new_name = str(data["fullName"]).strip()
+        if new_name:
+            user.fullName = new_name
+
+    if "email" in data and data["email"]:
+        new_email = str(data["email"]).strip().lower()
+        if new_email and new_email != (user.email or "").lower():
+            existing = User.query.filter(User.email == new_email, User.id != user.id).first()
+            if existing:
+                return jsonify({"error": "Email is already in use by another account"}), 400
+            user.email = new_email
+
+    if "department" in data:
+        user.department = str(data["department"]).strip() if data["department"] else ""
+
+    if "jobTitle" in data:
+        user.jobTitle = str(data["jobTitle"]).strip() if data["jobTitle"] else ""
 
     if "location" in data:
         user.location = data["location"]
@@ -892,8 +995,11 @@ def update_user(id):
                 "id": user.id,
                 "fullName": user.fullName,
                 "email": user.email,
+                "orgName": user.orgName,
                 "role": user.role,
                 "location": user.location,
+                "department": user.department,
+                "jobTitle": user.jobTitle,
                 "status": user.status,
             },
         }
@@ -963,7 +1069,7 @@ def delete_user(id):
 
 
 @auth_bp.route("/users/<int:id>/reset-password", methods=["POST"])
-@it_admin_required
+@it_access_required
 def admin_reset_password(id):
     """
     IT Admin resets a user's password directly (global authority).

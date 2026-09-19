@@ -674,3 +674,64 @@
   color: var(--accent-color, #ff6600);
 }
 
+/* ============================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   ============================================================ */
+@media (max-width: 1024px) {
+  .scope-selection-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .calculator-container {
+    padding: 0 12px !important;
+  }
+
+  .scope-selector-header {
+    padding: 20px 0 10px;
+  }
+
+  .scope-selector-title {
+    font-size: 1.4rem;
+  }
+
+  .scope-selector-subtitle {
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+  }
+
+  .scope-selection-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding-bottom: 28px;
+  }
+
+  .scope-card {
+    min-height: auto;
+  }
+
+  .scope-card-body {
+    padding: 16px;
+  }
+
+  .scope-switcher-tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+
+  .scope-switcher-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scope-tab-btn {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+

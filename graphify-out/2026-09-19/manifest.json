@@ -20,8 +20,8 @@
     "semantic_hash": ""
   },
   "new/client/src/App.jsx": {
-    "mtime": 1789848769.6418734,
-    "ast_hash": "3fdbf9511bb8ef7e9e457d7da68d8adc",
+    "mtime": 1789828200.4318788,
+    "ast_hash": "6a7cebe1f2b8318e8eb3bb8761f86347",
     "semantic_hash": ""
   },
   "new/client/src/api.js": {
@@ -155,13 +155,13 @@
     "semantic_hash": ""
   },
   "new/client/src/components/layout/Sidebar.jsx": {
-    "mtime": 1789848796.969398,
-    "ast_hash": "bc77d89b61b8d7bb9b4f8c84edefd0b6",
+    "mtime": 1789846179.4196901,
+    "ast_hash": "5d156861008d18408bdd15b83a6d6ba4",
     "semantic_hash": ""
   },
   "new/client/src/components/layout/TopBar.jsx": {
-    "mtime": 1789848487.9945233,
-    "ast_hash": "a198e552e0b7a865471a7524ae5cb8cd",
+    "mtime": 1789845999.467143,
+    "ast_hash": "d41b836a714890d40e1937c2d34cb763",
     "semantic_hash": ""
   },
   "new/client/src/components/scope1/AGRForm.jsx": {
@@ -300,8 +300,8 @@
     "semantic_hash": ""
   },
   "new/client/src/pages/UserManagement.jsx": {
-    "mtime": 1789848915.9266043,
-    "ast_hash": "08989e907caf692a8ef31ec73636cc4c",
+    "mtime": 1789847519.1761801,
+    "ast_hash": "3b5825c0885ffa264a8adae2b45ce492",
     "semantic_hash": ""
   },
   "new/client/src/utils/EmissionFactors.js": {
@@ -345,8 +345,8 @@
     "semantic_hash": ""
   },
   "new/server/app.py": {
-    "mtime": 1789848475.9968212,
-    "ast_hash": "45a1c68ae4f4a04886a62ded52f26da4",
+    "mtime": 1789828213.2362063,
+    "ast_hash": "b0860976b5b3999c09bf339debdb0a8c",
     "semantic_hash": ""
   },
   "new/server/background_processor.py": {
@@ -520,13 +520,13 @@
     "semantic_hash": ""
   },
   "new/server/routes/auth.py": {
-    "mtime": 1789848561.7603507,
-    "ast_hash": "f1641a296897e3d899b9d89c21782708",
+    "mtime": 1789847233.3618302,
+    "ast_hash": "b61ae2c88132a32a98b1a8615e87f346",
     "semantic_hash": ""
   },
   "new/server/routes/custom_factors.py": {
-    "mtime": 1789848702.566496,
-    "ast_hash": "2d931fc0f4516782fb9aa319a345e460",
+    "mtime": 1789549405.6923904,
+    "ast_hash": "ac759167f46d7e2650a038ef0a1b4994",
     "semantic_hash": ""
   },
   "new/server/routes/dashboard.py": {
@@ -545,18 +545,18 @@
     "semantic_hash": ""
   },
   "new/server/routes/emissions.py": {
-    "mtime": 1789848604.1381752,
-    "ast_hash": "690e6b0d425a5bc7a5addb5e683a1674",
+    "mtime": 1789639296.7223864,
+    "ast_hash": "0bebaeac30c93fa4b0d81daacf504ad7",
     "semantic_hash": ""
   },
   "new/server/routes/facilities.py": {
-    "mtime": 1789848581.5592692,
-    "ast_hash": "51a88f5ecb2dcbdd6b71b360901bbb55",
+    "mtime": 1789634022.4476576,
+    "ast_hash": "64bf9633af96bc710a2775ea6e6beeab",
     "semantic_hash": ""
   },
   "new/server/routes/managedata.py": {
-    "mtime": 1789848684.8682983,
-    "ast_hash": "66cea9fbb2a66befe0b1f01e013c25b9",
+    "mtime": 1789634017.3796794,
+    "ast_hash": "f86d50afa7d111867c0edaf655702b0b",
     "semantic_hash": ""
   },
   "new/server/routes/notifications.py": {
@@ -565,8 +565,8 @@
     "semantic_hash": ""
   },
   "new/server/routes/reports.py": {
-    "mtime": 1789848696.1593006,
-    "ast_hash": "d7940cbbf339094e9908f42cd8d0eee9",
+    "mtime": 1789634028.356215,
+    "ast_hash": "5f6fd5ad40fb6eb3f456c1502af2fc8d",
     "semantic_hash": ""
   },
   "new/server/routes/satellite.py": {
@@ -575,18 +575,18 @@
     "semantic_hash": ""
   },
   "new/server/routes/scope2.py": {
-    "mtime": 1789848623.0191767,
-    "ast_hash": "c0d63e27038f1f32e75002c4f497ee7f",
+    "mtime": 1789634048.7538636,
+    "ast_hash": "82e4babf422208291dd06816f2893e51",
     "semantic_hash": ""
   },
   "new/server/routes/scope3.py": {
-    "mtime": 1789848640.5060308,
-    "ast_hash": "96fd82efcb090ebb8c7593ca1acc57d1",
+    "mtime": 1789634074.368986,
+    "ast_hash": "69497fbdd4c47f6dd4622ae0188dfee6",
     "semantic_hash": ""
   },
   "new/server/seed_admin.py": {
-    "mtime": 1789848735.7161283,
-    "ast_hash": "20f33d3c60bef0a84548c8228c525587",
+    "mtime": 1789250655.672418,
+    "ast_hash": "93a94dbdb7db5ee3f18d2becef8bc115",
     "semantic_hash": ""
   },
   "new/server/services/__init__.py": {
@@ -645,8 +645,8 @@
     "semantic_hash": ""
   },
   "new/server/utils.py": {
-    "mtime": 1789848574.488948,
-    "ast_hash": "bfb2948f27ce91ca43084965710fd730",
+    "mtime": 1789250318.3496459,
+    "ast_hash": "ae9678d97fd54a59477ed208d4dbdafc",
     "semantic_hash": ""
   },
   "package.json": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "new/client/stats.html": {
-    "mtime": 1789848941.3517175,
-    "ast_hash": "a7297eac3e6478d51f45b635be440130",
+    "mtime": 1789847628.491075,
+    "ast_hash": "db45c49a58cf275da68c2f08043c6a14",
     "semantic_hash": ""
   },
   "temp_old/cbam_diff_README.md.txt": {
@@ -9405,13 +9405,8 @@
     "semantic_hash": ""
   },
   "new/server/tests/test_user_profile_update.py": {
-    "mtime": 1789848612.4835906,
-    "ast_hash": "69248777187fe6fe7dbc67985f38d99e",
-    "semantic_hash": ""
-  },
-  "new/server/tests/test_it_role_security.py": {
-    "mtime": 1789848982.4722178,
-    "ast_hash": "c362f5091eb9c042a25897bd4f1814f2",
+    "mtime": 1789847244.2625413,
+    "ast_hash": "6e37d88a087abbf3ff4402e47a3ff74c",
     "semantic_hash": ""
   }
 }

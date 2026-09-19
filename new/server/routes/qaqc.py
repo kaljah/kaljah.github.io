@@ -63,9 +63,27 @@ def get_qaqc_dashboard():
         all_flagged = []
         total_flagged = 0
 
+        status_arg = (request.args.get("status") or "all").lower().strip()
+
+        def _apply_status_filter(q, model):
+            if status_arg == "rejected":
+                return q.filter(model.status.ilike("%rejected%"))
+            elif status_arg == "verified":
+                return q.filter(model.status.ilike("%verified%"))
+            elif status_arg == "pending":
+                return q.filter(or_(model.status.ilike("%pending%"), model.status.is_(None)))
+            elif status_arg in ["all", "active"]:
+                # In QA/QC, "all statuses" excludes rejected records so users only see actionable/verified records.
+                # Rejected records only appear in the dedicated Rejected tab.
+                return q.filter(or_(model.status.is_(None), ~model.status.ilike("%rejected%")))
+            elif status_arg in ["any", "include_rejected"]:
+                return q
+            return q
+
         if scope_arg in [None, "all", "1"]:
             q1 = Emission.query.filter(Emission.qa_flag.isnot(None))
             q1 = _fac_filter(q1, Emission)
+            q1 = _apply_status_filter(q1, Emission)
             total_flagged += q1.count()
             if scope_arg == "1":
                 q1 = q1.order_by(Emission.timestamp.desc()).offset(offset).limit(limit)
@@ -88,6 +106,7 @@ def get_qaqc_dashboard():
         if scope_arg in [None, "all", "2"]:
             q2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
             q2 = _fac_filter(q2, Scope2Emission)
+            q2 = _apply_status_filter(q2, Scope2Emission)
             total_flagged += q2.count()
             if scope_arg == "2":
                 q2 = q2.order_by(Scope2Emission.created_at.desc()).offset(offset).limit(limit)
@@ -110,6 +129,7 @@ def get_qaqc_dashboard():
         if scope_arg in [None, "all", "3"]:
             q3 = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))
             q3 = _fac_filter(q3, Scope3Emission)
+            q3 = _apply_status_filter(q3, Scope3Emission)
             total_flagged += q3.count()
             if scope_arg == "3":
                 q3 = q3.order_by(Scope3Emission.created_at.desc()).offset(offset).limit(limit)
@@ -235,26 +255,40 @@ def get_qaqc_dashboard():
                     pass
             missing_facility_count = missing_fac_q.count()
 
+        # Facility names lookup for sample records
+        fac_map = {}
+        try:
+            for f in Facility.query.with_entities(Facility.id, Facility.name).all():
+                fac_map[f[0]] = f[1]
+        except Exception:
+            pass
+
         # Fuel check applies strictly to combustion processes or unspecified process types
+        proc_norm = func.lower(func.replace(Emission.process_type, ' ', '_'))
         comb_q = q_s1_all.filter(
             or_(
                 Emission.process_type.is_(None),
-                ~Emission.process_type.in_(NON_COMBUSTION_PROCESSES),
+                ~proc_norm.in_(NON_COMBUSTION_PROCESSES),
             )
         )
         comb_count = comb_q.count()
-        missing_fuel_count = comb_q.filter(
+        missing_fuel_q = comb_q.filter(
             or_(
                 Emission.fuel_type.is_(None),
                 Emission.fuel_type == "",
             )
-        ).count()
-        missing_amount_count = q_s1_all.filter(
+        )
+        missing_fuel_count = missing_fuel_q.count()
+
+        missing_amount_q = q_s1_all.filter(
             or_(Emission.quantity.is_(None), Emission.quantity <= 0)
-        ).count()
-        missing_co2e_count = q_s1_all.filter(
+        )
+        missing_amount_count = missing_amount_q.count()
+
+        missing_co2e_q = q_s1_all.filter(
             or_(Emission.co2e_total.is_(None), Emission.co2e_total < 0)
-        ).count()
+        )
+        missing_co2e_count = missing_co2e_q.count()
 
         # Facilities coverage (scoped to allowed facilities and reporting year)
         if allowed_fids is not None:
@@ -334,6 +368,19 @@ def get_qaqc_dashboard():
         suggestions = []
 
         if missing_facility_count > 0:
+            sample_recs = []
+            try:
+                for r in missing_fac_q.limit(10).all():
+                    sample_recs.append({
+                        "id": r.id,
+                        "year": r.year,
+                        "process": r.process_type or "Unassigned",
+                        "quantity": r.quantity,
+                        "co2e": r.co2e_total,
+                    })
+            except Exception:
+                pass
+
             issues.append({
                 "id": "missing_facility",
                 "type": "critical",
@@ -341,11 +388,26 @@ def get_qaqc_dashboard():
                 "description": f"{missing_facility_count} emission record(s) lack facility assignment, breaking GHG Protocol organizational boundary requirements.",
                 "affected_count": missing_facility_count,
                 "impact": "High",
-                "action": "Assign Facilities",
-                "action_tab": "queue",
+                "action": "Manage Facilities",
+                "action_url": "/manage-data?tab=facilities",
+                "sample_records": sample_recs,
             })
 
         if missing_co2e_count > 0:
+            sample_recs = []
+            try:
+                for r in missing_co2e_q.limit(10).all():
+                    sample_recs.append({
+                        "id": r.id,
+                        "facility_id": r.facility_id,
+                        "facility": fac_map.get(r.facility_id, f"Facility {r.facility_id}"),
+                        "year": r.year,
+                        "process": r.process_type or "Unassigned",
+                        "quantity": r.quantity,
+                    })
+            except Exception:
+                pass
+
             issues.append({
                 "id": "missing_co2e",
                 "type": "critical",
@@ -353,11 +415,26 @@ def get_qaqc_dashboard():
                 "description": f"{missing_co2e_count} record(s) have uncalculated or negative CO₂e totals.",
                 "affected_count": missing_co2e_count,
                 "impact": "High",
-                "action": "Recalculate",
-                "action_tab": "queue",
+                "action": "Review in Manage Data",
+                "action_url": "/manage-data?tab=pending",
+                "sample_records": sample_recs,
             })
 
         if missing_fuel_count > 0:
+            sample_recs = []
+            try:
+                for r in missing_fuel_q.limit(10).all():
+                    sample_recs.append({
+                        "id": r.id,
+                        "facility_id": r.facility_id,
+                        "facility": fac_map.get(r.facility_id, f"Facility {r.facility_id}"),
+                        "year": r.year,
+                        "process": r.process_type or "Unassigned",
+                        "quantity": r.quantity,
+                    })
+            except Exception:
+                pass
+
             warnings.append({
                 "id": "missing_fuel",
                 "type": "warning",
@@ -365,11 +442,26 @@ def get_qaqc_dashboard():
                 "description": f"{missing_fuel_count} Scope 1 combustion record(s) are missing explicit fuel or process types, using generic defaults.",
                 "affected_count": missing_fuel_count,
                 "impact": "Medium",
-                "action": "Classify Sources",
-                "action_tab": "queue",
+                "action": "Classify in Manage Data",
+                "action_url": "/manage-data?tab=sources",
+                "sample_records": sample_recs,
             })
 
         if missing_amount_count > 0:
+            sample_recs = []
+            try:
+                for r in missing_amount_q.limit(10).all():
+                    sample_recs.append({
+                        "id": r.id,
+                        "facility_id": r.facility_id,
+                        "facility": fac_map.get(r.facility_id, f"Facility {r.facility_id}"),
+                        "year": r.year,
+                        "process": r.process_type or "Unassigned",
+                        "fuel": r.fuel_type or "Unspecified",
+                    })
+            except Exception:
+                pass
+
             warnings.append({
                 "id": "missing_amount",
                 "type": "warning",
@@ -377,8 +469,9 @@ def get_qaqc_dashboard():
                 "description": f"{missing_amount_count} record(s) contain zero or unrecorded activity amounts.",
                 "affected_count": missing_amount_count,
                 "impact": "Medium",
-                "action": "Review Activity",
-                "action_tab": "queue",
+                "action": "Review in Manage Data",
+                "action_url": "/manage-data?tab=pending",
+                "sample_records": sample_recs,
             })
 
         if total_records_count > 0 and recent_records_count == 0:
@@ -389,11 +482,28 @@ def get_qaqc_dashboard():
                 "description": "No emissions or activity records ingested during the last 30 days.",
                 "affected_count": 0,
                 "impact": "Low",
-                "action": "Check Ingestion",
-                "action_tab": "diagnostics",
+                "action": "Review Ingestion",
+                "action_url": "/manage-data?tab=pending",
             })
 
         if unused_facilities > 0:
+            sample_facs = []
+            try:
+                fac_q = Facility.query
+                if allowed_fids is not None:
+                    fac_q = fac_q.filter(Facility.id.in_(allowed_fids))
+                for f in fac_q.all():
+                    if f.id not in active_fids:
+                        sample_facs.append({
+                            "id": f.id,
+                            "name": f.name,
+                            "location": f.location or f.field or "General",
+                        })
+                        if len(sample_facs) >= 10:
+                            break
+            except Exception:
+                pass
+
             suggestions.append({
                 "id": "unused_facilities",
                 "type": "info",
@@ -401,8 +511,9 @@ def get_qaqc_dashboard():
                 "description": f"{unused_facilities} facility boundary(ies) are registered in master data but have no emissions reported for this period.",
                 "affected_count": unused_facilities,
                 "impact": "Low",
-                "action": "View Facilities",
-                "action_url": "/reference-data",
+                "action": "Manage Facilities",
+                "action_url": "/manage-data?tab=facilities",
+                "sample_records": sample_facs,
             })
 
         if total_custom_factors == 0:
@@ -414,7 +525,7 @@ def get_qaqc_dashboard():
                 "affected_count": 0,
                 "impact": "Low",
                 "action": "Manage Factors",
-                "action_url": "/reference-data",
+                "action_url": "/manage-data?tab=factors",
             })
 
         # Calculate composite health score
@@ -504,20 +615,36 @@ def export_qaqc_report():
                     pass
             return q
 
+        status_arg = (request.args.get("status") or "").lower().strip()
+
+        def _apply_export_status_filter(q, model):
+            if status_arg == "rejected":
+                return q.filter(model.status.ilike("%rejected%"))
+            elif status_arg == "verified":
+                return q.filter(model.status.ilike("%verified%"))
+            elif status_arg == "pending":
+                return q.filter(or_(model.status.ilike("%pending%"), model.status.is_(None)))
+            elif status_arg in ["all", "active"]:
+                return q.filter(or_(model.status.is_(None), ~model.status.ilike("%rejected%")))
+            return q
+
         q1 = []
         q2 = []
         q3 = []
         if scope_arg in [None, "all", "1"]:
-            q1 = _fac_filter(
-                Emission.query.filter(Emission.qa_flag.isnot(None)), Emission
+            q1 = _apply_export_status_filter(
+                _fac_filter(Emission.query.filter(Emission.qa_flag.isnot(None)), Emission),
+                Emission
             ).limit(_MAX_FLAGGED_RECORDS).all()
         if scope_arg in [None, "all", "2"]:
-            q2 = _fac_filter(
-                Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)), Scope2Emission
+            q2 = _apply_export_status_filter(
+                _fac_filter(Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)), Scope2Emission),
+                Scope2Emission
             ).limit(_MAX_FLAGGED_RECORDS).all()
         if scope_arg in [None, "all", "3"]:
-            q3 = _fac_filter(
-                Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None)), Scope3Emission
+            q3 = _apply_export_status_filter(
+                _fac_filter(Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None)), Scope3Emission),
+                Scope3Emission
             ).limit(_MAX_FLAGGED_RECORDS).all()
 
         si = io.StringIO()

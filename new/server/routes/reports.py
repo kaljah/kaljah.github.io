@@ -257,10 +257,10 @@ def generate_report():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
+                {"error": "Forbidden: IT personnel cannot access operational emission reports"}
             ),
             403,
         )
@@ -458,10 +458,10 @@ def export_emissions():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
+                {"error": "Forbidden: IT personnel cannot access operational emission reports"}
             ),
             403,
         )
@@ -707,10 +707,10 @@ def export_ogmp_excel():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
+                {"error": "Forbidden: IT personnel cannot access operational emission reports"}
             ),
             403,
         )

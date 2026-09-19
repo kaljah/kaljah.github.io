@@ -366,3 +366,19 @@ select option:disabled {
   }
 }
 
+/* ============================================================
+   GLOBAL MOBILE RESPONSIVE UTILITIES
+   ============================================================ */
+@media (max-width: 768px) {
+  html, body {
+    height: 100dvh;
+  }
+
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+

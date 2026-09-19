@@ -37,7 +37,7 @@ const NonITRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <LoadingSpinner fullScreen />;
   if (!user) return <Navigate to="/login" />;
-  if (user.role === "it_admin") return <Navigate to="/user-management" />;
+  if (["it_admin", "it"].includes(user.role)) return <Navigate to="/user-management" />;
   return children;
 };
 
@@ -45,7 +45,7 @@ const ITRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <LoadingSpinner fullScreen />;
   if (!user) return <Navigate to="/login" />;
-  if (user.role !== "it_admin") return <Navigate to="/" />;
+  if (!["it_admin", "it"].includes(user.role)) return <Navigate to="/" />;
   return children;
 };
 
@@ -200,9 +200,9 @@ const AppRoutes = () => {
         <Route
           path="settings"
           element={
-            <PrivateRoute>
+            <NonITRoute>
               <Settings />
-            </PrivateRoute>
+            </NonITRoute>
           }
         />
       </Route>

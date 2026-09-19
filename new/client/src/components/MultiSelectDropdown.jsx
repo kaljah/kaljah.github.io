@@ -1,25 +1,88 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import "./CustomDropdown.css";
 
 const MultiSelectDropdown = ({
-  options,
-  selectedValues,
+  options = [],
+  selectedValues = [],
   onChange,
   label = "Select...",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState(null);
   const dropdownRef = useRef(null);
+  const portalRef = useRef(null);
 
-  // Close on click outside
+  const updatePosition = useCallback(() => {
+    if (!dropdownRef.current) return;
+    const rect = dropdownRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const minMenuWidth = Math.max(rect.width, 200);
+    const showAbove = spaceBelow < 240 && rect.top > 240;
+
+    let left = rect.left;
+    if (left + minMenuWidth > window.innerWidth - 10) {
+      left = Math.max(10, window.innerWidth - minMenuWidth - 10);
+    }
+    if (left < 10) left = 10;
+
+    const maxHeight = showAbove
+      ? Math.min(280, rect.top - 16)
+      : Math.min(280, spaceBelow - 16);
+
+    setPosition({
+      top: showAbove ? rect.top - 4 : rect.bottom + 4,
+      left,
+      width: minMenuWidth,
+      maxHeight,
+      showAbove,
+    });
+  }, []);
+
+  const handleToggle = () => {
+    if (!isOpen) {
+      updatePosition();
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  };
+
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        portalRef.current &&
+        !portalRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
+
+    const handleScrollOrResize = () => {
+      if (dropdownRef.current) {
+        const rect = dropdownRef.current.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+          setIsOpen(false);
+        } else {
+          updatePosition();
+        }
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    window.addEventListener("scroll", handleScrollOrResize, true);
+    window.addEventListener("resize", handleScrollOrResize);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScrollOrResize, true);
+      window.removeEventListener("resize", handleScrollOrResize);
+    };
+  }, [isOpen, updatePosition]);
 
   const toggleOption = (value) => {
     const newSelected = selectedValues.includes(value)
@@ -38,13 +101,13 @@ const MultiSelectDropdown = ({
 
   return (
     <div
-      className="custom-dropdown"
+      className={`custom-dropdown ${isOpen ? "open" : ""}`}
       ref={dropdownRef}
       style={{ width: "100%", position: "relative" }}
     >
       <div
         className="dropdown-selected"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         style={{
           padding: "10px 12px",
           border: "1px solid var(--border-color)",
@@ -83,80 +146,82 @@ const MultiSelectDropdown = ({
         </svg>
       </div>
 
-      {isOpen && (
-        <div
-          className="dropdown-options"
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-            zIndex: 100,
-            maxHeight: "250px",
-            overflowY: "auto",
-            border: "1px solid var(--border-color)",
-            background: "var(--bg-card)",
-            borderRadius: "6px",
-            marginTop: "4px",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-          }}
-        >
+      {isOpen &&
+        position &&
+        createPortal(
           <div
-            className="dropdown-option"
-            onClick={handleSelectAll}
+            ref={portalRef}
+            className="dropdown-options dropdown-portal"
             style={{
-              padding: "8px 12px",
-              borderBottom: "1px solid var(--border-color)",
-              fontWeight: 600,
-              cursor: "pointer",
+              position: "fixed",
+              top: position.showAbove ? "auto" : `${position.top}px`,
+              bottom: position.showAbove
+                ? `${window.innerHeight - position.top}px`
+                : "auto",
+              left: `${position.left}px`,
+              width: `${position.width}px`,
+              maxHeight: `${position.maxHeight}px`,
+              zIndex: 999999,
+              overflowY: "auto",
             }}
           >
-            {selectedValues.length === options.length
-              ? "Deselect All"
-              : "Select All"}
-          </div>
-          {options.map((opt) => (
             <div
-              key={opt.value}
               className="dropdown-option"
-              onClick={() => toggleOption(opt.value)}
+              onClick={handleSelectAll}
               style={{
                 padding: "8px 12px",
+                borderBottom: "1px solid var(--border-color)",
+                fontWeight: 600,
                 cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                background: selectedValues.includes(opt.value)
-                  ? "var(--bg-hover)"
-                  : "transparent",
               }}
             >
-              <input
-                type="checkbox"
-                checked={selectedValues.includes(opt.value)}
-                readOnly
-                style={{ cursor: "pointer" }}
-              />
-              <span>
-                {opt.label}
-                {opt.subLabel && (
-                  <span
-                    style={{
-                      fontSize: "0.72rem",
-                      color: "#94a3b8",
-                      marginLeft: "4px",
-                      fontWeight: 500,
-                    }}
-                  >
-                    {" "}
-                    - {opt.subLabel}
-                  </span>
-                )}
-              </span>
+              {selectedValues.length === options.length
+                ? "Deselect All"
+                : "Select All"}
             </div>
-          ))}
-        </div>
-      )}
+            {options.map((opt) => (
+              <div
+                key={opt.value}
+                className="dropdown-option"
+                onClick={() => toggleOption(opt.value)}
+                style={{
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  background: selectedValues.includes(opt.value)
+                    ? "var(--bg-hover)"
+                    : "transparent",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedValues.includes(opt.value)}
+                  readOnly
+                  style={{ cursor: "pointer" }}
+                />
+                <span>
+                  {opt.label}
+                  {opt.subLabel && (
+                    <span
+                      style={{
+                        fontSize: "0.72rem",
+                        color: "#94a3b8",
+                        marginLeft: "4px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {" "}
+                      - {opt.subLabel}
+                    </span>
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>,
+          document.body
+        )}
     </div>
   );
 };

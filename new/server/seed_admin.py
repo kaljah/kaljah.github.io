@@ -13,12 +13,15 @@ def seed_admin():
     with app.app_context():
         db.create_all()
 
-        # Remove legacy insecure/trivial test accounts if present
-        trivial_emails = ["a@a", "z@z", "a", "z"]
-        purged = User.query.filter(User.email.in_(trivial_emails)).delete(synchronize_session=False)
-        if purged > 0:
-            db.session.commit()
-            print(f"[SECURITY] Purged {purged} legacy trivial accounts from database.")
+        # Remove legacy insecure/trivial test accounts if present (if not referenced by FKs)
+        try:
+            trivial_emails = ["a@a", "z@z", "a", "z"]
+            purged = User.query.filter(User.email.in_(trivial_emails)).delete(synchronize_session=False)
+            if purged > 0:
+                db.session.commit()
+                print(f"[SECURITY] Purged {purged} legacy trivial accounts from database.")
+        except Exception:
+            db.session.rollback()
 
         force_reset = "--force-reset-password" in sys.argv
 
@@ -42,6 +45,9 @@ def seed_admin():
             it_admin_password = "ChangeMeITAdmin2026!"
             print("[WARNING] IT_ADMIN_PASSWORD not set in env; using temporary dev password. Set IT_ADMIN_PASSWORD in production!")
 
+        it_email = os.environ.get("IT_EMAIL", "it@ghg.com").strip().lower()
+        it_password = os.environ.get("IT_PASSWORD") or "ChangeMeIT2026!"
+
         users_to_seed = [
             {
                 "email": admin_email,
@@ -56,6 +62,13 @@ def seed_admin():
                 "role": "it_admin",
                 "fullName": "IT Administrator",
                 "jobTitle": "Systems Administrator",
+            },
+            {
+                "email": it_email,
+                "password": it_password,
+                "role": "it",
+                "fullName": "IT Support",
+                "jobTitle": "IT Support Specialist",
             },
         ]
 

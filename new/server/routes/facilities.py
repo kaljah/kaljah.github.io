@@ -18,10 +18,10 @@ def get_facilities():
     )  # API-02 FIX: replaced deprecated query.get
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role in ["it_admin", "it"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot access operational facility data"}
+                {"error": "Forbidden: IT personnel cannot access operational facility data"}
             ),
             403,
         )
@@ -65,7 +65,7 @@ def get_facilities():
 @login_required
 def get_all_regions():
     """
-    Return all unique region identifiers — IT Admin only, no access filtering.
+    Return all unique region identifiers — IT personnel only, no access filtering.
 
     Mirrors the fallback logic in utils.get_allowed_facility_ids():
       - Uses facility.region when set
@@ -75,8 +75,8 @@ def get_all_regions():
     """
     user_id = session.get("user_id")
     caller = db.session.get(User, user_id) if user_id else None  # API-02 FIX
-    if not caller or caller.role != "it_admin":
-        return jsonify({"error": "IT Admin privileges required"}), 403
+    if not caller or caller.role not in ["it_admin", "it"]:
+        return jsonify({"error": "IT privileges required"}), 403
 
     identifiers = set()
 

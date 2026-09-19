@@ -8,6 +8,7 @@ import {
 import api from '../api';
 import { useToast } from './Toast';
 import { useAuth } from '../context/AuthContext';
+import { getUserOperationalDefaults } from '../utils/userDefaults';
 import ConfirmModal from './ConfirmModal';
 import './BatchReviewWizard.css';
 
@@ -140,8 +141,12 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
     if (isOpen) {
       fetchAllPendingData();
       setSelectedKeys(new Set());
+      const opDefaults = getUserOperationalDefaults(user, facilities);
+      if (opDefaults.isRestricted && opDefaults.defaultFacilityId) {
+        setFacilityFilter(opDefaults.defaultFacilityId);
+      }
     }
-  }, [isOpen, fetchAllPendingData]);
+  }, [isOpen, fetchAllPendingData, user, facilities]);
 
   // Handle ESC key
   useEffect(() => {

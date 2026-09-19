@@ -16,8 +16,8 @@ scope3_bp = Blueprint("scope3", __name__)
 def get_scope3_emissions():
     """Get all Scope 3 emissions scoped to user's allowed facilities"""
     user = get_current_user()
-    if user and user.role == "it_admin":
-        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+    if user and user.role in ["it_admin", "it"]:
+        return jsonify({"error": "IT personnel do not have access to emission data"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)
 
@@ -74,7 +74,7 @@ def create_scope3_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["viewer", "auditor", "it_admin"]:
+    if user.role in ["viewer", "auditor", "it_admin", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot create emission records"}), 403
 
     data = request.get_json() or {}
@@ -218,7 +218,7 @@ def update_scope3_emission(emission_id):
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["viewer", "auditor", "it_admin"]:
+    if user.role in ["viewer", "auditor", "it_admin", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
 
     emission = db.session.get(Scope3Emission, emission_id)
@@ -310,8 +310,8 @@ def delete_scope3_emission(emission_id):
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role == "it_admin":
-        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+    if user.role in ["it_admin", "it"]:
+        return jsonify({"error": "IT personnel do not have access to emission data"}), 403
 
     if user.role in ["viewer", "auditor"]:
         return jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}), 403
@@ -364,8 +364,8 @@ def bulk_import_scope3():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role == "it_admin":
-        return jsonify({"error": "IT Admins do not have access to upload emission data"}), 403
+    if user.role in ["it_admin", "it"]:
+        return jsonify({"error": "IT personnel do not have access to upload emission data"}), 403
 
     data = request.get_json() or {}
     records = data.get("records", [])

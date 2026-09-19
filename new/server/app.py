@@ -308,7 +308,7 @@ def ensure_admin_seeded():
                     role=u["role"],
                     sector="Oil & Gas",
                     department="Sustainability & IT",
-                    jobTitle="Administrator",
+                    jobTitle="Sustainability Manager",
                     location="Global",
                     status="active",
                 )
@@ -318,6 +318,8 @@ def ensure_admin_seeded():
                 user.set_password(u["password"])
                 user.status = "active"
                 user.role = u["role"]
+                if not user.jobTitle:
+                    user.jobTitle = "Sustainability Manager"
         db.session.commit()
     except Exception as e:
         app.logger.error(f"Failed to auto-seed admin: {e}")

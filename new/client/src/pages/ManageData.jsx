@@ -14,6 +14,7 @@ import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
 import { useLayout } from '../context/LayoutContext';
+import { getUserOperationalDefaults, matchesActivity, matchesFacilityRegion, isUnrestrictedLocation } from '../utils/userDefaults';
 import { 
   ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, 
   Database, Shield, Zap, Upload, Target, Calendar, Edit2, Trash2, CheckCircle, 
@@ -659,38 +660,77 @@ const ManageDataInner = () => {
         fetchSbti();
     }, []);
 
-    // Auto-populate forms based on user's accessible facilities
-    // Admin users: skip (keep all dropdowns optional)
-    // Non-admin users: cascade-fill activity → division → region when unambiguous
+    // Auto-populate filters and forms based on connected user's and superuser's region, division, and activity
     useEffect(() => {
-        if (facilities.length === 0) return;
-        if (isPrivileged) return;
+        if (!user) return;
+        const userLoc = (user.location || '').trim();
+        const isGlobalAdmin = user.role === 'admin' && isUnrestrictedLocation(userLoc);
+        if (isGlobalAdmin && facilities.length > 1) return;
 
-        // Step 1: unique activities the user can see
-        const availableActivities = [...new Set(facilities.map(f => f.activity).filter(Boolean))];
-        const autoActivity = availableActivities.length === 1 ? availableActivities[0] : '';
+        const opDefaults = getUserOperationalDefaults(user, facilities);
 
-        // Step 2: unique divisions within that activity
-        const availableDivisions = autoActivity
-            ? [...new Set(facilities.filter(f => f.activity === autoActivity).map(f => f.division).filter(Boolean))]
-            : [];
-        const autoDivision = availableDivisions.length === 1 ? availableDivisions[0] : '';
+        // 1. Set Toolbar Filter Dropdowns (region, activity, division)
+        if (opDefaults.defaultRegion) {
+            setFilterRegion(prev => prev || opDefaults.defaultRegion);
+        }
+        if (opDefaults.defaultActivity) {
+            let actToSet = opDefaults.defaultActivity;
+            if (['Upstream', 'Exploration & Production', 'EP'].includes(actToSet)) actToSet = 'EP';
+            else if (['Downstream', 'Refining and Petrochemicals', 'RPC'].includes(actToSet)) actToSet = 'RPC';
+            else if (['Midstream', 'Transport', 'TRC'].includes(actToSet)) actToSet = 'TRC';
+            else if (['LQS', 'Liquifaction and Separation'].includes(actToSet)) actToSet = 'LQS';
+            setFilterActivity(prev => prev || actToSet);
+        }
+        if (opDefaults.defaultDivision) {
+            setFilterDivision(prev => prev || opDefaults.defaultDivision);
+        }
 
-        // Step 3: facilities matching the resolved activity + division
-        const matchingFacilities = facilities.filter(f =>
-            (!autoActivity || f.activity === autoActivity) &&
-            (!autoDivision || f.division === autoDivision)
-        );
-        const autoFacilityId = matchingFacilities.length === 1 ? matchingFacilities[0].id.toString() : '';
+        // 2. Set Entry Form Defaults
+        const autoFill = {
+            activity: opDefaults.defaultActivity || '',
+            division: opDefaults.defaultDivision || '',
+            facility_id: opDefaults.defaultFacilityId || ''
+        };
 
-        const autoFill = { activity: autoActivity, division: autoDivision, facility_id: autoFacilityId };
-
-        setProdForm(prev => ({ ...prev, ...autoFill }));
-        setSourceForm(prev => ({ ...prev, ...autoFill }));
-        setMitigationForm(prev => ({ ...prev, ...autoFill }));
-    setCbamForm((prev) => ({ ...prev, ...autoFill }));
-        setOgmpForm(prev => ({ ...prev, ...autoFill }));
-    }, [facilities]);
+        if (autoFill.activity || autoFill.division || autoFill.facility_id || opDefaults.defaultRegion) {
+            setProdForm(prev => ({
+                ...prev,
+                activity: prev.activity || autoFill.activity,
+                division: prev.division || autoFill.division,
+                facility_id: prev.facility_id || autoFill.facility_id,
+            }));
+            setSourceForm(prev => ({
+                ...prev,
+                activity: prev.activity || autoFill.activity,
+                division: prev.division || autoFill.division,
+                facility_id: prev.facility_id || autoFill.facility_id,
+            }));
+            setMitigationForm(prev => ({
+                ...prev,
+                activity: prev.activity || autoFill.activity,
+                division: prev.division || autoFill.division,
+                facility_id: prev.facility_id || autoFill.facility_id,
+            }));
+            setCbamForm(prev => ({
+                ...prev,
+                activity: prev.activity || autoFill.activity,
+                division: prev.division || autoFill.division,
+                facility_id: prev.facility_id || autoFill.facility_id,
+            }));
+            setOgmpForm(prev => ({
+                ...prev,
+                activity: prev.activity || autoFill.activity,
+                division: prev.division || autoFill.division,
+                facility_id: prev.facility_id || autoFill.facility_id,
+            }));
+            setFacilityForm(prev => ({
+                ...prev,
+                location: prev.location || opDefaults.defaultRegion,
+                activity: prev.activity || autoFill.activity,
+                division: prev.division || autoFill.division,
+            }));
+        }
+    }, [facilities, user]);
 
     // API Calls
     const fetchFacilities = async () => {
@@ -698,7 +738,11 @@ const ManageDataInner = () => {
             const res = await api.get('/facilities');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setFacilities(data);
-            const regions = [...new Set(data.map(f => f.location))].filter(Boolean);
+            const regions = [...new Set(data.flatMap(f => [f.region, f.location]).filter(Boolean))].sort();
+            const userLoc = (user?.location || '').trim();
+            if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {
+                regions.unshift(userLoc);
+            }
             setAvailableFilters(prev => ({ ...prev, regions }));
         } catch (err) { console.error(err); }
     };
@@ -1209,35 +1253,62 @@ const ManageDataInner = () => {
     };
 
 
+    // --- Dynamic Options and Matching for Filters ---
+    const activityFilterOptions = useMemo(() => {
+        const options = Object.keys(HIERARCHY).map(a => ({ value: a, label: ACTIVITY_LABELS[a] || a }));
+        facilities.forEach(f => {
+            if (f.activity && !options.some(opt => opt.value === f.activity || matchesActivity(opt.value, f.activity))) {
+                options.push({ value: f.activity, label: f.activity });
+            }
+        });
+        return options;
+    }, [facilities]);
+
+    const divisionFilterOptions = useMemo(() => {
+        if (!filterActivity) return [];
+        const fromHierarchy = HIERARCHY[filterActivity] || [];
+        const fromFacilities = facilities
+            .filter(f => matchesActivity(f.activity, filterActivity))
+            .map(f => f.division)
+            .filter(Boolean);
+        return [...new Set([...fromHierarchy, ...fromFacilities])].sort();
+    }, [filterActivity, facilities]);
+
+    const matchesRegionCheck = (fac, region) => {
+        if (!region || region === 'all') return true;
+        if (!fac) return false;
+        return matchesFacilityRegion(fac, region);
+    };
+
     // --- Pre-calculate Filtered Data for Pagination ---
     const getFilteredFactors = () => customFactors.filter(f => f.factor_name.toLowerCase().includes(searchTerm.toLowerCase()));
     
     const getFilteredFacilities = () => facilities.filter(f => {
         const matchesSearch = f.name.toLowerCase().includes(searchTerm.toLowerCase()) || (f.location?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (f.field?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-        const matchesActivity = filterActivity ? f.activity === filterActivity : true;
-        const matchesDivision = filterDivision ? f.division === filterDivision : true;
-        const matchesRegion = filterRegion ? f.location === filterRegion : true;
-        return matchesSearch && matchesActivity && matchesDivision && matchesRegion;
+        const matchesAct = filterActivity ? matchesActivity(f.activity, filterActivity) : true;
+        const matchesDiv = filterDivision ? f.division === filterDivision : true;
+        const matchesReg = matchesRegionCheck(f, filterRegion);
+        return matchesSearch && matchesAct && matchesDiv && matchesReg;
     });
 
     const getFilteredProduction = () => productionData.filter(d => {
         const fac = facilities.find(f => f.id === d.facilityId);
         const facName = fac ? fac.name.toLowerCase() : String(d.facilityId).toLowerCase();
         const matchesSearch = facName.includes(searchTerm.toLowerCase()) || d.year.toString().includes(searchTerm) || (d.activity?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-        const matchesActivity = filterActivity ? d.activity === filterActivity : true;
-        const matchesDivision = filterDivision ? d.division === filterDivision : true;
-        const matchesRegion = filterRegion ? (fac && fac.location === filterRegion) : true;
+        const matchesAct = filterActivity ? (matchesActivity(d.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
+        const matchesDiv = filterDivision ? (d.division === filterDivision || (fac && fac.division === filterDivision)) : true;
+        const matchesReg = matchesRegionCheck(fac, filterRegion);
         const matchesYear = filterYear ? d.year.toString() === filterYear.toString() : true;
-        return matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
+        return matchesSearch && matchesAct && matchesDiv && matchesReg && matchesYear;
     });
 
     const getFilteredSources = () => sources.filter(s => {
         const fac = facilities.find(f => f.id === s.facility_id);
         const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || (s.equipment_id?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (s.type?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-        const matchesActivity = filterActivity ? (fac && fac.activity === filterActivity) : true;
-        const matchesDivision = filterDivision ? (fac && fac.division === filterDivision) : true;
-        const matchesRegion = filterRegion ? (fac && fac.location === filterRegion) : true;
-        return matchesSearch && matchesActivity && matchesDivision && matchesRegion;
+        const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
+        const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
+        const matchesReg = matchesRegionCheck(fac, filterRegion);
+        return matchesSearch && matchesAct && matchesDiv && matchesReg;
     });
 
     const getFilteredMitigations = () => mitigations.filter(m => {
@@ -1246,11 +1317,11 @@ const ManageDataInner = () => {
                               (m.mitigation_type?.toLowerCase() || m.type?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
                               (m.notes?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
                               m.year?.toString().includes(searchTerm);
-        const matchesActivity = filterActivity ? (m.activity === filterActivity || fac?.activity === filterActivity) : true;
-        const matchesDivision = filterDivision ? (m.division === filterDivision || fac?.division === filterDivision) : true;
-        const matchesRegion = filterRegion ? (m.region === filterRegion || fac?.location === filterRegion) : true;
+        const matchesAct = filterActivity ? (matchesActivity(m.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
+        const matchesDiv = filterDivision ? (m.division === filterDivision || fac?.division === filterDivision) : true;
+        const matchesReg = matchesRegionCheck(fac || { region: m.region, location: m.region }, filterRegion);
         const matchesYear = filterYear ? m.year?.toString() === filterYear.toString() : true;
-        return matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
+        return matchesSearch && matchesAct && matchesDiv && matchesReg && matchesYear;
     });
 
     const getFilteredOgmp = () => ogmpSurveys.filter(o => {
@@ -1268,11 +1339,11 @@ const ManageDataInner = () => {
             fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             rStatus.toLowerCase().includes(searchTerm.toLowerCase()) ||
             yr.includes(searchTerm);
-        const matchesActivity = filterActivity ? (fac && fac.activity === filterActivity) : true;
-        const matchesDivision = filterDivision ? (fac && fac.division === filterDivision) : true;
-        const matchesRegion = filterRegion ? (fac && fac.location === filterRegion) : true;
+        const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
+        const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
+        const matchesReg = matchesRegionCheck(fac, filterRegion);
         const matchesYear = filterYear ? yr === filterYear.toString() : true;
-        return isOilAndGas && matchesSearch && matchesActivity && matchesDivision && matchesRegion && matchesYear;
+        return isOilAndGas && matchesSearch && matchesAct && matchesDiv && matchesReg && matchesYear;
     });
 
     const getFilteredGoals = () => goals.filter(g => {
@@ -1289,13 +1360,14 @@ const ManageDataInner = () => {
 
     const getFilteredCbam = () => cbamExports.filter(item => {
         const fac = facilities.find(f => f.id === item.facility_id);
-        if (filterActivity && (!fac || fac.activity !== filterActivity)) return false;
+        if (filterActivity && (!fac || !matchesActivity(fac.activity, filterActivity))) return false;
         if (filterDivision && (!fac || fac.division !== filterDivision)) return false;
-        if (filterRegion && filterRegion !== 'all' && (!fac || fac.location !== filterRegion)) return false;
+        if (filterRegion && filterRegion !== 'all' && !matchesRegionCheck(fac, filterRegion)) return false;
         if (filterYear && filterYear !== 'all' && item.year?.toString() !== filterYear.toString()) return false;
         if (searchTerm && !item.product_name?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
         return true;
     });
+
 
     const filteredFactors = getFilteredFactors();
     const filteredFacilities = getFilteredFacilities();
@@ -1380,12 +1452,12 @@ const ManageDataInner = () => {
                                 <>
                                     <select value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className="component-select" style={{ width: 'auto' }}>
                                         <option value="">All Activities</option>
-                                        {Object.keys(HIERARCHY).map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a]}</option>)}
+                                        {activityFilterOptions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
                                     </select>
 
                                     <select value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className="component-select" style={{ width: 'auto' }} disabled={!filterActivity}>
                                         <option value="">All Divisions</option>
-                                        {filterActivity && HIERARCHY[filterActivity] && HIERARCHY[filterActivity].map(d => <option key={d} value={d}>{d}</option>)}
+                                        {divisionFilterOptions.map(d => <option key={d} value={d}>{d}</option>)}
                                     </select>
 
                                     <select value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className="component-select" style={{ width: 'auto' }}>
