@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 import CustomDropdown from "./CustomDropdown";
 import { useToast } from "./Toast";
+import { useAuth } from "../context/AuthContext";
+import { getUserOperationalDefaults } from "../utils/userDefaults";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatNumber } from "../utils/formatters";
 import ColumnMappingWizard from "./ColumnMappingWizard";
@@ -12,6 +14,7 @@ import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
 
 const Scope2Form = () => {
+  const { user } = useAuth();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -91,11 +94,24 @@ const Scope2Form = () => {
       const res = await api.get("/facilities/");
       const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
       setFacilities(data);
+      const opDefaults = getUserOperationalDefaults(user, data);
+      if (opDefaults.defaultFacilityId) {
+        setFacilityId((prev) => prev || opDefaults.defaultFacilityId);
+      }
     } catch (error) {
       console.error("Failed to load regions:", error);
       toast.error("Failed to load regions");
     }
   };
+
+  useEffect(() => {
+    if (!facilityId && facilities.length > 0) {
+      const opDefaults = getUserOperationalDefaults(user, facilities);
+      if (opDefaults.defaultFacilityId) {
+        setFacilityId(opDefaults.defaultFacilityId);
+      }
+    }
+  }, [user, facilities]);
 
   const loadGridFactors = async () => {
     try {

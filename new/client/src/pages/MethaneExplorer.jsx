@@ -42,13 +42,14 @@ import {
   Check,
   BarChart3,
   Target,
-  Globe,
   RotateCcw,
   Calendar,
   Building,
 } from "lucide-react";
 import api from "../api";
+import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
+import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
 import "./MethaneExplorer.css";
 
 // Fix Leaflet tile sizing when mounted inside animated route transitions
@@ -85,24 +86,10 @@ const BASE_MAPS = {
       '&copy; <a href="https://www.google.com/maps">Google Maps</a>',
     icon: Layers,
   },
-  light: {
-    name: "Positron Light",
-    url: "https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: "abcd",
-    icon: Globe,
-  },
-  satellite: {
-    name: "Satellite Hybrid",
-    url: "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
-    attribution:
-      '&copy; <a href="https://www.google.com/maps">Google Satellite</a>',
-    icon: Satellite,
-  },
 };
 
 const EmissionsMap = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const toast = useToast?.() || {
     success: console.log,
@@ -187,14 +174,27 @@ const EmissionsMap = () => {
 
       // Derive distinct regions and activities directly from the database facilities
       const regions = [
-        ...new Set(fetchedFacilities.map((f) => f.region).filter(Boolean)),
+        ...new Set(fetchedFacilities.flatMap((f) => [f.region, f.location]).filter(Boolean)),
       ].sort();
+      const userLoc = (user?.location || '').trim();
+      if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {
+        regions.unshift(userLoc);
+      }
       setAvailableRegions(regions);
 
       const acts = [
         ...new Set(fetchedFacilities.map((f) => f.activity).filter(Boolean)),
       ].sort();
       setAvailableActivities(acts);
+
+      const opDefaults = getUserOperationalDefaults(user, fetchedFacilities);
+      if (opDefaults.isRestricted || fetchedFacilities.length === 1) {
+        setFilters((prev) => ({
+          ...prev,
+          region: prev.region === 'all' && opDefaults.defaultRegion ? opDefaults.defaultRegion : prev.region,
+          activity: prev.activity === 'all' && opDefaults.defaultActivity ? opDefaults.defaultActivity : prev.activity,
+        }));
+      }
     } catch (error) {
       console.error("Failed to load explorer data:", error);
       toast.error("Failed to initialize facility data from server");
@@ -854,9 +854,9 @@ const EmissionsMap = () => {
           {/* Dynamic Light Basemap Layer */}
           <TileLayer
             key={mapBaseLayer}
-            url={BASE_MAPS[mapBaseLayer].url}
-            attribution={BASE_MAPS[mapBaseLayer].attribution}
-            subdomains={BASE_MAPS[mapBaseLayer].subdomains || "abc"}
+            url={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).url}
+            attribution={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).attribution}
+            subdomains={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).subdomains || "abc"}
           />
 
           {/* Sentinel-5P Methane Column WMS / Tile Overlay */}

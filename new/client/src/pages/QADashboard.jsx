@@ -5,7 +5,8 @@ import { useToast } from '../components/Toast';
 import { 
     Download, AlertTriangle, CheckCircle, RefreshCw, ChevronLeft, ChevronRight,
     Search, Shield, Layers, Sparkles, Check, X, ArrowRight,
-    AlertCircle, Database, MapPin, Zap, Flame, FileText, CheckSquare, Square
+    AlertCircle, Database, MapPin, Zap, Flame, FileText, CheckSquare, Square,
+    ChevronDown, ChevronUp, Eye
 } from 'lucide-react';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -42,6 +43,19 @@ export default function QADashboard() {
     const [resolving, setResolving] = useState(false);
     const [exporting, setExporting] = useState(false);
     const [resolveModal, setResolveModal] = useState({ isOpen: false, resolution: null });
+    const [expandedFindingId, setExpandedFindingId] = useState(null);
+
+    const handleFindingAction = useCallback((item) => {
+        if (item.action_url) {
+            const [, query] = item.action_url.split('?');
+            const tab = query ? new URLSearchParams(query).get('tab') : null;
+            navigate(item.action_url, { state: { tab } });
+        } else if (item.action_tab === 'queue') {
+            setActiveTab('queue');
+            setStatusFilter('all');
+            setOffset(0);
+        }
+    }, [navigate]);
 
     // ── Fetch unified QA/QC & Diagnostics data ─────────────────────────────
     const fetchDashboard = useCallback(async (isManualRefresh = false) => {
@@ -58,6 +72,7 @@ export default function QADashboard() {
             const params = { limit: PAGE_SIZE, offset };
             if (scopeFilter !== 'all') params.scope = scopeFilter;
             if (yearFilter !== 'all') params.year = yearFilter;
+            params.status = statusFilter;
 
             const res = await api.get('/qaqc/dashboard', { params });
             setData(res.data);
@@ -72,7 +87,7 @@ export default function QADashboard() {
             setRunningDiagnostics(false);
             isFirstLoadRef.current = false;
         }
-    }, [scopeFilter, yearFilter, offset, toast]);
+    }, [scopeFilter, yearFilter, statusFilter, offset, toast]);
 
     useEffect(() => {
         fetchDashboard();
@@ -85,6 +100,7 @@ export default function QADashboard() {
             const params = {};
             if (scopeFilter !== 'all') params.scope = scopeFilter;
             if (yearFilter !== 'all') params.year = yearFilter;
+            params.status = statusFilter;
 
             const res = await api.get('/qaqc/export', {
                 params,
@@ -127,6 +143,20 @@ export default function QADashboard() {
             const res = await api.post('/qaqc/bulk-resolve', { records, resolution });
             toast.success(res.data.message || `Updated ${records.length} records to ${resolution}`);
             setSelectedIds(new Set());
+            // Optimistically update local flagged records
+            setData(prev => {
+                if (!prev?.flagged_records) return prev;
+                const idSet = new Set(records.map(r => `${r.scope}-${r.id}`));
+                return {
+                    ...prev,
+                    flagged_records: prev.flagged_records.map(r => {
+                        if (idSet.has(`${r.scope}-${r.id}`)) {
+                            return { ...r, status: resolution };
+                        }
+                        return r;
+                    })
+                };
+            });
             fetchDashboard();
         } catch (err) {
             toast.error(err.response?.data?.error || 'Bulk resolve failed');
@@ -145,6 +175,19 @@ export default function QADashboard() {
                 const next = new Set(prev);
                 next.delete(`${scope}-${id}`);
                 return next;
+            });
+            // Optimistically update local flagged records
+            setData(prev => {
+                if (!prev?.flagged_records) return prev;
+                return {
+                    ...prev,
+                    flagged_records: prev.flagged_records.map(r => {
+                        if (r.scope === scope && r.id === id) {
+                            return { ...r, status: resolution };
+                        }
+                        return r;
+                    })
+                };
             });
             fetchDashboard();
         } catch (err) {
@@ -188,13 +231,22 @@ export default function QADashboard() {
     const filteredRecords = useMemo(() => {
         if (!data?.flagged_records) return [];
         return data.flagged_records.filter(r => {
-            // Status match
-            if (statusFilter !== 'all') {
-                const s = (r.status || 'pending').toLowerCase();
-                if (statusFilter === 'pending' && !s.includes('pending')) return false;
-                if (statusFilter === 'verified' && !s.includes('verified')) return false;
-                if (statusFilter === 'rejected' && !s.includes('rejected')) return false;
+            const s = (r.status || 'pending').toLowerCase();
+            const isRejected = s.includes('rejected');
+
+            // Status match:
+            // "All Statuses" strictly excludes rejected records so reviewers focus on active items.
+            // Rejected records ONLY show in the 'rejected' tab.
+            if (statusFilter === 'all') {
+                if (isRejected) return false;
+            } else if (statusFilter === 'pending') {
+                if (!s.includes('pending')) return false;
+            } else if (statusFilter === 'verified') {
+                if (!s.includes('verified')) return false;
+            } else if (statusFilter === 'rejected') {
+                if (!isRejected) return false;
             }
+
             // Search query match
             if (searchQuery.trim()) {
                 const q = searchQuery.toLowerCase();
@@ -206,6 +258,21 @@ export default function QADashboard() {
             return true;
         });
     }, [data?.flagged_records, statusFilter, searchQuery]);
+
+    // ── Anomalies Summary Memo ───────────────────────────────────────────
+    const anomaliesSummary = useMemo(() => {
+        const raw = data?.diagnostics?.anomalies_summary || {};
+        const pending = raw.pending ?? 0;
+        const verified = raw.verified ?? 0;
+        const rejected = raw.rejected ?? 0;
+        return {
+            all: pending + verified,
+            pending,
+            verified,
+            rejected,
+            total: raw.total ?? (pending + verified + rejected),
+        };
+    }, [data?.diagnostics?.anomalies_summary]);
 
     if (loading && !data) {
         return (
@@ -253,6 +320,118 @@ export default function QADashboard() {
     // Health color determination
     const healthColor = healthScore >= 80 ? '#10b981' : healthScore >= 60 ? '#f59e0b' : '#ef4444';
     const healthStatusText = healthScore >= 80 ? 'Optimal & Verified' : healthScore >= 60 ? 'Attention Needed' : 'Action Required';
+
+    // Render helper for diagnostic finding card with sample inspection
+    const renderFindingCard = (item, type, icon) => {
+        const isExpanded = expandedFindingId === item.id;
+        const hasSamples = item.sample_records && item.sample_records.length > 0;
+
+        return (
+            <div key={`${type}-${item.id}`} className={`qa-issue-item ${type}`}>
+                <div className="qa-issue-main-row">
+                    <div className="qa-issue-content">
+                        <div className="qa-issue-title-row">
+                            {icon}
+                            <span className="qa-issue-title">{item.title}</span>
+                            <span className={`qa-issue-impact-badge ${item.impact ? item.impact.toLowerCase() : 'low'}`}>
+                                {item.impact ? `${item.impact} Impact` : 'Optimization'}
+                            </span>
+                            {item.affected_count > 0 && (
+                                <span className="qa-issue-count-pill">
+                                    {item.affected_count} {item.id === 'unused_facilities' ? 'facilities' : 'records'}
+                                </span>
+                            )}
+                        </div>
+                        <p className="qa-issue-desc">{item.description}</p>
+                    </div>
+
+                    <div className="qa-issue-actions-group">
+                        {hasSamples && (
+                            <button
+                                type="button"
+                                className="qa-btn-action qa-btn-inspect"
+                                onClick={() => setExpandedFindingId(prev => prev === item.id ? null : item.id)}
+                                title={isExpanded ? "Collapse preview" : "Inspect sample records"}
+                            >
+                                <Eye size={13} />
+                                <span>{isExpanded ? 'Hide' : `Inspect (${item.sample_records.length})`}</span>
+                                {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            className="qa-btn-action qa-btn-secondary"
+                            onClick={() => handleFindingAction(item)}
+                        >
+                            {item.action || 'Resolve'} <ArrowRight size={13} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Collapsible Sample Records Inspector */}
+                {isExpanded && hasSamples && (
+                    <div className="qa-issue-samples-container">
+                        <div className="qa-samples-header">
+                            <span style={{ fontWeight: 600, color: '#0f172a' }}>
+                                Sample Affected Entries (Showing {item.sample_records.length} of {item.affected_count})
+                            </span>
+                            <span className="qa-samples-hint">
+                                Direct correction available via the &ldquo;{item.action || 'Resolve'}&rdquo; button.
+                            </span>
+                        </div>
+                        <div className="qa-samples-table-wrap">
+                            <table className="qa-samples-table">
+                                <thead>
+                                    <tr>
+                                        {item.id === 'unused_facilities' ? (
+                                            <>
+                                                <th>Facility ID</th>
+                                                <th>Facility Name</th>
+                                                <th>Location / Field</th>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <th>Record ID</th>
+                                                <th>Facility</th>
+                                                <th>Year</th>
+                                                <th>Process Type</th>
+                                                <th>Details</th>
+                                            </>
+                                        )}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {item.sample_records.map((s, sIdx) => (
+                                        <tr key={sIdx}>
+                                            {item.id === 'unused_facilities' ? (
+                                                <>
+                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
+                                                    <td><strong>{s.name}</strong></td>
+                                                    <td>{s.location || '-'}</td>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
+                                                    <td>{s.facility || (s.facility_id ? `Facility #${s.facility_id}` : 'Unassigned Boundary')}</td>
+                                                    <td>{s.year || '-'}</td>
+                                                    <td><span className="qa-sample-tag">{s.process || 'Combustion'}</span></td>
+                                                    <td>
+                                                        {s.fuel && <span style={{ marginRight: '8px' }}>Fuel: <strong>{s.fuel}</strong></span>}
+                                                        {s.quantity !== undefined && <span>Qty: <strong>{s.quantity === null ? 'None' : s.quantity}</strong></span>}
+                                                        {s.co2e !== undefined && <span style={{ marginLeft: '8px' }}>CO₂e: <strong>{s.co2e === null ? 'None' : s.co2e}</strong></span>}
+                                                    </td>
+                                                </>
+                                            )}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
 
     return (
         <ErrorBoundary>
@@ -378,14 +557,15 @@ export default function QADashboard() {
                             </div>
                         </div>
                         <div className="qa-kpi-body">
-                            <span className="qa-kpi-value" style={{ color: total_flagged_count > 0 ? '#ef4444' : '#10b981' }}>
-                                {total_flagged_count}
+                            <span className="qa-kpi-value" style={{ color: anomaliesSummary.all > 0 ? '#ef4444' : '#10b981' }}>
+                                {anomaliesSummary.all}
                             </span>
-                            <span className="qa-kpi-unit">records</span>
+                            <span className="qa-kpi-unit">active</span>
                         </div>
                         <div className="qa-kpi-footer">
-                            <span>Pending: <strong>{diagnostics.anomalies_summary?.pending ?? total_flagged_count}</strong></span>
-                            <span>Verified: <strong style={{ color: '#10b981' }}>{diagnostics.anomalies_summary?.verified ?? 0}</strong></span>
+                            <span>Pending: <strong>{anomaliesSummary.pending}</strong></span>
+                            <span>Verified: <strong style={{ color: '#10b981' }}>{anomaliesSummary.verified}</strong></span>
+                            <span>Rejected: <strong style={{ color: '#ef4444' }}>{anomaliesSummary.rejected}</strong></span>
                         </div>
                     </div>
 
@@ -418,7 +598,7 @@ export default function QADashboard() {
                     >
                         <AlertTriangle size={15} />
                         <span>Anomaly Resolution Queue</span>
-                        <span className="qa-tab-count-pill">{total_flagged_count}</span>
+                        <span className="qa-tab-count-pill">{anomaliesSummary.all}</span>
                     </button>
 
                     <button
@@ -463,27 +643,39 @@ export default function QADashboard() {
                                 <div className="qa-status-filters">
                                     <button
                                         className={`qa-status-filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
-                                        onClick={() => setStatusFilter('all')}
+                                        onClick={() => { setStatusFilter('all'); setOffset(0); }}
                                     >
-                                        All Statuses
+                                        <span>All Statuses</span>
+                                        {anomaliesSummary.all > 0 && (
+                                            <span className="qa-status-pill-count">{anomaliesSummary.all}</span>
+                                        )}
                                     </button>
                                     <button
                                         className={`qa-status-filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
-                                        onClick={() => setStatusFilter('pending')}
+                                        onClick={() => { setStatusFilter('pending'); setOffset(0); }}
                                     >
-                                        Pending Review
+                                        <span>Pending Review</span>
+                                        {anomaliesSummary.pending > 0 && (
+                                            <span className="qa-status-pill-count">{anomaliesSummary.pending}</span>
+                                        )}
                                     </button>
                                     <button
                                         className={`qa-status-filter-btn ${statusFilter === 'verified' ? 'active' : ''}`}
-                                        onClick={() => setStatusFilter('verified')}
+                                        onClick={() => { setStatusFilter('verified'); setOffset(0); }}
                                     >
-                                        Verified
+                                        <span>Verified</span>
+                                        {anomaliesSummary.verified > 0 && (
+                                            <span className="qa-status-pill-count">{anomaliesSummary.verified}</span>
+                                        )}
                                     </button>
                                     <button
                                         className={`qa-status-filter-btn ${statusFilter === 'rejected' ? 'active' : ''}`}
-                                        onClick={() => setStatusFilter('rejected')}
+                                        onClick={() => { setStatusFilter('rejected'); setOffset(0); }}
                                     >
-                                        Rejected
+                                        <span>Rejected</span>
+                                        {anomaliesSummary.rejected > 0 && (
+                                            <span className="qa-status-pill-count">{anomaliesSummary.rejected}</span>
+                                        )}
                                     </button>
                                 </div>
                             </div>
@@ -563,7 +755,7 @@ export default function QADashboard() {
                                         </p>
                                         <button
                                             className="qa-btn-action qa-btn-secondary"
-                                            onClick={() => { setSearchQuery(''); setStatusFilter('all'); }}
+                                            onClick={() => { setSearchQuery(''); setStatusFilter('all'); setOffset(0); }}
                                         >
                                             Clear Filters
                                         </button>
@@ -799,108 +991,13 @@ export default function QADashboard() {
 
                                 <div className="qa-issues-grid">
                                     {/* Critical Issues */}
-                                    {issues.map((issue, idx) => (
-                                        <div key={`crit-${idx}`} className="qa-issue-item critical">
-                                            <div className="qa-issue-content">
-                                                <div className="qa-issue-title-row">
-                                                    <AlertCircle size={16} color="#ef4444" />
-                                                    <span className="qa-issue-title">{issue.title}</span>
-                                                    <span className="qa-issue-impact-badge high">Critical Impact</span>
-                                                    {issue.affected_count > 0 && (
-                                                        <span style={{ fontSize: '0.78rem', color: '#b91c1c', fontWeight: 600 }}>
-                                                            ({issue.affected_count} records)
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <p className="qa-issue-desc">{issue.description}</p>
-                                            </div>
-
-                                            <button
-                                                className="qa-btn-action qa-btn-secondary"
-                                                style={{ fontSize: '0.8rem', height: '34px' }}
-                                                onClick={() => {
-                                                    if (issue.action_tab === 'queue') {
-                                                        setActiveTab('queue');
-                                                        if (issue.id === 'missing_facility') setSearchQuery('facility');
-                                                        else if (issue.id === 'missing_fuel') setSearchQuery('fuel');
-                                                        else if (issue.id === 'missing_amount') setSearchQuery('quantity');
-                                                        else if (issue.id === 'missing_co2e') setSearchQuery('co2');
-                                                        else setSearchQuery('');
-                                                        setStatusFilter('all');
-                                                    } else if (issue.action_url) {
-                                                        navigate(issue.action_url);
-                                                    }
-                                                }}
-                                            >
-                                                {issue.action || 'Resolve'} <ArrowRight size={13} />
-                                            </button>
-                                        </div>
-                                    ))}
+                                    {issues.map(issue => renderFindingCard(issue, 'critical', <AlertCircle size={16} color="#ef4444" />))}
 
                                     {/* Warnings */}
-                                    {warnings.map((warn, idx) => (
-                                        <div key={`warn-${idx}`} className="qa-issue-item warning">
-                                            <div className="qa-issue-content">
-                                                <div className="qa-issue-title-row">
-                                                    <AlertTriangle size={16} color="#f59e0b" />
-                                                    <span className="qa-issue-title">{warn.title}</span>
-                                                    <span className="qa-issue-impact-badge medium">Warning</span>
-                                                    {warn.affected_count > 0 && (
-                                                        <span style={{ fontSize: '0.78rem', color: '#b45309', fontWeight: 600 }}>
-                                                            ({warn.affected_count} records)
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <p className="qa-issue-desc">{warn.description}</p>
-                                            </div>
-
-                                            <button
-                                                className="qa-btn-action qa-btn-secondary"
-                                                style={{ fontSize: '0.8rem', height: '34px' }}
-                                                onClick={() => {
-                                                    if (warn.action_tab === 'queue') {
-                                                        setActiveTab('queue');
-                                                        if (warn.id === 'missing_fuel') setSearchQuery('fuel');
-                                                        else if (warn.id === 'missing_amount') setSearchQuery('quantity');
-                                                        else setSearchQuery('');
-                                                        setStatusFilter('all');
-                                                    } else if (warn.action_url) {
-                                                        navigate(warn.action_url);
-                                                    }
-                                                }}
-                                            >
-                                                {warn.action || 'Inspect'} <ArrowRight size={13} />
-                                            </button>
-                                        </div>
-                                    ))}
+                                    {warnings.map(warn => renderFindingCard(warn, 'warning', <AlertTriangle size={16} color="#f59e0b" />))}
 
                                     {/* Suggestions / Advisory */}
-                                    {suggestions.map((sug, idx) => (
-                                        <div key={`sug-${idx}`} className="qa-issue-item info">
-                                            <div className="qa-issue-content">
-                                                <div className="qa-issue-title-row">
-                                                    <Shield size={16} color="#3b82f6" />
-                                                    <span className="qa-issue-title">{sug.title}</span>
-                                                    <span className="qa-issue-impact-badge low">Optimization</span>
-                                                </div>
-                                                <p className="qa-issue-desc">{sug.description}</p>
-                                            </div>
-
-                                            <button
-                                                className="qa-btn-action qa-btn-secondary"
-                                                style={{ fontSize: '0.8rem', height: '34px' }}
-                                                onClick={() => {
-                                                    if (sug.action_url) {
-                                                        navigate(sug.action_url);
-                                                    } else {
-                                                        setActiveTab('queue');
-                                                    }
-                                                }}
-                                            >
-                                                {sug.action || 'View'} <ArrowRight size={13} />
-                                            </button>
-                                        </div>
-                                    ))}
+                                    {suggestions.map(sug => renderFindingCard(sug, 'info', <Shield size={16} color="#3b82f6" />))}
 
                                     {/* All Clear state */}
                                     {issues.length === 0 && warnings.length === 0 && suggestions.length === 0 && (

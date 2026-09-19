@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useLayout } from "../../context/LayoutContext";
+import { X } from "lucide-react";
 import "./Sidebar.css";
 
 const Sidebar = () => {
   const { logout, user } = useAuth();
+  const { isMobileNavOpen, closeMobileNav } = useLayout();
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef(null);
 
@@ -23,22 +26,40 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     setIsAccountMenuOpen(false);
+    if (closeMobileNav) closeMobileNav();
     logout();
   };
 
   return (
-    <aside className="sidebar glass-panel">
+    <aside className={`sidebar glass-panel ${isMobileNavOpen ? "mobile-open" : ""}`}>
       {/* Header */}
       <div className="sidebar-header">
-        <div className="logo-box" style={{ background: 'transparent', padding: 0 }}>
-          <img src="/carbon_tech.svg" alt="Carbon Tech Logo" style={{ width: '32px', height: '32px' }} />
+        <div className="sidebar-brand-group">
+          <div className="logo-box" style={{ background: 'transparent', padding: 0, boxShadow: 'none' }}>
+            <img src="/carbon_tech.svg" alt="Carbon Tech Logo" style={{ width: '32px', height: '32px' }} />
+          </div>
+          <span className="brand-text">Carbon tech</span>
         </div>
-        <span className="brand-text">Carbon tech</span>
+        <button
+          className="mobile-sidebar-close"
+          onClick={closeMobileNav}
+          aria-label="Close navigation"
+          type="button"
+        >
+          <X size={20} />
+        </button>
       </div>
 
-      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+      <nav
+        style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}
+        onClick={(e) => {
+          if (e.target.closest("a") && closeMobileNav) {
+            closeMobileNav();
+          }
+        }}
+      >
         <ul className="nav-links">
-          {user?.role !== "it_admin" && (
+          {!["it_admin", "it"].includes(user?.role) && (
             <>
               <li className="nav-item">
                 <NavLink
@@ -354,14 +375,14 @@ const Sidebar = () => {
               </NavLink>
             </li>
           )}
-          {user?.role === "it_admin" && (
+          {["it_admin", "it"].includes(user?.role) && (
             <li className="nav-item">
               <NavLink
                 to="/user-management"
                 className={({ isActive }) =>
                   `nav-link ${isActive ? "active" : ""}`
                 }
-                title="IT Management"
+                title="User Management"
               >
                 <svg
                   width="18"
@@ -379,7 +400,7 @@ const Sidebar = () => {
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
-                <span className="nav-label">IT Management</span>
+                <span className="nav-label">User Management</span>
               </NavLink>
             </li>
           )}
@@ -387,7 +408,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Settings & Standards Link Right Above User Profile */}
-      {user?.role !== "it_admin" && (
+      {!["it_admin", "it"].includes(user?.role) && (
         <div className="sidebar-settings-pin">
           <NavLink
             to="/settings"
@@ -434,7 +455,7 @@ const Sidebar = () => {
               {user?.fullName || "User Name"}
             </div>
             <div className="user-role" id="user-role-sidebar">
-              {user?.jobTitle || "Sustainability Manager"}
+              {user?.jobTitle || user?.role || ""}
             </div>
           </div>
           <svg
@@ -465,7 +486,7 @@ const Sidebar = () => {
             </div>
           </div>
           <div className="dropdown-divider"></div>
-          {user?.role !== "it_admin" && (
+          {!["it_admin", "it"].includes(user?.role) && (
             <Link
               to="/settings"
               className="dropdown-item"

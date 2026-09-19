@@ -95,3 +95,58 @@ def test_qaqc_export_csv(client, admin_user):
     content = res.data.decode("utf-8")
     assert "Record ID" in content
     assert "Issue (QA Flag)" in content
+
+
+def test_qaqc_status_filtering_excludes_rejected_on_all(client, admin_user):
+    """Verify that 'all' status excludes rejected records, and 'rejected' status returns only rejected."""
+    client.post(
+        "/api/auth/login",
+        json={"email": "qa_admin@test.com", "password": "AdminPass123!"},
+    )
+
+    # 1. Default / All statuses query
+    res_all = client.get("/api/qaqc/dashboard?status=all")
+    assert res_all.status_code == 200
+    data_all = res_all.get_json()
+    flagged_all = data_all["flagged_records"]
+    # None of the records in 'all' should be rejected
+    for rec in flagged_all:
+        status_lower = (rec.get("status") or "").lower()
+        assert "rejected" not in status_lower, f"Record {rec['id']} with status {rec.get('status')} should not appear in 'all'"
+
+    # 2. Rejected tab query
+    res_rej = client.get("/api/qaqc/dashboard?status=rejected")
+    assert res_rej.status_code == 200
+    data_rej = res_rej.get_json()
+    flagged_rej = data_rej["flagged_records"]
+    # All records returned should be rejected
+    for rec in flagged_rej:
+        status_lower = (rec.get("status") or "").lower()
+        assert "rejected" in status_lower, f"Record {rec['id']} with status {rec.get('status')} must be rejected"
+
+
+def test_qaqc_diagnostics_action_urls_and_samples(client, admin_user):
+    """Verify that all diagnostic action URLs route to /manage-data and provide sample records when affected_count > 0."""
+    client.post(
+        "/api/auth/login",
+        json={"email": "qa_admin@test.com", "password": "AdminPass123!"},
+    )
+
+    res = client.get("/api/qaqc/dashboard")
+    assert res.status_code == 200
+    data = res.get_json()
+    diag = data["diagnostics"]
+
+    all_items = diag.get("issues", []) + diag.get("warnings", []) + diag.get("suggestions", [])
+    for item in all_items:
+        action_url = item.get("action_url")
+        if action_url:
+            assert "/reference-data" not in action_url, f"Finding {item.get('id')} should not link to /reference-data"
+            assert "/manage-data" in action_url, f"Finding {item.get('id')} action_url should route to /manage-data"
+
+        if item.get("affected_count", 0) > 0:
+            sample_records = item.get("sample_records", [])
+            assert len(sample_records) > 0, f"Finding {item.get('id')} with affected_count {item.get('affected_count')} must provide sample_records"
+            assert "id" in sample_records[0], f"Sample records for {item.get('id')} must include an id"
+
+

@@ -37,3 +37,29 @@
   background-color: rgba(156, 163, 175, 0.5);
   border-radius: 20px;
 }
+
+/* Mobile Sidebar Backdrop */
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1040;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .app-container {
+    height: 100dvh; /* Dynamic viewport height for iOS/Android */
+  }
+}
+

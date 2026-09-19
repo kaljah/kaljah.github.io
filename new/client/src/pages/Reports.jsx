@@ -6,6 +6,7 @@ import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MultiSelectDropdown from "../components/MultiSelectDropdown";
 import "../pages/Dashboard.css";
+import { getUserOperationalDefaults } from "../utils/userDefaults";
 
 const Reports = () => {
   const { user } = useAuth();
@@ -82,13 +83,19 @@ const Reports = () => {
         } else {
           setYear("all");
         }
+
+        const opDefaults = getUserOperationalDefaults(user, facilitiesData);
+        if (opDefaults.isRestricted || facilitiesData.length === 1) {
+          if (opDefaults.defaultFacilityId) setRegionId(opDefaults.defaultFacilityId);
+          if (opDefaults.defaultDivision) setDivision(opDefaults.defaultDivision);
+        }
       } catch (err) {
         console.error("Error fetching initial data", err);
         toast.error("Failed to load filter data");
       }
     };
     loadInitialData();
-  }, []);
+  }, [user]);
 
   // Reset page to 1 whenever filters change (but not on page itself changing)
   const prevFiltersRef = React.useRef({

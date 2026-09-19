@@ -1,10 +1,15 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 
 const LayoutContext = createContext();
 
 export const LayoutProvider = ({ children }) => {
   const [topBarLeft, setTopBarLeft] = useState(null);
   const [topBarRight, setTopBarRight] = useState(null);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  const toggleMobileNav = useCallback(() => setIsMobileNavOpen((prev) => !prev), []);
+  const closeMobileNav = useCallback(() => setIsMobileNavOpen(false), []);
+  const openMobileNav = useCallback(() => setIsMobileNavOpen(true), []);
 
   return (
     <LayoutContext.Provider
@@ -13,6 +18,11 @@ export const LayoutProvider = ({ children }) => {
         setTopBarLeft,
         topBarRight,
         setTopBarRight,
+        isMobileNavOpen,
+        setIsMobileNavOpen,
+        toggleMobileNav,
+        closeMobileNav,
+        openMobileNav,
       }}
     >
       {children}

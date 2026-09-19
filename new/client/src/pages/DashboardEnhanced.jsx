@@ -12,11 +12,18 @@ import {
 import CustomDropdown from "../components/CustomDropdown";
 import {
   formatCompactNumber,
-  formatNumber,
   calculateTrend,
 } from "../utils/formatters";
 import { useLayout } from "../context/LayoutContext";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { getUserOperationalDefaults, isUnrestrictedLocation } from "../utils/userDefaults";
+import {
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+} from "lucide-react";
 import "./Dashboard.css";
 
 // Simple Linear Regression for Forecasting
@@ -85,14 +92,12 @@ const DashboardEnhanced = () => {
   });
 
   const [sbtiData, setSbtiData] = useState(null);
-  const [sbtiLoading, setSbtiLoading] = useState(false);
   const [trendData, setTrendData] = useState([]);
   const [categoricalData, setCategoricalData] = useState([]);
   const [currentYear, setCurrentYear] = useState("all");
   const [expandedActivities, setExpandedActivities] = useState({});
   const [expandedDivisions, setExpandedDivisions] = useState({});
   const [goal, setGoal] = useState(null);
-  const [baseYear, setBaseYear] = useState(null);
   const [intensity, setIntensity] = useState(0);
   const [hasProductionData, setHasProductionData] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -105,6 +110,7 @@ const DashboardEnhanced = () => {
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   );
   const [categoricalCollapsed, setCategoricalCollapsed] = useState(false);
+  const [detailedBreakdownCollapsed, setDetailedBreakdownCollapsed] = useState(false);
   const [exportingPDF, setExportingPDF] = useState(false);
   const [gwpHorizon, setGwpHorizon] = useState("100"); // "100" (Standard 100-yr) or "20" (Near-term 20-yr)
 
@@ -133,12 +139,19 @@ const DashboardEnhanced = () => {
             ? filterRes.data.segments
             : [],
         });
+
+        const opDefaults = getUserOperationalDefaults(user, facilitiesData);
+        if (opDefaults.isRestricted || facilitiesData.length === 1) {
+          if (opDefaults.defaultActivity) setCurrentActivity(opDefaults.defaultActivity);
+          if (opDefaults.defaultDivision) setCurrentDivision(opDefaults.defaultDivision);
+          if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);
+        }
       } catch (error) {
         console.error("Failed to load initial data:", error);
       }
     };
     loadInitialData();
-  }, []);
+  }, [user]);
 
   const [isUpdating, setIsUpdating] = useState(false);
   const isFirstLoadRef = useRef(true);
@@ -210,12 +223,10 @@ const DashboardEnhanced = () => {
       const bYearObj = batch.base_year;
 
       setGoal(gObj);
-      setBaseYear(bYearObj);
       setCategoricalData(catData);
 
       // Fetch SBTi Trajectory Data
       try {
-        setSbtiLoading(true);
         const sbtiRes = await api.get('/dashboard/sbti-trajectory');
         if (sbtiRes.data && sbtiRes.data.has_target) {
             setSbtiData(sbtiRes.data);
@@ -224,8 +235,6 @@ const DashboardEnhanced = () => {
         }
       } catch (err) {
         console.error("Failed to load SBTi data", err);
-      } finally {
-        setSbtiLoading(false);
       }
 
 
@@ -320,7 +329,11 @@ const DashboardEnhanced = () => {
         let totalBoeForIntensity = 0;
         intensityData.forEach((d) => {
           if (d.total_boe > 0) {
-            totalEmissionsForIntensity += d.co2_intensity * d.total_boe;
+            const intVal =
+              gwpHorizon === "20" && d.co2_intensity_gwp20 != null
+                ? d.co2_intensity_gwp20
+                : d.co2_intensity;
+            totalEmissionsForIntensity += intVal * d.total_boe;
             totalBoeForIntensity += d.total_boe;
           }
         });
@@ -442,10 +455,6 @@ const DashboardEnhanced = () => {
       setIsUpdating(false);
       isFirstLoadRef.current = false;
     }
-  };
-
-  const loadCategoricalData = async () => {
-    // Now integrated into loadDashboardData for performance
   };
 
   const getSegmentOptions = () => {
@@ -812,41 +821,66 @@ const DashboardEnhanced = () => {
         </div>
 
         {pendingCount > 0 && (
-          <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ background: '#eab308', color: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
+          <div className={`pending-banner-card ${includePending ? "active-preview" : ""}`}>
+            <div className="pending-banner-left">
+              <div className="pending-banner-icon">
+                <Clock size={20} />
               </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: '#854d0e' }}>
-                  {includePending ? "Previewing Pending & Verified Emissions" : "Pending Records Awaiting Review"}
-                </h3>
-                <p style={{ margin: '4px 0 0 0', fontSize: '0.875rem', color: '#a16207' }}>
-                  There are <strong>{pendingCount}</strong> emission records {pendingCo2e > 0 ? `(${pendingCo2e.toLocaleString()} tCO₂e) ` : ""}pending approval.
-                  {!includePending && " Official metrics display verified data only."}
+              <div className="pending-banner-info">
+                <div className="pending-banner-header">
+                  <h3 className="pending-banner-title">
+                    {includePending
+                      ? "Previewing Pending & Verified Emissions"
+                      : "Pending Records Awaiting Review"}
+                  </h3>
+                  <span className={`pending-badge ${includePending ? "active-preview-badge" : ""}`}>
+                    {includePending ? "Live Preview Active" : "Pending Approval"}
+                  </span>
+                </div>
+                <p className="pending-banner-desc">
+                  There are <strong>{pendingCount.toLocaleString()}</strong> emission records
+                  {pendingCo2e > 0 && (
+                    <span className="pending-co2e-highlight">
+                      {pendingCo2e.toLocaleString()} tCO₂e
+                    </span>
+                  )}
+                  pending approval.
+                  {!includePending
+                    ? " Official metrics currently display verified records only."
+                    : " Dashboard metrics now combine pending drafts and verified records."}
                 </p>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', background: 'rgba(234, 179, 8, 0.2)', padding: '6px 12px', borderRadius: '6px' }}>
-                <input 
-                  type="checkbox" 
-                  checked={includePending} 
-                  onChange={(e) => setIncludePending(e.target.checked)} 
-                />
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#854d0e' }}>
-                  Preview Pending Data
+
+            <div className="pending-banner-actions">
+              <label
+                className="pending-toggle-wrapper"
+                title="Toggle pending emissions preview"
+              >
+                <span className="pending-toggle-label">
+                  {includePending ? <Eye size={15} /> : <EyeOff size={15} />}
+                  <span>Preview Pending Data</span>
                 </span>
+                <div className={`pending-switch ${includePending ? "active" : ""}`}>
+                  <input
+                    type="checkbox"
+                    checked={includePending}
+                    onChange={(e) => setIncludePending(e.target.checked)}
+                    className="pending-switch-input"
+                  />
+                  <span className="pending-switch-slider" />
+                </div>
               </label>
+
               {['admin', 'superuser'].includes(user?.role) && (
-                <button 
-                  className="btn-primary" 
-                  style={{ background: '#ca8a04', whiteSpace: 'nowrap' }}
+                <button
+                  type="button"
+                  className="pending-review-btn"
                   onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
+                  title="Go to Manage Data to review pending records"
                 >
-                  Review Now →
+                  <span>Review Now</span>
+                  <ArrowRight size={14} />
                 </button>
               )}
             </div>

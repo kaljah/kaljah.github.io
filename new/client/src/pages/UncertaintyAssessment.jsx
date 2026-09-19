@@ -11,6 +11,7 @@ import { useLayout } from "../context/LayoutContext";
 import { useToast } from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/CustomDropdown";
+import { getUserOperationalDefaults } from "../utils/userDefaults";
 import "./UncertaintyAssessment.css";
 
 const UncertaintyAssessment = () => {
@@ -44,9 +45,12 @@ const UncertaintyAssessment = () => {
           setLoading(false);
         }
         if (facRes.data) {
-          setFacilities(
-            Array.isArray(facRes.data) ? facRes.data : facRes.data.facilities || []
-          );
+          const facList = Array.isArray(facRes.data) ? facRes.data : facRes.data.facilities || [];
+          setFacilities(facList);
+          const opDefaults = getUserOperationalDefaults(user, facList);
+          if (opDefaults.isRestricted && opDefaults.defaultFacilityId) {
+            setSelectedFacility(opDefaults.defaultFacilityId);
+          }
         }
       } catch (err) {
         console.error("Failed to load filters:", err);
@@ -54,7 +58,7 @@ const UncertaintyAssessment = () => {
       }
     };
     loadFilters();
-  }, []);
+  }, [user]);
 
   // Fetch uncertainty data when filters change
   useEffect(() => {

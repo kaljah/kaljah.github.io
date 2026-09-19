@@ -2,8 +2,23 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
-import Modal from "../components/Modal";
+import Drawer from "../components/Drawer";
 import ConfirmModal from "../components/ConfirmModal";
+import {
+  UserPlus,
+  UserCheck,
+  KeyRound,
+  Lock,
+  Shield,
+  Eye,
+  EyeOff,
+  Check,
+  User,
+  Mail,
+  Briefcase,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 
 /* ─── tiny keyframe injection ─────────────────────────────────────────────── */
 const STYLE_ID = "um-keyframes";
@@ -32,6 +47,12 @@ const ROLE_META = {
     bg: "#fffbeb",
     border: "rgba(245,158,11,.25)",
   },
+  it: {
+    label: "IT",
+    color: "#0284c7",
+    bg: "#f0f9ff",
+    border: "rgba(2,132,199,.25)",
+  },
   superuser: {
     label: "Super User",
     color: "#8b5cf6",
@@ -58,9 +79,11 @@ const S = {
   page: {
     padding: "32px",
     fontFamily: "'Outfit', Inter, system-ui, sans-serif",
-    maxWidth: "1400px",
+    maxWidth: "1600px",
+    width: "100%",
     margin: "0 auto",
     animation: "um-fade-in .4s ease both",
+    boxSizing: "border-box",
   },
   /* hero header */
   hero: {
@@ -328,6 +351,37 @@ const S = {
     paddingTop: "16px",
     borderTop: "1px solid var(--border-color)",
   },
+  drawerSection: {
+    background: "var(--bg-card)",
+    border: "1px solid var(--border-color)",
+    borderRadius: "14px",
+    padding: "16px 18px",
+    marginBottom: "16px",
+  },
+  sectionHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    marginBottom: "14px",
+  },
+  sectionIconBadge: (color) => ({
+    width: "26px",
+    height: "26px",
+    borderRadius: "8px",
+    background: `${color}18`,
+    color: color,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  }),
+  sectionTitle: {
+    fontSize: "0.82rem",
+    fontWeight: 700,
+    color: "var(--text-primary)",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  },
 
   /* empty / loading */
   emptyCell: {
@@ -349,16 +403,6 @@ const UserManagement = () => {
   const [filterRegion, setFilterRegion] = useState("");
   const [filterRole, setFilterRole] = useState("");
   const [hoveredRow, setHoveredRow] = useState(null);
-  const [showDebug, setShowDebug] = useState(false);
-  const [debugInfo, setDebugInfo] = useState({
-    usersStatus: null,
-    usersCount: null,
-    usersError: null,
-    regionsStatus: null,
-    regionsData: null,
-    regionsError: null,
-    lastFetch: null,
-  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -386,11 +430,8 @@ const UserManagement = () => {
   const [deleteTargetUser, setDeleteTargetUser] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-
-
   const fetchData = async (silent = false, keepOptimistic = false) => {
     if (!silent) setLoading(true);
-    const dbg = { lastFetch: new Date().toISOString() };
 
     // --- Users call (independent) ---
     try {
@@ -408,13 +449,7 @@ const UserManagement = () => {
       } else {
         setUsers(serverUsers);
       }
-      dbg.usersStatus = usersRes.status;
-      dbg.usersCount = usersRes.data?.length ?? 0;
-      dbg.usersError = null;
-    } catch (err) {
-      dbg.usersStatus = err.response?.status ?? "NETWORK_ERR";
-      dbg.usersCount = 0;
-      dbg.usersError = err.response?.data?.error || err.message;
+    } catch {
       if (!silent) toast.error("Failed to load users");
     }
 
@@ -422,32 +457,21 @@ const UserManagement = () => {
     try {
       const regionsRes = await api.get("/facilities/all-regions");
       const data = regionsRes.data;
-      dbg.regionsStatus = regionsRes.status;
-      dbg.regionsData = Array.isArray(data) ? data : JSON.stringify(data);
-      dbg.regionsError = null;
       setRegions(Array.isArray(data) ? data : []);
-    } catch (err) {
-      dbg.regionsStatus = err.response?.status ?? "NETWORK_ERR";
-      dbg.regionsData = null;
-      dbg.regionsError = err.response?.data?.error || err.message;
+    } catch {
       setRegions([]);
-      // Show debug panel automatically on error so user sees it
-      setShowDebug(true);
-      if (!silent)
-        toast.error(
-          `Regions API failed (${dbg.regionsStatus}): ${dbg.regionsError}`,
-        );
+      if (!silent) toast.error("Failed to load facility regions");
     }
 
-    setDebugInfo(dbg);
     if (!silent) setLoading(false);
   };
 
   useEffect(() => {
-    if (user?.role === "it_admin") fetchData();
+    if (["it_admin", "it"].includes(user?.role)) fetchData();
   }, [user]);
 
   const handleOpenModal = (userToEdit = null) => {
+    if (user?.role === "it") return;
     if (userToEdit) {
       setEditingUser(userToEdit);
       setFormData({
@@ -480,9 +504,32 @@ const UserManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (user?.role === "it") {
+      toast.error("IT role cannot modify user accounts or profiles.");
+      return;
+    }
     try {
       if (editingUser) {
-        const payload = { role: formData.role, location: formData.location };
+        if (!formData.fullName.trim()) {
+          toast.error("Full Name is required.");
+          return;
+        }
+        if (
+          !formData.email.trim() ||
+          !/^[^@]+@[^@]+\.[^@]+$/.test(formData.email)
+        ) {
+          toast.error("A valid Email address is required.");
+          return;
+        }
+
+        const payload = {
+          fullName: formData.fullName.trim(),
+          email: formData.email.trim(),
+          department: (formData.department || "").trim(),
+          jobTitle: (formData.jobTitle || "").trim(),
+          role: formData.role,
+          location: formData.location,
+        };
         const res = await api.put(`/auth/users/${editingUser.id}`, payload);
         const updated = res.data?.user;
         if (updated) {
@@ -493,7 +540,15 @@ const UserManagement = () => {
           setUsers((prev) =>
             prev.map((u) =>
               u.id === editingUser.id
-                ? { ...u, role: formData.role, location: formData.location }
+                ? {
+                    ...u,
+                    fullName: payload.fullName,
+                    email: payload.email,
+                    department: payload.department,
+                    jobTitle: payload.jobTitle,
+                    role: formData.role,
+                    location: formData.location,
+                  }
                 : u,
             ),
           );
@@ -563,6 +618,10 @@ const UserManagement = () => {
   };
 
   const handleDelete = (target) => {
+    if (user?.role === "it") {
+      toast.error("IT role cannot delete users.");
+      return;
+    }
     // Accepts either user object or user id
     if (typeof target === "object" && target !== null) {
       setDeleteTargetUser(target);
@@ -573,6 +632,10 @@ const UserManagement = () => {
   };
 
   const handleConfirmDelete = async () => {
+    if (user?.role === "it") {
+      toast.error("IT role cannot delete users.");
+      return;
+    }
     if (!deleteTargetUser?.id) return;
     setDeleteLoading(true);
     const targetId = deleteTargetUser.id;
@@ -591,7 +654,14 @@ const UserManagement = () => {
   };
 
   const handleOpenResetPassword = (u) => {
-    setResetTarget({ id: u.id, fullName: u.fullName, email: u.email });
+    setResetTarget({
+      id: u.id,
+      fullName: u.fullName,
+      email: u.email,
+      role: u.role,
+      location: u.location,
+      department: u.department,
+    });
     setResetPwd("");
     setResetPwdConfirm("");
     setResetPwdShow(false);
@@ -607,7 +677,7 @@ const UserManagement = () => {
     if (!/[A-Z]/.test(resetPwd)) { toast.error("Password needs an uppercase letter."); return; }
     if (!/[a-z]/.test(resetPwd)) { toast.error("Password needs a lowercase letter."); return; }
     if (!/[0-9]/.test(resetPwd)) { toast.error("Password needs a digit."); return; }
-    if (!/[!@#$%^&*(),.?":{}<>\-_+=\[\]\\/~`]/.test(resetPwd)) {
+    if (!/[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd)) {
       toast.error("Password needs a special character."); return;
     }
     if (resetPwd !== resetPwdConfirm) {
@@ -626,7 +696,7 @@ const UserManagement = () => {
     }
   };
 
-  if (user?.role !== "it_admin") {
+  if (!["it_admin", "it"].includes(user?.role)) {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
         <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
@@ -642,10 +712,13 @@ const UserManagement = () => {
     );
   }
 
+  const isITOnly = user?.role === "it";
+
   /* derived stats */
   const totalUsers = users.length;
   const adminCount = users.filter((u) => u.role === "admin").length;
   const itAdminCount = users.filter((u) => u.role === "it_admin").length;
+  const itCount = users.filter((u) => u.role === "it").length;
   const standardCount = users.filter((u) => u.role === "user").length;
 
   const filteredUsers = users.filter((u) => {
@@ -653,7 +726,8 @@ const UserManagement = () => {
       !filterRegion ||
       u.location === filterRegion ||
       u.role === "admin" ||
-      u.role === "it_admin";
+      u.role === "it_admin" ||
+      u.role === "it";
     const byRole = !filterRole || u.role === filterRole;
     return byRegion && byRole;
   });
@@ -677,11 +751,13 @@ const UserManagement = () => {
         <div style={S.heroLeft}>
           <span style={S.badge}>
             <span style={S.pulseDot} />
-            IT ADMIN CONSOLE
+            {isITOnly ? "IT CREDENTIALS CONSOLE" : "IT ADMIN CONSOLE"}
           </span>
           <h1 style={S.pageTitle}>User Management</h1>
           <p style={S.pageSubtitle}>
-            Manage identities, roles, and regional workspace access
+            {isITOnly
+              ? "Modify user passwords and manage credentials"
+              : "Manage identities, roles, and regional workspace access"}
           </p>
         </div>
         <div style={S.heroRight}>
@@ -696,6 +772,7 @@ const UserManagement = () => {
             <option value="superuser">Super User</option>
             <option value="admin">Admin</option>
             <option value="it_admin">IT Admin</option>
+            <option value="it">IT</option>
           </select>
 
           <select
@@ -712,233 +789,37 @@ const UserManagement = () => {
             ))}
           </select>
 
-          <button
-            id="um-add-user-btn"
-            style={S.btnPrimary}
-            onClick={() => handleOpenModal()}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 20px rgba(255,102,0,.35)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.boxShadow =
-                "0 4px 12px rgba(255,102,0,.25)";
-            }}
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
+          {!isITOnly && (
+            <button
+              id="um-add-user-btn"
+              style={S.btnPrimary}
+              onClick={() => handleOpenModal()}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 20px rgba(255,102,0,.35)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(255,102,0,.25)";
+              }}
             >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add New User
-          </button>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add New User
+            </button>
+          )}
         </div>
-      </div>
-
-      {/* ── Debug Panel ── */}
-      <div
-        style={{
-          marginBottom: "20px",
-          border: `1.5px solid ${showDebug ? "#f59e0b" : "var(--border-color)"}`,
-          borderRadius: "14px",
-          overflow: "hidden",
-          background: "var(--bg-card)",
-          boxShadow: showDebug ? "0 0 0 3px rgba(245,158,11,.12)" : "none",
-          transition: "all .2s",
-        }}
-      >
-        <button
-          onClick={() => {
-            setShowDebug((s) => !s);
-            if (!showDebug) fetchData(true);
-          }}
-          style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "11px 18px",
-            background: showDebug ? "rgba(245,158,11,.08)" : "transparent",
-            border: "none",
-            cursor: "pointer",
-            fontFamily: "inherit",
-            fontSize: "0.82rem",
-            fontWeight: 700,
-            color: showDebug ? "#d97706" : "var(--text-secondary)",
-            letterSpacing: ".4px",
-            transition: "all .2s",
-            textTransform: "uppercase",
-          }}
-        >
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            API Debugger — click to{" "}
-            {showDebug ? "hide" : "inspect live API calls"}
-          </span>
-          <span
-            style={{
-              fontSize: "1rem",
-              transform: showDebug ? "rotate(180deg)" : "none",
-              transition: "transform .2s",
-            }}
-          >
-            ▾
-          </span>
-        </button>
-
-        {showDebug && (
-          <div
-            style={{
-              padding: "16px 20px",
-              borderTop: "1px solid var(--border-color)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "14px",
-            }}
-          >
-            {/* Refresh button */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <span
-                style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}
-              >
-                Last fetch:{" "}
-                <code
-                  style={{
-                    background: "var(--bg-body)",
-                    padding: "2px 6px",
-                    borderRadius: "4px",
-                  }}
-                >
-                  {debugInfo.lastFetch || "not yet"}
-                </code>
-              </span>
-              <button
-                onClick={() => fetchData(true)}
-                style={{
-                  ...S.btnPrimary,
-                  padding: "6px 14px",
-                  fontSize: "0.78rem",
-                  boxShadow: "none",
-                }}
-              >
-                ↻ Re-run now
-              </button>
-            </div>
-
-            {/* Users call */}
-            {[
-              {
-                label: "GET /auth/users",
-                status: debugInfo.usersStatus,
-                ok: debugInfo.usersStatus === 200,
-                detail: debugInfo.usersError
-                  ? `Error: ${debugInfo.usersError}`
-                  : `Returned ${debugInfo.usersCount} user(s)`,
-              },
-              {
-                label: "GET /facilities/all-regions",
-                status: debugInfo.regionsStatus,
-                ok: debugInfo.regionsStatus === 200,
-                detail: debugInfo.regionsError
-                  ? `Error: ${debugInfo.regionsError}`
-                  : `Returned ${Array.isArray(debugInfo.regionsData) ? debugInfo.regionsData.length : 0} region(s): ${Array.isArray(debugInfo.regionsData) ? debugInfo.regionsData.slice(0, 8).join(", ") + (debugInfo.regionsData.length > 8 ? "…" : "") : debugInfo.regionsData}`,
-              },
-            ].map((row) => (
-              <div
-                key={row.label}
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: "12px",
-                  padding: "12px 14px",
-                  borderRadius: "10px",
-                  background: row.ok
-                    ? "rgba(16,185,129,.06)"
-                    : row.status === null
-                      ? "rgba(100,116,139,.06)"
-                      : "rgba(239,68,68,.06)",
-                  border: `1px solid ${row.ok ? "rgba(16,185,129,.2)" : row.status === null ? "rgba(100,116,139,.15)" : "rgba(239,68,68,.2)"}`,
-                }}
-              >
-                <span
-                  style={{
-                    flexShrink: 0,
-                    width: "52px",
-                    textAlign: "center",
-                    padding: "2px 0",
-                    borderRadius: "6px",
-                    fontWeight: 800,
-                    fontSize: "0.8rem",
-                    background: row.ok
-                      ? "#ecfdf5"
-                      : row.status === null
-                        ? "#f1f5f9"
-                        : "#fef2f2",
-                    color: row.ok
-                      ? "#059669"
-                      : row.status === null
-                        ? "#64748b"
-                        : "#dc2626",
-                  }}
-                >
-                  {row.status ?? "—"}
-                </span>
-                <div>
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      fontSize: "0.82rem",
-                      fontFamily: "monospace",
-                      color: "var(--text-primary)",
-                      marginBottom: "3px",
-                    }}
-                  >
-                    {row.label}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.78rem",
-                      color: row.ok
-                        ? "#059669"
-                        : row.status === null
-                          ? "var(--text-secondary)"
-                          : "#dc2626",
-                    }}
-                  >
-                    {row.status === null ? "Not fetched yet" : row.detail}
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <p
-              style={{
-                margin: 0,
-                fontSize: "0.72rem",
-                color: "var(--text-secondary)",
-                fontStyle: "italic",
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: "4px" }}><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
-              If /facilities/all-regions returns 404 → server needs restart.
-              If 403 → auth issue. If 200 but empty → no region values in DB.
-            </p>
-          </div>
-        )}
       </div>
 
       {/* ── Stats Row ── */}
@@ -1210,7 +1091,7 @@ const UserManagement = () => {
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                             All Regions
                           </span>
-                        ) : u.role === "it_admin" ? (
+                        ) : u.role === "it_admin" || u.role === "it" ? (
                           <span
                             style={S.regionPill(
                               "#ef4444",
@@ -1265,25 +1146,27 @@ const UserManagement = () => {
 
                       {/* Actions */}
                       <td style={{ ...S.td, whiteSpace: "nowrap" }}>
-                        <button
-                          id={`um-edit-btn-${u.id}`}
-                          style={S.iconBtn("#6366f1")}
-                          onClick={() => handleOpenModal(u)}
-                          title="Edit Role / Region"
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.background = "#eef2ff")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.background = "none")
-                          }
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
+                        {!isITOnly && (
+                          <button
+                            id={`um-edit-btn-${u.id}`}
+                            style={S.iconBtn("#6366f1")}
+                            onClick={() => handleOpenModal(u)}
+                            title="Edit User Information"
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.background = "#eef2ff")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.background = "none")
+                            }
+                          >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                          </button>
+                        )}
                         <button
                           id={`um-reset-pwd-btn-${u.id}`}
                           style={S.iconBtn("#f59e0b")}
                           onClick={() => handleOpenResetPassword(u)}
-                          title="Reset Password"
+                          title="Modify / Reset Password"
                           onMouseEnter={(e) =>
                             (e.currentTarget.style.background = "#fffbeb")
                           }
@@ -1293,20 +1176,22 @@ const UserManagement = () => {
                         >
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
                         </button>
-                        <button
-                          id={`um-delete-btn-${u.id}`}
-                          style={S.iconBtn("#ef4444")}
-                          onClick={() => handleDelete(u.id)}
-                          title="Revoke Access"
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.background = "#fef2f2")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.background = "none")
-                          }
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </button>
+                        {!isITOnly && (
+                          <button
+                            id={`um-delete-btn-${u.id}`}
+                            style={S.iconBtn("#ef4444")}
+                            onClick={() => handleDelete(u.id)}
+                            title="Revoke Access"
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.background = "#fef2f2")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.background = "none")
+                            }
+                          >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -1317,222 +1202,22 @@ const UserManagement = () => {
         </div>
       </div>
 
-      {/* ── Modal ── */}
-      <Modal
+      {/* ── Slide-Over Drawer: Add / Edit User ── */}
+      <Drawer
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={
-          editingUser ? "Edit User Permissions" : "Register New User"
+        title={editingUser ? "Edit User Information" : "Register New User"}
+        subtitle={
+          editingUser
+            ? `Update profile details for ${editingUser.fullName || editingUser.email}`
+            : "Provision a new system identity and configure role access"
         }
-        maxWidth="540px"
-      >
-        <form onSubmit={handleSubmit}>
-          {/* Identity section (disabled when editing) */}
-          <div style={{ ...S.formRow, marginBottom: 0 }}>
-            <div style={S.formGroup}>
-              <label style={S.label}>Full Name</label>
-              <input
-                id="um-modal-fullname"
-                type="text"
-                value={formData.fullName}
-                onChange={(e) =>
-                  setFormData({ ...formData, fullName: e.target.value })
-                }
-                disabled={!!editingUser}
-                style={{
-                  ...inputStyle("fullName"),
-                  opacity: editingUser ? 0.55 : 1,
-                }}
-                {...focusProps("fullName")}
-                placeholder="Jane Smith"
-              />
-            </div>
-            <div style={S.formGroup}>
-              <label style={S.label}>Email Address</label>
-              <input
-                id="um-modal-email"
-                type="text"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                disabled={!!editingUser}
-                style={{
-                  ...inputStyle("email"),
-                  opacity: editingUser ? 0.55 : 1,
-                }}
-                {...focusProps("email")}
-                placeholder="jane@company.com"
-              />
-            </div>
-          </div>
-
-          {!editingUser && (
-            <>
-              <div style={S.formRow}>
-                <div style={S.formGroup}>
-                  <label style={S.label}>Department</label>
-                  <input
-                    id="um-modal-department"
-                    type="text"
-                    value={formData.department}
-                    onChange={(e) =>
-                      setFormData({ ...formData, department: e.target.value })
-                    }
-                    style={inputStyle("department")}
-                    {...focusProps("department")}
-                    placeholder="e.g. Engineering"
-                  />
-                </div>
-                <div style={S.formGroup}>
-                  <label style={S.label}>Job Title</label>
-                  <input
-                    id="um-modal-jobtitle"
-                    type="text"
-                    value={formData.jobTitle}
-                    onChange={(e) =>
-                      setFormData({ ...formData, jobTitle: e.target.value })
-                    }
-                    style={inputStyle("jobTitle")}
-                    {...focusProps("jobTitle")}
-                    placeholder="e.g. Data Analyst"
-                  />
-                </div>
-              </div>
-
-              <div style={S.formGroup}>
-                <label style={S.label}>
-                  Temporary Password (min 10 characters)
-                </label>
-                <input
-                  id="um-modal-password"
-                  type="text"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  style={{
-                    ...inputStyle("password"),
-                    borderColor:
-                      formData.password && formData.password.length < 10
-                        ? "#ef4444"
-                        : focusedField === "password"
-                          ? "#ff6600"
-                          : "var(--border-color)",
-                    boxShadow:
-                      formData.password && formData.password.length < 10
-                        ? "0 0 0 3px rgba(239,68,68,.1)"
-                        : focusedField === "password"
-                          ? "0 0 0 3px rgba(255,102,0,.12)"
-                          : "none",
-                  }}
-                  {...focusProps("password")}
-                  placeholder="Minimum 10 characters"
-                />
-                {formData.password && formData.password.length < 10 && (
-                  <p
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "#ef4444",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {formData.password.length}/10 characters — need{" "}
-                    {10 - formData.password.length} more
-                  </p>
-                )}
-              </div>
-            </>
-          )}
-
-          <div style={S.formRow}>
-            <div style={S.formGroup}>
-              <label style={S.label}>System Role</label>
-              <select
-                id="um-modal-role"
-                value={formData.role}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    role: e.target.value,
-                    location: ["user", "superuser"].includes(e.target.value)
-                      ? formData.location || regions[0] || ""
-                      : "",
-                  })
-                }
-                style={{ ...inputStyle("role"), cursor: "pointer" }}
-                {...focusProps("role")}
-              >
-                <option value="user">Standard User</option>
-                <option value="superuser">Super User</option>
-                <option value="admin">Admin (All Data)</option>
-                <option value="it_admin">IT Admin</option>
-              </select>
-            </div>
-
-            {["user", "superuser"].includes(formData.role) && (
-              <div style={S.formGroup}>
-                <label style={S.label}>Assigned Region</label>
-                <select
-                  id="um-modal-region"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                  style={{
-                    ...inputStyle("location"),
-                    cursor: "pointer",
-                    // Red border highlight when empty to signal required
-                    borderColor: !formData.location
-                      ? "#ef4444"
-                      : focusedField === "location"
-                        ? "#ff6600"
-                        : "var(--border-color)",
-                    boxShadow: !formData.location
-                      ? "0 0 0 3px rgba(239,68,68,.1)"
-                      : focusedField === "location"
-                        ? "0 0 0 3px rgba(255,102,0,.12)"
-                        : "none",
-                  }}
-                  {...focusProps("location")}
-                >
-                  <option value="">— Select a Region —</option>
-                  {regions.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-                {regions.length === 0 ? (
-                  <p
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "#ef4444",
-                      marginTop: "4px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    ⚠️ No regions loaded — use the 🔧 API Debugger above to
-                    diagnose.
-                  </p>
-                ) : !formData.location ? (
-                  <p
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "#ef4444",
-                      marginTop: "4px",
-                    }}
-                  >
-                    ↑ Required — pick a region to proceed.
-                  </p>
-                ) : null}
-              </div>
-            )}
-          </div>
-
-          <div style={S.modalActions}>
+        icon={editingUser ? UserCheck : UserPlus}
+        iconColor={editingUser ? "#6366f1" : "#ff6600"}
+        iconBg={editingUser ? "rgba(99, 102, 241, 0.12)" : "rgba(255, 102, 0, 0.12)"}
+        width="560px"
+        footer={
+          <>
             <button
               id="um-modal-cancel"
               type="button"
@@ -1550,6 +1235,7 @@ const UserManagement = () => {
             <button
               id="um-modal-submit"
               type="submit"
+              form="um-user-form"
               style={S.btnPrimary}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-1px)";
@@ -1564,77 +1250,446 @@ const UserManagement = () => {
             >
               {editingUser ? (
                 <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <UserCheck size={16} />
                   Save Changes
                 </span>
               ) : (
                 <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <UserPlus size={16} />
                   Create User
                 </span>
               )}
             </button>
-          </div>
-        </form>
-      </Modal>
+          </>
+        }
+      >
+        <form id="um-user-form" onSubmit={handleSubmit}>
+          {/* Section 1: Profile & Identity */}
+          <div style={S.drawerSection}>
+            <div style={S.sectionHeader}>
+              <span style={S.sectionIconBadge("#6366f1")}>
+                <User size={14} />
+              </span>
+              <span style={S.sectionTitle}>Profile & Identity</span>
+            </div>
 
-      {/* ── Reset Password Modal ── */}
-      <Modal
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div style={S.formGroup}>
+                <label style={S.label}>
+                  Full Name <span style={{ color: "#ef4444" }}>*</span>
+                </label>
+                <input
+                  id="um-modal-fullname"
+                  type="text"
+                  value={formData.fullName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
+                  style={inputStyle("fullName")}
+                  {...focusProps("fullName")}
+                  placeholder="e.g. Jane Smith"
+                />
+              </div>
+
+              <div style={S.formGroup}>
+                <label style={S.label}>
+                  Email Address <span style={{ color: "#ef4444" }}>*</span>
+                </label>
+                <input
+                  id="um-modal-email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  style={inputStyle("email")}
+                  {...focusProps("email")}
+                  placeholder="e.g. jane.smith@company.com"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Organization & Title */}
+          <div style={S.drawerSection}>
+            <div style={S.sectionHeader}>
+              <span style={S.sectionIconBadge("#0ea5e9")}>
+                <Briefcase size={14} />
+              </span>
+              <span style={S.sectionTitle}>Organization & Title</span>
+            </div>
+
+            <div style={S.formRow}>
+              <div style={S.formGroup}>
+                <label style={S.label}>Department</label>
+                <input
+                  id="um-modal-department"
+                  type="text"
+                  value={formData.department}
+                  onChange={(e) =>
+                    setFormData({ ...formData, department: e.target.value })
+                  }
+                  style={inputStyle("department")}
+                  {...focusProps("department")}
+                  placeholder="e.g. Engineering"
+                />
+              </div>
+
+              <div style={S.formGroup}>
+                <label style={S.label}>Job Title</label>
+                <input
+                  id="um-modal-jobtitle"
+                  type="text"
+                  value={formData.jobTitle}
+                  onChange={(e) =>
+                    setFormData({ ...formData, jobTitle: e.target.value })
+                  }
+                  style={inputStyle("jobTitle")}
+                  {...focusProps("jobTitle")}
+                  placeholder="e.g. Lead Carbon Analyst"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Access Governance & Scope */}
+          <div style={S.drawerSection}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+              <div style={{ ...S.sectionHeader, marginBottom: 0 }}>
+                <span style={S.sectionIconBadge("#f59e0b")}>
+                  <Shield size={14} />
+                </span>
+                <span style={S.sectionTitle}>Access Governance & Scope</span>
+              </div>
+              {editingUser && (
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    padding: "3px 8px",
+                    borderRadius: "6px",
+                    background: "rgba(100, 116, 139, 0.1)",
+                    color: "var(--text-secondary)",
+                    fontSize: "0.72rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  <Lock size={11} /> Locked by Policy
+                </span>
+              )}
+            </div>
+
+            {editingUser && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "8px",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  background: "rgba(100, 116, 139, 0.06)",
+                  border: "1px dashed var(--border-color)",
+                  marginBottom: "14px",
+                  fontSize: "0.76rem",
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.4,
+                }}
+              >
+                <Lock size={13} style={{ flexShrink: 0, marginTop: "2px", color: "var(--text-secondary)" }} />
+                <span>
+                  Role and regional assignments are fixed by administrative governance and locked against profile modification.
+                </span>
+              </div>
+            )}
+
+            <div style={S.formRow}>
+              <div style={S.formGroup}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "7px" }}>
+                  <label style={{ ...S.label, marginBottom: 0 }}>System Role</label>
+                  {editingUser && (
+                    <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", display: "inline-flex", alignItems: "center", gap: "3px" }}>
+                      <Lock size={10} /> Locked
+                    </span>
+                  )}
+                </div>
+                <select
+                  id="um-modal-role"
+                  value={formData.role}
+                  disabled={!!editingUser}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      role: e.target.value,
+                      location: ["user", "superuser"].includes(e.target.value)
+                        ? formData.location || regions[0] || ""
+                        : "",
+                    })
+                  }
+                  style={{
+                    ...inputStyle("role"),
+                    cursor: editingUser ? "not-allowed" : "pointer",
+                    opacity: editingUser ? 0.75 : 1,
+                    background: editingUser ? "var(--bg-body)" : "var(--bg-card)",
+                  }}
+                  {...(!editingUser ? focusProps("role") : {})}
+                >
+                  <option value="user">Standard User</option>
+                  <option value="superuser">Super User</option>
+                  <option value="admin">Admin (All Data)</option>
+                  <option value="it_admin">IT Admin</option>
+                  <option value="it">IT</option>
+                </select>
+              </div>
+
+              {(["user", "superuser"].includes(formData.role) || formData.location) && (
+                <div style={S.formGroup}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "7px" }}>
+                    <label style={{ ...S.label, marginBottom: 0 }}>Assigned Region</label>
+                    {editingUser && (
+                      <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", display: "inline-flex", alignItems: "center", gap: "3px" }}>
+                        <Lock size={10} /> Locked
+                      </span>
+                    )}
+                  </div>
+                  <select
+                    id="um-modal-region"
+                    value={formData.location}
+                    disabled={!!editingUser}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
+                    style={{
+                      ...inputStyle("location"),
+                      cursor: editingUser ? "not-allowed" : "pointer",
+                      opacity: editingUser ? 0.75 : 1,
+                      background: editingUser ? "var(--bg-body)" : "var(--bg-card)",
+                      borderColor:
+                        !editingUser && !formData.location
+                          ? "#ef4444"
+                          : focusedField === "location"
+                          ? "#ff6600"
+                          : "var(--border-color)",
+                    }}
+                    {...(!editingUser ? focusProps("location") : {})}
+                  >
+                    <option value="">— Select a Region —</option>
+                    {regions.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                  {!editingUser && !formData.location && (
+                    <p style={{ fontSize: "0.72rem", color: "#ef4444", marginTop: "4px" }}>
+                      ↑ Required — choose an assigned region
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section 4: Initial Password (Register only) */}
+          {!editingUser && (
+            <div style={S.drawerSection}>
+              <div style={S.sectionHeader}>
+                <span style={S.sectionIconBadge("#10b981")}>
+                  <KeyRound size={14} />
+                </span>
+                <span style={S.sectionTitle}>Initial Credentials</span>
+              </div>
+
+              <div style={S.formGroup}>
+                <label style={S.label}>
+                  Temporary Password <span style={{ color: "#ef4444" }}>*</span>
+                </label>
+                <input
+                  id="um-modal-password"
+                  type="text"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  style={{
+                    ...inputStyle("password"),
+                    borderColor:
+                      formData.password && formData.password.length < 10
+                        ? "#ef4444"
+                        : focusedField === "password"
+                        ? "#ff6600"
+                        : "var(--border-color)",
+                  }}
+                  {...focusProps("password")}
+                  placeholder="Minimum 10 characters"
+                />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
+                  <span style={{ fontSize: "0.74rem", color: formData.password.length >= 10 ? "#10b981" : "#94a3b8" }}>
+                    {formData.password.length >= 10 ? "✓ Meets minimum length requirement" : "Requires at least 10 characters"}
+                  </span>
+                  <span style={{ fontSize: "0.74rem", fontWeight: 600, color: formData.password.length >= 10 ? "#10b981" : "#ef4444" }}>
+                    {formData.password.length}/10 chars
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </form>
+      </Drawer>
+
+      {/* ── Slide-Over Drawer: Reset Password ── */}
+      <Drawer
         isOpen={!!resetTarget}
         onClose={() => setResetTarget(null)}
         title="Reset User Password"
-        maxWidth="480px"
+        subtitle={resetTarget ? `Administrative credential overwrite for ${resetTarget.email}` : ""}
+        icon={KeyRound}
+        iconColor="#f59e0b"
+        iconBg="rgba(245, 158, 11, 0.12)"
+        width="540px"
+        footer={
+          <>
+            <button
+              id="um-reset-pwd-cancel"
+              type="button"
+              style={S.btnSecondary}
+              onClick={() => setResetTarget(null)}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "var(--bg-hover)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "transparent")
+              }
+            >
+              Cancel
+            </button>
+            <button
+              id="um-reset-pwd-submit"
+              type="submit"
+              form="um-reset-pwd-form"
+              disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
+              style={{
+                ...S.btnPrimary,
+                background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
+                boxShadow: "0 4px 12px rgba(245,158,11,.3)",
+                opacity:
+                  resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
+                    ? 0.6
+                    : 1,
+                cursor:
+                  resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
+                    ? "not-allowed"
+                    : "pointer",
+              }}
+            >
+              {resetLoading ? (
+                "Resetting…"
+              ) : (
+                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <KeyRound size={16} />
+                  Reset Password
+                </span>
+              )}
+            </button>
+          </>
+        }
       >
         {resetTarget && (
-          <form onSubmit={handleResetPasswordSubmit}>
-            {/* Target user info */}
+          <form id="um-reset-pwd-form" onSubmit={handleResetPasswordSubmit}>
+            {/* Target user info card */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "12px",
-                padding: "12px 14px",
-                borderRadius: "12px",
-                background: "rgba(245,158,11,.08)",
-                border: "1px solid rgba(245,158,11,.25)",
+                gap: "14px",
+                padding: "14px 16px",
+                borderRadius: "14px",
+                background: "var(--bg-body)",
+                border: "1px solid var(--border-color)",
                 marginBottom: "20px",
               }}
             >
-              <span style={{ color: "#f59e0b" }}><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-              <div>
-                <div style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "0.95rem" }}>
+              <div
+                style={{
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "12px",
+                  background: "rgba(245, 158, 11, 0.15)",
+                  border: "1px solid rgba(245, 158, 11, 0.3)",
+                  color: "#f59e0b",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 800,
+                  fontSize: "1.1rem",
+                  flexShrink: 0,
+                }}
+              >
+                {resetTarget.fullName?.charAt(0)?.toUpperCase() || "U"}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    color: "var(--text-primary)",
+                    fontSize: "0.98rem",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {resetTarget.fullName}
                 </div>
-                <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", fontFamily: "monospace" }}>
+                <div
+                  style={{
+                    fontSize: "0.8rem",
+                    color: "var(--text-secondary)",
+                    fontFamily: "monospace",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {resetTarget.email}
                 </div>
               </div>
+              {resetTarget.role && (
+                <span
+                  style={S.roleBadge(
+                    getRoleMeta(resetTarget.role).color,
+                    getRoleMeta(resetTarget.role).bg,
+                    getRoleMeta(resetTarget.role).border,
+                  )}
+                >
+                  {getRoleMeta(resetTarget.role).label}
+                </span>
+              )}
             </div>
 
-            {/* Security warning */}
+            {/* Security Notice */}
             <div
               style={{
                 display: "flex",
                 alignItems: "flex-start",
-                gap: "8px",
-                padding: "10px 14px",
+                gap: "10px",
+                padding: "12px 14px",
                 borderRadius: "10px",
-                background: "rgba(239,68,68,.06)",
-                border: "1px solid rgba(239,68,68,.2)",
-                marginBottom: "20px",
+                background: "rgba(239, 68, 68, 0.06)",
+                border: "1px solid rgba(239, 68, 68, 0.2)",
+                marginBottom: "22px",
                 fontSize: "0.8rem",
                 color: "#dc2626",
+                lineHeight: 1.45,
               }}
             >
-              <span style={{ flexShrink: 0 }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-              <span>
-                You are about to reset this user's password. They will receive a security notification
-                and must use the new password immediately.
-              </span>
+              <AlertCircle size={17} style={{ flexShrink: 0, marginTop: "2px" }} />
+              <div>
+                <strong>Security Impact:</strong> This will overwrite the user's password immediately. Active sessions will be terminated and the user must sign in with the new credentials.
+              </div>
             </div>
 
-            {/* New password */}
-            <div style={S.formGroup}>
+            {/* New Password input */}
+            <div style={{ ...S.formGroup, marginBottom: "20px" }}>
               <label style={S.label}>New Password</label>
               <div style={{ position: "relative" }}>
                 <input
@@ -1652,9 +1707,7 @@ const UserManagement = () => {
                         ? "#f59e0b"
                         : "var(--border-color)",
                     boxShadow:
-                      resetPwd && resetPwd.length < 10
-                        ? "0 0 0 3px rgba(239,68,68,.1)"
-                        : focusedField === "resetPwd"
+                      focusedField === "resetPwd"
                         ? "0 0 0 3px rgba(245,158,11,.15)"
                         : "none",
                   }}
@@ -1675,50 +1728,73 @@ const UserManagement = () => {
                     border: "none",
                     cursor: "pointer",
                     color: "var(--text-secondary)",
-                    fontSize: "1rem",
-                    lineHeight: 1,
-                    padding: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "4px",
                   }}
-                  title={resetPwdShow ? "Hide" : "Show"}
+                  title={resetPwdShow ? "Hide password" : "Show password"}
                 >
-                  {resetPwdShow ? (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                  ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  )}
+                  {resetPwdShow ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              {/* Strength indicator */}
+
+              {/* Password strength visual meter */}
               {resetPwd && (
-                <div style={{ marginTop: "6px", display: "flex", gap: "4px" }}>
-                  {[
-                    resetPwd.length >= 10,
-                    /[A-Z]/.test(resetPwd),
-                    /[a-z]/.test(resetPwd),
-                    /[0-9]/.test(resetPwd),
-                    /[!@#$%^&*(),.?":{}<>\-_]/.test(resetPwd),
-                  ].map((ok, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        flex: 1,
-                        height: "4px",
-                        borderRadius: "2px",
-                        background: ok ? "#10b981" : "var(--border-color)",
-                        transition: "background .2s",
-                      }}
-                    />
-                  ))}
+                <div style={{ marginTop: "10px" }}>
+                  <div style={{ display: "flex", gap: "4px", marginBottom: "8px" }}>
+                    {[
+                      resetPwd.length >= 10,
+                      /[A-Z]/.test(resetPwd),
+                      /[a-z]/.test(resetPwd),
+                      /[0-9]/.test(resetPwd),
+                      /[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd),
+                    ].map((ok, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          flex: 1,
+                          height: "4px",
+                          borderRadius: "2px",
+                          background: ok ? "#10b981" : "var(--border-color)",
+                          transition: "background .2s",
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Requirements breakdown tags */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {[
+                      { label: "10+ Chars", ok: resetPwd.length >= 10 },
+                      { label: "Uppercase (A-Z)", ok: /[A-Z]/.test(resetPwd) },
+                      { label: "Lowercase (a-z)", ok: /[a-z]/.test(resetPwd) },
+                      { label: "Number (0-9)", ok: /[0-9]/.test(resetPwd) },
+                      { label: "Special symbol", ok: /[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd) },
+                    ].map((req, idx) => (
+                      <span
+                        key={idx}
+                        style={{
+                          fontSize: "0.7rem",
+                          padding: "2px 8px",
+                          borderRadius: "4px",
+                          background: req.ok ? "rgba(16, 185, 129, 0.1)" : "rgba(100, 116, 139, 0.08)",
+                          color: req.ok ? "#10b981" : "var(--text-secondary)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "3px",
+                          fontWeight: req.ok ? 600 : 400,
+                        }}
+                      >
+                        {req.ok ? <Check size={10} /> : "·"} {req.label}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              )}
-              {resetPwd && (
-                <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: "4px" }}>
-                  Requirements: 10+ chars · Uppercase · Lowercase · Digit · Special char
-                </p>
               )}
             </div>
 
-            {/* Confirm password */}
+            {/* Confirm Password input */}
             <div style={S.formGroup}>
               <label style={S.label}>Confirm New Password</label>
               <input
@@ -1731,69 +1807,31 @@ const UserManagement = () => {
                   borderColor:
                     resetPwdConfirm && resetPwdConfirm !== resetPwd
                       ? "#ef4444"
+                      : resetPwdConfirm && resetPwdConfirm === resetPwd
+                      ? "#10b981"
                       : focusedField === "resetPwdConfirm"
                       ? "#f59e0b"
                       : "var(--border-color)",
-                  boxShadow:
-                    resetPwdConfirm && resetPwdConfirm !== resetPwd
-                      ? "0 0 0 3px rgba(239,68,68,.1)"
-                      : "none",
                 }}
                 onFocus={() => setFocusedField("resetPwdConfirm")}
                 onBlur={() => setFocusedField(null)}
-                placeholder="Re-enter the password"
+                placeholder="Re-enter the new password"
                 autoComplete="new-password"
               />
               {resetPwdConfirm && resetPwdConfirm !== resetPwd && (
-                <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "4px" }}>
-                  ✗ Passwords do not match
+                <p style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <AlertCircle size={13} /> Passwords do not match
                 </p>
               )}
               {resetPwdConfirm && resetPwdConfirm === resetPwd && resetPwd.length >= 10 && (
-                <p style={{ fontSize: "0.75rem", color: "#10b981", marginTop: "4px" }}>
-                  ✓ Passwords match
+                <p style={{ fontSize: "0.75rem", color: "#10b981", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <CheckCircle2 size={13} /> Passwords match
                 </p>
               )}
             </div>
-
-            <div style={S.modalActions}>
-              <button
-                id="um-reset-pwd-cancel"
-                type="button"
-                style={S.btnSecondary}
-                onClick={() => setResetTarget(null)}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "var(--bg-hover)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "transparent")
-                }
-              >
-                Cancel
-              </button>
-              <button
-                id="um-reset-pwd-submit"
-                type="submit"
-                disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
-                style={{
-                  ...S.btnPrimary,
-                  background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
-                  boxShadow: "0 4px 12px rgba(245,158,11,.3)",
-                  opacity: (resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10) ? 0.6 : 1,
-                  cursor: (resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10) ? "not-allowed" : "pointer",
-                }}
-              >
-                {resetLoading ? "Resetting…" : (
-                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-                    Reset Password
-                  </span>
-                )}
-              </button>
-            </div>
           </form>
         )}
-      </Modal>
+      </Drawer>
 
       <ConfirmModal
         isOpen={!!deleteTargetUser}
