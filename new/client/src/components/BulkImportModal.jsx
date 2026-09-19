@@ -535,7 +535,8 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
   const downloadTemplate = async () => {
     if (type === "activity") {
       // Use the backend's comprehensive template generator for emissions data
-      window.location.href = `http://127.0.0.1:5000/api/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`;
+      const baseUrl = import.meta.env.VITE_API_URL || "/api";
+      window.location.href = `${baseUrl}/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`;
       return;
     }
 
