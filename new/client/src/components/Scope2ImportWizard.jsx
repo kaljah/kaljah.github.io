@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import "./Scope1ImportWizard.css"; // Reuse the same CSS for identical aesthetic
 
@@ -264,6 +265,7 @@ function autoDetect(headers, allFields) {
 
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
+  const toast = useToast();
   const fileInputRef = useRef(null);
 
   const [step, setStep] = useState(1);
@@ -339,15 +341,14 @@ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
     form.append("file", file);
     form.append("scope", "2");
     form.append("column_mapping", JSON.stringify(mapping));
-    // Re-using the same backend endpoint for scope 1 which supports dynamic scope through form.append("scope", "2")
     try {
-      const res = await api.post("/emissions/bulk-upload", form, {
+      const res = await api.post("/emissions/upload/start", form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setJobId(res.data.job_id);
       setStep(3);
     } catch (err) {
-      alert("Upload error: " + (err.response?.data?.error || err.message));
+      toast.error("Upload error: " + (err.response?.data?.error || err.message));
     } finally { setIsSubmitting(false); }
   };
 

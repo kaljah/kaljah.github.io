@@ -62,7 +62,7 @@ def _parse_non_negative_float(val, field_name, default=0.0):
 def create_custom_factor():
     """Create a new custom emission factor (Super User / Admin only)"""
     user_id = session.get("user_id")
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
 
     data = request.get_json()
     factor_name = (data.get("factor_name") or data.get("name") or "").strip() if data else ""
@@ -134,9 +134,9 @@ def create_custom_factor():
 def update_custom_factor(factor_id):
     """Update a custom emission factor (Super User / Admin only)"""
     user_id = session.get("user_id")
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
 
-    factor = CustomFactor.query.get(factor_id)
+    factor = db.session.get(CustomFactor, factor_id)
     if not factor:
         return jsonify({"error": "Factor not found"}), 404
 
@@ -188,7 +188,7 @@ def update_custom_factor(factor_id):
         factor.version = data["version"]
 
     factor.updated_by = user_id
-    factor.updated_at = datetime.datetime.utcnow()
+    factor.updated_at = datetime.datetime.now(datetime.timezone.utc)
 
     try:
         db.session.commit()
@@ -218,11 +218,24 @@ def update_custom_factor(factor_id):
 def delete_custom_factor(factor_id):
     """Delete a custom emission factor (Super User / Admin only)"""
     user_id = session.get("user_id")
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
 
-    factor = CustomFactor.query.get(factor_id)
+    factor = db.session.get(CustomFactor, factor_id)
     if not factor:
         return jsonify({"error": "Factor not found"}), 404
+
+    from models import Emission, Scope2Emission
+    ref_count_s1 = Emission.query.filter(Emission.fuel_type == factor.name).count()
+    ref_count_s2 = Scope2Emission.query.filter(Scope2Emission.source_type == factor.name).count()
+    if (ref_count_s1 + ref_count_s2) > 0:
+        return (
+            jsonify(
+                {
+                    "error": f"Cannot delete factor '{factor.name}': referenced by {ref_count_s1 + ref_count_s2} emission records. Archive the factor instead."
+                }
+            ),
+            409,
+        )
 
     factor_name = factor.name
     try:
@@ -254,7 +267,7 @@ def delete_custom_factor(factor_id):
 def import_custom_factors():
     """Bulk import custom factors from CSV/Excel (Super User / Admin only)"""
     user_id = session.get("user_id")
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
 
     data = request.get_json()
     factors_data = data.get("factors", [])

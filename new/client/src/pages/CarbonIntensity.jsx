@@ -207,12 +207,12 @@ const CarbonIntensity = () => {
       });
 
       setStats({
-        avgCo2Intensity: tBoe > 0 ? wCo2Sum / tBoe : 0,
-        avgCo2IntensityGwp20: tBoe > 0 ? wCo2Gwp20Sum / tBoe : 0,
-        avgScope1Intensity: tBoe > 0 ? wS1Sum / tBoe : 0,
-        avgScope2Intensity: tBoe > 0 ? wS2Sum / tBoe : 0,
-        avgScope3Intensity: tBoe > 0 ? wS3Sum / tBoe : 0,
-        avgFlaringIntensity: tBoe > 0 ? wFlaringSum / tBoe : 0,
+        avgCo2Intensity: tBoe > 0 ? wCo2Sum / tBoe : (tCo2e > 0 ? null : 0),
+        avgCo2IntensityGwp20: tBoe > 0 ? wCo2Gwp20Sum / tBoe : (tCo2eGwp20 > 0 ? null : 0),
+        avgScope1Intensity: tBoe > 0 ? wS1Sum / tBoe : (tScope1 > 0 ? null : 0),
+        avgScope2Intensity: tBoe > 0 ? wS2Sum / tBoe : (tScope2 > 0 ? null : 0),
+        avgScope3Intensity: tBoe > 0 ? wS3Sum / tBoe : (tScope3 > 0 ? null : 0),
+        avgFlaringIntensity: tBoe > 0 ? wFlaringSum / tBoe : (tFlaringEm > 0 ? null : 0),
         totalCo2Emissions: tCo2e,
         totalCo2EmissionsGwp20: tCo2eGwp20,
         totalScope1: tScope1,
@@ -435,7 +435,7 @@ const CarbonIntensity = () => {
   }, [rawTrendData, currentRegion, gwpHorizon]);
 
   const getHeatmapClass = (val) => {
-    if (val === null || val === 0) return "heat-null";
+    if (val === null || val === undefined || isNaN(val) || val === 0) return "heat-null";
     if (val < 18) return "heat-lux";
     if (val < 28) return "heat-low";
     if (val < 38) return "heat-mid";
@@ -517,10 +517,21 @@ const CarbonIntensity = () => {
                 <span className="kpi-label">GHG Intensity (Avg)</span>
               </div>
               <div className="kpi-value-container">
-                <span className="total-value co2">
-                  {(currentDisplayCo2Intensity ?? 0).toFixed(2)}
+                <span
+                  className="total-value co2"
+                  style={
+                    currentDisplayCo2Intensity === null
+                      ? { fontSize: "1.25rem", color: "#f59e0b" }
+                      : undefined
+                  }
+                >
+                  {currentDisplayCo2Intensity === null
+                    ? "Pending Production"
+                    : (currentDisplayCo2Intensity ?? 0).toFixed(2)}
                 </span>
-                <span className="kpi-unit">kg CO₂e / BOE</span>
+                <span className="kpi-unit">
+                  {currentDisplayCo2Intensity === null ? "" : "kg CO₂e / BOE"}
+                </span>
               </div>
               <div className="kpi-footer">
                 <span className="gwp-subtag">
@@ -541,16 +552,29 @@ const CarbonIntensity = () => {
                 <span className="kpi-label">Scope 1 Direct Intensity</span>
               </div>
               <div className="kpi-value-container">
-                <span className="total-value scope1">
-                  {(stats.avgScope1Intensity ?? 0).toFixed(2)}
+                <span
+                  className="total-value scope1"
+                  style={
+                    stats.avgScope1Intensity === null
+                      ? { fontSize: "1.25rem", color: "#f59e0b" }
+                      : undefined
+                  }
+                >
+                  {stats.avgScope1Intensity === null
+                    ? "Pending Production"
+                    : (stats.avgScope1Intensity ?? 0).toFixed(2)}
                 </span>
-                <span className="kpi-unit">kg CO₂e / BOE</span>
+                <span className="kpi-unit">
+                  {stats.avgScope1Intensity === null ? "" : "kg CO₂e / BOE"}
+                </span>
               </div>
               <div className="kpi-footer">
                 <span>
                   Scope 2:{" "}
                   <strong>
-                    {(stats.avgScope2Intensity ?? 0).toFixed(2)} kg/BOE
+                    {stats.avgScope2Intensity === null
+                      ? "Pending"
+                      : `${(stats.avgScope2Intensity ?? 0).toFixed(2)} kg/BOE`}
                   </strong>
                 </span>
                 <span>
@@ -886,11 +910,13 @@ const CarbonIntensity = () => {
                         const record = yData.data.find(
                           (r) => r.facility_id === facData.facility_id,
                         );
-                        const val = record
+                        const rawVal = record
                           ? gwpHorizon === "20"
                             ? record.co2_intensity_gwp20 || record.co2_intensity
                             : record.co2_intensity
                           : 0;
+                        const numVal = Number(rawVal);
+                        const val = isFinite(numVal) ? numVal : 0;
                         return (
                           <div
                             key={yData.year}

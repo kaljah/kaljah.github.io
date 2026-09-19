@@ -8,6 +8,7 @@ import "./Scope1Form.css";
 
 // Sub-components
 import Scope1ImportWizard from "./Scope1ImportWizard";
+import ConfirmModal from "./ConfirmModal";
 import { Upload, Trash2, Eye } from "lucide-react";
 import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
@@ -40,6 +41,7 @@ const PROCESS_TYPES = PROCESS_TYPES_MAP;
 const Scope1Form = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   // Core Identity State
   const [year, setYear] = useState(new Date().getFullYear());
@@ -53,6 +55,7 @@ const Scope1Form = () => {
   const [streamType, setStreamType] = useState("Upstream"); // 'Upstream', 'Midstream', 'Downstream'
   const [groupName, setGroupName] = useState("");
   const [equipmentId, setEquipmentId] = useState("");
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   // Dynamic Form Data State
   const [formData, setFormData] = useState({});
@@ -730,6 +733,7 @@ const Scope1Form = () => {
     }
 
     try {
+      setSubmitting(true);
       // Construct calc_inputs based on process type
       // This wraps all process-specific parameters as backend expects
       const processInputs = {};
@@ -1022,6 +1026,8 @@ const Scope1Form = () => {
       console.error("Failed to add entry:", error);
       const msg = error.response?.data?.error || "Failed to add entry";
       toast.error(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -1031,51 +1037,129 @@ const Scope1Form = () => {
     const qty = entry.amount || entry.quantity || 0;
     const unitVal = entry.unit || "unit";
 
+    let payload = {};
+    if (entry.source_payload) {
+      try {
+        payload =
+          typeof entry.source_payload === "string"
+            ? JSON.parse(entry.source_payload)
+            : entry.source_payload;
+      } catch (e) {}
+    }
+
+    const co2Val = Number(entry.co2_emissions || 0);
+    const ch4Val = Number(entry.ch4_emissions || 0);
+    const n2oVal = Number(entry.n2o_emissions || 0);
+    const co2eVal = Number(entry.co2e_total || 0);
+
+    const numQty = Number(qty) || 0;
+    const efCo2 =
+      entry.ef_used_co2 ??
+      payload.ef_used_co2 ??
+      payload.factor_co2 ??
+      (numQty > 0 ? (co2Val * 1000) / numQty : null);
+    const efCh4 =
+      entry.ef_used_ch4 ??
+      payload.ef_used_ch4 ??
+      payload.factor_ch4 ??
+      (numQty > 0 ? (ch4Val * 1000) / numQty : null);
+    const efN2o =
+      entry.ef_used_n2o ??
+      payload.ef_used_n2o ??
+      payload.factor_n2o ??
+      (numQty > 0 ? (n2oVal * 1000) / numQty : null);
+
+    const fSource =
+      entry.factor_source ||
+      entry.factor_type ||
+      payload.factor_source ||
+      "API Compendium 2021 (Default)";
+    const facName =
+      entry.facility_name ||
+      facilities.find((f) => f.id === entry.facility_id)?.name ||
+      `Facility #${entry.facility_id || "N/A"}`;
+    const pLabel =
+      PROCESS_TYPES[entry.process || entry.process_type]?.label || pType;
+
     setInspectRecord({
-      process_type: `Scope 1 - ${pType}`,
+      process_type: `Scope 1 - ${pLabel}`,
       fuel: fuelVal,
       amount: qty,
       unit: unitVal,
+      facility: facName,
+      year: entry.year,
+      month: entry.month,
+      equipment_id: entry.equipment_id || "-",
+      status: entry.status || "Verified",
+      factor_source: fSource,
+      method:
+        entry.calc_method ||
+        entry.calculation_method ||
+        (fSource.toLowerCase().includes("specific")
+          ? "Tier 3 Engineering / CEMS"
+          : "API Compendium / Tier 1-2"),
       emissions: {
-        totalCo2e: entry.co2e_total || 0,
-        co2: entry.co2_emissions || 0,
-        ch4: entry.ch4_emissions || 0,
-        n2o: entry.n2o_emissions || 0,
+        totalCo2e: co2eVal,
+        co2: co2Val,
+        ch4: ch4Val,
+        n2o: n2oVal,
       },
       factors: {
-        co2: entry.factor_co2 || null,
-        ch4: entry.factor_ch4 || null,
-        n2o: entry.factor_n2o || null,
+        co2: efCo2,
+        ch4: efCh4,
+        n2o: efN2o,
+        gwp_ch4: 28.0,
+        gwp_n2o: 265.0,
+        source: fSource,
       },
-      method: entry.calculation_method || "API Compendium / Tier 3 Rigorous",
+      uncertainty: {
+        co2: entry.uncertainty_co2,
+        ch4: entry.uncertainty_ch4,
+        n2o: entry.uncertainty_n2o,
+      },
       steps: [
         {
-          name: "Activity Input",
-          desc: `${formatNumber(qty, 2)} ${unitVal} of ${fuelVal} for facility ID ${entry.facility_id}`,
+          name: "1. Operational Activity & Facility Scope",
+          desc: `Logged consumption / activity of ${formatNumber(qty, 2)} ${unitVal} for ${fuelVal} at ${facName} (${entry.year}-${String(entry.month || 1).padStart(2, "0")}).`,
+          formula: `Activity = ${formatNumber(qty, 2)} ${unitVal}`,
         },
         {
-          name: "GHG Species Calculation",
-          desc: `CO₂: ${formatNumber(entry.co2_emissions || 0, 3)} t | CH₄: ${formatNumber(entry.ch4_emissions || 0, 5)} t | N₂O: ${formatNumber(entry.n2o_emissions || 0, 5)} t`,
+          name: "2. Emission Factor Application & Species Mass",
+          desc: `Calculated direct chemical emission masses using ${fSource} methodology:`,
+          formula: `CO₂: ${formatNumber(co2Val, 4)} t | CH₄: ${formatNumber(ch4Val, 6)} t | N₂O: ${formatNumber(n2oVal, 6)} t`,
         },
         {
-          name: "GWP Weighted Total",
-          desc: `Total CO₂e: ${formatNumber(entry.co2e_total || 0, 3)} tCO₂e`,
+          name: "3. Global Warming Potential (GWP AR5) Weighting",
+          desc: `Weighted summation to CO₂ equivalent using standard IPCC AR5 factors (CO₂: 1.0, CH₄: 28.0, N₂O: 265.0):`,
+          formula: `CO₂e = (${formatNumber(co2Val, 4)} × 1.0) + (${formatNumber(ch4Val, 6)} × 28.0) + (${formatNumber(n2oVal, 6)} × 265.0)`,
+          result: co2eVal,
+          unit: "tCO₂e",
+        },
+        {
+          name: "4. Quality Assurance & Uncertainty Profile",
+          desc: `Standard combined uncertainty (1σ): CO₂ ${entry.uncertainty_co2 != null ? '±' + (entry.uncertainty_co2 * 100).toFixed(0) + '%' : '—'}, CH₄ ${entry.uncertainty_ch4 != null ? '±' + (entry.uncertainty_ch4 * 100).toFixed(0) + '%' : '—'}, N₂O ${entry.uncertainty_n2o != null ? '±' + (entry.uncertainty_n2o * 100).toFixed(0) + '%' : '—'}. Verification Status: ${entry.status || 'Verified'}.`,
         },
       ],
     });
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this entry?")) return;
+  const handleDelete = (id) => {
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
     try {
       // Strip prefix (e.g. "s1_17" -> "17")
-      const realId = id.toString().replace(/^[s]\d+_/, "");
+      const realId = deleteConfirmId.toString().replace(/^[s]\d+_/, "");
       await api.delete(`/emissions/${realId}`);
       toast.success("Entry deleted");
       loadEntries();
     } catch (error) {
       console.error("Failed to delete:", error);
       toast.error("Failed to delete entry");
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -2035,6 +2119,7 @@ const Scope1Form = () => {
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             className="btn-add-draft"
+            disabled={submitting}
             onClick={() => handleAddEntry("Draft")}
             style={{
               flex: 1,
@@ -2044,17 +2129,23 @@ const Scope1Form = () => {
               fontWeight: 600,
               padding: "10px 16px",
               borderRadius: "10px",
-              cursor: "pointer",
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
             }}
           >
-            Save as Draft (Maker Mode)
+            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
           </button>
           <button
             className="btn-add-activity"
+            disabled={submitting}
             onClick={() => handleAddEntry("Verified")}
-            style={{ flex: 1.5 }}
+            style={{
+              flex: 1.5,
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+            }}
           >
-            + Calculate & Submit for Review
+            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
           </button>
         </div>
       </div>
@@ -2277,7 +2368,7 @@ const Scope1Form = () => {
                   return (
                     <tr>
                       <td
-                        colSpan="19"
+                        colSpan="22"
                         style={{
                           textAlign: "center",
                           color: "var(--text-secondary)",
@@ -2476,7 +2567,7 @@ const Scope1Form = () => {
             <tfoot>
               <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
                 <td
-                  colSpan="18"
+                  colSpan="14"
                   style={{ textAlign: "right", paddingRight: "15px" }}
                 >
                   Total (
@@ -2513,7 +2604,7 @@ const Scope1Form = () => {
                     3,
                   )}
                 </td>
-                <td></td>
+                <td colSpan="7"></td>
               </tr>
             </tfoot>
           </table>
@@ -2560,6 +2651,16 @@ const Scope1Form = () => {
           onClose={() => setInspectRecord(null)}
         />
       )}
+
+      <ConfirmModal
+        isOpen={Boolean(deleteConfirmId)}
+        title="Delete Scope 1 Emission"
+        message="Are you sure you want to delete this emission entry? This action cannot be undone."
+        confirmLabel="Delete"
+        confirmVariant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteConfirmId(null)}
+      />
     </div>
   );
 };

@@ -8,12 +8,16 @@ import Scope3ImportWizard from "./Scope3ImportWizard";
 import { Upload, Trash2, Eye } from "lucide-react";
 import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
+import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
 
 const Scope3Form = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [facilityId, setFacilityId] = useState("");
@@ -272,6 +276,7 @@ const Scope3Form = () => {
     }
 
     try {
+      setSubmitting(true);
       const amt = parseFloat(amount);
       const ef = parseFloat(emissionFactor);
       const totalEmissions = (amt * ef) / 1000;
@@ -305,6 +310,8 @@ const Scope3Form = () => {
     } catch (error) {
       console.error("Failed to add entry:", error);
       toast.error("Failed to add entry");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -348,15 +355,23 @@ const Scope3Form = () => {
     toast.success("Records imported successfully!");
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this entry?")) return;
+  const handleDelete = (id) => {
+    setDeleteTargetId(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) return;
+    setIsDeleting(true);
     try {
-      await api.delete(`/scope3/${id}`);
+      await api.delete(`/scope3/${deleteTargetId}`);
       toast.success("Entry deleted");
+      setDeleteTargetId(null);
       loadEntries();
     } catch (error) {
       console.error("Failed to delete:", error);
       toast.error("Failed to delete entry");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -648,17 +663,28 @@ const Scope3Form = () => {
         >
           <button
             className="action-btn secondary"
+            disabled={submitting}
             onClick={() => handleAddEntry("Draft")}
-            style={{ padding: "12px 20px" }}
+            style={{
+              padding: "12px 20px",
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+            }}
           >
-            Save as Draft (Maker Mode)
+            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
           </button>
           <button
             className="btn-add-activity"
+            disabled={submitting}
             onClick={() => handleAddEntry("Verified")}
-            style={{ flex: 1.5, padding: "12px" }}
+            style={{
+              flex: 1.5,
+              padding: "12px",
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+            }}
           >
-            + Calculate & Submit for Review
+            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
           </button>
         </div>
 
@@ -867,6 +893,17 @@ const Scope3Form = () => {
           onClose={() => setInspectRecord(null)}
         />
       )}
+
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        title="Delete Scope 3 Entry"
+        message="Are you sure you want to delete this Scope 3 entry? This calculation record will be permanently removed."
+        confirmLabel="Delete Record"
+        confirmVariant="danger"
+        loading={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTargetId(null)}
+      />
     </div>
   );
 };

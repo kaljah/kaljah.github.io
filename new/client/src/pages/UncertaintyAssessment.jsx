@@ -40,6 +40,8 @@ const UncertaintyAssessment = () => {
           if (selectedYear === "all") {
             setSelectedYear(filterRes.data.years[0].toString());
           }
+        } else {
+          setLoading(false);
         }
         if (facRes.data) {
           setFacilities(
@@ -48,6 +50,7 @@ const UncertaintyAssessment = () => {
         }
       } catch (err) {
         console.error("Failed to load filters:", err);
+        setLoading(false);
       }
     };
     loadFilters();
@@ -55,7 +58,10 @@ const UncertaintyAssessment = () => {
 
   // Fetch uncertainty data when filters change
   useEffect(() => {
-    if (selectedYear === "all") return;
+    if (selectedYear === "all") {
+      setLoading(false);
+      return;
+    }
 
     const fetchData = async () => {
       setLoading(true);
@@ -172,24 +178,6 @@ const UncertaintyAssessment = () => {
     );
   }
 
-  if (!data) {
-    return (
-      <div className="uncertainty-assessment">
-        <div className="ua-methodology-box">
-          <Info size={24} className="ua-methodology-icon" />
-          <div>
-            <h4>No Uncertainty Data Available</h4>
-            <p>
-              No verified emission records found for the selected filters.
-              Ensure emissions have been submitted and verified before running
-              the uncertainty assessment.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="uncertainty-assessment">
       {/* ── Page Header ── */}
@@ -201,19 +189,21 @@ const UncertaintyAssessment = () => {
             inventory, compliant with ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
             §3.3.
           </p>
-          <div className="ua-inventory-badge">
-            <div className="ua-inventory-label">Inventory Uncertainty</div>
-            <div
-              className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
-            >
-              {data.inventory_uncertainty_pct}
-            </div>
-            {data.confidence_level_pct && (
-              <div className="ua-confidence-badge">
-                {data.confidence_level_pct}% CI (k={data.coverage_factor})
+          {data && (
+            <div className="ua-inventory-badge">
+              <div className="ua-inventory-label">Inventory Uncertainty</div>
+              <div
+                className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
+              >
+                {data.inventory_uncertainty_pct}
               </div>
-            )}
-          </div>
+              {data.confidence_level_pct && (
+                <div className="ua-confidence-badge">
+                  {data.confidence_level_pct}% CI (k={data.coverage_factor})
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="ua-controls">
@@ -245,7 +235,7 @@ const UncertaintyAssessment = () => {
           <button
             className="ua-export-btn"
             onClick={handleExport}
-            disabled={exporting}
+            disabled={exporting || !data}
             title="Export uncertainty assessment as CSV"
           >
             <Download size={16} />
@@ -254,7 +244,21 @@ const UncertaintyAssessment = () => {
         </div>
       </div>
 
-      {/* ── Tier Breakdown Cards ── */}
+      {!data ? (
+        <div className="ua-methodology-box" style={{ marginTop: "24px" }}>
+          <Info size={24} className="ua-methodology-icon" />
+          <div>
+            <h4>No Uncertainty Data Available</h4>
+            <p>
+              No verified emission records found for the selected filters.
+              Ensure emissions have been submitted and verified before running
+              the uncertainty assessment.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* ── Tier Breakdown Cards ── */}
       <div className="ua-tier-grid">
         {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
           <div key={tier} className="ua-tier-card">
@@ -335,6 +339,8 @@ const UncertaintyAssessment = () => {
           </div>
         ))}
       </div>
+      </>
+      )}
 
       {/* ── Methodology Footer ── */}
       <div className="ua-methodology-box">

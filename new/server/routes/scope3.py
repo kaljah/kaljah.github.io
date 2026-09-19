@@ -4,6 +4,7 @@ from extensions import db
 from sqlalchemy import func
 from routes.auth import login_required
 from calculations.uncertainty import propagate_uncertainty, Tier
+from calculations.units import compute_scope3_co2e
 from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
 import datetime
 
@@ -73,8 +74,8 @@ def create_scope3_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role == "it_admin":
-        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+    if user.role in ["viewer", "auditor", "it_admin"]:
+        return jsonify({"error": "Read-only or administrative role cannot create emission records"}), 403
 
     data = request.get_json() or {}
     facility_id = data.get("facility_id")
@@ -95,10 +96,13 @@ def create_scope3_emission():
     activity_data = float(data.get("activity_data") or data.get("amount", 0))
     emission_factor = float(data.get("emission_factor", 0))
     co2e_input = data.get("co2e") or data.get("emissions_tco2e")
-    if co2e_input not in [None, ""]:
+    # Enforce server-side calculation from activity_data and emission_factor to prevent client-side tampering
+    if activity_data > 0 and emission_factor > 0:
+        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or "")
+        calc_method = str(data.get("calculation_method") or "")
+        co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method)
+    elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
         co2e_val = float(co2e_input)
-    elif activity_data > 0 and emission_factor > 0:
-        co2e_val = (activity_data * emission_factor) / 1000.0
     else:
         co2e_val = 0.0
 
@@ -141,30 +145,37 @@ def create_scope3_emission():
     emission.notes = data.get("notes")
     emission.created_by = user.id
 
-    db.session.add(emission)
-    db.session.commit()
-
-    log_activity_and_notify(
-        action="CREATE",
-        record_id=str(emission.id),
-        user=user,
-        request=request,
-        entity="Scope3Emission",
-        details=f"Created Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, Status: {initial_status})",
-    )
-    db.session.commit()
-
-    if initial_status in ("Pending", "Pending Approval"):
-        from models import Notification
-        admins = User.query.filter_by(role="admin", status="active").all()
-        for admin in admins:
-            Notification.create(
-                user_id=admin.id,
-                type="audit",
-                title="New Scope 3 Emission Pending Review",
-                message=f"A new Scope 3 emission record ({emission.category}) was submitted by {user.fullName} and is awaiting your approval.",
-            )
+    try:
+        db.session.add(emission)
         db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to create Scope 3 emission: {str(e)}"}), 500
+
+    try:
+        log_activity_and_notify(
+            action="CREATE",
+            record_id=str(emission.id),
+            user=user,
+            request=request,
+            entity="Scope3Emission",
+            details=f"Created Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, Status: {initial_status})",
+        )
+        db.session.commit()
+
+        if initial_status in ("Pending", "Pending Approval"):
+            from models import Notification
+            admins = User.query.filter_by(role="admin", status="active").all()
+            for admin in admins:
+                Notification.create(
+                    user_id=admin.id,
+                    type="audit",
+                    title="New Scope 3 Emission Pending Review",
+                    message=f"A new Scope 3 emission record ({emission.category}) was submitted by {user.fullName} and is awaiting your approval.",
+                )
+            db.session.commit()
+    except Exception:
+        db.session.rollback()
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
@@ -188,9 +199,12 @@ def create_scope3_emission():
             "facility_id": emission.facility_id,
             "category": emission.category,
             "sub_category": emission.sub_category,
+            "activity_data": emission.activity_data,
             "amount": emission.activity_data,
             "unit": emission.unit,
             "emission_factor": emission.emission_factor,
+            "co2e": co2e_val,
+            "uncertainty": final_uncertainty,
             "status": emission.status,
         },
         "calculation_method": calc_method,
@@ -204,8 +218,8 @@ def update_scope3_emission(emission_id):
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role == "it_admin":
-        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+    if user.role in ["viewer", "auditor", "it_admin"]:
+        return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
 
     emission = db.session.get(Scope3Emission, emission_id)
     if not emission:
@@ -213,6 +227,16 @@ def update_scope3_emission(emission_id):
 
     if not require_facility_access(user, emission.facility_id):
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
+
+    # Enforce creator ownership for standard user role
+    if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
+        return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
+
+    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
+    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
+        emission.status = "Pending"
+        emission.approved_by = None
+        emission.approved_at = None
 
     data = request.get_json() or {}
 
@@ -248,7 +272,9 @@ def update_scope3_emission(emission_id):
         # Recalculate co2e in tonnes: activity_data * emission_factor (if factor is kg/unit -> /1000)
         ef = emission.emission_factor or 0.0
         act = emission.activity_data or 0.0
-        emission.co2e = round((act * ef) / 1000.0, 4)
+        factor_unit = str(data.get("factor_unit") or data.get("emission_factor_unit") or getattr(emission, "factor_unit", "") or "")
+        calc_method = str(data.get("calculation_method") or getattr(emission, "calculation_method", "") or "")
+        emission.co2e = round(compute_scope3_co2e(act, ef, factor_unit, calc_method), 4)
 
         if emission.status == "Verified" and user.role != "admin":
             emission.status = "Pending"
@@ -264,7 +290,12 @@ def update_scope3_emission(emission_id):
     if "notes" in data:
         emission.notes = data["notes"]
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update Scope 3 emission: {str(e)}"}), 500
+
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
@@ -282,15 +313,43 @@ def delete_scope3_emission(emission_id):
     if user.role == "it_admin":
         return jsonify({"error": "IT Admins do not have access to emission data"}), 403
 
+    if user.role in ["viewer", "auditor"]:
+        return jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}), 403
+
     emission = db.session.get(Scope3Emission, emission_id)
     if not emission:
         return jsonify({"error": "Emission not found"}), 404
 
-    if not require_facility_access(user, emission.facility_id):
-        return jsonify({"error": "Unauthorized: Outside your region"}), 403
+    if user.role not in ["admin", "superuser"]:
+        if emission.created_by != user.id:
+            return (
+                jsonify(
+                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
+                ),
+                403,
+            )
+    else:
+        if not require_facility_access(user, emission.facility_id):
+            return jsonify({"error": "Unauthorized: Outside your region"}), 403
 
+    log_details = f"Deleted Scope 3 emission: {emission.category} ({emission.co2e:.2f} tCO2e, facility #{emission.facility_id})"
     db.session.delete(emission)
-    db.session.commit()
+    try:
+        from utils import log_activity_and_notify
+        log_activity_and_notify(
+            action="DELETE",
+            record_id=str(emission_id),
+            user=user,
+            request=request,
+            entity="Scope3Emission",
+            details=log_details,
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to delete Scope 3 emission: {e}")
+        return jsonify({"error": "Failed to delete Scope 3 record"}), 500
+
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
@@ -308,10 +367,21 @@ def bulk_import_scope3():
     if user.role == "it_admin":
         return jsonify({"error": "IT Admins do not have access to upload emission data"}), 403
 
-    data = request.get_json()
+    data = request.get_json() or {}
     records = data.get("records", [])
     if not records:
         return jsonify({"error": "No records provided"}), 400
+
+    MAX_SYNCHRONOUS_IMPORT = 2500
+    if len(records) > MAX_SYNCHRONOUS_IMPORT:
+        return (
+            jsonify(
+                {
+                    "error": f"Payload exceeds maximum synchronous limit of {MAX_SYNCHRONOUS_IMPORT} rows. Please split the batch."
+                }
+            ),
+            413,
+        )
 
     # Per D-04: bulk imports are Verified only if created by admin, otherwise Pending
     bulk_status = "Verified" if user.role == "admin" else "Pending"
@@ -341,7 +411,7 @@ def bulk_import_scope3():
                     if fid in facility_cache:
                         facility = facility_cache[fid]
                     else:
-                        facility = Facility.query.get(fid)
+                        facility = db.session.get(Facility, fid)
                         facility_cache[fid] = facility
                 except (ValueError, TypeError):
                     facility = None
@@ -350,24 +420,26 @@ def bulk_import_scope3():
                 errors.append(f"Row {i}: Facility '{f_val}' not found")
                 continue
 
+            if allowed_fids is not None and facility.id not in allowed_fids:
+                errors.append(f"Row {i}: Unauthorized for facility '{f_val}'")
+                continue
+
             # 2. Extract Data and Calculate
+            from background_processor import _clean_float
             cat = rec.get("category", "11")
             sub_cat = rec.get("sub_category")
-            amt = float(rec.get("amount") or 0)
-            ef = float(rec.get("emission_factor") or 0)
-            ef_unit = str(rec.get("ef_unit") or "kg").lower()
+            amt = _clean_float(rec.get("amount"), default=0.0)
+            ef = _clean_float(rec.get("emission_factor"), default=0.0)
+            ef_unit = str(rec.get("ef_unit") or rec.get("factor_unit") or "kg").strip()
+            calc_method = str(rec.get("calculation_method") or "")
 
-            # co2e stored in the DB is always in TONNES CO2e.
-            # If a pre-calculated co2e value is provided in the CSV, use it directly (already in tonnes).
-            if rec.get("co2e"):
-                co2e = float(rec.get("co2e"))
-            elif "t" in ef_unit or "tonne" in ef_unit:
-                # EF is in t CO2e/unit (e.g. 0.43 tCO2e/bbl for crude) -> result already in tonnes
-                co2e = amt * ef
+            # Authoritatively calculate co2e when activity amount and EF are present
+            if amt > 0 and ef > 0:
+                co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
+            elif rec.get("co2e") and user.role in ["admin", "superuser"]:
+                co2e = _clean_float(rec.get("co2e"), default=0.0)
             else:
-                # EF is in kg CO2e/unit (default, most common for Scope 3 activity factors)
-                # Divide by 1000 to convert kg -> tonnes
-                co2e = (amt * ef) / 1000.0
+                co2e = 0.0
 
             emission = Scope3Emission(
                 facility_id=facility.id,
@@ -392,21 +464,41 @@ def bulk_import_scope3():
         except Exception as e:
             errors.append(f"Row {i}: {str(e)}")
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk import Scope 3 emissions: {str(e)}"}), 500
+
     from routes.dashboard import clear_dashboard_cache
 
     clear_dashboard_cache()
-    if bulk_status in ("Pending", "Pending Approval") and imported_count > 0:
-        from models import Notification
-        admins = User.query.filter_by(role="admin", status="active").all()
-        for admin in admins:
-            Notification.create(
-                user_id=admin.id,
-                type="audit",
-                title="Scope 3 Bulk Upload Pending Review",
-                message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+    try:
+        if bulk_status in ("Pending", "Pending Approval") and imported_count > 0:
+            from models import Notification
+            admins = User.query.filter_by(role="admin", status="active").all()
+            for admin in admins:
+                Notification.create(
+                    user_id=admin.id,
+                    type="audit",
+                    title="Scope 3 Bulk Upload Pending Review",
+                    message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+                )
+            db.session.commit()
+
+        if imported_count > 0:
+            log_activity_and_notify(
+                action="BULK_IMPORT",
+                record_id=f"count:{imported_count}",
+                user=user,
+                request=request,
+                entity="Scope3Emission",
+                details=f"Bulk imported {imported_count} Scope 3 records (Status: {bulk_status})",
             )
-        db.session.commit()
+            db.session.commit()
+    except Exception:
+        db.session.rollback()
+
     return jsonify(
         {"message": f"Successfully imported {imported_count} records", "errors": errors}
     ), (200 if not errors else 207)

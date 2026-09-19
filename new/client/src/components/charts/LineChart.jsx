@@ -21,9 +21,12 @@ export const LineChart = ({
   height = 300,
   showLegend = true,
   formatValue = (val) => {
-    if (Math.abs(val) >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-    if (Math.abs(val) >= 1000) return `${(val / 1000).toFixed(1)}k`;
-    return val.toLocaleString();
+    if (val === null || val === undefined || isNaN(val)) return "0";
+    const num = Number(val);
+    if (!isFinite(num)) return "0";
+    if (Math.abs(num) >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (Math.abs(num) >= 1000) return `${(num / 1000).toFixed(1)}k`;
+    return num.toLocaleString();
   },
 }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -162,11 +165,11 @@ export const LineChart = ({
                 key={idx}
                 type="monotone"
                 dataKey={line.dataKey || line.key || "value"}
-                name={line.name}
+                name={line.name || line.label || line.dataKey || line.key}
                 stroke={line.color}
                 strokeWidth={isTrajectory ? 2 : 3}
                 strokeDasharray={
-                  line.strokeDasharray || (isTrajectory ? "5 5" : "0")
+                  line.strokeDasharray || line.dash || (isTrajectory ? "5 5" : "0")
                 }
                 fillOpacity={isArea ? 0.3 : 0}
                 fill={isArea ? `url(#${gradientId})` : "transparent"}

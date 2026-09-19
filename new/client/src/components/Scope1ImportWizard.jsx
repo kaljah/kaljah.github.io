@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import { PROCESS_TYPES } from "../utils/EmissionFactors";
 import "./Scope1ImportWizard.css";
@@ -506,6 +507,7 @@ function autoDetect(headers, allFields) {
 
 // ─── Main Wizard ──────────────────────────────────────────────────────────────
 export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
+  const toast = useToast();
   const fileInputRef = useRef(null);
 
   const [step, setStep] = useState(1);
@@ -605,7 +607,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
       a.href = url;
       a.download = fmt === "excel" ? "Scope1_Template.xlsx" : "scope1_template.csv";
       document.body.appendChild(a); a.click(); a.remove();
-    } catch { alert("Template download failed."); }
+    } catch { toast.error("Template download failed."); }
   };
 
   // Submit
@@ -623,7 +625,7 @@ export default function Scope1ImportWizard({ onClose, onUploadSuccess }) {
       setJobId(res.data.job_id);
       setStep(5);
     } catch (err) {
-      alert("Upload error: " + (err.response?.data?.error || err.message));
+      toast.error("Upload error: " + (err.response?.data?.error || err.message));
     } finally { setIsSubmitting(false); }
   };
 

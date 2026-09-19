@@ -15,8 +15,10 @@ export const fetchCsrfToken = async () => {
   try {
     const response = await api.get("/csrf-token");
     csrfToken = response.data.csrf_token;
+    return csrfToken;
   } catch (err) {
     console.error("Failed to fetch CSRF token:", err);
+    return null;
   }
 };
 
@@ -39,17 +41,21 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const msg = error.response?.data?.error || "";
 
-    // CSRF token expired/missing — refresh it and retry the request ONCE
+    // CSRF token expired/missing — refresh it and retry the request strictly ONCE
+    const originalConfig = error.config;
     if (
       status === 400 &&
+      originalConfig &&
+      !originalConfig._retry &&
       (msg.toLowerCase().includes("csrf") ||
-        msg.toLowerCase().includes("token"))
+        msg.toLowerCase().includes("csrf token") ||
+        msg.toLowerCase().includes("token missing"))
     ) {
+      originalConfig._retry = true;
       try {
-        await fetchCsrfToken();
-        // Retry with the fresh token
-        const originalConfig = error.config;
-        originalConfig.headers["X-CSRFToken"] = csrfToken;
+        const freshToken = await fetchCsrfToken();
+        originalConfig.headers = originalConfig.headers || {};
+        originalConfig.headers["X-CSRFToken"] = freshToken || csrfToken;
         return api(originalConfig);
       } catch (_) {
         /* retry also failed — fall through to rejection */

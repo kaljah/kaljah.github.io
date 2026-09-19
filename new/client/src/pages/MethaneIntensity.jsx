@@ -71,6 +71,10 @@ const MethaneIntensity = () => {
     totalFlaringEmissions: 0,
     totalWecFeeUsd: 0,
     ogmpGoldStatus: "Compliant",
+    upstreamGasM3: 0,
+    upstreamCh4Tonnes: 0,
+    midstreamGasM3: 0,
+    midstreamCh4Tonnes: 0,
   });
 
   const [regionalData, setRegionalData] = useState([]);
@@ -240,7 +244,9 @@ const MethaneIntensity = () => {
         tGasM3 > 0 ? (tFlaringVol / tGasM3) * 100.0 : 0.0;
 
       let goldStatus = "Compliant";
-      if (
+      if (tGasM3 === 0 && tCh4Tonnes > 0) {
+        goldStatus = "Pending Production";
+      } else if (
         (upGasM3 > 0 && upstreamLossRatePct > upstreamTargetPct * 1.25) ||
         (midGasM3 > 0 && midstreamLossRatePct > midstreamTargetPct * 1.25) ||
         (tGasM3 > 0 && avgLossRatePct > upstreamTargetPct * 1.25)
@@ -270,6 +276,10 @@ const MethaneIntensity = () => {
         totalFlaringEmissions: tFlaringEm,
         totalWecFeeUsd: tWecFee,
         ogmpGoldStatus: goldStatus,
+        upstreamGasM3: upGasM3,
+        upstreamCh4Tonnes: upCh4Tonnes,
+        midstreamGasM3: midGasM3,
+        midstreamCh4Tonnes: midCh4Tonnes,
       });
     } catch (error) {
       console.error("Failed to load methane stats:", error);
@@ -648,7 +658,7 @@ const MethaneIntensity = () => {
   }, [rawTrendData, currentRegion, upstreamTargetPct, midstreamTargetPct]);
 
   const getHeatmapClass = (val) => {
-    if (val === null || val === 0) return "heat-null";
+    if (val === null || val === undefined || isNaN(val) || val === 0) return "heat-null";
     if (val < 0.05) return "heat-lux";
     if (val < 0.15) return "heat-low";
     if (val < 0.25) return "heat-mid";
@@ -705,20 +715,23 @@ const MethaneIntensity = () => {
                 background:
                   stats.ogmpGoldStatus === "Compliant"
                     ? "rgba(16, 185, 129, 0.1)"
-                    : stats.ogmpGoldStatus === "Warning"
+                    : stats.ogmpGoldStatus === "Warning" ||
+                      stats.ogmpGoldStatus === "Pending Production"
                     ? "rgba(245, 158, 11, 0.1)"
                     : "rgba(239, 68, 68, 0.1)",
                 border: `1px solid ${
                   stats.ogmpGoldStatus === "Compliant"
                     ? "#10b981"
-                    : stats.ogmpGoldStatus === "Warning"
+                    : stats.ogmpGoldStatus === "Warning" ||
+                      stats.ogmpGoldStatus === "Pending Production"
                     ? "#f59e0b"
                     : "#ef4444"
                 }`,
                 color:
                   stats.ogmpGoldStatus === "Compliant"
                     ? "#10b981"
-                    : stats.ogmpGoldStatus === "Warning"
+                    : stats.ogmpGoldStatus === "Warning" ||
+                      stats.ogmpGoldStatus === "Pending Production"
                     ? "#f59e0b"
                     : "#ef4444",
                 fontWeight: 600,
@@ -731,9 +744,10 @@ const MethaneIntensity = () => {
                 <AlertTriangle size={16} />
               )}
               <span>
-                OGMP 2.0 Targets: {stats.ogmpGoldStatus} (&le;
-                {upstreamTargetPct.toFixed(2)}% Upstream / &le;
-                {midstreamTargetPct.toFixed(2)}% Midstream)
+                OGMP 2.0 Targets: {stats.ogmpGoldStatus}{" "}
+                {stats.ogmpGoldStatus === "Pending Production"
+                  ? "(Gas production figures required)"
+                  : `(≤${upstreamTargetPct.toFixed(2)}% Upstream / ≤${midstreamTargetPct.toFixed(2)}% Midstream)`}
               </span>
             </div>
           </div>
@@ -779,17 +793,25 @@ const MethaneIntensity = () => {
                   className="total-value"
                   style={{
                     color:
-                      stats.avgMethaneLossRatePct <= upstreamTargetPct
-                        ? "#10b981"
-                        : stats.avgMethaneLossRatePct <=
-                            upstreamTargetPct * 1.25
-                          ? "#f59e0b"
-                          : "#ef4444",
+                      stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
+                        ? "#f59e0b"
+                        : stats.avgMethaneLossRatePct <= upstreamTargetPct
+                          ? "#10b981"
+                          : stats.avgMethaneLossRatePct <=
+                              upstreamTargetPct * 1.25
+                            ? "#f59e0b"
+                            : "#ef4444",
                   }}
                 >
-                  {(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%
+                  {stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
+                    ? "Pending Prod."
+                    : `${(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%`}
                 </span>
-                <span className="kpi-unit">Overall Avg</span>
+                <span className="kpi-unit">
+                  {stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
+                    ? "Gas prod. required"
+                    : "Overall Avg"}
+                </span>
               </div>
 
               {/* Upstream & Midstream Segment Loss Rates */}
@@ -822,12 +844,16 @@ const MethaneIntensity = () => {
                       fontSize: "0.95rem",
                       fontWeight: 700,
                       color:
-                        stats.upstreamLossRatePct <= upstreamTargetPct
-                          ? "#10b981"
-                          : "#ef4444",
+                        stats.upstreamGasM3 === 0 && stats.upstreamCh4Tonnes > 0
+                          ? "#f59e0b"
+                          : stats.upstreamLossRatePct <= upstreamTargetPct
+                            ? "#10b981"
+                            : "#ef4444",
                     }}
                   >
-                    {(stats.upstreamLossRatePct ?? 0).toFixed(3)}%
+                    {stats.upstreamGasM3 === 0 && stats.upstreamCh4Tonnes > 0
+                      ? "Pending Prod."
+                      : `${(stats.upstreamLossRatePct ?? 0).toFixed(3)}%`}
                   </div>
                   <div
                     style={{
@@ -861,12 +887,16 @@ const MethaneIntensity = () => {
                       fontSize: "0.95rem",
                       fontWeight: 700,
                       color:
-                        stats.midstreamLossRatePct <= midstreamTargetPct
-                          ? "#10b981"
-                          : "#ef4444",
+                        stats.midstreamGasM3 === 0 && stats.midstreamCh4Tonnes > 0
+                          ? "#f59e0b"
+                          : stats.midstreamLossRatePct <= midstreamTargetPct
+                            ? "#10b981"
+                            : "#ef4444",
                     }}
                   >
-                    {(stats.midstreamLossRatePct ?? 0).toFixed(3)}%
+                    {stats.midstreamGasM3 === 0 && stats.midstreamCh4Tonnes > 0
+                      ? "Pending Prod."
+                      : `${(stats.midstreamLossRatePct ?? 0).toFixed(3)}%`}
                   </div>
                   <div
                     style={{
@@ -1593,9 +1623,11 @@ const MethaneIntensity = () => {
                         const record = yData.data.find(
                           (r) => r.facility_id === facData.facility_id,
                         );
-                        const val = record
+                        const rawVal = record
                           ? record.methane_loss_rate_pct || 0
                           : 0;
+                        const numVal = Number(rawVal);
+                        const val = isFinite(numVal) ? numVal : 0;
                         return (
                           <div
                             key={yData.year}

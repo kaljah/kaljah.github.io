@@ -8,12 +8,16 @@ import ColumnMappingWizard from "./ColumnMappingWizard";
 import { Upload, Copy, Trash2, Eye } from "lucide-react";
 import EmissionResult from "./EmissionResult";
 import CalculationDetails from "./CalculationDetails";
+import ConfirmModal from "./ConfirmModal";
 import "./ScopeTables.css";
 
 const Scope2Form = () => {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Identity State (Hoisted to match Scope 1)
   const [year, setYear] = useState(new Date().getFullYear());
@@ -133,6 +137,7 @@ const Scope2Form = () => {
     }
 
     try {
+      setSubmitting(true);
       const val = parseFloat(amount);
       if (val <= 0 && sourceType !== "cogen_allocation") {
         toast.warning("Please enter a valid usage amount");
@@ -213,6 +218,8 @@ const Scope2Form = () => {
     } catch (error) {
       console.error("Failed to add entry:", error);
       toast.error("Failed to add Scope 2 entry");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -276,15 +283,23 @@ const Scope2Form = () => {
     toast.success("Records imported successfully!");
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this entry?")) return;
+  const handleDelete = (id) => {
+    setDeleteTargetId(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) return;
+    setIsDeleting(true);
     try {
-      await api.delete(`/scope2/${id}`);
+      await api.delete(`/scope2/${deleteTargetId}`);
       toast.success("Entry deleted");
+      setDeleteTargetId(null);
       loadEntries();
     } catch (error) {
       console.error("Failed to delete:", error);
       toast.error("Failed to delete entry");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -551,17 +566,27 @@ const Scope2Form = () => {
         >
           <button
             className="action-btn secondary"
+            disabled={submitting}
             onClick={() => handleAddEntry("Draft")}
-            style={{ padding: "10px 20px" }}
+            style={{
+              padding: "10px 20px",
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+            }}
           >
-            Save as Draft (Maker Mode)
+            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
           </button>
           <button
             className="btn-add-activity"
+            disabled={submitting}
             onClick={() => handleAddEntry("Verified")}
-            style={{ padding: "10px 24px" }}
+            style={{
+              padding: "10px 24px",
+              cursor: submitting ? "not-allowed" : "pointer",
+              opacity: submitting ? 0.6 : 1,
+            }}
           >
-            + Calculate & Submit for Review
+            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
           </button>
         </div>
       </div>
@@ -633,7 +658,7 @@ const Scope2Form = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" style={{ textAlign: "center" }}>
+                  <td colSpan="11" style={{ textAlign: "center" }}>
                     <LoadingSpinner />
                   </td>
                 </tr>
@@ -797,7 +822,7 @@ const Scope2Form = () => {
             <tfoot>
               <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
                 <td
-                  colSpan="6"
+                  colSpan="7"
                   style={{ textAlign: "right", paddingRight: "15px" }}
                 >
                   Total (Page):
@@ -808,7 +833,7 @@ const Scope2Form = () => {
                     3,
                   )}
                 </td>
-                <td></td>
+                <td colSpan="3"></td>
               </tr>
             </tfoot>
           </table>
@@ -868,6 +893,17 @@ const Scope2Form = () => {
           onClose={() => setInspectRecord(null)}
         />
       )}
+
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        title="Delete Scope 2 Entry"
+        message="Are you sure you want to delete this Scope 2 entry? This calculation record will be permanently removed."
+        confirmLabel="Delete Record"
+        confirmVariant="danger"
+        loading={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTargetId(null)}
+      />
     </div>
   );
 };

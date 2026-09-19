@@ -94,8 +94,13 @@ def add_source():
         division=data.get("division"),
         field=data.get("field"),
     )
-    db.session.add(source)
-    db.session.commit()
+    try:
+        db.session.add(source)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to add source: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "CREATE",
@@ -117,7 +122,7 @@ def delete_source(source_id):
     user = get_current_user()
     if user and user.role == "it_admin":
         return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
-    source = EmissionSource.query.get(source_id)
+    source = db.session.get(EmissionSource, source_id)
     if not source:
         return jsonify({"error": "Source not found"}), 404
 
@@ -125,8 +130,13 @@ def delete_source(source_id):
     if allowed_fids is not None and source.facility_id not in allowed_fids:
         return jsonify({"error": "Access to this facility is denied"}), 403
 
-    db.session.delete(source)
-    db.session.commit()
+    try:
+        db.session.delete(source)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete source: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "DELETE",
@@ -177,7 +187,7 @@ def bulk_import_sources():
                 if fid in facility_cache:
                     facility = facility_cache[fid]
                 else:
-                    facility = Facility.query.get(fid)
+                    facility = db.session.get(Facility, fid)
                     facility_cache[fid] = facility
             except (ValueError, TypeError):
                 facility = None
@@ -205,7 +215,12 @@ def bulk_import_sources():
         db.session.add(source)
         imported_count += 1
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk import sources: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "CREATE",
@@ -325,7 +340,12 @@ def add_mitigation():
             facility_id=fid,
         )
         db.session.add(project)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": f"Failed to add mitigation project: {str(e)}"}), 500
+
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
         return (
@@ -345,7 +365,12 @@ def add_mitigation():
             reference_id=data.get("reference_id"),
         )
         db.session.add(mitigation)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": f"Failed to add mitigation record: {str(e)}"}), 500
+
         from routes.dashboard import clear_dashboard_cache
         clear_dashboard_cache()
         return (
@@ -364,15 +389,21 @@ def delete_mitigation(mitigation_id):
         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
     # Determine type from ID prefix
     if mitigation_id.startswith("proj_"):
-        pid = int(mitigation_id.split("_")[1])
-        item = MitigationProject.query.get(pid)
+        try:
+            pid = int(mitigation_id.split("_")[1])
+        except (IndexError, ValueError):
+            return jsonify({"error": "Invalid project ID format"}), 400
+        item = db.session.get(MitigationProject, pid)
     elif mitigation_id.startswith("rec_"):
-        rid = int(mitigation_id.split("_")[1])
-        item = MitigationRecord.query.get(rid)
+        try:
+            rid = int(mitigation_id.split("_")[1])
+        except (IndexError, ValueError):
+            return jsonify({"error": "Invalid record ID format"}), 400
+        item = db.session.get(MitigationRecord, rid)
     else:
         # Fallback for old IDs (assume record)
         try:
-            item = MitigationRecord.query.get(int(mitigation_id))
+            item = db.session.get(MitigationRecord, int(mitigation_id))
         except (ValueError, TypeError):
             return jsonify({"error": "Invalid ID format"}), 400
 
@@ -383,9 +414,17 @@ def delete_mitigation(mitigation_id):
         allowed_fids = get_allowed_facility_ids(user)
         if allowed_fids is not None and item.facility_id not in allowed_fids:
             return jsonify({"error": "Access to this facility is denied"}), 403
+    elif isinstance(item, MitigationRecord):
+        if not user or user.role not in ["admin", "superuser"]:
+            return jsonify({"error": "Admin or Superuser privileges required to delete corporate mitigation records"}), 403
 
-    db.session.delete(item)
-    db.session.commit()
+    try:
+        db.session.delete(item)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete mitigation item: {str(e)}"}), 500
+
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
     return jsonify({"message": "Mitigation record deleted"})
@@ -470,7 +509,11 @@ def save_reporting_metadata():
         )
         db.session.add(metadata)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to save reporting metadata: {str(e)}"}), 500
 
     # --- Audit Notification ---
     try:
@@ -615,7 +658,7 @@ def bulk_import_mitigation():
                 if fid in facility_cache:
                     facility = facility_cache[fid]
                 else:
-                    facility = Facility.query.get(fid)
+                    facility = db.session.get(Facility, fid)
                     facility_cache[fid] = facility
             except (ValueError, TypeError):
                 facility = None
@@ -672,7 +715,12 @@ def bulk_import_mitigation():
         db.session.add(proj)
         imported_count += 1
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to bulk import mitigation projects: {str(e)}"}), 500
+
     try:
         log_activity_and_notify(
             "CREATE",
@@ -788,7 +836,7 @@ def get_base_years():
         active_rec = BaseYearRecalculation.query.order_by(
             BaseYearRecalculation.recalc_date.desc()
         ).first()
-        base_year_entry = BaseYear.query.get(1)
+        base_year_entry = db.session.get(BaseYear, 1)
 
         active_year = None
         if active_rec:
@@ -875,7 +923,7 @@ def add_base_year_recalculation():
         db.session.add(recalc)
 
         # Keep BaseYear singleton synchronized
-        base_year_singleton = BaseYear.query.get(1)
+        base_year_singleton = db.session.get(BaseYear, 1)
         if base_year_singleton:
             base_year_singleton.year = year
         else:
@@ -905,7 +953,7 @@ def delete_base_year_recalculation(rec_id):
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
     try:
-        rec = BaseYearRecalculation.query.get(rec_id)
+        rec = db.session.get(BaseYearRecalculation, rec_id)
         if not rec:
             return jsonify({"error": "Recalculation record not found"}), 404
         db.session.delete(rec)
@@ -916,7 +964,7 @@ def delete_base_year_recalculation(rec_id):
             BaseYearRecalculation.recalc_date.desc()
         ).first()
         if latest:
-            singleton = BaseYear.query.get(1)
+            singleton = db.session.get(BaseYear, 1)
             if singleton:
                 singleton.year = latest.year
                 db.session.commit()

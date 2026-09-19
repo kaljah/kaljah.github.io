@@ -37,8 +37,11 @@ def get_active_gwp(standard=None, gwp_dict=None, horizon="100"):
     std_key = str(standard or "").upper().strip()
     if not std_key:
         try:
-            from routes.auth import _app_settings
-
+            from routes.auth import _app_settings, load_settings_from_db
+            try:
+                load_settings_from_db()
+            except Exception:
+                pass
             std_key = str(_app_settings.get("gwp_standard") or "AR5").upper().strip()
         except Exception:
             std_key = "AR5"

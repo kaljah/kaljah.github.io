@@ -277,18 +277,21 @@ def export_satellite_to_ogmp():
     )
 
     thresh = facility.reconciliation_threshold or 20.0
-    if bottom_up_emissions > 0:
+    if bottom_up_emissions > 0 and estimated_annual_tch4 > 0:
         variance_pct = round(
             ((estimated_annual_tch4 - bottom_up_emissions) / bottom_up_emissions)
             * 100.0,
             2,
         )
         variance_flag = abs(variance_pct) > thresh
-    elif estimated_annual_tch4 > 0:
+    elif bottom_up_emissions > 0 and estimated_annual_tch4 == 0:
+        variance_pct = None
+        variance_flag = False
+    elif estimated_annual_tch4 > 0 and bottom_up_emissions == 0:
         variance_pct = None
         variance_flag = True
     else:
-        variance_pct = 0.0
+        variance_pct = None
         variance_flag = False
 
     survey_status = "Verified" if (user and user.role in ["admin", "superuser"]) else "Pending"

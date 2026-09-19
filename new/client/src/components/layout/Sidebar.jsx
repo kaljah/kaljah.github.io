@@ -301,82 +301,58 @@ const Sidebar = () => {
             </>
           )}
           {["admin", "superuser", "it_admin"].includes(user?.role) && (
-            <>
-              <li className="nav-item">
-                <NavLink
-                  to="/audit-trail"
-                  className={({ isActive }) =>
-                    `nav-link ${isActive ? "active" : ""}`
-                  }
-                  title="Audit Trail"
+            <li className="nav-item">
+              <NavLink
+                to="/audit-trail"
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? "active" : ""}`
+                }
+                title="Audit Trail"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="nav-icon"
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="nav-icon"
-                  >
-                    <path d="M9 11l3 3L22 4"></path>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                  </svg>
-                  <span className="nav-label">Audit Trail</span>
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="/qa-dashboard"
-                  className={({ isActive }) =>
-                    `nav-link ${isActive ? "active" : ""}`
-                  }
-                  title="QA/QC"
+                  <path d="M9 11l3 3L22 4"></path>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <span className="nav-label">Audit Trail</span>
+              </NavLink>
+            </li>
+          )}
+          {["admin", "superuser"].includes(user?.role) && (
+            <li className="nav-item">
+              <NavLink
+                to="/qa-dashboard"
+                className={({ isActive }) =>
+                  `nav-link ${isActive ? "active" : ""}`
+                }
+                title="QA/QC & Diagnostics"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="nav-icon"
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="nav-icon"
-                  >
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <path d="M9 12l2 2 4-4"></path>
-                  </svg>
-                  <span className="nav-label">QA/QC</span>
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="/diagnostics"
-                  className={({ isActive }) =>
-                    `nav-link ${isActive ? "active" : ""}`
-                  }
-                  title="System Diagnostics"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="nav-icon"
-                  >
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                  </svg>
-                  <span className="nav-label">Diagnostics</span>
-                </NavLink>
-              </li>
-            </>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+                <span className="nav-label">QA/QC & Diagnostics</span>
+              </NavLink>
+            </li>
           )}
           {user?.role === "it_admin" && (
             <li className="nav-item">

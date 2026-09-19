@@ -65,6 +65,7 @@ def set_sqlite_pragmas(dbapi_conn, _):
         cursor.execute("PRAGMA foreign_keys = ON")
         cursor.execute("PRAGMA journal_mode = WAL")
         cursor.execute("PRAGMA synchronous = NORMAL")
+        cursor.execute("PRAGMA busy_timeout = 5000")
         cursor.close()
 
 
@@ -275,6 +276,32 @@ def get_csrf_token():
 def health_check():
     # SEC-06 FIX: no longer expose DB engine name
     return jsonify({"status": "ok", "version": app.config.get("APP_VERSION", "1.0.0")})
+
+
+@app.route("/api/health/live")
+def health_liveness():
+    """Kubernetes / Docker shallow liveness probe."""
+    return jsonify({"status": "alive", "version": app.config.get("APP_VERSION", "1.0.0")}), 200
+
+
+@app.route("/api/health/ready")
+def health_readiness():
+    """Kubernetes / Docker deep readiness probe verifying DB pool and filesystem readiness."""
+    try:
+        from sqlalchemy import text
+        db.session.execute(text("SELECT 1"))
+        return jsonify({
+            "status": "ready",
+            "database": "connected",
+            "version": app.config.get("APP_VERSION", "1.0.0")
+        }), 200
+    except Exception as e:
+        app.logger.error(f"Readiness probe failed: {e}")
+        return jsonify({
+            "status": "unhealthy",
+            "database": "unreachable",
+            "error": "Database connectivity check failed"
+        }), 503
 
 
 if __name__ == "__main__":

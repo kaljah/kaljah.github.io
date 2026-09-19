@@ -467,13 +467,35 @@ const EmissionsMap = () => {
     }
   };
 
-  // Copy coordinates to clipboard
-  const handleCopyCoords = () => {
+  // Copy coordinates to clipboard safely with fallback
+  const handleCopyCoords = async () => {
     if (!selectedFacility) return;
     const text = `${Number(selectedFacility.latitude).toFixed(4)}, ${Number(selectedFacility.longitude).toFixed(4)}`;
-    navigator.clipboard.writeText(text);
-    setCopiedCoords(true);
-    setTimeout(() => setCopiedCoords(false), 2000);
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        throw new Error("Clipboard API unavailable");
+      }
+      setCopiedCoords(true);
+      setTimeout(() => setCopiedCoords(false), 2000);
+    } catch (err) {
+      try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        setCopiedCoords(true);
+        setTimeout(() => setCopiedCoords(false), 2000);
+      } catch (fallbackErr) {
+        toast.info(`Coordinates: ${text}`);
+      }
+    }
   };
 
   // Reset all filters to default

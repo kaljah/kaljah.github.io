@@ -165,7 +165,7 @@ def add_facility():
     # Audit
     try:
         user_id = session.get("user_id")
-        user = User.query.get(user_id) if user_id else None
+        user = db.session.get(User, user_id) if user_id else None
 
         log_details = (
             f"Created facility: {fac.name} (Code: {fac.code}, Segment: {fac.segment})"
@@ -202,10 +202,10 @@ def update_facility(facility_id):
     user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if user.role not in ["admin", "superuser"]:
         return (
             jsonify(
-                {"error": "Forbidden: IT Administrators cannot manage operational facilities"}
+                {"error": "Forbidden: Administrative privileges required to manage facility configuration"}
             ),
             403,
         )
@@ -262,7 +262,7 @@ def update_facility(facility_id):
 
     import datetime
 
-    facility.updated_at = datetime.datetime.utcnow()
+    facility.updated_at = datetime.datetime.now(datetime.timezone.utc)
     db.session.flush()
 
     # Audit
@@ -341,11 +341,11 @@ def delete_facility(facility_id):
     if allowed_fids is not None and facility.id not in allowed_fids:
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
 
-    db.session.delete(facility)
-    db.session.flush()
-
-    # Audit
     try:
+        db.session.delete(facility)
+        db.session.flush()
+
+        # Audit
         user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
         log_details = f"Deleted facility: {facility.name} (Code: {facility.code})"
 
@@ -367,7 +367,7 @@ def delete_facility(facility_id):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        raise e
+        return jsonify({"error": f"Failed to delete facility: {str(e)}"}), 500
 
     return jsonify({"message": "Facility deleted"})
 

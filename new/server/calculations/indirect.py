@@ -39,6 +39,8 @@ class IndirectSteamCalculator(BaseCalculator):
             energy_btu = heat_energy * 947817.12  # 1 GJ = 947,817 BTU
         elif u in ["mj", "megajoule"]:
             energy_btu = heat_energy * 947.817
+        elif u in ["therm", "therms"]:
+            energy_btu = heat_energy * 100_000.0
         elif u in ["mwh", "mw-hr"]:
             energy_btu = heat_energy * 3_412_142.0
         elif u in ["ton", "us_ton", "short_ton"]:
@@ -129,18 +131,13 @@ class CogenAllocationCalculator(BaseCalculator):
             e_h = 0.8
             e_p = 0.33
             denominator = (heat_output / e_h) + (power_output / e_p)
-            allocated_heat = ((heat_output / e_h) / denominator) * total_emissions
-            allocated_power = ((power_output / e_p) / denominator) * total_emissions
-        elif method == "energy_content":
-            # Simple energy content allocation
-            denominator = heat_output + power_output
-            allocated_heat = (heat_output / denominator) * total_emissions
-            allocated_power = (power_output / denominator) * total_emissions
+            allocated_heat = ((heat_output / e_h) / denominator) * total_emissions if denominator > 0 else 0.0
+            allocated_power = ((power_output / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
         else:
-            # Default to Energy Content
+            # Energy content allocation
             denominator = heat_output + power_output
-            allocated_heat = (heat_output / denominator) * total_emissions
-            allocated_power = (power_output / denominator) * total_emissions
+            allocated_heat = (heat_output / denominator) * total_emissions if denominator > 0 else 0.0
+            allocated_power = (power_output / denominator) * total_emissions if denominator > 0 else 0.0
 
         _unc_dict = uncertainties or {}
         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))
