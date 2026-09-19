@@ -84,6 +84,8 @@ class GHGCalculator:
             return val * 35.3147
         if u in ["mmscf"]:
             return val * 1000000.0
+        if u in ["mscf", "mcf"]:
+            return val * 1000.0
         if u in ["gal", "gallons", "us_gal"]:
             return val * 0.133681
         if u in ["bbl", "barrel", "barrels"]:
@@ -606,8 +608,8 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
             ch4_factor = factor_data.get("ch4") or 0
             # Convert scf/hr/device to tonnes/year
             if "scf/hr" in str(factor_data.get("unit", "")):
-                # scf/hr × 8760 hr/yr × count × 0.0423 lb/scf × 0.453592 kg/lb ÷ 1000
-                ch4_factor = (ch4_factor * 8760 * 0.0423 * 0.453592) / (1000 * 2.20462)
+                # scf/hr × 8760 hr/yr × count × 0.0423 lb/scf × 0.453592 kg/lb ÷ 1000 kg/tonne
+                ch4_factor = (ch4_factor * 8760 * 0.0423 * 0.453592) / 1000.0
 
         em["ch4"] = ch4_factor * count
         em["totalCo2e"] = em["ch4"] * gwp_dict["CH4"]

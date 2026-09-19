@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from functools import wraps
 from flask import request, jsonify, session, current_app
 from . import auth_bp
-from models import User
+from models import User, Notification
 from extensions import db, limiter
 from utils import log_activity_and_notify
 
@@ -92,12 +92,16 @@ def login_required(f):
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
         return f(*args, **kwargs)
 
     return decorated_function
 
 
-def admin_required(f):
+def it_admin_required(f):
+    """Restricts access to IT Admin role only — for user account management routes."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
@@ -105,10 +109,13 @@ def admin_required(f):
         user_id = session.get("user_id")
         if not user_id:
             return jsonify({"error": "Not authenticated"}), 401
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
         if user.role != "it_admin":
             return jsonify({"error": "IT Admin privileges required"}), 403
         return f(*args, **kwargs)
@@ -116,8 +123,33 @@ def admin_required(f):
     return decorated_function
 
 
+def admin_required(f):
+    """Restricts access to business/data Admin role only."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if request.method == "OPTIONS":
+            return ("", 204)
+        user_id = session.get("user_id")
+        if not user_id:
+            return jsonify({"error": "Not authenticated"}), 401
+        user = db.session.get(User, user_id)
+        if not user:
+            session.pop("user_id", None)
+            return jsonify({"error": "User not found"}), 401
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
+        if user.role != "admin":
+            return jsonify({"error": "Admin privileges required"}), 403
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 def superuser_required(f):
-    """Permits superuser, admin, and it_admin roles"""
+    """Permits superuser and admin roles for data management operations.
+    NOTE: it_admin is intentionally excluded — they manage accounts only, not data.
+    """
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -126,11 +158,14 @@ def superuser_required(f):
         user_id = session.get("user_id")
         if not user_id:
             return jsonify({"error": "Not authenticated"}), 401
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
-        if user.role not in ["superuser", "admin", "it_admin"]:
+        if user.status != "active":
+            session.pop("user_id", None)
+            return jsonify({"error": "Account disabled"}), 403
+        if user.role not in ["superuser", "admin"]:
             return jsonify({"error": "Super User or Admin privileges required"}), 403
         return f(*args, **kwargs)
 
@@ -138,7 +173,7 @@ def superuser_required(f):
 
 
 @auth_bp.route("/register", methods=["POST"])
-@admin_required
+@it_admin_required
 def register():
     data = request.get_json()
 
@@ -147,7 +182,8 @@ def register():
         if not data or not data.get(field):
             return jsonify({"error": f"Missing required field: {field}"}), 400
 
-    if User.query.filter_by(email=data.get("email")).first():
+    email_clean = str(data.get("email", "")).strip().lower()
+    if User.query.filter(db.func.lower(User.email) == email_clean).first():
         return jsonify({"error": "Email already registered"}), 400
 
     password = data.get("password")
@@ -158,7 +194,7 @@ def register():
     user = User(
         fullName=data.get("fullName"),
         orgName=data.get("orgName"),
-        email=data.get("email"),
+        email=email_clean,
         sector=data.get("sector"),
         department=data.get("department"),
         jobTitle=data.get("jobTitle"),
@@ -224,6 +260,8 @@ def login():
         if user.status != "active":
             return jsonify({"error": "Account disabled"}), 403
 
+        session.clear()
+        session.permanent = True
         session["user_id"] = user.id
         current_app.logger.debug(f"Session set for user_id={user.id}")
         user.last_login = datetime.datetime.now(datetime.timezone.utc)
@@ -259,6 +297,71 @@ def login():
     return jsonify({"error": "Invalid credentials"}), 401
 
 
+@auth_bp.route("/forgot-password", methods=["POST"])
+@limiter.limit("5 per 15 minutes")
+def forgot_password():
+    """
+    User triggers a password reset request.
+    Creates a notification for the IT Role / Admin to reset their credentials.
+    """
+    data = request.get_json(silent=True) or {}
+    email_input = str(data.get("email", "")).strip().lower()
+
+    if not email_input:
+        return jsonify({"error": "Email is required"}), 400
+
+    user = User.query.filter(db.func.lower(User.email) == email_input).first()
+
+    if user:
+        # Find IT Admins or Admins to notify
+        it_admins = User.query.filter(User.role == "it_admin", User.status == "active").all()
+
+        notification_title = f"Password Reset Request: {user.fullName or user.email}"
+        notification_msg = (
+            f"User {user.fullName} ({user.email}) requested a password reset at "
+            f"{datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}. "
+            f"Please review and reset their password in User Management."
+        )
+
+        for admin in it_admins:
+            Notification.create(
+                title=notification_title,
+                message=notification_msg,
+                type="security",
+                user_id=admin.id,
+                metadata={"requester_id": user.id, "requester_email": user.email, "request_type": "forgot_password"}
+            )
+
+        try:
+            from services.email_service import send_password_reset_email
+            send_password_reset_email(user.email, user.fullName)
+        except Exception as _em_err:
+            current_app.logger.warning(f"Failed to dispatch password reset email: {_em_err}")
+
+        try:
+            log_activity_and_notify(
+                action="SECURITY",
+                record_id=str(user.id),
+                user=user,
+                request=request,
+                entity="User",
+                details=f"Password reset requested for: {user.email}",
+            )
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error logging forgot password request: {e}")
+    else:
+        # Mitigate user enumeration timing attack by executing cryptographic hash equivalent
+        from werkzeug.security import generate_password_hash
+        generate_password_hash("timing_mitigation_constant_salt_and_work_factor")
+
+    # Standard security practice: always return a uniform success response to prevent email enumeration
+    return jsonify({
+        "message": "If your email is registered in the system, a password reset request has been forwarded to the IT Administrator."
+    }), 200
+
+
 # Audit Login (Success)
 # (Done inside login block above if successful? No, let's add it before return)
 # Actually, inside the `if user and check_password` block is best.
@@ -270,7 +373,7 @@ def login():
 def logout():
     user_id = session.get("user_id")
     if user_id:
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if user:
             try:
                 log_activity_and_notify(
@@ -284,27 +387,33 @@ def logout():
             except Exception as e:
                 current_app.logger.error(f"Audit Log Error on logout: {e}")
 
-    session.pop("user_id", None)
-    return jsonify({"message": "Logged out"})
+    session.clear()
+    resp = jsonify({"message": "Logged out"})
+    cookie_name = current_app.config.get("SESSION_COOKIE_NAME", "session")
+    resp.delete_cookie(
+        cookie_name,
+        path="/",
+        samesite=current_app.config.get("SESSION_COOKIE_SAMESITE", "Lax"),
+        secure=current_app.config.get("SESSION_COOKIE_SECURE", False),
+        httponly=True,
+    )
+    return resp
 
 
 @auth_bp.route("/me", methods=["GET"])
-@login_required
 def me():
     user_id = session.get("user_id")
-    current_app.logger.debug(
-        f"/me check session user_id={user_id}"
-    )  # SEC-12 FIX: replaced DEBUG print
     if not user_id:
-        return jsonify({"error": "Not authenticated"}), 401
+        return jsonify({"authenticated": False, "user": None}), 200
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         session.pop("user_id", None)
-        return jsonify({"error": "User not found"}), 401
+        return jsonify({"authenticated": False, "user": None}), 200
 
     return jsonify(
         {
+            "authenticated": True,
             "id": user.id,
             "fullName": user.fullName,
             "email": user.email,
@@ -329,13 +438,13 @@ def update_profile():
     if not user_id:
         return jsonify({"error": "Not authenticated"}), 401
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
     data = request.get_json()
 
-    # Update allowed fields
+    # Update allowed fields (location is immutable via /profile to prevent RBAC bypass; managed via /users/<id>)
     if "fullName" in data:
         user.fullName = data["fullName"]
     if "jobTitle" in data:
@@ -344,8 +453,6 @@ def update_profile():
         user.department = data["department"]
     if "phone" in data:
         user.phone = data["phone"]
-    if "location" in data:
-        user.location = data["location"]
     if "bio" in data:
         user.bio = data["bio"]
     if "consolidationApproach" in data:
@@ -363,7 +470,7 @@ def change_password():
     if not user_id:
         return jsonify({"error": "Not authenticated"}), 401
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -383,7 +490,7 @@ def change_password():
         return jsonify({"error": err_msg}), 400
 
     user.set_password(new_password)
-    user.password_updated_at = datetime.datetime.utcnow()
+    user.password_updated_at = datetime.datetime.now(datetime.timezone.utc)
 
     # Audit + commit atomically
     try:
@@ -399,6 +506,12 @@ def change_password():
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Audit Log Error on change_password: {e}")
+        return jsonify({"error": "Failed to update password"}), 500
+
+    # Session fixation / exfiltration protection: regenerate session ID on credential change
+    session.clear()
+    session.permanent = True
+    session["user_id"] = user.id
 
     return jsonify({"message": "Password changed successfully"})
 
@@ -433,8 +546,8 @@ def upload_avatar():
     return jsonify({"message": "Avatar updated successfully", "avatarUrl": avatar_url})
 
 
-# Global Application & User Preferences Store
-_app_settings = {
+# Global Application & User Preferences Store (with DB persistence via SystemSetting)
+_DEFAULT_APP_SETTINGS = {
     "gwp_standard": "AR5",
     "ogmp_default_base_year": 2023,
     "reconciliation_threshold": 20.0,
@@ -456,6 +569,43 @@ _app_settings = {
         "AR4": {"ch4_100": 25.0, "ch4_20": 72.0, "n2o_100": 298.0, "co2": 1.0},
     },
 }
+
+_app_settings = dict(_DEFAULT_APP_SETTINGS)
+
+
+def load_settings_from_db():
+    """Loads all system settings from SystemSetting table in DB into _app_settings."""
+    import json
+    try:
+        from models import SystemSetting
+        settings = SystemSetting.query.all()
+        for s in settings:
+            try:
+                _app_settings[s.key] = json.loads(s.value)
+            except Exception:
+                _app_settings[s.key] = s.value
+    except Exception as e:
+        # Table might not exist yet during migration
+        pass
+    return _app_settings
+
+
+def save_setting_to_db(key: str, val):
+    """Saves a setting to the SystemSetting table and syncs _app_settings."""
+    import json
+    from models import SystemSetting
+    _app_settings[key] = val
+    try:
+        row = db.session.get(SystemSetting, key)
+        if not row:
+            row = SystemSetting(key=key, value=json.dumps(val))
+            db.session.add(row)
+        else:
+            row.value = json.dumps(val)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to persist system setting '{key}': {e}")
 
 
 def recalculate_all_emissions_gwp(standard):
@@ -482,7 +632,7 @@ def recalculate_all_emissions_gwp(standard):
                 + func.coalesce(Emission.n2o_emissions, 0.0) * n2o_factor
             ),
             Emission.gwp_version: standard,
-            Emission.updated_at: datetime.datetime.utcnow(),
+            Emission.updated_at: datetime.datetime.now(datetime.timezone.utc),
         },
         synchronize_session=False,
     )
@@ -504,7 +654,10 @@ def get_settings():
     import json
 
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
+
+    # Load fresh persistent settings from DB
+    load_settings_from_db()
 
     # Merge global settings with user preferences
     resp = dict(_app_settings)
@@ -515,6 +668,13 @@ def get_settings():
                 resp.update(prefs)
         except Exception:
             pass
+
+    # Mask secrets before returning
+    if resp.get("copernicus_password"):
+        resp["copernicus_password"] = "********"
+    if resp.get("copernicus_client_secret"):
+        resp["copernicus_client_secret"] = "********"
+
     return jsonify(resp)
 
 
@@ -522,57 +682,102 @@ def get_settings():
 @login_required
 def update_settings():
     import json
+    from models import SystemSetting
 
     user_id = session.get("user_id")
-    user = User.query.get(user_id) if user_id else None
+    user = db.session.get(User, user_id) if user_id else None
     data = request.get_json() or {}
+
+    load_settings_from_db()
+
+    operational_keys = {
+        "gwp_standard",
+        "ogmp_default_base_year",
+        "reconciliation_threshold",
+        "ogmp_upstream_target_pct",
+        "ogmp_midstream_target_pct",
+        "copernicus_username",
+        "copernicus_password",
+        "copernicus_client_id",
+        "copernicus_client_secret",
+        "copernicus_qa_threshold",
+        "copernicus_enabled",
+        "auto_flag_discrepancy",
+        "wec_fee_rates",
+    }
+    has_operational_keys = any(k in data for k in operational_keys)
+
+    if user and user.role == "it_admin" and has_operational_keys:
+        return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
+
+    is_admin = user and user.role in ["admin", "superuser"]
+    if has_operational_keys and not is_admin:
+        return jsonify({"error": "Administrator privileges are required to modify system-wide calculation standards."}), 403
 
     # Global system & GWP standards updates
     gwp_changed = False
-    if "gwp_standard" in data and data["gwp_standard"] in ["AR4", "AR5", "AR6"]:
-        new_gwp = data["gwp_standard"]
-        if _app_settings.get("gwp_standard") != new_gwp:
-            _app_settings["gwp_standard"] = new_gwp
-            gwp_changed = True
+    if is_admin:
+        if "gwp_standard" in data and data["gwp_standard"] in ["AR4", "AR5", "AR6"]:
+            new_gwp = data["gwp_standard"]
+            if _app_settings.get("gwp_standard") != new_gwp:
+                _app_settings["gwp_standard"] = new_gwp
+                save_setting_to_db("gwp_standard", new_gwp)
+                gwp_changed = True
 
-    if "ogmp_default_base_year" in data:
-        _app_settings["ogmp_default_base_year"] = int(data["ogmp_default_base_year"])
-    if "reconciliation_threshold" in data:
-        _app_settings["reconciliation_threshold"] = float(
-            data["reconciliation_threshold"]
-        )
-    if "ogmp_upstream_target_pct" in data:
-        _app_settings["ogmp_upstream_target_pct"] = float(
-            data["ogmp_upstream_target_pct"]
-        )
-    if "ogmp_midstream_target_pct" in data:
-        _app_settings["ogmp_midstream_target_pct"] = float(
-            data["ogmp_midstream_target_pct"]
-        )
-    if "wec_fee_rates" in data and isinstance(data["wec_fee_rates"], dict):
-        _app_settings["wec_fee_rates"].update(
-            {str(k): float(v) for k, v in data["wec_fee_rates"].items()}
-        )
-    if "theme" in data and data["theme"] in ["dark", "light"]:
-        _app_settings["theme"] = data["theme"]
-    if "unit_system" in data and data["unit_system"] in ["metric", "imperial"]:
-        _app_settings["unit_system"] = data["unit_system"]
-    if "auto_flag_discrepancy" in data:
-        _app_settings["auto_flag_discrepancy"] = bool(data["auto_flag_discrepancy"])
+        system_setting_keys = [
+            "ogmp_default_base_year",
+            "reconciliation_threshold",
+            "ogmp_upstream_target_pct",
+            "ogmp_midstream_target_pct",
+            "copernicus_username",
+            "copernicus_password",
+            "copernicus_client_id",
+            "copernicus_client_secret",
+            "copernicus_qa_threshold",
+            "copernicus_enabled",
+            "theme",
+            "unit_system",
+            "auto_flag_discrepancy",
+        ]
 
-    # If GWP standard was changed or set, recalculate existing emissions
-    if gwp_changed:
-        try:
-            recalculate_all_emissions_gwp(_app_settings["gwp_standard"])
-        except Exception as e:
-            current_app.logger.error(f"Error recalculating emissions with new GWP: {e}")
+        for k in system_setting_keys:
+            if k in data:
+                val = data[k]
+                if k in ["copernicus_password", "copernicus_client_secret"] and str(val).strip() in ["********", ""]:
+                    continue  # Do not overwrite existing secret with mask or empty string
+                if k == "ogmp_default_base_year":
+                    val = int(val)
+                elif k in ["reconciliation_threshold", "ogmp_upstream_target_pct", "ogmp_midstream_target_pct", "copernicus_qa_threshold"]:
+                    val = float(val)
+                elif k in ["copernicus_enabled", "auto_flag_discrepancy"]:
+                    val = bool(val)
+                _app_settings[k] = val
+                save_setting_to_db(k, val)
+
+        if "wec_fee_rates" in data and isinstance(data["wec_fee_rates"], dict):
+            rates = _app_settings.get("wec_fee_rates", {})
+            rates.update({str(k): float(v) for k, v in data["wec_fee_rates"].items()})
+            _app_settings["wec_fee_rates"] = rates
+            save_setting_to_db("wec_fee_rates", rates)
+
+        # If GWP standard was changed or set, recalculate existing emissions
+        if gwp_changed:
+            try:
+                recalculate_all_emissions_gwp(_app_settings["gwp_standard"])
+            except Exception as e:
+                current_app.logger.error(f"Error recalculating emissions with new GWP: {e}")
 
     if user:
         try:
             existing = json.loads(user.preferences) if user.preferences else {}
         except Exception:
             existing = {}
-        existing.update(data)
+        user_pref_keys = ["theme", "unit_system", "consolidation", "notifications", "language"]
+        for k, v in data.items():
+            if is_admin or k in user_pref_keys or k not in operational_keys:
+                if k in ["copernicus_password", "copernicus_client_secret"] and str(v).strip() in ["********", ""]:
+                    continue
+                existing[k] = v
         user.preferences = json.dumps(existing)
 
         if "consolidation" in data:
@@ -585,47 +790,39 @@ def update_settings():
                 user=user,
                 request=request,
                 entity="User",
-                details=f"Updated settings for user: {user.email} (GWP: {_app_settings['gwp_standard']})",
+                details=f"Updated settings for user: {user.email} (GWP: {_app_settings.get('gwp_standard', 'AR4')})",
             )
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"Audit Log Error: {e}")
+            current_app.logger.error(f"Audit Log Error on update_settings: {e}")
+            return jsonify({"error": "Failed to update settings"}), 500
 
     try:
         from routes.dashboard import clear_dashboard_cache
-
         clear_dashboard_cache()
     except Exception:
         pass
 
+    out_settings = dict(_app_settings)
+    if out_settings.get("copernicus_password"):
+        out_settings["copernicus_password"] = "********"
+    if out_settings.get("copernicus_client_secret"):
+        out_settings["copernicus_client_secret"] = "********"
+
     return jsonify(
-        {"message": "Settings saved successfully", "settings": _app_settings}
+        {"message": "Settings saved successfully", "settings": out_settings}
     )
 
 
 @auth_bp.route("/users", methods=["GET"])
-@admin_required
+@it_admin_required
 def get_users():
     # Force expire session cache so we always read fresh data from DB
     db.session.expire_all()
 
-    it_admin_id = session.get("user_id")
-    it_admin = User.query.get(it_admin_id)
-    admin_region = it_admin.location if it_admin else None
-
-    # Treat null / empty / "Global" as "no restriction" — see all users
-    SENTINEL_VALUES = {None, "", "Global", "global"}
-    region_restricted = admin_region not in SENTINEL_VALUES
-
-    query = User.query
-    if region_restricted:
-        # Scope to users in the same region; always include admins/it_admins
-        query = query.filter(
-            db.or_(User.location == admin_region, User.role.in_(["admin", "it_admin"]))
-        )
-
-    users = query.order_by(User.created_at.desc()).all()
+    # IT Admins have global authority over all accounts — no regional restriction
+    users = User.query.order_by(User.created_at.desc()).all()
     result = []
     for u in users:
         result.append(
@@ -647,37 +844,45 @@ def get_users():
 
 
 @auth_bp.route("/users/<int:id>", methods=["PUT"])
-@admin_required
+@it_admin_required
 def update_user(id):
     db.session.expire_all()
     user = db.session.get(User, id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # IT admin can only modify users within their own region
+    # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
-    it_admin = User.query.get(it_admin_id)
-    if it_admin and it_admin.location and user.role == "user":
-        if user.location != it_admin.location:
-            return jsonify({"error": "Unauthorized: User is outside your region"}), 403
+    it_admin = db.session.get(User, it_admin_id)
 
     data = request.get_json()
 
     ROLE_RANK = {"user": 0, "superuser": 1, "admin": 2, "it_admin": 3}
+    VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
-    target_new_rank = ROLE_RANK.get(
-        data.get("role", user.role) if data else user.role, 0
-    )
-    if target_new_rank > requester_rank:
-        return jsonify({"error": "Cannot assign a role higher than your own"}), 403
 
     if "role" in data:
-        user.role = data["role"]
+        new_role = str(data["role"]).strip().lower()
+        if new_role not in VALID_ROLES:
+            return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
+        target_new_rank = ROLE_RANK.get(new_role, 0)
+        if target_new_rank > requester_rank:
+            return jsonify({"error": "Cannot assign a role higher than your own"}), 403
+        user.role = new_role
+
     if "location" in data:
         user.location = data["location"]
     if "status" in data:
         user.status = data["status"]
 
+    log_activity_and_notify(
+        action="UPDATE",
+        record_id=str(user.id),
+        user=it_admin,
+        request=request,
+        entity="User",
+        details=f"User {user.email} updated by {it_admin.fullName if it_admin else 'IT Admin'}",
+    )
     db.session.commit()
     # Return updated user so frontend can reflect changes immediately
     return jsonify(
@@ -696,7 +901,7 @@ def update_user(id):
 
 
 @auth_bp.route("/users/<int:id>", methods=["DELETE"])
-@admin_required
+@it_admin_required
 def delete_user(id):
     if id == session.get("user_id"):
         return jsonify({"error": "Cannot delete your own account"}), 400
@@ -706,46 +911,104 @@ def delete_user(id):
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # IT admin can only delete users within their own region
+    # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
-    it_admin = User.query.get(it_admin_id)
-    if it_admin and it_admin.location and user.role == "user":
-        if user.location != it_admin.location:
-            return jsonify({"error": "Unauthorized: User is outside your region"}), 403
+    it_admin = db.session.get(User, it_admin_id)
 
-    # Nullify FK references before deleting to avoid constraint violations
+    # Clean up and nullify FK references before deleting
     from sqlalchemy import text
 
-    # Nullify activity_log.user_id references
+    # Delete notifications belonging to the user
+    db.session.execute(
+        text("DELETE FROM notifications WHERE user_id = :uid"),
+        {"uid": id},
+    )
+    # Nullify activity_log.user_id references (user_name is already preserved)
     db.session.execute(
         text("UPDATE activity_log SET user_id = NULL WHERE user_id = :uid"), {"uid": id}
-    )
-    # Nullify notifications.user_id references
-    db.session.execute(
-        text("UPDATE notifications SET user_id = NULL WHERE user_id = :uid"),
-        {"uid": id},
     )
     # Nullify created_by on facilities
     db.session.execute(
         text("UPDATE facilities SET created_by = NULL WHERE created_by = :uid"),
         {"uid": id},
     )
-    # Nullify any other created_by/updated_by references in emissions tables
-    for tbl in [
+    # Nullify all created_by, approved_by, updated_by references across all tables
+    cols_to_nullify = ["created_by", "approved_by", "updated_by"]
+    tables_to_clean = [
         "emissions",
         "scope2_emissions",
         "scope3_emissions",
         "mitigation_projects",
         "mitigation_records",
-    ]:
-        try:
-            db.session.execute(
-                text(f"UPDATE {tbl} SET created_by = NULL WHERE created_by = :uid"),
-                {"uid": id},
-            )
-        except Exception:
-            pass  # Table may not have created_by column; skip
+        "facilities",
+        "emission_sources",
+        "custom_factors",
+        "cbam_product_exports",
+        "base_year_recalculations",
+        "ogmp_surveys",
+    ]
+    for tbl in tables_to_clean:
+        for col in cols_to_nullify:
+            try:
+                db.session.execute(
+                    text(f"UPDATE {tbl} SET {col} = NULL WHERE {col} = :uid"),
+                    {"uid": id},
+                )
+            except Exception:
+                pass  # Table or column may not exist in current schema; skip
 
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully"})
+
+
+@auth_bp.route("/users/<int:id>/reset-password", methods=["POST"])
+@it_admin_required
+def admin_reset_password(id):
+    """
+    IT Admin resets a user's password directly (global authority).
+    """
+    db.session.expire_all()
+    user = db.session.get(User, id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    current_admin_id = session.get("user_id")
+    admin_user = db.session.get(User, current_admin_id) if current_admin_id else None
+
+    data = request.get_json(silent=True) or {}
+    new_password = data.get("newPassword", "").strip()
+
+    if not new_password:
+        return jsonify({"error": "New password is required"}), 400
+
+    valid, err_msg = validate_password_complexity(new_password)
+    if not valid:
+        return jsonify({"error": err_msg}), 400
+
+    user.set_password(new_password)
+    user.password_updated_at = datetime.datetime.now(datetime.timezone.utc)
+
+    # Create notification for the user whose password was reset
+    Notification.create(
+        title="Your Password Has Been Reset",
+        message=f"Your account password was reset by IT Administrator ({admin_user.fullName if admin_user else 'IT Admin'}) on {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}.",
+        type="security",
+        user_id=user.id,
+    )
+
+    try:
+        log_activity_and_notify(
+            action="UPDATE",
+            record_id=str(user.id),
+            user=admin_user or user,
+            request=request,
+            entity="User",
+            details=f"Password reset for {user.email} by IT Admin {admin_user.email if admin_user else 'system'}",
+        )
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error logging admin password reset: {e}")
+
+    return jsonify({"message": f"Password for {user.fullName} ({user.email}) has been successfully reset."}), 200

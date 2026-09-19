@@ -1,5 +1,8 @@
 
 
+import math
+
+
 class BaseCalculator:
     """
     Base class for all API Compendium 2021 calculation modules.
@@ -11,25 +14,33 @@ class BaseCalculator:
         self.section_ref = section_ref
 
     def validate_inputs(self, inputs, required_keys):
-        """Validates that all required inputs are present and non-negative."""
+        """Validates that all required inputs are present, finite, and non-negative."""
         for key in required_keys:
             if key not in inputs:
                 raise ValueError(f"Missing required input: {key}")
-            if isinstance(inputs[key], (int, float)) and inputs[key] < 0:
-                raise ValueError(f"Input {key} cannot be negative: {inputs[key]}")
+            val = inputs[key]
+            if isinstance(val, (int, float)):
+                if math.isnan(val) or math.isinf(val):
+                    raise ValueError(f"Input {key} cannot be NaN or Infinite: {val}")
+                if val < 0:
+                    raise ValueError(f"Input {key} cannot be negative: {val}")
         return True
 
-    def calculate_uncertainty(self, value, relative_uncertainty):
+    def calculate_uncertainty(self, value, relative_uncertainty, coverage_factor=2.0):
         """
-        Calculates absolute uncertainty and non-negative bounds at 95% CI.
+        Calculates absolute uncertainty and non-negative bounds at 95% CI (k=2.0 per ISO/IEC Guide 98-3 GUM §6.2).
         """
-        abs_uncertainty = value * relative_uncertainty
+        abs_1sigma = value * relative_uncertainty
+        abs_95 = abs_1sigma * coverage_factor
         return {
             "value": value,
             "uncertainty": relative_uncertainty,
-            "abs_uncertainty": abs_uncertainty,
-            "lower_bound": max(0.0, value - abs_uncertainty),
-            "upper_bound": value + abs_uncertainty,
+            "abs_uncertainty": abs_1sigma,
+            "abs_uncertainty_95": abs_95,
+            "lower_bound": max(0.0, value - abs_95),
+            "upper_bound": value + abs_95,
+            "confidence_level_pct": 95,
+            "coverage_factor": coverage_factor,
         }
 
     def format_result(
