@@ -5,6 +5,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 // https://vite.dev/config/
 // FE-01 FIX: add dev proxy + production build optimisations
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [
     react(),
     visualizer({ filename: "stats.html", open: false })
