@@ -255,8 +255,36 @@ def ensure_admin_seeded():
         app.logger.error(f"Failed to auto-seed admin: {e}")
 
 
+def ensure_database_indexes():
+    try:
+        from sqlalchemy import text
+        queries = [
+            "CREATE INDEX IF NOT EXISTS ix_emissions_activity ON emissions(activity);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_division ON emissions(division);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_year ON emissions(year);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_facility_id ON emissions(facility_id);",
+            "CREATE INDEX IF NOT EXISTS ix_emissions_status ON emissions(status);",
+            "CREATE INDEX IF NOT EXISTS ix_production_data_facility_id ON production_data(facility_id);",
+            "CREATE INDEX IF NOT EXISTS ix_production_data_year ON production_data(year);",
+            "CREATE INDEX IF NOT EXISTS ix_scope2_emissions_year ON scope2_emissions(year);",
+            "CREATE INDEX IF NOT EXISTS ix_scope2_emissions_status ON scope2_emissions(status);",
+            "CREATE INDEX IF NOT EXISTS ix_scope3_emissions_year ON scope3_emissions(year);",
+            "CREATE INDEX IF NOT EXISTS ix_scope3_emissions_status ON scope3_emissions(status);",
+        ]
+        with db.engine.connect() as conn:
+            for q in queries:
+                try:
+                    conn.execute(text(q))
+                except Exception:
+                    pass
+            conn.commit()
+    except Exception as e:
+        app.logger.warning(f"Could not ensure database indexes: {e}")
+
+
 with app.app_context():
     db.create_all()
+    ensure_database_indexes()
     ensure_admin_seeded()
 
 
