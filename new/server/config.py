@@ -65,15 +65,18 @@ class Config:
 
     # Session Configuration (8-hour session lifetime)
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SAMESITE = os.environ.get(
+        "SESSION_COOKIE_SAMESITE",
+        "None" if os.environ.get("FLASK_ENV") == "production" else "Lax",
+    )
     # Only set Secure in production to allow localhost testing
     SESSION_COOKIE_SECURE = _is_production
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     SESSION_REFRESH_EACH_REQUEST = True
 
     # CSRF Configuration
-    # Set CSRF time limit to None so it lives as long as the session
-    # Fixes: 'The CSRF token has expired' for long-running SPA sessions
+    # Disable strict referrer checking so GitHub Pages frontend can communicate with Render backend
+    WTF_CSRF_SSL_STRICT = False
     WTF_CSRF_TIME_LIMIT = 86400
 
     # API-03 FIX: Hard limit on all incoming request bodies — prevents large-payload DoS

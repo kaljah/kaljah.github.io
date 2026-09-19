@@ -135,6 +135,20 @@ def get_batch_dashboard_data():
     include_pending = request.args.get("includePending", "false").lower() == "true"
     gwp_horizon = request.args.get("gwp_horizon", "100")
 
+    cache_key = (
+        "batch_all",
+        facility_id,
+        year,
+        activity,
+        division,
+        segment,
+        group_by,
+        user.id if user else 0,
+    )
+    with CACHE_LOCK:
+        if cache_key in DASHBOARD_CACHE:
+            return jsonify(DASHBOARD_CACHE[cache_key])
+
     # Capture app reference NOW (inside the request context) so worker
     # threads can push their own app context independently.
     app = current_app._get_current_object()
@@ -284,6 +298,20 @@ def get_batch_dashboard_data():
                 "pending_stats": pending_stats,
             }
         )
+        batch_result = {
+            "summary": f_summary.result(),
+            "mitigation": f_mitigation.result(),
+            "scope3_summary": f_scope3.result(),
+            "categorical_breakdown": f_categorical.result(),
+            "intensity_stats": f_intensity.result(),
+            "uncertainty": f_uncertainty.result(),
+            "years": f_years.result(),
+            "goal": goal_obj,
+            "base_year": base_year_obj,
+        }
+        with CACHE_LOCK:
+            DASHBOARD_CACHE[cache_key] = batch_result
+        return jsonify(batch_result)
     except Exception as e:
         import traceback
 
