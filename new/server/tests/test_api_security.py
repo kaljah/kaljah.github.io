@@ -148,7 +148,7 @@ class TestIDOR:
         """User should not be able to delete an emission record created by another user (e.g. admin)."""
         with app.app_context():
             from models import Facility
-            if not Facility.query.get(1):
+            if not db.session.get(Facility, 1):
                 f = Facility(id=1, name="Test Facility")
                 db.session.add(f)
                 db.session.commit()
@@ -184,7 +184,7 @@ class TestIDOR:
         """User should be able to delete their own emission record."""
         with app.app_context():
             from models import Facility
-            if not Facility.query.get(1):
+            if not db.session.get(Facility, 1):
                 f = Facility(id=1, name="Test Facility")
                 db.session.add(f)
                 db.session.commit()

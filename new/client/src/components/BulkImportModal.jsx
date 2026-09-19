@@ -17,6 +17,7 @@ import "./BulkImportModal.css";
 const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
   const toast = useToast();
   const fileInputRef = useRef(null);
+  const pollIntervalRef = useRef(null);
   const [file, setFile] = useState(null);
   const [csvData, setCsvData] = useState([]);
   const [headers, setHeaders] = useState([]);
@@ -24,6 +25,15 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
   const [step, setStep] = useState(1); // 1: Upload, 2: Mapping, 3: Preview
   const [loading, setLoading] = useState(false);
   const [uploadJobId, setUploadJobId] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+    };
+  }, []);
   const [uploadStatus, setUploadStatus] = useState(null);
   const [showCheatSheet, setShowCheatSheet] = useState(false);
   const [validationErrors, setValidationErrors] = useState([]);
@@ -534,6 +544,23 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
 
   const downloadTemplate = async () => {
     if (type === "activity") {
+      try {
+        const res = await api.get(
+          `/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`,
+          { responseType: "blob" }
+        );
+        const url = window.URL.createObjectURL(new Blob([res.data], { type: "text/csv" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `scope1_template_${selectedProcess || "all"}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+      } catch (err) {
+        console.error("Template download failed:", err);
+        toast.error("Failed to download emissions template.");
+      }
       // Use the backend's comprehensive template generator for emissions data
       const baseUrl = import.meta.env.VITE_API_URL || "/api";
       window.location.href = `${baseUrl}/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`;
@@ -817,8 +844,11 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
       const jobId = res.data.job_id;
       setUploadJobId(jobId);
 
-      // Start polling
-      const interval = setInterval(async () => {
+      // Start polling with cleanup protection
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+      pollIntervalRef.current = setInterval(async () => {
         try {
           const statusRes = await api.get(`/emissions/upload/status/${jobId}`);
           setUploadStatus(statusRes.data);
@@ -827,7 +857,10 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
             statusRes.data.status === "completed" ||
             statusRes.data.status === "failed"
           ) {
-            clearInterval(interval);
+            if (pollIntervalRef.current) {
+              clearInterval(pollIntervalRef.current);
+              pollIntervalRef.current = null;
+            }
             setLoading(false);
             if (statusRes.data.status === "completed") {
               toast.success(
@@ -839,7 +872,10 @@ const BulkImportModal = ({ isOpen, onClose, type, onImportSuccess }) => {
             }
           }
         } catch (err) {
-          clearInterval(interval);
+          if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
+          }
           setLoading(false);
           toast.error("Error checking upload status.");
         }

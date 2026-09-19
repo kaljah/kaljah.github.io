@@ -7,23 +7,24 @@ import { ToastProvider } from "./components/Toast";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Layout from "./components/layout/Layout";
 import Login from "./pages/Login";
-import DashboardEnhanced from "./pages/DashboardEnhanced";
-import Emissions from "./pages/Emissions";
-import ManageData from "./pages/ManageData";
-import QADashboard from "./pages/QADashboard";
-import ReportsSync from "./pages/Reports";
-import CarbonIntensity from "./pages/CarbonIntensity";
-import MethaneIntensity from "./pages/MethaneIntensity";
-import UncertaintyAssessment from "./pages/UncertaintyAssessment";
-import ReferenceData from "./pages/ReferenceData";
-import Diagnostics from "./pages/Diagnostics";
-import AuditTrail from "./pages/AuditTrail";
-import UserManagement from "./pages/UserManagement";
-import Settings from "./pages/Settings";
 import LoadingSpinner from "./components/LoadingSpinner";
-// --- Lazy loaded heavy components ---
-const EmissionsMap = React.lazy(() => import("./pages/MethaneExplorer"));
+
+// Lazy loaded page components for optimal bundle splitting and fast load times
+const DashboardEnhanced = React.lazy(() => import("./pages/DashboardEnhanced"));
+const Emissions = React.lazy(() => import("./pages/Emissions"));
+const ManageData = React.lazy(() => import("./pages/ManageData"));
+const QADashboard = React.lazy(() => import("./pages/QADashboard"));
 const Reports = React.lazy(() => import("./pages/Reports"));
+const CarbonIntensity = React.lazy(() => import("./pages/CarbonIntensity"));
+const MethaneIntensity = React.lazy(() => import("./pages/MethaneIntensity"));
+const UncertaintyAssessment = React.lazy(() => import("./pages/UncertaintyAssessment"));
+const ReferenceData = React.lazy(() => import("./pages/ReferenceData"));
+const Diagnostics = React.lazy(() => import("./pages/Diagnostics"));
+const AuditTrail = React.lazy(() => import("./pages/AuditTrail"));
+const UserManagement = React.lazy(() => import("./pages/UserManagement"));
+const Settings = React.lazy(() => import("./pages/Settings"));
+const SbtiDashboard = React.lazy(() => import("./pages/SbtiDashboard"));
+const EmissionsMap = React.lazy(() => import("./pages/MethaneExplorer"));
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -56,6 +57,23 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+const SuperuserRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner fullScreen />;
+  if (!user) return <Navigate to="/login" />;
+  if (!["admin", "superuser"].includes(user.role)) return <Navigate to="/" />;
+  return children;
+};
+
+const AuditRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner fullScreen />;
+  if (!user) return <Navigate to="/login" />;
+  if (!["admin", "superuser", "it_admin"].includes(user.role))
+    return <Navigate to="/" />;
+  return children;
+};
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -65,9 +83,7 @@ const AppRoutes = () => {
         path="/"
         element={
           <PrivateRoute>
-            <React.Suspense fallback={<LoadingSpinner fullScreen message="Loading Component..." />}>
-              <Layout />
-            </React.Suspense>
+            <Layout />
           </PrivateRoute>
         }
       >
@@ -98,9 +114,9 @@ const AppRoutes = () => {
         <Route
           path="qa-dashboard"
           element={
-            <AdminRoute>
+            <SuperuserRoute>
               <QADashboard />
-            </AdminRoute>
+            </SuperuserRoute>
           }
         />
         <Route
@@ -136,6 +152,14 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="sbti"
+          element={
+            <NonITRoute>
+              <SbtiDashboard />
+            </NonITRoute>
+          }
+        />
+        <Route
           path="uncertainty"
           element={
             <NonITRoute>
@@ -146,27 +170,23 @@ const AppRoutes = () => {
         <Route
           path="reference-data"
           element={
-            <AdminRoute>
+            <NonITRoute>
               <ReferenceData />
-            </AdminRoute>
+            </NonITRoute>
           }
         />
-        {/* NEW-01 FIX */}
+        {/* Unified QA/QC & Diagnostics */}
         <Route
           path="diagnostics"
-          element={
-            <AdminRoute>
-              <Diagnostics />
-            </AdminRoute>
-          }
+          element={<Navigate to="/qa-dashboard" replace />}
         />
         {/* NEW-01 FIX */}
         <Route
           path="audit-trail"
           element={
-            <AdminRoute>
+            <AuditRoute>
               <AuditTrail />
-            </AdminRoute>
+            </AuditRoute>
           }
         />
         <Route
@@ -180,9 +200,9 @@ const AppRoutes = () => {
         <Route
           path="settings"
           element={
-            <NonITRoute>
+            <PrivateRoute>
               <Settings />
-            </NonITRoute>
+            </PrivateRoute>
           }
         />
       </Route>
@@ -197,14 +217,17 @@ const App = () => {
 
   return (
     <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <LayoutProvider>
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <LayoutProvider>
           <AuthProvider>
             <ToastProvider>
               <AppRoutes />
             </ToastProvider>
-          </AuthProvider>
-        </LayoutProvider>
+          </LayoutProvider>
+        </AuthProvider>
       </BrowserRouter>
     </ErrorBoundary>
   );

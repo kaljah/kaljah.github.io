@@ -1,27 +1,38 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 class Config:
-    # SEC-01: Enforce secure SECRET_KEY in production
-    if os.environ.get("FLASK_ENV") == "production":
+    # SEC-01: Enforce secure SECRET_KEY across modern environment identifiers
+    _env_name = (
+        os.environ.get("FLASK_ENV")
+        or os.environ.get("APP_ENV")
+        or os.environ.get("ENVIRONMENT")
+        or "development"
+    ).lower()
+    _is_production = _env_name in ["production", "prod", "staging"]
+
+    if _is_production:
         SECRET_KEY = os.environ.get("SECRET_KEY")
-        if not SECRET_KEY or SECRET_KEY == "dev-secret-key-change-in-prod-please":
+        if not SECRET_KEY or SECRET_KEY in [
+            "dev-secret-key-change-in-prod-please",
+            "secret",
+            "changeme",
+        ]:
             raise ValueError(
                 "FATAL: SECRET_KEY is not set or is using the default development key in a production environment."
+            )
+        if not os.environ.get("DATABASE_URL"):
+            raise ValueError(
+                "FATAL: DATABASE_URL is not set in a production environment."
             )
     else:
         SECRET_KEY = (
             os.environ.get("SECRET_KEY") or "dev-secret-key-change-in-prod-please"
         )
-
-    if os.environ.get("FLASK_ENV") == "production":
-        if not os.environ.get("DATABASE_URL"):
-            raise ValueError(
-                "FATAL: DATABASE_URL is not set in a production environment."
-            )
 
     ALLOWED_ORIGINS = os.environ.get(
         "ALLOWED_ORIGINS",
@@ -46,15 +57,22 @@ class Config:
         ) or "sqlite:///" + os.path.join(BASE_DIR, "ghg_app.db")
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_size": 25,
+        "max_overflow": 25,
+        "pool_timeout": 60,
+    }
 
-    # Session Configuration
+    # Session Configuration (8-hour session lifetime)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = os.environ.get(
         "SESSION_COOKIE_SAMESITE",
         "None" if os.environ.get("FLASK_ENV") == "production" else "Lax",
     )
     # Only set Secure in production to allow localhost testing
-    SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"
+    SESSION_COOKIE_SECURE = _is_production
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
+    SESSION_REFRESH_EACH_REQUEST = True
 
     # CSRF Configuration
     # Disable strict referrer checking so GitHub Pages frontend can communicate with Render backend
@@ -62,8 +80,15 @@ class Config:
     WTF_CSRF_TIME_LIMIT = 86400
 
     # API-03 FIX: Hard limit on all incoming request bodies — prevents large-payload DoS
-    # Temporarily increased to 1000 MB for 1-million row bulk upload stress testing
-    MAX_CONTENT_LENGTH = 1000 * 1024 * 1024  # 1000 MB
+    # NOTE: 50 MB covers any realistic single-month CSV upload.
+    # If you need bulk testing with million-row files, set MAX_CONTENT_LENGTH=1073741824 in .env temporarily.
+    MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH", 50 * 1024 * 1024))  # 50 MB default
 
-    # Rate Limiting Backend (Memory default, Redis in multi-worker production)
+    # Rate Limiting Backend
+    # Currently uses memory:// (in-process) — limits v5.x does not support SQLite.
+    # This is correct for single-process (dev / single gunicorn worker) deployments.
+    # To scale to multi-worker production, install Redis and set:
+    #   RATELIMIT_STORAGE_URI=redis://localhost:6379/0  in your .env file
     RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")
+    # Expose X-RateLimit-* response headers so clients can self-throttle
+    RATELIMIT_HEADERS_ENABLED = True

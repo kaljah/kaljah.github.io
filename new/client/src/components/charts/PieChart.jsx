@@ -72,7 +72,34 @@ export const PieChart = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "rgba(255,255,255,0.3)",
+            color: "var(--text-muted, #94a3b8)",
+          }}
+        >
+          No data available
+        </div>
+      </div>
+    );
+  }
+
+  const sanitizedData = data.map((item) => ({
+    ...item,
+    [dataKey]: Math.max(0, Number(item[dataKey]) || 0),
+  }));
+  const totalValue = sanitizedData.reduce(
+    (acc, curr) => acc + (Number(curr[dataKey]) || 0),
+    0
+  );
+
+  if (totalValue <= 0) {
+    return (
+      <div className="chart-wrapper empty">
+        <div
+          style={{
+            height,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--text-muted, #94a3b8)",
           }}
         >
           No data available
@@ -98,7 +125,7 @@ export const PieChart = ({
       <ResponsiveContainer width="99%" height={height} debounce={200}>
         <RechartsPie>
           <Pie
-            data={data}
+            data={sanitizedData}
             dataKey={dataKey}
             nameKey={nameKey}
             cx="50%"
@@ -108,7 +135,7 @@ export const PieChart = ({
             paddingAngle={5}
             cornerRadius={4}
           >
-            {data.map((entry, index) => (
+            {sanitizedData.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={entry.color || colors[index % colors.length]}

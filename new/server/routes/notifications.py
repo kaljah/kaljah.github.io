@@ -73,49 +73,62 @@ def stream_notifications():
     def generate(uid, lid):
         yield ": connected\n\n"
 
-        last_heartbeat = time.time()
+        start_time = time.time()
+        last_heartbeat = start_time
+        MAX_STREAM_DURATION = 45  # Cycle worker threads every 45s to prevent Gunicorn worker starvation
         POLL_INTERVAL = 2
-        HEARTBEAT_INTERVAL = 25
+        HEARTBEAT_INTERVAL = 20
 
-        while True:
-            try:
-                new_notifs = (
-                    Notification.query.filter(
-                        Notification.user_id == uid, Notification.id > lid
-                    )
-                    .order_by(Notification.id.asc())
-                    .all()
-                )
-
-                for n in new_notifs:
-                    payload = json.dumps(
-                        {
-                            "id": n.id,
-                            "type": n.type,
-                            "title": n.title,
-                            "message": n.message,
-                            "is_read": n.is_read,
-                            "time": n.created_at.isoformat() + "Z",
-                        }
-                    )
-                    yield f"data: {payload}\n\n"
-                    lid = n.id
-
-                now = time.time()
-                if now - last_heartbeat >= HEARTBEAT_INTERVAL:
-                    yield ": heartbeat\n\n"
-                    last_heartbeat = now
-
-                time.sleep(POLL_INTERVAL)
-
-            except GeneratorExit:
-                return
-            except Exception as exc:
+        try:
+            while time.time() - start_time < MAX_STREAM_DURATION:
                 try:
-                    current_app.logger.error(f"SSE stream error for user {uid}: {exc}")
-                except Exception:
-                    pass
-                time.sleep(POLL_INTERVAL)
+                    new_notifs = (
+                        Notification.query.filter(
+                            Notification.user_id == uid, Notification.id > lid
+                        )
+                        .order_by(Notification.id.asc())
+                        .all()
+                    )
+
+                    for n in new_notifs:
+                        payload = json.dumps(
+                            {
+                                "id": n.id,
+                                "type": n.type,
+                                "title": n.title,
+                                "message": n.message,
+                                "is_read": n.is_read,
+                                "time": n.created_at.isoformat() + "Z",
+                            }
+                        )
+                        yield f"data: {payload}\n\n"
+                        lid = n.id
+
+                    now = time.time()
+                    if now - last_heartbeat >= HEARTBEAT_INTERVAL:
+                        yield ": heartbeat\n\n"
+                        last_heartbeat = now
+
+                    time.sleep(POLL_INTERVAL)
+
+                except GeneratorExit:
+                    return
+                except Exception as exc:
+                    try:
+                        current_app.logger.error(f"SSE stream error for user {uid}: {exc}")
+                    except Exception:
+                        pass
+                    time.sleep(POLL_INTERVAL)
+
+            # Instruct browser EventSource to reconnect cleanly without treating end-of-stream as an error
+            yield "retry: 1000\n\n"
+            yield ": session-cycle\n\n"
+        finally:
+            # Explicitly return DB connection to pool when worker thread finishes or client disconnects
+            try:
+                db.session.remove()
+            except Exception:
+                pass
 
     return Response(
         stream_with_context(generate(user_id, last_id)),
@@ -128,33 +141,47 @@ def stream_notifications():
     )
 
 
+from utils import get_current_user
+
+
 @notifications_bp.route("/<int:id>/read", methods=["PUT"])
 @login_required
 def mark_read(id):
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
     n = Notification.query.get_or_404(id)
-    if n.user_id is not None and n.user_id != user_id:
+    if n.user_id is None:
+        if user.role != "admin":
+            return jsonify({"error": "Only administrators can modify system notifications"}), 403
+    elif n.user_id != user.id:
         return jsonify({"error": "Unauthorized"}), 403
 
     n.is_read = True
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to update notification"}), 500
     return jsonify({"success": True})
 
 
 @notifications_bp.route("/dismiss-all", methods=["POST"])
 @login_required
 def dismiss_all():
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    Notification.query.filter_by(user_id=user_id, is_read=False).update(
+    Notification.query.filter_by(user_id=user.id, is_read=False).update(
         {"is_read": True}
     )
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to dismiss notifications"}), 500
     return jsonify({"success": True})
 
 
@@ -162,16 +189,23 @@ def dismiss_all():
 @login_required
 def delete_notification(id):
     """Permanently delete a single notification."""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
     n = Notification.query.get_or_404(id)
-    if n.user_id is not None and n.user_id != user_id:
+    if n.user_id is None:
+        if user.role != "admin":
+            return jsonify({"error": "Only administrators can delete system notifications"}), 403
+    elif n.user_id != user.id:
         return jsonify({"error": "Unauthorized"}), 403
 
-    db.session.delete(n)
-    db.session.commit()
+    try:
+        db.session.delete(n)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete notification"}), 500
     return jsonify({"success": True})
 
 
@@ -179,10 +213,14 @@ def delete_notification(id):
 @login_required
 def delete_all_notifications():
     """Permanently delete all notifications for the current user."""
-    user_id = session.get("user_id")
-    if not user_id:
+    user = get_current_user()
+    if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    deleted = Notification.query.filter_by(user_id=user_id).delete()
-    db.session.commit()
+    try:
+        deleted = Notification.query.filter_by(user_id=user.id).delete()
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Failed to delete notifications"}), 500
     return jsonify({"success": True, "deleted": deleted})

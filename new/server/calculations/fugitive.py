@@ -12,7 +12,7 @@ class ComponentFugitiveCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Component-Level Fugitive", "Section 7.2")
 
-    def calculate(self, component_counts, ch4_content, uncertainties):
+    def calculate(self, component_counts, ch4_content, uncertainties, gwp_dict=None):
         """
         Average Factor Method - counts * EF
         component_counts: dict of {type: count}
@@ -24,9 +24,19 @@ class ComponentFugitiveCalculator(BaseCalculator):
 
         total_ch4_kg_hr = 0
         for comp_type, data in component_counts.items():
-            count = data.get("count", 0)
-            ef = data.get("ef", 0)
-            total_ch4_kg_hr += count * ef * ch4_content
+            if isinstance(data, dict):
+                count = data.get("count", 0)
+                ef = data.get("ef", 0)
+                ef_unit = str(data.get("unit") or data.get("ef_unit") or "").lower()
+                is_methane = bool(data.get("is_methane")) or any(
+                    x in ef_unit for x in ["ch4", "methane", "ch_4"]
+                )
+            else:
+                count = float(data or 0)
+                ef = 0.0
+                is_methane = False
+            ch4_scaling = 1.0 if is_methane else ch4_content
+            total_ch4_kg_hr += count * ef * ch4_scaling
 
         total_ch4_tonnes_year = (total_ch4_kg_hr * 8760) / 1000.0
 
@@ -40,7 +50,7 @@ class ComponentFugitiveCalculator(BaseCalculator):
             process_category="fugitive_component",
             gas="ch4",
         )
-        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year)
+        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year, gwp_dict=gwp_dict)
 
         return self.format_result(
             ch4=ch4_res,
@@ -54,7 +64,7 @@ class EquipmentFugitiveCalculator(BaseCalculator):
         super().__init__("Equipment-Level Fugitive", "Section 7.2.2")
 
     def calculate(
-        self, equipment_count, ef, ch4_content, uncertainties, ef_unit="kg/hr"
+        self, equipment_count, ef, ch4_content, uncertainties, ef_unit="kg/hr", gwp_dict=None
     ):
         """
         Average Factor Method for equipment - count * EF
@@ -63,8 +73,8 @@ class EquipmentFugitiveCalculator(BaseCalculator):
 
         # Check if EF is already in tonnes
         is_tonne = "tonne" in ef_unit.lower() or " mt" in ef_unit.lower()
-        # Check if EF is already methane-based
-        is_methane = "ch" in ef_unit.lower() or "methane" in ef_unit.lower()
+        # Check if EF is already methane-based (do not match substrings like 'component')
+        is_methane = any(x in ef_unit.lower() for x in ["ch4", "methane", "ch_4"])
 
         total_ch4_raw = equipment_count * ef
         if not is_methane:
@@ -95,7 +105,7 @@ class EquipmentFugitiveCalculator(BaseCalculator):
             process_category="equipment_fugitive",
             gas="ch4",
         )
-        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year)
+        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year, gwp_dict=gwp_dict)
 
         return self.format_result(
             ch4=ch4_res,
@@ -112,7 +122,7 @@ class CompressorSealCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Compressor Seal Leakage", "Section 7.2.3")
 
-    def calculate(self, compressor_count, seal_type, uncertainties):
+    def calculate(self, compressor_count, seal_type, uncertainties, gwp_dict=None):
         """
         API Section 7.2.3 - Compressor seals
         """
@@ -139,10 +149,11 @@ class CompressorSealCalculator(BaseCalculator):
             process_category="compressor_fugitive",
             gas="ch4",
         )
-        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year)
+        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year, gwp_dict=gwp_dict)
 
         return self.format_result(
             ch4=ch4_res,
             total_co2e=total_co2e,
             inputs={"compressor_count": compressor_count, "seal_type": seal_type},
         )
+

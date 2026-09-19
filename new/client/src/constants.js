@@ -10,9 +10,9 @@ export const GWP_AR4 = {
 export const GWP_AR5 = {
   CO2: 1,
   CH4: 28,
-  N2O: 264, // IPCC AR5 WG1 Table 8.7 (2013)
+  N2O: 265, // IPCC AR5 WG1 Table 8.7 (2013)
   CH4_20: 82.5,
-  N2O_20: 264,
+  N2O_20: 268,
 };
 
 export const GWP_AR6 = {

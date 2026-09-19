@@ -298,28 +298,110 @@
   font-size: 0.8rem;
 }
 
-.login-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
-  border-radius: 24px 24px 0 0;
+.login-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
-.fade-in {
-  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.forgot-password-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.forgot-password-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* --- Forgot Password Modal --- */
+.forgot-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.forgot-modal-content {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  position: relative;
+}
+
+.forgot-modal-header {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.forgot-modal-header h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.forgot-modal-header p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.forgot-status-msg {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.forgot-status-msg.success {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.forgot-status-msg.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.forgot-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  background: #f1f5f9;
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
 }

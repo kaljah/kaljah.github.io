@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import api from "../api";
 import "./UploadProgress.css";
 
@@ -93,6 +95,7 @@ const IconChevron = ({ open }) => (
 /* ── Reason tag colour coding ─────────────────────────────── */
 function categoryFromReason(reason = "") {
   const r = reason.toLowerCase();
+  if (r.includes("duplicate")) return { label: "Duplicate", cls: "tag-duplicate" };
   if (r.includes("access denied") || r.includes("permission")) return { label: "Access Denied", cls: "tag-access" };
   if (r.includes("facility") || r.includes("region")) return { label: "Region", cls: "tag-facility" };
   if (r.includes("date") || r.includes("year"))
@@ -108,6 +111,10 @@ function categoryFromReason(reason = "") {
 
 /* ── Main component ──────────────────────────────────────── */
 const UploadProgress = ({ jobId, onComplete, onCancel }) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isReviewer = ["admin", "superuser"].includes(user?.role);
+
   const [status, setStatus] = useState("processing");
   const [progress, setProgress] = useState(0);
   const [processed, setProcessed] = useState(0);
@@ -424,9 +431,39 @@ const UploadProgress = ({ jobId, onComplete, onCancel }) => {
           )}
 
           <div className="up-footer-actions">
-            <button className="up-btn-primary" onClick={onComplete}>
-              View Pending Review
-            </button>
+            {isReviewer ? (
+              <>
+                <button
+                  type="button"
+                  className="up-btn-ghost"
+                  onClick={() => {
+                    if (onComplete) onComplete();
+                  }}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="up-btn-primary"
+                  onClick={() => {
+                    if (onComplete) onComplete();
+                    navigate("/manage-data", { state: { tab: "pending" } });
+                  }}
+                >
+                  Review Pending Records →
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="up-btn-primary"
+                onClick={() => {
+                  if (onComplete) onComplete();
+                }}
+              >
+                Close & View Inventory
+              </button>
+            )}
           </div>
         </div>
       )}

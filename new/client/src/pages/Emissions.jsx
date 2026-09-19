@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useToast } from "../components/Toast";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "./Emissions.css";
 import "../pages/Dashboard.css";
 
@@ -21,10 +21,32 @@ import {
 const Emissions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [stage, setStage] = useState(STAGE_SCOPE_SELECTION);
+
+  useEffect(() => {
+    const scopeParam = searchParams.get("scope") || searchParams.get("stage");
+    if (scopeParam) {
+      const lower = scopeParam.toLowerCase();
+      if (lower === "1" || lower === "scope1" || lower === "s1") {
+        setStage(STAGE_SCOPE1_SUB_SELECTION);
+      } else if (lower === "2" || lower === "scope2" || lower === "s2") {
+        setStage(STAGE_SCOPE2);
+      } else if (lower === "3" || lower === "scope3" || lower === "s3") {
+        setStage(STAGE_SCOPE3);
+      } else if (lower === "select" || lower === "all") {
+        setStage(STAGE_SCOPE_SELECTION);
+      }
+    }
+  }, [searchParams]);
 
   const goToStage = (newStage) => {
     setStage(newStage);
+    let sVal = "select";
+    if (newStage === STAGE_SCOPE1_SUB_SELECTION) sVal = "scope1";
+    else if (newStage === STAGE_SCOPE2) sVal = "scope2";
+    else if (newStage === STAGE_SCOPE3) sVal = "scope3";
+    setSearchParams(sVal === "select" ? {} : { scope: sVal }, { replace: true });
     window.scrollTo(0, 0);
   };
 
@@ -206,7 +228,7 @@ const Emissions = () => {
         <div className="breadcrumbs">
           <span
             style={{ cursor: "pointer" }}
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
           >
             Dashboard
           </span>
@@ -215,7 +237,7 @@ const Emissions = () => {
           </span>
           <span
             style={{ cursor: "pointer" }}
-            onClick={() => setStage(STAGE_SCOPE_SELECTION)}
+            onClick={() => goToStage(STAGE_SCOPE_SELECTION)}
           >
             Calculations
           </span>
@@ -226,12 +248,42 @@ const Emissions = () => {
             {stage === STAGE_SCOPE_SELECTION
               ? "Select Scope"
               : stage === STAGE_SCOPE1_SUB_SELECTION
-                ? "Scope 1"
+                ? "Scope 1 (Direct)"
                 : stage === STAGE_SCOPE2
-                  ? "Scope 2"
-                  : "Scope 3"}
+                  ? "Scope 2 (Indirect)"
+                  : "Scope 3 (Value Chain)"}
           </span>
         </div>
+
+        {stage !== STAGE_SCOPE_SELECTION && (
+          <div className="scope-switcher-tabs">
+            <button
+              className={`scope-tab-btn ${stage === STAGE_SCOPE1_SUB_SELECTION ? "active s1" : ""}`}
+              onClick={() => goToStage(STAGE_SCOPE1_SUB_SELECTION)}
+            >
+              <span className="tab-pill">01</span> Scope 1
+            </button>
+            <button
+              className={`scope-tab-btn ${stage === STAGE_SCOPE2 ? "active s2" : ""}`}
+              onClick={() => goToStage(STAGE_SCOPE2)}
+            >
+              <span className="tab-pill">02</span> Scope 2
+            </button>
+            <button
+              className={`scope-tab-btn ${stage === STAGE_SCOPE3 ? "active s3" : ""}`}
+              onClick={() => goToStage(STAGE_SCOPE3)}
+            >
+              <span className="tab-pill">03</span> Scope 3
+            </button>
+            <button
+              className="scope-tab-btn back-btn"
+              onClick={() => goToStage(STAGE_SCOPE_SELECTION)}
+              title="Back to Scope Selection"
+            >
+              ← All Scopes
+            </button>
+          </div>
+        )}
       </header>
 
       <div className="content-wrapper">

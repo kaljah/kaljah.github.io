@@ -2,47 +2,64 @@
 
 /**
  * Format number with compact notation (M, k, B)
- * @param {number} value - The number to format
- * @param {number} decimals - Number of decimal places
+ * @param {number|string} value - The number to format
+ * @param {number} decimals - Number of decimal places (clamped 0-20)
  * @returns {string} Formatted number
  */
 export const formatCompactNumber = (value, decimals = 1) => {
+  if (value === null || value === undefined || value === "") return "0";
   const num = parseFloat(value);
-  if (isNaN(num)) return "0";
+  if (!Number.isFinite(num)) {
+    if (num === Infinity) return "∞";
+    if (num === -Infinity) return "-∞";
+    return "0";
+  }
+
+  const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
 
   return new Intl.NumberFormat("en-US", {
     notation: "compact",
     compactDisplay: "short",
-    maximumFractionDigits: decimals,
+    maximumFractionDigits: safeDecimals,
   }).format(num);
 };
 
 /**
  * Format number with thousand separators
- * @param {number} value - The number to format
- * @param {number} decimals - Number of decimal places
+ * @param {number|string} value - The number to format
+ * @param {number} decimals - Number of decimal places (clamped 0-20)
  * @returns {string} Formatted number
  */
 export const formatNumber = (value, decimals = 3) => {
+  if (value === null || value === undefined || value === "") return "0";
   const num = parseFloat(value);
-  if (isNaN(num)) return "0";
+  if (!Number.isFinite(num)) {
+    if (num === Infinity) return "∞";
+    if (num === -Infinity) return "-∞";
+    return "0";
+  }
+
+  const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
 
   return num.toLocaleString("en-US", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    minimumFractionDigits: safeDecimals,
+    maximumFractionDigits: safeDecimals,
   });
 };
 
 /**
  * Calculate percentage change
- * @param {number} current - Current value
- * @param {number} base - Base value for comparison
+ * @param {number|string} current - Current value
+ * @param {number|string} base - Base value for comparison
  * @returns {string} Formatted percentage with + or -
  */
 export const calculateTrend = (current, base) => {
-  if (!base || base === 0) return "—";
+  const c = parseFloat(current);
+  const b = parseFloat(base);
+  if (!Number.isFinite(c) || !Number.isFinite(b) || b === 0) return "—";
 
-  const change = ((current - base) / base) * 100;
+  const change = ((c - b) / Math.abs(b)) * 100;
+  if (!Number.isFinite(change)) return "—";
   const sign = change > 0 ? "+" : "";
 
   return `${sign}${change.toFixed(1)}%`;
@@ -55,11 +72,15 @@ export const calculateTrend = (current, base) => {
  */
 export const formatDate = (date) => {
   if (!date) return "";
-
-  const d = new Date(date);
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  try {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return String(date);
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return String(date);
+  }
 };

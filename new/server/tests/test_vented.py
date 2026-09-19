@@ -16,6 +16,9 @@ def test_tanks_calculator():
     }
     res = calc.calculate(**data)
     assert res["results"]["ch4"]["value"] > 0
+    # Remediation check: Flared combustion produces CO2
+    assert res["results"]["co2"] is not None
+    assert res["results"]["co2"]["value"] > 0
 
 
 def test_pneumatics_calculator():
@@ -30,6 +33,42 @@ def test_pneumatics_calculator():
     res = calc.calculate(**data)
     # 6727.68 kg -> 6.72 tonnes
     assert abs(res["results"]["ch4"]["value"] - 6.727) < 0.1
+
+
+def test_pneumatics_intermittent_actuation():
+    """Verify pneumatic intermittent actuation calculation"""
+    calc = PneumaticDeviceCalculator()
+    data = {
+        "count": 2,
+        "hours": 8760,
+        "bleed_rate": 13.5,  # 13.5 scf/actuation
+        "ch4_content": 0.90,
+        "actuations": 500,
+        "uncertainties": {},
+    }
+    res = calc.calculate(**data)
+    assert res["results"]["ch4"]["value"] > 0
+    assert res["inputs"]["mode"] == "intermittent_actuation"
+
+
+def test_liquids_unloading_units():
+    """Verify liquids unloading accepts depth/diam/press units without error"""
+    from calculations.vented import LiquidsUnloadingCalculator
+
+    calc = LiquidsUnloadingCalculator()
+    res = calc.calculate(
+        well_depth=1000,
+        diameter=4,
+        pressure=150,
+        ch4_content=0.85,
+        events=5,
+        uncertainties={},
+        depth_unit="m",
+        diameter_unit="in",
+        press_unit="psig",
+    )
+    assert res is not None
+    assert res["results"]["ch4"]["value"] > 0
 
 
 def test_blowdown_calculator():

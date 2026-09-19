@@ -272,16 +272,13 @@ class TestTier3Flaring(unittest.TestCase):
                       = 1000 * 0.85 * (1-0.98) = 1000 * 0.85 * 0.02 = 17 m3
       CH4 mass = 17 * 0.6785 kg/m3 = 11.5345 kg = 0.0115345 tonne
 
-      CO2 from combustion = vol * total_C * eta_c * eta_d * density_co2
-                          = 1000 * 1.04 * 0.984 * 0.98 * 1.861
-                          = 1000 * 1.04 * 0.96432 * 1.861
-        Let's compute: 1.04 * 0.984 = 1.02336; 1.02336 * 0.98 = 1.002893;
-                        1.002893 * 1.861 = 1.8664 kg/m3
-        CO2_combusted = 1000 * 1.8664 kg = 1866.4 kg = 1.8664 tonne
+      CO2 from combustion = vol * total_C * eta_c * density_co2 (API Eq. 5-4)
+                          = 1000 * 1.04 * 0.984 * 1.861
+                          = 1000 * 1.02336 * 1.861 = 1904.47 kg = 1.9045 tonne
 
       CO2_native = vol * co2_comp * density_co2 = 1000 * 0.03 * 1.861 = 55.83 kg = 0.05583 tonne
 
-      CO2_total = 1.8664 + 0.05583 = 1.9222 tonne
+      CO2_total = 1.9045 + 0.0558 = 1.9603 tonne
     """
 
     def setUp(self):
@@ -295,12 +292,12 @@ class TestTier3Flaring(unittest.TestCase):
         self.density_ch4 = CONVERSIONS["density_ch4"]  # 0.6785
         self.density_co2 = CONVERSIONS["density_co2"]  # 1.861
 
-        # Expected values (hand calculated)
+        # Expected values (hand calculated per API Eq. 5-4)
         ch4_undestroyed_m3 = self.vol_m3 * self.ch4_frac * (1 - self.eta_d)
         self.expected_ch4 = ch4_undestroyed_m3 * self.density_ch4 / 1000.0
 
         total_C = self.ch4_frac * 1 + self.c2_frac * 2 + self.c3_frac * 3
-        co2_comb_vol = self.vol_m3 * total_C * self.eta_c * self.eta_d
+        co2_comb_vol = self.vol_m3 * total_C * self.eta_c
         co2_comb_kg = co2_comb_vol * self.density_co2
         co2_native_kg = self.vol_m3 * self.co2_comp * self.density_co2
         self.expected_co2 = (co2_comb_kg + co2_native_kg) / 1000.0

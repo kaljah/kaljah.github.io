@@ -16,13 +16,17 @@ export const LineChart = ({
   lines = [],
   series = [], // Alias for lines
   xKey = "name",
+  xAxisKey,
   title,
   height = 300,
   showLegend = true,
   formatValue = (val) => {
-    if (Math.abs(val) >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-    if (Math.abs(val) >= 1000) return `${(val / 1000).toFixed(1)}k`;
-    return val.toLocaleString();
+    if (val === null || val === undefined || isNaN(val)) return "0";
+    const num = Number(val);
+    if (!isFinite(num)) return "0";
+    if (Math.abs(num) >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (Math.abs(num) >= 1000) return `${(num / 1000).toFixed(1)}k`;
+    return num.toLocaleString();
   },
 }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -30,12 +34,13 @@ export const LineChart = ({
     setIsMounted(true);
   }, []);
 
+  const finalXKey = xAxisKey || xKey || "name";
   const chartLines = lines.length > 0 ? lines : series;
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const label =
-        payload[0].payload && payload[0].payload[xKey]
-          ? payload[0].payload[xKey]
+        payload[0].payload && payload[0].payload[finalXKey]
+          ? payload[0].payload[finalXKey]
           : "";
       return (
         <div className="custom-tooltip">
@@ -75,7 +80,7 @@ export const LineChart = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "rgba(255,255,255,0.3)",
+            color: "var(--text-muted, #94a3b8)",
           }}
         >
           No trend data available
@@ -119,17 +124,17 @@ export const LineChart = ({
             vertical={false}
           />
           <XAxis
-            dataKey={xKey}
+            dataKey={finalXKey}
             type="category"
-            stroke="#94a3b8"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
+            stroke="#cbd5e1"
+            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             padding={{ left: 20, right: 20 }}
           />
           <YAxis
-            stroke="#94a3b8"
-            tick={{ fill: "#64748b", fontSize: 11, fontWeight: 500 }}
+            stroke="#cbd5e1"
+            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={formatValue}
@@ -160,11 +165,11 @@ export const LineChart = ({
                 key={idx}
                 type="monotone"
                 dataKey={line.dataKey || line.key || "value"}
-                name={line.name}
+                name={line.name || line.label || line.dataKey || line.key}
                 stroke={line.color}
                 strokeWidth={isTrajectory ? 2 : 3}
                 strokeDasharray={
-                  line.strokeDasharray || (isTrajectory ? "5 5" : "0")
+                  line.strokeDasharray || line.dash || (isTrajectory ? "5 5" : "0")
                 }
                 fillOpacity={isArea ? 0.3 : 0}
                 fill={isArea ? `url(#${gradientId})` : "transparent"}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
@@ -94,16 +94,19 @@ const DashboardEnhanced = () => {
   const [goal, setGoal] = useState(null);
   const [baseYear, setBaseYear] = useState(null);
   const [intensity, setIntensity] = useState(0);
+  const [hasProductionData, setHasProductionData] = useState(true);
   const [loading, setLoading] = useState(true);
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [variance, setVariance] = useState({ emissions: "—", intensity: "—" });
   const [pendingCount, setPendingCount] = useState(0);
+  const [pendingCo2e, setPendingCo2e] = useState(0);
+  const [includePending, setIncludePending] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   );
-  const [categoricalCollapsed, setCategoricalCollapsed] = useState(true);
-  const [detailedBreakdownCollapsed, setDetailedBreakdownCollapsed] =
-    useState(true);
+  const [categoricalCollapsed, setCategoricalCollapsed] = useState(false);
+  const [exportingPDF, setExportingPDF] = useState(false);
+  const [gwpHorizon, setGwpHorizon] = useState("100"); // "100" (Standard 100-yr) or "20" (Near-term 20-yr)
 
   const navigate = useNavigate();
 
@@ -130,17 +133,15 @@ const DashboardEnhanced = () => {
             ? filterRes.data.segments
             : [],
         });
-
-        // Set default year to 'all' (explicitly, though it initializes to 'all')
-        // if (filterRes.data.years?.length > 0) {
-        //     setCurrentYear(filterRes.data.years[0].toString());
-        // }
       } catch (error) {
         console.error("Failed to load initial data:", error);
       }
     };
     loadInitialData();
   }, []);
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const isFirstLoadRef = useRef(true);
 
   // Load dashboard data
   useEffect(() => {
@@ -152,11 +153,17 @@ const DashboardEnhanced = () => {
     currentYear,
     currentSegment,
     isCompareMode,
+    includePending,
+    gwpHorizon,
   ]);
 
   const loadDashboardData = async () => {
     try {
-      setLoading(true);
+      if (isFirstLoadRef.current) {
+        setLoading(true);
+      } else {
+        setIsUpdating(true);
+      }
       const queryParams = {
         facilityId: currentRegion,
         activity: currentActivity,
@@ -173,12 +180,21 @@ const DashboardEnhanced = () => {
       if (currentYear !== "all") {
         filterParams.append("year", currentYear);
       }
+      if (includePending) {
+        filterParams.append("includePending", "true");
+      }
+      if (gwpHorizon && gwpHorizon !== "100") {
+        filterParams.append("gwp_horizon", gwpHorizon);
+      }
 
       // Part 3: Optimized Batch Dashboard API Call
       const batchRes = await api.get(`/dashboard/batch-all?${filterParams}`);
       const batch = batchRes.data;
 
-      if (user?.role === 'admin' || user?.role === 'superuser') {
+      if (batch.pending_stats) {
+        setPendingCount(batch.pending_stats.count || 0);
+        setPendingCo2e(batch.pending_stats.totalCo2e || 0);
+      } else if (['admin', 'superuser'].includes(user?.role)) {
         try {
           const pRes = await api.get('/emissions/pending');
           setPendingCount(pRes.data.total_pending || 0);
@@ -221,9 +237,10 @@ const DashboardEnhanced = () => {
         scope3:
           currentYear === "all"
             ? s3Data.total || 0
-            : s3Data.by_year?.[currentYear] ||
-              s3Data.by_year?.[parseInt(currentYear)] ||
-              0,
+            : (s3Data.by_year?.[currentYear] ??
+              s3Data.by_year?.[parseInt(currentYear)] ??
+              s3Data.total ??
+              0),
         mitigation: 0,
         methaneEmissions: 0,
         purchasedEnergy: 0,
@@ -297,6 +314,7 @@ const DashboardEnhanced = () => {
 
       // Weighted Intensity Calculation
       let weightedIntensity = 0;
+      let hasProd = false;
       if (intensityData && intensityData.length > 0) {
         let totalEmissionsForIntensity = 0;
         let totalBoeForIntensity = 0;
@@ -308,9 +326,11 @@ const DashboardEnhanced = () => {
         });
         if (totalBoeForIntensity > 0) {
           weightedIntensity = totalEmissionsForIntensity / totalBoeForIntensity;
+          hasProd = true;
         }
       }
       setIntensity(weightedIntensity);
+      setHasProductionData(hasProd);
 
       // YoY Variance Calculation
       if (currentYear !== "all") {
@@ -419,6 +439,8 @@ const DashboardEnhanced = () => {
       toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
+      setIsUpdating(false);
+      isFirstLoadRef.current = false;
     }
   };
 
@@ -629,48 +651,82 @@ const DashboardEnhanced = () => {
             placeholder="Region"
           />
         </div>
-      </div>,
+      </div>
     );
 
     setTopBarRight(
-      goal ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span
-            style={{
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              color: "#6b7280",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            Target {goal.year}:
-            <strong style={{ color: "#111827" }}>
-              {Number(goal.target_amount).toLocaleString()} tCO₂e
-            </strong>
-          </span>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* Dual GWP Horizon Toggle */}
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            background: "var(--bg-card, rgba(255, 255, 255, 0.08))",
+            borderRadius: "8px",
+            padding: "2px",
+            border: "1px solid var(--border-color, rgba(226, 232, 240, 0.8))",
+          }}
+          title="Global Warming Potential Horizon: 100-Year (Standard, CH4=28) vs 20-Year (Near-term, CH4=84 per IPCC AR5/AR6)"
+        >
           <button
-            className="action-button secondary"
-            style={{ padding: "5px 12px", fontSize: "0.78rem" }}
-            onClick={() =>
-              navigate("/manage-data", { state: { tab: "goals" } })
-            }
-            title="Manage emission goals and base years in Manage Data"
+            type="button"
+            style={{
+              padding: "4px 8px",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer",
+              background: gwpHorizon === "100" ? "var(--accent-color, #ff6600)" : "transparent",
+              color: gwpHorizon === "100" ? "#fff" : "var(--text-secondary)",
+              transition: "all 0.15s ease",
+            }}
+            onClick={() => setGwpHorizon("100")}
           >
-            Edit Goals
+            GWP-100
+          </button>
+          <button
+            type="button"
+            style={{
+              padding: "4px 8px",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer",
+              background: gwpHorizon === "20" ? "#ef4444" : "transparent",
+              color: gwpHorizon === "20" ? "#fff" : "var(--text-secondary)",
+              transition: "all 0.15s ease",
+            }}
+            onClick={() => setGwpHorizon("20")}
+          >
+            GWP-20
           </button>
         </div>
-      ) : (
-        <button
-          className="action-button secondary"
-          style={{ padding: "5px 12px", fontSize: "0.78rem" }}
-          onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
-          title="Set emission targets in Manage Data"
-        >
-          + Set Emission Target
-        </button>
-      ),
+
+        {goal ? (
+          <div className="topbar-goal-badge">
+            <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+              Target {goal.year}: <strong style={{ color: "var(--text-primary)" }}>{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
+            </span>
+            <button
+              className="btn-target-action"
+              onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
+              title="Manage emission goals and base years in Manage Data"
+            >
+              Edit Target
+            </button>
+          </div>
+        ) : (
+          <button
+            className="btn-target-action"
+            onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
+            title="Set emission targets in Manage Data"
+          >
+            + Set Target
+          </button>
+        )}
+      </div>
     );
 
     return () => {
@@ -688,6 +744,7 @@ const DashboardEnhanced = () => {
     navigate,
     setTopBarLeft,
     setTopBarRight,
+    gwpHorizon,
   ]);
 
   const toggleActivity = (act) => {
@@ -713,23 +770,49 @@ const DashboardEnhanced = () => {
     return hierarchy;
   }, [categoricalData]);
 
+  const handleExportPDF = async () => {
+    try {
+      setExportingPDF(true);
+      toast.info("Generating executive brief PDF...");
+      const { generateModernPDF } = await import("../utils/ModernReportGenerator");
+      await generateModernPDF(api, {
+        year: currentYear !== "all" ? currentYear : undefined,
+        regionId: currentRegion !== "all" ? currentRegion : undefined,
+        scope: "all",
+      });
+      toast.success("Executive brief PDF generated successfully!");
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      toast.error("Failed to generate PDF report. Opening print dialog.");
+      window.print();
+    } finally {
+      setExportingPDF(false);
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner message="Loading Dashboard Data..." fullScreen />;
   }
 
   return (
-    <div className="dashboard-content">
+    <div
+      className="dashboard-content"
+      style={{
+        opacity: isUpdating ? 0.8 : 1,
+        transition: "opacity 0.15s ease",
+      }}
+    >
       <div className="dashboard-grid">
         <div className="dashboard-header-row">
           <h1 className="grid-title">GHG Emissions Dashboard</h1>
           <div className="live-badge">
-            <div className="pulse-dot"></div>
-            Live Content • Updated {lastUpdated}
+            <div className={`pulse-dot ${isUpdating ? "updating" : ""}`}></div>
+            {isUpdating ? "Syncing filters..." : `Live Content • Updated ${lastUpdated}`}
           </div>
         </div>
 
         {pendingCount > 0 && (
-          <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ background: '#eab308', color: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
@@ -737,41 +820,227 @@ const DashboardEnhanced = () => {
                 </svg>
               </div>
               <div>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: '#854d0e' }}>Pending Data Review</h3>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: '#854d0e' }}>
+                  {includePending ? "Previewing Pending & Verified Emissions" : "Pending Records Awaiting Review"}
+                </h3>
                 <p style={{ margin: '4px 0 0 0', fontSize: '0.875rem', color: '#a16207' }}>
-                  There are <strong>{pendingCount}</strong> emission records pending your approval. These values are excluded from the dashboard until verified.
+                  There are <strong>{pendingCount}</strong> emission records {pendingCo2e > 0 ? `(${pendingCo2e.toLocaleString()} tCO₂e) ` : ""}pending approval.
+                  {!includePending && " Official metrics display verified data only."}
                 </p>
               </div>
             </div>
-            <button 
-              className="btn-primary" 
-              style={{ background: '#ca8a04', whiteSpace: 'nowrap' }}
-              onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', background: 'rgba(234, 179, 8, 0.2)', padding: '6px 12px', borderRadius: '6px' }}>
+                <input 
+                  type="checkbox" 
+                  checked={includePending} 
+                  onChange={(e) => setIncludePending(e.target.checked)} 
+                />
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#854d0e' }}>
+                  Preview Pending Data
+                </span>
+              </label>
+              {['admin', 'superuser'].includes(user?.role) && (
+                <button 
+                  className="btn-primary" 
+                  style={{ background: '#ca8a04', whiteSpace: 'nowrap' }}
+                  onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
+                >
+                  Review Now →
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Zero-Data Quick Start Onboarding Card */}
+        {!loading && stats.totalEmissions === 0 && stats.netEmissions === 0 && stats.scope3 === 0 && trendData.length === 0 && (
+          <div
+            className="card glass-panel"
+            style={{
+              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)",
+              border: "1px solid rgba(16, 185, 129, 0.2)",
+              borderRadius: "12px",
+              padding: "24px",
+              marginBottom: "24px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+              <div
+                style={{
+                  background: "#10b981",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  width: "36px",
+                  height: "36px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 700,
+                  fontSize: "1.2rem",
+                }}
+              >
+                ✦
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--text-primary)" }}>
+                  Welcome to Antigravity GHG Inventory
+                </h3>
+                <p style={{ margin: "2px 0 0 0", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
+                  Your emissions workspace is initialized. Follow this 4-step workflow to establish your inventory:
+                </p>
+              </div>
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: "14px",
+              }}
             >
-              Review Now
-            </button>
+              <div
+                style={{
+                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "8px",
+                  padding: "14px",
+                }}
+              >
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#10b981", textTransform: "uppercase" }}>
+                  Step 1 • Facilities
+                </div>
+                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Set Boundaries</h4>
+                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  Define production facilities, segments, and operational control.
+                </p>
+                <button
+                  className="btn-secondary-unified"
+                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
+                  onClick={() => navigate("/manage-data")}
+                >
+                  Manage Facilities →
+                </button>
+              </div>
+              <div
+                style={{
+                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "8px",
+                  padding: "14px",
+                }}
+              >
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#3b82f6", textTransform: "uppercase" }}>
+                  Step 2 • Ingestion
+                </div>
+                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Log Activity Data</h4>
+                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  Import Scope 1 fuel, Scope 2 electricity, or Scope 3 supply chain CSVs.
+                </p>
+                <button
+                  className="btn-secondary-unified"
+                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
+                  onClick={() => navigate("/emissions")}
+                >
+                  Enter Emissions →
+                </button>
+              </div>
+              <div
+                style={{
+                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "8px",
+                  padding: "14px",
+                }}
+              >
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#f59e0b", textTransform: "uppercase" }}>
+                  Step 3 • Verification
+                </div>
+                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>QA/QC & Approvals</h4>
+                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  Maker-checker dual approval and anomaly outlier resolution.
+                </p>
+                <button
+                  className="btn-secondary-unified"
+                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
+                  onClick={() => navigate("/qa-dashboard")}
+                >
+                  QA/QC Console →
+                </button>
+              </div>
+              <div
+                style={{
+                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "8px",
+                  padding: "14px",
+                }}
+              >
+                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#8b5cf6", textTransform: "uppercase" }}>
+                  Step 4 • Compliance
+                </div>
+                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Generate Reports</h4>
+                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                  Export OGMP 2.0 Gold Standard and GHG Protocol disclosures.
+                </p>
+                <button
+                  className="btn-secondary-unified"
+                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
+                  onClick={() => navigate("/reports")}
+                >
+                  View Reports →
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
         {/* Hero Overview Card */}
         <div className="card hero-card glass-panel">
-          <div className="hero-header">
+          <div className="hero-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 className="hero-title">Emissions Overview</h2>
-            <div className="location-badge">
-              {currentRegion !== "all"
-                ? facilities.find((f) => f.id.toString() === currentRegion)
-                    ?.name || "Region"
-                : currentDivision !== "all"
-                  ? currentDivision
-                  : currentActivity !== "all"
-                    ? currentActivity
-                    : "All Regions"}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="location-badge">
+                {currentRegion !== "all"
+                  ? facilities.find((f) => f.id.toString() === currentRegion)
+                      ?.name || "Region"
+                  : currentDivision !== "all"
+                    ? currentDivision
+                    : currentActivity !== "all"
+                      ? currentActivity
+                      : "All Regions"}
+              </div>
+              <button
+                onClick={handleExportPDF}
+                disabled={exportingPDF}
+                className="btn-secondary-unified"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  border: '1px solid var(--border-color)',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  cursor: exportingPDF ? 'not-allowed' : 'pointer',
+                  color: 'var(--text-primary)',
+                  opacity: exportingPDF ? 0.7 : 1,
+                }}
+                title="Export multi-page executive summary PDF"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                  <path d="M6 14h12v8H6z" />
+                </svg>
+                {exportingPDF ? "Generating PDF..." : "Export Executive Brief (PDF)"}
+              </button>
             </div>
           </div>
 
           <div className="hero-stats-grid">
             <div className="stat-item">
-              <div className="stat-label">Gross Emissions</div>
+              <div className="stat-label">Gross Operational Emissions (Scope 1+2)</div>
               <div className="stat-value-row">
                 <div className="stat-value">
                   {formatCompactNumber(stats.totalEmissions)}
@@ -836,12 +1105,26 @@ const DashboardEnhanced = () => {
             <div className="stat-item border-left">
               <div className="stat-label">Performance Intensity</div>
               <div className="stat-value-row">
-                <div className="stat-value" style={{ color: "#8b5cf6" }}>
-                  {formatCompactNumber(intensity, 2)}
+                <div
+                  className="stat-value"
+                  style={{
+                    color: !hasProductionData && stats.totalEmissions > 0 ? "#f59e0b" : "#8b5cf6",
+                    fontSize: !hasProductionData && stats.totalEmissions > 0 ? "1.25rem" : undefined,
+                  }}
+                >
+                  {!hasProductionData && stats.totalEmissions > 0 ? "Pending" : formatCompactNumber(intensity, 2)}
                 </div>
-                <span className="stat-unit">kg/BOE</span>
+                <span className="stat-unit">
+                  {!hasProductionData && stats.totalEmissions > 0 ? "Production" : "kg/BOE"}
+                </span>
               </div>
-              <div className="stat-sublabel">CO₂e Intensity (Scope 1+2)</div>
+              <div className="stat-sublabel">
+                {!hasProductionData && stats.totalEmissions > 0 ? (
+                  <span style={{ color: "#d97706", fontWeight: 600 }}>Production figures required</span>
+                ) : (
+                  "CO₂e Intensity (Scope 1+2)"
+                )}
+              </div>
             </div>
           </div>
 
@@ -867,16 +1150,18 @@ const DashboardEnhanced = () => {
           </div>
         </div>
 
-        {/* --- NEW SECTION: Charts (Trend & Donut) --- */}
+        {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
         <div className="charts-section">
-          {/* Trend Chart - Full Width or large */}
+          {/* Trend Chart */}
           <div className="card trend-card-enhanced glass-panel">
             <div className="card-header-row">
-              <h3 className="card-title">Emissions Trend</h3>
+              <div>
+                <h3 className="card-title">Emissions Trend & Projection</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                  Historical inventory trajectory with 5-year predictive forecast
+                </p>
+              </div>
               <div className="card-header-actions">
-                {!isCompareMode && (
-                  <div className="card-info-badge">Over Time</div>
-                )}
                 <button
                   className={`compare-toggle-btn ${isCompareMode ? "active" : ""}`}
                   onClick={() => setIsCompareMode(!isCompareMode)}
@@ -898,7 +1183,7 @@ const DashboardEnhanced = () => {
             <div
               className="chart-container"
               style={{
-                height: "600px",
+                height: "360px",
                 width: "100%",
                 minWidth: 0,
                 position: "relative",
@@ -941,56 +1226,12 @@ const DashboardEnhanced = () => {
                         },
                       ]
                 }
-                height={600}
+                height={360}
               />
             </div>
           </div>
 
-
-          {/* SBTi Trajectory Chart */}
-          {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
-            <div className="card full-width-card glass-panel" style={{ marginTop: '24px' }}>
-              <div className="card-header-row">
-                <div>
-                  <h3 className="card-subtitle">SBTi Trajectory Pathway ({sbtiData.pathway_type})</h3>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                    Tracking emissions against Science Based Targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
-                  </p>
-                </div>
-              </div>
-              <div className="chart-container" style={{ height: "400px", width: "100%" }}>
-                <LineChartWrapper
-                  data={sbtiData.trajectory}
-                  xAxisKey="year"
-                  series={[
-                    {
-                      dataKey: "actual",
-                      name: "Actual Emissions (Verified)",
-                      color: "#3b82f6",
-                      strokeWidth: 3
-                    },
-                    {
-                      dataKey: "sbti_target",
-                      name: "SBTi Target Pathway",
-                      color: "#10b981",
-                      strokeDasharray: "5 5",
-                      strokeWidth: 2
-                    },
-                    {
-                      dataKey: "bau_projection",
-                      name: "Business as Usual",
-                      color: "#ef4444",
-                      strokeDasharray: "3 3",
-                      strokeWidth: 2
-                    }
-                  ]}
-                  height={400}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Donut Charts - Side by Side */}
+          {/* Donut Charts Column (1fr) */}
           <div className="donuts-row">
             <div className="card donut-card-enhanced glass-panel">
               <div className="donut-header">
@@ -999,7 +1240,7 @@ const DashboardEnhanced = () => {
               <div
                 className="chart-container"
                 style={{
-                  height: "300px",
+                  height: "170px",
                   width: "100%",
                   minWidth: 0,
                   position: "relative",
@@ -1007,9 +1248,9 @@ const DashboardEnhanced = () => {
               >
                 <PieChartWrapper
                   data={activityChartData}
-                  height={300}
-                  innerRadius={80}
-                  outerRadius={110}
+                  height={170}
+                  innerRadius={50}
+                  outerRadius={75}
                 />
               </div>
             </div>
@@ -1020,7 +1261,7 @@ const DashboardEnhanced = () => {
               <div
                 className="chart-container"
                 style={{
-                  height: "300px",
+                  height: "170px",
                   width: "100%",
                   minWidth: 0,
                   position: "relative",
@@ -1028,14 +1269,78 @@ const DashboardEnhanced = () => {
               >
                 <PieChartWrapper
                   data={sourceChartData}
-                  height={300}
-                  innerRadius={80}
-                  outerRadius={110}
+                  height={170}
+                  innerRadius={50}
+                  outerRadius={75}
                 />
               </div>
             </div>
           </div>
         </div>
+
+        {/* SBTi Trajectory Pathway - Full Width Banner */}
+        {sbtiData && sbtiData.trajectory && sbtiData.trajectory.length > 0 && (
+          <div className="card full-width-card glass-panel" style={{ padding: '24px', borderRadius: '20px' }}>
+            <div className="card-header-row" style={{ marginBottom: '16px' }}>
+              <div>
+                <h3 className="card-subtitle" style={{ fontSize: '1.15rem', fontWeight: 700 }}>
+                  SBTi Decarbonization Trajectory ({sbtiData.pathway_type || "1.5°C"})
+                </h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                  Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}
+                </p>
+              </div>
+              <button
+                className="btn-secondary-unified"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 16px",
+                  borderRadius: "10px",
+                  background: "rgba(255, 255, 255, 0.8)",
+                  border: "1px solid var(--border-color)",
+                  cursor: "pointer",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  color: "var(--text-primary)"
+                }}
+                onClick={() => navigate("/sbti")}
+              >
+                View Full SBTi Dashboard →
+              </button>
+            </div>
+            <div className="chart-container" style={{ height: "320px", width: "100%" }}>
+              <LineChartWrapper
+                data={sbtiData.trajectory}
+                xAxisKey="year"
+                series={[
+                  {
+                    dataKey: "actual",
+                    name: "Actual Verified Emissions",
+                    color: "#3b82f6",
+                    strokeWidth: 3
+                  },
+                  {
+                    dataKey: "sbti_target",
+                    name: "SBTi 1.5°C Linear Target",
+                    color: "#10b981",
+                    strokeDasharray: "5 5",
+                    strokeWidth: 2
+                  },
+                  {
+                    dataKey: "bau_projection",
+                    name: "Business as Usual (+1.5%/yr)",
+                    color: "#ef4444",
+                    strokeDasharray: "3 3",
+                    strokeWidth: 2
+                  }
+                ]}
+                height={320}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Categorical Breakdown Cards */}
 
@@ -1219,9 +1524,13 @@ const DashboardEnhanced = () => {
                         </td>
                       </tr>
                       <tr className="total-row">
-                        <td>Total Footprint</td>
+                        <td>Total Footprint (Scopes 1+2+3)</td>
                         <td className="text-right">
-                          {formatCompactNumber(stats.totalEmissions)}
+                          {formatCompactNumber(
+                            (stats.scope1 || 0) +
+                              (stats.scope2 || 0) +
+                              (stats.scope3 || 0)
+                          )}
                         </td>
                       </tr>
                       <tr
@@ -1230,7 +1539,12 @@ const DashboardEnhanced = () => {
                       >
                         <td>Net Footprint</td>
                         <td className="text-right">
-                          {formatCompactNumber(stats.netEmissions)}
+                          {formatCompactNumber(
+                            (stats.scope1 || 0) +
+                              (stats.scope2 || 0) +
+                              (stats.scope3 || 0) -
+                              (stats.mitigation || 0)
+                          )}
                         </td>
                       </tr>
 
@@ -1367,7 +1681,7 @@ const DashboardEnhanced = () => {
               <button
                 className="manage-factors-btn"
                 onClick={() =>
-                  (window.location.href = "/manage-data?tab=factors")
+                  navigate("/manage-data", { state: { tab: "factors" } })
                 }
               >
                 <svg
