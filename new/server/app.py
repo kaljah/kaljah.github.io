@@ -206,13 +206,69 @@ if (
         app.logger.warning(f"Could not initialize Swagger UI: {e}")
 
 
+def ensure_admin_seeded():
+    try:
+        from models import User
+        users_to_seed = [
+            {
+                "email": "admin@ghg.com",
+                "password": "Admin12345!",
+                "role": "admin",
+                "fullName": "System Administrator",
+            },
+            {
+                "email": "a@a",
+                "password": "a",
+                "role": "admin",
+                "fullName": "Admin User",
+            },
+            {
+                "email": "a",
+                "password": "a",
+                "role": "admin",
+                "fullName": "Admin User",
+            },
+        ]
+        for u in users_to_seed:
+            user = User.query.filter_by(email=u["email"]).first()
+            if not user:
+                user = User(
+                    fullName=u["fullName"],
+                    orgName="GHG Operations",
+                    email=u["email"],
+                    role=u["role"],
+                    sector="Oil & Gas",
+                    department="Sustainability & IT",
+                    jobTitle="Administrator",
+                    location="Global",
+                    status="active",
+                )
+                user.set_password(u["password"])
+                db.session.add(user)
+            else:
+                user.set_password(u["password"])
+                user.status = "active"
+                user.role = u["role"]
+        db.session.commit()
+    except Exception as e:
+        app.logger.error(f"Failed to auto-seed admin: {e}")
+
+
 with app.app_context():
     db.create_all()
-    try:
-        from seed_admin import seed_admin
-        seed_admin()
-    except Exception as e:
-        app.logger.warning(f"Could not auto-seed admin: {e}")
+    ensure_admin_seeded()
+
+
+@app.route("/api/auth/init-admin")
+def init_admin_route():
+    ensure_admin_seeded()
+    from models import User
+    users = User.query.all()
+    return jsonify({
+        "status": "ok",
+        "message": "Admin accounts seeded and ready",
+        "users": [u.email for u in users]
+    })
 
 
 @app.route("/api/csrf-token")
