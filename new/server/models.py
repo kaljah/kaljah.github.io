@@ -183,6 +183,8 @@ class Emission(db.Model):
     __table_args__ = (
         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
         db.Index("ix_emissions_act_div", "activity", "division"),
+        db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
+        db.Index("ix_emissions_yr_status_proc", "year", "status", "process_type"),
     )
 
 
@@ -213,6 +215,7 @@ class ProductionData(db.Model):
         db.UniqueConstraint(
             "facility_id", "month", "year", name="_facility_month_year_uc"
         ),
+        db.Index("ix_prod_yr_fac_units", "year", "facility_id", "oil_unit", "gas_unit"),
     )
 
 
@@ -367,6 +370,7 @@ class Scope2Emission(db.Model):
 
     __table_args__ = (
         db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
+        db.Index("ix_scope2_status_yr_co2e", "status", "year", "co2e", "electricity_kwh"),
     )
 
 
@@ -398,6 +402,7 @@ class Scope3Emission(db.Model):
 
     __table_args__ = (
         db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
+        db.Index("ix_scope3_status_yr_co2e", "status", "year", "co2e"),
     )
 
 

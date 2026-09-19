@@ -109,7 +109,7 @@ def it_admin_required(f):
         user_id = session.get("user_id")
         if not user_id:
             return jsonify({"error": "Not authenticated"}), 401
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
@@ -132,7 +132,7 @@ def admin_required(f):
         user_id = session.get("user_id")
         if not user_id:
             return jsonify({"error": "Not authenticated"}), 401
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
@@ -158,7 +158,7 @@ def superuser_required(f):
         user_id = session.get("user_id")
         if not user_id:
             return jsonify({"error": "Not authenticated"}), 401
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             session.pop("user_id", None)
             return jsonify({"error": "User not found"}), 401
@@ -333,6 +333,12 @@ def forgot_password():
             )
 
         try:
+            from services.email_service import send_password_reset_email
+            send_password_reset_email(user.email, user.fullName)
+        except Exception as _em_err:
+            current_app.logger.warning(f"Failed to dispatch password reset email: {_em_err}")
+
+        try:
             log_activity_and_notify(
                 action="SECURITY",
                 record_id=str(user.id),
@@ -345,6 +351,10 @@ def forgot_password():
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f"Error logging forgot password request: {e}")
+    else:
+        # Mitigate user enumeration timing attack by executing cryptographic hash equivalent
+        from werkzeug.security import generate_password_hash
+        generate_password_hash("timing_mitigation_constant_salt_and_work_factor")
 
     # Standard security practice: always return a uniform success response to prevent email enumeration
     return jsonify({
@@ -363,7 +373,7 @@ def forgot_password():
 def logout():
     user_id = session.get("user_id")
     if user_id:
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if user:
             try:
                 log_activity_and_notify(
@@ -377,8 +387,17 @@ def logout():
             except Exception as e:
                 current_app.logger.error(f"Audit Log Error on logout: {e}")
 
-    session.pop("user_id", None)
-    return jsonify({"message": "Logged out"})
+    session.clear()
+    resp = jsonify({"message": "Logged out"})
+    cookie_name = current_app.config.get("SESSION_COOKIE_NAME", "session")
+    resp.delete_cookie(
+        cookie_name,
+        path="/",
+        samesite=current_app.config.get("SESSION_COOKIE_SAMESITE", "Lax"),
+        secure=current_app.config.get("SESSION_COOKIE_SECURE", False),
+        httponly=True,
+    )
+    return resp
 
 
 @auth_bp.route("/me", methods=["GET"])
@@ -419,13 +438,13 @@ def update_profile():
     if not user_id:
         return jsonify({"error": "Not authenticated"}), 401
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
     data = request.get_json()
 
-    # Update allowed fields
+    # Update allowed fields (location is immutable via /profile to prevent RBAC bypass; managed via /users/<id>)
     if "fullName" in data:
         user.fullName = data["fullName"]
     if "jobTitle" in data:
@@ -434,8 +453,6 @@ def update_profile():
         user.department = data["department"]
     if "phone" in data:
         user.phone = data["phone"]
-    if "location" in data:
-        user.location = data["location"]
     if "bio" in data:
         user.bio = data["bio"]
     if "consolidationApproach" in data:
@@ -453,7 +470,7 @@ def change_password():
     if not user_id:
         return jsonify({"error": "Not authenticated"}), 401
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -473,7 +490,7 @@ def change_password():
         return jsonify({"error": err_msg}), 400
 
     user.set_password(new_password)
-    user.password_updated_at = datetime.datetime.utcnow()
+    user.password_updated_at = datetime.datetime.now(datetime.timezone.utc)
 
     # Audit + commit atomically
     try:
@@ -490,6 +507,11 @@ def change_password():
         db.session.rollback()
         current_app.logger.error(f"Audit Log Error on change_password: {e}")
         return jsonify({"error": "Failed to update password"}), 500
+
+    # Session fixation / exfiltration protection: regenerate session ID on credential change
+    session.clear()
+    session.permanent = True
+    session["user_id"] = user.id
 
     return jsonify({"message": "Password changed successfully"})
 
@@ -831,25 +853,36 @@ def update_user(id):
 
     # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
-    it_admin = User.query.get(it_admin_id)
+    it_admin = db.session.get(User, it_admin_id)
 
     data = request.get_json()
 
     ROLE_RANK = {"user": 0, "superuser": 1, "admin": 2, "it_admin": 3}
+    VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
-    target_new_rank = ROLE_RANK.get(
-        data.get("role", user.role) if data else user.role, 0
-    )
-    if target_new_rank > requester_rank:
-        return jsonify({"error": "Cannot assign a role higher than your own"}), 403
 
     if "role" in data:
-        user.role = data["role"]
+        new_role = str(data["role"]).strip().lower()
+        if new_role not in VALID_ROLES:
+            return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
+        target_new_rank = ROLE_RANK.get(new_role, 0)
+        if target_new_rank > requester_rank:
+            return jsonify({"error": "Cannot assign a role higher than your own"}), 403
+        user.role = new_role
+
     if "location" in data:
         user.location = data["location"]
     if "status" in data:
         user.status = data["status"]
 
+    log_activity_and_notify(
+        action="UPDATE",
+        record_id=str(user.id),
+        user=it_admin,
+        request=request,
+        entity="User",
+        details=f"User {user.email} updated by {it_admin.fullName if it_admin else 'IT Admin'}",
+    )
     db.session.commit()
     # Return updated user so frontend can reflect changes immediately
     return jsonify(
@@ -880,7 +913,7 @@ def delete_user(id):
 
     # IT Admins have global authority over all user accounts — no regional restriction
     it_admin_id = session.get("user_id")
-    it_admin = User.query.get(it_admin_id)
+    it_admin = db.session.get(User, it_admin_id)
 
     # Clean up and nullify FK references before deleting
     from sqlalchemy import text
@@ -899,21 +932,30 @@ def delete_user(id):
         text("UPDATE facilities SET created_by = NULL WHERE created_by = :uid"),
         {"uid": id},
     )
-    # Nullify any other created_by/updated_by references in emissions tables
-    for tbl in [
+    # Nullify all created_by, approved_by, updated_by references across all tables
+    cols_to_nullify = ["created_by", "approved_by", "updated_by"]
+    tables_to_clean = [
         "emissions",
         "scope2_emissions",
         "scope3_emissions",
         "mitigation_projects",
         "mitigation_records",
-    ]:
-        try:
-            db.session.execute(
-                text(f"UPDATE {tbl} SET created_by = NULL WHERE created_by = :uid"),
-                {"uid": id},
-            )
-        except Exception:
-            pass  # Table may not have created_by column; skip
+        "facilities",
+        "emission_sources",
+        "custom_factors",
+        "cbam_product_exports",
+        "base_year_recalculations",
+        "ogmp_surveys",
+    ]
+    for tbl in tables_to_clean:
+        for col in cols_to_nullify:
+            try:
+                db.session.execute(
+                    text(f"UPDATE {tbl} SET {col} = NULL WHERE {col} = :uid"),
+                    {"uid": id},
+                )
+            except Exception:
+                pass  # Table or column may not exist in current schema; skip
 
     db.session.delete(user)
     db.session.commit()
