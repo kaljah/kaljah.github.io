@@ -10,6 +10,8 @@ import { GWP_AR5, BOUNDARY_OPTIONS } from '../constants';
 import { useToast } from '../components/Toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorBoundary from '../components/ErrorBoundary'; // FE-03 FIX
+import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
 import { useLayout } from '../context/LayoutContext';
 import { 
@@ -191,6 +193,35 @@ const ManageDataInner = () => {
         recordIds: [],
         reason: ''
     });
+
+    const [confirmDialog, setConfirmDialog] = useState({
+        isOpen: false,
+        title: "",
+        message: "",
+        confirmLabel: "Delete",
+        confirmVariant: "danger",
+        onConfirm: null,
+    });
+
+    const requestConfirm = ({
+        title = "Confirm Deletion",
+        message = "Are you sure you want to delete this item?",
+        confirmLabel = "Delete",
+        confirmVariant = "danger",
+        onConfirm,
+    }) => {
+        setConfirmDialog({
+            isOpen: true,
+            title,
+            message,
+            confirmLabel,
+            confirmVariant,
+            onConfirm: async () => {
+                setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+                if (onConfirm) await onConfirm();
+            },
+        });
+    };
 
     const QUICK_REJECTION_REASONS = [
         "Incorrect Emission Factor Applied",
@@ -471,27 +502,34 @@ const ManageDataInner = () => {
         }
     };
 
-    const handleApproveAllInScope = async (scopeNum) => {
+    const handleApproveAllInScope = (scopeNum) => {
         const count = pendingMetrics[`count${scopeNum}`];
         if (!count) return;
-        if (!window.confirm(`Approve all ${count} pending Scope ${scopeNum} records?`)) return;
-        setIsProcessingBatch(true);
-        try {
-            await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
-            toast.success(`Approved all Scope ${scopeNum} records`);
-            setSelectedPendingKeys(prev => {
-                const next = new Set(prev);
-                Array.from(next).forEach(k => {
-                    if (k.startsWith(`${scopeNum}-`)) next.delete(k);
-                });
-                return next;
-            });
-            fetchPendingEmissions();
-        } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to approve batch');
-        } finally {
-            setIsProcessingBatch(false);
-        }
+        requestConfirm({
+            title: `Approve Scope ${scopeNum} Records`,
+            message: `Are you sure you want to approve all ${count} pending Scope ${scopeNum} records?`,
+            confirmLabel: "Approve All",
+            confirmVariant: "primary",
+            onConfirm: async () => {
+                setIsProcessingBatch(true);
+                try {
+                    await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
+                    toast.success(`Approved all Scope ${scopeNum} records`);
+                    setSelectedPendingKeys(prev => {
+                        const next = new Set(prev);
+                        Array.from(next).forEach(k => {
+                            if (k.startsWith(`${scopeNum}-`)) next.delete(k);
+                        });
+                        return next;
+                    });
+                    fetchPendingEmissions();
+                } catch (err) {
+                    toast.error(err.response?.data?.error || 'Failed to approve batch');
+                } finally {
+                    setIsProcessingBatch(false);
+                }
+            }
+        });
     };
 
 
@@ -757,19 +795,26 @@ const ManageDataInner = () => {
         setEditingGoalYear(goal.year);
     };
 
-    const handleDeleteGoal = async (year) => {
-        if (!confirm(`Delete emission goal for year ${year}?`)) return;
-        try {
-            await api.delete(`/goals/${year}`);
-            toast.success('Emission goal deleted');
-            if (editingGoalYear === year) {
-                setEditingGoalYear(null);
-                setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
+    const handleDeleteGoal = (year) => {
+        requestConfirm({
+            title: "Delete Emission Goal",
+            message: `Delete emission goal for year ${year}?`,
+            confirmLabel: "Delete Goal",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/goals/${year}`);
+                    toast.success('Emission goal deleted');
+                    if (editingGoalYear === year) {
+                        setEditingGoalYear(null);
+                        setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
+                    }
+                    fetchGoals();
+                } catch (err) {
+                    toast.error(err.response?.data?.error || 'Failed to delete goal');
+                }
             }
-            fetchGoals();
-        } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to delete goal');
-        }
+        });
     };
 
     const handleSaveBaseYear = async () => {
@@ -796,15 +841,22 @@ const ManageDataInner = () => {
         }
     };
 
-    const handleDeleteBaseYearRecalc = async (id) => {
-        if (!confirm('Delete this base year recalculation entry?')) return;
-        try {
-            await api.delete(`/base-years/${id}`);
-            toast.success('Base year record deleted');
-            fetchBaseYears();
-        } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to delete base year record');
-        }
+    const handleDeleteBaseYearRecalc = (id) => {
+        requestConfirm({
+            title: "Delete Base Year Recalculation",
+            message: 'Delete this base year recalculation entry?',
+            confirmLabel: "Delete Record",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/base-years/${id}`);
+                    toast.success('Base year record deleted');
+                    fetchBaseYears();
+                } catch (err) {
+                    toast.error(err.response?.data?.error || 'Failed to delete base year record');
+                }
+            }
+        });
     };
 
 
@@ -849,13 +901,20 @@ const ManageDataInner = () => {
         } catch (err) { toast.error('Failed to save factor'); }
     };
 
-    const handleDeleteFactor = async (id) => {
-        if (!confirm('Delete this factor?')) return;
-        try {
-            await api.delete(`/custom-factors/${id}`);
-            toast.success('Factor deleted!');
-            fetchCustomFactors();
-        } catch (err) { toast.error('Failed to delete factor'); }
+    const handleDeleteFactor = (id) => {
+        requestConfirm({
+            title: "Delete Custom Factor",
+            message: 'Delete this factor?',
+            confirmLabel: "Delete Factor",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/custom-factors/${id}`);
+                    toast.success('Factor deleted!');
+                    fetchCustomFactors();
+                } catch (err) { toast.error('Failed to delete factor'); }
+            }
+        });
     };
 
     const handleEditFactor = (factor) => {
@@ -943,15 +1002,22 @@ const ManageDataInner = () => {
     }
   };
 
-  const handleDeleteCbamExport = async (id) => {
-    if (!window.confirm('Delete this CBAM export record?')) return;
-    try {
-      await api.delete('/data/cbam-exports/' + id);
-      toast.success('CBAM export record deleted');
-      fetchCbamExports();
-    } catch (err) {
-      toast.error('Failed to delete CBAM record');
-    }
+  const handleDeleteCbamExport = (id) => {
+    requestConfirm({
+      title: "Delete CBAM Export",
+      message: 'Delete this CBAM export record?',
+      confirmLabel: "Delete Record",
+      confirmVariant: "danger",
+      onConfirm: async () => {
+        try {
+          await api.delete('/data/cbam-exports/' + id);
+          toast.success('CBAM export record deleted');
+          fetchCbamExports();
+        } catch (err) {
+          toast.error('Failed to delete CBAM record');
+        }
+      }
+    });
   };
 
     const handleSaveOgmpSurvey = async () => {
@@ -984,59 +1050,94 @@ const ManageDataInner = () => {
         }
     };
 
-    const handleDeleteOgmpSurvey = async (id) => {
-        if (!confirm('Delete this OGMP survey record?')) return;
-        try {
-            await api.delete(`/data/ogmp-surveys/${id}`);
-            toast.success('OGMP survey record deleted');
-            fetchOgmpSurveys();
-        } catch (err) {
-            toast.error('Failed to delete OGMP survey');
-        }
+    const handleDeleteOgmpSurvey = (id) => {
+        requestConfirm({
+            title: "Delete OGMP Survey",
+            message: 'Delete this OGMP survey record?',
+            confirmLabel: "Delete Survey",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/data/ogmp-surveys/${id}`);
+                    toast.success('OGMP survey record deleted');
+                    fetchOgmpSurveys();
+                } catch (err) {
+                    toast.error('Failed to delete OGMP survey');
+                }
+            }
+        });
     };
 
-    const handleDeleteFacility = async (id) => {
-        if (!window.confirm('Delete this region?')) return;
-        try {
-            await api.delete(`/facilities/${id}`);
-            toast.success('Region deleted');
-            fetchFacilities();
-        } catch (err) {
-            toast.error(err?.response?.data?.error || 'Failed to delete region');
-        }
+    const handleDeleteFacility = (id) => {
+        requestConfirm({
+            title: "Delete Region",
+            message: 'Are you sure you want to delete this region/facility? Associated records may be affected.',
+            confirmLabel: "Delete Region",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/facilities/${id}`);
+                    toast.success('Region deleted');
+                    fetchFacilities();
+                } catch (err) {
+                    toast.error(err?.response?.data?.error || 'Failed to delete region');
+                }
+            }
+        });
     };
 
-    const handleDeleteProduction = async (id) => {
-        if (!window.confirm('Delete this production record?')) return;
-        try {
-            await api.delete(`/data/production/${id}`);
-            toast.success('Production record deleted');
-            fetchProduction();
-        } catch (err) {
-            toast.error(err?.response?.data?.error || 'Failed to delete production record');
-        }
+    const handleDeleteProduction = (id) => {
+        requestConfirm({
+            title: "Delete Production Record",
+            message: 'Delete this production record?',
+            confirmLabel: "Delete Record",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/data/production/${id}`);
+                    toast.success('Production record deleted');
+                    fetchProduction();
+                } catch (err) {
+                    toast.error(err?.response?.data?.error || 'Failed to delete production record');
+                }
+            }
+        });
     };
 
-    const handleDeleteSource = async (id) => {
-        if (!window.confirm('Delete this emission source?')) return;
-        try {
-            await api.delete(`/sources/${id}`);
-            toast.success('Emission source deleted');
-            fetchSources();
-        } catch (err) {
-            toast.error(err?.response?.data?.error || 'Failed to delete emission source');
-        }
+    const handleDeleteSource = (id) => {
+        requestConfirm({
+            title: "Delete Emission Source",
+            message: 'Delete this emission source?',
+            confirmLabel: "Delete Source",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/sources/${id}`);
+                    toast.success('Emission source deleted');
+                    fetchSources();
+                } catch (err) {
+                    toast.error(err?.response?.data?.error || 'Failed to delete emission source');
+                }
+            }
+        });
     };
 
-    const handleDeleteMitigation = async (id) => {
-        if (!window.confirm('Delete this mitigation project?')) return;
-        try {
-            await api.delete(`/mitigation/${id}`);
-            toast.success('Mitigation project deleted');
-            fetchMitigations();
-        } catch (err) {
-            toast.error(err?.response?.data?.error || 'Failed to delete mitigation project');
-        }
+    const handleDeleteMitigation = (id) => {
+        requestConfirm({
+            title: "Delete Mitigation Project",
+            message: 'Delete this mitigation project?',
+            confirmLabel: "Delete Project",
+            confirmVariant: "danger",
+            onConfirm: async () => {
+                try {
+                    await api.delete(`/mitigation/${id}`);
+                    toast.success('Mitigation project deleted');
+                    fetchMitigations();
+                } catch (err) {
+                    toast.error(err?.response?.data?.error || 'Failed to delete mitigation project');
+                }
+            }
+        });
     };
 
     const handleFactorChange = (e) => {
@@ -1047,23 +1148,34 @@ const ManageDataInner = () => {
         setFacilityForm({ ...facilityForm, [e.target.name]: e.target.value });
     };
 
-    // Conversion Helpers
+    // Conversion Helpers (in-app modal dialog replacing blocking browser prompt)
+    const [convertModal, setConvertModal] = useState({ isOpen: false, type: 'gas', value: '' });
+
     const openGasConverter = () => {
-        const value = prompt("Enter Gas amount in m³ to convert to mcf (x 0.0353147):");
-        if (value && !isNaN(value)) {
-            const mcf = (parseFloat(value) * 0.0353147).toFixed(2);
-            setProdForm(prev => ({ ...prev, gas_amount: mcf, gas_unit: 'mscf' }));
-            toast.success(`Converted ${value} m³ to ${mcf} mcf`);
-        }
+        setConvertModal({ isOpen: true, type: 'gas', value: '' });
     };
 
     const openOilConverter = () => {
-        const value = prompt("Enter Oil amount in m³ to convert to bbl (x 6.28981):");
-        if (value && !isNaN(value)) {
-            const bbl = (parseFloat(value) * 6.28981).toFixed(2);
-            setProdForm(prev => ({ ...prev, oil_amount: bbl, oil_unit: 'bbl' }));
-            toast.success(`Converted ${value} m³ to ${bbl} bbl`);
+        setConvertModal({ isOpen: true, type: 'oil', value: '' });
+    };
+
+    const handleApplyConversion = (e) => {
+        if (e) e.preventDefault();
+        const val = parseFloat(convertModal.value);
+        if (isNaN(val) || val <= 0) {
+            toast.error("Please enter a valid positive number");
+            return;
         }
+        if (convertModal.type === 'gas') {
+            const mcf = (val * 0.0353147).toFixed(2);
+            setProdForm(prev => ({ ...prev, gas_amount: mcf, gas_unit: 'mscf' }));
+            toast.success(`Converted ${val} m³ to ${mcf} mcf`);
+        } else {
+            const bbl = (val * 6.28981).toFixed(2);
+            setProdForm(prev => ({ ...prev, oil_amount: bbl, oil_unit: 'bbl' }));
+            toast.success(`Converted ${val} m³ to ${bbl} bbl`);
+        }
+        setConvertModal({ isOpen: false, type: 'gas', value: '' });
     };
 
     // CSV Logic with RFC 4180 Escaping and Blob Download
@@ -1938,6 +2050,27 @@ const ManageDataInner = () => {
                                         facilities={facilities}
                                     />
                                 )}
+                            </div>
+                        )}
+
+                        {activeTab === 'pending' && !isPrivileged && (
+                            <div className="manage-tab-content" style={{ padding: '56px 24px', textAlign: 'center', background: '#ffffff', borderRadius: '16px', border: '1px solid var(--border-color)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                                <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', color: '#d97706' }}>
+                                    <Clock size={28} />
+                                </div>
+                                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: 700 }}>
+                                    Review Permissions Required
+                                </h3>
+                                <p style={{ maxWidth: '520px', margin: '0 auto 20px auto', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+                                    The pending review queue is restricted to Regional Managers and Administrators under corporate Maker-Checker governance rules. Direct activity logs submitted by operators are audited here before inclusion in official GHG inventories.
+                                </p>
+                                <button
+                                    className="btn-primary"
+                                    onClick={() => handleTabChange('factors')}
+                                    style={{ padding: '8px 24px', fontSize: '0.88rem' }}
+                                >
+                                    Return to Emission Factors
+                                </button>
                             </div>
                         )}
 
@@ -3827,7 +3960,59 @@ const ManageDataInner = () => {
                     }}
                 />
             )}
-        </div >
+
+            <Modal
+                isOpen={convertModal.isOpen}
+                onClose={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
+                title={`Convert Volume (${convertModal.type === 'gas' ? 'Gas: m³ → mscf' : 'Oil: m³ → bbl'})`}
+            >
+                <form onSubmit={handleApplyConversion} style={{ padding: '8px 0' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                        Enter volume in cubic meters (m³):
+                    </label>
+                    <input
+                        type="number"
+                        step="any"
+                        autoFocus
+                        placeholder="e.g. 1000"
+                        value={convertModal.value}
+                        onChange={(e) => setConvertModal(prev => ({ ...prev, value: e.target.value }))}
+                        className="mole-input"
+                        style={{ width: '100%', marginBottom: '12px', padding: '10px' }}
+                    />
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
+                        {convertModal.type === 'gas' 
+                            ? 'Conversion Factor: m³ × 0.0353147 = mcf (mscf)'
+                            : 'Conversion Factor: m³ × 6.28981 = barrels (bbl)'}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                        <button
+                            type="button"
+                            className="btn-ghost"
+                            onClick={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="btn-primary"
+                        >
+                            Convert & Apply
+                        </button>
+                    </div>
+                </form>
+            </Modal>
+
+            <ConfirmModal
+                isOpen={confirmDialog.isOpen}
+                title={confirmDialog.title}
+                message={confirmDialog.message}
+                confirmLabel={confirmDialog.confirmLabel}
+                confirmVariant={confirmDialog.confirmVariant}
+                onConfirm={confirmDialog.onConfirm}
+                onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+            />
+        </div>
     );
 };
 

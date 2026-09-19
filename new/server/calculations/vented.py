@@ -13,6 +13,7 @@ from .units import (
     to_kelvin,
     STD_TEMP_K,
     STD_PRESSURE_PSIA,
+    normalize_efficiency,
 )
 from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
 import math
@@ -37,7 +38,7 @@ def _split_vented_and_flared(
         and flared_mmbtu = flared_scf * (hhv or 1020.0) / 1e6.
         Catalog ef_n2o is in kg/MMBtu (default 0.0001 kg/MMBtu); convert to tonnes: / 1000.0.
     """
-    ctrl = max(0.0, min(1.0, float(ctrl_eff or 0.0)))
+    ctrl = normalize_efficiency(ctrl_eff, default=0.0)
     vented_frac = 1.0 - ctrl
 
     vented_ch4 = ch4_tonnes * vented_frac
@@ -540,10 +541,10 @@ class TankFlashingCalculator(BaseCalculator):
         is_flashing = process_type in ["tank_flashing", "tank", "storage_tanks"]
 
         if is_flashing:
-            total_gas_scf = float(throughput) * float(gas_oil_ratio)
+            total_gas_scf = float(throughput) * float(gas_oil_ratio or 0.0)
             total_gas_m3 = convert(total_gas_scf, "scf", "m3")
 
-            ch4_vol_scf = total_gas_scf * float(ch4_content)
+            ch4_vol_scf = total_gas_scf * float(ch4_content if ch4_content is not None else 0.85)
             ch4_vol_m3 = convert(ch4_vol_scf, "scf", "m3")
             ch4_mass_kg = ch4_vol_m3 * CONVERSIONS["density_ch4"]
             ch4_tonnes = ch4_mass_kg / 1000.0

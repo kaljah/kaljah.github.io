@@ -118,14 +118,16 @@ const AuditTrail = () => {
       return { start_date: start.toISOString() };
     }
     if (timeframe === "custom") {
-      const params = {};
-      if (customStartDate) params.start_date = new Date(customStartDate).toISOString();
-      if (customEndDate) {
+      if (customStartDate && customEndDate) {
+        const start = new Date(customStartDate);
         const end = new Date(customEndDate);
         end.setHours(23, 59, 59, 999);
-        params.end_date = end.toISOString();
+        return {
+          start_date: start.toISOString(),
+          end_date: end.toISOString(),
+        };
       }
-      return params;
+      return {};
     }
     return {};
   }, [timeframe, customStartDate, customEndDate]);

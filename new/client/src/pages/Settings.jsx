@@ -430,7 +430,8 @@ const Settings = () => {
                 <div
                   key={key}
                   className={`gwp-card ${isSelected ? "selected" : ""}`}
-                  onClick={() => setGwpStandard(key)}
+                  onClick={() => { if (isAdmin) setGwpStandard(key); }}
+                  style={{ cursor: isAdmin ? "pointer" : "default" }}
                   id={`gwp-card-${key.toLowerCase()}`}
                 >
                   <div className="gwp-card-header">
@@ -560,6 +561,7 @@ const Settings = () => {
                   <button
                     key={yr}
                     type="button"
+                    disabled={!isAdmin}
                     className={`btn-year-pill ${defaultBaseYear === yr ? "active" : ""}`}
                     onClick={() => setDefaultBaseYear(yr)}
                   >
@@ -600,6 +602,7 @@ const Settings = () => {
                   min="5"
                   max="50"
                   step="1"
+                  disabled={!isAdmin}
                   value={globalThreshold}
                   onChange={(e) => setGlobalThreshold(Number(e.target.value))}
                   className="range-slider"
@@ -638,6 +641,7 @@ const Settings = () => {
                     step="0.01"
                     min="0.01"
                     max="5.0"
+                    disabled={!isAdmin}
                     value={upstreamTarget}
                     onChange={(e) => setUpstreamTarget(Number(e.target.value))}
                     className="form-input"
@@ -679,6 +683,7 @@ const Settings = () => {
                     step="0.01"
                     min="0.01"
                     max="5.0"
+                    disabled={!isAdmin}
                     value={midstreamTarget}
                     onChange={(e) => setMidstreamTarget(Number(e.target.value))}
                     className="form-input"
@@ -785,6 +790,7 @@ const Settings = () => {
                         <select
                           className="table-select"
                           value={opStatus}
+                          disabled={!isAdmin}
                           onChange={(e) =>
                             handleFacilityChange(
                               fac.id,
@@ -806,6 +812,7 @@ const Settings = () => {
                           type="text"
                           className="table-input"
                           value={edit.country || "Algeria"}
+                          disabled={!isAdmin}
                           onChange={(e) =>
                             handleFacilityChange(
                               fac.id,
@@ -819,6 +826,7 @@ const Settings = () => {
                         <select
                           className="table-select-small"
                           value={baseYear}
+                          disabled={!isAdmin}
                           onChange={(e) =>
                             handleFacilityChange(
                               fac.id,
@@ -846,6 +854,7 @@ const Settings = () => {
                             max="100"
                             className="table-input-num"
                             value={edit.reconciliation_threshold || 20.0}
+                            disabled={!isAdmin}
                             onChange={(e) =>
                               handleFacilityChange(
                                 fac.id,
@@ -1023,6 +1032,7 @@ const Settings = () => {
                   type="radio"
                   name="authMode"
                   value="password"
+                  disabled={!isAdmin}
                   checked={authMode === "password"}
                   onChange={() => setAuthMode("password")}
                 />
@@ -1035,6 +1045,7 @@ const Settings = () => {
                   type="radio"
                   name="authMode"
                   value="oauth_client"
+                  disabled={!isAdmin}
                   checked={authMode === "oauth_client"}
                   onChange={() => setAuthMode("oauth_client")}
                 />
@@ -1052,6 +1063,7 @@ const Settings = () => {
                     type="email"
                     placeholder="user@example.com"
                     value={copernicusUsername}
+                    disabled={!isAdmin}
                     onChange={(e) => setCopernicusUsername(e.target.value)}
                     className="form-input"
                     id="copernicus-email-input"
@@ -1066,6 +1078,7 @@ const Settings = () => {
                     type="password"
                     placeholder="••••••••••••"
                     value={copernicusPassword}
+                    disabled={!isAdmin}
                     onChange={(e) => setCopernicusPassword(e.target.value)}
                     className="form-input"
                     id="copernicus-password-input"
@@ -1083,6 +1096,7 @@ const Settings = () => {
                     type="text"
                     placeholder="e.g. 9b1deb4d-3b7d-4bad-9bdd-..."
                     value={copernicusClientId}
+                    disabled={!isAdmin}
                     onChange={(e) => setCopernicusClientId(e.target.value)}
                     className="form-input"
                     id="copernicus-client-id-input"
@@ -1094,6 +1108,7 @@ const Settings = () => {
                     type="password"
                     placeholder="••••••••••••"
                     value={copernicusClientSecret}
+                    disabled={!isAdmin}
                     onChange={(e) => setCopernicusClientSecret(e.target.value)}
                     className="form-input"
                     id="copernicus-client-secret-input"
@@ -1125,6 +1140,7 @@ const Settings = () => {
                   min="0.3"
                   max="0.9"
                   step="0.05"
+                  disabled={!isAdmin}
                   value={copernicusQaThreshold}
                   onChange={(e) =>
                     setCopernicusQaThreshold(Number(e.target.value))
@@ -1152,12 +1168,13 @@ const Settings = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: "10px",
-                    cursor: "pointer",
+                    cursor: isAdmin ? "pointer" : "default",
                     marginTop: "4px",
                   }}
                 >
                   <input
                     type="checkbox"
+                    disabled={!isAdmin}
                     checked={copernicusEnabled}
                     onChange={(e) => setCopernicusEnabled(e.target.checked)}
                     style={{
@@ -1180,7 +1197,7 @@ const Settings = () => {
                 type="button"
                 className="btn-test-connection"
                 onClick={handleTestConnection}
-                disabled={testingConnection}
+                disabled={!isAdmin || testingConnection}
                 id="test-copernicus-connection-btn"
               >
                 {testingConnection ? (

@@ -290,3 +290,79 @@ select option:disabled {
   background-color: #f8fafc;
 }
 
+/* ==========================================================================
+   Global Print Stylesheet (Ctrl + P / Physical & PDF Report Printing)
+   ========================================================================== */
+@media print {
+  /* Hide navigation, toolbars, buttons, modals, and toasts */
+  .sidebar,
+  .app-sidebar,
+  .topbar,
+  header,
+  nav,
+  button,
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline,
+  .modal,
+  .modal-overlay,
+  .modal-backdrop,
+  .toast,
+  .toast-container,
+  #offline-banner,
+  .action-buttons,
+  .pagination,
+  .filter-bar,
+  .search-box {
+    display: none !important;
+  }
+
+  /* Reset layout constraints for clean page printing */
+  html,
+  body,
+  #root,
+  .app-container,
+  .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+  }
+
+  /* Prevent awkward page splits inside charts, metric cards, and table rows */
+  .glass-card,
+  .glass-panel,
+  .kpi-card,
+  .chart-container,
+  table,
+  tr,
+  figure {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  /* Table styling for crisp print readability */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 8px !important;
+    color: #000000 !important;
+  }
+
+  th {
+    background-color: #f1f5f9 !important;
+    font-weight: 700 !important;
+  }
+}
+

@@ -6,23 +6,33 @@ load_dotenv()
 
 
 class Config:
-    # SEC-01: Enforce secure SECRET_KEY in production
-    if os.environ.get("FLASK_ENV") == "production":
+    # SEC-01: Enforce secure SECRET_KEY across modern environment identifiers
+    _env_name = (
+        os.environ.get("FLASK_ENV")
+        or os.environ.get("APP_ENV")
+        or os.environ.get("ENVIRONMENT")
+        or "development"
+    ).lower()
+    _is_production = _env_name in ["production", "prod", "staging"]
+
+    if _is_production:
         SECRET_KEY = os.environ.get("SECRET_KEY")
-        if not SECRET_KEY or SECRET_KEY == "dev-secret-key-change-in-prod-please":
+        if not SECRET_KEY or SECRET_KEY in [
+            "dev-secret-key-change-in-prod-please",
+            "secret",
+            "changeme",
+        ]:
             raise ValueError(
                 "FATAL: SECRET_KEY is not set or is using the default development key in a production environment."
+            )
+        if not os.environ.get("DATABASE_URL"):
+            raise ValueError(
+                "FATAL: DATABASE_URL is not set in a production environment."
             )
     else:
         SECRET_KEY = (
             os.environ.get("SECRET_KEY") or "dev-secret-key-change-in-prod-please"
         )
-
-    if os.environ.get("FLASK_ENV") == "production":
-        if not os.environ.get("DATABASE_URL"):
-            raise ValueError(
-                "FATAL: DATABASE_URL is not set in a production environment."
-            )
 
     ALLOWED_ORIGINS = os.environ.get(
         "ALLOWED_ORIGINS",
@@ -47,12 +57,17 @@ class Config:
         ) or "sqlite:///" + os.path.join(BASE_DIR, "ghg_app.db")
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_size": 25,
+        "max_overflow": 25,
+        "pool_timeout": 60,
+    }
 
     # Session Configuration (8-hour session lifetime)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     # Only set Secure in production to allow localhost testing
-    SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"
+    SESSION_COOKIE_SECURE = _is_production
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     SESSION_REFRESH_EACH_REQUEST = True
 

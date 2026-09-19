@@ -1,0 +1,1107 @@
+{
+  "total_button_actions_passed": 220,
+  "total_console_errors": 0,
+  "errors": [],
+  "actions": [
+    {
+      "view": "Executive Dashboard",
+      "control": "+ Set Target",
+      "status": "PASS"
+    },
+    {
+      "view": "Executive Dashboard",
+      "control": "Pending Review",
+      "status": "PASS"
+    },
+    {
+      "view": "Executive Dashboard",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Executive Dashboard",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Executive Dashboard",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Executive Dashboard",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Executive Dashboard",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope Selection",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope Selection",
+      "control": "01 DIRECT EMISSIONS Scope 1  Combustion, flaring, fugitive &",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope Selection",
+      "control": "02 Scope 2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope Selection",
+      "control": "03 Scope 3",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 1 Direct",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 1 Direct",
+      "control": "01 Scope 1",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 1 Direct",
+      "control": "02 Scope 2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 1 Direct",
+      "control": "03 Scope 3",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 1 Direct",
+      "control": "\u2190 All Scopes",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 2 Indirect",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 2 Indirect",
+      "control": "01 Scope 1",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 2 Indirect",
+      "control": "02 Scope 2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 2 Indirect",
+      "control": "03 Scope 3",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 2 Indirect",
+      "control": "\u2190 All Scopes",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 3 Value Chain",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 3 Value Chain",
+      "control": "01 Scope 1",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 3 Value Chain",
+      "control": "02 Scope 2",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 3 Value Chain",
+      "control": "03 Scope 3",
+      "status": "PASS"
+    },
+    {
+      "view": "Emissions Scope 3 Value Chain",
+      "control": "\u2190 All Scopes",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Previous [DISABLED]",
+      "status": "PASS (Disabled)"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Next",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (pending)",
+      "control": "Elem-45",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (factors)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (facilities)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (production)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (sources)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Previous [DISABLED]",
+      "status": "PASS (Disabled)"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Next",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (goals)",
+      "control": "Elem-45",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (mitigation)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (ogmp)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Save CBAM Record",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Edit",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Delete",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (cbam)",
+      "control": "Previous [DISABLED]",
+      "status": "PASS (Disabled)"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (metadata)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "Pending Review 562",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "Emission Factors",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "Regions",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "Production Data",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "Emission Sources",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "Emission Goals & Base Years",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "Mitigation Projects",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "OGMP 2.0 Surveys",
+      "status": "PASS"
+    },
+    {
+      "view": "Manage Data (level_upgrades)",
+      "control": "CBAM Products",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Anomaly Queue)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Anomaly Queue)",
+      "control": "Run Diagnostics",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Anomaly Queue)",
+      "control": "Export QA Report",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Anomaly Queue)",
+      "control": "Anomaly Resolution Queue 104",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Anomaly Queue)",
+      "control": "Health & Completeness Diagnostics 2",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Anomaly Queue)",
+      "control": "Uncertainty & Rigor Analysis (IPCC)",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Health & Completeness Diagnostics)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Health & Completeness Diagnostics)",
+      "control": "Run Diagnostics",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Health & Completeness Diagnostics)",
+      "control": "Export QA Report",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Health & Completeness Diagnostics)",
+      "control": "Anomaly Resolution Queue 104",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Health & Completeness Diagnostics)",
+      "control": "Health & Completeness Diagnostics 2",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Health & Completeness Diagnostics)",
+      "control": "Uncertainty & Rigor Analysis (IPCC)",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Uncertainty & Rigor Analysis (IPCC))",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Uncertainty & Rigor Analysis (IPCC))",
+      "control": "Run Diagnostics",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Uncertainty & Rigor Analysis (IPCC))",
+      "control": "Export QA Report",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Uncertainty & Rigor Analysis (IPCC))",
+      "control": "Anomaly Resolution Queue 104",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Uncertainty & Rigor Analysis (IPCC))",
+      "control": "Health & Completeness Diagnostics 2",
+      "status": "PASS"
+    },
+    {
+      "view": "QA Dashboard (Uncertainty & Rigor Analysis (IPCC))",
+      "control": "Uncertainty & Rigor Analysis (IPCC)",
+      "status": "PASS"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "2",
+      "status": "PASS"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "Reset Filters",
+      "status": "PASS"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "OGMP 2.0 (Excel)",
+      "status": "PASS"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "Excel Export",
+      "status": "PASS"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "PDF Report",
+      "status": "PASS"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "Create Report",
+      "status": "PASS"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "Previous [DISABLED]",
+      "status": "PASS (Disabled)"
+    },
+    {
+      "view": "Reports (Main)",
+      "control": "Next",
+      "status": "PASS"
+    },
+    {
+      "view": "Carbon Intensity",
+      "control": "Notifications",
+      "status": "PASS"
+    },
+    {
+      "view": "Methane Explorer Map",
+      "control": "Notifications",
+      "status": "PASS"
+    },
+    {
+      "view": "Uncertainty Assessment",
+      "control": "Notifications",
+      "status": "PASS"
+    },
+    {
+      "view": "User Management & RBAC",
+      "control": "Notifications",
+      "status": "PASS"
+    },
+    {
+      "view": "User Management & RBAC",
+      "control": "Add New User",
+      "status": "PASS"
+    },
+    {
+      "view": "User Management & RBAC",
+      "control": "API DEBUGGER \u2014 CLICK TO INSPECT LIVE API CALLS \u25be",
+      "status": "PASS"
+    },
+    {
+      "view": "Audit Trail (IT Admin)",
+      "control": "Notifications",
+      "status": "PASS"
+    }
+  ]
+}

@@ -25,6 +25,8 @@ import uuid
 import json
 from sqlalchemy import cast, String, literal, Float, union_all, or_
 from services.ogmp import ogmp_level_for
+from process_categories import NON_COMBUSTION_PROCESSES
+
 
 
 
@@ -537,21 +539,24 @@ def add_bulk_upload():
         fuel = row.get("fuel", row.get("fuel_type", ""))
         unit = row.get("unit", "")
 
-        if not process_type:
-            row_errors.append("Missing process type.")
-        if not fuel and process_type not in [
-            "Well Completions",
-            "Fugitive",
-        ]:  # Some processes might not need fuel
-            row_errors.append("Missing fuel/activity.")
-
-        # 4. Resolve Factor (Standard vs Custom vs Sparse Engineering)
+        proc_clean = str(process_type).strip().lower()
         factor_type_raw = str(row.get("factor_type", "")).lower()
         if global_factor_type and global_factor_type != "auto":
             factor_type = global_factor_type
         else:
             factor_type = factor_type_raw
 
+        is_tier3_factor = factor_type in [
+            "specific", "site_specific", "site-specific", "engineering", "tier3", "tier_3", "t3", "cems"
+        ]
+        is_non_comb = proc_clean in NON_COMBUSTION_PROCESSES or is_tier3_factor
+
+        if not process_type:
+            row_errors.append("Missing process type.")
+        if not fuel and not is_non_comb:
+            row_errors.append("Missing fuel/activity.")
+
+        # 4. Resolve Factor (Standard vs Custom vs Sparse Engineering)
         factor_data = {}
 
         if process_type == "Flaring":
@@ -617,12 +622,13 @@ def add_bulk_upload():
                     parent_factor = API_FACTORS.get(cf.parent_fuel, {})
                     if "uncertainty" in parent_factor:
                         factor_data["uncertainty"] = parent_factor["uncertainty"]
+        elif is_non_comb or is_tier3_factor:
+            factor_data = API_FACTORS.get(fuel, {})
         else:
             factor_data = API_FACTORS.get(fuel, {})
             if (
                 not factor_data
                 and not row_errors
-                and process_type not in ["Well Completions"]
             ):
                 row_errors.append(f"Standard emission factor not found for: '{fuel}'")
 
@@ -754,12 +760,13 @@ def add_bulk_upload():
                     if k in specific_keys:
                         has_specific = True
 
-        if has_specific:
+        if is_tier3_factor or has_specific:
             calc_data["factor_source"] = "specific"
+        elif factor_type in ["custom", "regional", "tier2", "tier_2", "t2"]:
+            calc_data["factor_source"] = "custom"
+        elif factor_type == "default":
+            calc_data["factor_source"] = "default"
 
-        # Ensure factor source is recorded cleanly if forced globally or provided in column
-        if factor_type in ["default", "custom", "specific"]:
-            calc_data["factor_source"] = factor_type
 
         # 6. Compute
         gwp_dict = resolve_gwp_dict(user)
@@ -2933,10 +2940,10 @@ def add_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
-        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+    if user.role in ("viewer", "auditor", "it_admin"):
+        return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     # Validation
     required = ["year", "month", "facility_id", "process_type"]
@@ -2944,8 +2951,13 @@ def add_emission():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 422
 
+    try:
+        fac_id = int(data["facility_id"])
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid facility_id: must be an integer"}), 422
+
     allowed_ids = get_allowed_facility_ids(user)
-    if allowed_ids is not None and int(data["facility_id"]) not in allowed_ids:
+    if allowed_ids is not None and fac_id not in allowed_ids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
 
     # Calculate Emissions
@@ -2960,7 +2972,8 @@ def add_emission():
     # Custom Factor Override
     custom_factor_id = data.get("custom_factor_id")
     if custom_factor_id:
-        cf = CustomFactor.query.get(custom_factor_id)
+        cf = db.session.get(CustomFactor, custom_factor_id)
+
         if cf:
             # Map CustomFactor to factor_data structure
             # API_FACTORS usually has: { 'co2': val, 'ch4': val, 'n2o': val, 'unit': '...', 'hhv': ... }
@@ -3000,9 +3013,9 @@ def add_emission():
             elif cf.uncertainty and cf.uncertainty > 0:
                 # Use saved custom uncertainty
                 factor_data["uncertainty"] = {
-                    "co2": cf.uncertainty,
-                    "ch4": cf.uncertainty,
-                    "n2o": cf.uncertainty,
+                    "co2": float(cf.uncertainty or 0) / 100.0,
+                    "ch4": float(cf.uncertainty or 0) / 100.0,
+                    "n2o": float(cf.uncertainty or 0) / 100.0,
                 }
             elif cf.parent_fuel:
                 # Fallback to parent fuel uncertainty
@@ -3120,7 +3133,7 @@ def add_emission():
     # --- Audit Log ---
     try:
         # Fetch facility name for better description
-        facility = Facility.query.get(data["facility_id"])
+        facility = db.session.get(Facility, data["facility_id"])
         facility_name = facility.name if facility else "Unknown"
 
         log_details = f"Added {record.process_type} emission: {record.quantity} {record.unit} of {record.fuel_type} for {facility_name} ({record.month}/{record.year})"
@@ -3164,7 +3177,7 @@ def add_emission():
                 )
 
                 # Get Goal
-                goal = Goal.query.get(current_year)
+                goal = db.session.get(Goal, current_year)
 
                 if goal and goal.target_amount > 0:
                     percent = total_emissions / goal.target_amount
@@ -3187,7 +3200,7 @@ def add_emission():
                         # an unread notification of the same type and year doesn't exist.
                         from datetime import timedelta
 
-                        cutoff = datetime.datetime.utcnow() - timedelta(hours=24)
+                        cutoff = datetime.datetime.now(datetime.timezone.utc) - timedelta(hours=24)
                         existing = Notification.query.filter(
                             Notification.user_id == user.id,
                             Notification.type == n_type,
@@ -3221,9 +3234,8 @@ def add_emission():
                     "process_type": data["process_type"],
                     # BUG-04 FIX: safe facility name lookup
                     "facility_name": (
-                        Facility.query.get(data["facility_id"]).name
-                        if data.get("facility_id")
-                        and Facility.query.get(data["facility_id"])
+                        db.session.get(Facility, data["facility_id"]).name
+                        if data.get("facility_id") and db.session.get(Facility, data["facility_id"])
                         else "Unknown"
                     ),
                     "month": data["month"],
@@ -3252,9 +3264,23 @@ def delete_emission(id):
     if not record:
         return jsonify({"error": "Record not found"}), 404
     # SEC-03 FIX: IDOR — enforce ownership; admins may delete any record, users can delete own records
-    allowed_fids = get_allowed_facility_ids(user)
-    if allowed_fids is not None and record.facility_id not in allowed_fids:
+    if user.role in ["viewer", "auditor"]:
+        return (
+            jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}),
+            403,
+        )
+
+    if user.role not in ["admin", "superuser"]:
         if record.created_by != user.id:
+            return (
+                jsonify(
+                    {"error": "Forbidden: You do not have permission to delete records created by another user"}
+                ),
+                403,
+            )
+    else:
+        allowed_fids = get_allowed_facility_ids(user)
+        if allowed_fids is not None and record.facility_id not in allowed_fids:
             return jsonify({"error": "Forbidden: Outside your region"}), 403
 
     # BUG-05 FIX: capture audit data before deletion, then commit everything atomically
@@ -3286,6 +3312,12 @@ def delete_emission(id):
 @login_required  # EXTRA-06 FIX: decorator was present but get_current_user() could return None causing 500
 def update_emission(id):
     user = get_current_user()
+    if not user:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if user.role in ["viewer", "auditor", "it_admin"]:
+        return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
+
     data = request.get_json()  # EXTRA-03 FIX: removed duplicate call below
     record = Emission.query.filter_by(record_id=id).first() or db.session.get(
         Emission, int(id) if str(id).isdigit() else -1
@@ -3296,6 +3328,16 @@ def update_emission(id):
     allowed_fids = get_allowed_facility_ids(user)
     if allowed_fids is not None and record.facility_id not in allowed_fids:
         return jsonify({"error": "Unauthorized: Outside your region"}), 403
+
+    # Enforce creator ownership for standard user role
+    if user.role == "user" and record.created_by is not None and record.created_by != user.id:
+        return jsonify({"error": "Unauthorized: You may only modify records you created"}), 403
+
+    # If non-admin modifies a verified record, reset status to Pending for maker-checker review
+    if user.role not in ["admin", "superuser"] and record.status == "Verified":
+        record.status = "Pending"
+        record.approved_by = None
+        record.approved_at = None
         # EXTRA-03 FIX: removed second data = request.get_json() (double-read, second returns None)
     import json
     
@@ -3356,7 +3398,7 @@ def update_emission(id):
         # Handle Custom Factor in update
         cf_id = data.get("custom_factor_id")
         if cf_id:
-            cf = CustomFactor.query.get(cf_id)
+            cf = db.session.get(CustomFactor, cf_id)
             if cf:
                 factor_data = {
                     "co2": cf.co2_factor,
@@ -3403,9 +3445,32 @@ def update_emission(id):
 
         gwp_dict = resolve_gwp_dict(user)
         gwp_std = resolve_gwp_standard(user)
+        # Build merged calc_payload from existing source_payload / record fields and new data
+        calc_payload = {}
+        if record.source_payload:
+            try:
+                calc_payload = json.loads(record.source_payload)
+            except Exception:
+                calc_payload = {}
+        base_record_fields = {
+            "process_type": record.process_type,
+            "process": record.process_type,
+            "fuel_type": record.fuel_type,
+            "fuel": record.fuel_type,
+            "unit": record.unit,
+            "quantity": record.quantity,
+            "amount": record.quantity,
+            "calc_method": record.calc_method,
+            "factor_source": record.factor_source,
+        }
+        for k, v in base_record_fields.items():
+            if k not in calc_payload or calc_payload[k] is None:
+                calc_payload[k] = v
+        calc_payload.update(data)
+
         try:
             calculated_em, method = compute_emissions(
-                data, factor_data, gwp_dict=gwp_dict
+                calc_payload, factor_data, gwp_dict=gwp_dict
             )
             record.co2_emissions = calculated_em["co2"]
             record.ch4_emissions = calculated_em["ch4"]
@@ -3414,6 +3479,7 @@ def update_emission(id):
             record.co2e_total = calculated_em["totalCo2e"]
             record.calc_method = method
             record.gwp_version = gwp_std
+            record.source_payload = json.dumps(calc_payload)
 
             # Update record uncertainty
             u_dict = factor_data.get("uncertainty", {})
@@ -3447,7 +3513,7 @@ def update_emission(id):
             print(f"Error during emission recalculation: {e}")
 
     record.updated_by = user.id
-    record.updated_at = datetime.datetime.utcnow()
+    record.updated_at = datetime.datetime.now(datetime.timezone.utc)
 
     db.session.flush()
 
@@ -3696,7 +3762,7 @@ def import_emissions():
             # Check for custom factor if provided
             cf_id = rec_data.get("custom_factor_id")
             if cf_id:
-                cf = CustomFactor.query.get(cf_id)
+                cf = db.session.get(CustomFactor, cf_id)
                 if cf:
                     factor_data = {
                         "co2": cf.co2_factor,
@@ -4518,41 +4584,49 @@ def reject_batch_emissions():
     deleted_count = 0
     pending_statuses = ["Pending", "Draft", "Pending Approval"]
 
-    def apply_rejection(model, target_ids=None):
+    def apply_rejection(model, scope_label, target_ids=None):
         q = model.query.filter(model.status.in_(pending_statuses))
         if allowed_fids is not None:
             q = q.filter(model.facility_id.in_(allowed_fids))
         if target_ids is not None:
             q = q.filter(model.id.in_(target_ids))
-        return q.delete(synchronize_session=False)
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
+        update_vals = {
+            "status": "Rejected",
+            "approved_by": user.id,
+            "approved_at": now_utc,
+        }
+        if hasattr(model, "qa_flag"):
+            update_vals["qa_flag"] = f"Rejected: {reason}"
+        return q.update(update_vals, synchronize_session=False)
 
     if scope == "all" and reject_all:
         deleted_count = (
-            apply_rejection(Emission)
-            + apply_rejection(Scope2Emission)
-            + apply_rejection(Scope3Emission)
+            apply_rejection(Emission, "Scope 1")
+            + apply_rejection(Scope2Emission, "Scope 2")
+            + apply_rejection(Scope3Emission, "Scope 3")
         )
     elif has_by_scope:
         s1_ids = by_scope.get("1") or by_scope.get(1) or []
         s2_ids = by_scope.get("2") or by_scope.get(2) or []
         s3_ids = by_scope.get("3") or by_scope.get(3) or []
         if s1_ids:
-            deleted_count += apply_rejection(Emission, s1_ids)
+            deleted_count += apply_rejection(Emission, "Scope 1", s1_ids)
         if s2_ids:
-            deleted_count += apply_rejection(Scope2Emission, s2_ids)
+            deleted_count += apply_rejection(Scope2Emission, "Scope 2", s2_ids)
         if s3_ids:
-            deleted_count += apply_rejection(Scope3Emission, s3_ids)
+            deleted_count += apply_rejection(Scope3Emission, "Scope 3", s3_ids)
     elif scope == "1":
-        deleted_count = apply_rejection(Emission, None if reject_all else ids)
+        deleted_count = apply_rejection(Emission, "Scope 1", None if reject_all else ids)
     elif scope == "2":
-        deleted_count = apply_rejection(Scope2Emission, None if reject_all else ids)
+        deleted_count = apply_rejection(Scope2Emission, "Scope 2", None if reject_all else ids)
     elif scope == "3":
-        deleted_count = apply_rejection(Scope3Emission, None if reject_all else ids)
+        deleted_count = apply_rejection(Scope3Emission, "Scope 3", None if reject_all else ids)
     elif scope == "all" and ids:
         deleted_count = (
-            apply_rejection(Emission, ids)
-            + apply_rejection(Scope2Emission, ids)
-            + apply_rejection(Scope3Emission, ids)
+            apply_rejection(Emission, "Scope 1", ids)
+            + apply_rejection(Scope2Emission, "Scope 2", ids)
+            + apply_rejection(Scope3Emission, "Scope 3", ids)
         )
     else:
         return jsonify({"error": f"Invalid scope: {scope}"}), 400

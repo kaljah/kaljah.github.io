@@ -3,6 +3,7 @@ import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import Modal from "../components/Modal";
+import ConfirmModal from "../components/ConfirmModal";
 
 /* ─── tiny keyframe injection ─────────────────────────────────────────────── */
 const STYLE_ID = "um-keyframes";
@@ -381,6 +382,10 @@ const UserManagement = () => {
   const [resetPwdShow, setResetPwdShow] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
 
+  // ── Delete confirmation modal state ──────────────────────────────────────
+  const [deleteTargetUser, setDeleteTargetUser] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
 
 
   const fetchData = async (silent = false, keepOptimistic = false) => {
@@ -557,19 +562,31 @@ const UserManagement = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (
-      !window.confirm("Are you sure you want to completely remove this user?")
-    )
-      return;
+  const handleDelete = (target) => {
+    // Accepts either user object or user id
+    if (typeof target === "object" && target !== null) {
+      setDeleteTargetUser(target);
+    } else {
+      const found = users.find((u) => u.id === target) || { id: target };
+      setDeleteTargetUser(found);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetUser?.id) return;
+    setDeleteLoading(true);
+    const targetId = deleteTargetUser.id;
     try {
-      await api.delete(`/auth/users/${id}`);
-      setUsers((prev) => prev.filter((u) => u.id !== id));
+      await api.delete(`/auth/users/${targetId}`);
+      setUsers((prev) => prev.filter((u) => u.id !== targetId));
       toast.success("User deleted");
+      setDeleteTargetUser(null);
       fetchData(true);
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to delete user");
       fetchData(true);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -1777,6 +1794,17 @@ const UserManagement = () => {
           </form>
         )}
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!deleteTargetUser}
+        title="Revoke User Access"
+        message={`Are you sure you want to permanently revoke access for ${deleteTargetUser?.fullName ? `"${deleteTargetUser.fullName}"` : "this user"} (${deleteTargetUser?.email || "selected account"})? This action cannot be undone.`}
+        confirmLabel="Revoke Access"
+        confirmVariant="danger"
+        loading={deleteLoading}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTargetUser(null)}
+      />
     </div>
   );
 };

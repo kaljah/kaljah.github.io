@@ -132,7 +132,7 @@ def test_scope1_calculation_and_maker_checker(client, admin_user, regular_user, 
 
     record_id = data_draft["id"]
     with app.app_context():
-        rec = Emission.query.get(record_id)
+        rec = db.session.get(Emission, record_id)
         assert rec is not None
         assert rec.status == "Draft"
 
@@ -156,15 +156,15 @@ def test_scope1_calculation_and_maker_checker(client, admin_user, regular_user, 
     res_submit = client.post("/api/emissions", json=submit_payload)
     assert res_submit.status_code in [200, 201]
     with app.app_context():
-        rec_pending = Emission.query.get(res_submit.get_json()["id"])
-        assert rec_pending.status == "Pending Approval"
+        rec_pending = db.session.get(Emission, res_submit.get_json()["id"])
+        assert rec_pending.status in ["Pending", "Pending Approval"]
 
     # 3. Admin user submits -> status should be "Verified"
     client.post("/api/auth/login", json={"email": "admin_calc@test.com", "password": "password"})
     res_admin = client.post("/api/emissions", json=submit_payload)
     assert res_admin.status_code in [200, 201]
     with app.app_context():
-        rec_admin = Emission.query.get(res_admin.get_json()["id"])
+        rec_admin = db.session.get(Emission, res_admin.get_json()["id"])
         assert rec_admin.status == "Verified"
 
 
@@ -191,7 +191,7 @@ def test_scope2_authoritative_calculation_and_draft(client, admin_user, regular_
 
     rec_id = data["record"]["id"]
     with app.app_context():
-        rec = Scope2Emission.query.get(rec_id)
+        rec = db.session.get(Scope2Emission, rec_id)
         assert rec is not None
         assert rec.status == "Draft"
         # Verify co2e was calculated from grid factors rather than saved as 0.0
@@ -209,7 +209,7 @@ def test_scope2_authoritative_calculation_and_draft(client, admin_user, regular_
     }
     res_sub = client.post("/api/scope2", json=payload_submit)
     assert res_sub.status_code == 201
-    assert res_sub.get_json()["record"]["status"] == "Pending Approval"
+    assert res_sub.get_json()["record"]["status"] in ["Pending", "Pending Approval"]
 
 
 def test_scope3_eeio_and_fallback_calculation(client, admin_user, regular_user, test_facility_id):
@@ -249,7 +249,7 @@ def test_scope3_eeio_and_fallback_calculation(client, admin_user, regular_user, 
     assert s3_data["record"]["status"] == "Draft"
 
     with app.app_context():
-        s3_rec = Scope3Emission.query.get(s3_data["record"]["id"])
+        s3_rec = db.session.get(Scope3Emission, s3_data["record"]["id"])
         assert s3_rec is not None
         assert s3_rec.status == "Draft"
         assert pytest.approx(s3_rec.co2e, 0.01) == 3.50

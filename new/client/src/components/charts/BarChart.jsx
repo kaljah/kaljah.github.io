@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BarChart as RechartsBar,
   Bar,
@@ -23,12 +23,19 @@ export const BarChart = ({
   height = 300,
   showLegend = true,
   formatValue = (val) => {
-    if (val === null || val === undefined) return "0";
-    if (Math.abs(val) >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-    if (Math.abs(val) >= 1000) return `${(val / 1000).toFixed(1)}k`;
-    return Number(val).toLocaleString();
+    if (val === null || val === undefined || isNaN(val)) return "0";
+    const num = Number(val);
+    if (!isFinite(num)) return "0";
+    if (Math.abs(num) >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (Math.abs(num) >= 1000) return `${(num / 1000).toFixed(1)}k`;
+    return num.toLocaleString();
   },
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const finalXKey = xAxisKey || xKey || "name";
   const finalDataKey = dataKey || barKey || "value";
 
@@ -54,6 +61,35 @@ export const BarChart = ({
     }
     return null;
   };
+
+  if (!isMounted) {
+    return (
+      <div
+        style={{
+          height: typeof height === "number" ? `${height}px` : height,
+          width: "100%",
+        }}
+      />
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="chart-wrapper empty">
+        <div
+          style={{
+            height,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--text-muted, #94a3b8)",
+          }}
+        >
+          No data available
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="chart-wrapper">

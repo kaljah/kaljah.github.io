@@ -3,16 +3,66 @@ import api, { fetchCsrfToken } from "../api";
 
 const AuthContext = createContext(null);
 
-// 10-minute idle session timeout
+// 10-minute idle session timeout, 9-minute warning
 const IDLE_TIMEOUT_MS = 10 * 60 * 1000;
+const IDLE_WARNING_MS = 9 * 60 * 1000;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [preferences, setPreferences] = useState({});
   const [loading, setLoading] = useState(true);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [sessionWarning, setSessionWarning] = useState(false);
   const idleTimerRef = useRef(null);
+  const idleWarningRef = useRef(null);
   const lastActivityRef = useRef(Date.now());
+
+  // BroadcastChannel for cross-tab auth synchronization
+  const authChannelRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        authChannelRef.current = new BroadcastChannel("ghg_auth_channel");
+        authChannelRef.current.onmessage = (event) => {
+          const msg = event.data;
+          if (msg?.type === "LOGOUT") {
+            setUser(null);
+            setPreferences({});
+            applyTheme("light");
+            setSessionWarning(false);
+            if (msg.isTimeout) {
+              setSessionExpired(true);
+            }
+          } else if (msg?.type === "ACTIVITY") {
+            lastActivityRef.current = msg.timestamp || Date.now();
+            setSessionWarning(false);
+          }
+        };
+      } catch (err) {
+        console.warn("[Auth] BroadcastChannel not supported in this environment", err);
+      }
+    }
+
+    // Storage event fallback for older browser tabs
+    const handleStorage = (e) => {
+      if (e.key === "ghg_auth_logout_event") {
+        setUser(null);
+        setPreferences({});
+        applyTheme("light");
+        setSessionWarning(false);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      if (authChannelRef.current) {
+        authChannelRef.current.close();
+        authChannelRef.current = null;
+      }
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
   // Register global logout hook for API interceptor
   useEffect(() => {
@@ -39,29 +89,58 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setPreferences({});
     applyTheme("light");
+    setSessionWarning(false);
     if (isTimeout) {
       setSessionExpired(true);
     }
+
+    // Broadcast logout to all sibling browser tabs
+    if (authChannelRef.current) {
+      try {
+        authChannelRef.current.postMessage({ type: "LOGOUT", isTimeout });
+      } catch (e) {}
+    }
+    try {
+      localStorage.setItem("ghg_auth_logout_event", Date.now().toString());
+    } catch (e) {}
+
     try {
       await fetchCsrfToken();
     } catch (e) {}
   }, []);
 
-  // ── 10-Minute Idle Session Timeout ─────────────────────────────────────────
+  // ── 10-Minute Idle Session Timeout & 9-Minute Warning ─────────────────────
   useEffect(() => {
     if (!user) {
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
         idleTimerRef.current = null;
       }
+      if (idleWarningRef.current) {
+        clearTimeout(idleWarningRef.current);
+        idleWarningRef.current = null;
+      }
+      setSessionWarning(false);
       return;
     }
 
     const resetIdleTimer = () => {
       lastActivityRef.current = Date.now();
+      setSessionWarning(false);
+      if (authChannelRef.current) {
+        try {
+          authChannelRef.current.postMessage({ type: "ACTIVITY", timestamp: Date.now() });
+        } catch (e) {}
+      }
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
       }
+      if (idleWarningRef.current) {
+        clearTimeout(idleWarningRef.current);
+      }
+      idleWarningRef.current = setTimeout(() => {
+        setSessionWarning(true);
+      }, IDLE_WARNING_MS);
       idleTimerRef.current = setTimeout(() => {
         console.warn("[Auth] 10-minute idle session timeout reached. Logging out.");
         logout(true);
@@ -90,6 +169,9 @@ export const AuthProvider = ({ children }) => {
     return () => {
       if (idleTimerRef.current) {
         clearTimeout(idleTimerRef.current);
+      }
+      if (idleWarningRef.current) {
+        clearTimeout(idleWarningRef.current);
       }
       if (throttleTimeout) {
         clearTimeout(throttleTimeout);
@@ -133,6 +215,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     setSessionExpired(false);
+    setSessionWarning(false);
     const { data } = await api.post("/auth/login", { email, password });
     setUser(data.user);
 
@@ -181,6 +264,8 @@ export const AuthProvider = ({ children }) => {
         loading,
         sessionExpired,
         setSessionExpired,
+        sessionWarning,
+        setSessionWarning,
       }}
     >
       {children}

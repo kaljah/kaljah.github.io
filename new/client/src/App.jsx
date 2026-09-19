@@ -57,6 +57,14 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+const SuperuserRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner fullScreen />;
+  if (!user) return <Navigate to="/login" />;
+  if (!["admin", "superuser"].includes(user.role)) return <Navigate to="/" />;
+  return children;
+};
+
 const AuditRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <LoadingSpinner fullScreen />;
@@ -106,9 +114,9 @@ const AppRoutes = () => {
         <Route
           path="qa-dashboard"
           element={
-            <AdminRoute>
+            <SuperuserRoute>
               <QADashboard />
-            </AdminRoute>
+            </SuperuserRoute>
           }
         />
         <Route
@@ -167,14 +175,10 @@ const AppRoutes = () => {
             </NonITRoute>
           }
         />
-        {/* NEW-01 FIX */}
+        {/* Unified QA/QC & Diagnostics */}
         <Route
           path="diagnostics"
-          element={
-            <AdminRoute>
-              <Diagnostics />
-            </AdminRoute>
-          }
+          element={<Navigate to="/qa-dashboard" replace />}
         />
         {/* NEW-01 FIX */}
         <Route
@@ -196,9 +200,9 @@ const AppRoutes = () => {
         <Route
           path="settings"
           element={
-            <NonITRoute>
+            <PrivateRoute>
               <Settings />
-            </NonITRoute>
+            </PrivateRoute>
           }
         />
       </Route>

@@ -84,6 +84,8 @@ class GHGCalculator:
             return val * 35.3147
         if u in ["mmscf"]:
             return val * 1000000.0
+        if u in ["mscf", "mcf"]:
+            return val * 1000.0
         if u in ["gal", "gallons", "us_gal"]:
             return val * 0.133681
         if u in ["bbl", "barrel", "barrels"]:

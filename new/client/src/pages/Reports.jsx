@@ -353,7 +353,6 @@ const Reports = () => {
   const [verificationStatus, setVerificationStatus] = useState("Not externally verified");
 
   const openConfigModal = () => {
-    console.log("openConfigModal called. reportSelectedRegions:", reportSelectedRegions);
     if (reportSelectedRegions.length === 0) {
       toast.error("Please select at least one region/facility.");
       return;
@@ -398,7 +397,6 @@ const Reports = () => {
 
   return (
     <div className="reports-page">
-      {console.log("Rendering Reports. showConfigModal:", showConfigModal)}
       <header className="top-bar">
         <div className="breadcrumbs">
           <svg

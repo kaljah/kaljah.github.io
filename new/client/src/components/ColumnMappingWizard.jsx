@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import Papa from "papaparse";
 import api from "../api";
+import { useToast } from "./Toast";
 import UploadProgress from "./UploadProgress";
 import "./ColumnMappingWizard.css";
 import { PROCESS_TYPES } from "../utils/EmissionFactors";
@@ -521,6 +522,7 @@ export default function ColumnMappingWizard({
   onUploadSuccess,
   type = "activity",
 }) {
+  const toast = useToast();
   const fileInputRef = useRef(null);
   const [step, setStep] = useState(type === "activity" ? 1 : 2);
   const [file, setFile] = useState(null);
@@ -612,9 +614,7 @@ export default function ColumnMappingWizard({
     if (type === "activity_scope3") scopeStr = "3";
     form.append("scope", scopeStr);
     
-    if (type === "facilities") {
-        form.append("overwrite_duplicates", overwriteDuplicates);
-    }
+    form.append("overwrite_duplicates", overwriteDuplicates);
 
     // Pass the column mapping so the server can use correct column names
     form.append("column_mapping", JSON.stringify(mapping));
@@ -626,7 +626,7 @@ export default function ColumnMappingWizard({
       setJobId(res.data.job_id);
       setStep(4);
     } catch (err) {
-      alert(
+      toast.error(
         "Error starting upload: " + (err.response?.data?.error || err.message),
       );
     } finally {
@@ -653,7 +653,7 @@ export default function ColumnMappingWizard({
         a.click();
         a.remove();
       } catch {
-        alert("Template download failed.");
+        toast.error("Template download failed.");
       }
       return;
     }
@@ -1288,7 +1288,6 @@ export default function ColumnMappingWizard({
         {/* ── STEP 2: File Select ── */}
         {step === 2 && (
           <div className="cmw-body">
-            {type === "facilities" && (
               <div className="cmw-config-section" style={{ marginBottom: '20px', padding: '16px', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}>
                 <h3 style={{ marginBottom: '8px', fontSize: '1rem', color: 'var(--text-primary)' }}>Import Settings</h3>
                 <label className="cmw-config-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -1297,11 +1296,16 @@ export default function ColumnMappingWizard({
                     checked={overwriteDuplicates} 
                     onChange={(e) => setOverwriteDuplicates(e.target.checked)}
                   />
-                  Overwrite existing Regions with the same name
+                  {type === "facilities" 
+                    ? "Overwrite existing Regions with the same name" 
+                    : "Overwrite existing records with matching facility, date, and source"}
                 </label>
-                <p className="cmw-hint" style={{ marginTop: '4px', marginLeft: '24px' }}>If unchecked, duplicates will be skipped with an error.</p>
+                <p className="cmw-hint" style={{ marginTop: '4px', marginLeft: '24px' }}>
+                  {type === "facilities" 
+                    ? "If unchecked, duplicate regions will be skipped with an error." 
+                    : "If unchecked, duplicate records will be skipped to prevent double-counting."}
+                </p>
               </div>
-            )}
             {/* Drop zone */}
             <div
               className={`cmw-dropzone ${isDragging ? "dragging" : ""}`}

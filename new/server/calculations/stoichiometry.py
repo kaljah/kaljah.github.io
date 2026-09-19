@@ -4,7 +4,7 @@ Implementation of stoichiometric mass balance calculations.
 """
 
 from .base import BaseCalculator
-from .units import calculate_co2e
+from .units import CONVERSIONS, calculate_co2e
 from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
 
 
@@ -12,7 +12,9 @@ class StoichiometricCalculator(BaseCalculator):
     def __init__(self):
         super().__init__("Stoichiometric Mass Balance", "Section 4.1")
 
-    def calculate(self, fuel_mass, carbon_content, uncertainties, mass_unit="kg"):
+    def calculate(
+        self, fuel_mass, carbon_content, uncertainties, mass_unit="kg", gwp_dict=None
+    ):
         """
         API Equation 4-3/4-4: CO2 from carbon content
         CO2 = Mass * Carbon_Content * (44.01 / 12.011)
@@ -24,11 +26,25 @@ class StoichiometricCalculator(BaseCalculator):
 
         # Normalize to kg
         norm_mass = fuel_mass
-        u = str(mass_unit).lower()
+        u = str(mass_unit).strip().lower()
         if u in ["lb", "lbs", "pound", "pounds"]:
-            norm_mass = fuel_mass * 0.453592
-        elif u in ["tonne", "tonnes", "metric_ton"]:
-            norm_mass = fuel_mass * 1000.0
+            norm_mass = fuel_mass * CONVERSIONS["lb_to_kg"]
+        elif u in ["tonne", "tonnes", "metric_ton", "metric_tons", "mt", "t"]:
+            norm_mass = fuel_mass * CONVERSIONS["tonne_to_kg"]
+        elif u in ["ton", "tons", "short_ton", "short_tons", "us_ton"]:
+            norm_mass = fuel_mass * CONVERSIONS["short_ton_to_kg"]
+        elif u in ["long_ton", "long_tons"]:
+            norm_mass = fuel_mass * CONVERSIONS["long_ton_to_kg"]
+        elif u in ["g", "gram", "grams"]:
+            norm_mass = fuel_mass * 0.001
+        elif u in ["kg", "kgs", "kilogram", "kilograms"]:
+            norm_mass = fuel_mass
+        else:
+            try:
+                from .units import convert
+                norm_mass = convert(fuel_mass, mass_unit, "kg")
+            except Exception:
+                norm_mass = fuel_mass
 
         # stoichiometric ratio CO2/C
         ratio = 44.01 / 12.011
@@ -47,7 +63,7 @@ class StoichiometricCalculator(BaseCalculator):
             process_category="stoichiometric",
             gas="co2",
         )
-        total_co2e = calculate_co2e(co2=co2_tonnes)
+        total_co2e = calculate_co2e(co2=co2_tonnes, gwp_dict=gwp_dict)
 
         return self.format_result(
             co2=co2_res,

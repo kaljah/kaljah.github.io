@@ -399,11 +399,18 @@
   color: #991b1b;
   border: 1px solid #fecaca;
 }
+.tag-duplicate {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
 
 /* ─── Footer Actions ──────────────────────────────────────────────────────── */
 .up-footer-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 12px;
   margin-top: 24px;
 }
 

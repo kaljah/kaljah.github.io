@@ -82,7 +82,7 @@ const Login = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [introFading, setIntroFading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, sessionExpired, setSessionExpired } = useAuth();
   const navigate = useNavigate();
 
   const handleIntroEnd = () => {
@@ -93,6 +93,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    if (sessionExpired) setSessionExpired(false);
     try {
       await login(email, password);
       navigate("/");
@@ -162,6 +163,45 @@ const Login = () => {
           <h2>Welcome Back</h2>
           <p>Sign in to your GHG Reporting Platform</p>
         </div>
+
+        {/* Inactivity Session Expiration Banner */}
+        {sessionExpired && (
+          <div
+            className="session-expired-alert"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "12px 14px",
+              background: "#fffbeb",
+              border: "1px solid #fde68a",
+              borderRadius: "10px",
+              color: "#92400e",
+              fontSize: "0.85rem",
+              marginBottom: "16px",
+              lineHeight: 1.4,
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ flexShrink: 0, color: "#d97706" }}
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>
+              Your session timed out after 10 minutes of inactivity. Please sign in again to resume your work.
+            </span>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (

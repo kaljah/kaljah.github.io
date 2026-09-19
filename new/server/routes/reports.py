@@ -34,9 +34,11 @@ reports_bp = Blueprint("reports", __name__)
 
 
 def _safe_excel_value(val):
-    """Prevent formula injection (DDE/CSV injection) in Excel cells."""
-    if isinstance(val, str) and val and val[0] in ("=", "-", "+", "@", "\t", "\r"):
-        return "'" + val
+    """Prevent formula injection (DDE/CSV injection) in Excel cells including leading whitespace bypasses."""
+    if isinstance(val, str) and val:
+        stripped = val.lstrip()
+        if stripped and stripped[0] in ("=", "-", "+", "@", "\t", "\r", "%"):
+            return "'" + val
     return val
 
 
@@ -363,6 +365,19 @@ def generate_report():
             q2 = q2.filter(Scope2Emission.status == "Verified")
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
+                st = (e.source_type or "Electricity").strip().lower()
+                if "steam" in st:
+                    s2_amount = e.steam_ton or 0
+                    s2_unit = "tons"
+                elif "heat" in st:
+                    s2_amount = e.heat_mmbtu or 0
+                    s2_unit = "MMBtu"
+                elif "cooling" in st:
+                    s2_amount = e.cooling_ton or 0
+                    s2_unit = "tons"
+                else:
+                    s2_amount = e.electricity_kwh or 0
+                    s2_unit = "kWh"
                 emissions_data.append(
                     {
                         "scope": 2,
@@ -370,8 +385,8 @@ def generate_report():
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
                         "process_type": f"Scope 2: {e.source_type or 'Electricity'}",
                         "fuel_type": e.grid_region or "Grid",
-                        "amount": e.electricity_kwh or 0,
-                        "unit": "kWh",
+                        "amount": s2_amount,
+                        "unit": s2_unit,
                         "co2_emissions": 0,
                         "ch4_emissions": 0,
                         "n2o_emissions": 0,
@@ -584,15 +599,28 @@ def export_emissions():
             q2 = q2.filter(Scope2Emission.status == "Verified")
             for e in q2.all():
                 m_val = e.month if e.month is not None else 1
+                st = (e.source_type or "Electricity").strip().lower()
+                if "steam" in st:
+                    s2_amount = e.steam_ton or 0
+                    s2_unit = "tons"
+                elif "heat" in st:
+                    s2_amount = e.heat_mmbtu or 0
+                    s2_unit = "MMBtu"
+                elif "cooling" in st:
+                    s2_amount = e.cooling_ton or 0
+                    s2_unit = "tons"
+                else:
+                    s2_amount = e.electricity_kwh or 0
+                    s2_unit = "kWh"
                 emissions_data.append(
                     {
                         "scope": 2,
                         "date": f"{e.year or 0}-{m_val:02d}-01",
                         "facility_name": fac_map.get(e.facility_id, "Unknown"),
-                        "process_type": "Indirect Electricity",
+                        "process_type": f"Indirect {e.source_type or 'Electricity'}",
                         "fuel_type": e.source_type or "Electricity",
-                        "amount": e.electricity_kwh or 0,
-                        "unit": "kWh",
+                        "amount": s2_amount,
+                        "unit": s2_unit,
                         "co2_emissions": 0,
                         "ch4_emissions": 0,
                         "n2o_emissions": 0,
@@ -785,7 +813,7 @@ def export_ogmp_excel():
             ws1.cell(
                 row=3,
                 column=1,
-                value=f"Emission Target {_active_goal.year}: {float(_active_goal.target_amount):,.0f} tCO\u2082e",
+                value=f"Emission Target {_active_goal.year}: {float(_active_goal.target_amount or 0):,.0f} tCO\u2082e",
             ).font = bold_font
         if _active_base_year:
             by_val = f"Active Base Year: {_active_base_year.year}"

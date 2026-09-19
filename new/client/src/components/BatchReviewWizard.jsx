@@ -8,6 +8,7 @@ import {
 import api from '../api';
 import { useToast } from './Toast';
 import { useAuth } from '../context/AuthContext';
+import ConfirmModal from './ConfirmModal';
 import './BatchReviewWizard.css';
 
 const QUICK_REJECTION_REASONS = [
@@ -111,6 +112,14 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
     mode: 'selected', // 'single' | 'selected' | 'all' | 'filtered'
     targetItem: null,
     reason: ''
+  });
+
+  // Approval Confirm Modal
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null,
   });
 
   // Fetch ALL pending data without exception
@@ -347,7 +356,7 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
   };
 
   // Approve All (Global or Filtered)
-  const handleApproveAll = async (isFiltered = false) => {
+  const handleApproveAll = (isFiltered = false) => {
     const targetCount = isFiltered ? filteredRecords.length : stats.totalCount;
     if (targetCount === 0) return;
 
@@ -355,39 +364,45 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
       ? `Approve all ${targetCount} currently filtered records across active criteria?`
       : `Approve ALL ${targetCount} pending records in the system across all scopes?`;
 
-    if (!window.confirm(msg)) return;
-
-    setIsProcessing(true);
-    try {
-      if (!isFiltered) {
-        // Pure global approve all
-        const res = await api.post('/emissions/approve/batch', {
-          scope: "all",
-          approve_all: true
-        });
-        toast.success(`Approved all ${res.data.approved_count} pending records`);
-      } else {
-        // Scoped to current filters
-        const by_scope = { "1": [], "2": [], "3": [] };
-        const ids = [];
-        filteredRecords.forEach(r => {
-          by_scope[r.scope].push(Number(r.id));
-          ids.push(Number(r.id));
-        });
-        const res = await api.post('/emissions/approve/batch', {
-          scope: "all",
-          ids,
-          by_scope
-        });
-        toast.success(`Approved ${res.data.approved_count} filtered records`);
+    setConfirmModal({
+      isOpen: true,
+      title: isFiltered ? "Batch Approve Filtered Records" : "Batch Approve All Records",
+      message: msg,
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        setIsProcessing(true);
+        try {
+          if (!isFiltered) {
+            // Pure global approve all
+            const res = await api.post('/emissions/approve/batch', {
+              scope: "all",
+              approve_all: true
+            });
+            toast.success(`Approved all ${res.data.approved_count} pending records`);
+          } else {
+            // Scoped to current filters
+            const by_scope = { "1": [], "2": [], "3": [] };
+            const ids = [];
+            filteredRecords.forEach(r => {
+              by_scope[r.scope].push(Number(r.id));
+              ids.push(Number(r.id));
+            });
+            const res = await api.post('/emissions/approve/batch', {
+              scope: "all",
+              ids,
+              by_scope
+            });
+            toast.success(`Approved ${res.data.approved_count} filtered records`);
+          }
+          setSelectedKeys(new Set());
+          fetchAllPendingData();
+        } catch (err) {
+          toast.error(err.response?.data?.error || "Batch approval failed");
+        } finally {
+          setIsProcessing(false);
+        }
       }
-      setSelectedKeys(new Set());
-      fetchAllPendingData();
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Failed to batch approve");
-    } finally {
-      setIsProcessing(false);
-    }
+    });
   };
 
   // Confirm Rejection Modal Submission
@@ -951,6 +966,17 @@ const BatchReviewWizard = ({ isOpen, onClose, facilities = [] }) => {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmLabel="Approve Records"
+        confirmVariant="primary"
+        loading={isProcessing}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 
