@@ -1,21 +1,24 @@
-# Use Node.js 20 slim as base image
-FROM node:20-slim
+# Use official Python runtime
+FROM python:3.11-slim
 
-# Create and change to the app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json
-COPY package.json ./
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install only production dependencies
-# Note: we don't copy package-lock.json to avoid platform-specific issues with sqlite3 if it was installed on Windows
-RUN npm install --omit=dev
+# Copy backend requirements and install
+COPY new/server/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt gunicorn psycopg2-binary
 
-# Copy application source code
-COPY . .
+# Copy backend application code
+COPY new/server/ ./
 
-# Expose the port the app runs on
-EXPOSE 3000
+ENV PORT=10000
+EXPOSE 10000
 
-# Start the server using the web script
-CMD [ "npm", "run", "start:web" ]
+# Start Gunicorn WSGI server
+CMD ["sh", "-c", "python -c 'from app import app, db; app.app_context().push(); db.create_all()' && exec gunicorn --bind 0.0.0.0:${PORT:-10000} --workers 2 --threads 4 --timeout 120 'app:app'"]
