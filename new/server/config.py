@@ -49,7 +49,10 @@ class Config:
 
     # Session Configuration
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SAMESITE = os.environ.get(
+        "SESSION_COOKIE_SAMESITE",
+        "None" if os.environ.get("FLASK_ENV") == "production" else "Lax",
+    )
     # Only set Secure in production to allow localhost testing
     SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"
 

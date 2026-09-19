@@ -206,9 +206,27 @@ if (
         app.logger.warning(f"Could not initialize Swagger UI: {e}")
 
 
+with app.app_context():
+    db.create_all()
+    try:
+        from seed_admin import seed_admin
+        seed_admin()
+    except Exception as e:
+        app.logger.warning(f"Could not auto-seed admin: {e}")
+
+
 @app.route("/api/csrf-token")
 def get_csrf_token():
     return jsonify({"csrf_token": generate_csrf()})
+
+
+@app.route("/")
+def index():
+    return jsonify({
+        "status": "online",
+        "service": "GHG Accounting & Reporting Platform API",
+        "health": "/api/health"
+    })
 
 
 @app.route("/api/health")

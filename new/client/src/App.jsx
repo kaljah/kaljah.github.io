@@ -197,7 +197,7 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <LayoutProvider>
           <AuthProvider>
             <ToastProvider>
