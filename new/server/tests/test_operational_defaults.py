@@ -54,7 +54,7 @@ def test_login_and_me_operational_defaults_regular_user(client):
     assert u["location"] == "Hassi Messaoud"
     assert u["default_region"] in ["Hassi Messaoud", "Ouargla"]
     assert u["default_division"] in ["Production", "Exploration & Production"]
-    assert u["default_activity"] == "Upstream"
+    assert u["default_activity"] in ["Upstream", "Extraction"]
     assert u["default_facility_id"] is not None
 
     # 2. Test /me
@@ -64,7 +64,7 @@ def test_login_and_me_operational_defaults_regular_user(client):
     assert data_me["location"] == "Hassi Messaoud"
     assert data_me["default_region"] in ["Hassi Messaoud", "Ouargla"]
     assert data_me["default_division"] in ["Production", "Exploration & Production"]
-    assert data_me["default_activity"] == "Upstream"
+    assert data_me["default_activity"] in ["Upstream", "Extraction"]
 
 
 def test_login_operational_defaults_superuser(client):

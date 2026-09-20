@@ -59,7 +59,7 @@ const Sidebar = () => {
         }}
       >
         <ul className="nav-links">
-          {!["it_admin", "it"].includes(user?.role) && (
+          {!["it_admin", "it_manager", "it"].includes(user?.role) && (
             <>
               <li className="nav-item">
                 <NavLink
@@ -321,7 +321,7 @@ const Sidebar = () => {
               </li>
             </>
           )}
-          {["admin", "superuser", "it_admin"].includes(user?.role) && (
+          {["admin", "superuser", "it_admin", "it_manager"].includes(user?.role) && (
             <li className="nav-item">
               <NavLink
                 to="/audit-trail"
@@ -375,7 +375,7 @@ const Sidebar = () => {
               </NavLink>
             </li>
           )}
-          {["it_admin", "it"].includes(user?.role) && (
+          {["it_admin", "it_manager", "it"].includes(user?.role) && (
             <li className="nav-item">
               <NavLink
                 to="/user-management"
@@ -408,7 +408,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Settings & Standards Link Right Above User Profile */}
-      {!["it_admin", "it"].includes(user?.role) && (
+      {!["it_admin", "it_manager", "it"].includes(user?.role) && (
         <div className="sidebar-settings-pin">
           <NavLink
             to="/settings"
@@ -486,7 +486,7 @@ const Sidebar = () => {
             </div>
           </div>
           <div className="dropdown-divider"></div>
-          {!["it_admin", "it"].includes(user?.role) && (
+          {!["it_admin", "it_manager", "it"].includes(user?.role) && (
             <Link
               to="/settings"
               className="dropdown-item"
@@ -508,7 +508,7 @@ const Sidebar = () => {
               Settings &amp; Standards
             </Link>
           )}
-          {["admin", "superuser", "it_admin"].includes(user?.role) && (
+          {["admin", "superuser", "it_admin", "it_manager"].includes(user?.role) && (
             <Link
               to="/audit-trail"
               className="dropdown-item"

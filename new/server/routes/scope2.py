@@ -99,7 +99,7 @@ def get_scope2_emissions():
     """Get all Scope 2 emissions, scoped to the requesting user's allowed facilities."""
     try:
         user = get_current_user()
-        if user and user.role in ["it_admin", "it"]:
+        if user and user.role in ["it_admin", "it_manager", "it"]:
             return jsonify({"error": "IT personnel do not have access to emission data"}), 403
 
         allowed_fids = get_allowed_facility_ids(user)
@@ -161,7 +161,7 @@ def create_scope2_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["viewer", "auditor", "it_admin", "it"]:
+    if user.role in ["viewer", "auditor", "it_admin", "it_manager", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot create emission records"}), 403
 
     data = request.get_json() or {}
@@ -356,7 +356,7 @@ def update_scope2_emission(emission_id):
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["viewer", "auditor", "it_admin", "it"]:
+    if user.role in ["viewer", "auditor", "it_admin", "it_manager", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
 
     emission = db.session.get(Scope2Emission, emission_id)
@@ -485,7 +485,7 @@ def delete_scope2_emission(emission_id):
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["it_admin", "it"]:
+    if user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT personnel do not have access to emission data"}), 403
 
     if user.role in ["viewer", "auditor"]:
@@ -540,7 +540,7 @@ def bulk_import_scope2():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["it_admin", "it"]:
+    if user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT personnel do not have access to upload emission data"}), 403
 
     allowed_fids = get_allowed_facility_ids(user)

@@ -42,7 +42,13 @@ const ROLE_META = {
     border: "rgba(16,185,129,.25)",
   },
   it_admin: {
-    label: "IT Admin",
+    label: "IT Manager",
+    color: "#f59e0b",
+    bg: "#fffbeb",
+    border: "rgba(245,158,11,.25)",
+  },
+  it_manager: {
+    label: "IT Manager",
     color: "#f59e0b",
     bg: "#fffbeb",
     border: "rgba(245,158,11,.25)",
@@ -467,7 +473,7 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    if (["it_admin", "it"].includes(user?.role)) fetchData();
+    if (["it_admin", "it_manager", "it"].includes(user?.role)) fetchData();
   }, [user]);
 
   const handleOpenModal = (userToEdit = null) => {
@@ -483,6 +489,7 @@ const UserManagement = () => {
         jobTitle: userToEdit.jobTitle || "",
         role: userToEdit.role || "user",
         location: userToEdit.location || "",
+        status: userToEdit.status || "active",
         password: "",
       });
     } else {
@@ -496,6 +503,7 @@ const UserManagement = () => {
         jobTitle: "",
         role: "user",
         location: regions[0] || "",
+        status: "active",
         password: "",
       });
     }
@@ -529,6 +537,7 @@ const UserManagement = () => {
           jobTitle: (formData.jobTitle || "").trim(),
           role: formData.role,
           location: formData.location,
+          status: formData.status || "active",
         };
         const res = await api.put(`/auth/users/${editingUser.id}`, payload);
         const updated = res.data?.user;
@@ -548,6 +557,7 @@ const UserManagement = () => {
                     jobTitle: payload.jobTitle,
                     role: formData.role,
                     location: formData.location,
+                    status: payload.status,
                   }
                 : u,
             ),
@@ -696,7 +706,7 @@ const UserManagement = () => {
     }
   };
 
-  if (!["it_admin", "it"].includes(user?.role)) {
+  if (!["it_admin", "it_manager", "it"].includes(user?.role)) {
     return (
       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
         <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
@@ -717,7 +727,7 @@ const UserManagement = () => {
   /* derived stats */
   const totalUsers = users.length;
   const adminCount = users.filter((u) => u.role === "admin").length;
-  const itAdminCount = users.filter((u) => u.role === "it_admin").length;
+  const itAdminCount = users.filter((u) => ["it_admin", "it_manager"].includes(u.role)).length;
   const itCount = users.filter((u) => u.role === "it").length;
   const standardCount = users.filter((u) => u.role === "user").length;
 
@@ -727,8 +737,13 @@ const UserManagement = () => {
       u.location === filterRegion ||
       u.role === "admin" ||
       u.role === "it_admin" ||
+      u.role === "it_manager" ||
       u.role === "it";
-    const byRole = !filterRole || u.role === filterRole;
+    const byRole =
+      !filterRole ||
+      u.role === filterRole ||
+      (filterRole === "it_manager" && ["it_admin", "it_manager"].includes(u.role)) ||
+      (filterRole === "it_admin" && ["it_admin", "it_manager"].includes(u.role));
     return byRegion && byRole;
   });
 
@@ -751,7 +766,7 @@ const UserManagement = () => {
         <div style={S.heroLeft}>
           <span style={S.badge}>
             <span style={S.pulseDot} />
-            {isITOnly ? "IT CREDENTIALS CONSOLE" : "IT ADMIN CONSOLE"}
+            {isITOnly ? "IT CREDENTIALS CONSOLE" : "IT MANAGER CONSOLE"}
           </span>
           <h1 style={S.pageTitle}>User Management</h1>
           <p style={S.pageSubtitle}>
@@ -771,7 +786,7 @@ const UserManagement = () => {
             <option value="user">Standard User</option>
             <option value="superuser">Super User</option>
             <option value="admin">Admin</option>
-            <option value="it_admin">IT Admin</option>
+            <option value="it_manager">IT Manager</option>
             <option value="it">IT</option>
           </select>
 
@@ -1091,7 +1106,7 @@ const UserManagement = () => {
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                             All Regions
                           </span>
-                        ) : u.role === "it_admin" || u.role === "it" ? (
+                        ) : u.role === "it_admin" || u.role === "it_manager" || u.role === "it" ? (
                           <span
                             style={S.regionPill(
                               "#ef4444",
@@ -1216,52 +1231,6 @@ const UserManagement = () => {
         iconColor={editingUser ? "#6366f1" : "#ff6600"}
         iconBg={editingUser ? "rgba(99, 102, 241, 0.12)" : "rgba(255, 102, 0, 0.12)"}
         width="560px"
-        footer={
-          <>
-            <button
-              id="um-modal-cancel"
-              type="button"
-              style={S.btnSecondary}
-              onClick={() => setIsModalOpen(false)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "var(--bg-hover)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "transparent")
-              }
-            >
-              Cancel
-            </button>
-            <button
-              id="um-modal-submit"
-              type="submit"
-              form="um-user-form"
-              style={S.btnPrimary}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-1px)";
-                e.currentTarget.style.boxShadow =
-                  "0 8px 20px rgba(255,102,0,.35)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 12px rgba(255,102,0,.25)";
-              }}
-            >
-              {editingUser ? (
-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <UserCheck size={16} />
-                  Save Changes
-                </span>
-              ) : (
-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <UserPlus size={16} />
-                  Create User
-                </span>
-              )}
-            </button>
-          </>
-        }
       >
         <form id="um-user-form" onSubmit={handleSubmit}>
           {/* Section 1: Profile & Identity */}
@@ -1361,62 +1330,14 @@ const UserManagement = () => {
                 </span>
                 <span style={S.sectionTitle}>Access Governance & Scope</span>
               </div>
-              {editingUser && (
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    padding: "3px 8px",
-                    borderRadius: "6px",
-                    background: "rgba(100, 116, 139, 0.1)",
-                    color: "var(--text-secondary)",
-                    fontSize: "0.72rem",
-                    fontWeight: 600,
-                  }}
-                >
-                  <Lock size={11} /> Locked by Policy
-                </span>
-              )}
             </div>
-
-            {editingUser && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: "8px",
-                  padding: "10px 12px",
-                  borderRadius: "8px",
-                  background: "rgba(100, 116, 139, 0.06)",
-                  border: "1px dashed var(--border-color)",
-                  marginBottom: "14px",
-                  fontSize: "0.76rem",
-                  color: "var(--text-secondary)",
-                  lineHeight: 1.4,
-                }}
-              >
-                <Lock size={13} style={{ flexShrink: 0, marginTop: "2px", color: "var(--text-secondary)" }} />
-                <span>
-                  Role and regional assignments are fixed by administrative governance and locked against profile modification.
-                </span>
-              </div>
-            )}
 
             <div style={S.formRow}>
               <div style={S.formGroup}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "7px" }}>
-                  <label style={{ ...S.label, marginBottom: 0 }}>System Role</label>
-                  {editingUser && (
-                    <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", display: "inline-flex", alignItems: "center", gap: "3px" }}>
-                      <Lock size={10} /> Locked
-                    </span>
-                  )}
-                </div>
+                <label style={S.label}>System Role</label>
                 <select
                   id="um-modal-role"
                   value={formData.role}
-                  disabled={!!editingUser}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -1426,52 +1347,36 @@ const UserManagement = () => {
                         : "",
                     })
                   }
-                  style={{
-                    ...inputStyle("role"),
-                    cursor: editingUser ? "not-allowed" : "pointer",
-                    opacity: editingUser ? 0.75 : 1,
-                    background: editingUser ? "var(--bg-body)" : "var(--bg-card)",
-                  }}
-                  {...(!editingUser ? focusProps("role") : {})}
+                  style={inputStyle("role")}
+                  {...focusProps("role")}
                 >
                   <option value="user">Standard User</option>
                   <option value="superuser">Super User</option>
                   <option value="admin">Admin (All Data)</option>
-                  <option value="it_admin">IT Admin</option>
+                  <option value="it_manager">IT Manager</option>
                   <option value="it">IT</option>
                 </select>
               </div>
 
               {(["user", "superuser"].includes(formData.role) || formData.location) && (
                 <div style={S.formGroup}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "7px" }}>
-                    <label style={{ ...S.label, marginBottom: 0 }}>Assigned Region</label>
-                    {editingUser && (
-                      <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", display: "inline-flex", alignItems: "center", gap: "3px" }}>
-                        <Lock size={10} /> Locked
-                      </span>
-                    )}
-                  </div>
+                  <label style={S.label}>Assigned Region</label>
                   <select
                     id="um-modal-region"
                     value={formData.location}
-                    disabled={!!editingUser}
                     onChange={(e) =>
                       setFormData({ ...formData, location: e.target.value })
                     }
                     style={{
                       ...inputStyle("location"),
-                      cursor: editingUser ? "not-allowed" : "pointer",
-                      opacity: editingUser ? 0.75 : 1,
-                      background: editingUser ? "var(--bg-body)" : "var(--bg-card)",
                       borderColor:
-                        !editingUser && !formData.location
+                        !formData.location
                           ? "#ef4444"
                           : focusedField === "location"
                           ? "#ff6600"
                           : "var(--border-color)",
                     }}
-                    {...(!editingUser ? focusProps("location") : {})}
+                    {...focusProps("location")}
                   >
                     <option value="">— Select a Region —</option>
                     {regions.map((r) => (
@@ -1480,7 +1385,7 @@ const UserManagement = () => {
                       </option>
                     ))}
                   </select>
-                  {!editingUser && !formData.location && (
+                  {!formData.location && (
                     <p style={{ fontSize: "0.72rem", color: "#ef4444", marginTop: "4px" }}>
                       ↑ Required — choose an assigned region
                     </p>
@@ -1488,6 +1393,24 @@ const UserManagement = () => {
                 </div>
               )}
             </div>
+
+            {editingUser && (
+              <div style={{ ...S.formGroup, marginTop: "14px" }}>
+                <label style={S.label}>Account Status</label>
+                <select
+                  id="um-modal-status"
+                  value={formData.status || "active"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value })
+                  }
+                  style={inputStyle("status")}
+                  {...focusProps("status")}
+                >
+                  <option value="active">Active (Full Access Granted)</option>
+                  <option value="disabled">Disabled (Account Suspended)</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Section 4: Initial Password (Register only) */}
@@ -1534,6 +1457,61 @@ const UserManagement = () => {
               </div>
             </div>
           )}
+
+          {/* Action Buttons Right Under Form Fields */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: "12px",
+              marginTop: "24px",
+              paddingTop: "16px",
+              borderTop: "1px solid var(--border-color)",
+            }}
+          >
+            <button
+              id="um-modal-cancel"
+              type="button"
+              style={S.btnSecondary}
+              onClick={() => setIsModalOpen(false)}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "var(--bg-hover)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "transparent")
+              }
+            >
+              Cancel
+            </button>
+            <button
+              id="um-modal-submit"
+              type="submit"
+              style={S.btnPrimary}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 20px rgba(255,102,0,.35)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(255,102,0,.25)";
+              }}
+            >
+              {editingUser ? (
+                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <UserCheck size={16} />
+                  Save Changes
+                </span>
+              ) : (
+                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <UserPlus size={16} />
+                  Create User
+                </span>
+              )}
+            </button>
+          </div>
         </form>
       </Drawer>
 
@@ -1547,52 +1525,6 @@ const UserManagement = () => {
         iconColor="#f59e0b"
         iconBg="rgba(245, 158, 11, 0.12)"
         width="540px"
-        footer={
-          <>
-            <button
-              id="um-reset-pwd-cancel"
-              type="button"
-              style={S.btnSecondary}
-              onClick={() => setResetTarget(null)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "var(--bg-hover)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "transparent")
-              }
-            >
-              Cancel
-            </button>
-            <button
-              id="um-reset-pwd-submit"
-              type="submit"
-              form="um-reset-pwd-form"
-              disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
-              style={{
-                ...S.btnPrimary,
-                background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
-                boxShadow: "0 4px 12px rgba(245,158,11,.3)",
-                opacity:
-                  resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
-                    ? 0.6
-                    : 1,
-                cursor:
-                  resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
-                    ? "not-allowed"
-                    : "pointer",
-              }}
-            >
-              {resetLoading ? (
-                "Resetting…"
-              ) : (
-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <KeyRound size={16} />
-                  Reset Password
-                </span>
-              )}
-            </button>
-          </>
-        }
       >
         {resetTarget && (
           <form id="um-reset-pwd-form" onSubmit={handleResetPasswordSubmit}>
@@ -1828,6 +1760,61 @@ const UserManagement = () => {
                   <CheckCircle2 size={13} /> Passwords match
                 </p>
               )}
+            </div>
+
+            {/* Action Buttons Right Under Form Fields */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                gap: "12px",
+                marginTop: "24px",
+                paddingTop: "16px",
+                borderTop: "1px solid var(--border-color)",
+              }}
+            >
+              <button
+                id="um-reset-pwd-cancel"
+                type="button"
+                style={S.btnSecondary}
+                onClick={() => setResetTarget(null)}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "var(--bg-hover)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+              >
+                Cancel
+              </button>
+              <button
+                id="um-reset-pwd-submit"
+                type="submit"
+                disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
+                style={{
+                  ...S.btnPrimary,
+                  background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
+                  boxShadow: "0 4px 12px rgba(245,158,11,.3)",
+                  opacity:
+                    resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
+                      ? 0.6
+                      : 1,
+                  cursor:
+                    resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
+                      ? "not-allowed"
+                      : "pointer",
+                }}
+              >
+                {resetLoading ? (
+                  "Resetting…"
+                ) : (
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <KeyRound size={16} />
+                    Reset Password
+                  </span>
+                )}
+              </button>
             </div>
           </form>
         )}

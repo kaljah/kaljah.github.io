@@ -579,7 +579,8 @@ const ManageDataInner = () => {
     const [factorForm, setFactorForm] = useState({
         factor_name: '', parent_fuel: '', unit: 'scf',
         co2_factor: '', ch4_factor: '', n2o_factor: '',
-        co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: ''
+        co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '',
+        source: '', description: ''
     });
     const [editingFactorId, setEditingFactorId] = useState(null);
 
@@ -905,6 +906,14 @@ const ManageDataInner = () => {
 
 
     // Handlers
+    const handleFacilityChange = (e) => {
+        setFacilityForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleFactorChange = (e) => {
+        setFactorForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
     const handleAddFacility = async () => {
         if (!facilityForm.name || !facilityForm.activity || !facilityForm.division) {
             return toast.error('Name, Activity, and Division are required');
@@ -939,7 +948,7 @@ const ManageDataInner = () => {
                 await api.post('/custom-factors', factorForm);
                 toast.success('Factor added!');
             }
-            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '' });
+            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '' });
             setEditingFactorId(null);
             fetchCustomFactors();
         } catch (err) { toast.error('Failed to save factor'); }
@@ -963,7 +972,7 @@ const ManageDataInner = () => {
 
     const handleEditFactor = (factor) => {
         setFactorForm({
-            factor_name: factor.factor_name,
+            factor_name: factor.factor_name || factor.name || '',
             parent_fuel: factor.parent_fuel || '',
             unit: factor.unit || 'scf',
             co2_factor: factor.co2_factor || '',
@@ -972,7 +981,9 @@ const ManageDataInner = () => {
             co_factor: factor.co_factor || '',
             co2_uncertainty: factor.co2_uncertainty || '',
             ch4_uncertainty: factor.ch4_uncertainty || '',
-            n2o_uncertainty: factor.n2o_uncertainty || ''
+            n2o_uncertainty: factor.n2o_uncertainty || '',
+            source: factor.source || '',
+            description: factor.description || ''
         });
         setEditingFactorId(factor.id);
     };
@@ -1182,14 +1193,6 @@ const ManageDataInner = () => {
                 }
             }
         });
-    };
-
-    const handleFactorChange = (e) => {
-        setFactorForm({ ...factorForm, [e.target.name]: e.target.value });
-    };
-
-    const handleFacilityChange = (e) => {
-        setFacilityForm({ ...facilityForm, [e.target.name]: e.target.value });
     };
 
     // Conversion Helpers (in-app modal dialog replacing blocking browser prompt)
@@ -2256,6 +2259,29 @@ const ManageDataInner = () => {
                                         <label>N₂O Uncertainty (±%)</label>
                                         <input type="number" name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} className="mole-input" placeholder="e.g. 150.0" step="0.1" />
                                     </div>
+                                    <div className="input-group" style={{ gridColumn: 'span 2' }}>
+                                        <label>Lab Certification / Source Reference</label>
+                                        <input
+                                            type="text"
+                                            name="source"
+                                            value={factorForm.source || ''}
+                                            onChange={handleFactorChange}
+                                            className="mole-input"
+                                            placeholder="e.g. Lab GC Report #2026-ARZ-01 / ISO 17025 / EPD Ref"
+                                        />
+                                    </div>
+                                    <div className="input-group" style={{ gridColumn: 'span 3' }}>
+                                        <label>Description & Technical Justification</label>
+                                        <textarea
+                                            name="description"
+                                            value={factorForm.description || ''}
+                                            onChange={handleFactorChange}
+                                            className="mole-input"
+                                            rows="2"
+                                            placeholder="Engineering justification, gas chromatography sampling conditions, or manufacturer test certificate details..."
+                                            style={{ resize: 'vertical' }}
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* EF Uncertainty Workbench */}
@@ -2321,7 +2347,8 @@ const ManageDataInner = () => {
                                                 setEditingFactorId(null);
                                                 setFactorForm({
                                                     factor_name: '', parent_fuel: '', unit: 'scf',
-                                                    co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: ''
+                                                    co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '',
+                                                    source: '', description: ''
                                                 });
                                             }}
                                         >
@@ -2341,6 +2368,7 @@ const ManageDataInner = () => {
                                                 <th>CO2</th>
                                                 <th>CH4</th>
                                                 <th>N2O</th>
+                                                <th>Certification / Description</th>
                                                 <th>CO₂ Unc.</th>
                                                 <th>CH₄ Unc.</th>
                                                 <th>N₂O Unc.</th>
@@ -2350,11 +2378,16 @@ const ManageDataInner = () => {
                                         <tbody>
                                             {filteredFactors.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(f => (
                                                 <tr key={f.id}>
-                                                    <td>{f.factor_name}</td>
+                                                    <td><strong>{f.factor_name || f.name}</strong></td>
                                                     <td>{f.unit}</td>
                                                     <td>{f.co2_factor}</td>
                                                     <td>{f.ch4_factor}</td>
                                                     <td>{f.n2o_factor}</td>
+                                                    <td style={{ maxWidth: '240px' }}>
+                                                        {f.source && <span style={{ display: 'inline-block', fontSize: '0.75rem', background: '#dbeafe', color: '#1d4ed8', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginBottom: '2px' }}>{f.source}</span>}
+                                                        {f.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={f.description}>{f.description}</div>}
+                                                        {!f.source && !f.description && <span style={{ color: 'var(--text-secondary)' }}>—</span>}
+                                                    </td>
                                                     <td style={{ color: f.co2_uncertainty ? '#10b981' : 'inherit' }}>{f.co2_uncertainty ? `±${f.co2_uncertainty}%` : '—'}</td>
                                                     <td style={{ color: f.ch4_uncertainty ? '#3b82f6' : 'inherit' }}>{f.ch4_uncertainty ? `±${f.ch4_uncertainty}%` : '—'}</td>
                                                     <td style={{ color: f.n2o_uncertainty ? '#8b5cf6' : 'inherit' }}>{f.n2o_uncertainty ? `±${f.n2o_uncertainty}%` : '—'}</td>
@@ -2366,7 +2399,7 @@ const ManageDataInner = () => {
                                             ))}
                                             {filteredFactors.length === 0 && (
                                                 <tr>
-                                                    <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
                                                         No custom emission factors found.
                                                     </td>
                                                 </tr>
@@ -2498,7 +2531,7 @@ const ManageDataInner = () => {
                                                     <td>{ACTIVITY_LABELS[f.activity] || f.activity}</td>
                                                     <td>{f.division}</td>
                                                     <td>{f.location || '-'}</td>
-                                                    <td>{f.boundary_notes || '-'}</td>
+                                                    <td>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? ' - ' + f.boundary_detail : ''}` : '-')}</td>
                                                     <td>{f.segment || '-'}</td>
                                                     <td style={{ fontSize: '0.8rem' }}>{f.latitude ? `${f.latitude}, ${f.longitude}` : 'Not Set'}</td>
                                                     {['admin', 'superuser'].includes(user?.role) && (

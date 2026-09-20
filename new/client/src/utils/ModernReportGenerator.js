@@ -1,9 +1,27 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Chart, registerables } from "chart.js";
-import { DEFAULT_GWP } from "../constants";
+import { DEFAULT_GWP, getActiveGwpFactors, GWP_STANDARDS } from "../constants";
 
 Chart.register(...registerables);
+
+export function resolveGwpFactors(gwpChoice) {
+  const str = String(gwpChoice || "AR5").toUpperCase().trim();
+  let standard = "AR5";
+  let horizon = "100";
+  if (str.includes("AR4")) standard = "AR4";
+  else if (str.includes("AR6")) standard = "AR6";
+  else standard = "AR5";
+
+  if (str.includes("20")) horizon = "20";
+  const factors = getActiveGwpFactors(standard, horizon);
+  return {
+    standard,
+    horizon,
+    factors,
+    label: `IPCC ${standard} (${horizon}-yr: CH₄=${factors.CH4}, N₂O=${factors.N2O})`
+  };
+}
 
 // Sonatrach Brand Colors (White Theme)
 const THEME = {
@@ -57,7 +75,7 @@ function loadImage(url) {
 }
 
 export async function generateModernPDF(api, filters) {
-  const { year, scope, regionId, processType, comparisonYear, exclusionCriteria = 'None provided', verificationStatus = 'Not externally verified', personResponsible = 'Logged In User' } = filters;
+  const { year, scope, regionId, processType, comparisonYear, exclusionCriteria = 'None provided', verificationStatus = 'Not externally verified', personResponsible = 'Logged In User', gwpStandard: requestedGwp } = filters;
   const selectedYear = year && year !== "all" ? year : new Date().getFullYear();
   const isComparison = comparisonYear && comparisonYear !== "none";
 
@@ -176,7 +194,9 @@ export async function generateModernPDF(api, filters) {
     const baseYearData = baseYearRes.data;
     const exclusionsData = exclusionsRes.data || [];
     const settingsData = settingsRes.data || { gwp_standard: 'IPCC AR5' };
-    const gwpStandard = settingsData.gwp_standard || 'IPCC AR5';
+    const activeGwpChoice = requestedGwp || settingsData.gwp_standard || 'AR5';
+    const resolvedGwp = resolveGwpFactors(activeGwpChoice);
+    const gwpStandard = resolvedGwp.standard;
 
     // Client-side filtering by selected region array
     if (Array.isArray(regionId) && regionId.length > 0) {
@@ -208,6 +228,7 @@ export async function generateModernPDF(api, filters) {
       reportData,
       params,
       productionData,
+      resolvedGwp.factors,
     );
 
     // Comparison Data
@@ -231,6 +252,7 @@ export async function generateModernPDF(api, filters) {
           cReportData,
           compParams,
           cProdRes.data || [],
+          resolvedGwp.factors,
         );
       } catch (e) {
         console.warn("Comparison Fetch Failed", e);
@@ -523,7 +545,7 @@ ${scopeText}`;
 
     curY += 20;
 
-    let narrative = `The ${year === "all" ? "comprehensive" : selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise accounting of direct and indirect greenhouse gas emissions in adherence to international standards. ${fullData.primaryDriver} has been identified as the significant emission source over the reporting period.`;
+    let narrative = `The ${year === "all" ? "comprehensive" : selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise accounting of direct and indirect greenhouse gas emissions in adherence to international standards. Total emissions are calculated in metric tonnes of CO₂ equivalent (tCO₂e) under ${resolvedGwp.label}. ${fullData.primaryDriver} has been identified as the significant emission source over the reporting period.`;
     if (isComparison && compData) {
       const diff = fullData.totalEmissions - compData.totalEmissions;
       const pct =
@@ -715,14 +737,19 @@ Email: ${personResponsible.email || "N/A"}`;
      */
     curY = addSectionHeader(2, "ORGANIZATIONAL BOUNDARIES", null, true);
     
-    const uniqueBoundaries = [...new Set(reportFacilities.map(f => f.boundary_type || "Operational Control"))].join(" and ");
+    const uniqueBoundaries = [...new Set(reportFacilities.map(f => {
+      if (f.boundary_type && f.boundary_detail) {
+        return `${f.boundary_type} (${f.boundary_detail})`;
+      }
+      return f.boundary_type || "Operational Control";
+    }))].join(" and ");
     
     curY = addTextBlock(`The consolidation approach used for organizational boundaries is: ${uniqueBoundaries}.`, curY);
     curY += 5;
     curY = addTextBlock(`This inventory includes ${reportFacilities.length} facilities within the specified boundaries:`, curY);
     
-    // Explicitly list the facilities
-    const facilityList = reportFacilities.map(f => `- ${f.name}`).join("\n");
+    // Explicitly list the facilities with their respective consolidation boundaries
+    const facilityList = reportFacilities.map(f => `- ${f.name} [${f.boundary_type || "Operational Control"}${f.boundary_detail ? ': ' + f.boundary_detail : ''}]`).join("\n");
     curY = addTextBlock(facilityList, curY);
     
     drawFooter();
@@ -777,6 +804,8 @@ Email: ${personResponsible.email || "N/A"}`;
     doc.setFont("helvetica", "bold");
     doc.text("Consolidated Emissions by Category", margin, curY);
     curY += 5;
+    curY = addTextBlock(`Emissions are aggregated in metric tonnes of CO₂ equivalent (tCO₂e) applying ${resolvedGwp.label}.`, curY);
+    curY += 4;
     
     autoTable(doc, {
         startY: curY,
@@ -1118,7 +1147,7 @@ Email: ${personResponsible.email || "N/A"}`;
     doc.setFontSize(9);
     doc.setTextColor(...THEME.textMuted);
     doc.text(
-      `Total records: ${fullData.scope1Rows.length} | Year: ${selectedYear} | All Scopes`,
+      `Total records: ${fullData.scope1Rows.length} | Year: ${selectedYear} | All Scopes | GWP: ${resolvedGwp.label}`,
       20,
       28,
     );
@@ -1184,15 +1213,15 @@ Email: ${personResponsible.email || "N/A"}`;
   }
 }
 
-// --- DATA FETCHING (Unchanged logic, just ensure robustness) ---
+// --- DATA FETCHING (Dynamic GWP Recalculation) ---
 async function fetchAllReportData(
   api,
   year,
   rawReportData,
   params,
   productionData = [],
+  gwpFactors = DEFAULT_GWP,
 ) {
-  // ... (Keep existing data processing logic from previous step, it was solid)
   let co2Total = 0,
     ch4Total = 0,
     n2oTotal = 0;
@@ -1209,8 +1238,22 @@ async function fetchAllReportData(
   let facilityBreakdown = {};
   let monthlyData = {};
 
+  const co2_factor = (gwpFactors && gwpFactors.CO2 !== undefined) ? Number(gwpFactors.CO2) : 1;
+  const ch4_factor = (gwpFactors && gwpFactors.CH4 !== undefined) ? Number(gwpFactors.CH4) : 28;
+  const n2o_factor = (gwpFactors && gwpFactors.N2O !== undefined) ? Number(gwpFactors.N2O) : 265;
+
   const scope1Rows = rawReportData.map((r) => {
-    const tVal = r.co2e_total || 0;
+    const co2Val = Number(r.co2_emissions || 0);
+    const ch4Val = Number(r.ch4_emissions || 0);
+    const n2oVal = Number(r.n2o_emissions || 0);
+
+    let tVal = 0;
+    if (co2Val > 0 || ch4Val > 0 || n2oVal > 0) {
+      tVal = (co2Val * co2_factor) + (ch4Val * ch4_factor) + (n2oVal * n2o_factor);
+    } else {
+      tVal = Number(r.co2e_total || 0);
+    }
+
     let scope = String(r.scope || "");
     if (!scope || scope === "null" || scope === "undefined") {
       const pType = (r.process_type || "").toLowerCase();
@@ -1225,17 +1268,12 @@ async function fetchAllReportData(
       else scope = "1";
     }
 
-    if (
-      (r.co2_emissions || 0) === 0 &&
-      (r.ch4_emissions || 0) === 0 &&
-      (r.n2o_emissions || 0) === 0 &&
-      tVal > 0
-    ) {
+    if (co2Val === 0 && ch4Val === 0 && n2oVal === 0 && tVal > 0) {
       co2Total += tVal;
     } else {
-      co2Total += r.co2_emissions || 0;
-      ch4Total += r.ch4_emissions || 0;
-      n2oTotal += r.n2o_emissions || 0;
+      co2Total += co2Val;
+      ch4Total += ch4Val;
+      n2oTotal += n2oVal;
     }
 
     const fName = r.facility_name || "Unknown Facility";

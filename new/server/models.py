@@ -257,6 +257,7 @@ class CustomFactor(db.Model):
     usage = db.Column(db.String(100))  # stored as stringified list or CSV
     parent_fuel = db.Column(db.String(50))
     source = db.Column(db.String(100))
+    description = db.Column(db.Text, nullable=True)
     version = db.Column(db.String(20))
     uncertainty = db.Column(db.Float)  # legacy fallback
     co2_uncertainty = db.Column(db.Float)
