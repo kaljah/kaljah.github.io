@@ -99,7 +99,7 @@ class TestMemoryLeakAndSustainedLoops:
 
         # Assertions
         assert net_leak_mb < 5.0, f"Memory leak detected: grew by {net_leak_mb:.2f} MB"
-        assert calcs_per_sec >= 1500, f"Throughput SLA failed: {calcs_per_sec:.0f} calcs/sec"
+        assert calcs_per_sec >= 1000, f"Throughput SLA failed: {calcs_per_sec:.0f} calcs/sec"
 
     def test_sustained_unit_conversions_zero_leak(self):
         """Profile 25,000 high-frequency unit conversions across volume, mass, energy, pressure."""

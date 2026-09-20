@@ -73,6 +73,13 @@ def set_sqlite_pragmas(dbapi_conn, _):
         cursor.execute("PRAGMA journal_mode = WAL")
         cursor.execute("PRAGMA synchronous = NORMAL")
         cursor.execute("PRAGMA busy_timeout = 5000")
+        try:
+            cursor.execute("SELECT description FROM custom_factors LIMIT 1")
+        except sqlite3.OperationalError:
+            try:
+                cursor.execute("ALTER TABLE custom_factors ADD COLUMN description TEXT")
+            except Exception:
+                pass
         cursor.close()
 
 

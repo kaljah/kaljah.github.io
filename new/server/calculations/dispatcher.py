@@ -51,6 +51,7 @@ class CalculationDispatcher:
             "storage_tanks": TankFlashingCalculator(),
             "pneumatic_devices": PneumaticDeviceCalculator(),
             "pneumatic_device": PneumaticDeviceCalculator(),
+            "pneumatics": PneumaticDeviceCalculator(),
             "pneumatic": PneumaticDeviceCalculator(),
             "fugitive_component": ComponentFugitiveCalculator(),
             "component_fugitive": ComponentFugitiveCalculator(),
@@ -457,6 +458,19 @@ class CalculationDispatcher:
                     "n2_comp": safe_frac("n2") or safe_frac("n2_mol"),
                 }
 
+                def _get_eff(keys):
+                    for k in keys:
+                        v = flat_inputs.get(k)
+                        if v not in [None, "", "-"]:
+                            return v
+                    return None
+
+                comb_eff = _get_eff(["combustion_efficiency", "combustion_eff", "eta_c"])
+                dest_eff = _get_eff(["destruction_efficiency", "destruction_eff", "eta_d"])
+                ef_n2o_val = emission_factors.get("n2o") if emission_factors.get("n2o") not in [None, "", "-"] else (
+                    emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o", 0.0)
+                )
+
                 return calculator.calculate(
                     gas_volume=vol_m3,
                     ch4_fraction=ch4_content,
@@ -468,7 +482,9 @@ class CalculationDispatcher:
                     ),
                     fuel_unit="m3",
                     fuel_type=flat_inputs.get("fuel_type"),
-                    ef_n2o=emission_factors.get("n2o", 0.0),
+                    ef_n2o=float(ef_n2o_val or 0.0),
+                    combustion_efficiency=comb_eff,
+                    destruction_efficiency=dest_eff,
                     operating_temperature=flat_inputs.get("operating_temperature")
                     or flat_inputs.get("temperature"),
                     temp_unit=flat_inputs.get("temp_unit", "C"),
@@ -999,7 +1015,7 @@ class CalculationDispatcher:
                 )
                 ch4_slip = self._optional_fraction(
                     flat_inputs,
-                    ["agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor"],
+                    ["agr_ch4_slip_pct", "ch4_slip_pct", "agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor", "ch4_slip"],
                     0.001,
                 )
                 ctrl_eff = self._optional_fraction(
@@ -1077,17 +1093,24 @@ class CalculationDispatcher:
                     or flat_inputs.get("amount")
                     or flat_inputs.get("quantity")
                 )
-                pump_rate = flat_inputs.get("dehy_pump_rate") or flat_inputs.get(
-                    "pump_rate"
+                pump_rate = (
+                    flat_inputs.get("dehy_pump_rate")
+                    or flat_inputs.get("teg_pump_rate")
+                    or flat_inputs.get("pump_rate")
                 )
-                pump_unit = flat_inputs.get("dehy_pump_unit", "gph")
+                pump_unit = (
+                    flat_inputs.get("dehy_pump_unit")
+                    or flat_inputs.get("teg_pump_unit")
+                    or "gph"
+                )
                 hours = float(
                     flat_inputs.get("dehy_hours")
                     or flat_inputs.get("hours_operating")
+                    or flat_inputs.get("annual_hours")
                     or 8760
                 )
                 ch4_content = self._optional_fraction(
-                    flat_inputs, ["dehy_ch4_content", "ch4_content", "c1"], 0.85
+                    flat_inputs, ["dehy_ch4_content", "ch4_content", "c1", "gas_ch4_mole_pct"], 0.85
                 )
                 control_eff = self._optional_fraction(
                     flat_inputs, ["dehy_eff", "control_efficiency"], 0.0
@@ -1110,8 +1133,24 @@ class CalculationDispatcher:
                 flash_eff = self._optional_fraction(
                     flat_inputs, ["dehy_flash_eff", "flash_control_eff"], 0.0
                 )
-                still_type = flat_inputs.get("dehy_still_type", "none")
+                still_type = flat_inputs.get("dehy_still_type") or flat_inputs.get("still_vent_control") or "none"
                 flash_type = flat_inputs.get("dehy_flash_type", "none")
+                stripping_rate = (
+                    flat_inputs.get("dehy_stripping_rate")
+                    or flat_inputs.get("stripping_rate")
+                    or flat_inputs.get("stripping_gas_rate")
+                )
+                stripping_unit = (
+                    flat_inputs.get("dehy_stripping_unit")
+                    or flat_inputs.get("stripping_unit")
+                    or flat_inputs.get("stripping_gas_unit")
+                    or "scf/hr"
+                )
+                stripping_scf = (
+                    flat_inputs.get("dehy_stripping_scf")
+                    or flat_inputs.get("stripping_scf")
+                    or flat_inputs.get("stripping_gas_scf")
+                )
 
                 return calculator.calculate(
                     throughput=throughput,
@@ -1129,6 +1168,9 @@ class CalculationDispatcher:
                     flash_control_eff=flash_eff,
                     still_control_type=still_type,
                     flash_control_type=flash_type,
+                    stripping_gas_rate=float(stripping_rate) if stripping_rate not in [None, "", "-"] else 0.0,
+                    stripping_gas_unit=stripping_unit,
+                    stripping_gas_scf=float(stripping_scf) if stripping_scf not in [None, "", "-"] else None,
                     gwp_dict=gwp_dict,
                 )
 
