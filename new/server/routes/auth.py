@@ -138,7 +138,7 @@ def login_required(f):
 
 
 def it_admin_required(f):
-    """Restricts access to IT Admin role only — for user account management routes."""
+    """Restricts access to IT Manager / IT Admin role only — for user account management routes."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
@@ -153,7 +153,7 @@ def it_admin_required(f):
         if user.status != "active":
             session.pop("user_id", None)
             return jsonify({"error": "Account disabled"}), 403
-        if user.role != "it_admin":
+        if user.role not in ["it_admin", "it_manager"]:
             return jsonify({"error": "IT Admin privileges required"}), 403
         return f(*args, **kwargs)
 
@@ -161,7 +161,7 @@ def it_admin_required(f):
 
 
 def it_access_required(f):
-    """Allows IT Admin and IT roles — for accessing user list and resetting passwords."""
+    """Allows IT Manager, IT Admin, and IT roles — for accessing user list and resetting passwords."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if request.method == "OPTIONS":
@@ -176,7 +176,7 @@ def it_access_required(f):
         if user.status != "active":
             session.pop("user_id", None)
             return jsonify({"error": "Account disabled"}), 403
-        if user.role not in ["it_admin", "it"]:
+        if user.role not in ["it_admin", "it_manager", "it"]:
             return jsonify({"error": "IT privileges required"}), 403
         return f(*args, **kwargs)
 
@@ -386,8 +386,8 @@ def forgot_password():
     user = User.query.filter(db.func.lower(User.email) == email_input).first()
 
     if user:
-        # Find IT Admins or Admins to notify
-        it_admins = User.query.filter(User.role == "it_admin", User.status == "active").all()
+        # Find IT Admins or IT Managers to notify
+        it_admins = User.query.filter(User.role.in_(["it_admin", "it_manager"]), User.status == "active").all()
 
         notification_title = f"Password Reset Request: {user.fullName or user.email}"
         notification_msg = (
@@ -791,7 +791,7 @@ def update_settings():
     if user and user.role == "it":
         return jsonify({"error": "IT role is not authorized to modify settings."}), 403
 
-    if user and user.role == "it_admin" and has_operational_keys:
+    if user and user.role in ["it_admin", "it_manager"] and has_operational_keys:
         return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
 
     is_admin = user and user.role in ["admin", "superuser"]
@@ -941,7 +941,7 @@ def update_user(id):
 
     data = request.get_json()
 
-    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4}
+    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
     VALID_ROLES = set(ROLE_RANK.keys())
     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
 

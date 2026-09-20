@@ -37,7 +37,7 @@ const NonITRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <LoadingSpinner fullScreen />;
   if (!user) return <Navigate to="/login" />;
-  if (["it_admin", "it"].includes(user.role)) return <Navigate to="/user-management" />;
+  if (["it_admin", "it_manager", "it"].includes(user.role)) return <Navigate to="/user-management" />;
   return children;
 };
 
@@ -45,7 +45,7 @@ const ITRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <LoadingSpinner fullScreen />;
   if (!user) return <Navigate to="/login" />;
-  if (!["it_admin", "it"].includes(user.role)) return <Navigate to="/" />;
+  if (!["it_admin", "it_manager", "it"].includes(user.role)) return <Navigate to="/" />;
   return children;
 };
 
@@ -69,7 +69,7 @@ const AuditRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <LoadingSpinner fullScreen />;
   if (!user) return <Navigate to="/login" />;
-  if (!["admin", "superuser", "it_admin"].includes(user.role))
+  if (!["admin", "superuser", "it_admin", "it_manager"].includes(user.role))
     return <Navigate to="/" />;
   return children;
 };

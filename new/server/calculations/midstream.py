@@ -150,6 +150,9 @@ class DehydratorCalculator(BaseCalculator):
         flash_control_eff=0.0,
         still_control_type="none",
         flash_control_type="none",
+        stripping_gas_rate=0.0,
+        stripping_gas_unit="scf/hr",
+        stripping_gas_scf=None,
         gwp_dict=None,
         **kwargs,
     ):
@@ -239,9 +242,26 @@ class DehydratorCalculator(BaseCalculator):
         # Total dissolved methane across annual operating hours
         total_ch4_scf = rate_gph * solubility_scf_per_gal * op_hours
 
+        # Stripping gas calculation (API Compendium §6.6 / GRI-GLYCalc / EPA Subpart W §98.233(e))
+        # Stripping gas (fuel gas or methane) is injected into the regenerator reboiler/stripping column
+        # and exits overhead with the still vent gas stream.
+        total_stripping_scf = 0.0
+        if stripping_gas_scf is not None and float(stripping_gas_scf or 0) > 0:
+            total_stripping_scf = float(stripping_gas_scf)
+        elif stripping_gas_rate is not None and float(stripping_gas_rate or 0) > 0:
+            s_rate = float(stripping_gas_rate)
+            s_unit = str(stripping_gas_unit or "scf/hr").strip().lower()
+            if s_unit in ["m3/hr", "m3h", "m3_hr", "m3"]:
+                s_rate = convert(s_rate, "m3", "scf")
+            elif s_unit in ["scf/gal", "scf/gallon"]:
+                s_rate = s_rate * rate_gph
+            total_stripping_scf = s_rate * op_hours
+        stripping_scf = total_stripping_scf * ch4_frac
+
         # Stream Partitioning & Control Systems:
-        # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent
-        # If no Flash Tank: 100% goes directly to regenerator still vent
+        # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent.
+        # Injected stripping gas joins the regenerator still vent stream.
+        # If no Flash Tank: 100% of dissolved gas plus stripping gas goes directly to regenerator still vent.
         still_eff = normalize_efficiency(control_eff, default=0.0)
         flash_eff = normalize_efficiency(flash_control_eff, default=0.0)
 
@@ -263,7 +283,7 @@ class DehydratorCalculator(BaseCalculator):
 
         if has_flash_tank:
             flash_gas_scf = total_ch4_scf * 0.80
-            still_gas_scf = total_ch4_scf * 0.20
+            still_gas_scf = (total_ch4_scf * 0.20) + stripping_scf
             ch4_emitted_scf = (flash_gas_scf * (1.0 - flash_eff)) + (
                 still_gas_scf * (1.0 - still_eff)
             )
@@ -272,8 +292,9 @@ class DehydratorCalculator(BaseCalculator):
                 + (flash_gas_scf * flash_eff if flash_is_combustion else 0.0)
             )
         else:
-            ch4_emitted_scf = total_ch4_scf * (1.0 - still_eff)
-            ch4_combusted_scf = (total_ch4_scf * still_eff) if still_is_combustion else 0.0
+            still_gas_scf = total_ch4_scf + stripping_scf
+            ch4_emitted_scf = still_gas_scf * (1.0 - still_eff)
+            ch4_combusted_scf = (still_gas_scf * still_eff) if still_is_combustion else 0.0
 
         # Convert scf to metric tonnes
         density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
@@ -323,6 +344,8 @@ class DehydratorCalculator(BaseCalculator):
                 "contactor_temperature_F": t_f,
                 "solubility_scf_gal": round(solubility_scf_per_gal, 3),
                 "has_flash_tank": has_flash_tank,
+                "stripping_gas_scf": round(total_stripping_scf, 2),
+                "stripping_ch4_scf": round(stripping_scf, 2),
                 "still_control_eff": still_eff,
                 "flash_control_eff": flash_eff,
                 "combusted_co2_tonnes": round(co2_combusted_tonnes, 4),

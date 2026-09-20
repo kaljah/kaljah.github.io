@@ -28,7 +28,7 @@ managedata_bp = Blueprint("managedata", __name__)
 @login_required
 def get_sources():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view operational emission sources."}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
@@ -65,7 +65,7 @@ def get_sources():
 @login_required
 def add_source():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
     data = request.get_json() or {}
     fid = data.get("facility_id")
@@ -120,7 +120,7 @@ def add_source():
 @login_required
 def delete_source(source_id):
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
     source = db.session.get(EmissionSource, source_id)
     if not source:
@@ -156,7 +156,7 @@ def delete_source(source_id):
 @login_required
 def bulk_import_sources():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational emission sources."}), 403
     allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
@@ -242,7 +242,7 @@ def bulk_import_sources():
 @login_required
 def get_mitigations():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view operational mitigation data."}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
@@ -314,7 +314,7 @@ def get_mitigations():
 @login_required
 def add_mitigation():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
     data = request.get_json() or {}
 
@@ -385,7 +385,7 @@ def add_mitigation():
 @login_required
 def delete_mitigation(mitigation_id):
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
     # Determine type from ID prefix
     if mitigation_id.startswith("proj_"):
@@ -435,7 +435,7 @@ def delete_mitigation(mitigation_id):
 @login_required
 def get_reporting_metadata():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view reporting metadata."}), 403
     year = request.args.get("year")
     if not year:
@@ -473,7 +473,7 @@ def get_reporting_metadata():
 @login_required
 def save_reporting_metadata():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify reporting metadata."}), 403
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Administrator privileges required to modify reporting metadata."}), 403
@@ -534,7 +534,7 @@ def save_reporting_metadata():
 @login_required
 def get_production_years():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view operational data."}), 403
     years = (
         db.session.query(ProductionData.year)
@@ -550,7 +550,7 @@ def get_production_years():
 @login_required
 def get_available_filters():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view operational filters."}), 403
     allowed_fids = get_allowed_facility_ids(user)
 
@@ -624,7 +624,7 @@ def get_available_filters():
 @login_required
 def bulk_import_mitigation():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
     allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
@@ -746,7 +746,7 @@ def bulk_import_mitigation():
 @login_required
 def get_all_goals():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view corporate emission targets."}), 403
     try:
         goals = Goal.query.order_by(Goal.year.desc()).all()
@@ -771,7 +771,7 @@ def get_all_goals():
 @login_required
 def add_or_update_goal():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Administrator privileges required to modify corporate emission targets."}), 403
@@ -810,7 +810,7 @@ def add_or_update_goal():
 @login_required
 def delete_goal(year):
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify corporate emission targets."}), 403
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Administrator privileges required to modify corporate emission targets."}), 403
@@ -832,7 +832,7 @@ def delete_goal(year):
 @login_required
 def get_base_years():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to view base year recalculation data."}), 403
     try:
         active_rec = BaseYearRecalculation.query.order_by(
@@ -891,7 +891,7 @@ def get_base_years():
 @login_required
 def add_base_year_recalculation():
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
@@ -950,7 +950,7 @@ def add_base_year_recalculation():
 @login_required
 def delete_base_year_recalculation(rec_id):
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to modify base year recalculation data."}), 403
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Administrator privileges required to modify base year recalculation data."}), 403
@@ -986,7 +986,7 @@ def manage_sbti():
     from models import SbtiTarget, Emission, Scope2Emission, Scope3Emission, BaseYearRecalculation
     from routes.dashboard import clear_dashboard_cache
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT administrators are not authorized to access SBTi targets."}), 403
 
     if request.method == "GET":

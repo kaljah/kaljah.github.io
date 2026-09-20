@@ -38,7 +38,7 @@ export const getActiveGwpFactors = (standard = "AR5", horizon = "100") => {
     return {
       CO2: 1,
       CH4: std.CH4_20 || 82.5,
-      N2O: std.N2O_20 || 264,
+      N2O: std.N2O_20 || 268,
     };
   }
   return {

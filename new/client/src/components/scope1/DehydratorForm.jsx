@@ -142,6 +142,22 @@ const DehydratorForm = ({ data, onChange, sourceType }) => {
           </div>
 
           <div className="input-group">
+            <label>Stripping Gas Rate (scf/hr)</label>
+            <input
+              type="number"
+              className="mole-input"
+              value={
+                data.dehy_stripping_rate !== undefined &&
+                data.dehy_stripping_rate !== null
+                  ? data.dehy_stripping_rate
+                  : ""
+              }
+              onChange={(e) => onChange("dehy_stripping_rate", e.target.value)}
+              placeholder="0 (Optional stripping gas)"
+            />
+          </div>
+
+          <div className="input-group">
             <label>Control Device</label>
             <CustomDropdown
               options={[

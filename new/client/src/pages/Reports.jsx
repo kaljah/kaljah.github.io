@@ -304,6 +304,7 @@ const Reports = () => {
         scope,
         regionId,
         processType,
+        gwpStandard: reportGwpStandard,
       };
 
       await generateModernPDF(api, filters);
@@ -346,6 +347,7 @@ const Reports = () => {
     new Date().getFullYear().toString(),
   );
   const [comparisonYear, setComparisonYear] = useState("none"); // [NEW] Comparison Year State
+  const [reportGwpStandard, setReportGwpStandard] = useState("AR5"); // [NEW] GWP Standard Selector
   const [reportSelectedRegions, setReportSelectedRegions] = useState([]); // Multiselect
 
   // Derived options
@@ -384,6 +386,7 @@ const Reports = () => {
         processType: "all",
         exclusionCriteria: exclusionCriteria,
         verificationStatus: verificationStatus,
+        gwpStandard: reportGwpStandard,
         personResponsible: user || { username: "Logged In User" },
       };
 
@@ -604,6 +607,20 @@ const Reports = () => {
                       </option>
                     ))}
                   <option value="baseline">Baseline (2020)</option>
+                </select>
+              </div>
+
+              <div className="control-group">
+                <label className="input-label">GWP Metric Standard</label>
+                <select
+                  className="component-select"
+                  value={reportGwpStandard}
+                  onChange={(e) => setReportGwpStandard(e.target.value)}
+                >
+                  <option value="AR5">IPCC AR5 (100-yr: CH4=28, N2O=265)</option>
+                  <option value="AR6">IPCC AR6 (100-yr: CH4=29.8, N2O=273)</option>
+                  <option value="AR4">IPCC AR4 (100-yr: CH4=25, N2O=298)</option>
+                  <option value="20yr">IPCC AR6 (20-yr: CH4=82.5, N2O=273)</option>
                 </select>
               </div>
 
@@ -1047,6 +1064,23 @@ const Reports = () => {
                   onChange={(e) => setVerificationStatus(e.target.value)}
                   style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
                 />
+              </div>
+              <div className="input-group">
+                <label>GWP Metric Standard</label>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                  Select the IPCC Assessment Report Global Warming Potentials applied to calculate CO2-equivalent totals.
+                </p>
+                <select
+                  className="component-select"
+                  value={reportGwpStandard}
+                  onChange={(e) => setReportGwpStandard(e.target.value)}
+                  style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+                >
+                  <option value="AR5">IPCC AR5 (100-yr: CH4=28, N2O=265) — Default</option>
+                  <option value="AR6">IPCC AR6 (100-yr: CH4=29.8, N2O=273)</option>
+                  <option value="AR4">IPCC AR4 (100-yr: CH4=25, N2O=298)</option>
+                  <option value="20yr">IPCC AR6 (20-yr: CH4=82.5, N2O=273)</option>
+                </select>
               </div>
             </div>
             <div className="modal-footer" style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>

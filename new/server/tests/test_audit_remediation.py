@@ -1545,3 +1545,145 @@ def test_csv_formula_injection_whitespace_and_tab_escaping():
     assert sanitize_csv_cell("Normal Text") == "Normal Text"
     assert sanitize_csv_cell(123.45) == "123.45"
     assert sanitize_csv_cell(None) == ""
+
+
+def test_facility_boundary_type_and_detail_roundtrip(client, test_users):
+    """Verify Facility boundary_type and boundary_detail persistence and retrieval via API."""
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_users["admin"]
+
+    # Create facility with explicit boundary_type and boundary_detail
+    resp = client.post(
+        "/api/facilities",
+        json={
+            "name": "Boundaries Test Facility",
+            "location": "In Salah",
+            "activity": "Extraction",
+            "division": "Upstream",
+            "segment": "Upstream",
+            "boundary_type": "Equity Share",
+            "boundary_detail": "Sonatrach 51%, Partner 49%",
+        },
+    )
+    assert resp.status_code == 201
+    fac_id = resp.get_json()["id"]
+
+    # Verify retrieval via GET /facilities
+    get_resp = client.get("/api/facilities")
+    assert get_resp.status_code == 200
+    all_facs = get_resp.get_json()
+    target = next((f for f in all_facs if f["id"] == fac_id), None)
+    assert target is not None
+    assert target["boundary_type"] == "Equity Share"
+    assert target["boundary_detail"] == "Sonatrach 51%, Partner 49%"
+
+
+def test_custom_factor_description_and_source_roundtrip(client, test_users):
+    """Verify CustomFactor description and source lab certification roundtrip via API."""
+    with client.session_transaction() as sess:
+        sess["user_id"] = test_users["admin"]
+
+    # Create custom factor with description and source
+    resp = client.post(
+        "/api/custom-factors",
+        json={
+            "fuel_name": "Test Flare Gas Lab Blend",
+            "process_type": "flaring",
+            "unit": "m3",
+            "co2_factor": 1.95,
+            "ch4_factor": 0.012,
+            "n2o_factor": 0.0001,
+            "source": "Sonatrach CRD Lab Cert #2026-B84",
+            "description": "Gas chromatography sample from separator train B, calibrated to ISO 6974.",
+        },
+    )
+    assert resp.status_code == 201
+    factor_id = resp.get_json()["id"]
+
+    # Verify retrieval
+    get_resp = client.get("/api/custom-factors")
+    assert get_resp.status_code == 200
+    factors = get_resp.get_json()
+    created = next((f for f in factors if f["id"] == factor_id), None)
+    assert created is not None
+    assert created["source"] == "Sonatrach CRD Lab Cert #2026-B84"
+    assert created["description"] == "Gas chromatography sample from separator train B, calibrated to ISO 6974."
+
+
+def test_dehydrator_stripping_gas_calculation():
+    """Verify Dehydrator stripping gas calculation adds methane volume to still vent before control."""
+    from calculations.midstream import DehydratorCalculator
+    from calculations.units import convert
+
+    calc = DehydratorCalculator()
+    # Baseline without stripping gas
+    base_res = calc.calculate(
+        pump_rate=100.0,
+        pump_unit="gph",
+        hours=1000,
+        ch4_content=0.90,
+        has_flash_tank=False,
+        still_control_type="none",
+        control_eff=0.0,
+        stripping_gas_rate=0.0,
+    )
+
+    # With stripping gas (50 scf/hr = 50,000 scf over 1000 hrs)
+    strip_res = calc.calculate(
+        pump_rate=100.0,
+        pump_unit="gph",
+        hours=1000,
+        ch4_content=0.90,
+        has_flash_tank=False,
+        still_control_type="none",
+        control_eff=0.0,
+        stripping_gas_rate=50.0,
+        stripping_gas_unit="scf/hr",
+    )
+
+    # 50,000 scf * 0.90 CH4 = 45,000 scf CH4
+    expected_strip_ch4_tonnes = convert(45000.0, "scf", "m3") * 0.6785 / 1000.0
+    diff_ch4 = strip_res["results"]["ch4"]["value"] - base_res["results"]["ch4"]["value"]
+    assert abs(diff_ch4 - expected_strip_ch4_tonnes) < 1e-4
+    assert strip_res["inputs"]["stripping_gas_scf"] == 50000.0
+
+    # With 98% flare control efficiency, stripping gas is abated and converted to CO2 stoichiometrically
+    flared_strip_res = calc.calculate(
+        pump_rate=100.0,
+        pump_unit="gph",
+        hours=1000,
+        ch4_content=0.90,
+        has_flash_tank=False,
+        still_control_type="flare",
+        control_eff=0.98,
+        stripping_gas_rate=50.0,
+        stripping_gas_unit="scf/hr",
+    )
+    # Remaining uncombusted CH4 must be 2%
+    assert abs(flared_strip_res["results"]["ch4"]["value"] - (strip_res["results"]["ch4"]["value"] * 0.02)) < 1e-4
+    # Stoichiometric CO2 must be generated from destroyed CH4
+    assert flared_strip_res["results"]["co2"]["value"] > 0.0
+
+
+def test_dehydrator_stripping_gas_dispatcher():
+    """Verify dispatcher passes stripping gas parameters correctly."""
+    dispatcher = CalculationDispatcher()
+    payload = {
+        "process_type": "dehydrator",
+        "factor_source": "specific",
+        "dehydrator_calc_method": "glycol_pump",
+        "teg_pump_rate": 100.0,
+        "teg_pump_unit": "gph",
+        "annual_hours": 1000.0,
+        "gas_ch4_mole_pct": 90.0,
+        "flash_tank": "no",
+        "still_vent_control": "none",
+        "stripping_gas_rate": 50.0,
+        "stripping_gas_unit": "scf/hr",
+    }
+    gwps = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
+    res = dispatcher.dispatch("dehydrator", payload, {}, gwps)
+    assert res is not None
+    assert res["inputs"]["stripping_gas_scf"] == 50000.0
+    assert res["results"]["ch4"]["value"] > 0
+

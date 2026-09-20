@@ -14,7 +14,7 @@ custom_factors_bp = Blueprint("custom_factors", __name__)
 def get_custom_factors():
     """Get all custom emission factors"""
     user = get_current_user()
-    if user and user.role in ["it_admin", "it"]:
+    if user and user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT personnel do not have access to operational factor data"}), 403
 
     factors = CustomFactor.query.all()
@@ -33,6 +33,7 @@ def get_custom_factors():
                 "usage": f.usage or "Custom",
                 "parent_fuel": f.parent_fuel,
                 "source": f.source or "",
+                "description": f.description or "",
                 "version": f.version or "",
                 "uncertainty": float(f.uncertainty or 0),
                 "co2_uncertainty": float(f.co2_uncertainty or 0),
@@ -65,7 +66,7 @@ def create_custom_factor():
     user = db.session.get(User, user_id)
 
     data = request.get_json()
-    factor_name = (data.get("factor_name") or data.get("name") or "").strip() if data else ""
+    factor_name = (data.get("factor_name") or data.get("name") or data.get("fuel_name") or "").strip() if data else ""
     if not factor_name:
         return jsonify({"error": "Factor name is required"}), 400
 
@@ -97,6 +98,7 @@ def create_custom_factor():
         usage=data.get("usage", "Custom"),
         parent_fuel=data.get("parent_fuel"),
         source=data.get("source"),
+        description=data.get("description"),
         version=data.get("version"),
         uncertainty=uncertainty,
         co2_uncertainty=co2_uncertainty,
@@ -144,8 +146,8 @@ def update_custom_factor(factor_id):
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    if "factor_name" in data or "name" in data:
-        fn = (data.get("factor_name") or data.get("name") or "").strip()
+    if "factor_name" in data or "name" in data or "fuel_name" in data:
+        fn = (data.get("factor_name") or data.get("name") or data.get("fuel_name") or "").strip()
         if not fn:
             return jsonify({"error": "Factor name cannot be empty"}), 400
         factor.name = fn
@@ -184,6 +186,8 @@ def update_custom_factor(factor_id):
         factor.parent_fuel = data["parent_fuel"]
     if "source" in data:
         factor.source = data["source"]
+    if "description" in data:
+        factor.description = data["description"]
     if "version" in data:
         factor.version = data["version"]
 
@@ -306,6 +310,7 @@ def import_custom_factors():
             usage=factor_data.get("usage", "Custom"),
             parent_fuel=factor_data.get("parent_fuel"),
             source=factor_data.get("source"),
+            description=factor_data.get("description"),
             version=factor_data.get("version"),
             uncertainty=uncertainty,
             co2_uncertainty=co2_uncertainty,

@@ -1,0 +1,855 @@
+[
+  {
+    "test_id": "GOLD-A01-COMB-NG-NORM",
+    "category_code": "A",
+    "category_name": "Normal Case",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1 (Tier 1)",
+    "activity_data": {
+      "quantity": 100000.0,
+      "fuel_type": "natural_gas",
+      "hhv": 1020.0
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 53.06,
+      "ch4": 0.001,
+      "n2o": 0.0001,
+      "unit": "kg/MMBtu"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {
+      "energy_mmbtu": 3602.0960055420005
+    },
+    "expected_final_result": {
+      "co2": 191.12721405670285,
+      "ch4": 0.0036020960055918364,
+      "n2o": 0.00036020960055918366,
+      "co2e": 191.3235282890076
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Standard gas HHV 1020 Btu/scf, standard thermodynamic density",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-A02-FLARE-ELEV-NORM",
+    "category_code": "A",
+    "category_name": "Normal Case",
+    "calc_type": "flaring",
+    "methodology": "API Compendium 2021 \u00a75.2 (Dual-Efficiency)",
+    "activity_data": {
+      "volume": 50000.0,
+      "amount": 50000.0,
+      "flare_type": "elevated",
+      "ch4_fraction": 0.88,
+      "c1": 0.88,
+      "c2": 0.05,
+      "co2_mol": 0.02
+    },
+    "units": "m3",
+    "emission_factor": {
+      "flare_type": "elevated",
+      "ef_n2o": 0.0001,
+      "ef_unit": "kg/m3"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 91.590976,
+      "ch4": 0.5970800000000005,
+      "n2o": 0.005,
+      "co2e": 109.63421600000002,
+      "vol_m3_std": 50000.0,
+      "eta_c": 0.984,
+      "eta_d": 0.98
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Elevated flare default eta_c=0.984, eta_d=0.980",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-A03-UNLOAD-NORM",
+    "category_code": "A",
+    "category_name": "Normal Case",
+    "calc_type": "liquids_unloading",
+    "methodology": "API Compendium 2021 \u00a76.4 Eq. 6-3",
+    "activity_data": {
+      "well_depth": 5000.0,
+      "diameter": 2.441,
+      "pressure": 150.0,
+      "events": 12
+    },
+    "units": "events",
+    "emission_factor": {
+      "ch4_content": 0.85
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "ch4": 0.35687197224490275,
+      "co2": 0.0,
+      "n2o": 0.0,
+      "co2e": 9.992415222857277,
+      "total_gas_m3": 618.7905366420786
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Tubing wellbore geometry at 150 psig, 60F",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-A04-TANK-FLASH-NORM",
+    "category_code": "A",
+    "category_name": "Normal Case",
+    "calc_type": "tank_flashing",
+    "methodology": "API Compendium 2021 \u00a76.8 GOR Method",
+    "activity_data": {
+      "throughput": 10000.0,
+      "gas_oil_ratio": 50.0
+    },
+    "units": "bbl",
+    "emission_factor": {
+      "gor": 50.0,
+      "ch4_content": 0.8
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "ch4": 7.6851921650688,
+      "co2": 0.0,
+      "n2o": 0.0,
+      "co2e": 215.1853806219264,
+      "total_gas_m3": 14158.423296
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Flash gas GOR 50 scf/bbl, 80% CH4",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-A05-SCOPE2-GRID-NORM",
+    "category_code": "A",
+    "category_name": "Normal Case",
+    "calc_type": "scope2_electricity",
+    "methodology": "GHG Protocol Scope 2 Location-Based",
+    "activity_data": {
+      "electricity_kwh": 500000.0
+    },
+    "units": "kWh",
+    "emission_factor": {
+      "factor": 0.522,
+      "unit": "kg CO2e/kWh",
+      "grid": "Algerian National Grid"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2e": 261.0,
+      "co2": 261.0,
+      "ch4": 0.0,
+      "n2o": 0.0
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "500 MWh consumption in Algerian National Grid",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-A06-SCOPE3-EEIO-NORM",
+    "category_code": "A",
+    "category_name": "Normal Case",
+    "calc_type": "scope3_spend",
+    "methodology": "GHG Protocol Scope 3 Category 1 (USEEIO v1.3)",
+    "activity_data": {
+      "spend_amount": 250000.0
+    },
+    "units": "USD",
+    "emission_factor": {
+      "factor": 3200.1,
+      "unit": "kg CO2e/$1000",
+      "naics": "211"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2e": 800.025,
+      "method": "spend_eeio"
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "$250k spend in NAICS 211 Oil & Gas extraction",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-B01-ZERO-ACTIVITY",
+    "category_code": "B",
+    "category_name": "Zero Case",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "quantity": 0.0
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 53.06,
+      "unit": "kg/MMBtu"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 0.0,
+      "ch4": 0.0,
+      "n2o": 0.0,
+      "co2e": 0.0
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Zero fuel consumption must result in exactly 0.0 emissions",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-B02-ZERO-SCOPE2",
+    "category_code": "B",
+    "category_name": "Zero Case",
+    "calc_type": "scope2_electricity",
+    "methodology": "GHG Protocol Scope 2",
+    "activity_data": {
+      "electricity_kwh": 0.0
+    },
+    "units": "kWh",
+    "emission_factor": {
+      "factor": 0.522
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2e": 0.0,
+      "co2": 0.0,
+      "ch4": 0.0,
+      "n2o": 0.0
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Zero kWh must produce 0.0 tCO2e",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-C01-VERY-SMALL-VAL",
+    "category_code": "C",
+    "category_name": "Very Small Value",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "quantity": 1e-06
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 1.861,
+      "unit": "kg/m3"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 1.8609999999999999e-09,
+      "ch4": 0.0,
+      "n2o": 0.0,
+      "co2e": 1.8609999999999999e-09
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-12,
+    "assumptions": "1 micro-cubic-meter fuel trace calculation",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-D01-VERY-LARGE-VAL",
+    "category_code": "D",
+    "category_name": "Very Large Value",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "quantity": 1000000000.0
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 1.861,
+      "unit": "kg/m3"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 1861000.0,
+      "ch4": 0.0,
+      "n2o": 0.0,
+      "co2e": 1861000.0
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 0.001,
+    "assumptions": "1 billion m3 fuel industrial refinery throughput",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-E01-DECIMAL-VALS",
+    "category_code": "E",
+    "category_name": "Decimal Value",
+    "calc_type": "equipment_fugitive",
+    "methodology": "API Compendium 2021 \u00a77.2",
+    "activity_data": {
+      "equipment_count": 17.385,
+      "ch4_content": 0.8432
+    },
+    "units": "count",
+    "emission_factor": {
+      "factor": 0.0045,
+      "unit": "kg/hr"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "ch4": 0.5778590414399999,
+      "co2": 0.0,
+      "n2o": 0.0,
+      "co2e": 16.180053160319996
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Fractional equipment count and non-integer composition",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-F01-EFFICIENCY-100PCT",
+    "category_code": "F",
+    "category_name": "Boundary Value",
+    "calc_type": "flaring",
+    "methodology": "API Compendium 2021 \u00a75.2",
+    "activity_data": {
+      "volume": 10000.0,
+      "amount": 10000.0,
+      "c1": 0.85,
+      "ch4_fraction": 0.85,
+      "flare_type": "elevated",
+      "combustion_efficiency": 1.0,
+      "destruction_efficiency": 1.0
+    },
+    "units": "m3",
+    "emission_factor": {
+      "ch4_content": 0.85,
+      "c1": 0.85
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 15.8185,
+      "ch4": 0.0,
+      "n2o": 0.0,
+      "co2e": 15.8185,
+      "vol_m3_std": 10000.0,
+      "eta_c": 1.0,
+      "eta_d": 1.0
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "100% destruction efficiency must yield exactly 0.0 unburnt CH4",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-F02-EFFICIENCY-0PCT",
+    "category_code": "F",
+    "category_name": "Boundary Value",
+    "calc_type": "flaring",
+    "methodology": "API Compendium 2021 \u00a75.2",
+    "activity_data": {
+      "volume": 10000.0,
+      "amount": 10000.0,
+      "c1": 0.85,
+      "ch4_fraction": 0.85,
+      "flare_type": "elevated",
+      "combustion_efficiency": 0.0,
+      "destruction_efficiency": 0.0
+    },
+    "units": "m3",
+    "emission_factor": {
+      "ch4_content": 0.85,
+      "c1": 0.85
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 0.0,
+      "ch4": 5.76725,
+      "n2o": 0.0,
+      "co2e": 161.483,
+      "vol_m3_std": 10000.0,
+      "eta_c": 0.0,
+      "eta_d": 0.0
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "0% combustion efficiency yields 0.0 combusted CO2 and 100% unburnt CH4",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-G01-MISSING-OPTIONAL-HOURS",
+    "category_code": "G",
+    "category_name": "Missing Optional Value",
+    "calc_type": "pneumatic_device",
+    "methodology": "API Compendium 2021 \u00a76.10",
+    "activity_data": {
+      "count": 10,
+      "bleed_rate": 15.0,
+      "pneu_ch4_content": 0.85,
+      "ch4_content": 0.85
+    },
+    "units": "count",
+    "emission_factor": {
+      "bleed_rate": 15.0
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "ch4": 21.458977822913354,
+      "co2": 0.0,
+      "n2o": 0.0,
+      "co2e": 600.8513790415739,
+      "ch4_vol_m3": 31627.0859586048
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Missing operating hours defaults authoritatively to 8760 hours/yr",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-H01-INVALID-NAN-QTY",
+    "category_code": "H",
+    "category_name": "Invalid Value",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "quantity": "NaN"
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 53.06
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {},
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "System must reject NaN activity data and not produce numeric emissions",
+    "is_invalid": true,
+    "expected_error": "ValueError"
+  },
+  {
+    "test_id": "GOLD-H02-INVALID-INF-QTY",
+    "category_code": "H",
+    "category_name": "Invalid Value",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "quantity": "Infinity"
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 53.06
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {},
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "System must reject infinite activity data",
+    "is_invalid": true,
+    "expected_error": "ValueError"
+  },
+  {
+    "test_id": "GOLD-I01-NEGATIVE-QTY-REJECTED",
+    "category_code": "I",
+    "category_name": "Negative Value",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "quantity": -500.0
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 53.06
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {},
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Negative fuel quantity must be rejected to prevent negative emissions",
+    "is_invalid": true,
+    "expected_error": "ValueError"
+  },
+  {
+    "test_id": "GOLD-J01-UNIT-EQUIV-MASS",
+    "category_code": "J",
+    "category_name": "Unit Conversion Equivalence",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "equiv_cases": [
+        1.0,
+        1000.0,
+        1000000.0
+      ]
+    },
+    "units": "tonne/kg/g",
+    "emission_factor": {
+      "co2": 2.5,
+      "unit": "kg/kg"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "tonne": {
+        "co2": 2.5,
+        "ch4": 0.0,
+        "n2o": 0.0,
+        "co2e": 2.5
+      },
+      "kg": {
+        "co2": 2.5,
+        "ch4": 0.0,
+        "n2o": 0.0,
+        "co2e": 2.5
+      },
+      "gram": {
+        "co2": 2.5,
+        "ch4": 0.0,
+        "n2o": 0.0,
+        "co2e": 2.5
+      }
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-08,
+    "assumptions": "1 tonne == 1000 kg == 1,000,000 g must yield identical emissions",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-K01-MULTI-GAS-MASS",
+    "category_code": "K",
+    "category_name": "Multiple-Gas Case",
+    "calc_type": "stationary_combustion",
+    "methodology": "API Compendium 2021 \u00a75.1",
+    "activity_data": {
+      "quantity": 10000.0
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 1.9,
+      "ch4": 0.05,
+      "n2o": 0.002,
+      "unit": "kg/m3"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 19.0,
+      "ch4": 0.5,
+      "n2o": 0.02,
+      "co2e": 38.3
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Independent tracking of CO2, CH4, and N2O masses and combined CO2e",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-L01-MULTI-SOURCE-AGG",
+    "category_code": "L",
+    "category_name": "Multiple-Source Case",
+    "calc_type": "aggregation_uncertainty",
+    "methodology": "IPCC 2006 GL Vol. 1 \u00a73.3 Eq. 3.2",
+    "activity_data": {
+      "sources": [
+        {
+          "value": 1500.0,
+          "uncertainty": 0.05
+        },
+        {
+          "value": 3500.0,
+          "uncertainty": 0.07
+        }
+      ]
+    },
+    "units": "tCO2e",
+    "emission_factor": {},
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "total_value": 5000.0,
+      "relative_uncertainty": 0.05124451190127584
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Additive aggregation of independent emission sources with SRSS uncertainty",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-M01-MULTI-FACILITY-BOE",
+    "category_code": "M",
+    "category_name": "Multiple-Facility Case",
+    "calc_type": "production_boe",
+    "methodology": "SPE / WPC BOE Normalization",
+    "activity_data": {
+      "facility_1": {
+        "oil": 100000.0,
+        "gas": 50000.0
+      },
+      "facility_2": {
+        "oil": 250000.0,
+        "gas": 10000.0
+      }
+    },
+    "units": "BOE",
+    "emission_factor": {},
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "fac1_boe": 108900.0,
+      "fac2_boe": 251780.0,
+      "total_boe": 360680.0
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Portfolio BOE aggregation from oil and gas production",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-N01-MULTI-YEAR-WEC",
+    "category_code": "N",
+    "category_name": "Multiple-Year Case",
+    "calc_type": "epa_wec",
+    "methodology": "EPA 40 CFR Part 99 / IRA \u00a7136",
+    "activity_data": {
+      "ch4_tonnes": 150.0,
+      "gas_prod_m3": 10000000.0
+    },
+    "units": "tCH4",
+    "emission_factor": {},
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "wec_2024": {
+        "allowed_ch4_tonnes": 13.57,
+        "excess_ch4_tonnes": 136.43,
+        "wec_rate": 900.0,
+        "wec_fee_usd": 122787.0,
+        "status": "Taxable Liability"
+      },
+      "wec_2025": {
+        "allowed_ch4_tonnes": 13.57,
+        "excess_ch4_tonnes": 136.43,
+        "wec_rate": 1200.0,
+        "wec_fee_usd": 163716.0,
+        "status": "Taxable Liability"
+      },
+      "wec_2026": {
+        "allowed_ch4_tonnes": 13.57,
+        "excess_ch4_tonnes": 136.43,
+        "wec_rate": 1500.0,
+        "wec_fee_usd": 204645.0,
+        "status": "Taxable Liability"
+      }
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Statutory escalation of WEC fee: $900 in 2024, $1200 in 2025, $1500 in 2026+",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-O01-CUSTOM-FACTOR",
+    "category_code": "O",
+    "category_name": "Custom Emission Factor Case",
+    "calc_type": "stationary_combustion",
+    "methodology": "Tier 2 Facility-Specific Custom Factor",
+    "activity_data": {
+      "quantity": 50000.0,
+      "fuel_type": "custom_fuel_blend"
+    },
+    "units": "m3",
+    "emission_factor": {
+      "co2": 2.15,
+      "ch4": 0.08,
+      "n2o": 0.005,
+      "unit": "kg/m3"
+    },
+    "factor_source": "custom",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "co2": 107.5,
+      "ch4": 4.0,
+      "n2o": 0.25,
+      "co2e": 285.75
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Tier 2 user-defined custom emission factor",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-P01-DEFAULT-DEHY-FACTOR",
+    "category_code": "P",
+    "category_name": "Default Factor Case",
+    "calc_type": "dehydrator",
+    "methodology": "API Compendium 2021 Table 6-6",
+    "activity_data": {
+      "throughput_mmscf": 100.0
+    },
+    "units": "MMscf",
+    "emission_factor": {
+      "factor": 0.266,
+      "unit": "tonnes CH4/MMscf"
+    },
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "ch4": 26.6,
+      "co2": 0.0,
+      "n2o": 0.0,
+      "co2e": 744.8000000000001
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "API Table 6-6 Tier 1 default uncontrolled factor 0.266 tCH4/MMscf",
+    "is_invalid": false,
+    "expected_error": null
+  },
+  {
+    "test_id": "GOLD-Q01-METHODOLOGY-COMPARISON",
+    "category_code": "Q",
+    "category_name": "Different Methodology Case",
+    "calc_type": "dehydrator_methodology",
+    "methodology": "Tier 1 Default Factor vs Tier 3 Henry's Law Solubility",
+    "activity_data": {
+      "tier1_throughput_mmscf": 50.0,
+      "tier3_pump_rate": 15.0,
+      "hours": 8760.0
+    },
+    "units": "MMscf / gph",
+    "emission_factor": {},
+    "factor_source": "default",
+    "factor_version": "2021",
+    "gwp_version": "AR5",
+    "gwp_horizon": "100",
+    "intermediate_results": {},
+    "expected_final_result": {
+      "tier1": {
+        "ch4": 13.3,
+        "co2": 0.0,
+        "n2o": 0.0,
+        "co2e": 372.40000000000003
+      },
+      "tier3": {
+        "ch4": 3.918292523544391,
+        "co2": 0.0,
+        "n2o": 0.0,
+        "co2e": 109.71219065924295,
+        "solubility_scf_gal": 1.5520537243188048,
+        "total_ch4_scf": 203939.85937549098
+      }
+    },
+    "expected_units": "tCO2e",
+    "tolerance": 1e-05,
+    "assumptions": "Comparison of generic throughput screening vs physical Henry's law glycol solubility",
+    "is_invalid": false,
+    "expected_error": null
+  }
+]

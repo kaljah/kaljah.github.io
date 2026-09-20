@@ -44,7 +44,7 @@ def get_emissions():
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
 
-    if user.role in ["it_admin", "it"]:
+    if user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT personnel do not have access to emission data"}), 403
 
     current_app.logger.info(f"[Emissions] Fetch requested by user_id: {user.id}")
@@ -438,7 +438,7 @@ def add_bulk_upload():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role in ["it_admin", "it"]:
+    if user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT personnel do not have access to upload emission data"}), 403
 
     data = request.get_json()
@@ -2940,7 +2940,7 @@ def add_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role in ("viewer", "auditor", "it_admin", "it"):
+    if user.role in ("viewer", "auditor", "it_admin", "it_manager", "it"):
         return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
 
     data = request.get_json(silent=True) or {}
@@ -3315,7 +3315,7 @@ def update_emission(id):
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
 
-    if user.role in ["viewer", "auditor", "it_admin", "it"]:
+    if user.role in ["viewer", "auditor", "it_admin", "it_manager", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
 
     data = request.get_json()  # EXTRA-03 FIX: removed duplicate call below
@@ -3617,7 +3617,7 @@ def import_emissions():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role in ["it_admin", "it"]:
+    if user.role in ["it_admin", "it_manager", "it"]:
         return (
             jsonify(
                 {"error": "Forbidden: IT personnel cannot access operational emission data"}
@@ -3941,7 +3941,7 @@ def export_emissions():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role in ["it_admin", "it"]:
+    if user.role in ["it_admin", "it_manager", "it"]:
         return (
             jsonify(
                 {"error": "Forbidden: IT personnel cannot access operational emission data"}

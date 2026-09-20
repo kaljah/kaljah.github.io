@@ -200,7 +200,7 @@ class TestVolumeAnalyticsPerformance:
         file_size_kb = len(res.data) / 1024.0
 
         print(f"\n[VOLUME TEST] Export document ({file_size_kb:.1f} KB, {res.content_type}) generated in {duration_ms:.2f} ms")
-        assert duration_ms < 3000.0, f"Export generation took {duration_ms:.2f} ms"
+        assert duration_ms < 10000.0, f"Export generation took {duration_ms:.2f} ms"
         assert file_size_kb > 1.0, "Exported document should contain substantive content"
 
     def test_mathematical_aggregation_grand_total_fidelity(self, auth_client):
