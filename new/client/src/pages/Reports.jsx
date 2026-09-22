@@ -791,7 +791,7 @@ const Reports = () => {
                   onChange={(e) => setRegionId(e.target.value)}
                 >
                   <option value="all">All Regions</option>
-                  {availableFilters.regions.map((f) => (
+                  {facilities.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.name} {f.field ? ` - ${f.field}` : ""}
                     </option>

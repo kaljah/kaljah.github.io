@@ -33,20 +33,25 @@ def seed_data():
 
         mgmt_user = User.query.filter_by(email='z').first()
         if not mgmt_user:
-            print("Management user 'z' not found. Creating...")
+            print("IT Manager user 'z' not found. Creating...")
             mgmt_user = User(
-                fullName='Management User',
+                fullName='IT Manager',
                 orgName='Carbon Tech Algeria',
                 email='z',
-                role='manager',
+                role='it_manager',
                 sector='Industrial Decarbonization & CBAM',
-                department='Management',
-                jobTitle='Manager',
+                department='IT Management',
+                jobTitle='IT Operations Manager',
                 location='Algiers',
                 status='active'
             )
             mgmt_user.set_password('z')
             db.session.add(mgmt_user)
+            db.session.commit()
+        else:
+            mgmt_user.role = 'it_manager'
+            mgmt_user.set_password('z')
+            mgmt_user.status = 'active'
             db.session.commit()
 
         # Clean existing test emissions
@@ -119,21 +124,21 @@ def seed_data():
         # Seed sample emissions records with realistic Tier 3 numbers
         records = [
             # Tosyali Steel
-            {"facility": facilities[0], "year": 2026, "month": 1, "proc": "Stationary Combustion", "fuel": "Natural Gas DRI", "qty": 500000.0, "unit": "m3", "co2": 45000.0, "ch4": 12.5, "n2o": 2.1, "co2e": 45350.0, "method": "ef_facility_specific"},
-            {"facility": facilities[0], "year": 2026, "month": 2, "proc": "Stoichiometry", "fuel": "Carbon Electrodes EAF", "qty": 12000.0, "unit": "tonnes", "co2": 28000.0, "ch4": 5.0, "n2o": 1.2, "co2e": 28150.0, "method": "direct_measurement"},
+            {"facility": facilities[0], "year": 2026, "month": 1, "proc": "Stationary Combustion", "fuel": "Natural Gas DRI", "qty": 500000.0, "unit": "m3", "co2": 45000.0, "ch4": 12.5, "n2o": 2.1, "co2e": 45906.5, "method": "ef_facility_specific"},
+            {"facility": facilities[0], "year": 2026, "month": 2, "proc": "Stoichiometry", "fuel": "Carbon Electrodes EAF", "qty": 12000.0, "unit": "tonnes", "co2": 28000.0, "ch4": 5.0, "n2o": 1.2, "co2e": 28458.0, "method": "direct_measurement"},
             
             # Fertial Ammonia
-            {"facility": facilities[1], "year": 2026, "month": 1, "proc": "Steam Methane Reforming", "fuel": "Feedstock Gas", "qty": 650000.0, "unit": "m3", "co2": 52000.0, "ch4": 8.0, "n2o": 1.5, "co2e": 52250.0, "method": "engineering_estimate"},
+            {"facility": facilities[1], "year": 2026, "month": 1, "proc": "Steam Methane Reforming", "fuel": "Feedstock Gas", "qty": 650000.0, "unit": "m3", "co2": 52000.0, "ch4": 8.0, "n2o": 1.5, "co2e": 52621.5, "method": "engineering_estimate"},
             {"facility": facilities[1], "year": 2026, "month": 2, "proc": "Vented Tail Gas", "fuel": "N2O Abatement", "qty": 45.0, "unit": "tonnes", "co2": 1500.0, "ch4": 0.0, "n2o": 45.0, "co2e": 13425.0, "method": "direct_measurement"},
             
             # GICA Cement
             {"facility": facilities[2], "year": 2026, "month": 1, "proc": "Calcination Process", "fuel": "Limestone (CaCO3)", "qty": 75000.0, "unit": "tonnes", "co2": 38500.0, "ch4": 0.0, "n2o": 0.0, "co2e": 38500.0, "method": "ef_facility_specific"},
-            {"facility": facilities[2], "year": 2026, "month": 1, "proc": "Stationary Combustion", "fuel": "Natural Gas Kiln", "qty": 210000.0, "unit": "m3", "co2": 18200.0, "ch4": 3.2, "n2o": 0.8, "co2e": 18320.0, "method": "ef_facility_specific"},
+            {"facility": facilities[2], "year": 2026, "month": 1, "proc": "Stationary Combustion", "fuel": "Natural Gas Kiln", "qty": 210000.0, "unit": "m3", "co2": 18200.0, "ch4": 3.2, "n2o": 0.8, "co2e": 18501.6, "method": "ef_facility_specific"},
 
             # Sonatrach Gas
             {"facility": facilities[3], "year": 2026, "month": 1, "proc": "AGR Acid Gas Removal", "fuel": "Amine Flash", "qty": 350000.0, "unit": "m3", "co2": 31000.0, "ch4": 15.0, "n2o": 0.0, "co2e": 31420.0, "method": "engineering_estimate"},
-            {"facility": facilities[3], "year": 2026, "month": 1, "proc": "Flaring", "fuel": "High Pressure Flare Gas", "qty": 180000.0, "unit": "m3", "co2": 22000.0, "ch4": 85.0, "n2o": 0.5, "co2e": 24400.0, "method": "ef_facility_specific"},
-            {"facility": facilities[3], "year": 2026, "month": 1, "proc": "Compressor Fugitive", "fuel": "Wet Seal Methane", "qty": 110.0, "unit": "kg", "co2": 0.0, "ch4": 110.0, "n2o": 0.0, "co2e": 3080.0, "method": "direct_measurement"}
+            {"facility": facilities[3], "year": 2026, "month": 1, "proc": "Flaring", "fuel": "High Pressure Flare Gas", "qty": 180000.0, "unit": "m3", "co2": 22000.0, "ch4": 85.0, "n2o": 0.5, "co2e": 24512.5, "method": "ef_facility_specific"},
+            {"facility": facilities[3], "year": 2026, "month": 1, "proc": "Compressor Fugitive", "fuel": "Wet Seal Methane", "qty": 110.0, "unit": "tonnes", "co2": 0.0, "ch4": 110.0, "n2o": 0.0, "co2e": 3080.0, "method": "direct_measurement"}
         ]
 
         for i, r in enumerate(records):

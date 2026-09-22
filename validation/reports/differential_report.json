@@ -1,0 +1,26 @@
+[
+  {
+    "test_id": "GOLDEN-S1-COMB-002",
+    "calculation_type": "stationary_combustion",
+    "description": "Natural gas combustion with thermodynamic normalization (50\u00b0C, 100 psig)",
+    "prod_co2e": 9.70375,
+    "ref_co2e": 69.042359,
+    "abs_diff": 59.338609,
+    "rel_diff_pct": 85.9452,
+    "tolerance": 0.001,
+    "status": "FAIL",
+    "notes": ""
+  },
+  {
+    "test_id": "GOLDEN-S1-VENT-001",
+    "calculation_type": "pneumatic_devices",
+    "description": "Intermittent pneumatic controllers (10 devices, 8760 hrs)",
+    "prod_co2e": null,
+    "ref_co2e": 573.199222,
+    "abs_diff": Infinity,
+    "rel_diff_pct": Infinity,
+    "tolerance": 0.001,
+    "status": "FAIL",
+    "notes": ""
+  }
+]

@@ -1,0 +1,124 @@
+date,facility_name,activity,division,process,fuel,factor_type,quantity,unit
+2025-02,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Natural Gas,Default,39078,scf
+2024-03,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Natural Gas,Default,29111,m3
+2025-04,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Natural Gas,Default,23903,Mcf
+2024-05,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Natural Gas,Default,5341,MMscf
+2025-06,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Diesel (No. 2 Fuel Oil),Default,33133,gal
+2024-07,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Diesel (No. 2 Fuel Oil),Default,43495,L
+2025-08,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Diesel (No. 2 Fuel Oil),Default,37511,bbl
+2024-09,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Diesel (No. 2 Fuel Oil),Default,49967,m3
+2025-10,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Motor Gasoline,Default,38798,gal
+2024-11,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Motor Gasoline,Default,38781,L
+2025-12,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Motor Gasoline,Default,44451,m3
+2024-01,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Propane (Liquid/LPG),Default,28386,gal
+2025-02,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Propane (Liquid/LPG),Default,24762,L
+2024-03,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Propane (Liquid/LPG),Default,48078,bbl
+2025-04,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Kerosene,Default,6233,gal
+2024-05,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Kerosene,Default,39542,L
+2025-06,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Kerosene,Default,30101,bbl
+2024-07,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,598,gal
+2025-08,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,45199,bbl
+2024-09,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,11948,m3
+2025-10,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Crude Oil,Default,41818,bbl
+2024-11,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Crude Oil,Default,9115,m3
+2025-12,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Crude Oil,Default,12941,gal
+2024-01,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Flaring,Associated Gas (Flaring),Default,35257,scf
+2025-02,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Flaring,Associated Gas (Flaring),Default,5928,m3
+2024-03,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Flaring,Associated Gas (Flaring),Default,39442,Mcf
+2025-04,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Landfill Gas,Default,49844,scf
+2024-05,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Landfill Gas,Default,30132,m3
+2025-06,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coke Oven Gas,Default,20209,scf
+2024-07,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coke Oven Gas,Default,5047,m3
+2025-08,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Refinery Gas,Default,1216,scf
+2024-09,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Refinery Gas,Default,9046,m3
+2025-10,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Bituminous),Default,41756,ton
+2024-11,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Bituminous),Default,28645,tonne
+2025-12,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Bituminous),Default,7200,kg
+2024-01,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Sub-bituminous),Default,30668,ton
+2025-02,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Sub-bituminous),Default,11882,tonne
+2024-03,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Lignite),Default,40900,ton
+2025-04,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Lignite),Default,15271,tonne
+2024-05,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Anthracite),Default,1256,ton
+2025-06,Complexe Sidérurgique DRI/EAF (Tosyali),Steel & Iron (Acier DRI),Metallurgy,Combustion,Coal (Anthracite),Default,45301,tonne
+2024-07,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Natural Gas,Default,25509,scf
+2025-08,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Natural Gas,Default,49984,m3
+2024-09,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Natural Gas,Default,33953,Mcf
+2025-10,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Natural Gas,Default,20112,MMscf
+2024-11,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Diesel (No. 2 Fuel Oil),Default,24648,gal
+2025-12,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Diesel (No. 2 Fuel Oil),Default,5288,L
+2024-01,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Diesel (No. 2 Fuel Oil),Default,30691,bbl
+2025-02,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Diesel (No. 2 Fuel Oil),Default,48233,m3
+2024-03,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Motor Gasoline,Default,45000,gal
+2025-04,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Motor Gasoline,Default,27775,L
+2024-05,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Motor Gasoline,Default,9695,m3
+2025-06,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Propane (Liquid/LPG),Default,49442,gal
+2024-07,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Propane (Liquid/LPG),Default,48577,L
+2025-08,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Propane (Liquid/LPG),Default,38651,bbl
+2024-09,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Kerosene,Default,28280,gal
+2025-10,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Kerosene,Default,38663,L
+2024-11,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Kerosene,Default,3109,bbl
+2025-12,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,7354,gal
+2024-01,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,19271,bbl
+2025-02,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,32267,m3
+2024-03,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Crude Oil,Default,18763,bbl
+2025-04,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Crude Oil,Default,12170,m3
+2024-05,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Crude Oil,Default,13562,gal
+2025-06,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Flaring,Associated Gas (Flaring),Default,34304,scf
+2024-07,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Flaring,Associated Gas (Flaring),Default,12572,m3
+2025-08,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Flaring,Associated Gas (Flaring),Default,21152,Mcf
+2024-09,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Landfill Gas,Default,17066,scf
+2025-10,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Landfill Gas,Default,29943,m3
+2024-11,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coke Oven Gas,Default,34567,scf
+2025-12,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coke Oven Gas,Default,18374,m3
+2024-01,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Refinery Gas,Default,17607,scf
+2025-02,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Refinery Gas,Default,6297,m3
+2024-03,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Bituminous),Default,37492,ton
+2025-04,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Bituminous),Default,6503,tonne
+2024-05,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Bituminous),Default,39533,kg
+2025-06,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Sub-bituminous),Default,38655,ton
+2024-07,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Sub-bituminous),Default,32505,tonne
+2025-08,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Lignite),Default,45694,ton
+2024-09,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Lignite),Default,39893,tonne
+2025-10,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Anthracite),Default,32093,ton
+2024-11,Cimenterie Industrielle de Chlef (GICA),Cement & Clinker,Building Materials,Combustion,Coal (Anthracite),Default,12130,tonne
+2025-12,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Natural Gas,Default,40909,scf
+2024-01,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Natural Gas,Default,40547,m3
+2025-02,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Natural Gas,Default,16214,Mcf
+2024-03,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Natural Gas,Default,43791,MMscf
+2025-04,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Diesel (No. 2 Fuel Oil),Default,13397,gal
+2024-05,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Diesel (No. 2 Fuel Oil),Default,49458,L
+2025-06,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Diesel (No. 2 Fuel Oil),Default,17007,bbl
+2024-07,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Diesel (No. 2 Fuel Oil),Default,18069,m3
+2025-08,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Motor Gasoline,Default,14310,gal
+2024-09,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Motor Gasoline,Default,22585,L
+2025-10,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Motor Gasoline,Default,8839,m3
+2024-11,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Propane (Liquid/LPG),Default,27285,gal
+2025-12,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Propane (Liquid/LPG),Default,27525,L
+2024-01,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Propane (Liquid/LPG),Default,21444,bbl
+2025-02,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Kerosene,Default,1413,gal
+2024-03,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Kerosene,Default,6744,L
+2025-04,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Kerosene,Default,3118,bbl
+2024-05,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,33393,gal
+2025-06,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,27160,bbl
+2024-07,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Residual Fuel Oil (No. 6 Fuel Oil),Default,698,m3
+2025-08,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Crude Oil,Default,2650,bbl
+2024-09,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Crude Oil,Default,43256,m3
+2025-10,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Crude Oil,Default,32892,gal
+2024-11,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Flaring,Associated Gas (Flaring),Default,3253,scf
+2025-12,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Flaring,Associated Gas (Flaring),Default,2345,m3
+2024-01,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Flaring,Associated Gas (Flaring),Default,20095,Mcf
+2025-02,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Landfill Gas,Default,36840,scf
+2024-03,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Landfill Gas,Default,44319,m3
+2025-04,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coke Oven Gas,Default,45405,scf
+2024-05,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coke Oven Gas,Default,34345,m3
+2025-06,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Refinery Gas,Default,37744,scf
+2024-07,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Refinery Gas,Default,34140,m3
+2025-08,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Bituminous),Default,5062,ton
+2024-09,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Bituminous),Default,30367,tonne
+2025-10,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Bituminous),Default,18101,kg
+2024-11,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Sub-bituminous),Default,30982,ton
+2025-12,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Sub-bituminous),Default,14590,tonne
+2024-01,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Lignite),Default,46316,ton
+2025-02,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Lignite),Default,41367,tonne
+2024-03,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Anthracite),Default,3183,ton
+2025-04,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Anthracite),Default,13492,tonne

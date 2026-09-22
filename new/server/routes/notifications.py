@@ -84,7 +84,8 @@ def stream_notifications():
                 try:
                     new_notifs = (
                         Notification.query.filter(
-                            Notification.user_id == uid, Notification.id > lid
+                            ((Notification.user_id == uid) | (Notification.user_id == None)),
+                            Notification.id > lid,
                         )
                         .order_by(Notification.id.asc())
                         .all()
@@ -153,9 +154,9 @@ def mark_read(id):
 
     n = Notification.query.get_or_404(id)
     if n.user_id is None:
-        if user.role != "admin":
-            return jsonify({"error": "Only administrators can modify system notifications"}), 403
-    elif n.user_id != user.id:
+        # Broadcast/system notification: allowed to mark read by any authenticated user
+        pass
+    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Unauthorized"}), 403
 
     n.is_read = True
@@ -174,9 +175,15 @@ def dismiss_all():
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
 
-    Notification.query.filter_by(user_id=user.id, is_read=False).update(
-        {"is_read": True}
-    )
+    if user.role in ["admin", "superuser"]:
+        Notification.query.filter(
+            ((Notification.user_id == user.id) | (Notification.user_id == None)),
+            Notification.is_read == False,
+        ).update({"is_read": True}, synchronize_session="fetch")
+    else:
+        Notification.query.filter_by(user_id=user.id, is_read=False).update(
+            {"is_read": True}
+        )
     try:
         db.session.commit()
     except Exception as e:
@@ -195,9 +202,9 @@ def delete_notification(id):
 
     n = Notification.query.get_or_404(id)
     if n.user_id is None:
-        if user.role != "admin":
+        if user.role not in ["admin", "superuser"]:
             return jsonify({"error": "Only administrators can delete system notifications"}), 403
-    elif n.user_id != user.id:
+    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Unauthorized"}), 403
 
     try:

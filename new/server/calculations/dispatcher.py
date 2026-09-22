@@ -270,11 +270,16 @@ class CalculationDispatcher:
             "flare",
             "separation",
         ]:
-            if factor_source == "specific" and (
-                flat_inputs.get("specific_factors")
-                or flat_inputs.get("specificFactors")
-            ):
-                if flat_inputs.get("c1") in [None, "", "-"]:
+            spec = flat_inputs.get("specific_factors") or flat_inputs.get("specificFactors")
+            has_spec = isinstance(spec, dict) and any(
+                str(v).strip() not in [None, "", "-"]
+                for k, v in spec.items()
+                if not k.endswith("Unit")
+            )
+            if factor_source == "specific" and has_spec:
+                has_ef = bool(spec.get("co2") or spec.get("ch4"))
+                c1_val = flat_inputs.get("c1") or flat_inputs.get("ch4_content") or flat_inputs.get("gas_ch4_content")
+                if not has_ef and c1_val in [None, "", "-"]:
                     raise ValueError(
                         "Missing required gas composition (C1 mole fraction) for Tier 3 specific calculation"
                     )
@@ -505,7 +510,15 @@ class CalculationDispatcher:
                 vol_m3 = self._normalize_volume(
                     mud_vol, flat_inputs.get("mud_unit") or unit, "m3"
                 )
-                mud_type = flat_inputs.get("mud_type") or "water_based"
+                raw_mud_type = str(flat_inputs.get("mud_type") or "water_based").lower()
+                if "oil" in raw_mud_type:
+                    mud_type = "oil_based"
+                elif "water" in raw_mud_type:
+                    mud_type = "water_based"
+                elif "synth" in raw_mud_type:
+                    mud_type = "synthetic"
+                else:
+                    mud_type = raw_mud_type
                 return calculator.calculate(
                     mud_volume=vol_m3,
                     mud_type=mud_type,
@@ -515,9 +528,14 @@ class CalculationDispatcher:
                 )
 
             elif process_type == "completions":
-                comp_method = flat_inputs.get("comp_method") or flat_inputs.get(
-                    "calculation_method", "metered_volume"
+                comp_method = (
+                    flat_inputs.get("comp_method")
+                    or flat_inputs.get("calc_method")
+                    or flat_inputs.get("calculation_method", "metered_volume")
                 )
+                events_val = float(flat_inputs.get("amount") or flat_inputs.get("events") or 1.0)
+                gas_sales_mcf = float(flat_inputs.get("comp_gas_produced_mcf") or 0.0)
+                gas_sales_scf = gas_sales_mcf * 1000.0
 
                 vol_m3 = 0.0
                 if comp_method == "metered_volume" or (
@@ -567,6 +585,8 @@ class CalculationDispatcher:
                     well_head_pressure=flat_inputs.get("comp_whp"),
                     hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
                     gwp_dict=gwp_dict,
+                    events=events_val,
+                    gas_produced_sales_scf=gas_sales_scf,
                 )
 
             elif process_type in ["liquids_unloading", "unloading"]:
@@ -756,7 +776,7 @@ class CalculationDispatcher:
                     ch4_content=ch4_content,
                     control_efficiency=tank_eff,
                     uncertainties=uncertainties,
-                    process_type="tank_flashing",
+                    process_type=process_type,
                     ef_ch4=ef_ch4_val,
                     co2_content=co2_content,
                     hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),

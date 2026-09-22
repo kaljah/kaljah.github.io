@@ -65,11 +65,19 @@ class Config:
         ) or "sqlite:///" + os.path.join(BASE_DIR, "ghg_app.db")
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_size": 25,
-        "max_overflow": 25,
-        "pool_timeout": 60,
-    }
+    if str(SQLALCHEMY_DATABASE_URI).startswith("sqlite:///:memory:"):
+        from sqlalchemy.pool import StaticPool
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "connect_args": {"check_same_thread": False},
+            "poolclass": StaticPool,
+        }
+    else:
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "pool_size": 25,
+            "max_overflow": 25,
+            "pool_timeout": 60,
+        }
+
 
     # Session Configuration (8-hour session lifetime)
     SESSION_COOKIE_HTTPONLY = True

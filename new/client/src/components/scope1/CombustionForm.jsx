@@ -51,6 +51,7 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
               { value: "kg", label: "kg" },
               { value: "ton", label: "ton (short)" },
               { value: "tonne", label: "tonne (metric)" },
+              { value: "events", label: "events" },
             ]}
             value={data.unit}
             onChange={(val) => onChange("unit", val)}
@@ -209,24 +210,40 @@ const CombustionForm = ({ data, onChange, sourceType }) => {
             </div>
           )}
 
-          {/* Flare type for flaring */}
+          {/* Flare type & CH4 content for flaring */}
           {isFlaring && (
-            <div
-              className="input-group"
-              style={{ marginTop: "10px", marginBottom: 0 }}
-            >
-              <label style={{ fontSize: "0.75rem" }}>Flare Type</label>
-              <select
-                className="component-select"
-                value={data.flare_type || "elevated"}
-                onChange={(e) => onChange("flare_type", e.target.value)}
-              >
-                <option value="elevated">Elevated Flare (η_d=98%)</option>
-                <option value="enclosed_ground">
-                  Enclosed Ground Flare (η_d=99.5%)
-                </option>
-                <option value="pit">Pit / Open Burn (η_d=95%)</option>
-              </select>
+            <div className="form-grid-2" style={{ gap: "10px", marginTop: "10px" }}>
+              <div className="input-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontSize: "0.75rem" }}>Flare Type</label>
+                <select
+                  className="component-select"
+                  value={data.flare_type || "elevated"}
+                  onChange={(e) => onChange("flare_type", e.target.value)}
+                >
+                  <option value="elevated">Elevated Flare (η_d=98%)</option>
+                  <option value="enclosed_ground">
+                    Enclosed Ground Flare (η_d=99.5%)
+                  </option>
+                  <option value="pit">Pit / Open Burn (η_d=95%)</option>
+                </select>
+              </div>
+              <div className="input-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontSize: "0.75rem" }}>
+                  Flared Gas CH4 Content (%)
+                  <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>
+                </label>
+                <input
+                  id="flare-ch4-input"
+                  type="number"
+                  className="mole-input"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={data.ch4_content !== undefined ? data.ch4_content : ""}
+                  onChange={(e) => onChange("ch4_content", e.target.value)}
+                  placeholder="e.g. 85.0"
+                />
+              </div>
             </div>
           )}
 

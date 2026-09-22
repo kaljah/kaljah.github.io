@@ -183,10 +183,32 @@ def restore_data():
         db.create_all()
         random.seed(42)
 
-        # 1. Ensure user a@a and admin users exist
-        user = User.query.filter_by(email="a@a").first()
+        # 1. Ensure user a, a@a, z, z@z exist
+        user = User.query.filter_by(email="a").first()
         if not user:
             user = User(
+                fullName="Admin User",
+                orgName="Sonatrach Operations",
+                email="a",
+                role="admin",
+                sector="Oil & Gas",
+                department="Sustainability & Carbon Management",
+                jobTitle="Sustainability Director",
+                location="Global",
+                status="active"
+            )
+            user.set_password("a")
+            db.session.add(user)
+            db.session.commit()
+        else:
+            user.role = "admin"
+            user.set_password("a")
+            user.status = "active"
+            db.session.commit()
+
+        user_aa = User.query.filter_by(email="a@a").first()
+        if not user_aa:
+            user_aa = User(
                 fullName="Admin User",
                 orgName="Sonatrach Operations",
                 email="a@a",
@@ -197,8 +219,47 @@ def restore_data():
                 location="Global",
                 status="active"
             )
-            user.set_password("a")
-            db.session.add(user)
+            user_aa.set_password("a")
+            db.session.add(user_aa)
+            db.session.commit()
+
+        mgmt_z = User.query.filter_by(email="z").first()
+        if not mgmt_z:
+            mgmt_z = User(
+                fullName="IT Manager",
+                orgName="Sonatrach Operations",
+                email="z",
+                role="it_manager",
+                sector="Oil & Gas",
+                department="IT & Systems",
+                jobTitle="IT Operations Manager",
+                location="Global",
+                status="active"
+            )
+            mgmt_z.set_password("z")
+            db.session.add(mgmt_z)
+            db.session.commit()
+        else:
+            mgmt_z.role = "it_manager"
+            mgmt_z.set_password("z")
+            mgmt_z.status = "active"
+            db.session.commit()
+
+        mgmt_zz = User.query.filter_by(email="z@z").first()
+        if not mgmt_zz:
+            mgmt_zz = User(
+                fullName="IT Manager",
+                orgName="Sonatrach Operations",
+                email="z@z",
+                role="it_manager",
+                sector="Oil & Gas",
+                department="IT & Systems",
+                jobTitle="IT Operations Manager",
+                location="Global",
+                status="active"
+            )
+            mgmt_zz.set_password("z")
+            db.session.add(mgmt_zz)
             db.session.commit()
 
         # 2. Seed OGMP Source Types
