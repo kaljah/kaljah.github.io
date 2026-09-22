@@ -96,6 +96,14 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="dashboard"
+          element={
+            <NonITRoute>
+              <DashboardEnhanced />
+            </NonITRoute>
+          }
+        />
+        <Route
           path="emissions"
           element={
             <NonITRoute>

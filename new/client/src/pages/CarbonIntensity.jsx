@@ -51,12 +51,14 @@ const CarbonIntensity = () => {
     avgCo2Intensity: 0,
     avgCo2IntensityGwp20: 0,
     avgScope1Intensity: 0,
+    avgScope1IntensityGwp20: 0,
     avgScope2Intensity: 0,
     avgScope3Intensity: 0,
     avgFlaringIntensity: 0,
     totalCo2Emissions: 0,
     totalCo2EmissionsGwp20: 0,
     totalScope1: 0,
+    totalScope1Gwp20: 0,
     totalScope2: 0,
     totalScope3: 0,
     totalFlaringEmissions: 0,
@@ -182,10 +184,12 @@ const CarbonIntensity = () => {
       let wCo2Sum = 0,
         wCo2Gwp20Sum = 0,
         wS1Sum = 0,
+        wS1Gwp20Sum = 0,
         wS2Sum = 0,
         wS3Sum = 0,
         wFlaringSum = 0;
       let tScope1 = 0,
+        tScope1Gwp20 = 0,
         tScope2 = 0,
         tScope3 = 0,
         tCo2e = 0,
@@ -198,6 +202,7 @@ const CarbonIntensity = () => {
         tFlaringVol += d.flaring_volume || 0;
         tFlaringEm += d.flaring_emissions || 0;
         tScope1 += d.total_scope1 || 0;
+        tScope1Gwp20 += d.total_scope1_gwp20 ?? d.total_scope1 ?? 0;
         tScope2 += d.total_scope2 || 0;
         tScope3 += d.total_scope3 || 0;
         tCo2e += d.total_co2e || 0;
@@ -207,6 +212,7 @@ const CarbonIntensity = () => {
           wCo2Sum += (d.co2_intensity || 0) * boe;
           wCo2Gwp20Sum += (d.co2_intensity_gwp20 || d.co2_intensity || 0) * boe;
           wS1Sum += (d.scope1_intensity || 0) * boe;
+          wS1Gwp20Sum += (d.scope1_intensity_gwp20 ?? d.scope1_intensity ?? 0) * boe;
           wS2Sum += (d.scope2_intensity || 0) * boe;
           wS3Sum += (d.scope3_intensity || 0) * boe;
           wFlaringSum += (d.api_flaring_intensity || 0) * boe;
@@ -218,12 +224,14 @@ const CarbonIntensity = () => {
         avgCo2Intensity: tBoe > 0 ? wCo2Sum / tBoe : (tCo2e > 0 ? null : 0),
         avgCo2IntensityGwp20: tBoe > 0 ? wCo2Gwp20Sum / tBoe : (tCo2eGwp20 > 0 ? null : 0),
         avgScope1Intensity: tBoe > 0 ? wS1Sum / tBoe : (tScope1 > 0 ? null : 0),
+        avgScope1IntensityGwp20: tBoe > 0 ? wS1Gwp20Sum / tBoe : (tScope1Gwp20 > 0 ? null : 0),
         avgScope2Intensity: tBoe > 0 ? wS2Sum / tBoe : (tScope2 > 0 ? null : 0),
         avgScope3Intensity: tBoe > 0 ? wS3Sum / tBoe : (tScope3 > 0 ? null : 0),
         avgFlaringIntensity: tBoe > 0 ? wFlaringSum / tBoe : (tFlaringEm > 0 ? null : 0),
         totalCo2Emissions: tCo2e,
         totalCo2EmissionsGwp20: tCo2eGwp20,
         totalScope1: tScope1,
+        totalScope1Gwp20: tScope1Gwp20,
         totalScope2: tScope2,
         totalScope3: tScope3,
         totalFlaringEmissions: tFlaringEm,
@@ -457,6 +465,10 @@ const CarbonIntensity = () => {
     gwpHorizon === "20"
       ? stats.totalCo2EmissionsGwp20
       : stats.totalCo2Emissions;
+  const currentDisplayScope1Intensity =
+    gwpHorizon === "20" ? stats.avgScope1IntensityGwp20 : stats.avgScope1Intensity;
+  const currentDisplayTotalScope1 =
+    gwpHorizon === "20" ? stats.totalScope1Gwp20 : stats.totalScope1;
 
   if (loading && regionalData.length === 0)
     return (
@@ -563,17 +575,17 @@ const CarbonIntensity = () => {
                 <span
                   className="total-value scope1"
                   style={
-                    stats.avgScope1Intensity === null
+                    currentDisplayScope1Intensity === null
                       ? { fontSize: "1.25rem", color: "#f59e0b" }
                       : undefined
                   }
                 >
-                  {stats.avgScope1Intensity === null
+                  {currentDisplayScope1Intensity === null
                     ? "Pending Production"
-                    : (stats.avgScope1Intensity ?? 0).toFixed(2)}
+                    : (currentDisplayScope1Intensity ?? 0).toFixed(2)}
                 </span>
                 <span className="kpi-unit">
-                  {stats.avgScope1Intensity === null ? "" : "kg CO₂e / BOE"}
+                  {currentDisplayScope1Intensity === null ? "" : "kg CO₂e / BOE"}
                 </span>
               </div>
               <div className="kpi-footer">
@@ -586,7 +598,7 @@ const CarbonIntensity = () => {
                   </strong>
                 </span>
                 <span>
-                  Total S1: <strong>{formatNumber(stats.totalScope1)} t</strong>
+                  Total S1: <strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
                 </span>
               </div>
             </div>
@@ -778,11 +790,21 @@ const CarbonIntensity = () => {
               <BarChart
                 data={regionalData.map((d) => ({
                   name: d.facility_name,
-                  scope1: Number((d.scope1_intensity || 0).toFixed(2)),
+                  scope1: Number(
+                    (
+                      (gwpHorizon === "20"
+                        ? d.scope1_intensity_gwp20 || d.scope1_intensity
+                        : d.scope1_intensity) || 0
+                    ).toFixed(2)
+                  ),
                   scope2: Number((d.scope2_intensity || 0).toFixed(2)),
                 }))}
                 bars={[
-                  { dataKey: "scope1", name: "Scope 1 (Direct)", color: "#2563eb" },
+                  {
+                    dataKey: "scope1",
+                    name: gwpHorizon === "20" ? "Scope 1 (GWP₂₀ Direct)" : "Scope 1 (Direct)",
+                    color: "#2563eb",
+                  },
                   { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#0ea5e9" },
                 ]}
                 xKey="name"

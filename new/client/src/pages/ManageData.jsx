@@ -739,7 +739,7 @@ const ManageDataInner = () => {
             const res = await api.get('/facilities');
             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setFacilities(data);
-            const regions = [...new Set(data.flatMap(f => [f.region, f.location]).filter(Boolean))].sort();
+            const regions = [...new Set(data.flatMap(f => [f.region_identifier, f.location]).filter(Boolean))].sort();
             const userLoc = (user?.location || '').trim();
             if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {
                 regions.unshift(userLoc);

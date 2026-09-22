@@ -174,7 +174,7 @@ const EmissionsMap = () => {
 
       // Derive distinct regions and activities directly from the database facilities
       const regions = [
-        ...new Set(fetchedFacilities.flatMap((f) => [f.region, f.location]).filter(Boolean)),
+        ...new Set(fetchedFacilities.flatMap((f) => [f.region_identifier, f.location]).filter(Boolean)),
       ].sort();
       const userLoc = (user?.location || '').trim();
       if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {
@@ -233,10 +233,11 @@ const EmissionsMap = () => {
     const medThreshold = viewMode === "total" ? 10000 : 100;
 
     const filtered = facilities.filter((f) => {
-      // Region Filter
+      // Region Filter — use region_identifier (= f.region ?? f.name) so facilities
+      // uploaded via bulk uploader (where region=NULL) still match correctly.
       const matchesRegion =
         filters.region === "all" ||
-        (f.region && f.region === filters.region);
+        f.region_identifier === filters.region;
 
       // Activity Filter
       const matchesActivity =
@@ -245,7 +246,7 @@ const EmissionsMap = () => {
 
       // Search Filter
       const name = (f.name || "").toLowerCase();
-      const region = (f.region || "").toLowerCase();
+      const region = (f.region_identifier || "").toLowerCase();
       const division = (f.division || "").toLowerCase();
       const matchesSearch =
         !searchLower ||

@@ -106,3 +106,9 @@ CarbonTech_PitchDeck_StartupAlgeria.pptx
 
 # Graphify temporary cache
 graphify-out/cache/
+
+# Playwright and test runs
+test_results/
+**/test-results/
+playwright-report/
+**/storageState.json

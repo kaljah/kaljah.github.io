@@ -772,6 +772,8 @@ def save_cbam_export():
             details=f'{action} CBAM Export: {product_name} ({quantity_tonnes} t) to {export_destination}'
         )
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return jsonify({'message': 'CBAM Export saved successfully', 'id': record.id})
     except Exception as e:
         import traceback
@@ -804,6 +806,8 @@ def delete_cbam_export(record_id):
             details=f'Deleted CBAM Export: {prod_name}'
         )
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return jsonify({'message': 'CBAM export deleted successfully'})
     except Exception as e:
         import traceback

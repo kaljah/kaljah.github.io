@@ -406,12 +406,17 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
         except (ValueError, TypeError):
             hhv = 0
 
+    if hhv and not payload.get("hhv"):
+        payload["hhv"] = hhv
+
     calc_inputs = payload.get("calc_inputs") or {}
     inputs = calc_inputs.get(process) or {}  # Extract specific inputs
 
     # NEW: Merge root payload into inputs to support flat CSV data
     # This allows keys like 'comp_duration' or 'unload_diam' to be read directly from the CSV row
     inputs = {**payload, **inputs}
+    if hhv and not inputs.get("hhv"):
+        inputs["hhv"] = hhv
 
     is_specific = payload.get("factor_source") == "specific" or payload.get(
         "isSpecific"
@@ -426,7 +431,7 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
     # Try to use the new API 2021 compliant calculators first
     uncertainties = factor_data.get("uncertainty", {})
     api_res = api2021_dispatcher.dispatch(
-        process, payload, factor_data, uncertainties, gwp_dict=gwp_dict
+        process, inputs, factor_data, uncertainties, gwp_dict=gwp_dict
     )
 
     def get_val(r):

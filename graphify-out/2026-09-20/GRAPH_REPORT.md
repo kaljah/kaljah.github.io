@@ -1,24 +1,24 @@
 # Graph Report - H2  (2026-09-20)
 
 ## Corpus Check
-- 698 files · ~2,780,285 words
+- 728 files · ~2,809,099 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4783 nodes · 8119 edges · 394 communities (314 shown, 80 thin omitted)
+- 5148 nodes · 8486 edges · 406 communities (338 shown, 68 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 648 edges (avg confidence: 0.51)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e750f776`
+- Built from commit: `9a69efc8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- emissions.py
-- audit.py
+- Master Calculation Register
+- TestBoundaryResilienceAPI
 - Scope1Form.jsx
-- emission_factors_routes.py
+- qaqc.py
 - Sentinel5PService
 - calculate_co2e
 - dependencies
@@ -26,23 +26,23 @@
 - DashboardEnhanced.jsx
 - server/app.py
 - ._execute_sync_thread
-- login_required
+- dashboard.py
 - User
-- TestStatisticalZScoreAndIQRBattery
+- get_allowed_facility_ids
+- get_current_user
 - log_activity_and_notify
-- auth.py
 - TestAllProcessTypesTier3
 - test_numerical_invariants.py
 - pages/ManageData.jsx
 - CalculationDispatcher
-- useAuth
+- NotificationCenter.jsx
 - 5. CHANGELOG & DRIFT LOG
-- test_emission_factor_selection.py
+- 4. HTTP & Application Layer Hardening
 - test_audit.py
 - dependencies
 - Authentication and User-Specific Database Implementation Walkthrough
 - Scope1ImportWizard.jsx
-- test_csv_engine_matrix.py
+- 2. Calculation Inventory by Type
 - Backend (Server)
 - ui_format_number
 - test_all_apis_health.py
@@ -50,13 +50,13 @@
 - Master Calculation Register
 - 4. Formal Specifications for Scope 1 Direct Emissions
 - Frontend (Client)
-- Scope2Form.jsx
+- Emissions.jsx
 - Tasks: [FEATURE NAME]
 - test_qaqc_diagnostics.py
 - TestEdgeCases
 - test_audit_remediation.py
-- User
-- useToast
+- Emission
+- Comprehensive Database Architecture, ACID Integrity & Concurrency Audit
 - Project Metadata
 - build
 - env.py
@@ -64,12 +64,12 @@
 - Desktop App Dev Tools
 - ghg_tool/app.py
 - files
-- test_boundary_and_negative.py
+- 4. Critical Observations
 - test_independent_differential.py
 - NPM Scripts
 - Pitch Deck Builder
 - ModernReportGenerator.js
-- TestDifferentialScope1
+- test_all_process_types_matrix.py
 - test_aggregation_reconciliation.py
 - Graphify Workflow Tools
 - Tasks: [FEATURE NAME]
@@ -91,37 +91,37 @@
 - Facility Imagery
 - Vite Assets
 - Python Requirements
-- EquipmentFugitiveCalculator
+- Enterprise Production Readiness, Deployment & Disaster Recovery Audit
 - test_deep_button_audit.py
-- calculations/units.py
-- .test_ogmp_facility_level_5_requires_level_4_bottom_up
+- get_active_gwp
+- models.py
 - Feature Specification: Batch Approve/Reject Pending Records
-- CogenAllocationCalculator
+- .test_steam_energy_units_conversion
 - new/.specify/scripts/powershell/common.ps1
 - .specify/scripts/powershell/common.ps1
-- test_all_bulk_imports.py
+- Facility
 - Feature Specification: [FEATURE NAME]
 - Feature Specification: [FEATURE NAME]
 - extract_val
 - Implementation Tasks: QA/QC Module (IPCC & ISO 14064)
-- qaqc.py
+- custom_factors.py
 - send_email
 - Core Principles
 - Core Principles
 - Core Principles
 - Core Principles
-- client/package.json
+- scripts
 - test_master_button_audit.py
-- TestCalculationMutations
+- .calculate_co2e
 - Implementation Tasks: Batch Approve/Reject Pending Records
 - Implementation Plan: [FEATURE]
 - Implementation Plan: [FEATURE]
 - Existing Entities to Modify
 - 75f2d6f4-9958-4818-85e3-afee007ac5ca/implementation_plan.md
-- dataset_generator.py
+- TestCogenAllocationBattery
 - Comprehensive GHG Engine & MRV Platform Independent Validation Report
 - status.py
-- TestGWPHorizonsAndProfilesBattery
+- test_csv_engine_matrix.py
 - generate_1k_comprehensive.py
 - new/.specify/scripts/powershell/create-new-feature.ps1
 - .specify/scripts/powershell/create-new-feature.ps1
@@ -129,23 +129,23 @@
 - [CHECKLIST TYPE] Checklist: [FEATURE NAME]
 - Research & Design Decisions: Batch Approve/Reject
 - Research & Design Decisions: QA/QC Module (IPCC & ISO 14064)
-- Final Comprehensive GHG Platform Validation Report
-- test_battery_midstream_process_equipment.py
-- formik
+- FINAL VALIDATION REPORT
+- BlowdownCalculator
+- 3. Subsystem Architecture Analysis
 - Solar PV Calculator - Complete Feature Implementation Plan
 - papaparse
-- test_battery_concurrency_stress_invariants.py
-- TestDifferentialScope2and3
-- tailwind-merge
-- chart.js
+- test_production_smoke.py
+- TestCalculationMutations
+- test_api_security.py
+- Phase 1 — Testing Inventory
 - File-by-File Analysis
 - jspdf-autotable
-- .test_scope2_location_based_grid_averages
+- test_security_hardening.py
 - TestRegressionArchive
 - TestUnauthenticatedAccess
-- test_user_profile_update.py
-- .test_scope3_tier2_average_data_transport
-- .test_scope3_category11_use_of_sold_products_oil_and_gas
+- Calculation Validation Report
+- TestUnitConversionInvarianceMatrix
+- audit.py
 - 001-batch-approve-reject/data-model.md
 - 001-batch-approve-reject/quickstart.md
 - 002-qa-qc-ipcc-iso14064/quickstart.md
@@ -153,41 +153,41 @@
 - test_golden_dataset_validation.py
 - GHGCalculator
 - AnomalyDetector
-- .test_carbon_intensity_metric_equations
-- sqlite3
+- NumberedCanvas
+- login_required
 - 3. Dimensional Consistency & Physical Equations
 - Complete Repository Audit & Architecture Baseline
-- .test_multiplicative_product_propagation_formula
 - normalize_gas_volume_to_standard
+- TestExhaustiveTransitivity
 - test_ui_audit_visuals.mjs
-- .test_methane_loss_rate_ogmp_equation
+- UserManagement.jsx
 - CSV Spreadsheet Pro - Enhanced Features Walkthrough
 - background_processor.py
 - Detailed Implementation Walkthrough
-- TestScope2ProcessMatrix
-- .test_dashboard_summary_identity_and_compact_formatting
-- TestBulkCSVIngestionAllTiersAndScopes
+- useToast
+- TestMemoryLeakAndSustainedLoops
+- test_deep_injection_matrix.py
 - antigravity_guide/SKILL.md
 - 🎨 HIGH-TIER 3D CAD RENDERING COMPLETE!
-- class-variance-authority
-- disable_limiter_for_tests
+- test_log_handler.py
+- conftest.py
 - PVGIS Data Analyzer - Walkthrough
-- .test_scope2_market_based_contractual_instruments
-- get_eeio_factor
+- MockSession
+- 3. Test Quality & Rigor Audit
 - Proposed Changes
-- framer-motion
+- test_rate_limiting.py
 - Dashboard Categorical Overview Fixes - Walkthrough
 - Complete CAD/Design View - All 12 Gaps
-- test_audit_bug_fixes.py
-- TestProcessCategoryIntegrity
-- test_component_fugitive_calculator_scalar_counts
+- Enterprise Performance, Stress & Latency Benchmark Audit
+- .test_ogmp_facility_level_5_requires_level_4_bottom_up
+- eslint-plugin-react-hooks
 - CAD Enhancements: Dimensions & Module Overlay - Complete
-- .test_boe_production_normalization_exactness
+- leaflet
 - 🎨 SolarEPC-Pro UI/UX Enhancement - Complete
 - Solar PV Calculator - Advanced Features Implementation Summary
 - 3. Security, Authorization & RBAC
 - Examples
-- test_tank_flashing_calculator_null_gor
+- 2. Key WCAG 2.1 Level AA Compliance Findings
 - SolarEPC-Pro v3.0 - Complete Implementation
 - CAD/Design View - Gap Analysis
 - What Will Be DELETED
@@ -308,43 +308,50 @@
 - c9768850-e325-4576-9c89-09f39787fb7c/task.md
 - cb1e2599-6eda-488f-8f5a-372c19ceca8f/task.md
 - d9e613de-bfed-4e7c-b6f4-e6c436fce153/task.md
-- .test_flaring_rate_percentage_equation
-- .test_epa_wec_part99_fee_schedules_and_thresholds
+- @radix-ui/react-slot
+- react-leaflet
 - 2. Detailed Methodological Analysis by Subsystem
 - test_definitions.py
 - TestExhaustiveUnitInvertibility
-- test_background_processor_scope3_units
-- notifications.py
-- test_dashboard_intensity_mmscf_scaling
+- Cross-Browser Compatibility & Responsive Viewport Audit
+- Independent GHG Emissions & MRV Calculation Validation Report
+- sqlite3
 - TestUnitConversions
-- _clean_float
-- .test_bidirectional_conversions_exactness
-- @vitejs/plugin-react
+- TestTier1DrillingMud
+- react-router-dom
+- @playwright/test
 - run_full_validation_suite.py
-- test_deep_injection_matrix.py
-- react-dom
-- .test_temperature_unit_conversions
+- prettier
+- rollup-plugin-visualizer
+- TestTier1Flaring
+- @testing-library/react
+- vitest
+- Mandatory Human Review & Domain Expert Governance Register
+- Phase 49 — Human Review Required
+- test_dehydrator_stripping_gas_calculation
+- .test_bidirectional_conversions_exactness
 - .test_srss_subadditivity_property
 - .test_confidence_interval_bounds_ordering
 - .test_zero_emission_uncertainty_bounds
-- Human Review & Domain Expert Governance Gates
 - .test_api_example_4_5_flaring_dual_efficiency
-- get_job_status
-- react
+- test_audit_bug_fixes.py
 - .test_ipcc_uncertainty_srss_worked_example
 - .test_scope3_tier1_spend_based_eeio
 - .test_scope3_tier3_supplier_specific_pcf
+- .test_multiplicative_product_propagation_formula
 - .test_additive_sum_propagation_formula
 - .test_srss_inventory_aggregation_approach1
 - .test_coverage_factor_and_non_negative_bounds
-- .test_scope2_indirect_steam_thermodynamic_equation
+- test_emission_factor_selection.py
+- convert_factor_to_kg_per_unit
 - validation/__init__.py
 - regression/__init__.py
+- dataset_generator.py
 
 ## God Nodes (most connected - your core abstractions)
-1. `CalculationDispatcher` - 132 edges
+1. `CalculationDispatcher` - 134 edges
 2. `login_required()` - 131 edges
-3. `User` - 109 edges
+3. `User` - 112 edges
 4. `get_current_user()` - 104 edges
 5. `Facility` - 93 edges
 6. `Emission` - 77 edges
@@ -356,14 +363,14 @@
 ## Surprising Connections (you probably didn't know these)
 - `Methane Intensity Analytics UI` --conceptually_related_to--> `Emission Calculation Engines`  [INFERRED]
   deck_assets/ui_methane.png → README.md
+- `seed_data()` --calls--> `Facility`  [INFERRED]
+  seed_demo_data.py → new/server/models.py
+- `seed_data()` --calls--> `Emission`  [INFERRED]
+  seed_demo_data.py → new/server/models.py
 - `TestCompressorSealBattery` --uses--> `IndependentFugitiveModel`  [INFERRED]
   new/server/tests/test_battery_compressor_fugitives_equipment.py → validation/reference_model/fugitives.py
 - `TestEquipmentFugitiveBattery` --uses--> `IndependentFugitiveModel`  [INFERRED]
   new/server/tests/test_battery_compressor_fugitives_equipment.py → validation/reference_model/fugitives.py
-- `TestComponentFugitiveBattery` --uses--> `IndependentFugitiveModel`  [INFERRED]
-  new/server/tests/test_battery_compressor_fugitives_equipment.py → validation/reference_model/fugitives.py
-- `TestStoichiometricMassBalanceBattery` --uses--> `IndependentScope2Model`  [INFERRED]
-  new/server/tests/test_battery_stoichiometry_indirect_energy.py → validation/reference_model/scope2.py
 
 ## Import Cycles
 - None detected.
@@ -372,99 +379,99 @@
 - **Graphify Tooling and Documentation** — agents_rules_graphify, agents_workflows_graphify, agents_rules_graphify_cli, agents_rules_graphify_mcp [EXTRACTED 1.00]
 - **Emission Calculation & Visualization Flow** — new_server_calculations, deck_assets_ui_dashboard, deck_assets_chart_industry_emissions [INFERRED 0.80]
 
-## Communities (394 total, 80 thin omitted)
+## Communities (406 total, 68 thin omitted)
 
-### Community 0 - "emissions.py"
-Cohesion: 0.06
-Nodes (55): add_bulk_upload(), add_emission(), approve_batch_emissions(), approve_emission(), bulk_delete_emissions(), delete_emission(), _escape_like(), export_emissions() (+47 more)
+### Community 0 - "Master Calculation Register"
+Cohesion: 0.05
+Nodes (37): CALC-001: Stationary Combustion — Tier 1 / Tier 2 Fuel-Based, CALC-002: Stationary Combustion — Tier 3 Gas Chromatographic Carbon Balance, CALC-003: Flaring — API Compendium Dual-Efficiency Stoichiometric Combustion, CALC-004: Mud Degassing / Well Drilling, CALC-005: Well Completion Flowback, CALC-006: Liquids Unloading, CALC-007: Vessel Blowdown & Equipment Depressurization, CALC-008: Storage Tanks — GOR Flash Gas & Breathing Losses (+29 more)
 
-### Community 1 - "audit.py"
-Cohesion: 0.27
-Nodes (14): audit_access_required(), _build_audit_query(), export_audit_logs(), get_audit_filters(), get_audit_logs(), get_audit_stats(), route, Prevent CSV formula injection (DDE/Excel macro execution) including leading… (+6 more)
+### Community 1 - "TestBoundaryResilienceAPI"
+Cohesion: 0.17
+Nodes (7): API endpoints under hostile, oversized, or malformed inputs., API endpoints must cleanly reject NaN and Infinity with 400/422 and 0 crashes., 1 MB giant string payload in text fields must not cause server crash or memory…, Formula injection patterns (=cmd|, @SUM, +1+1) must not be executed., Malformed, empty, or non-dictionary JSON payloads must return 400/422 cleanly., Arabic, Chinese, emojis, and special control characters handled cleanly., TestBoundaryResilienceAPI
 
 ### Community 2 - "Scope1Form.jsx"
-Cohesion: 0.10
-Nodes (21): CustomDropdown(), EmissionFactorOption(), AGRForm(), BlowdownForm(), CombustionForm(), HHV_REQUIRED_PROCESSES, CompletionsForm(), DehydratorForm() (+13 more)
+Cohesion: 0.08
+Nodes (26): CalculationDetails(), ConfirmModal(), CustomDropdown(), EmissionFactorOption(), EmissionResult(), AGRForm(), BlowdownForm(), CombustionForm() (+18 more)
 
-### Community 3 - "emission_factors_routes.py"
-Cohesion: 0.07
-Nodes (39): get_factor_by_process_category(), get_factor_by_segment(), get_factors_by_segment_and_category(), Emission Factors Database - API Compendium 2021 Complete catalog from Sections…, Returns all emission factors applicable to the given segment. Args: segment…, Returns all emission factors for the given process category. Args:…, Returns all emission factors for a specific segment and process category. Args:…, Emission Factors Database - API Compendium 2021 Comprehensive emission factors… (+31 more)
+### Community 3 - "qaqc.py"
+Cohesion: 0.06
+Nodes (50): get_factor_by_process_category(), get_factor_by_segment(), get_factors_by_segment_and_category(), Emission Factors Database - API Compendium 2021 Complete catalog from Sections…, Returns all emission factors applicable to the given segment. Args: segment…, Returns all emission factors for the given process category. Args:…, Returns all emission factors for a specific segment and process category. Args:…, Emission Factors Database - API Compendium 2021 Comprehensive emission factors… (+42 more)
 
 ### Community 4 - "Sentinel5PService"
 Cohesion: 0.08
 Nodes (21): Any, Sentinel-5P (TROPOMI) Satellite Methane Service Connects to ESA Copernicus Data…, Retrieves a valid JWT access token from Copernicus CDSE with caching., Returns tile layer configuration, color ramps, and metadata for Leaflet., Queries Copernicus STAC/OData API for real Sentinel-5P methane data around…, Service for querying ESA Copernicus Sentinel-5P TROPOMI methane measurements., Estimates methane mass emission rate (kg CH4/hr) from a Sentinel-5P column…, Tests authentication against Copernicus Data Space Ecosystem Keycloak endpoint.… (+13 more)
 
 ### Community 5 - "calculate_co2e"
-Cohesion: 0.05
-Nodes (63): convert_factor_to_kg_per_unit(), _normalize_efficiency(), _normalize_unit_str(), API Compendium 2021 - Section 5: Combustion and Flaring Implementation of…, Standard fuel-based combustion calculation with API §4.2.1 thermodynamic…, Defensively normalizes efficiency inputs provided as either fractional ratios…, Dual-efficiency flaring model (API 5-3, 5-4) with API §4.2.1 thermodynamic…, Standard Quantity * EF fallback with unit handling and tier-aware uncertainty. (+55 more)
+Cohesion: 0.06
+Nodes (58): _normalize_efficiency(), API Compendium 2021 - Section 5: Combustion and Flaring Implementation of…, Standard fuel-based combustion calculation with API §4.2.1 thermodynamic…, Defensively normalizes efficiency inputs provided as either fractional ratios…, Dual-efficiency flaring model (API 5-3, 5-4) with API §4.2.1 thermodynamic…, API Compendium 2021 - Section 7: Fugitive Emissions Implementation of equations…, API Section 7.2.3 - Compressor seals, Average Factor Method - counts * EF component_counts: dict of {type: count} (+50 more)
 
 ### Community 6 - "dependencies"
-Cohesion: 0.09
-Nodes (23): axios, clsx, jspdf, leaflet, lucide-react, dependencies, axios, clsx (+15 more)
+Cohesion: 0.07
+Nodes (29): axios, chart.js, class-variance-authority, clsx, formik, framer-motion, jspdf, lucide-react (+21 more)
 
 ### Community 7 - "devDependencies"
 Cohesion: 0.07
-Nodes (27): autoprefixer, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, devDependencies, autoprefixer (+19 more)
+Nodes (29): autoprefixer, eslint, @eslint/js, eslint-plugin-react-refresh, globals, jsdom, devDependencies, autoprefixer (+21 more)
 
 ### Community 8 - "DashboardEnhanced.jsx"
-Cohesion: 0.10
-Nodes (25): DashboardEnhanced, DEFAULT_COLORS, PieChart(), SkeletonCard(), calculateForecast(), DashboardEnhanced(), calculateTrend(), formatCompactNumber() (+17 more)
+Cohesion: 0.08
+Nodes (32): DashboardEnhanced, SbtiDashboard, BarChart(), LineChart(), DEFAULT_COLORS, PieChart(), Scope2Form(), Scope3Form() (+24 more)
 
 ### Community 9 - "server/app.py"
-Cohesion: 0.13
-Nodes (21): errorhandler, listens_for, after_request(), before_request(), ensure_admin_seeded(), get_csrf_token(), health_check(), health_liveness() (+13 more)
+Cohesion: 0.12
+Nodes (21): errorhandler, listens_for, after_request(), before_request(), get_csrf_token(), handle_csrf_error(), health_check(), health_liveness() (+13 more)
 
 ### Community 10 - "._execute_sync_thread"
 Cohesion: 0.11
 Nodes (9): Runs _process_file_thread synchronously for deterministic assertion., Validates European semicolon-separated CSV parsing., Validates Tab-separated (TSV) and Pipe-separated CSV parsing., Validates UTF-8 with BOM and Windows-1252 / ISO-8859-1 encodings with accented…, Validates Windows CRLF (\r\n) and legacy Mac CR (\r) line terminators., Validates resilient skipping of empty lines and padded whitespace in headers…, Validates zero-byte and header-only empty files., Verifies that rows lacking process type are rejected deterministically with… (+1 more)
 
-### Community 11 - "login_required"
-Cohesion: 0.05
-Nodes (99): cached, BaseYear, BaseYearRecalculation, EmissionSource, Goal, MitigationProject, MitigationRecord, ReportingMetadata (+91 more)
+### Community 11 - "dashboard.py"
+Cohesion: 0.06
+Nodes (52): cached, create_base_year_recalculation(), get_available_years(), get_base_year(), get_batch_dashboard_data(), get_categorical_breakdown(), get_dashboard_summary(), _get_global_cache_epoch() (+44 more)
 
 ### Community 12 - "User"
-Cohesion: 0.10
-Nodes (21): admin_user(), client(), it_admin_user(), fixture, Test suite for /dashboard/uncertainty endpoint. Covers: auth, RBAC,…, Specifying year= returns that year in the response., scope=1 should only return Scope 1 categories (no Scope 2/3 groups)., export=csv should return text/csv with correct headers. (+13 more)
+Cohesion: 0.04
+Nodes (53): User, seed_admin(), Defect 9: Verify save_cbam_export checks facility access for existing records…, Verify QA/QC dashboard scopes total and active facilities to the user's allowed…, Verify viewer/auditor blocked from mutate on Scope 2, and creator ownership…, test_cbam_export_existing_record_facility_check(), test_qaqc_dashboard_regional_facility_scoping(), test_scope2_rbac_and_creator_ownership() (+45 more)
 
-### Community 13 - "TestStatisticalZScoreAndIQRBattery"
-Cohesion: 0.10
-Nodes (10): detector(), fixture, parametrize, Battery 3: Statistical Anomaly Detection & Outlier QA/QC Battery.…, Verifies behavior when insufficient historical data is present., Verifies detection when historical readings are perfectly uniform (std=0)., Verifies Z-score and IQR fence detection against known mathematical…, TestConstantHistoryBattery (+2 more)
+### Community 13 - "get_allowed_facility_ids"
+Cohesion: 0.09
+Nodes (44): add_bulk_upload(), add_emission(), approve_batch_emissions(), approve_emission(), bulk_delete_emissions(), delete_emission(), _escape_like(), export_emissions() (+36 more)
 
-### Community 14 - "log_activity_and_notify"
+### Community 14 - "get_current_user"
 Cohesion: 0.08
-Nodes (52): ActivityLog, CbamProductExport, LevelUpgradeLog, Notification, clear_dashboard_cache(), Updates global epoch in shared DB state and invalidates local worker heap., add_production(), bulk_import_production() (+44 more)
+Nodes (52): CbamProductExport, LevelUpgradeLog, clear_dashboard_cache(), Updates global epoch in shared DB state and invalidates local worker heap., add_production(), bulk_import_production(), delete_cbam_export(), delete_ogmp_survey() (+44 more)
 
-### Community 15 - "auth.py"
-Cohesion: 0.07
-Nodes (48): limit, Persistent key-value store for application-wide settings (GWP standard, OGMP…, SystemSetting, admin_required(), admin_reset_password(), change_password(), delete_user(), forgot_password() (+40 more)
+### Community 15 - "log_activity_and_notify"
+Cohesion: 0.08
+Nodes (50): exempt, Persistent key-value store for application-wide settings (GWP standard, OGMP…, SystemSetting, admin_required(), admin_reset_password(), change_password(), delete_user(), forgot_password() (+42 more)
 
 ### Community 16 - "TestAllProcessTypesTier3"
-Cohesion: 0.06
-Nodes (14): parametrize, Every single process type in PROCESS_TYPES must calculate successfully in Tier…, Verify compute_emissions pipeline routes and handles all canonical process…, Exhaustive test of all 15 Scope 3 categories per GHG Protocol Corporate Value…, Strict verification of physical conservation laws across every process type., Conservation Law: 0 activity MUST produce exactly 0.0 emissions., Monotonicity Law: Doubling activity data MUST double emissions., Verify additional process types not in PROCESS_TYPES table (indirect steam,… (+6 more)
+Cohesion: 0.08
+Nodes (7): parametrize, Strict verification of physical conservation laws across every process type., Conservation Law: 0 activity MUST produce exactly 0.0 emissions., Monotonicity Law: Doubling activity data MUST double emissions., Verify specific engineering physics for every process type that supports Tier 3., TestAllProcessTypesTier3, TestPhysicalConservationAcrossAllProcesses
 
 ### Community 17 - "test_numerical_invariants.py"
-Cohesion: 0.08
-Nodes (60): CombustionCalculator, FlaringCalculator, ComponentFugitiveCalculator, CompressorSealCalculator, IndirectSteamCalculator, AGRCalculator, DehydratorCalculator, StoichiometricCalculator (+52 more)
+Cohesion: 0.07
+Nodes (60): ComponentFugitiveCalculator, CompressorSealCalculator, EquipmentFugitiveCalculator, CogenAllocationCalculator, IndirectSteamCalculator, AGRCalculator, DehydratorCalculator, StoichiometricCalculator (+52 more)
 
 ### Community 18 - "pages/ManageData.jsx"
-Cohesion: 0.11
-Nodes (14): RFC-4180, ManageData, BatchReviewWizard(), detectAnomalies(), QUICK_REJECTION_REASONS, ErrorBoundary, ManageDataInner(), EmissionsMap() (+6 more)
+Cohesion: 0.17
+Nodes (13): RFC-4180, ManageData, BatchReviewWizard(), detectAnomalies(), QUICK_REJECTION_REASONS, ManageDataInner(), EmissionsMap(), getUserOperationalDefaults() (+5 more)
 
 ### Community 19 - "CalculationDispatcher"
-Cohesion: 0.05
-Nodes (50): CalculationDispatcher, Normalizes a volume value to the specified target unit., Strictly extracts a required float parameter without falling back to defaults., Cleanly parses a percentage (0-100) or fraction (0-1) into a 0.0 - 1.0 ratio., Extracts a percentage or fraction strictly and normalizes to 0.0 - 1.0., Extracts an optional percentage or fraction normalized to 0.0 - 1.0., Executes the calculation for the given process type. - Tier 1 (default /…, Routes a calculation request to the appropriate API 2021 calculator. (+42 more)
+Cohesion: 0.03
+Nodes (58): CalculationDispatcher, Normalizes a volume value to the specified target unit., Standard Quantity * EF fallback with unit handling and tier-aware uncertainty., Strictly extracts a required float parameter without falling back to defaults., Cleanly parses a percentage (0-100) or fraction (0-1) into a 0.0 - 1.0 ratio., Extracts a percentage or fraction strictly and normalizes to 0.0 - 1.0., Extracts an optional percentage or fraction normalized to 0.0 - 1.0., Executes the calculation for the given process type. - Tier 1 (default /… (+50 more)
 
-### Community 20 - "useAuth"
-Cohesion: 0.13
-Nodes (22): AdminRoute(), AuditRoute(), ITRoute(), NonITRoute(), PrivateRoute(), SuperuserRoute(), Layout(), Sidebar() (+14 more)
+### Community 20 - "NotificationCenter.jsx"
+Cohesion: 0.28
+Nodes (7): getTypeConfig(), headerActionBtn, iconBtnStyle, NotificationCenter(), NotifRow(), relativeTime(), TYPE_CONFIG
 
 ### Community 21 - "5. CHANGELOG & DRIFT LOG"
 Cohesion: 0.07
 Nodes (26): 1. ARCHITECTURAL MAP & ENTRY POINTS, [2026-09-14T23:44:00Z] - ARCHITECTURAL KNOWLEDGE GRAPH INITIALIZATION, [2026-09-15T00:01:00Z] - SCOPE 1 EMISSION DETAIL VIEWER REMEDIATION & THEME ALIGNMENT, [2026-09-15T00:52:00Z] - FULL-STACK RESILIENCE & RUNTIME VERIFICATION REMEDIATION, [2026-09-15T01:13:00Z] - FULL-STACK BUG REMEDIATION & UX HARDENING, [2026-09-15T01:36:00Z] - E2E PRODUCT EXPERIENCE & FEATURE POLISH REMEDIATION (DEF-09 TO DEF-12), [2026-09-16T01:10:00Z] - COMPREHENSIVE PRODUCT AUDIT REMEDIATION (DEF-01 TO DEF-08 & FINDINGS 2, 5), [2026-09-16T01:20:00Z] - ADVERSARIAL STRESS-TEST & DETERMINISTIC VERIFICATION AUDIT (CSV UPLOADERS & METROLOGICAL ENGINES) (+18 more)
 
-### Community 22 - "test_emission_factor_selection.py"
-Cohesion: 0.08
-Nodes (16): Grid Emission Factors - electricity_factors.py Central registry for indirect…, dispatcher(), fixture, parametrize, Emission Factor Selection, Resolution, and Precedence Verification Suite.…, Tests convert_factor_to_kg_per_unit dimensional transformations., Validates structure and completeness of the API 2021 factor catalog., API Compendium 2021 database must contain all published factors. (+8 more)
+### Community 22 - "4. HTTP & Application Layer Hardening"
+Cohesion: 0.12
+Nodes (16): 1. Executive Security Summary, 2.1 Password Complexity & Storage, 2.2 Session Management & Defense, 2. Authentication Lifecycle & Session Security, 3.1 Segregation of Duties (SoD) Verification, 3.2 Facility-Level Row-Level Security (RLS) & IDOR Defense, 3.3 Maker-Checker Verification Protocol, 3. Authorization, RBAC & Segregation of Duties (SoD) (+8 more)
 
 ### Community 23 - "test_audit.py"
 Cohesion: 0.17
@@ -479,12 +486,12 @@ Cohesion: 0.04
 Nodes (44): 1. User Registration, 2. User Login, 3. User Profile Dropdown, 4. Logout Functionality, ✅ All Tests Passed Successfully, Authentication and User-Specific Database Implementation Walkthrough, Authentication Flow, Backend (+36 more)
 
 ### Community 26 - "Scope1ImportWizard.jsx"
-Cohesion: 0.06
-Nodes (19): autoDetect(), FIELD_GROUPS, Icon, PROCESS_CATALOGUE, Scope1ImportWizard(), STEPS, autoDetect(), FIELD_GROUPS (+11 more)
+Cohesion: 0.05
+Nodes (24): autoDetectMapping(), ColumnMappingWizard(), Icons, STEPS, TEMPLATES, autoDetect(), FIELD_GROUPS, Icon (+16 more)
 
-### Community 27 - "test_csv_engine_matrix.py"
-Cohesion: 0.06
-Nodes (27): BaseCalculator, Validates that all required inputs are present, finite, and non-negative., Calculates absolute uncertainty and non-negative bounds at 95% CI (k=2.0 per…, Formats the final calculation result into a standard structure., Base class for all API Compendium 2021 calculation modules. Provides common…, ProductionData, Verify calculate_uncertainty applies k=2.0 coverage factor for 95% CI., test_base_calculator_uncertainty_k_factor() (+19 more)
+### Community 27 - "2. Calculation Inventory by Type"
+Cohesion: 0.05
+Nodes (38): 1. Calculation Module Overview, 2.10 Component Fugitives, 2.11 Equipment Fugitives, 2.12 Compressor Seal Fugitives, 2.13 Acid Gas Removal (AGR), 2.14 Glycol Dehydrators, 2.15 Indirect Steam / Heat (Scope 1 or 2 boundary), 2.16 Cogeneration Allocation (+30 more)
 
 ### Community 28 - "Backend (Server)"
 Cohesion: 0.03
@@ -499,8 +506,8 @@ Cohesion: 0.47
 Nodes (5): get_sample_payload(), Replace route parameter placeholders cleanly without modifying host., Provide realistic sample payloads for POST/PUT endpoints., resolve_rule(), run_api_health_audit()
 
 ### Community 31 - "App.jsx"
-Cohesion: 0.09
-Nodes (27): api, fetchCsrfToken(), App(), AuditTrail, CarbonIntensity, Diagnostics, EmissionsMap, MethaneIntensity (+19 more)
+Cohesion: 0.10
+Nodes (32): api, fetchCsrfToken(), AdminRoute(), App(), AuditRoute(), AuditTrail, CarbonIntensity, EmissionsMap (+24 more)
 
 ### Community 32 - "Master Calculation Register"
 Cohesion: 0.05
@@ -514,9 +521,9 @@ Nodes (37): 1. Thermodynamic Reference Conditions and Dimensional Standard, 2.1 
 Cohesion: 0.03
 Nodes (66): `api.js`, `App.jsx`, `components\BulkImportModal.jsx`, `components\CalculationDetails.jsx`, `components\charts\BarChart.jsx`, `components\charts\index.js`, `components\charts\LineChart.jsx`, `components\charts\PieChart.jsx` (+58 more)
 
-### Community 35 - "Scope2Form.jsx"
-Cohesion: 0.19
-Nodes (12): Emissions, CalculationDetails(), EmissionResult(), Scope2Form(), Scope3Form(), Emissions(), STAGE_EMISSION_CALCULATOR, STAGE_FACTOR_CALCULATOR (+4 more)
+### Community 35 - "Emissions.jsx"
+Cohesion: 0.29
+Nodes (8): Emissions, Emissions(), STAGE_EMISSION_CALCULATOR, STAGE_FACTOR_CALCULATOR, STAGE_SCOPE1_SUB_SELECTION, STAGE_SCOPE2, STAGE_SCOPE3, STAGE_SCOPE_SELECTION
 
 ### Community 36 - "Tasks: [FEATURE NAME]"
 Cohesion: 0.07
@@ -531,16 +538,16 @@ Cohesion: 0.20
 Nodes (5): Zero quantity should produce zero emissions without crash., Negative quantity must raise ValueError., 1 MMscf = 1,000,000 scf — result should match 1M scf calculation., If GOR=0 and EF=0, result should be zero (no flash gas)., TestEdgeCases
 
 ### Community 39 - "test_audit_remediation.py"
-Cohesion: 0.03
-Nodes (66): client(), fixture, Defect 5: Verify update_emission merges existing process_type and inputs., Defect 6: Verify bulk import for Scope 2 & 3 blocks it_admin and enforces…, Defect 7: Verify IT admin cannot access QA/QC resolve and users cannot verify…, Defect 8: Verify base year recalculation route enforces role, sets created_by,…, Verify short ton conversion to kg (907.185 kg)., Defect 11: Verify regular users cannot delete corporate MitigationRecord. (+58 more)
-
-### Community 40 - "User"
 Cohesion: 0.02
-Nodes (129): Anomaly Detection for GHG Emissions Data. Uses Z-score (against 12-month…, Emission Factors Package Re-exports everything from root emission_factors.py…, run_all_scenarios(), migrate_database(), Emission, Facility, MethaneSourceType, # NOTE: Do NOT call db.session.commit() here. (+121 more)
+Nodes (85): get_job_status(), _update_job(), client(), fixture, Defect 5: Verify update_emission merges existing process_type and inputs., Verify _require_fraction handles boundary values and percentages cleanly., Defect 6: Verify bulk import for Scope 2 & 3 blocks it_admin and enforces…, Defect 7: Verify IT admin cannot access QA/QC resolve and users cannot verify… (+77 more)
 
-### Community 41 - "useToast"
-Cohesion: 0.09
-Nodes (22): UserManagement, BulkImportModal(), autoDetectMapping(), ColumnMappingWizard(), Icons, STEPS, TEMPLATES, ConfirmModal() (+14 more)
+### Community 40 - "Emission"
+Cohesion: 0.05
+Nodes (59): Anomaly Detection for GHG Emissions Data. Uses Z-score (against 12-month…, Emission, SbtiTarget, Scope2Emission, Scope3Emission, restore_data(), Finding 11: Verify SBTi net-zero endpoint preserves legitimate 0.0 tCO2e…, test_dashboard_sbti_zero_actuals() (+51 more)
+
+### Community 41 - "Comprehensive Database Architecture, ACID Integrity & Concurrency Audit"
+Cohesion: 0.13
+Nodes (14): 1. Executive Database Summary, 2. Schema Architecture & Model Inventory, 3.1 Foreign Key Enforcement, 3.2 Cascading Delete Safety, 3. Referential Integrity & Cascading Behavior, 4.1 Atomic Unit of Work Pattern, 4.2 Error Handling & Rollback Verification (Remediated L-12), 4. ACID Compliance & Transactional Atomicity (+6 more)
 
 ### Community 42 - "Project Metadata"
 Cohesion: 0.22
@@ -570,13 +577,13 @@ Nodes (32): add_calc(), display_result(), show_methodology(), calculate_amine(),
 Cohesion: 0.29
 Nodes (6): files, main.js, node_modules/**/*, public/**/*, server.js, users_v2.db
 
-### Community 51 - "test_boundary_and_negative.py"
-Cohesion: 0.10
-Nodes (12): dispatcher(), fixture, parametrize, Boundary Conditions, Resilience, and Negative Test Suite.…, Verifies that negative inputs cannot produce physical emissions or corrupt…, Verifies rejection of IEEE 754 NaN, +Inf, -Inf., Verifies graceful and explicit validation of missing and empty fields., Verifies calculation stability under micro and macro numerical regimes. (+4 more)
+### Community 51 - "4. Critical Observations"
+Cohesion: 0.07
+Nodes (26): 1. Repository Structure Overview, 2.1 Active Production Files, 2.2 Legacy / Obsolete Files, 2.3 v2 Files Assessment, 2.4 Test Files Status, 2. File Classification, 3.1 Backend Architecture, 3.2 Frontend Architecture (+18 more)
 
 ### Community 52 - "test_independent_differential.py"
 Cohesion: 0.11
-Nodes (30): Differential Testing: Production Calculation Engine vs. Independent Reference…, Mutation Testing Harness for Critical GHG Calculation Code.…, Independent Aggregation, Operational Intensities & Compliance Models. Source of…, IndependentCombustionModel, IndependentFlaringModel, Independent Combustion & Flaring Reference Models. Source of Truth: API…, Independent Fugitive Emissions Reference Models. Source of Truth: API…, IndependentGWPModel (+22 more)
+Nodes (39): Battery 1: Midstream & Upstream Process Equipment Test Suite.…, Verifies storage tank flashing and working/breathing losses., Verifies drilling mud degassing calculations against independent reference., TestMudDegassingBattery, TestTankFlashingBattery, Battery 2: Stoichiometry & Indirect Energy Allocation Test Suite.…, Verifies API §4.1 stoichiometric carbon mass balance calculations., TestStoichiometricMassBalanceBattery (+31 more)
 
 ### Community 53 - "NPM Scripts"
 Cohesion: 0.33
@@ -590,13 +597,13 @@ Nodes (4): add_card(), add_header(), Adds standard Startup Algeria header banner
 Cohesion: 0.15
 Nodes (18): BOUNDARY_OPTIONS, DEFAULT_GWP, getActiveGwpFactors(), GWP_AR4, GWP_AR5, GWP_AR6, GWP_STANDARDS, CarbonIntensity() (+10 more)
 
-### Community 56 - "TestDifferentialScope1"
-Cohesion: 0.10
-Nodes (11): Diff Test: Liquids unloading wellbore geometry., Diff Test: Vessel/pipeline blowdown with thermodynamic normalization., Diff Test: Storage tank flashing GOR method., Diff Test: Pneumatic devices continuous bleed and intermittent., Diff Test: Acid gas removal (amine) CO2 balance and methane slip., Diff Test: TEG dehydrator parametric Henry's law solubility., Differential verification for Scope 1 direct emissions., Diff Test: Tier 3 Gas chromatographic carbon mass balance. (+3 more)
+### Community 56 - "test_all_process_types_matrix.py"
+Cohesion: 0.08
+Nodes (14): dispatcher(), fixture, test_all_process_types_matrix.py --------------------------------- Exhaustive…, Every single process type in PROCESS_TYPES must calculate successfully in Tier…, Verify compute_emissions pipeline routes and handles all canonical process…, Verify that every process is mapped to valid segments and combustion/non-…, Verify all Scope 2 utility types: Grid Electricity (Location/Market) and…, Exhaustive test of all 15 Scope 3 categories per GHG Protocol Corporate Value… (+6 more)
 
 ### Community 57 - "test_aggregation_reconciliation.py"
-Cohesion: 0.08
-Nodes (18): Aggregation, Reconciliation, and Rollup Integrity Test Suite.…, Verifies that summing across sources and scopes is strictly conservative and…, Sum(CO2e_i) must equal calculate_co2e(Sum(CO2_i), Sum(CH4_i), Sum(N2O_i)).…, Total GHG = Scope 1 + Scope 2 + Scope 3., Verifies OGMP 2.0 Top-Down vs Bottom-Up reconciliation thresholds., Verifies BOE and Carbon/Methane Intensity calculations., TestIntensityMetrics, TestOGMPSurveyReconciliation (+10 more)
+Cohesion: 0.09
+Nodes (15): Aggregation, Reconciliation, and Rollup Integrity Test Suite.…, Verifies that summing across sources and scopes is strictly conservative and…, Sum(CO2e_i) must equal calculate_co2e(Sum(CO2_i), Sum(CH4_i), Sum(N2O_i)).…, Total GHG = Scope 1 + Scope 2 + Scope 3., Verifies OGMP 2.0 Top-Down vs Bottom-Up reconciliation thresholds., Verifies BOE and Carbon/Methane Intensity calculations., TestIntensityMetrics, TestOGMPSurveyReconciliation (+7 more)
 
 ### Community 58 - "Graphify Workflow Tools"
 Cohesion: 0.67
@@ -626,25 +633,29 @@ Nodes (12): 0. Conventions and context to respect, 1. CRITICAL security findings
 Cohesion: 0.31
 Nodes (3): HttpUser, GHGUser, task
 
-### Community 89 - "EquipmentFugitiveCalculator"
-Cohesion: 0.17
-Nodes (10): EquipmentFugitiveCalculator, parametrize, Battery 4: Compressor Seals & Specialized Equipment Fugitives Test Suite.…, Verifies API §7.2 average factor method with component count dictionaries., Verifies API §7.2.3 compressor seal leakage across all mechanical…, Verifies API §7.2.2 equipment-level fugitives with unit and methane…, TestComponentFugitiveBattery, TestCompressorSealBattery (+2 more)
+### Community 89 - "Enterprise Production Readiness, Deployment & Disaster Recovery Audit"
+Cohesion: 0.13
+Nodes (14): 1. Executive Production Readiness Summary, 2.1 Dockerfile Architecture & Findings, 2.2 Docker Compose Topology, 2. Containerization & Build Pipeline Audit, 3. Environment Hardening & Configuration Audit, 4.1 Python Dependencies (`new/server/requirements.txt`), 4.2 Frontend Dependencies (`new/client/package.json`), 4. Software Dependencies & Vulnerability Audit (+6 more)
 
 ### Community 92 - "test_deep_button_audit.py"
 Cohesion: 0.48
 Nodes (6): audit_buttons_on_current_page(), close_any_modal(), is_forbidden(), Wait for lazy-loaded component to finish mounting and spinners to detach., run(), wait_page_loaded()
 
-### Community 93 - "calculations/units.py"
-Cohesion: 0.06
-Nodes (31): _process_row(), Validates a single mapped row and runs calculation via compute_emissions.…, get_active_gwp(), Global Warming Potential (GWP) Constants & Resolution Engine Supports IPCC AR4…, Dynamically resolve the active GWP factors dictionary based on standard and…, compute_emissions(), compute_scope3_co2e(), Authoritatively calculates Scope 3 CO2e in metric tonnes from activity amount… (+23 more)
+### Community 93 - "get_active_gwp"
+Cohesion: 0.10
+Nodes (21): _process_row(), Validates a single mapped row and runs calculation via compute_emissions.…, get_active_gwp(), Global Warming Potential (GWP) Constants & Resolution Engine Supports IPCC AR4…, Dynamically resolve the active GWP factors dictionary based on standard and…, compute_emissions(), Tests the full _process_row pipeline to verify data gets into Emission fields…, _process_row should return an Emission object with correct fields. (+13 more)
+
+### Community 94 - "models.py"
+Cohesion: 0.07
+Nodes (38): migrate_database(), ActivityLog, BaseYearRecalculation, Goal, MethaneSourceType, Notification, OgmpSurvey, # NOTE: Do NOT call db.session.commit() here. (+30 more)
 
 ### Community 111 - "Feature Specification: Batch Approve/Reject Pending Records"
 Cohesion: 0.08
 Nodes (23): Content Quality, Feature Readiness, Notes, Requirement Completeness, Specification Quality Checklist: batch-approve-reject, Complexity Tracking, Constitution Check, Documentation (this feature) (+15 more)
 
-### Community 112 - "CogenAllocationCalculator"
-Cohesion: 0.12
-Nodes (13): CogenAllocationCalculator, parametrize, Battery 2: Stoichiometry & Indirect Energy Allocation Test Suite.…, When net efficiency <= 0 (e.g. 100% transmission loss or zero boiler…, Verifies API §8.3 Cogeneration (CHP) emission allocation., Verifies API §4.1 stoichiometric carbon mass balance calculations., 1 metric tonne of 100% pure carbon produces exactly 44.01/12.011 = ~3.66414…, Verifies API §8.1 indirect steam/heat with multiplicative efficiency. (+5 more)
+### Community 112 - ".test_steam_energy_units_conversion"
+Cohesion: 0.20
+Nodes (5): parametrize, 1 metric tonne of 100% pure carbon produces exactly 44.01/12.011 = ~3.66414…, _val(), Diff Test: Indirect steam net efficiency equation., Mutant: Steam calculation omits transmission loss: eta_net = eta_boiler instead…
 
 ### Community 113 - "new/.specify/scripts/powershell/common.ps1"
 Cohesion: 0.23
@@ -654,9 +665,9 @@ Nodes (13): Find-SpecifyRoot(), Format-SpecKitCommand(), Get-CurrentBranch(), Ge
 Cohesion: 0.23
 Nodes (13): Find-SpecifyRoot(), Format-SpecKitCommand(), Get-CurrentBranch(), Get-FeaturePathsEnv(), Get-InvokeSeparator(), Get-NormalizedPriority(), Get-Python3Command(), Get-RepoRoot() (+5 more)
 
-### Community 115 - "test_all_bulk_imports.py"
-Cohesion: 0.19
-Nodes (17): app(), client(), logged_client(), fixture, DEF-04 Verification: Ensure duplicate rows are skipped by default and updated…, Verifies that non-combustion sources (e.g. pneumatics) normalize fuel_k to…, test_bulk_import_custom_factors(), test_bulk_import_duplicate_prevention_and_overwrite() (+9 more)
+### Community 115 - "Facility"
+Cohesion: 0.09
+Nodes (30): Facility, End-to-End Test for the CSV Uploader (Import Emissions Data Wizard) Tests the…, Tests the CSV upload endpoint with a mock CSV containing mixed scenarios.…, TestCSVUploaderE2E, app(), client(), logged_client(), fixture (+22 more)
 
 ### Community 116 - "Feature Specification: [FEATURE NAME]"
 Cohesion: 0.15
@@ -667,16 +678,16 @@ Cohesion: 0.15
 Nodes (12): Assumptions, Edge Cases, Feature Specification: [FEATURE NAME], Functional Requirements, Key Entities *(include if feature involves data)*, Measurable Outcomes, Requirements *(mandatory)*, Success Criteria *(mandatory)* (+4 more)
 
 ### Community 118 - "extract_val"
-Cohesion: 0.04
-Nodes (30): extract_val(), =============================================================================…, Aggregates test results for a final summary table., Same calculation using m3 input — should produce same result after conversion., Diesel Tier 1: quantity = 500 gal HHV = 138,700 Btu/gal → 500 × 138,700 /…, Flaring Tier 1 (default factor_source → _generic_calculation): Uses API_FACTORS…, Tier 1 flaring falls through to generic EF-based calculation., Flaring Tier 3 (factor_source='specific') — Dual efficiency model: gas_volume =… (+22 more)
+Cohesion: 0.05
+Nodes (26): extract_val(), =============================================================================…, Aggregates test results for a final summary table., Same calculation using m3 input — should produce same result after conversion., Diesel Tier 1: quantity = 500 gal HHV = 138,700 Btu/gal → 500 × 138,700 /…, Flaring Tier 3 (factor_source='specific') — Dual efficiency model: gas_volume =…, Blowdown Tier 1 (default): vessel volume = 5 m3 physical pressure = 100 psig →…, Tank Tier 3: throughput = 2000 bbl/month GOR = 200 scf/bbl CH4 content = 45%… (+18 more)
 
 ### Community 119 - "Implementation Tasks: QA/QC Module (IPCC & ISO 14064)"
 Cohesion: 0.17
 Nodes (11): Dependencies & Execution Order, Implementation for User Story 1, Implementation for User Story 2, Implementation for User Story 3, Implementation Tasks: QA/QC Module (IPCC & ISO 14064), Phase 1: Setup (Shared Infrastructure), Phase 2: Foundational (Blocking Prerequisites), Phase 3: User Story 1 - Automated Data Validation (Priority: P1) ⭐ MVP (+3 more)
 
-### Community 120 - "qaqc.py"
-Cohesion: 0.13
-Nodes (26): CustomFactor, Permits superuser and admin roles for data management operations. NOTE:…, superuser_required(), create_custom_factor(), delete_custom_factor(), get_custom_factors(), import_custom_factors(), _parse_non_negative_float() (+18 more)
+### Community 120 - "custom_factors.py"
+Cohesion: 0.21
+Nodes (16): Permits superuser and admin roles for data management operations. NOTE:…, superuser_required(), _check_plausibility(), create_custom_factor(), delete_custom_factor(), get_custom_factors(), import_custom_factors(), _parse_non_negative_float() (+8 more)
 
 ### Community 121 - "send_email"
 Cohesion: 0.31
@@ -698,17 +709,17 @@ Nodes (10): Core Principles, Governance, [PRINCIPLE_1_NAME], [PRINCIPLE_2_NAME],
 Cohesion: 0.18
 Nodes (10): Core Principles, Governance, [PRINCIPLE_1_NAME], [PRINCIPLE_2_NAME], [PRINCIPLE_3_NAME], [PRINCIPLE_4_NAME], [PRINCIPLE_5_NAME], [PROJECT_NAME] Constitution (+2 more)
 
-### Community 126 - "client/package.json"
-Cohesion: 0.20
-Nodes (9): name, private, scripts, build, dev, lint, preview, type (+1 more)
+### Community 126 - "scripts"
+Cohesion: 0.15
+Nodes (12): name, private, scripts, build, dev, e2e, lint, preview (+4 more)
 
 ### Community 127 - "test_master_button_audit.py"
 Cohesion: 0.60
 Nodes (5): audit_buttons_on_current_page(), close_any_modal(), is_forbidden(), run_master_audit(), wait_page_loaded()
 
-### Community 128 - "TestCalculationMutations"
-Cohesion: 0.10
-Nodes (11): Diff Test: Flaring dual-efficiency model (elevated and enclosed)., Mutant: Flaring calculation completely drops native CO2 from gas stream., Mutant: CH4 standard density (0.6785 kg/m3) swapped with CO2 density (1.861…, Verifies that mathematical mutations cause tests to fail (100% mutant kill…, Mutant: Flaring unburnt CH4 calculated with (1 + eff) instead of (1 - eff)., Mutant: scf to m3 factor mutated from 0.0283168 to 0.0383168 (+35% error)., Mutant: AR5 GWP for CH4 (28) mutated to SAR (21) or AR4 (25)., Mutant: CO2/CH4 molar ratio 44.01/16.04 (2.7437) inverted to 16.04/44.01… (+3 more)
+### Community 128 - ".calculate_co2e"
+Cohesion: 0.08
+Nodes (16): parametrize, Diff Test: Flaring dual-efficiency model (elevated and enclosed)., Diff Test: Liquids unloading wellbore geometry., Diff Test: Vessel/pipeline blowdown with thermodynamic normalization., Diff Test: Storage tank flashing GOR method., Diff Test: Pneumatic devices continuous bleed and intermittent., Diff Test: TEG dehydrator parametric Henry's law solubility., Differential verification for Scope 1 direct emissions. (+8 more)
 
 ### Community 129 - "Implementation Tasks: Batch Approve/Reject Pending Records"
 Cohesion: 0.20
@@ -730,9 +741,9 @@ Nodes (8): 1. `Emission` (Scope 1), 2. `Scope2Emission`, 3. `Scope3Emission`, 4.
 Cohesion: 0.05
 Nodes (39): 3. Battery Degradation (`src/hybrid_model.py`), `app.py`, Automated Tests, Goal, Goal, Goal, Goal, Goal (+31 more)
 
-### Community 134 - "dataset_generator.py"
-Cohesion: 0.16
-Nodes (8): Diff Test: Tier 1 Fuel-based combustion., build_case(), generate_golden_dataset(), get_golden_cases(), Authoritative Golden Dataset Generator. Generates comprehensive test cases…, Golden Validation Dataset Package., IndependentFugitiveModel, IPCC 2006 Eq. 3.2 / 3.3: u_total = sqrt(sum((E_i * u_i)^2)) / sum(E_i)
+### Community 134 - "TestCogenAllocationBattery"
+Cohesion: 0.12
+Nodes (8): Verifies API §8.3 Cogeneration (CHP) emission allocation., TestCogenAllocationBattery, Differential verification for Scope 2 and Scope 3 calculations., Diff Test: Location-based grid electricity., Diff Test: WRI Efficiency CHP allocation., Diff Test: Scope 3 spend EEIO vs physical tonne factor., TestDifferentialScope2and3, Mutant: EEIO spend factor scaled by 1,000 instead of 1,000,000 (1000x error).
 
 ### Community 135 - "Comprehensive GHG Engine & MRV Platform Independent Validation Report"
 Cohesion: 0.08
@@ -742,9 +753,9 @@ Nodes (24): 10. Appendices, 1. Executive Summary, 2. Standards & Methodology Inv
 Cohesion: 0.50
 Nodes (3): normalize_status(), Canonical Status Vocabulary for GHG Platform. Standardizes statuses across…, Normalize input status string to canonical vocabulary.
 
-### Community 139 - "TestGWPHorizonsAndProfilesBattery"
-Cohesion: 0.17
-Nodes (7): parametrize, In flaring, unburnt methane slip is amplified under a 20-year horizon., Verifies IPCC Assessment Report GWP horizons and factor resolution., Methane emissions under 20-year horizon reflect immediate near-term warming…, Changing GWP profile (AR4 vs AR5 vs AR6 vs 20-yr) must NEVER alter physical gas…, A user-supplied custom GWP dictionary must be strictly honored., TestGWPHorizonsAndProfilesBattery
+### Community 139 - "test_csv_engine_matrix.py"
+Cohesion: 0.04
+Nodes (44): BaseCalculator, Validates that all required inputs are present, finite, and non-negative., Calculates absolute uncertainty and non-negative bounds at 95% CI (k=2.0 per…, Formats the final calculation result into a standard structure., Base class for all API Compendium 2021 calculation modules. Provides common…, CombustionCalculator, FlaringCalculator, ProductionData (+36 more)
 
 ### Community 140 - "generate_1k_comprehensive.py"
 Cohesion: 0.33
@@ -766,33 +777,57 @@ Nodes (4): 1. Technical Context Verification, 2. Identified Issues, 3. Decisions
 Cohesion: 0.40
 Nodes (4): 1. Technical Context Verification, 2. Identified Issues & Requirements, 3. Decisions, Research & Design Decisions: QA/QC Module (IPCC & ISO 14064)
 
-### Community 150 - "Final Comprehensive GHG Platform Validation Report"
+### Community 150 - "FINAL VALIDATION REPORT"
 Cohesion: 0.11
-Nodes (17): 1. Executive Summary, 2. Master Validation Matrix, 3.1 CRITICAL Findings (Historical Remediated & Verified), 3.2 HIGH Findings (Historical Remediated & Verified), 3. Critical Failure Classification & Defect Log, 4. Mutation Testing Verification, 5. Numerical Tolerances & Acceptance Thresholds, 6. Final Certification & Conclusion (+9 more)
+Nodes (17): Calculation Engine: HIGH CONFIDENCE, CI/CD: INCOMPLETE, CRITICAL Findings, Database: ADEQUATE for SQLite, REQUIRES REVIEW for PostgreSQL, Executive Summary, FINAL VALIDATION REPORT, Frontend: INCOMPLETE TESTING COVERAGE, HIGH Findings (+9 more)
 
-### Community 151 - "test_battery_midstream_process_equipment.py"
-Cohesion: 0.12
-Nodes (23): parametrize, Battery 1: Midstream & Upstream Process Equipment Test Suite.…, Verifies API Eq. 6-3 liquids unloading with tubing geometry and P/T correction., Verifies API Eq. 6-4 blowdown events with compressibility Z-factor., Verifies storage tank flashing and working/breathing losses., Verifies continuous bleed vs intermittent actuation pneumatic devices., Verifies drilling mud degassing calculations against independent reference., Verifies completions and workovers flowback across all 3 methodologies. (+15 more)
+### Community 151 - "BlowdownCalculator"
+Cohesion: 0.07
+Nodes (20): BlowdownCalculator, API Eq. 6-4: Vessel/Pipeline Blowdown (Depressurization) V_std = V_physical *…, Verifies API Eq. 6-3 liquids unloading with tubing geometry and P/T correction., Verifies API Eq. 6-4 blowdown events with compressibility Z-factor., Verifies continuous bleed vs intermittent actuation pneumatic devices., Verifies completions and workovers flowback across all 3 methodologies., TestBlowdownBattery, TestLiquidsUnloadingBattery (+12 more)
+
+### Community 152 - "3. Subsystem Architecture Analysis"
+Cohesion: 0.14
+Nodes (13): 1. Architectural Reality vs. README Claims, 2. Directory Structure & Lifecycle Classification, 3.1 Frontend Single-Page Application (SPA), 3.2 Backend API Server, 3.3 Database & Storage Layer, 3.4 Authentication, Authorization & Segregation of Duties, 3.5 Calculation Engine Architecture, 3.6 Background Ingestion & Processing (+5 more)
 
 ### Community 154 - "Solar PV Calculator - Complete Feature Implementation Plan"
 Cohesion: 0.05
 Nodes (38): Goal Description, Implementation Strategy, Integration Testing, [MODIFY] [app.js](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/app.js), [MODIFY] [index.html](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/index.html), [MODIFY] [styles.css](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/styles.css), [NEW] [battery-storage.js](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/battery-storage.js), [NEW] [chart-export.js](file:///C:/Users/samsung/.gemini/antigravity/scratch/solar-pv-calculator/chart-export.js) (+30 more)
 
-### Community 156 - "test_battery_concurrency_stress_invariants.py"
-Cohesion: 0.11
-Nodes (12): dispatcher(), fixture, Battery 6: Concurrency, Stress, Determinism & Invariant Test Suite.…, Verifies that engine execution never mutates caller input objects., Verifies smooth numerical scaling from micro-activities to gigascale portfolios., Verifies that CalculationDispatcher is completely re-entrant and thread-safe., Executes 160 simultaneous calculations across 16 worker threads covering…, Verifies that identical mathematical inputs yield bit-for-bit identical outputs. (+4 more)
+### Community 156 - "test_production_smoke.py"
+Cohesion: 0.08
+Nodes (23): fixture, Phase 7.1 — Production Smoke Tests. High-speed (<10 seconds), robust smoke test…, SMOKE-08: Standard scf to m3 conversion factor is accurate., SMOKE-09: Unhandled 404 routes return JSON, not HTML error pages., SMOKE-10: Insecure hard-coded dev accounts (a@a, a) do not exist., SMOKE-01: Health check endpoint responds with 200 and status ok., SMOKE-02: Deep readiness probe confirms database connectivity and WAL…, SMOKE-03: Root API gateway index responds. (+15 more)
 
-### Community 157 - "TestDifferentialScope2and3"
-Cohesion: 0.10
-Nodes (11): _calc_cogen_allocation(), Calculate heat-allocated tCO2e for CHP / cogeneration entry., Differential verification for Scope 2 and Scope 3 calculations., Diff Test: Location-based grid electricity., Diff Test: Indirect steam net efficiency equation., Diff Test: WRI Efficiency CHP allocation., Diff Test: Scope 3 spend EEIO vs physical tonne factor., TestDifferentialScope2and3 (+3 more)
+### Community 157 - "TestCalculationMutations"
+Cohesion: 0.09
+Nodes (12): Diff Test: Acid gas removal (amine) CO2 balance and methane slip., Mutant: Flaring calculation completely drops native CO2 from gas stream., Mutant: CH4 standard density (0.6785 kg/m3) swapped with CO2 density (1.861…, Mutant: AGR regenerator emissions calculated with zero methane slip., Verifies that mathematical mutations cause tests to fail (100% mutant kill…, Mutant: Flaring unburnt CH4 calculated with (1 + eff) instead of (1 - eff)., Mutant: scf to m3 factor mutated from 0.0283168 to 0.0383168 (+35% error)., Mutant: AR5 GWP for CH4 (28) mutated to SAR (21) or AR4 (25). (+4 more)
+
+### Community 158 - "test_api_security.py"
+Cohesion: 0.12
+Nodes (15): admin_user(), app(), client(), login(), fixture, Security and integration tests for GHG Dashboard API. These test the HTTP layer…, User should not be able to delete an emission record created by another user…, User should be able to delete their own emission record. (+7 more)
+
+### Community 159 - "Phase 1 — Testing Inventory"
+Cohesion: 0.11
+Nodes (17): 1. Backend Test Infrastructure, 2. Backend Test Files Inventory (43 files, 880 tests), 3. Frontend Test Infrastructure, 4. Security Testing, 5. Performance Testing, 6. E2E Testing, 7. Coverage Analysis, 8. Recommended Testing Additions (+9 more)
+
+### Community 162 - "test_security_hardening.py"
+Cohesion: 0.12
+Nodes (17): ensure_admin_seeded(), Seeds admin accounts ONLY when SEED_ADMIN=true environment variable is set. In…, client(), fixture, Security hardening regression tests — Phase 1.2. Verifies that: - Hard-coded…, ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:…, SECURITY REGRESSION (CRIT-02): The 'a@a' dev shortcut account must not be auto-…, SECURITY REGRESSION (CRIT-02): The 'a' dev shortcut account (not even a valid… (+9 more)
 
 ### Community 163 - "TestRegressionArchive"
-Cohesion: 0.11
-Nodes (9): Bug ID: B9 Description: Top-down SUM over multiple surveys per facility-year…, Bug ID: B12 Description: LiquidsUnloading press_unit ignored (hardcoded psig).…, Bug ID: B14 Description: Case-sensitive units (MWh vs mwh, KWH vs kwh).…, Bug ID: L1 Description: CSV factor_type=specific downgraded to default with…, Permanent regression tests for all platform calculation bugs. Each test…, Bug ID: B1 Description: Flared branch used raw flared_volume_m3 * ef_co2 / 1000…, Bug ID: B3 Description: Fugitive screening fallback hours were zero or missing.…, Bug ID: B8 Description: GWP AR5 N2O 264 vs 265; GWP20 N2O 264 vs 268. Original… (+1 more)
+Cohesion: 0.09
+Nodes (11): Bug ID: B9 Description: Top-down SUM over multiple surveys per facility-year…, Bug ID: B12 Description: LiquidsUnloading press_unit ignored (hardcoded psig).…, Bug ID: B14 Description: Case-sensitive units (MWh vs mwh, KWH vs kwh).…, Bug ID: L1 Description: CSV factor_type=specific downgraded to default with…, Bug ID: B15 / Client Parity Description: Frontend constants getActiveGwpFactors…, Permanent regression tests for all platform calculation bugs. Each test…, Bug ID: B1 Description: Flared branch used raw flared_volume_m3 * ef_co2 / 1000…, Bug ID: B2 Description: Missing flare type support and hardcoded efficiencies.… (+3 more)
 
-### Community 165 - "test_user_profile_update.py"
-Cohesion: 0.36
-Nodes (5): client(), existing_other_user(), it_admin(), fixture, target_user()
+### Community 165 - "Calculation Validation Report"
+Cohesion: 0.13
+Nodes (14): Calculation Validation Matrix, Calculation Validation Report, CONCERN-01 (MEDIUM): N2O Default Factor Inconsistency, CONCERN-02 (LOW): Mobile vs. Stationary Scope Classification, CONCERN-03 (LOW): Cogeneration Allocation Edge Case, Flaring Efficiency — Verified, Golden Dataset Assessment, GWP Values — Independently Verified (+6 more)
+
+### Community 166 - "TestUnitConversionInvarianceMatrix"
+Cohesion: 0.14
+Nodes (8): Every physical quantity represented across various dimensional units must…, 1000 m3 of natural gas converted across all 13 volume units must yield equal…, 10 tonnes carbon mass converted across all 12 mass units must yield identical…, 1,000 MMBtu of steam converted across all 7 energy units must yield identical…, Blowdown calculation at 20°C expressed in C, F, K, R must produce identical…, Blowdown calculation at 1000 kPa expressed in kPa, MPa, Pa, bar, mbar, psia,…, Exhaustively verifies roundtrip convert(val, u1, u2) -> convert(converted, u2,…, TestUnitConversionInvarianceMatrix
+
+### Community 170 - "audit.py"
+Cohesion: 0.33
+Nodes (12): audit_access_required(), _build_audit_query(), export_audit_logs(), get_audit_filters(), get_audit_logs(), get_audit_stats(), route, Prevent CSV formula injection (DDE/Excel macro execution) including leading… (+4 more)
 
 ### Community 181 - "TestPropertyInvariantsHypothesis"
 Cohesion: 0.21
@@ -803,8 +838,16 @@ Cohesion: 0.22
 Nodes (7): dispatcher(), get_val(), fixture, parametrize, Golden Dataset Validation Suite. ================================ Validates all…, Runs all 25 golden cases from categories A through Q against production engine., TestGoldenDatasetCases
 
 ### Community 184 - "AnomalyDetector"
+Cohesion: 0.06
+Nodes (22): AnomalyDetector, Check a Scope 1 CO2e value against the trailing 12 months strictly prior to the…, Checks a new emission value against historical data for the same facility and…, Check a Scope 2 CO2e value against the trailing 12 months strictly prior to the…, Check a Scope 3 CO2e value against the trailing 12 months strictly prior to the…, Compute Z-score of a value against a list of historical values. Returns…, Verify that background anomaly detection flags are stored in emission.qa_flag., Finding 9: Verify IQR quantile calculation does not distort on small N >= 4. (+14 more)
+
+### Community 185 - "NumberedCanvas"
+Cohesion: 0.28
+Nodes (3): NumberedCanvas, Comprehensive Master PDF Report Generator…, Two-pass canvas to dynamically compute and print 'Page X of Y' and running…
+
+### Community 186 - "login_required"
 Cohesion: 0.13
-Nodes (12): AnomalyDetector, Check a Scope 1 CO2e value against the trailing 12 months strictly prior to the…, Checks a new emission value against historical data for the same facility and…, Check a Scope 2 CO2e value against the trailing 12 months strictly prior to the…, Check a Scope 3 CO2e value against the trailing 12 months strictly prior to the…, Compute Z-score of a value against a list of historical values. Returns…, Verify that background anomaly detection flags are stored in emission.qa_flag., Finding 9: Verify IQR quantile calculation does not distort on small N >= 4. (+4 more)
+Nodes (37): BaseYear, EmissionSource, MitigationProject, MitigationRecord, ReportingMetadata, login_required(), add_base_year_recalculation(), add_mitigation() (+29 more)
 
 ### Community 187 - "3. Dimensional Consistency & Physical Equations"
 Cohesion: 0.13
@@ -814,29 +857,37 @@ Nodes (14): 1.1 Canonical Conversion Constants, 1. Unit Conversion Factor Archit
 Cohesion: 0.14
 Nodes (13): 1. System Architecture Overview, 2. Active Calculation Paths, 3.1 `new/server/calculations/legacy_engine.py` (Facade & Legacy Fallback), 3.2 Obsolete Scratch Scripts & Archive Files, 3. Inactive, Legacy & Duplicate Calculation Paths, 4. Data Sources & Storage Models, 5. Test Infrastructure Audit, 6.1 Backend Dependencies (`new/server/requirements.txt`) (+5 more)
 
-### Community 203 - "normalize_gas_volume_to_standard"
-Cohesion: 0.07
-Nodes (24): convert_pressure(), convert_temperature(), from_psia(), normalize_gas_volume_to_standard(), Converts gauge or metric pressure to absolute pressure in psia., API Compendium 2021 §4.2.1: Converts gas volume measured at actual/operating…, Converts temperature value to Celsius., Converts absolute psia pressure to any target unit (gauge or absolute). (+16 more)
+### Community 202 - "normalize_gas_volume_to_standard"
+Cohesion: 0.09
+Nodes (20): convert_pressure(), from_psia(), normalize_gas_volume_to_standard(), Converts gauge or metric pressure to absolute pressure in psia., API Compendium 2021 §4.2.1: Converts gas volume measured at actual/operating…, Converts temperature value to Celsius., Converts absolute psia pressure to any target unit (gauge or absolute)., Converts pressure value across psia, psig, bar, barg, kpa, kpag, mpa, mpag,… (+12 more)
+
+### Community 205 - "UserManagement.jsx"
+Cohesion: 0.32
+Nodes (6): UserManagement, Drawer(), getRoleMeta(), ROLE_META, S, UserManagement()
 
 ### Community 206 - "CSV Spreadsheet Pro - Enhanced Features Walkthrough"
 Cohesion: 0.05
 Nodes (37): 1. **Theme Toggle (Light/Dark Mode)** ✅, 2. **Import from URL** ✅, 3. **Excel Export (.xlsx)** ✅, 4. **Row Operations** ✅, 5. **Chart Visualization** ✅, 6. **localStorage Auto-Save** ✅, 7. **Enhanced UI/UX** ✅, Add/Delete Rows (+29 more)
 
 ### Community 207 - "background_processor.py"
-Cohesion: 0.23
-Nodes (15): _append_job_list(), _build_mapping(), _process_file_thread(), _process_row_custom_factors(), _process_row_facilities(), _process_row_mitigation(), _process_row_production(), _process_row_scope2() (+7 more)
+Cohesion: 0.08
+Nodes (32): _append_job_list(), _build_mapping(), _clean_float(), _process_file_thread(), _process_row_custom_factors(), _process_row_facilities(), _process_row_mitigation(), _process_row_production() (+24 more)
 
 ### Community 208 - "Detailed Implementation Walkthrough"
 Cohesion: 0.06
 Nodes (32): 10. `background_processor.py` — Thread-Safe Upload Job Registry, 11. `managedata.py` — Mitigation Record Deletion Protection, 12. `auth.py` — User Role Mutation Whitelist & Hierarchy Check, 1. Carbon Intensity Page (`CarbonIntensity.jsx` & `_query_intensity_stats`), 1. `notifications.py` — Stream Heartbeat Initialization, 1. Scope 1: Tier 1, 2, 3 Calculations, 2. Methane Intensity Page (`MethaneIntensity.jsx` & `_query_intensity_stats`), 2. `scope2.py` — Indirect Steam Custom Thermodynamics (+24 more)
 
-### Community 210 - ".test_dashboard_summary_identity_and_compact_formatting"
-Cohesion: 0.50
-Nodes (3): Replicates formatCompactNumber(value, decimals) from formatters.js., Verify: Dashboard summary aggregate preserves scope1 + scope2 == total and…, ui_format_compact_number()
+### Community 209 - "useToast"
+Cohesion: 0.10
+Nodes (14): Diagnostics, QADashboard, BulkImportModal(), ErrorBoundary, COMPONENT_DATA, GasCompositionCalculator(), Modal(), ToastContext (+6 more)
 
-### Community 211 - "TestBulkCSVIngestionAllTiersAndScopes"
-Cohesion: 0.22
-Nodes (7): Executes the full asynchronous/synchronous file processing pipeline for all 3…, Tier 1 Bulk CSV: Default catalog factors across combustion, venting, and…, Tier 2 Bulk CSV: Uses regional custom emission factors created in DB., Tier 3 Bulk CSV: Engineering mode with physical parameters (c1, c2, hhv, GOR,…, Scope 2 Bulk CSV: Location-based electricity, Market-based renewable PPA, and…, Scope 3 Bulk CSV: Uploading mass, distance, and spend EEIO units across…, TestBulkCSVIngestionAllTiersAndScopes
+### Community 210 - "TestMemoryLeakAndSustainedLoops"
+Cohesion: 0.25
+Nodes (5): Profile 25,000 high-frequency unit conversions across volume, mass, energy,…, Verify garbage collector stability and absence of cyclic reference leaks., Stress tests sustained calculation pipelines for zero memory leakage and high…, Profile 10,000 sequential calculation dispatcher loops with tracemalloc., TestMemoryLeakAndSustainedLoops
+
+### Community 211 - "test_deep_injection_matrix.py"
+Cohesion: 0.08
+Nodes (23): CustomFactor, Defect 4: Verify custom factor with general uncertainty 5.0 is divided by 100…, test_custom_factor_percentage_uncertainty_in_add_emission(), app(), db_session(), dispatcher(), fixture, test_deep_injection_matrix.py ------------------------------ Exhaustive Deep… (+15 more)
 
 ### Community 212 - "antigravity_guide/SKILL.md"
 Cohesion: 0.06
@@ -846,21 +897,29 @@ Nodes (28): 1. Unified Interface Surfaces, 2. Agent Settings & Permissions, 3. F
 Cohesion: 0.08
 Nodes (25): 1. Photorealistic Materials (PBR), 2. Cinematic Camera Presets, 3. HDR Sky Background, 4. Professional Title & Annotations, 5. Enhanced Hover Information, 6. Modern Modebar, Advanced Lighting, Camera Controls (+17 more)
 
-### Community 215 - "disable_limiter_for_tests"
-Cohesion: 0.50
-Nodes (3): disable_limiter_for_tests(), fixture, Ensure Flask-Limiter does not throttle authentication endpoints across large…
+### Community 214 - "test_log_handler.py"
+Cohesion: 0.33
+Nodes (5): Regression test: import_debug.log must not be recreated. Ensures the…, import_debug.log was a 4.1 GB unbounded log file that caused disk exhaustion.…, Verify that the application's rotating log handler is configured with size and…, test_no_import_debug_log_file_exists(), test_trace_log_uses_rotating_handler()
+
+### Community 215 - "conftest.py"
+Cohesion: 0.43
+Nodes (6): app(), client(), disable_limiter_for_tests(), init_test_db(), fixture, Ensure Flask-Limiter does not throttle endpoints during tests.
 
 ### Community 216 - "PVGIS Data Analyzer - Walkthrough"
 Cohesion: 0.08
 Nodes (24): 1. Start the Server, 2. Access the Application, 3. Upload PVGIS Data, 4. View Analysis, Annual Production, Application Launch, Backend Components, Complete Analysis Results (+16 more)
 
-### Community 219 - "get_eeio_factor"
-Cohesion: 0.50
-Nodes (3): get_eeio_factor(), EPA USEEIO Emission Factors v1.3 Maps NAICS codes to kg CO2e per $1,000 spend.…, Returns the EEIO factor for a given 3-digit NAICS code. If exact match not…
+### Community 219 - "3. Test Quality & Rigor Audit"
+Cohesion: 0.17
+Nodes (11): 1. Test Harness Structure & Strategy, 2.1 Backend Pytest Suite Summary, 2.2 Independent Validation Suite Summary (`validation/scripts/run_full_validation_suite.py`), 2.3 Frontend Benchmarks & Parity Suite, 2. Test Execution Inventory & Execution Results, 3.1 Non-Circularity Verification, 3.2 Assertion Rigor & Avoidance of Vacuous Tests, 3.3 Database Isolation & Fixture Hygiene (+3 more)
 
 ### Community 220 - "Proposed Changes"
 Cohesion: 0.08
 Nodes (23): Authentication and User-Specific Database Implementation, Automated Tests, Backend - Database Architecture, Database Cleanup, Frontend - Authentication UI, Frontend - Login Page Integration, Manual Verification, [MODIFY] All other HTML pages in public folder (+15 more)
+
+### Community 221 - "test_rate_limiting.py"
+Cohesion: 0.40
+Nodes (4): fixture, rate_limit_client(), Verify login endpoint rate limiting triggers after 20 attempts., test_login_rate_limit_exceeded()
 
 ### Community 222 - "Dashboard Categorical Overview Fixes - Walkthrough"
 Cohesion: 0.08
@@ -870,9 +929,9 @@ Nodes (23): 1. Enhanced Categorical Breakdown ([dashboard.js](file:///c:/Users/s
 Cohesion: 0.08
 Nodes (23): 10. Shade Report Integration (#5), 11. Drone Imagery Underlay (#9), 12. ML-Optimized Layout (#12), 1. Layer Toggle Controls, 2. Site Measurements, 3. Sun Path Animation (#11), 4. Dimensions & Annotations (#2), 5. Module-Level Data Overlay (#6) (+15 more)
 
-### Community 224 - "test_audit_bug_fixes.py"
-Cohesion: 0.28
-Nodes (8): OgmpSurvey, client(), fixture, Verify delete_mitigation returns 400 Bad Request on malformed ID instead of 500…, Verify get_ogmp_surveys handles records with null measured_rate_kg_hr without…, test_delete_mitigation_invalid_id_format(), test_ogmp_survey_null_measured_rate(), test_users()
+### Community 224 - "Enterprise Performance, Stress & Latency Benchmark Audit"
+Cohesion: 0.17
+Nodes (11): 1. Executive Performance Summary, 2. Frontend High-Volume Benchmarks, 3. Backend & API Latency Benchmarks, 4.1 Invalidation Performance, 4.2 Server Memory Stability, 4. Caching & Memory Footprint, Enterprise Performance, Stress & Latency Benchmark Audit, Key Benchmark Highlights: (+3 more)
 
 ### Community 227 - "CAD Enhancements: Dimensions & Module Overlay - Complete"
 Cohesion: 0.08
@@ -893,6 +952,10 @@ Nodes (22): 1. Web & Real-Time Communications, 2. Computational & Numerical Logi
 ### Community 232 - "Examples"
 Cohesion: 0.09
 Nodes (21): Asking for Permissions, Example 10: Searching Pull Requests, Example 11: Searching Commits, Example 12: Searching Code, Example 13: Searching Issues, Example 14: Running (Dispatching) a Workflow, Example 15: Listing, Viewing, or Watching Workflow Runs, Example 1: Creating an Issue (+13 more)
+
+### Community 233 - "2. Key WCAG 2.1 Level AA Compliance Findings"
+Cohesion: 0.22
+Nodes (8): 1. Executive Accessibility Summary, 2.1 Keyboard Operability & Focus Management (WCAG 2.1.1, 2.4.7), 2.2 Form Semantics & Error Handling (WCAG 1.3.1, 3.3.1, 3.3.2), 2.3 Color Contrast & Visual Ergonomics (WCAG 1.4.3, 1.4.11), 2.4 Tables & Complex Data Visualization (WCAG 1.3.1, 1.1.1), 2.5 Screen Reader Live Regions (WCAG 4.1.3), 2. Key WCAG 2.1 Level AA Compliance Findings, Web Accessibility & WCAG 2.1 AA Compliance Audit
 
 ### Community 234 - "SolarEPC-Pro v3.0 - Complete Implementation"
 Cohesion: 0.10
@@ -1330,44 +1393,64 @@ Nodes (5): Export expected results from golden validation cases., get_test_case_
 Cohesion: 0.47
 Nodes (3): parametrize, Tests A -> B -> A round-trip invertibility for every unit category., TestExhaustiveUnitInvertibility
 
-### Community 360 - "notifications.py"
-Cohesion: 0.27
-Nodes (10): delete_all_notifications(), delete_notification(), dismiss_all(), get_notifications(), mark_read(), route, Permanently delete a single notification., Permanently delete all notifications for the current user. (+2 more)
+### Community 359 - "Cross-Browser Compatibility & Responsive Viewport Audit"
+Cohesion: 0.22
+Nodes (8): 1. Executive Browser & Viewport Summary, 2. Browser Compatibility Matrix, 3. Web Platform Feature & Polyfill Verification, 4.1 Desktop (1920×1080) & Laptop (1440×900, 1280×800), 4.2 Tablet (768×1024, iPad Portrait / Landscape), 4.3 Mobile Smartphone (375×667, 390×844, 412×915), 4. Responsive Viewport & Device Layout Audit, Cross-Browser Compatibility & Responsive Viewport Audit
 
-### Community 371 - "_clean_float"
-Cohesion: 0.33
-Nodes (4): _clean_float(), Robustly parses numbers with currency signs, trailing engineering units,…, parametrize, Mathematically prove that NaN and Infinity are neutralized.
+### Community 360 - "Independent GHG Emissions & MRV Calculation Validation Report"
+Cohesion: 0.25
+Nodes (7): 1. Zero-Circularity Independent Validation Methodology, 2. GHG Calculation Validation Matrix, 3. Golden Dataset Validation Results, 4. Property-Based Invariant Validation (Hypothesis), 5. Mutation Testing Kill Rate, Independent GHG Emissions & MRV Calculation Validation Report, Non-Circularity Safeguards:
+
+### Community 371 - "TestTier1DrillingMud"
+Cohesion: 0.29
+Nodes (3): Mud Degassing Tier 1 (water-based mud): mud_volume = 500 m3 EF (water-based) =…, Oil-based mud uses EF=0.35 kg/m3., TestTier1DrillingMud
 
 ### Community 374 - "run_full_validation_suite.py"
 Cohesion: 0.60
 Nodes (4): main(), parse_pytest_summary(), Master Validation Test Runner. ============================= Orchestrates…, run_pytest()
 
-### Community 375 - "test_deep_injection_matrix.py"
-Cohesion: 0.39
-Nodes (7): app(), db_session(), dispatcher(), fixture, test_deep_injection_matrix.py ------------------------------ Exhaustive Deep…, test_facility(), test_user()
+### Community 377 - "TestTier1Flaring"
+Cohesion: 0.33
+Nodes (3): Flaring Tier 1 (default factor_source → _generic_calculation): Uses API_FACTORS…, Tier 1 flaring falls through to generic EF-based calculation., TestTier1Flaring
 
-### Community 381 - "Human Review & Domain Expert Governance Gates"
-Cohesion: 0.50
-Nodes (3): 1. Domain Expert Review Register, 2. Decision Protocol for Human Review Gates, Human Review & Domain Expert Governance Gates
+### Community 380 - "Mandatory Human Review & Domain Expert Governance Register"
+Cohesion: 0.40
+Nodes (4): 1. Principle of Automated Testing Boundaries, 2. Mandatory Human Review Gates Register, 3. Governance Protocol & Audit Sign-Off Requirements, Mandatory Human Review & Domain Expert Governance Register
 
-### Community 383 - "get_job_status"
+### Community 381 - "Phase 49 — Human Review Required"
+Cohesion: 0.14
+Nodes (13): HR-01: N2O Default Emission Factor for Flaring, HR-02: Mobile vs. Stationary Combustion Boundary, HR-03: OGMP 2.0 Level Assignment Methodology, HR-04: Scope 3 Category Completeness, HR-05: Uncertainty GWP Interaction, HR-06: Custom Emission Factor Validation Boundary, HR-07: CSRF Protection Architecture, HR-08: Production Database and Backup Procedure (+5 more)
+
+### Community 388 - "test_audit_bug_fixes.py"
 Cohesion: 0.18
-Nodes (8): get_job_status(), Defect 10: Verify upload_jobs_lock exists and functions thread-safely., test_background_processor_upload_jobs_lock(), test_stress_bulk_pipeline.py ============================ Pillar 3: Concurrent…, Stress test concurrent polling via get_job_status across 30 parallel threads., Stress tests the background asynchronous file processor under multi-threaded…, Submit and process 8 distinct CSV upload jobs concurrently in parallel…, TestConcurrentBulkIngestionPipeline
+Nodes (11): client(), fixture, Verify ComponentFugitiveCalculator handles scalar counts without AttributeError., Verify TankFlashingCalculator handles null or missing GOR without TypeError., Verify delete_mitigation returns 400 Bad Request on malformed ID instead of 500…, Verify get_ogmp_surveys handles records with null measured_rate_kg_hr without…, test_component_fugitive_calculator_scalar_counts(), test_delete_mitigation_invalid_id_format() (+3 more)
+
+### Community 398 - "test_emission_factor_selection.py"
+Cohesion: 0.07
+Nodes (17): Grid Emission Factors - electricity_factors.py Central registry for indirect…, EPA USEEIO Emission Factors v1.3 Maps NAICS codes to kg CO2e per $1,000 spend.…, Emission Factors Package Re-exports everything from root emission_factors.py…, run_all_scenarios(), dispatcher(), fixture, parametrize, Emission Factor Selection, Resolution, and Precedence Verification Suite.… (+9 more)
+
+### Community 400 - "convert_factor_to_kg_per_unit"
+Cohesion: 0.40
+Nodes (4): convert_factor_to_kg_per_unit(), _normalize_unit_str(), Tests convert_factor_to_kg_per_unit dimensional transformations., TestUnitAwareFactorConversion
+
+### Community 406 - "dataset_generator.py"
+Cohesion: 0.15
+Nodes (11): build_case(), generate_golden_dataset(), get_golden_cases(), Authoritative Golden Dataset Generator. Generates comprehensive test cases…, Golden Validation Dataset Package., IndependentDehydratorModel, IndependentUncertaintyModel, Independent Uncertainty Quantification & Propagation Model. Source of Truth:… (+3 more)
 
 ## Knowledge Gaps
-- **1585 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+1580 more)
+- **1790 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+1785 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **80 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **68 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `CalculationDispatcher` connect `CalculationDispatcher` to `calculate_co2e`, `TestGWPHorizonsAndProfilesBattery`, `TestAllProcessTypesTier3`, `test_numerical_invariants.py`, `test_emission_factor_selection.py`, `test_csv_engine_matrix.py`, `test_battery_concurrency_stress_invariants.py`, `TestDifferentialScope2and3`, `TestEdgeCases`, `test_audit_remediation.py`, `User`, `test_boundary_and_negative.py`, `test_independent_differential.py`, `TestPropertyInvariantsHypothesis`, `test_golden_dataset_validation.py`, `TestDifferentialScope1`, `test_aggregation_reconciliation.py`, `normalize_gas_volume_to_standard`, `TestScope2ProcessMatrix`, `TestBulkCSVIngestionAllTiersAndScopes`, `EquipmentFugitiveCalculator`, `calculations/units.py`, `TestProcessCategoryIntegrity`, `TestUnitConversions`, `CogenAllocationCalculator`, `extract_val`, `test_deep_injection_matrix.py`?**
-  _High betweenness centrality (0.057) - this node is a cross-community bridge._
-- **Why does `User` connect `User` to `emissions.py`, `calculate_co2e`, `server/app.py`, `login_required`, `User`, `log_activity_and_notify`, `auth.py`, `test_numerical_invariants.py`, `test_audit.py`, `test_csv_engine_matrix.py`, `TestUnauthenticatedAccess`, `test_qaqc_diagnostics.py`, `test_user_profile_update.py`, `test_audit_remediation.py`, `test_it_role_security.py`, `background_processor.py`, `TestBulkCSVIngestionAllTiersAndScopes`, `test_audit_bug_fixes.py`, `test_all_bulk_imports.py`, `test_deep_injection_matrix.py`, `qaqc.py`, `get_job_status`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
-- **Why does `Facility` connect `User` to `emissions.py`, `test_audit_bug_fixes.py`, `TestUnauthenticatedAccess`, `test_qaqc_diagnostics.py`, `calculate_co2e`, `test_audit_remediation.py`, `login_required`, `User`, `log_activity_and_notify`, `auth.py`, `background_processor.py`, `test_numerical_invariants.py`, `test_all_bulk_imports.py`, `TestBulkCSVIngestionAllTiersAndScopes`, `test_deep_injection_matrix.py`, `qaqc.py`, `test_csv_engine_matrix.py`, `get_job_status`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **Why does `CalculationDispatcher` connect `CalculationDispatcher` to `.calculate_co2e`, `calculate_co2e`, `TestCogenAllocationBattery`, `test_csv_engine_matrix.py`, `test_emission_factor_selection.py`, `TestAllProcessTypesTier3`, `test_numerical_invariants.py`, `convert_factor_to_kg_per_unit`, `BlowdownCalculator`, `test_production_smoke.py`, `TestEdgeCases`, `test_audit_remediation.py`, `TestUnitConversionInvarianceMatrix`, `Emission`, `test_independent_differential.py`, `TestPropertyInvariantsHypothesis`, `test_golden_dataset_validation.py`, `test_all_process_types_matrix.py`, `test_deep_injection_matrix.py`, `get_active_gwp`, `TestUnitConversions`, `TestTier1DrillingMud`, `extract_val`, `TestTier1Flaring`?**
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+- **Why does `User` connect `User` to `TestBoundaryResilienceAPI`, `test_audit_bug_fixes.py`, `calculate_co2e`, `server/app.py`, `test_csv_engine_matrix.py`, `get_allowed_facility_ids`, `test_emission_factor_selection.py`, `log_activity_and_notify`, `get_current_user`, `test_numerical_invariants.py`, `test_audit.py`, `test_production_smoke.py`, `test_api_security.py`, `test_security_hardening.py`, `TestUnauthenticatedAccess`, `test_qaqc_diagnostics.py`, `TestUnitConversionInvarianceMatrix`, `test_audit_remediation.py`, `Emission`, `test_it_role_security.py`, `background_processor.py`, `test_deep_injection_matrix.py`, `models.py`, `Facility`, `custom_factors.py`?**
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+- **Why does `Facility` connect `Facility` to `TestBoundaryResilienceAPI`, `qaqc.py`, `test_audit_bug_fixes.py`, `calculate_co2e`, `dashboard.py`, `User`, `get_allowed_facility_ids`, `test_emission_factor_selection.py`, `log_activity_and_notify`, `get_current_user`, `test_csv_engine_matrix.py`, `test_numerical_invariants.py`, `test_api_security.py`, `TestUnauthenticatedAccess`, `test_qaqc_diagnostics.py`, `TestUnitConversionInvarianceMatrix`, `test_audit_remediation.py`, `Emission`, `login_required`, `background_processor.py`, `test_deep_injection_matrix.py`, `models.py`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **Are the 75 inferred relationships involving `CalculationDispatcher` (e.g. with `CombustionCalculator` and `FlaringCalculator`) actually correct?**
   _`CalculationDispatcher` has 75 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 29 inferred relationships involving `User` (e.g. with `TestCSVUploaderE2E` and `TestCalculationIntegrity`) actually correct?**
@@ -1375,4 +1458,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 29 inferred relationships involving `Facility` (e.g. with `TestCSVUploaderE2E` and `TestCalculationIntegrity`) actually correct?**
   _`Facility` has 29 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `private`, `version` to the rest of the system?**
-  _1585 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1790 weakly-connected nodes found - possible documentation gaps or missing edges._

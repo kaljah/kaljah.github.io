@@ -219,6 +219,19 @@ def get_batch_dashboard_data():
                 allowed_fids=allowed_fids,
                 segment=segment,
             )
+            f_intensity_py = None
+            if year and year != "all" and str(year).isdigit():
+                f_intensity_py = executor.submit(
+                    _run_in_app_ctx,
+                    app,
+                    _query_intensity_stats,
+                    facility_id=facility_id,
+                    year=int(year) - 1,
+                    activity=activity,
+                    division=division,
+                    allowed_fids=allowed_fids,
+                    segment=segment,
+                )
             f_uncertainty = executor.submit(
                 _run_in_app_ctx,
                 app,
@@ -242,8 +255,8 @@ def get_batch_dashboard_data():
         base_year_rec = BaseYearRecalculation.query.order_by(
             BaseYearRecalculation.recalc_date.desc()
         ).first()
-        base_year_obj = (
-            {
+        if base_year_rec:
+            base_year_obj = {
                 "id": base_year_rec.id,
                 "year": base_year_rec.year,
                 "reason": base_year_rec.reason,
@@ -253,9 +266,18 @@ def get_batch_dashboard_data():
                     else None
                 ),
             }
-            if base_year_rec
-            else None
-        )
+        else:
+            base_year_singleton = db.session.get(BaseYear, 1) or BaseYear.query.first()
+            base_year_obj = (
+                {
+                    "id": base_year_singleton.id,
+                    "year": base_year_singleton.year,
+                    "reason": "Official Baseline",
+                    "recalc_date": None,
+                }
+                if base_year_singleton
+                else None
+            )
 
         # Compute pending summary stats
         p_q1 = db.session.query(
@@ -287,30 +309,18 @@ def get_batch_dashboard_data():
             "totalCo2e": round(float(p1.tot or 0.0) + float(p2.tot or 0.0), 2),
         }
 
-        return jsonify(
-            {
-                "summary": f_summary.result(),
-                "mitigation": f_mitigation.result(),
-                "scope3_summary": f_scope3.result(),
-                "categorical_breakdown": f_categorical.result(),
-                "intensity_stats": f_intensity.result(),
-                "uncertainty": f_uncertainty.result(),
-                "years": f_years.result(),
-                "goal": goal_obj,
-                "base_year": base_year_obj,
-                "pending_stats": pending_stats,
-            }
-        )
         batch_result = {
             "summary": f_summary.result(),
             "mitigation": f_mitigation.result(),
             "scope3_summary": f_scope3.result(),
             "categorical_breakdown": f_categorical.result(),
             "intensity_stats": f_intensity.result(),
+            "intensity_stats_py": f_intensity_py.result() if f_intensity_py else None,
             "uncertainty": f_uncertainty.result(),
             "years": f_years.result(),
             "goal": goal_obj,
             "base_year": base_year_obj,
+            "pending_stats": pending_stats,
         }
         with CACHE_LOCK:
             DASHBOARD_CACHE[cache_key] = batch_result
@@ -452,6 +462,10 @@ def _query_summary(
 
     yearly_data = {}
     is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
+    gwp100_map = get_active_gwp(horizon="100")
+    gwp20_map = get_active_gwp(horizon="20")
+    delta_ch4 = float(gwp20_map.get("CH4", 84.0)) - float(gwp100_map.get("CH4", 28.0))
+    delta_n2o = float(gwp20_map.get("N2O", 264.0)) - float(gwp100_map.get("N2O", 265.0))
 
     for row in scope1_data:
         yr = int(row.year)
@@ -461,11 +475,8 @@ def _query_summary(
         ch4_val = float(row.ch4_total or 0)
         n2o_val = float(row.n2o_total or 0)
         gwp100_val = float(row.scope1_total or 0)
-        # IPCC AR5/AR6 GWP-20:
-        # Base scope1_total is computed under GWP-100 (CH4=28, N2O=265).
-        # Converting to GWP-20 (CH4=84, N2O=264) requires adding the delta: + (84 - 28)*CH4 + (264 - 265)*N2O.
-        # This guarantees all Scope 1 records (even if not split by gas) are preserved and GWP-20 >= GWP-100.
-        gwp20_val = round(max(gwp100_val, gwp100_val + (56.0 * ch4_val) - (1.0 * n2o_val)), 2)
+        # Dynamic GWP-20 conversion using active IPCC standards
+        gwp20_val = round(max(gwp100_val, gwp100_val + (delta_ch4 * ch4_val) + (delta_n2o * n2o_val)), 2)
 
         yearly_data[key] = {
             "year": yr,
@@ -551,7 +562,7 @@ def _query_summary(
             g100 = float(row.total or 0)
             ch4_t = float(row.ch4_total or 0)
             n2o_t = float(row.n2o_total or 0)
-            g_val = round(max(g100, g100 + (56.0 * ch4_t) - (1.0 * n2o_t)), 2) if is_20 else g100
+            g_val = round(max(g100, g100 + (delta_ch4 * ch4_t) + (delta_n2o * n2o_t)), 2) if is_20 else g100
             source_raw = (row.process_type or "").lower().strip()
             mapped = False
             for pattern, category in SOURCE_MAP.items():
@@ -761,12 +772,17 @@ def _query_categorical_breakdown(
     output_map = {}
     scope3_map = {}
     is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
+    gwp100_map = get_active_gwp(horizon="100")
+    gwp20_map = get_active_gwp(horizon="20")
+    delta_ch4 = float(gwp20_map.get("CH4", 84.0)) - float(gwp100_map.get("CH4", 28.0))
+    delta_n2o = float(gwp20_map.get("N2O", 264.0)) - float(gwp100_map.get("N2O", 265.0))
+
     for r in results:
         key = (r.activity, r.division, r.region, r.field)
         g100 = float(r.total_emissions or 0)
         ch4_t = float(r.ch4_total or 0)
         n2o_t = float(r.n2o_total or 0)
-        g_val = round(max(g100, g100 + (56.0 * ch4_t) - (1.0 * n2o_t)), 2) if is_20 else g100
+        g_val = round(max(g100, g100 + (delta_ch4 * ch4_t) + (delta_n2o * n2o_t)), 2) if is_20 else g100
         output_map[key] = g_val
     for r in scope2_results:
         key = (r.activity, r.division, r.region, r.field)
@@ -944,12 +960,20 @@ def get_goal(year):
 @dashboard_bp.route("/base-year", methods=["GET"])
 @login_required
 def get_base_year():
-    """Get most recent base year recalculation"""
+    """Get most recent base year recalculation or baseline"""
     base_year = BaseYearRecalculation.query.order_by(
         BaseYearRecalculation.recalc_date.desc()
     ).first()
 
     if not base_year:
+        base_year_singleton = db.session.get(BaseYear, 1) or BaseYear.query.first()
+        if base_year_singleton:
+            return jsonify({
+                "id": base_year_singleton.id,
+                "year": base_year_singleton.year,
+                "reason": "Official Baseline",
+                "recalc_date": None,
+            })
         return jsonify(None)
 
     return jsonify(
@@ -1457,6 +1481,10 @@ def _query_intensity_trend_bulk(
         s2_q = s2_q.join(Facility, Scope2Emission.facility_id == Facility.id).filter(
             Facility.segment == segment
         )
+    if activity and activity != "all":
+        s2_q = s2_q.filter(Scope2Emission.activity == activity)
+    if division and division != "all":
+        s2_q = s2_q.filter(Scope2Emission.division == division)
     s2_rows = s2_q.group_by(Scope2Emission.year, Scope2Emission.facility_id).all()
     for rec in s2_rows:
         key = (rec.year, rec.facility_id)
@@ -1488,6 +1516,13 @@ def _query_intensity_trend_bulk(
         s3_q = s3_q.join(Facility, Scope3Emission.facility_id == Facility.id).filter(
             Facility.segment == segment
         )
+    if (activity and activity != "all") or (division and division != "all"):
+        if not (segment and segment != "all"):
+            s3_q = s3_q.join(Facility, Scope3Emission.facility_id == Facility.id)
+        if activity and activity != "all":
+            s3_q = s3_q.filter(Facility.activity == activity)
+        if division and division != "all":
+            s3_q = s3_q.filter(Facility.division == division)
     s3_rows = s3_q.group_by(Scope3Emission.year, Scope3Emission.facility_id).all()
     s3_map = {}  # {(year, fid): co2e}
     for rec in s3_rows:
@@ -1989,13 +2024,14 @@ def _query_intensity_stats(
             co2_int = (ed["total_co2e"] * 1000.0) / boe
             co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe
             scope1_int = ((ed["total_co2e"] - s2_val) * 1000.0) / boe
+            scope1_int_gwp20 = (s1_gwp20 * 1000.0) / boe
             scope2_int = (s2_val * 1000.0) / boe
             scope3_int = (s3_map.get(fid, 0) * 1000.0) / boe
             ch4_int = (ed["total_ch4"] * 1000.0) / boe
             flare_int = (ed["total_flaring"] * 1000.0) / boe
             biogenic_int = (ed["total_biogenic"] * 1000.0) / boe
         else:
-            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = (
+            co2_int = co2_int_gwp20 = scope1_int = scope1_int_gwp20 = scope2_int = scope3_int = ch4_int = (
                 flare_int
             ) = biogenic_int = 0.0
 
@@ -2154,6 +2190,7 @@ def _query_intensity_stats(
                 "co2_intensity": co2_int,
                 "co2_intensity_gwp20": co2_int_gwp20,
                 "scope1_intensity": scope1_int,
+                "scope1_intensity_gwp20": scope1_int_gwp20,
                 "scope2_intensity": scope2_int,
                 "scope3_intensity": scope3_int,
                 "ch4_intensity": ch4_int,
@@ -2194,6 +2231,7 @@ def _query_intensity_stats(
                 "total_co2e": scope1_2_co2e,
                 "total_co2e_gwp20": total_co2e_gwp20,
                 "total_scope1": total_s1,
+                "total_scope1_gwp20": s1_gwp20,
                 "total_scope2": s2_val,
                 "total_scope3": scope3_co2e,
                 "total_co2": ed["total_co2"],

@@ -620,15 +620,14 @@ const Scope1Form = () => {
           return;
         }
       } else if (processType === "unloading") {
-        if (
-          !formData.unload_depth ||
-          !formData.unload_diameter ||
-          !formData.unload_pressure ||
-          !formData.unload_time ||
-          !formData.unload_events
-        ) {
+        const hasDepth = formData.unload_depth;
+        const hasDiam = formData.unload_diam || formData.unload_diameter;
+        const hasPress = formData.unload_press || formData.unload_pressure;
+        const hasEvents =
+          formData.unload_freq || formData.unload_events || formData.amount;
+        if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
           toast.warning(
-            "All well unloading parameters (depth, diameter, pressure, time, events) are required",
+            "Well unloading parameters (depth, diameter, pressure, events) are required",
           );
           return;
         }
@@ -641,13 +640,15 @@ const Scope1Form = () => {
           return;
         }
       } else if (processType === "completions") {
-        if (
-          !formData.comp_volume ||
-          !formData.comp_pressure ||
-          !formData.comp_events
-        ) {
+        const hasRateDur = formData.comp_duration && formData.comp_rate;
+        const hasGor = formData.comp_liquid_bbl && formData.comp_gor;
+        const hasVol =
+          formData.comp_volume ||
+          formData.amount ||
+          formData.flowback_volume;
+        if (!hasRateDur && !hasGor && !hasVol) {
           toast.warning(
-            "Well completions parameters (volume, pressure, events) are required",
+            "Well completions parameters (rate & duration OR liquid & GOR OR volume) are required",
           );
           return;
         }
@@ -990,8 +991,16 @@ const Scope1Form = () => {
         })(),
 
         // Specific Factors (for combustion/flaring/venting in specific mode)
-        specific_factors: sourceType === "specific" ? specFactors : undefined,
-        specificFactors: sourceType === "specific" ? specFactors : undefined,
+        specific_factors:
+          sourceType === "specific" &&
+          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
+            ? specFactors
+            : undefined,
+        specificFactors:
+          sourceType === "specific" &&
+          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || specFactors.co)
+            ? specFactors
+            : undefined,
         user_uncertainty:
           sourceType === "specific" ? userUncertainty : undefined,
         meter_uncertainty_pct:
@@ -1290,9 +1299,17 @@ const Scope1Form = () => {
           "blowdown",
           "agr",
           "dehydrator",
+          "tank",
+          "tank_flashing",
+          "tank_working",
+          "tank_breathing",
         ].includes(process)
       ) {
         setSourceType("specific");
+      } else if (
+        ["mobile", "fugitive", "loading", "separation"].includes(process)
+      ) {
+        setSourceType("default");
       }
     }
   };
@@ -1310,14 +1327,14 @@ const Scope1Form = () => {
     }));
 
     // Auto-map composition to engineering forms if raw_composition is provided
-    if (
-      res.raw_composition &&
-      ["drilling", "completions", "unloading"].includes(processType)
-    ) {
-      if (res.raw_composition.CH4)
+    if (res.raw_composition) {
+      if (res.raw_composition.CH4) {
         handleFormChange("ch4_content", res.raw_composition.CH4);
-      if (res.raw_composition.CO2)
+        handleFormChange("c1", parseFloat(res.raw_composition.CH4) / 100.0);
+      }
+      if (res.raw_composition.CO2) {
         handleFormChange("co2_content", res.raw_composition.CO2);
+      }
     }
 
     setShowGasCalc(false);

@@ -184,34 +184,39 @@ class CompletionFlowbackCalculator(BaseCalculator):
         well_head_pressure=None,
         hhv=1020.0,
         gwp_dict=None,
+        events=1.0,
+        gas_produced_sales_scf=0.0,
     ):
         """
         API Compendium 2021 §6.3 & EPA Subpart W §98.233(c) Completions & Workovers Flowback:
         Supports 3 rigorous calculation methodologies:
         1. 'metered_volume': Direct standard gas volume measurement (scf or m3).
-        2. 'rate_duration': Flowback rate (Mscf/day or scf/hr) * duration (hours).
-        3. 'gor_liquid': Liquid flowback volume (bbl) * GOR (scf/bbl).
+        2. 'rate_duration': Flowback rate (Mcf/hr) * duration (hours) * events.
+        3. 'gor' / 'gor_liquid': Liquid flowback volume (bbl) * GOR (scf/bbl) * events - sales gas.
         """
         uncertainties = uncertainties or {}
 
         # Determine standard gas volume (in m3) based on selected method
         method = str(calculation_method).lower()
         total_gas_scf = 0.0
+        num_events = float(events if events is not None else 1.0)
 
         if method == "rate_duration" and flowback_rate and flowback_duration_hours:
-            # flowback_rate in Mscf/day -> scf/hr = (rate * 1000) / 24
-            rate_scf_hr = (float(flowback_rate) * 1000.0) / 24.0
-            total_gas_scf = rate_scf_hr * float(flowback_duration_hours)
+            # flowback_rate in Mcf/hr per UI standard -> scf/hr = rate * 1000
+            rate_scf_hr = float(flowback_rate) * 1000.0
+            total_gas_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
             total_gas_m3 = convert(total_gas_scf, "scf", "m3")
-        elif method == "gor_liquid" and liquid_flowback_bbl and gas_oil_ratio:
-            total_gas_scf = float(liquid_flowback_bbl) * float(gas_oil_ratio)
+        elif method in ["gor", "gor_liquid"] and liquid_flowback_bbl and gas_oil_ratio:
+            gross_gas_scf = float(liquid_flowback_bbl) * float(gas_oil_ratio) * num_events
+            deduct_scf = float(gas_produced_sales_scf or 0.0)
+            total_gas_scf = max(0.0, gross_gas_scf - deduct_scf)
             total_gas_m3 = convert(total_gas_scf, "scf", "m3")
         else:
             # Direct flowback volume passed in m3 (or scf)
             self.validate_inputs(
                 {"flowback_volume": flowback_volume}, ["flowback_volume"]
             )
-            total_gas_m3 = float(flowback_volume)
+            total_gas_m3 = float(flowback_volume) * num_events
             total_gas_scf = convert(total_gas_m3, "m3", "scf")
 
         ch4_frac = max(
@@ -538,7 +543,7 @@ class TankFlashingCalculator(BaseCalculator):
         """
         self.validate_inputs({"throughput": throughput}, ["throughput"])
 
-        is_flashing = process_type in ["tank_flashing", "tank", "storage_tanks"]
+        is_flashing = process_type in ["tank_flashing", "tank", "storage_tanks"] or (gas_oil_ratio and float(gas_oil_ratio) > 0 and not ef_ch4)
 
         if is_flashing:
             total_gas_scf = float(throughput) * float(gas_oil_ratio or 0.0)

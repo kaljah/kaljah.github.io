@@ -73,8 +73,8 @@ const TankForm = ({ data, onChange, sourceType }) => {
       {/* Engineering Mode: Calculation */}
       {isEngineering && (
         <>
-          {/* Flashing Specific Inputs */}
-          {(processType === "tank" || processType === "tank_flashing") && (
+          {/* Flashing / Working / Breathing Specific Inputs */}
+          {["tank", "tank_flashing", "tank_working", "tank_breathing"].includes(processType) && (
             <>
               <div className="input-group">
                 <label>

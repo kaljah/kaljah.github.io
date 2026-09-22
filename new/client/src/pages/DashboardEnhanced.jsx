@@ -245,10 +245,9 @@ const DashboardEnhanced = () => {
         // BUG-UI-04 FIX: Apply year filter to Scope 3 just like Scope 1 & 2
         scope3:
           currentYear === "all"
-            ? s3Data.total || 0
+            ? (s3Data.total || 0)
             : (s3Data.by_year?.[currentYear] ??
               s3Data.by_year?.[parseInt(currentYear)] ??
-              s3Data.total ??
               0),
         mitigation: 0,
         methaneEmissions: 0,
@@ -345,6 +344,29 @@ const DashboardEnhanced = () => {
       setIntensity(weightedIntensity);
       setHasProductionData(hasProd);
 
+      // Prior Year Weighted Intensity Calculation for YoY Trend
+      let pyIntensity = 0;
+      let pyHasProd = false;
+      const intensityPyData = batch.intensity_stats_py || [];
+      if (intensityPyData && intensityPyData.length > 0) {
+        let totalEmissionsForPy = 0;
+        let totalBoeForPy = 0;
+        intensityPyData.forEach((d) => {
+          if (d.total_boe > 0) {
+            const intVal =
+              gwpHorizon === "20" && d.co2_intensity_gwp20 != null
+                ? d.co2_intensity_gwp20
+                : d.co2_intensity;
+            totalEmissionsForPy += intVal * d.total_boe;
+            totalBoeForPy += d.total_boe;
+          }
+        });
+        if (totalBoeForPy > 0) {
+          pyIntensity = totalEmissionsForPy / totalBoeForPy;
+          pyHasProd = true;
+        }
+      }
+
       // YoY Variance Calculation
       if (currentYear !== "all") {
         const cy = parseInt(currentYear);
@@ -360,14 +382,16 @@ const DashboardEnhanced = () => {
           if (row.year === py) pyEmissions += total;
         });
 
-        if (pyEmissions > 0) {
-          setVariance({
-            emissions: calculateTrend(cyEmissions, pyEmissions),
-            intensity: "—", // Logic for intensity YoY if available
-          });
-        } else {
-          setVariance({ emissions: "—", intensity: "—" });
-        }
+        const emissionsVariance = pyEmissions > 0 ? calculateTrend(cyEmissions, pyEmissions) : "—";
+        const intensityVariance =
+          hasProd && pyHasProd && pyIntensity > 0
+            ? calculateTrend(weightedIntensity, pyIntensity)
+            : "—";
+
+        setVariance({
+          emissions: emissionsVariance,
+          intensity: intensityVariance,
+        });
       } else {
         setVariance({ emissions: "—", intensity: "—" });
       }
@@ -466,10 +490,10 @@ const DashboardEnhanced = () => {
   };
 
   const getActivityOptions = () => {
-    const filtered = availableFilters.regions.filter(
-      (r) => currentSegment === "all" || r.segment === currentSegment,
+    const filtered = facilities.filter(
+      (f) => currentSegment === "all" || f.segment === currentSegment,
     );
-    const activities = new Set(filtered.map((r) => r.activity));
+    const activities = new Set(filtered.map((f) => f.activity).filter(Boolean));
     return [
       { value: "all", label: "All Activities" },
       ...Array.from(activities)
@@ -480,12 +504,12 @@ const DashboardEnhanced = () => {
 
   const getDivisionOptions = () => {
     let divisionsSet = new Set();
-    const filtered = availableFilters.regions.filter(
-      (r) =>
-        (currentSegment === "all" || r.segment === currentSegment) &&
-        (currentActivity === "all" || r.activity === currentActivity),
+    const filtered = facilities.filter(
+      (f) =>
+        (currentSegment === "all" || f.segment === currentSegment) &&
+        (currentActivity === "all" || f.activity === currentActivity),
     );
-    filtered.forEach((r) => divisionsSet.add(r.division));
+    filtered.forEach((f) => { if (f.division) divisionsSet.add(f.division); });
     return [
       { value: "all", label: "All Divisions" },
       ...Array.from(divisionsSet)
@@ -495,7 +519,7 @@ const DashboardEnhanced = () => {
   };
 
   const getRegionOptions = () => {
-    const filtered = availableFilters.regions.filter(
+    const filtered = facilities.filter(
       (f) =>
         (currentSegment === "all" || f.segment === currentSegment) &&
         (currentActivity === "all" || f.activity === currentActivity) &&
@@ -510,6 +534,7 @@ const DashboardEnhanced = () => {
       })),
     ];
   };
+
 
   const getYearOptions = () => {
     return [
@@ -1151,6 +1176,13 @@ const DashboardEnhanced = () => {
                 <span className="stat-unit">
                   {!hasProductionData && stats.totalEmissions > 0 ? "Production" : "kg/BOE"}
                 </span>
+                {currentYear !== "all" && variance.intensity !== "—" && hasProductionData && (
+                  <span
+                    className={`variance-badge ${variance.intensity.startsWith("+") ? "danger" : "success"}`}
+                  >
+                    {variance.intensity}
+                  </span>
+                )}
               </div>
               <div className="stat-sublabel">
                 {!hasProductionData && stats.totalEmissions > 0 ? (

@@ -123,7 +123,7 @@ export function getUserOperationalDefaults(user, facilities = []) {
   // 4. If all accessible facilities share the same region/division/activity, use that
   if (facilities && facilities.length > 0) {
     if (!defaults.defaultRegion) {
-      const uniqueRegions = [...new Set(facilities.map(f => f.region || f.location).filter(Boolean))];
+      const uniqueRegions = [...new Set(facilities.map(f => f.region_identifier || f.location).filter(Boolean))];
       if (uniqueRegions.length === 1) defaults.defaultRegion = uniqueRegions[0];
     }
     if (!defaults.defaultActivity) {

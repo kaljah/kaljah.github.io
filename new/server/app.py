@@ -3,14 +3,14 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from config import Config
-from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_wtf.csrf import CSRFProtect, generate_csrf, CSRFError
 import uuid
 import time
 import traceback
 import logging
 from logging.handlers import RotatingFileHandler
 
-from extensions import db, limiter  # SEC-08 FIX: import limiter
+from extensions import db, limiter, csrf  # SEC-08 FIX: import limiter, csrf
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -62,7 +62,8 @@ if os.environ.get("USE_PROXY_FIX", "false").lower() == "true":
 # WAL checkpoint counter — runs PRAGMA wal_checkpoint(TRUNCATE) every 500 commits
 # to prevent the SQLite WAL file from growing unboundedly.
 _wal_commit_counter = 0
-_WAL_CHECKPOINT_INTERVAL = 500
+_WAL_CHECKPOINT_INTERVAL = int(os.environ.get("WAL_CHECKPOINT_INTERVAL", "100"))
+
 
 
 @event.listens_for(Engine, "connect")
@@ -121,7 +122,16 @@ def receive_after_commit(session):
 
 
 # CSRF Protection
-csrf = CSRFProtect(app)
+csrf.init_app(app)
+
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return jsonify({
+        "error": "CSRF token missing or invalid. Refresh the page and try again.",
+        "code": 400,
+    }), 400
+
 
 
 # Request Logging & Request ID Middleware
@@ -246,7 +256,6 @@ from routes.satellite import satellite_bp
 from routes.qaqc import qaqc_bp
 
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
-csrf.exempt(auth_bp)
 app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
 app.register_blueprint(facilities_bp, url_prefix="/api/facilities")
 app.register_blueprint(data_bp, url_prefix="/api/data")
@@ -283,29 +292,76 @@ if (
 
 
 def ensure_admin_seeded():
+    """
+    Seeds essential development and admin accounts:
+    - Admin: user 'a' / password 'a' (role: admin) and 'a@a'
+    - IT Manager: user 'z' / password 'z' (role: it_manager) and 'z@z'
+    In production when SEED_ADMIN=true, also configures explicit production credentials.
+    """
+    _env_name = (
+        os.environ.get("FLASK_ENV")
+        or os.environ.get("APP_ENV")
+        or os.environ.get("ENVIRONMENT")
+        or "development"
+    ).lower()
+    is_production = _env_name in ["production", "prod", "staging"]
+
+    accounts = [
+        {
+            "email": "a",
+            "password": "a",
+            "role": "admin",
+            "fullName": "Administrator",
+            "jobTitle": "Sustainability Lead",
+        },
+        {
+            "email": "a@a",
+            "password": "a",
+            "role": "admin",
+            "fullName": "Administrator",
+            "jobTitle": "Sustainability Lead",
+        },
+        {
+            "email": "z",
+            "password": "z",
+            "role": "it_manager",
+            "fullName": "IT Manager",
+            "jobTitle": "IT Operations Manager",
+        },
+        {
+            "email": "z@z",
+            "password": "z",
+            "role": "it_manager",
+            "fullName": "IT Manager",
+            "jobTitle": "IT Operations Manager",
+        },
+    ]
+
+    admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
+    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
+    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
+    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip()
+
+    if admin_email and admin_password:
+        accounts.append({
+            "email": admin_email,
+            "password": admin_password,
+            "role": "admin",
+            "fullName": os.environ.get("ADMIN_FULL_NAME", "System Administrator"),
+            "jobTitle": "Sustainability Lead",
+        })
+    if it_admin_email and it_admin_password:
+        accounts.append({
+            "email": it_admin_email,
+            "password": it_admin_password,
+            "role": "it_admin",
+            "fullName": os.environ.get("IT_ADMIN_FULL_NAME", "IT Administrator"),
+            "jobTitle": "Systems Administrator",
+        })
+
     try:
         from models import User
-        users_to_seed = [
-            {
-                "email": "admin@ghg.com",
-                "password": "Admin12345!",
-                "role": "admin",
-                "fullName": "System Administrator",
-            },
-            {
-                "email": "a@a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Admin User",
-            },
-            {
-                "email": "a",
-                "password": "a",
-                "role": "admin",
-                "fullName": "Admin User",
-            },
-        ]
-        for u in users_to_seed:
+        for u in accounts:
             user = User.query.filter_by(email=u["email"]).first()
             if not user:
                 user = User(
@@ -315,21 +371,22 @@ def ensure_admin_seeded():
                     role=u["role"],
                     sector="Oil & Gas",
                     department="Sustainability & IT",
-                    jobTitle="Sustainability Manager",
+                    jobTitle=u.get("jobTitle", "Administrator"),
                     location="Global",
                     status="active",
                 )
                 user.set_password(u["password"])
                 db.session.add(user)
+                app.logger.info(f"Seeded {u['role']} account: {u['email']}")
             else:
                 user.set_password(u["password"])
                 user.status = "active"
                 user.role = u["role"]
-                if not user.jobTitle:
-                    user.jobTitle = "Sustainability Manager"
+                app.logger.info(f"Updated account: {u['email']}")
         db.session.commit()
     except Exception as e:
-        app.logger.error(f"Failed to auto-seed admin: {e}")
+        app.logger.error(f"Failed to seed admin accounts: {e}")
+        db.session.rollback()
 
 
 def ensure_database_indexes():
@@ -372,14 +429,31 @@ def init_admin_route():
     users = User.query.all()
     return jsonify({
         "status": "ok",
-        "message": "Admin accounts seeded and ready",
-        "users": [u.email for u in users]
+        "message": "Admin and IT Manager accounts seeded successfully",
+        "users": [{"email": u.email, "role": u.role, "status": u.status} for u in users]
     })
 
 
 @app.route("/api/csrf-token")
 def get_csrf_token():
-    return jsonify({"csrf_token": generate_csrf()})
+    """
+    Issues a CSRF token for the double-submit cookie pattern.
+    Sets a non-HttpOnly cookie readable by the SPA via document.cookie.
+    The client must send the same value as X-CSRFToken header on mutating requests.
+    """
+    token = generate_csrf()
+    resp = jsonify({"csrf_token": token})
+    resp.set_cookie(
+        "csrf_token",
+        token,
+        httponly=False,          # Must be False — JavaScript reads this cookie
+        secure=app.config.get("SESSION_COOKIE_SECURE", False),
+        samesite=app.config.get("SESSION_COOKIE_SAMESITE", "Lax"),
+        max_age=86400,
+    )
+    return resp
+
+
 
 
 @app.route("/")
@@ -409,9 +483,13 @@ def health_readiness():
     try:
         from sqlalchemy import text
         db.session.execute(text("SELECT 1"))
+        wal_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ghg_app.db-wal")
+        wal_mb = round(os.path.getsize(wal_path) / (1024 * 1024), 2) if os.path.exists(wal_path) else 0.0
         return jsonify({
             "status": "ready",
             "database": "connected",
+            "wal_size_mb": wal_mb,
+            "wal_warning": wal_mb > 100.0,
             "version": app.config.get("APP_VERSION", "1.0.0")
         }), 200
     except Exception as e:

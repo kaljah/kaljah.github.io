@@ -791,6 +791,8 @@ def add_or_update_goal():
             db.session.add(goal)
 
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return (
             jsonify(
                 {
@@ -820,6 +822,8 @@ def delete_goal(year):
             return jsonify({"error": "Goal not found"}), 404
         db.session.delete(goal)
         db.session.commit()
+        from routes.dashboard import clear_dashboard_cache
+        clear_dashboard_cache()
         return jsonify({"message": "Goal deleted successfully"})
     except Exception as e:
         db.session.rollback()
