@@ -57,7 +57,32 @@ def _parse_non_negative_float(val, field_name, default=0.0):
         raise ValueError(f"{field_name} must be a non-negative number")
 
 
+PLAUSIBILITY_BOUNDS = {
+    "co2_factor": (0.0, 500.0),    # API 2021: typical solid fuels ~100 kg/MMBtu
+    "ch4_factor": (0.0, 100.0),    # API 2021: max ~5 for most fuels
+    "n2o_factor": (0.0, 10.0),     # API 2021: max ~0.5 for most fuels
+}
+
+
+def _check_plausibility(data):
+    """Flags any extreme or out-of-bounds custom factor values for user review."""
+    warnings = []
+    if not isinstance(data, dict):
+        return warnings
+    for field, (lo, hi) in PLAUSIBILITY_BOUNDS.items():
+        val = data.get(field)
+        if val is not None and str(val).strip() != "":
+            try:
+                v = float(val)
+                if v < lo or v > hi:
+                    warnings.append(f"{field}={v} is outside typical plausible range [{lo}, {hi}]")
+            except (ValueError, TypeError):
+                pass
+    return warnings
+
+
 @custom_factors_bp.route("", methods=["POST"])
+
 @custom_factors_bp.route("/", methods=["POST"])
 @superuser_required
 def create_custom_factor():
@@ -128,7 +153,12 @@ def create_custom_factor():
     except Exception as e:
         current_app.logger.error(f"Audit log error on custom factor create: {e}")
 
-    return jsonify({"message": "Custom factor created", "id": factor.id}), 201
+    warnings = _check_plausibility(data)
+    resp_data = {"message": "Custom factor created", "id": factor.id}
+    if warnings:
+        resp_data["warnings"] = warnings
+    return jsonify(resp_data), 201
+
 
 
 @custom_factors_bp.route("/<int:factor_id>", methods=["PUT"])

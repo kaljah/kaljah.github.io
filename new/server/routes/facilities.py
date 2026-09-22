@@ -46,6 +46,11 @@ def get_facilities():
                 "division": f.division,
                 "activity": f.activity,
                 "region": f.region,
+                # Computed identifier: falls back to name when region is NULL.
+                # Mirrors the 3-way match in utils.get_allowed_facility_ids().
+                # All frontend dropdowns and filters MUST use this field instead
+                # of reading f.region directly.
+                "region_identifier": f.region or f.name,
                 "boundary_notes": f.boundary_notes,
                 "boundary_type": f.boundary_type or "Operational Control",
                 "boundary_detail": f.boundary_detail or "",

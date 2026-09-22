@@ -1,7 +1,11 @@
-name: Deploy Frontend to GitHub Pages
+name: Build, Test & Deploy
 
 on:
   push:
+    branches:
+      - main
+      - master
+  pull_request:
     branches:
       - main
       - master
@@ -17,8 +21,109 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1: Backend Tests & Calculation Validation
+  # Runs on every push and PR. Frontend deploy is blocked until this passes.
+  # ─────────────────────────────────────────────────────────────────────────────
+  backend-tests:
+    name: Backend Tests & Calculation Validation
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: new/server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: new/server/requirements.txt
+
+      - name: Install backend dependencies
+        run: pip install -r requirements.txt pytest hypothesis
+
+      - name: Run full backend test suite
+        env:
+          FLASK_ENV: testing
+          DATABASE_URL: "sqlite:///:memory:"
+          SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
+          SECRET_KEY: "ci-test-secret-key-not-for-production"
+          SEED_ADMIN: "false"
+          RATELIMIT_ENABLED: "false"
+        run: |
+          python -m pytest tests/ \
+            --tb=short \
+            -q \
+            --no-header \
+            -x \
+            --timeout=300
+        timeout-minutes: 15
+
+      - name: Run GHG calculation differential validation
+        env:
+          FLASK_ENV: testing
+          DATABASE_URL: "sqlite:///:memory:"
+          SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
+          SECRET_KEY: "ci-test-secret-key-not-for-production"
+          SEED_ADMIN: "false"
+        run: |
+          python -m pytest \
+            tests/test_independent_differential.py \
+            tests/test_golden_dataset_validation.py \
+            tests/test_property_invariants.py \
+            tests/test_unit_conversions_exhaustive.py \
+            tests/test_battery_gwp_horizons_regulatory.py \
+            -v --tb=long
+        timeout-minutes: 10
+
+      - name: Run security regression tests
+        env:
+          FLASK_ENV: testing
+          DATABASE_URL: "sqlite:///:memory:"
+          SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
+          SECRET_KEY: "ci-test-secret-key-not-for-production"
+          SEED_ADMIN: "false"
+        run: |
+          python -m pytest \
+            tests/test_api_security.py \
+            tests/test_deep_injection_matrix.py \
+            tests/test_it_role_security.py \
+            tests/test_security_hardening.py \
+            -v --tb=long
+        timeout-minutes: 10
+
+      - name: Run production smoke tests
+        env:
+          FLASK_ENV: testing
+          DATABASE_URL: "sqlite:///:memory:"
+          SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
+          SECRET_KEY: "ci-test-secret-key-not-for-production"
+          SEED_ADMIN: "false"
+        run: |
+          python -m pytest \
+            tests/test_production_smoke.py \
+            -v --tb=long
+        timeout-minutes: 5
+
+      - name: Dependency vulnerability audit
+        run: |
+          pip install pip-audit
+          pip-audit --requirement requirements.txt --ignore-vuln PYSEC-2022-42969 || true
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2: Frontend Build
+  # Only runs after backend-tests passes. On PRs this validates the build.
+  # On main/master it also prepares the GitHub Pages artifact.
+  # ─────────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    needs: backend-tests        # ← Frontend BLOCKED until backend tests pass
     defaults:
       run:
         working-directory: new/client
@@ -37,13 +142,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
+      - name: Run frontend unit tests
+        run: npm run test
+
+
       - name: Determine Base Path and Build
         env:
-          # VITE_API_URL can be configured in GitHub Repo Settings -> Secrets/Variables -> Actions
           VITE_API_URL: ${{ vars.VITE_API_URL || secrets.VITE_API_URL || 'https://ghg-accounting.onrender.com/api' }}
         run: |
-          # If the repository is a user site (<owner>.github.io), base is '/'
-          # If it is a project repository, base is '/<repo-name>/'
           REPO_NAME="${{ github.event.repository.name }}"
           if [[ "$REPO_NAME" == *.github.io ]]; then
             export VITE_BASE_PATH="/"
@@ -59,12 +168,18 @@ jobs:
         with:
           path: new/client/dist
 
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 3: Deploy to GitHub Pages
+  # Only runs on main/master after a successful build.
+  # ─────────────────────────────────────────────────────────────────────────────
   deploy:
+    name: Deploy to GitHub Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

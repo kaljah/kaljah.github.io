@@ -386,7 +386,7 @@ class FlaringCalculator(BaseCalculator):
         ef_unit=None,
         fuel_unit=None,
         fuel_type=None,
-        ef_n2o=0.0,
+        ef_n2o=None,
         operating_temperature=None,
         temp_unit="C",
         operating_pressure=None,
@@ -515,18 +515,20 @@ class FlaringCalculator(BaseCalculator):
         )
 
         # N2O from flaring (energy or volume basis aware)
-        if ef_n2o and float(ef_n2o) > 0:
-            ef_u = str(ef_unit or "kg/m3").lower()
-            if "mmbtu" in ef_u:
+        _ef_n2o = float(ef_n2o) if ef_n2o is not None else 0.0001  # API Compendium 2021 Table 5-3
+        if _ef_n2o > 0:
+            ef_u = str(ef_unit or "kg/mmbtu").lower()
+            if "mmbtu" in ef_u or ef_unit is None:
                 hhv_val = float(hhv or 1020.0)
                 vol_scf = vol_std * CONVERSIONS.get("m3_to_scf", 35.3147)
                 flared_mmbtu = (vol_scf * hhv_val) / 1_000_000.0
-                n2o_tonnes = (flared_mmbtu * float(ef_n2o)) / 1000.0
+                n2o_tonnes = (flared_mmbtu * _ef_n2o) / 1000.0
             else:
-                n2o_kg = vol_std * convert_factor_to_kg_per_unit(ef_n2o, ef_unit, "m3", hhv=hhv, fuel_type="gases")
+                n2o_kg = vol_std * convert_factor_to_kg_per_unit(_ef_n2o, ef_unit, "m3", hhv=hhv, fuel_type="gases")
                 n2o_tonnes = n2o_kg / 1000.0
         else:
             n2o_tonnes = 0.0
+
         n2o_res = propagate_uncertainty(
             n2o_tonnes,
             ef_uncertainty=resolve_ef_uncertainty(

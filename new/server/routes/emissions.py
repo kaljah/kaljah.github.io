@@ -12,7 +12,7 @@ from models import (
     CustomFactor,
     Facility,
 )
-from extensions import db
+from extensions import db, limiter
 from utils import log_activity_and_notify
 from calculations import (
     compute_emissions,
@@ -33,6 +33,36 @@ from process_categories import NON_COMBUSTION_PROCESSES
 def _escape_like(val: str) -> str:
     """NEW-07 FIX: Escape SQL LIKE wildcards in user-supplied search strings."""
     return val.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
+def _lookup_api_factor(fuel_name: str) -> dict:
+    """Look up an emission factor from API_FACTORS supporting exact, normalized, and alias matches."""
+    if not fuel_name:
+        return {}
+    if fuel_name in API_FACTORS:
+        return API_FACTORS[fuel_name]
+    norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
+    for k, v in API_FACTORS.items():
+        if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
+            return v
+        if v.get("code") and v.get("code").lower() == norm:
+            return v
+    aliases = {
+        "natural gas": "Natural Gas",
+        "gas": "Natural Gas",
+        "diesel": "Diesel (No. 2 Fuel Oil)",
+        "crude oil": "Crude Oil",
+        "fuel gas": "Refinery Fuel Gas",
+        "lpg": "Propane (Liquid)",
+        "propane": "Propane (Gas)",
+        "gasoline": "Motor Gasoline",
+        "kerosene": "Kerosene",
+        "coal": "Bituminous Coal",
+    }
+    canonical = aliases.get(norm)
+    if canonical and canonical in API_FACTORS:
+        return API_FACTORS[canonical]
+    return {}
 
 
 @emissions_bp.route("/", methods=["GET"])
@@ -431,6 +461,7 @@ def resolve_gwp_dict(user=None):
 
 
 @emissions_bp.route("/bulk-upload", methods=["POST"])
+@limiter.limit("20 per minute")
 @login_required
 def add_bulk_upload():
     from datetime import datetime
@@ -2967,7 +2998,9 @@ def add_emission():
     # Passing empty factor_data relies on hardcoded defaults in calculations.py if any
 
     # Fetch real factor data from Constants based on fuel_type
-    factor_data = API_FACTORS.get(data.get("fuel"), {})
+    factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type"))
+    if factor_data.get("hhv") and not data.get("hhv"):
+        data["hhv"] = factor_data["hhv"]
 
     # Custom Factor Override
     custom_factor_id = data.get("custom_factor_id")
@@ -3034,7 +3067,7 @@ def add_emission():
 
         match = re.search(r"Missing required field: (\w+)", str(e))
         field = match.group(1) if match else "unknown"
-        return jsonify({"error": "Missing required field", "field": field}), 422
+        return jsonify({"error": str(e), "field": field, "detail": str(e)}), 422
 
     # Fallback: Calculate totalCo2e if it's missing or zero
     if not em_result.get("totalCo2e") or em_result.get("totalCo2e") == 0:
@@ -3394,7 +3427,7 @@ def update_emission(id):
             record.approved_by = None
             record.approved_at = None
 
-        factor_data = API_FACTORS.get(data.get("fuel") or data.get("fuel_type") or record.fuel_type, {})
+        factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type") or record.fuel_type)
         # Handle Custom Factor in update
         cf_id = data.get("custom_factor_id")
         if cf_id:

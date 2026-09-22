@@ -330,6 +330,9 @@ def _process_file_thread(
                 ).all()
 
             fac_name_map = {f.name.lower(): f for f in all_facilities}
+            for f in all_facilities:
+                if f.region and f.region.lower() not in fac_name_map:
+                    fac_name_map[f.region.lower()] = f
             fac_id_map = {str(f.id): f for f in all_facilities}
 
             custom_factors = CustomFactor.query.all()
