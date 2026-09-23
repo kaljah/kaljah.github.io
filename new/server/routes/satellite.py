@@ -209,13 +209,6 @@ def export_satellite_to_ogmp():
             ),
             403,
         )
-    if user.role == "viewer":
-        return (
-            jsonify(
-                {"error": "Forbidden: Read-only viewers cannot create OGMP survey records"}
-            ),
-            403,
-        )
 
     user_id = user.id
     data = request.get_json() or {}

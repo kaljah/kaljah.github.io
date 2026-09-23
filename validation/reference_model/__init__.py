@@ -43,6 +43,31 @@ from .ref_intensity import (
     ref_evaluate_ogmp_level,
 )
 
+# Independent Object-Oriented Reference Models
+from .unit_conversions import IndependentUnitConverter
+from .gwp import IndependentGWPModel
+from .combustion_flaring import IndependentCombustionModel, IndependentFlaringModel
+from .vented_processes import (
+    IndependentVentedPartition,
+    IndependentMudDegassing,
+    IndependentCompletions,
+    IndependentLiquidsUnloading,
+    IndependentBlowdown,
+    IndependentStorageTanks,
+    IndependentPneumatics,
+)
+from .fugitives import IndependentFugitiveModel
+from .midstream import (
+    IndependentAGRModel,
+    IndependentDehydratorModel,
+    IndependentStoichiometryModel,
+)
+from .scope2 import IndependentScope2Model
+from .scope3 import IndependentScope3Model
+from .uncertainty import IndependentUncertaintyModel
+from .aggregation_intensity import IndependentIntensityModel
+from .ogmp import IndependentOGMPModel
+
 __all__ = [
     "STD_TEMP_K",
     "STD_PRESSURE_PSIA",
@@ -71,4 +96,24 @@ __all__ = [
     "ref_calculate_carbon_intensity",
     "ref_calculate_methane_loss_rate",
     "ref_evaluate_ogmp_level",
+    "IndependentUnitConverter",
+    "IndependentGWPModel",
+    "IndependentCombustionModel",
+    "IndependentFlaringModel",
+    "IndependentVentedPartition",
+    "IndependentMudDegassing",
+    "IndependentCompletions",
+    "IndependentLiquidsUnloading",
+    "IndependentBlowdown",
+    "IndependentStorageTanks",
+    "IndependentPneumatics",
+    "IndependentFugitiveModel",
+    "IndependentAGRModel",
+    "IndependentDehydratorModel",
+    "IndependentStoichiometryModel",
+    "IndependentScope2Model",
+    "IndependentScope3Model",
+    "IndependentUncertaintyModel",
+    "IndependentIntensityModel",
+    "IndependentOGMPModel",
 ]

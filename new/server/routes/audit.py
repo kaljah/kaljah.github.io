@@ -24,6 +24,10 @@ def sanitize_csv_cell(val):
     return s
 
 
+def is_it_role(user):
+    return bool(user and user.role in ["it_admin", "it_manager", "it"])
+
+
 def audit_access_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -32,7 +36,7 @@ def audit_access_required(f):
         user = get_current_user()
         if not user:
             return jsonify({"error": "Authentication required"}), 401
-        if user.role not in ["admin", "superuser", "it_admin"]:
+        if user.role not in ["admin", "superuser", "it_admin", "it_manager"]:
             return (
                 jsonify(
                     {"error": "Administrative privileges required to access audit logs"}
@@ -54,8 +58,8 @@ def _build_audit_query(current_user=None):
 
     query = ActivityLog.query
 
-    # Separation of duties: IT Admins are strictly scoped to security and account lifecycle logs
-    if current_user and current_user.role == "it_admin":
+    # Separation of duties: IT Admins / Managers are strictly scoped to security and account lifecycle logs
+    if current_user and is_it_role(current_user):
         query = query.filter(
             ActivityLog.action.in_(["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"])
         )
@@ -116,11 +120,11 @@ def _build_audit_query(current_user=None):
     return query
 
 
-def _serialize_log(log, is_it_admin=False):
+def _serialize_log(log, is_it_user=False):
     old_val = None
     new_val = None
-    # IT Admin separation of duties: redact operational emission / data diffs
-    if not is_it_admin:
+    # IT Admin / Manager separation of duties: redact operational emission / data diffs
+    if not is_it_user:
         if log.old_values:
             try:
                 old_val = json.loads(log.old_values)
@@ -155,7 +159,7 @@ def _serialize_log(log, is_it_admin=False):
 @audit_access_required
 def get_audit_logs():
     user = get_current_user()
-    is_it_admin = bool(user and user.role == "it_admin")
+    is_it_user = is_it_role(user)
     query = _build_audit_query(current_user=user)
 
     total_count = query.count()
@@ -179,7 +183,7 @@ def get_audit_logs():
         .all()
     )
 
-    result = [_serialize_log(log, is_it_admin=is_it_admin) for log in logs]
+    result = [_serialize_log(log, is_it_user=is_it_user) for log in logs]
     pages = max(1, math.ceil(total_count / limit))
 
     response = jsonify(
@@ -200,7 +204,7 @@ def get_audit_logs():
 @audit_access_required
 def get_audit_stats():
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if user and is_it_role(user):
         sec_actions = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
         total_events = ActivityLog.query.filter(ActivityLog.action.in_(sec_actions)).count()
         total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
@@ -243,7 +247,7 @@ def get_audit_stats():
 @audit_access_required
 def get_audit_filters():
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if user and is_it_role(user):
         sec_actions = ["LOGIN", "LOGOUT", "REGISTER", "SECURITY", "UPDATE_PASSWORD", "PASSWORD_RESET"]
         users = (
             db.session.query(distinct(ActivityLog.user_name))
@@ -288,12 +292,12 @@ def get_audit_filters():
 def export_audit_logs():
     export_format = request.args.get("format", "csv").lower()
     user = get_current_user()
-    is_it_admin = bool(user and user.role == "it_admin")
+    is_it_user = is_it_role(user)
     query = _build_audit_query(current_user=user)
 
     # Limit maximum export to 10,000 records to prevent memory exhaustion
     logs = query.order_by(ActivityLog.timestamp.desc()).limit(10000).all()
-    serialized = [_serialize_log(log, is_it_admin=is_it_admin) for log in logs]
+    serialized = [_serialize_log(log, is_it_user=is_it_user) for log in logs]
     timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
     # Record the export in the audit trail itself

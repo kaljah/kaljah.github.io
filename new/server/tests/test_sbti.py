@@ -15,10 +15,10 @@ def client():
 @pytest.fixture
 def admin_user():
     with app.app_context():
-        user = User.query.filter_by(email="a@a").first()
+        user = User.query.filter_by(email="sbti_admin@example.com").first()
         if not user:
-            user = User(email="a@a", fullName="Admin User", orgName="AdminOrg", sector="Energy", role="admin")
-            user.set_password("a")
+            user = User(email="sbti_admin@example.com", fullName="Admin User", orgName="AdminOrg", sector="Energy", role="admin")
+            user.set_password("AdminPass123!")
             db.session.add(user)
             db.session.commit()
         return user
@@ -48,7 +48,7 @@ def test_manage_sbti_security(client, it_admin_user):
 
 
 def test_manage_sbti_validation_and_creation(client, admin_user):
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "sbti_admin@example.com", "password": "AdminPass123!"})
 
     # 1. Invalid base_year
     res = client.post("/api/manage/sbti", json={
@@ -90,7 +90,7 @@ def test_manage_sbti_validation_and_creation(client, admin_user):
 
 
 def test_sbti_trajectory_math_and_aliases(client, admin_user):
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "sbti_admin@example.com", "password": "AdminPass123!"})
 
     res = client.get("/api/dashboard/sbti-trajectory")
     assert res.status_code == 200

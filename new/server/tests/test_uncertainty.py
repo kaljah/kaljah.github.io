@@ -21,16 +21,16 @@ def client():
 @pytest.fixture
 def admin_user():
     with app.app_context():
-        user = User.query.filter_by(email="a@a").first()
+        user = User.query.filter_by(email="uncert_admin@example.com").first()
         if not user:
             user = User(
-                email="a@a",
+                email="uncert_admin@example.com",
                 fullName="Admin User",
                 orgName="AdminOrg",
                 sector="Energy",
                 role="admin",
             )
-            user.set_password("a")
+            user.set_password("AdminPass123!")
             db.session.add(user)
             db.session.commit()
         return user
@@ -83,7 +83,7 @@ def test_uncertainty_it_admin_blocked(client, it_admin_user):
 
 def test_uncertainty_default_response(client, admin_user):
     """Admin users receive a well-formed uncertainty response."""
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
     res = client.get("/api/dashboard/uncertainty")
     assert res.status_code == 200
 
@@ -104,7 +104,7 @@ def test_uncertainty_default_response(client, admin_user):
 
 def test_uncertainty_year_filter(client, admin_user):
     """Specifying year= returns that year in the response."""
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
     res = client.get("/api/dashboard/uncertainty?year=2024")
     assert res.status_code == 200
     data = res.get_json()
@@ -118,7 +118,7 @@ def test_uncertainty_year_filter(client, admin_user):
 
 def test_uncertainty_scope_filter(client, admin_user):
     """scope=1 should only return Scope 1 categories (no Scope 2/3 groups)."""
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
     res = client.get("/api/dashboard/uncertainty?scope=1")
     assert res.status_code == 200
     data = res.get_json()
@@ -136,7 +136,7 @@ def test_uncertainty_scope_filter(client, admin_user):
 
 def test_uncertainty_csv_export(client, admin_user):
     """export=csv should return text/csv with correct headers."""
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
     res = client.get("/api/dashboard/uncertainty?export=csv")
     assert res.status_code == 200
     assert "text/csv" in res.content_type
@@ -158,7 +158,7 @@ def test_uncertainty_95ci_correctness(client, admin_user):
     Verify that inventory_uncertainty_decimal ≈ 2 × inventory_uncertainty_1sigma.
     This confirms the GUM §6.2 coverage factor k=2 is applied correctly.
     """
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
     res = client.get("/api/dashboard/uncertainty")
     assert res.status_code == 200
     data = res.get_json()
@@ -175,7 +175,7 @@ def test_uncertainty_95ci_correctness(client, admin_user):
 
 def test_uncertainty_category_95ci(client, admin_user):
     """Verify per-category uncertainty_decimal is also 95% CI (2× 1sigma)."""
-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
     res = client.get("/api/dashboard/uncertainty")
     assert res.status_code == 200
     data = res.get_json()

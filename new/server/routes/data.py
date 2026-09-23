@@ -17,12 +17,15 @@ NON_OG_ACTIVITIES = [
     'Cement & Clinker',
 ]
 
+def is_it_role(user):
+    return bool(user and getattr(user, 'role', None) in ['it_admin', 'it_manager', 'it'])
+
 @data_bp.route('/production', methods=['GET'])
 @data_bp.route('/production/', methods=['GET'])
 @login_required
 def get_production():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to access operational production data.'}), 403
     query = ProductionData.query
     allowed_fids = get_allowed_facility_ids(user)
@@ -60,7 +63,7 @@ def get_production():
 def add_production():
     from sqlalchemy.exc import IntegrityError
     user = get_current_user()
-    if user and user.role in ['viewer', 'auditor', 'it_admin']:
+    if user and (user.role in ['auditor'] or is_it_role(user)):
         return jsonify({'error': 'Read-only or IT administrative role cannot modify operational production data.'}), 403
     data = request.get_json() or {}
     fid = data.get('facility_id') or data.get('facilityId')
@@ -76,16 +79,27 @@ def add_production():
 
     year = data.get('year')
     month = data.get('month')
-    oil_amount = data.get('oil_amount', 0)
-    gas_amount = data.get('gas_amount', 0)
+    try:
+        oil_amount = float(data.get('oil_amount', 0) if data.get('oil_amount') is not None else (data.get('oil_production', 0) or 0))
+        gas_amount = float(data.get('gas_amount', 0) if data.get('gas_amount') is not None else (data.get('gas_production', 0) or 0))
+        gross_prod = float(data.get('gross_production', 0) if data.get('gross_production') is not None else 0)
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Production amounts must be valid numbers'}), 400
+
+    if oil_amount < 0 or gas_amount < 0 or gross_prod < 0:
+        return jsonify({'error': 'Production amounts cannot be negative'}), 400
+
     oil_unit = data.get('oil_unit', 'bbl')
     gas_unit = data.get('gas_unit', 'mscf')
     activity = data.get('activity')
     division = data.get('division')
     field = data.get('field')
 
+    saved_rec_id = None
+
     # Atomic upsert pattern: try update if existing, handle race condition gracefully
     def perform_upsert():
+        nonlocal saved_rec_id
         existing = ProductionData.query.filter_by(
             facility_id=fid,
             year=year,
@@ -101,6 +115,7 @@ def add_production():
             existing.division = division
             existing.field = field
             rec_id = existing.id
+            saved_rec_id = rec_id
             action = 'UPDATE'
         else:
             prod = ProductionData(
@@ -118,6 +133,7 @@ def add_production():
             db.session.add(prod)
             db.session.flush()
             rec_id = prod.id
+            saved_rec_id = rec_id
             action = 'CREATE'
 
         log_details = f"{action.title()} Production Data for {year}-{month}: {oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas"
@@ -151,13 +167,13 @@ def add_production():
 
     from routes.dashboard import clear_dashboard_cache
     clear_dashboard_cache()
-    return jsonify({'message': 'Production data saved'})
+    return jsonify({'message': 'Production data saved', 'id': saved_rec_id}), 201
 
 @data_bp.route('/production/<int:record_id>', methods=['DELETE'])
 @login_required
 def delete_production(record_id):
     user = get_current_user()
-    if user and user.role in ['viewer', 'auditor', 'it_admin']:
+    if user and (user.role in ['auditor'] or is_it_role(user)):
         return jsonify({'error': 'Read-only or IT administrative role cannot delete operational production data.'}), 403
     prod = db.session.get(ProductionData, record_id)
     if not prod:
@@ -190,7 +206,7 @@ def delete_production(record_id):
 @login_required
 def bulk_import_production():
     user = get_current_user()
-    if user and user.role in ['viewer', 'auditor', 'it_admin']:
+    if user and (user.role in ['auditor'] or is_it_role(user)):
         return jsonify({'error': 'Read-only or IT administrative role cannot modify operational production data.'}), 403
     allowed_fids = get_allowed_facility_ids(user)
     data = request.get_json() or {}
@@ -296,7 +312,7 @@ def bulk_import_production():
 @login_required
 def get_methane_sources():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to view operational data.'}), 403
     sources = MethaneSourceType.query.order_by(MethaneSourceType.id.asc()).all()
     return jsonify([{
@@ -313,7 +329,7 @@ def get_methane_sources():
 @login_required
 def get_ogmp_surveys():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to view operational OGMP data.'}), 403
     query = OgmpSurvey.query
     allowed_fids = get_allowed_facility_ids(user)
@@ -383,7 +399,7 @@ def get_ogmp_surveys():
 @login_required
 def save_ogmp_survey():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
     record_id = data.get('id')
@@ -507,7 +523,9 @@ def save_ogmp_survey():
 @login_required
 def delete_ogmp_survey(record_id):
     user = get_current_user()
-    if user and user.role in ["viewer", "auditor"]:
+    if is_it_role(user):
+        return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
+    if user and user.role in ["auditor"]:
         return jsonify({'error': 'Forbidden: Read-only accounts cannot delete operational OGMP data.'}), 403
     record = db.session.get(OgmpSurvey, record_id)
     if not record:
@@ -542,7 +560,7 @@ def delete_ogmp_survey(record_id):
 @login_required
 def log_level_upgrade():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
     data = request.get_json() or {}
     facility_id = data.get('facility_id')
@@ -584,7 +602,7 @@ def log_level_upgrade():
 @login_required
 def get_level_logs():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to view operational OGMP data.'}), 403
     query = LevelUpgradeLog.query
     allowed_fids = get_allowed_facility_ids(user)
@@ -621,7 +639,7 @@ def get_level_logs():
 @login_required
 def get_cbam_exports():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to view operational CBAM data.'}), 403
     query = CbamProductExport.query
     allowed_fids = get_allowed_facility_ids(user)
@@ -678,7 +696,7 @@ def get_cbam_exports():
 @login_required
 def save_cbam_export():
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
     try:
         data = request.get_json() or {}
@@ -786,7 +804,7 @@ def save_cbam_export():
 @login_required
 def delete_cbam_export(record_id):
     user = get_current_user()
-    if user and user.role == 'it_admin':
+    if is_it_role(user):
         return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
     try:
         record = db.session.get(CbamProductExport, record_id)

@@ -3,7 +3,8 @@ import os
 
 # Set testing environment variables before importing app
 os.environ.setdefault("FLASK_ENV", "testing")
-os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+test_db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "test_app.db"))
+os.environ.setdefault("DATABASE_URL", f"sqlite:///{test_db_path.replace(os.sep, '/')}")
 os.environ.setdefault("SEED_ADMIN", "false")
 os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production")
 
@@ -31,6 +32,11 @@ def init_test_db():
         yield
         db.session.remove()
         db.drop_all()
+    if os.path.exists(test_db_path):
+        try:
+            os.remove(test_db_path)
+        except Exception:
+            pass
 
 
 @pytest.fixture(autouse=True)

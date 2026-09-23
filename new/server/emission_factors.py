@@ -268,6 +268,18 @@ LEGACY_FACTORS = {
         "description": "Average per event (Uncontrolled)",
         "uncertainty": {"co2": 0.0, "ch4": 0.3, "n2o": 0.0},
     },
+    "Tank - Flash Emissions (Oil)": {
+        "code": "TankFlashOil",
+        "type": "tank",
+        "ch4": 0.193,
+        "co2": 0.012,
+        "n2o": 0,
+        "factor": 0.193,
+        "unit": "kg/bbl",
+        "usage": ["tank_flashing"],
+        "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
+        "uncertainty": {"co2": 0.15, "ch4": 0.4, "n2o": 0.0},
+    },
     "Tank - Working Losses (Oil)": {
         "code": "TankWorkOil",
         "ch4": 0.05,

@@ -24,6 +24,9 @@ import threading
 import concurrent.futures
 import math
 
+def is_it_role(user):
+    return bool(user and getattr(user, "role", None) in ["it_admin", "it_manager", "it"])
+
 # Global cache for dashboard queries (5 minutes TTL)
 DASHBOARD_CACHE = TTLCache(maxsize=200, ttl=300)
 CACHE_LOCK = threading.Lock()
@@ -37,11 +40,14 @@ def _get_global_cache_epoch():
     import time
 
     now = time.time()
-    # Check at most once every 1.0s to avoid database query overhead
-    if now - _LAST_EPOCH_CHECK > 1.0:
-        _LAST_EPOCH_CHECK = now
-        try:
-            from extensions import db
+    try:
+        from extensions import db
+        if str(db.engine.url).startswith("sqlite"):
+            return _LOCAL_CACHE_EPOCH
+
+        # Check at most once every 1.0s to avoid database query overhead
+        if now - _LAST_EPOCH_CHECK > 1.0:
+            _LAST_EPOCH_CHECK = now
             from sqlalchemy import text
 
             with db.engine.connect() as conn:
@@ -55,26 +61,29 @@ def _get_global_cache_epoch():
                         with CACHE_LOCK:
                             DASHBOARD_CACHE.clear()
                         _LOCAL_CACHE_EPOCH = epoch_val
-        except Exception:
-            pass
+    except Exception:
+        pass
     return _LOCAL_CACHE_EPOCH
 
 
 def clear_dashboard_cache():
     """Updates global epoch in shared DB state and invalidates local worker heap."""
     import time
+    global _LOCAL_CACHE_EPOCH
 
     now = time.time()
+    _LOCAL_CACHE_EPOCH = now
     try:
         from extensions import db
-        from sqlalchemy import text
+        if not str(db.engine.url).startswith("sqlite"):
+            from sqlalchemy import text
 
-        with db.engine.begin() as conn:
-            conn.execute(
-                text("INSERT INTO system_settings (key, value) VALUES (:key, :val) "
-                     "ON CONFLICT(key) DO UPDATE SET value = :val"),
-                {"key": "_dashboard_cache_epoch", "val": str(now)}
-            )
+            with db.engine.begin() as conn:
+                conn.execute(
+                    text("INSERT INTO system_settings (key, value) VALUES (:key, :val) "
+                         "ON CONFLICT(key) DO UPDATE SET value = :val"),
+                    {"key": "_dashboard_cache_epoch", "val": str(now)}
+                )
     except Exception:
         pass
     with CACHE_LOCK:
@@ -124,7 +133,7 @@ def get_batch_dashboard_data():
     include_pending = request.args.get("includePending") == "true"
 
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -344,7 +353,7 @@ def get_batch_dashboard_data():
 @login_required
 def get_intensity_trend():
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -846,7 +855,7 @@ def get_dashboard_summary():
     Delegates to _query_summary() for thread-safe reuse.
     """
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -874,7 +883,7 @@ def get_dashboard_summary():
 def get_available_years():
     """Get list of all years present in the emissions and production data"""
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -891,7 +900,7 @@ def get_mitigation():
     Delegates to _query_mitigation() for thread-safe reuse.
     """
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -916,7 +925,7 @@ def get_scope3_summary():
     Delegates to _query_scope3_summary() for thread-safe reuse.
     """
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -996,7 +1005,7 @@ def get_categorical_breakdown():
     Delegates to _query_categorical_breakdown() for thread-safe reuse.
     """
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -1024,7 +1033,7 @@ def create_base_year_recalculation():
     user = get_current_user()
     if not user or user.role not in ["admin", "superuser"]:
         return jsonify({"error": "Admin or Superuser privileges required"}), 403
-    if user.role == "it_admin":
+    if is_it_role(user):
         return jsonify({"error": "IT Admins do not have access to emission calculations"}), 403
 
     data = request.get_json()
@@ -1096,7 +1105,7 @@ def get_ogmp_metrics():
     Returns compliance deadlines, current L1-L5 levels, and reconciliation status.
     """
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -1262,7 +1271,7 @@ def get_intensity_stats():
     Delegates to _query_intensity_stats() for thread-safe reuse.
     """
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -2262,7 +2271,7 @@ def get_uncertainty_analysis():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -2627,7 +2636,7 @@ def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="al
 def get_report_exclusions():
     """Fetches items marked as exclusions for the report."""
     user = get_current_user()
-    if user and user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
@@ -2663,7 +2672,7 @@ def get_sbti_trajectory():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role == "it_admin":
+    if is_it_role(user):
         return (
             jsonify(
                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}

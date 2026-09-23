@@ -18,7 +18,7 @@ from calculations import (
     compute_emissions,
     calculate_co2e,
 )
-from emission_factors import API_FACTORS
+from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS
 from routes.auth import login_required
 import datetime
 import uuid
@@ -36,17 +36,13 @@ def _escape_like(val: str) -> str:
 
 
 def _lookup_api_factor(fuel_name: str) -> dict:
-    """Look up an emission factor from API_FACTORS supporting exact, normalized, and alias matches."""
+    """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS supporting exact, normalized, and alias matches."""
     if not fuel_name:
         return {}
-    if fuel_name in API_FACTORS:
-        return API_FACTORS[fuel_name]
+    factor_catalog = {**API_FACTORS, **ALL_EMISSION_FACTORS}
+    if fuel_name in factor_catalog:
+        return factor_catalog[fuel_name]
     norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
-    for k, v in API_FACTORS.items():
-        if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
-            return v
-        if v.get("code") and v.get("code").lower() == norm:
-            return v
     aliases = {
         "natural gas": "Natural Gas",
         "gas": "Natural Gas",
@@ -58,10 +54,23 @@ def _lookup_api_factor(fuel_name: str) -> dict:
         "gasoline": "Motor Gasoline",
         "kerosene": "Kerosene",
         "coal": "Bituminous Coal",
+        "tank flash emissions oil": "Tank - Flash Emissions (Oil)",
+        "tank flash oil": "Tank - Flash Emissions (Oil)",
+        "tank flash": "Tank - Flash Emissions (Oil)",
+        "tank working losses oil": "Tank - Working Losses (Oil)",
+        "tank breathing losses oil": "Tank - Breathing Losses (Oil)",
+        "asphalt": "Asphalt",
+        "asphalt blowing": "Asphalt",
     }
     canonical = aliases.get(norm)
-    if canonical and canonical in API_FACTORS:
-        return API_FACTORS[canonical]
+    if canonical and canonical in factor_catalog:
+        return factor_catalog[canonical]
+
+    for k, v in factor_catalog.items():
+        if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
+            return v
+        if v.get("code") and v.get("code").lower() == norm:
+            return v
     return {}
 
 
@@ -2971,16 +2980,53 @@ def add_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
-    if user.role in ("viewer", "auditor", "it_admin", "it_manager", "it"):
+    if user.role in ("auditor", "it_admin", "it_manager", "it"):
         return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
 
     data = request.get_json(silent=True) or {}
 
+    # Map source_type to process_type if missing, and vice versa
+    if not data.get("process_type") and data.get("source_type"):
+        data["process_type"] = data["source_type"]
+    if not data.get("source_type") and data.get("process_type"):
+        data["source_type"] = data["process_type"]
+
     # Validation
     required = ["year", "month", "facility_id", "process_type"]
     for field in required:
-        if field not in data:
+        if field not in data or data[field] is None:
             return jsonify({"error": f"Missing field: {field}"}), 422
+
+    # Numeric & bounds validation
+    try:
+        yr = int(data["year"])
+        if yr < 1900 or yr > 2100:
+            return jsonify({"error": "Invalid year: must be between 1900 and 2100"}), 422
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid year: must be an integer"}), 422
+
+    try:
+        mo = int(data["month"])
+        if mo < 1 or mo > 12:
+            return jsonify({"error": "Invalid month: must be between 1 and 12"}), 422
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid month: must be an integer between 1 and 12"}), 422
+
+    if "quantity" in data and data["quantity"] is not None:
+        try:
+            q_val = float(data["quantity"])
+            import math
+            if math.isinf(q_val) or math.isnan(q_val):
+                return jsonify({"error": "Invalid quantity: value must be a finite number"}), 422
+            if q_val < 0:
+                return jsonify({"error": "Invalid quantity: cannot be negative"}), 422
+        except (ValueError, TypeError):
+            return jsonify({"error": "Invalid quantity: must be a valid number"}), 422
+
+    for str_field in ["fuel", "fuel_type", "source_type", "sub_type", "process_type"]:
+        val = data.get(str_field)
+        if val and len(str(val)) > 200:
+            return jsonify({"error": f"Invalid {str_field}: exceeds maximum length of 200 characters"}), 422
 
     try:
         fac_id = int(data["facility_id"])
@@ -2990,6 +3036,8 @@ def add_emission():
     allowed_ids = get_allowed_facility_ids(user)
     if allowed_ids is not None and fac_id not in allowed_ids:
         return jsonify({"error": "Unauthorized for this facility"}), 403
+
+    facility = db.session.get(Facility, fac_id)
 
     # Calculate Emissions
     # We need to fetch factor data if not specific
@@ -3110,9 +3158,10 @@ def add_emission():
         month=data["month"],
         facility_id=data["facility_id"],
         group_name=data.get("group_name"),
-        activity=data.get("activity"),
-        division=data.get("division"),
-        field=data.get("field"),
+        activity=data.get("activity") or (facility.activity if facility else None),
+        division=data.get("division") or (facility.division if facility else None),
+        region=data.get("region") or (facility.region if facility and facility.region else (facility.name if facility else None)),
+        field=data.get("field") or (facility.field if facility else None),
         process_type=data["process_type"],
         fuel_type=data.get("fuel"),
         quantity=data.get("amount"),
@@ -3161,24 +3210,28 @@ def add_emission():
     record.ogmp_level = ogmp_level_for(record)
 
     db.session.add(record)
-    db.session.flush()
+    try:
+        db.session.flush()
+        record_id_val = record.id
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to record emission: {e}"}), 500
+
+    facility = db.session.get(Facility, data.get("facility_id"))
+    facility_name = facility.name if facility else "Unknown"
 
     # --- Audit Log ---
     try:
-        # Fetch facility name for better description
-        facility = db.session.get(Facility, data["facility_id"])
-        facility_name = facility.name if facility else "Unknown"
-
         log_details = f"Added {record.process_type} emission: {record.quantity} {record.unit} of {record.fuel_type} for {facility_name} ({record.month}/{record.year})"
         log_activity_and_notify(
             action="CREATE",
-            record_id=str(record.id),
+            record_id=str(record_id_val),
             user=user,
             request=request,
             entity="Emission",
             details=log_details,
         )
-        db.session.commit()
         if record.status in ("Pending", "Pending Approval"):
             admins = User.query.filter_by(role="admin", status="active").all()
             for admin in admins:
@@ -3188,11 +3241,11 @@ def add_emission():
                     title="New Scope 1 Emission Pending Review",
                     message=f"A new Scope 1 emission record ({record.process_type}, {facility_name}) was submitted by {user.fullName} and is awaiting your approval.",
                 )
-            db.session.commit()
+        db.session.commit()
     except Exception as e:
         db.session.rollback()
-        print(f"Audit Log Error: {e}")
-        # Not raising here to not block notifications, but we committed atomically if no error
+        from flask import current_app
+        current_app.logger.warning(f"Audit Log Error: {e}")
 
     # --- Notification Logic: Check Goal ---
     try:
@@ -3245,9 +3298,9 @@ def add_emission():
                             Notification.create(
                                 title=title, message=msg, type=n_type, user_id=user.id
                             )
+                            db.session.commit()
     except Exception as e:
         from flask import current_app
-
         current_app.logger.warning(f"Notification check error: {e}")
 
     # Return emission result with uncertainty
@@ -3255,7 +3308,7 @@ def add_emission():
         jsonify(
             {
                 "message": "Record added",
-                "id": record.id,
+                "id": record_id_val,
                 "emissions": {
                     "co2": em_result["co2"],
                     "ch4": em_result["ch4"],
@@ -3265,12 +3318,7 @@ def add_emission():
                 },
                 "record": {
                     "process_type": data["process_type"],
-                    # BUG-04 FIX: safe facility name lookup
-                    "facility_name": (
-                        db.session.get(Facility, data["facility_id"]).name
-                        if data.get("facility_id") and db.session.get(Facility, data["facility_id"])
-                        else "Unknown"
-                    ),
+                    "facility_name": facility_name,
                     "month": data["month"],
                     "year": data["year"],
                     "fuel": data.get("fuel"),
@@ -3297,7 +3345,7 @@ def delete_emission(id):
     if not record:
         return jsonify({"error": "Record not found"}), 404
     # SEC-03 FIX: IDOR — enforce ownership; admins may delete any record, users can delete own records
-    if user.role in ["viewer", "auditor"]:
+    if user.role in ["auditor"]:
         return (
             jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}),
             403,
@@ -3348,7 +3396,7 @@ def update_emission(id):
     if not user:
         return jsonify({"error": "Unauthorized"}), 401
 
-    if user.role in ["viewer", "auditor", "it_admin", "it_manager", "it"]:
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
 
     data = request.get_json()  # EXTRA-03 FIX: removed duplicate call below
