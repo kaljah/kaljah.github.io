@@ -65,12 +65,19 @@ class Config:
         ) or "sqlite:///" + os.path.join(BASE_DIR, "ghg_app.db")
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    if str(SQLALCHEMY_DATABASE_URI).startswith("sqlite:///:memory:"):
-        from sqlalchemy.pool import StaticPool
-        SQLALCHEMY_ENGINE_OPTIONS = {
-            "connect_args": {"check_same_thread": False},
-            "poolclass": StaticPool,
-        }
+    if "sqlite" in str(SQLALCHEMY_DATABASE_URI).lower():
+        if str(SQLALCHEMY_DATABASE_URI).startswith("sqlite:///:memory:"):
+            from sqlalchemy.pool import StaticPool
+            SQLALCHEMY_ENGINE_OPTIONS = {
+                "connect_args": {"check_same_thread": False, "timeout": 30},
+                "poolclass": StaticPool,
+            }
+        else:
+            from sqlalchemy.pool import NullPool
+            SQLALCHEMY_ENGINE_OPTIONS = {
+                "connect_args": {"check_same_thread": False, "timeout": 30},
+                "poolclass": NullPool,
+            }
     else:
         SQLALCHEMY_ENGINE_OPTIONS = {
             "pool_size": 25,

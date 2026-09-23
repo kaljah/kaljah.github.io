@@ -657,6 +657,20 @@ EQUIPMENT_FACTORS = {
         "source": "API Compendium 2021 Section 6, Table 6-42",
     },
     # ========== STORAGE TANKS (TANK FLASHING) ==========
+    "Tank - Flash Emissions (Oil)": {
+        "code": "TankFlashOil",
+        "type": "tank",
+        "ch4": 0.193,  # kg CH₄/bbl (API Table 6-4 / Table 5-16)
+        "co2": 0.012,  # kg CO₂/bbl
+        "n2o": 0,
+        "uncertainty": {"co2": 0.15, "ch4": 0.40, "n2o": 0},
+        "unit": "kg/bbl",
+        "segment": "Upstream",
+        "process_category": "storage_tanks",
+        "type": "equipment",
+        "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
+        "source": "API Compendium 2021 Section 6, Table 6-4",
+    },
     "Tank - Crude Oil (Small, ≤10 bbl/d)": {
         "code": "TankCrudeSmall",
         "type": "tank",
@@ -1216,7 +1230,12 @@ EQUIPMENT_FACTORS = {
 }
 
 # Merge all emission factors
-ALL_EMISSION_FACTORS = {**API_FACTORS, **EQUIPMENT_FACTORS}
+ALL_EMISSION_FACTORS = {
+    **API_FACTORS,
+    **EQUIPMENT_FACTORS,
+    **CHEMICAL_PRODUCTION_FACTORS,
+    **N2O_PRODUCTION_FACTORS,
+}
 
 # Correlation equations for screening-based fugitive estimation (Section 7.3.1.6)
 CORRELATION_EQUATIONS = {

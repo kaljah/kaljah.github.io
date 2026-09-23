@@ -31,19 +31,35 @@ def get_user_operational_defaults(user):
     user_loc = str(user.location).strip() if user.location else ""
     if user_loc and not is_unrestricted_location(user_loc):
         defaults["region"] = user_loc
-        fac = Facility.query.filter(
-            db.or_(
-                Facility.region.ilike(user_loc),
-                Facility.location.ilike(user_loc),
-                Facility.name.ilike(user_loc),
-            )
-        ).first()
-        if fac:
-            defaults["region"] = fac.region or fac.location or user_loc
-            defaults["division"] = fac.division
-            defaults["activity"] = fac.activity
-            defaults["facility_id"] = str(fac.id)
-            defaults["facility_name"] = fac.name
+        try:
+            with db.session.no_autoflush:
+                fac = (
+                    db.session.query(
+                        Facility.id,
+                        Facility.name,
+                        Facility.region,
+                        Facility.location,
+                        Facility.division,
+                        Facility.activity,
+                    )
+                    .filter(
+                        db.or_(
+                            Facility.region.ilike(f"%{user_loc}%"),
+                            Facility.location.ilike(f"%{user_loc}%"),
+                            Facility.name.ilike(f"%{user_loc}%"),
+                        )
+                    )
+                    .order_by(Facility.division.isnot(None).desc(), Facility.id.desc())
+                    .first()
+                )
+                if fac:
+                    defaults["region"] = fac.region or fac.location or user_loc
+                    defaults["division"] = fac.division
+                    defaults["activity"] = fac.activity
+                    defaults["facility_id"] = str(fac.id)
+                    defaults["facility_name"] = fac.name
+        except Exception:
+            defaults["region"] = user_loc
 
     return defaults
 
@@ -246,12 +262,23 @@ def register():
 
     email_clean = str(data.get("email", "")).strip().lower()
     if User.query.filter(db.func.lower(User.email) == email_clean).first():
-        return jsonify({"error": "Email already registered"}), 400
+        return jsonify({"error": "Email already registered"}), 409
 
     password = data.get("password")
     valid, err_msg = validate_password_complexity(password)
     if not valid:
         return jsonify({"error": err_msg}), 400
+
+    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
+    VALID_ROLES = set(ROLE_RANK.keys())
+    role_requested = str(data.get("role", "user")).strip().lower()
+    if role_requested not in VALID_ROLES:
+        return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
+
+    creator_id = session.get("user_id")
+    creator = db.session.get(User, creator_id) if creator_id else None
+    if creator and creator.role in ["it_admin", "it_manager", "it"] and role_requested == "admin":
+        return jsonify({"error": "IT administrators cannot create accounts with business admin role"}), 403
 
     user = User(
         fullName=data.get("fullName"),
@@ -262,7 +289,7 @@ def register():
         jobTitle=data.get("jobTitle"),
         phone=data.get("phone"),
         location=data.get("location"),
-        role=data.get("role", "user"),  # Admins can explicitly set roles
+        role=role_requested,
     )
     user.set_password(password)
 
@@ -308,7 +335,7 @@ def register():
 
 @auth_bp.route("/login", methods=["POST"])
 @csrf.exempt
-@limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "300 per 15 minutes"))
+@limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
 def login():
     data = request.get_json()
     if not data or not data.get("email") or not data.get("password"):
@@ -332,9 +359,29 @@ def login():
         session.permanent = True
         session["user_id"] = user.id
         current_app.logger.debug(f"Session set for user_id={user.id}")
+
+        # Compute operational defaults before setting last_login to prevent premature query autoflush
+        user_defaults = get_user_operational_defaults(user)
         user.last_login = datetime.datetime.now(datetime.timezone.utc)
 
-        db.session.commit()
+        user_info = {
+            "id": user.id,
+            "fullName": user.fullName,
+            "email": user.email,
+            "role": user.role,
+            "orgName": user.orgName,
+            "jobTitle": user.jobTitle,
+            "department": user.department,
+            "sector": user.sector,
+            "phone": user.phone,
+            "location": user.location,
+            "status": user.status,
+            "default_region": user_defaults["region"],
+            "default_division": user_defaults["division"],
+            "default_activity": user_defaults["activity"],
+            "default_facility_id": user_defaults["facility_id"],
+            "default_facility_name": user_defaults["facility_name"],
+        }
 
         # Audit
         try:
@@ -349,29 +396,16 @@ def login():
         except Exception as e:
             current_app.logger.error(f"Audit Log Error on login: {e}")
 
-        user_defaults = get_user_operational_defaults(user)
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.warning(f"Login commit warning under concurrency: {e}")
 
         return jsonify(
             {
                 "message": "Login successful",
-                "user": {
-                    "id": user.id,
-                    "fullName": user.fullName,
-                    "email": user.email,
-                    "role": user.role,
-                    "orgName": user.orgName,
-                    "jobTitle": user.jobTitle,
-                    "department": user.department,
-                    "sector": user.sector,
-                    "phone": user.phone,
-                    "location": user.location,
-                    "status": user.status,
-                    "default_region": user_defaults["region"],
-                    "default_division": user_defaults["division"],
-                    "default_activity": user_defaults["activity"],
-                    "default_facility_id": user_defaults["facility_id"],
-                    "default_facility_name": user_defaults["facility_name"],
-                },
+                "user": user_info,
             }
         )
 
@@ -487,12 +521,12 @@ def logout():
 def me():
     user_id = session.get("user_id")
     if not user_id:
-        return jsonify({"authenticated": False, "user": None}), 200
+        return jsonify({"error": "Not authenticated", "authenticated": False, "user": None}), 401
 
     user = db.session.get(User, user_id)
     if not user:
         session.pop("user_id", None)
-        return jsonify({"authenticated": False, "user": None}), 200
+        return jsonify({"error": "Not authenticated", "authenticated": False, "user": None}), 401
 
     user_defaults = get_user_operational_defaults(user)
 
@@ -908,6 +942,12 @@ def update_settings():
     return jsonify(
         {"message": "Settings saved successfully", "settings": out_settings}
     )
+
+
+@auth_bp.route("/users", methods=["POST"])
+@it_admin_required
+def create_user():
+    return register()
 
 
 @auth_bp.route("/users", methods=["GET"])

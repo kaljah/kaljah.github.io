@@ -248,6 +248,15 @@ PROCESS_TYPES = {
         "required_inputs": ["production_amount", "abatement_type"],
         "description": "N₂O emissions from adipic acid production",
     },
+    "asphalt_blowing": {
+        "display_name": "Asphalt Blowing",
+        "segments": ["downstream"],
+        "category": "process",
+        "calculation_method": "production_factor",
+        "api_section": "Section 6 (Table 6-52)",
+        "required_inputs": ["production_amount"],
+        "description": "Process emissions from asphalt blowing",
+    },
     # ========== FUGITIVE - COMPONENT LEVEL (All Segments) ==========
     "fugitive_component": {
         "display_name": "Fugitive - Component Level",
@@ -352,6 +361,7 @@ NON_COMBUSTION_PROCESSES = {
     "drilling", "mud_degassing", "completions", "well_completions", "completion_flowback",
     "dehydrator", "dehydrators", "agr", "acid_gas_removal",
     "chemical_production", "nitric_acid_production", "adipic_acid_production",
+    "asphalt_blowing", "asphalt",
     "indirect_steam", "cogen_allocation", "stoichiometry",
 }
 

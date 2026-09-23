@@ -66,21 +66,27 @@ _WAL_CHECKPOINT_INTERVAL = int(os.environ.get("WAL_CHECKPOINT_INTERVAL", "100"))
 
 
 
+_custom_factors_migrated = False
+
+
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragmas(dbapi_conn, _):
+    global _custom_factors_migrated
     if isinstance(dbapi_conn, sqlite3.Connection):
         cursor = dbapi_conn.cursor()
         cursor.execute("PRAGMA foreign_keys = ON")
         cursor.execute("PRAGMA journal_mode = WAL")
         cursor.execute("PRAGMA synchronous = NORMAL")
-        cursor.execute("PRAGMA busy_timeout = 5000")
-        try:
-            cursor.execute("SELECT description FROM custom_factors LIMIT 1")
-        except sqlite3.OperationalError:
+        cursor.execute("PRAGMA busy_timeout = 30000")
+        if not _custom_factors_migrated:
+            _custom_factors_migrated = True
             try:
-                cursor.execute("ALTER TABLE custom_factors ADD COLUMN description TEXT")
-            except Exception:
-                pass
+                cursor.execute("SELECT description FROM custom_factors LIMIT 1")
+            except sqlite3.OperationalError:
+                try:
+                    cursor.execute("ALTER TABLE custom_factors ADD COLUMN description TEXT")
+                except Exception:
+                    pass
         cursor.close()
 
 
@@ -114,8 +120,9 @@ def receive_after_commit(session):
     if _wal_commit_counter % _WAL_CHECKPOINT_INTERVAL == 0:
         try:
             conn = db.engine.raw_connection()
-            if isinstance(conn.connection, sqlite3.Connection):
-                conn.connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            driver_conn = getattr(conn, "driver_connection", getattr(conn, "connection", None))
+            if isinstance(driver_conn, sqlite3.Connection):
+                driver_conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
             conn.close()
         except Exception as _wal_err:
             app.logger.warning(f"WAL checkpoint failed: {_wal_err}")
@@ -293,11 +300,13 @@ if (
 
 def ensure_admin_seeded():
     """
-    Seeds essential development and admin accounts:
-    - Admin: user 'a' / password 'a' (role: admin) and 'a@a'
-    - IT Manager: user 'z' / password 'z' (role: it_manager) and 'z@z'
-    In production when SEED_ADMIN=true, also configures explicit production credentials.
+    Seeds essential development and admin accounts when SEED_ADMIN=true.
     """
+    seed_flag = os.environ.get("SEED_ADMIN", "").strip().lower()
+    if seed_flag not in ["1", "true", "yes"]:
+        app.logger.info("Admin seeding skipped (SEED_ADMIN is not set)")
+        return
+
     _env_name = (
         os.environ.get("FLASK_ENV")
         or os.environ.get("APP_ENV")
@@ -306,36 +315,38 @@ def ensure_admin_seeded():
     ).lower()
     is_production = _env_name in ["production", "prod", "staging"]
 
-    accounts = [
-        {
-            "email": "a",
-            "password": "a",
-            "role": "admin",
-            "fullName": "Administrator",
-            "jobTitle": "Sustainability Lead",
-        },
-        {
-            "email": "a@a",
-            "password": "a",
-            "role": "admin",
-            "fullName": "Administrator",
-            "jobTitle": "Sustainability Lead",
-        },
-        {
-            "email": "z",
-            "password": "z",
-            "role": "it_manager",
-            "fullName": "IT Manager",
-            "jobTitle": "IT Operations Manager",
-        },
-        {
-            "email": "z@z",
-            "password": "z",
-            "role": "it_manager",
-            "fullName": "IT Manager",
-            "jobTitle": "IT Operations Manager",
-        },
-    ]
+    accounts = []
+    if not is_production:
+        accounts.extend([
+            {
+                "email": "a",
+                "password": "a",
+                "role": "admin",
+                "fullName": "Administrator",
+                "jobTitle": "Sustainability Lead",
+            },
+            {
+                "email": "a@a",
+                "password": "a",
+                "role": "admin",
+                "fullName": "Administrator",
+                "jobTitle": "Sustainability Lead",
+            },
+            {
+                "email": "z",
+                "password": "z",
+                "role": "it_manager",
+                "fullName": "IT Manager",
+                "jobTitle": "IT Operations Manager",
+            },
+            {
+                "email": "z@z",
+                "password": "z",
+                "role": "it_manager",
+                "fullName": "IT Manager",
+                "jobTitle": "IT Operations Manager",
+            },
+        ])
 
     admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
     admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
@@ -422,16 +433,7 @@ with app.app_context():
     ensure_admin_seeded()
 
 
-@app.route("/api/auth/init-admin")
-def init_admin_route():
-    ensure_admin_seeded()
-    from models import User
-    users = User.query.all()
-    return jsonify({
-        "status": "ok",
-        "message": "Admin and IT Manager accounts seeded successfully",
-        "users": [{"email": u.email, "role": u.role, "status": u.status} for u in users]
-    })
+
 
 
 @app.route("/api/csrf-token")

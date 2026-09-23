@@ -329,11 +329,11 @@ def _process_file_thread(
                     Facility.id.in_(allowed_fac_ids)
                 ).all()
 
-            fac_name_map = {f.name.lower(): f for f in all_facilities}
-            for f in all_facilities:
-                if f.region and f.region.lower() not in fac_name_map:
-                    fac_name_map[f.region.lower()] = f
-            fac_id_map = {str(f.id): f for f in all_facilities}
+            fac_name_map = {fac.name.lower(): fac for fac in all_facilities}
+            for fac in all_facilities:
+                if fac.region and fac.region.lower() not in fac_name_map:
+                    fac_name_map[fac.region.lower()] = fac
+            fac_id_map = {str(fac.id): fac for fac in all_facilities}
 
             custom_factors = CustomFactor.query.all()
             cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
@@ -434,7 +434,9 @@ def _process_file_thread(
                 mapped_data.update(row_dict)
                 for sys_key, header_name in mapping.items():
                     if header_name:
-                        mapped_data[sys_key] = row_dict.get(header_name)
+                        val = row_dict.get(header_name)
+                        if val is not None and str(val).strip() != "":
+                            mapped_data[sys_key] = val
 
 
                 # Merge Tier 3 / Gas Composition if present

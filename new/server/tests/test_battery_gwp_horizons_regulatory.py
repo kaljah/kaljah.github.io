@@ -136,7 +136,8 @@ class TestGWPHorizonsAndProfilesBattery:
         unburnt_ch4 = res_100["results"]["ch4"]["value"]
         assert unburnt_ch4 == pytest.approx(res_20["results"]["ch4"]["value"], rel=1e-5)
 
-        # Difference in total CO2e must equal unburnt CH4 * (GWP_20 - GWP_100) = 2.8836 * (82.5 - 28.0) = 157.158 tonnes CO2e
+        # Difference in total CO2e includes unburnt CH4 * (GWP_20 - GWP_100) and N2O * (GWP_20 - GWP_100)
         co2e_diff = res_20["total_co2e"] - res_100["total_co2e"]
-        expected_diff = unburnt_ch4 * (82.5 - 28.0)
+        n2o_t = res_100["results"]["n2o"]["value"]
+        expected_diff = unburnt_ch4 * (82.5 - 28.0) + n2o_t * (268.0 - 265.0)
         assert pytest.approx(co2e_diff, rel=1e-4) == expected_diff

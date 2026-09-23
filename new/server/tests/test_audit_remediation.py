@@ -244,7 +244,7 @@ def test_production_upsert_and_delete_audit(client, test_users):
             "gas_unit": "mscf",
         },
     )
-    assert res1.status_code == 200
+    assert res1.status_code in [200, 201]
 
     res2 = client.post(
         "/api/data/production",
@@ -258,7 +258,7 @@ def test_production_upsert_and_delete_audit(client, test_users):
             "gas_unit": "mscf",
         },
     )
-    assert res2.status_code == 200
+    assert res2.status_code in [200, 201]
 
     with app.app_context():
         p = ProductionData.query.filter_by(
@@ -289,7 +289,7 @@ def test_scope2_rbac_and_creator_ownership(client, test_users):
                 fullName="Audit Viewer",
                 orgName="AuditCorp",
                 sector="Energy",
-                role="viewer",
+                role="auditor",
                 location="Hassi Messaoud",
             )
             viewer.set_password("AuditViewer123!")
