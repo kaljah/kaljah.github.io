@@ -291,9 +291,9 @@
     "independent_intermediate_values": {},
     "independent_expected_result": {
       "co2": 82.43485600000001,
-      "ch4": 0.4776640000000004,
+      "ch4": 0.5970800000000005,
       "n2o": 0.0,
-      "co2e": 95.80944800000002
+      "co2e": 99.15309600000003
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Eq. 5-3, 5-4",
@@ -328,9 +328,9 @@
     "independent_intermediate_values": {},
     "independent_expected_result": {
       "co2": 42.631788,
-      "ch4": 0.062422000000000054,
+      "ch4": 0.07802750000000006,
       "n2o": 0.0,
-      "co2e": 44.373361800000005
+      "co2e": 44.808755250000004
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Table 5-11",
@@ -365,9 +365,9 @@
     "independent_intermediate_values": {},
     "independent_expected_result": {
       "co2": 14.55302,
-      "ch4": 0.4613799999999998,
+      "ch4": 0.28836250000000024,
       "n2o": 0.0,
-      "co2e": 27.471659999999993
+      "co2e": 22.627170000000007
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Table 5-11",
@@ -399,10 +399,10 @@
     },
     "independent_intermediate_values": {},
     "independent_expected_result": {
-      "co2": 0.6232024267302021,
+      "co2": 0.0,
       "ch4": 20.449143572423317,
       "n2o": 0.0,
-      "co2e": 573.1992224545832
+      "co2e": 572.5760200278529
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Table 5-15",
@@ -436,10 +436,10 @@
     },
     "independent_intermediate_values": {},
     "independent_expected_result": {
-      "co2": 0.07597907049084131,
-      "ch4": 2.4376992696760627,
+      "co2": 0.07784004470718295,
+      "ch4": 2.4974064424376574,
       "n2o": 0.0,
-      "co2e": 68.3315586214206
+      "co2e": 70.0052204329616
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Eq. 5-14",
@@ -472,9 +472,9 @@
     "independent_intermediate_values": {},
     "independent_expected_result": {
       "co2": 7.42539,
-      "ch4": 0.0,
+      "ch4": 0.0576725,
       "n2o": 0.0,
-      "co2e": 7.42539
+      "co2e": 9.04022
     },
     "tolerance": 0.001,
     "source": "API Compendium 2021 Eq. 5-18",

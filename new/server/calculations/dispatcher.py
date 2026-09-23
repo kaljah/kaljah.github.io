@@ -77,6 +77,8 @@ class CalculationDispatcher:
             "chemical_production": StoichiometricCalculator(),
             "nitric_acid_production": StoichiometricCalculator(),
             "adipic_acid_production": StoichiometricCalculator(),
+            "asphalt_blowing": StoichiometricCalculator(),
+            "asphalt": StoichiometricCalculator(),
             "venting": BlowdownCalculator(),
             "blowdown": BlowdownCalculator(),
         }
@@ -1087,6 +1089,8 @@ class CalculationDispatcher:
                 "chemical_production",
                 "nitric_acid_production",
                 "adipic_acid_production",
+                "asphalt_blowing",
+                "asphalt",
             ]:
                 raw_amt = self._require_float(
                     flat_inputs,
@@ -1250,8 +1254,14 @@ class CalculationDispatcher:
         process_type="combustion",
         gwp_dict=None,
     ):
-        """Standard Quantity * EF fallback with unit handling and tier-aware uncertainty."""
-        quantity = float(inputs.get("quantity") or inputs.get("amount") or 0)
+        raw_q = inputs.get("amount") if inputs.get("amount") not in [None, ""] else inputs.get("quantity")
+        if isinstance(raw_q, str):
+            s = raw_q.strip()
+            if "," in s and "." not in s:
+                raw_q = s.replace(",", ".")
+            else:
+                raw_q = s.replace(",", "")
+        quantity = float(raw_q or 0)
         unit = str(inputs.get("unit") or "m3").lower()
         f_unit = str(emission_factors.get("unit") or "kg/m3").lower()
 

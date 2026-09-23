@@ -74,7 +74,7 @@ def create_scope3_emission():
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["viewer", "auditor", "it_admin", "it_manager", "it"]:
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot create emission records"}), 403
 
     data = request.get_json() or {}
@@ -147,6 +147,8 @@ def create_scope3_emission():
 
     try:
         db.session.add(emission)
+        db.session.flush()
+        emission_id_val = emission.id
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -155,7 +157,7 @@ def create_scope3_emission():
     try:
         log_activity_and_notify(
             action="CREATE",
-            record_id=str(emission.id),
+            record_id=str(emission_id_val),
             user=user,
             request=request,
             entity="Scope3Emission",
@@ -182,7 +184,7 @@ def create_scope3_emission():
 
     return jsonify({
         "message": "Scope 3 emission created",
-        "id": emission.id,
+        "id": emission_id_val,
         "status": initial_status,
         "co2e": co2e_val,
         "emissions": {
@@ -193,7 +195,7 @@ def create_scope3_emission():
             "uncertainty": final_uncertainty,
         },
         "record": {
-            "id": emission.id,
+            "id": emission_id_val,
             "year": emission.year,
             "month": emission.month,
             "facility_id": emission.facility_id,
@@ -218,7 +220,7 @@ def update_scope3_emission(emission_id):
     user = get_current_user()
     if not user:
         return jsonify({"error": "Not authenticated"}), 401
-    if user.role in ["viewer", "auditor", "it_admin", "it_manager", "it"]:
+    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
         return jsonify({"error": "Read-only or administrative role cannot modify emission records"}), 403
 
     emission = db.session.get(Scope3Emission, emission_id)
@@ -313,7 +315,7 @@ def delete_scope3_emission(emission_id):
     if user.role in ["it_admin", "it_manager", "it"]:
         return jsonify({"error": "IT personnel do not have access to emission data"}), 403
 
-    if user.role in ["viewer", "auditor"]:
+    if user.role in ["auditor"]:
         return jsonify({"error": "Forbidden: Read-only accounts cannot delete emission records"}), 403
 
     emission = db.session.get(Scope3Emission, emission_id)

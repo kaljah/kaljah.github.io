@@ -31,11 +31,8 @@ def get_allowed_facility_ids(user):
     if user.role in ["it_admin", "it_manager", "it"]:
         return []
 
-    # admin has full unrestricted data access.
-    # superuser with location in UNRESTRICTED_LOCATIONS also gets unrestricted access.
-    if user.role == "admin" or (
-        user.role == "superuser" and is_unrestricted_location(user.location)
-    ):
+    # Only admin has full unrestricted data access.
+    if user.role == "admin":
         return None
 
     # User is tied to a specific location/region

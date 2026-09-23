@@ -24,6 +24,10 @@ import DehydratorForm from "./scope1/DehydratorForm";
 import PneumaticsForm from "./scope1/PneumaticsForm"; // Can use for tank as well or separate
 import TankForm from "./scope1/TankForm";
 import FugitivesForm from "./scope1/FugitivesForm";
+import ChemicalProductionForm from "./scope1/ChemicalProductionForm";
+import NitricAcidForm from "./scope1/NitricAcidForm";
+import AdipicAcidForm from "./scope1/AdipicAcidForm";
+import AsphaltBlowingForm from "./scope1/AsphaltBlowingForm";
 import GasCompositionCalculator from "./GasCompositionCalculator";
 import {
   API_FACTORS,
@@ -543,9 +547,9 @@ const Scope1Form = () => {
       const totalCount =
         res.headers["x-total-count"] || (res.data && res.data.total) || 0;
       if (totalCount) {
-        setTotalPages(Math.ceil(parseInt(totalCount) / RECORDS_PER_PAGE));
+        setTotalPages(Math.max(1, Math.ceil(parseInt(totalCount) / RECORDS_PER_PAGE)));
       } else {
-        setTotalPages(Math.ceil(allEntries.length / RECORDS_PER_PAGE) || 1);
+        setTotalPages(Math.max(1, Math.ceil(allEntries.length / RECORDS_PER_PAGE)));
       }
     } catch (error) {
       console.error("Failed to load entries:", error);
@@ -1207,8 +1211,6 @@ const Scope1Form = () => {
         "completions",
         "unloading",
         "blowdown",
-        "agr",
-        "dehydrator",
       ].includes(processType)
     ) {
       return <CombustionForm {...props} />;
@@ -1248,6 +1250,14 @@ const Scope1Form = () => {
         return <TankForm {...props} />;
       case "fugitive":
         return <FugitivesForm {...props} />;
+      case "chemical_production":
+        return <ChemicalProductionForm {...props} />;
+      case "nitric_acid_production":
+        return <NitricAcidForm {...props} />;
+      case "adipic_acid_production":
+        return <AdipicAcidForm {...props} />;
+      case "asphalt_blowing":
+        return <AsphaltBlowingForm {...props} />;
       default:
         return <div>Select a process type</div>;
     }
@@ -1307,7 +1317,16 @@ const Scope1Form = () => {
       ) {
         setSourceType("specific");
       } else if (
-        ["mobile", "fugitive", "loading", "separation"].includes(process)
+        [
+          "mobile",
+          "fugitive",
+          "loading",
+          "separation",
+          "chemical_production",
+          "nitric_acid_production",
+          "adipic_acid_production",
+          "asphalt_blowing",
+        ].includes(process)
       ) {
         setSourceType("default");
       }
@@ -1487,8 +1506,8 @@ const Scope1Form = () => {
               />
             </div>
 
-            {/* Hoisted Emission Factor Selection — hidden for stoichiometry */}
-            {processType !== "stoichiometry" && (
+            {/* Hoisted Emission Factor Selection — hidden for stoichiometry and dedicated downstream process forms */}
+            {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(processType) && (
               <div className="input-group">
                 <div
                   style={{
@@ -1519,6 +1538,8 @@ const Scope1Form = () => {
                           return false;
                         if (processType === "separation" && type === "specific")
                           return false;
+                        if (["agr", "dehydrator"].includes(processType) && (type === "default" || type === "custom"))
+                          return false;
                         return true;
                       })
                       .map((type) => (
@@ -1534,8 +1555,6 @@ const Scope1Form = () => {
                                 "completions",
                                 "unloading",
                                 "blowdown",
-                                "agr",
-                                "dehydrator",
                               ].includes(processType)
                             ) {
                               toast.warning(
@@ -1569,6 +1588,41 @@ const Scope1Form = () => {
                       ))}
                   </div>
                 </div>
+                {["agr", "dehydrator"].includes(processType) && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      marginTop: "6px",
+                      marginBottom: "6px",
+                      padding: "8px 12px",
+                      background: "#eff6ff",
+                      border: "1px solid #bfdbfe",
+                      borderRadius: "6px",
+                      fontSize: "0.75rem",
+                      color: "#1d4ed8",
+                    }}
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <span>
+                      <strong>OGMP 2.0 Level 4/5:</strong> Engineering model (Tier 3) required. No static Tier 1 factors exist for this process.
+                    </span>
+                  </div>
+                )}
                 {sourceType === "default" && (
                   <CustomDropdown
                     options={fuelOptions}

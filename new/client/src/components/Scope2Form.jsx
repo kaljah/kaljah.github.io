@@ -131,7 +131,7 @@ const Scope2Form = () => {
       const sorted = data.sort((a, b) => b.id - a.id);
       const start = (currentPage - 1) * RECORDS_PER_PAGE;
       setEntries(sorted.slice(start, start + RECORDS_PER_PAGE));
-      setTotalPages(Math.ceil(sorted.length / RECORDS_PER_PAGE));
+      setTotalPages(Math.max(1, Math.ceil(sorted.length / RECORDS_PER_PAGE)));
     } catch (error) {
       console.error("Failed to load entries:", error);
       toast.error("Failed to load Scope 2 data");

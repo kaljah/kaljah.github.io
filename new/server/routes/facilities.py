@@ -4,6 +4,7 @@ from . import facilities_bp
 from utils import get_allowed_facility_ids, log_activity_and_notify, is_unrestricted_location
 from models import Facility, User
 from extensions import db
+from sqlalchemy.exc import IntegrityError
 from routes.auth import login_required
 import json
 
@@ -146,6 +147,12 @@ def add_facility():
                 403,
             )
 
+    code = data.get("code")
+    if code:
+        existing = Facility.query.filter_by(code=str(code).strip()).first()
+        if existing:
+            return jsonify({"error": f"Facility code '{code}' is already in use"}), 409
+
     fac = Facility(
         name=data.get("name"),
         location=data.get("location"),
@@ -168,8 +175,12 @@ def add_facility():
         longitude=data.get("longitude"),
     )
 
-    db.session.add(fac)
-    db.session.flush()  # Flush to get fac.id for audit log
+    try:
+        db.session.add(fac)
+        db.session.flush()  # Flush to get fac.id for audit log
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": f"Facility code '{fac.code}' is already in use"}), 409
 
     # Audit
     try:

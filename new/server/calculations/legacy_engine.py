@@ -392,8 +392,14 @@ def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=Non
         process = "unloading"
     elif process == "separation":
         process = "tank"
-
-    amount = float(payload.get("quantity") or payload.get("amount") or 0)
+    raw_amt = payload.get("amount") if payload.get("amount") not in [None, ""] else payload.get("quantity")
+    if isinstance(raw_amt, str):
+        s = raw_amt.strip()
+        if "," in s and "." not in s:
+            raw_amt = s.replace(",", ".")
+        else:
+            raw_amt = s.replace(",", "")
+    amount = float(raw_amt or 0)
     unit = payload.get("unit") or "m3"
 
     # Safely parse HHV - handle None, empty string, or '-' placeholders

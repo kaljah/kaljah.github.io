@@ -186,12 +186,13 @@ class CompletionFlowbackCalculator(BaseCalculator):
         gwp_dict=None,
         events=1.0,
         gas_produced_sales_scf=0.0,
+        rate_unit="mscf/day",
     ):
         """
         API Compendium 2021 §6.3 & EPA Subpart W §98.233(c) Completions & Workovers Flowback:
         Supports 3 rigorous calculation methodologies:
         1. 'metered_volume': Direct standard gas volume measurement (scf or m3).
-        2. 'rate_duration': Flowback rate (Mcf/hr) * duration (hours) * events.
+        2. 'rate_duration': Flowback rate (Mcf/day or Mcf/hr) * duration (hours) * events.
         3. 'gor' / 'gor_liquid': Liquid flowback volume (bbl) * GOR (scf/bbl) * events - sales gas.
         """
         uncertainties = uncertainties or {}
@@ -202,8 +203,11 @@ class CompletionFlowbackCalculator(BaseCalculator):
         num_events = float(events if events is not None else 1.0)
 
         if method == "rate_duration" and flowback_rate and flowback_duration_hours:
-            # flowback_rate in Mcf/hr per UI standard -> scf/hr = rate * 1000
-            rate_scf_hr = float(flowback_rate) * 1000.0
+            rate_unit_norm = str(rate_unit or "mscf/day").lower().strip()
+            if "hr" in rate_unit_norm or "hour" in rate_unit_norm:
+                rate_scf_hr = float(flowback_rate) * 1000.0
+            else:
+                rate_scf_hr = (float(flowback_rate) * 1000.0) / 24.0
             total_gas_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
             total_gas_m3 = convert(total_gas_scf, "scf", "m3")
         elif method in ["gor", "gor_liquid"] and liquid_flowback_bbl and gas_oil_ratio:
