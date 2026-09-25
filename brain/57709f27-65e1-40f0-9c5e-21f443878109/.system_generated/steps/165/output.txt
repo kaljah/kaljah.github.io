@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId Name        CommandLine                                                                                      
+--------- ----        -----------                                                                                      
+    27000 esbuild.exe C:\Users\samsung\Desktop\H2\new\client\node_modules\@esbuild\win32-x64\esbuild.exe --service=0...
+
+
+

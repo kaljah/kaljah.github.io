@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+   Id ProcessName Path                                                                                                 
+   -- ----------- ----                                                                                                 
+28948 esbuild     C:\Users\samsung\Desktop\H2\new\client\node_modules\@esbuild\win32-x64\esbuild.exe                   
+29416 esbuild     C:\Users\samsung\Desktop\H2\new\client\node_modules\@esbuild\win32-x64\esbuild.exe                   
+29796 esbuild     C:\Users\samsung\Desktop\H2\new\client\node_modules\@esbuild\win32-x64\esbuild.exe                   
+34252 esbuild     C:\Users\samsung\Desktop\H2\new\client\node_modules\@esbuild\win32-x64\esbuild.exe                   
+  528 node        C:\Program Files\nodejs\node.exe                                                                     
+12612 node        C:\Program Files\nodejs\node.exe                                                                     
+14912 node        C:\Program Files\nodejs\node.exe                                                                     
+25500 node        C:\Program Files\nodejs\node.exe                                                                     
+29656 node        C:\Program Files\nodejs\node.exe                                                                     
+31264 node        C:\Program Files\nodejs\node.exe                                                                     
+34304 node        C:\Program Files\nodejs\node.exe                                                                     
+34732 node        C:\Program Files\nodejs\node.exe                                                                     
+35712 node        C:\Program Files\nodejs\node.exe                                                                     
+37772 node        C:\Users\samsung\AppData\Roaming\npm\node_modules\@colbymchenry\codegraph\node_modules\@colbymchen...
+38916 node        C:\Program Files\nodejs\node.exe                                                                     
+39424 node        C:\Users\samsung\AppData\Roaming\npm\node_modules\@colbymchenry\codegraph\node_modules\@colbymchen...
+37892 python      C:\Users\samsung\anaconda3\python.exe                                                                
+41940 python      C:\Users\samsung\AppData\Local\uv\cache\builds-v0\.tmpyu4urz\Scripts\python.exe                      
+
+
+

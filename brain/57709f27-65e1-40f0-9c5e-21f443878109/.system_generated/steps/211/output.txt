@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId Name           CommandLine                                                                                   
+--------- ----           -----------                                                                                   
+    29672 conhost.exe    \??\C:\WINDOWS\system32\conhost.exe 0x4                                                       
+    27180 cmd.exe        C:\WINDOWS\system32\cmd.exe /c agy-node C:\Users\samsung\AppData\Local\Programs\Antigravity...
+    39556 conhost.exe    \\?\C:\WINDOWS\system32\conhost.exe --headless --width 80 --height 24 --signal 0x11e4 --ser...
+    30788 powershell.exe C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe                                     
+     3084 cmd.exe        C:\WINDOWS\system32\cmd.exe /c codegraph serve --mcp                                          
+    32860 uv.exe         uv run --with graphifyy --with mcp -m graphify.serve ${workspace.path}/graphify-out/graph.json
+    40984 powershell.exe powershell -Command "cmd /c \"npm run dev < nul\""                                            
+    29304 powershell.exe powershell -Command "cmd /c \"python app.py < nul\""                                          
+    36996 powershell.exe powershell -Command "Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -eq ...
+
+
+

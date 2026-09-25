@@ -1,0 +1,1 @@
+{"name":"graph_stats","description":"Return summary statistics: node count, edge count, communities, confidence breakdown.","parameters":{"properties":{"project_path":{"description":"Absolute path to a project directory containing graphify-out/graph.json. Optional — defaults to the graph this server was started with.","type":"string"}},"type":"object"}}

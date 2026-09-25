@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+index.html:1784:  <section id="showcase" class="showcase-section">
+index.html:1806:      <div class="tab-content-panel active" id="tab-0">
+index.html:1841:      <div class="tab-content-panel" id="tab-1">
+index.html:1876:      <div class="tab-content-panel" id="tab-2">
+index.html:1911:      <div class="tab-content-panel" id="tab-3">
+index.html:1946:      <div class="tab-content-panel" id="tab-4">
+index.html:1981:      <div class="tab-content-panel" id="tab-5">
+index.html:2016:      <div class="tab-content-panel" id="tab-6">
+
+
+

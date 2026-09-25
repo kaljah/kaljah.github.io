@@ -1,0 +1,43 @@
+
+The command exited with code 1.
+Output:
+At line:7 char:52
++ matches = re.findall(r'(?:src=|openLightbox\([\'\"])(site_assets/[^\' ...
++                                                    ~
+Unexpected token ')' in expression or statement.
+At line:7 char:76
++ ... ndall(r'(?:src=|openLightbox\([\'\"])(site_assets/[^\'\"]+)', content ...
++                                                                 ~
+Missing argument in parameter list.
+At line:11 char:4
++ for a in unique_assets:
++    ~
+Missing opening '(' after keyword 'for'.
+At line:14 char:7
++     if not exists: all_ok = False
++       ~
+Missing '(' after 'if' in if statement.
+At line:17 char:30
++ print('All assets verified:', all_ok)
++                              ~
+Missing expression after ','.
+At line:17 char:31
++ print('All assets verified:', all_ok)
++                               ~~~~~~
+Unexpected token 'all_ok' in expression or statement.
+At line:17 char:30
++ print('All assets verified:', all_ok)
++                              ~
+Missing closing ')' in expression.
+At line:17 char:37
++ print('All assets verified:', all_ok)
++                                     ~
+Unexpected token ')' in expression or statement.
+At line:18 char:1
++ "
++ ~
+The string is missing the terminator: ".
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 
+

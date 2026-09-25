@@ -1,0 +1,36 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                          Length
+--------                                                          ------
+C:\Users\samsung\Desktop\H2\audit\work\F\dash.png                 201014
+C:\Users\samsung\Desktop\H2\audit\work\K\agr.png                  174745
+C:\Users\samsung\Desktop\H2\audit\work\K\em1.png                  130287
+C:\Users\samsung\Desktop\H2\audit\work\K\hhv0.png                  66330
+C:\Users\samsung\Desktop\H2\audit\work\K\reports.png              122412
+C:\Users\samsung\Desktop\H2\audit\work\K\reports_search.png        80400
+C:\Users\samsung\Desktop\H2\audit\work\K\s1.png                    63331
+C:\Users\samsung\Desktop\H2\audit\work\K\t0.png                   204238
+C:\Users\samsung\Desktop\H2\audit\work\L\em_page.png              139671
+C:\Users\samsung\Desktop\H2\audit\work\L\em_s1.png                 67849
+C:\Users\samsung\Desktop\H2\audit\work\L\md.png                    89573
+C:\Users\samsung\Desktop\H2\audit\work\L\md_crash_user.png        227452
+C:\Users\samsung\Desktop\H2\audit\work\L\md_regions.png            95086
+C:\Users\samsung\Desktop\H2\audit\work\L\s1opts.png                76041
+C:\Users\samsung\Desktop\H2\audit\work\L\w1_admin_landing.png     226888
+C:\Users\samsung\Desktop\H2\audit\work\L\w1_badpw.png             901639
+C:\Users\samsung\Desktop\H2\audit\work\L\w1_expired.png           506881
+C:\Users\samsung\Desktop\H2\audit\work\L\w1_it_admin_landing.png  160306
+C:\Users\samsung\Desktop\H2\audit\work\L\w1_superuser_landing.png 154635
+C:\Users\samsung\Desktop\H2\audit\work\L\w1_user_landing.png      153289
+C:\Users\samsung\Desktop\H2\audit\work\L\w2_fac.png               103354
+C:\Users\samsung\Desktop\H2\audit\work\L\w3_after.png             179027
+C:\Users\samsung\Desktop\H2\audit\work\L\w3_before.png             67793
+C:\Users\samsung\Desktop\H2\audit\work\L\w3_dash.png              119626
+C:\Users\samsung\Desktop\H2\audit\work\L\w4_pending.png           169800
+C:\Users\samsung\Desktop\H2\audit\work\L\w4_user_after.png        186154
+C:\Users\samsung\Desktop\H2\audit\work\smoke_dashboard.png        204325
+
+
+

@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+SUCCESS: The process with PID 23968 (child process of PID 10340) has been terminated.
+SUCCESS: The process with PID 10340 (child process of PID 34852) has been terminated.
+SUCCESS: The process with PID 34852 (child process of PID 21832) has been terminated.
+SUCCESS: The process with PID 21832 (child process of PID 40196) has been terminated.
+SUCCESS: The process with PID 40196 (child process of PID 40984) has been terminated.
+SUCCESS: The process with PID 40984 (child process of PID 26120) has been terminated.
+SUCCESS: The process with PID 41064 (child process of PID 41052) has been terminated.
+SUCCESS: The process with PID 41052 (child process of PID 29304) has been terminated.
+SUCCESS: The process with PID 29304 (child process of PID 26120) has been terminated.
+SUCCESS: The process with PID 37892 (child process of PID 41940) has been terminated.
+SUCCESS: The process with PID 41940 (child process of PID 32860) has been terminated.
+SUCCESS: The process with PID 32860 (child process of PID 26120) has been terminated.
+

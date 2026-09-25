@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId ParentProcessId Name     CommandLine                                                                         
+--------- --------------- ----     -----------                                                                         
+    21832           40196 node.exe "C:\Program Files\nodejs\\node.exe"  "C:\Program Files\nodejs\\node_modules\npm\b...
+
+
+

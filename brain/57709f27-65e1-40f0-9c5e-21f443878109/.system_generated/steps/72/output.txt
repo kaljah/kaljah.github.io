@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Logo format: PNG Size: (1024, 359) Mode: RGBA
+

@@ -1,0 +1,89 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\index.html. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2102,6 +2102,83 @@
+           </div>
+         </div>
+       </div>
++
++      <!-- Comprehensive Gallery Grid -->
++      <div style="margin-top: 60px; text-align: center;">
++        <span class="section-tag">High-Resolution Gallery</span>
++        <h3 style="font-size: 1.8rem; margin-bottom: 12px;">Operational Proof Across Every Department</h3>
++        <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 680px; margin: 0 auto 30px;">
++          Click any interface card below to open full-resolution 1440px inspection in the Lightbox viewer.
++        </p>
++
++        <div class="screenshot-gallery-grid">
++          <!-- Card 1 -->
++          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/analytics_kpi.png')">
++            <div class="gt-img-wrap">
++              <img src="site_assets/analytics_kpi.png" alt="Dynamic Emission Analytics & KPIs" loading="lazy">
++            </div>
++            <div class="gt-caption">
++              <div class="gt-category">Executive Intelligence</div>
++              <div class="gt-title">Dynamic Emission Analytics & Intensity Splits</div>
++            </div>
++          </div>
++
++          <!-- Card 2 -->
++          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/scope1_selection.png')">
++            <div class="gt-img-wrap">
++              <img src="site_assets/scope1_selection.png" alt="Scope 1 Category Selection Matrix" loading="lazy">
++            </div>
++            <div class="gt-caption">
++              <div class="gt-category">Calculation Architecture</div>
++              <div class="gt-title">Scope 1 Oil & Gas Engineering Selection Matrix</div>
++            </div>
++          </div>
++
++          <!-- Card 3 -->
++          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/geographic_mapping.png')">
++            <div class="gt-img-wrap">
++              <img src="site_assets/geographic_mapping.png" alt="Asset Boundaries & GIS Regional Mapping" loading="lazy">
++            </div>
++            <div class="gt-caption">
++              <div class="gt-category">GIS & Boundaries</div>
++              <div class="gt-title">Multi-Field Geographic Boundaries & Assets</div>
++            </div>
++          </div>
++
++          <!-- Card 4 -->
++          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/audit_verification.png')">
++            <div class="gt-img-wrap">
++              <img src="site_assets/audit_verification.png" alt="Auditor Verification & Filter Trail" loading="lazy">
++            </div>
++            <div class="gt-caption">
++              <div class="gt-category">Assurance & Verification</div>
++              <div class="gt-title">Auditor Verification Trail & Query Filter</div>
++            </div>
++          </div>
++
++          <!-- Card 5 -->
++          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/admin_portal.png')">
++            <div class="gt-img-wrap">
++              <img src="site_assets/admin_portal.png" alt="RBAC User Permissions & Access Control" loading="lazy">
++            </div>
++            <div class="gt-caption">
++              <div class="gt-category">Enterprise Governance</div>
++              <div class="gt-title">Role-Based Access Control & RLS Security</div>
++            </div>
++          </div>
++
++          <!-- Card 6 -->
++          <div class="gallery-thumb-card" onclick="openLightbox('site_assets/hero_mockup.jpg')">
++            <div class="gt-img-wrap">
++              <img src="site_assets/hero_mockup.jpg" alt="NeoCarbon Enterprise Engineering Station" loading="lazy">
++            </div>
++            <div class="gt-caption">
++              <div class="gt-category">Control Room Readiness</div>
++              <div class="gt-title">Field Decarbonization Workstation Setup</div>
++            </div>
++          </div>
++        </div>
++      </div>
+     </div>
+   </section>
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

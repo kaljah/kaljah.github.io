@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+T  Syncing CodeGraph
+|
+Scanning files...
+Parsing code...
+Resolving refs...
+Linking dynamic dispatch...
+|
+*  Synced 91 changed files
+|
+•  Added: 85, Modified: 2, Removed: 4 - 956 nodes in 2.0s
+|
+—  Done
+
+

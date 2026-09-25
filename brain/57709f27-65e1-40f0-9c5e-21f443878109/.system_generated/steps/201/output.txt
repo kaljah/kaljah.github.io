@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId ParentProcessId Name     CommandLine                                                                         
+--------- --------------- ----     -----------                                                                         
+    10340           34852 node.exe "node"   "C:\Users\samsung\Desktop\H2\new\client\node_modules\.bin\\..\vite\bin\v...
+
+
+

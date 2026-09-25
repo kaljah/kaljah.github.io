@@ -1,0 +1,19 @@
+
+The command exited with code 1.
+Output:
+At line:5 char:42
++             print(f'{idx+1}: {line.strip()[:80]}')
++                                          ~
+An expression was expected after '('.
+At line:5 char:44
++             print(f'{idx+1}: {line.strip()[:80]}')
++                                            ~
+Array index expression is missing or not valid.
+At line:5 char:49
++             print(f'{idx+1}: {line.strip()[:80]}')
++                                                 ~~
+The string is missing the terminator: '.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : ExpectedExpression
+ 
+

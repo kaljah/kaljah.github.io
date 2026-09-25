@@ -1,0 +1,16 @@
+Task: b8001249-1636-42c6-896f-bdf8d0e78d33/task-1877
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8001249-1636-42c6-896f-bdf8d0e78d33\.system_generated\tasks\task-1877.log
+Log output:
+<truncated 2716 lines>
+1:10] "GET /api/dashboard/flaring-summary?facilityId=3&activity=EP&division=Production HTTP/1.1" 200 -
+[2026-09-25 20:21:18,116] INFO in app: GET /api/notifications/stream 200 [0.004s] [ReqID: 71fd0830-d053-4176-b9e8-4915c27b38c1]
+127.0.0.1 - - [25/Sep/2026 20:21:18] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+[2026-09-25 20:22:05,165] INFO in app: GET /api/notifications/stream 200 [0.003s] [ReqID: 020ff7c1-de1d-424f-bbe5-4e1cd206eaf1]
+127.0.0.1 - - [25/Sep/2026 20:22:05] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+[2026-09-25 20:22:52,217] INFO in app: GET /api/notifications/stream 200 [0.003s] [ReqID: 7773bb64-eec9-4909-905b-339c19941c71]
+127.0.0.1 - - [25/Sep/2026 20:22:52] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+[2026-09-25 20:23:39,260] INFO in app: GET /api/notifications/stream 200 [0.004s] [ReqID: f951d484-b563-48be-aa0f-db3d4d9482be]
+127.0.0.1 - - [25/Sep/2026 20:23:39] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+
+Last progress: 1m20s ago

@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+T  Syncing CodeGraph
+|
+Scanning files...
+|
+*  Synced 2 changed files
+|
+•  Removed: 2 - 0 nodes in 1.6s
+|
+—  Done
+
+

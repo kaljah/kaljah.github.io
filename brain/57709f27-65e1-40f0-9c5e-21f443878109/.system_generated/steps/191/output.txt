@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId ParentProcessId Name       CommandLine                                   
+--------- --------------- ----       -----------                                   
+    39260           25684 python.exe "C:\Users\samsung\anaconda3\python.exe" app.py
+
+
+

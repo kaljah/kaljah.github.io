@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Corners RGBA: [(254, 254, 255, 255), (254, 254, 255, 255), (255, 254, 255, 255), (254, 254, 255, 255)]
+

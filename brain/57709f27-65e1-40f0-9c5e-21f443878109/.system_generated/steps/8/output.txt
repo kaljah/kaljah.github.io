@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+Usage: codegraph install [options]
+
+Install codegraph MCP server into one or more agents (Claude Code, Cursor, Codex
+CLI, opencode, Hermes Agent, Gemini CLI, Antigravity IDE, Kiro, GitHub Copilot)
+
+Options:
+  -t, --target <ids>      Target agent(s): comma-separated ids, or
+                          "auto"|"all"|"none". Default: prompt
+  -l, --location <where>  Install location: "global" or "local". Default: prompt
+  -y, --yes               Non-interactive: defaults to --location=global
+                          --target=auto, auto-allow on
+  -i, --init              After wiring agents, also run `codegraph init` in the
+                          current directory — builds this project’s index, so
+                          install + index is one command (combine with --yes for
+                          an unattended bootstrap)
+  --no-permissions        Skip writing the auto-allow permissions list (Claude
+                          Code only)
+  --print-config <id>     Print MCP config snippet for the named agent and exit
+                          (no file writes)
+  --refresh               Rewrite what previous installs configured, for
+                          already-configured agents only (never adds new ones).
+                          Run automatically by `codegraph upgrade`
+  -h, --help              display help for command
+

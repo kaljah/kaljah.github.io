@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+
+CodeGraph Status
+
+Project: C:\Users\samsung\Desktop\H2
+
+Index Statistics:
+  Files:     465
+  Nodes:     6,163
+  Edges:     14,397
+  DB Size:   21.29 MB
+  Backend:   node:sqlite - built-in (full WAL)
+  Journal:   wal
+
+Nodes by Kind:
+  import          1,777
+  variable        1,546
+  function        1,014
+  method          699
+  file            459
+  class           248
+  route           214
+  constant        206
+
+Files by Language:
+  python          330
+  jsx             73
+  javascript      58
+  yaml            4
+
+Pending Changes:
+  Added:     85 files
+  Modified:  2 files
+[i] Run "codegraph sync" to update the index
+
+

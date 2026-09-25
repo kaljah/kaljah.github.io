@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+LocalAddress LocalPort OwningProcess
+------------ --------- -------------
+127.0.0.1         5192           528
+127.0.0.1         5191         34732
+127.0.0.1         5190         34304
+0.0.0.0           5173         29656
+0.0.0.0           5040          9524
+
+
+

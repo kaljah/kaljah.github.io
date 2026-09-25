@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+# Add to C:\Users\samsung\.gemini\config\mcp_config.json
+
+{
+  "mcpServers": {
+    "codegraph": {
+      "command": "codegraph",
+      "args": [
+        "serve",
+        "--mcp"
+      ]
+    }
+  }
+}
+

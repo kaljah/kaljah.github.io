@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId ParentProcessId Name           CommandLine                                       
+--------- --------------- ----           -----------                                       
+    40984           26120 powershell.exe powershell -Command "cmd /c \"npm run dev < nul\""
+
+
+

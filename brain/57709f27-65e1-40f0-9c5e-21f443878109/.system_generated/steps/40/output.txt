@@ -1,0 +1,197 @@
+
+The command exited with code 0.
+Output:
+## Code Context
+
+**Query:** emission calculations
+
+### Entry Points
+
+- **searchEmissionFactors** (function) - new/client/src/utils/emissionFactorsAPI.js:105
+  `(
+  query,
+  segment = null,
+  process = null,
+)`
+- **Emissions** (function) - new/client/src/pages/Emissions.jsx:21
+  `()`
+- **EmissionResult** (function) - new/client/src/components/EmissionResult.jsx:4
+  `({ result, onClose, onEdit, onDelete })`
+
+### Related Symbols
+
+- new/client/src/api.js: fetchCsrfToken:14
+- new/client/src/context/AuthContext.jsx: useAuth:276
+- new/client/src/components/Scope1Form.jsx: Scope1Form:49
+- new/client/src/components/Scope2Form.jsx: Scope2Form:16
+- new/client/src/components/Scope3Form.jsx: Scope3Form:16
+- new/client/src/App.jsx: AppRoutes:77
+- new/client/src/utils/formatters.js: formatNumber:39
+- new/client/src/utils/emissionFactorsAPI.js: formatUncertainty:192
+
+### Code
+
+#### searchEmissionFactors (new/client/src/utils/emissionFactorsAPI.js:105)
+
+```javascript
+export const searchEmissionFactors = async (
+  query,
+  segment = null,
+  process = null,
+) => {
+  try {
+    const params = { q: query };
+    if (segment) params.segment = segment;
+    if (process) params.process = process;
+
+    const response = await api.get("/emission-factors/search", { params });
+    return response.data.factors || {};
+  } catch (error) {
+    console.error("Error searching emission factors:", error);
+    return {};
+  }
+};
+```
+
+#### Emissions (new/client/src/pages/Emissions.jsx:21)
+
+```jsx
+const Emissions = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [stage, setStage] = useState(STAGE_SCOPE_SELECTION);
+
+  useEffect(() => {
+    const scopeParam = searchParams.get("scope") || searchParams.get("stage");
+    if (scopeParam) {
+      const lower = scopeParam.toLowerCase();
+      if (lower === "1" || lower === "scope1" || lower === "s1") {
+        setStage(STAGE_SCOPE1_SUB_SELECTION);
+      } else if (lower === "2" || lower === "scope2" || lower === "s2") {
+        setStage(STAGE_SCOPE2);
+      } else if (lower === "3" || lower === "scope3" || lower === "s3") {
+        setStage(STAGE_SCOPE3);
+      } else if (lower === "select" || lower === "all") {
+        setStage(STAGE_SCOPE_SELECTION);
+      }
+    }
+  }, [searchParams]);
+
+  const goToStage = (newStage) => {
+    setStage(newStage);
+    let sVal = "select";
+    if (newStage === STAGE_SCOPE1_SUB_SELECTION) sVal = "scope1";
+    else if (newStage === STAGE_SCOPE2) sVal = "scope2";
+    else if (newStage === STAGE_SCOPE3) sVal = "scope3";
+    setSearchParams(sVal === "select" ? {} : { scope: sVal }, { replace: true });
+    window.scrollTo(0, 0);
+  };
+
+  const renderSelectionScreen = () => (
+    <div className="scope-selection-grid">
+      {/* ── SCOPE 1 ── */}
+      <div
+        className="scope-card scope-1-card"
+        onClick={() => goToStage(STAGE_SCOPE1_SUB_SELECTION)}
+      >
+        <div className="scope-card-left">
+ 
+... (truncated) ...
+```
+
+#### EmissionResult (new/client/src/components/EmissionResult.jsx:4)
+
+```jsx
+const EmissionResult = ({ result, onClose, onEdit, onDelete }) => {
+  if (!result) return null;
+
+  const { emissions, record, calculation_method } = result;
+
+  // Format number with commas
+  const formatNumber = (num) => {
+    if (num === null || num === undefined) return "0.00";
+    return parseFloat(num).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 3,
+    });
+  };
+
+  // Format uncertainty range
+  const formatUncertainty = (value, uncertainty) => {
+    if (!uncertainty || uncertainty === 0) return null;
+    const margin = value * uncertainty;
+    return `±${formatNumber(margin)}`;
+  };
+
+  // Calculate confidence interval
+  const getConfidenceInterval = (value, uncertainty) => {
+    if (!uncertainty || uncertainty === 0) return null;
+    const margin = value * uncertainty;
+    return {
+      lower: value - margin,
+      upper: value + margin,
+    };
+  };
+
+  return (
+    <div className="result-overlay" onClick={onClose}>
+      <div className="result-panel" onClick={(e) => e.stopPropagation()}>
+        <div className="result-header">
+          <h3>Emission Calculation Result</h3>
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
+        </div>
+
+        <div className="result-body">
+          {/* Summary Card */}
+          <div className="result-summary-card">
+            <div className="summary-main">
+              <div className="summary-total">
+                <span className="total-label">To
+... (truncated) ...
+```
+
+#### fetchCsrfToken (new/client/src/api.js:14)
+
+```javascript
+export const fetchCsrfToken = async () => {
+  try {
+    const response = await api.get("/csrf-token");
+    csrfToken = response.data.csrf_token;
+    return csrfToken;
+  } catch (err) {
+    console.error("Failed to fetch CSRF token:", err);
+    return null;
+  }
+};
+```
+
+#### useAuth (new/client/src/context/AuthContext.jsx:276)
+
+```jsx
+export const useAuth = () => useContext(AuthContext);
+```
+
+
+## Call paths
+
+Execution flow among the key symbols (traced through the call graph):
+
+- Emissions →[renders <Scope1Form>] Scope1Form →[renders <EmissionResult>] EmissionResult → formatNumber
+- Emissions →[renders <Scope1Form>] Scope1Form →[renders <EmissionResult>] EmissionResult → formatUncertainty
+- Emissions →[renders <Scope2Form>] Scope2Form →[renders <EmissionResult>] EmissionResult → formatNumber
+
+_Hops marked `[callback/event …]` are dynamic dispatch bridged by codegraph (with the registration site); the rest are direct calls. codegraph_node any symbol for its body._
+
+
+### ⚠️ Low-confidence match
+
+This query matched mostly on common words, so the entry points above may be off-target — treat them as a starting point, not a complete answer. For a reliable result:
+- `codegraph_explore` with the **exact symbol names** you are after (class / function / method names), or
+- `codegraph_search <name>` for one specific symbol
+- `codegraph_files` a likely area: `new/client/src/utils`, `new/client/src/pages`, `new/client/src/components`
+
+Do not assume the list above is comprehensive.
+

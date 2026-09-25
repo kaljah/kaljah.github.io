@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId ParentProcessId Name    CommandLine                                         
+--------- --------------- ----    -----------                                         
+    40196           40984 cmd.exe "C:\WINDOWS\system32\cmd.exe" /c "npm run dev < nul"
+
+
+

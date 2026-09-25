@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                 
+--------                                                 
+C:\Users\samsung\Desktop\H2\.agents\rules\graphify.md    
+C:\Users\samsung\Desktop\H2\.agents\workflows\graphify.md
+C:\Users\samsung\Desktop\H2\new\graphify-out             
+C:\Users\samsung\Desktop\H2\new\graphify-out\.graphify...
+C:\Users\samsung\Desktop\H2\new\graphify-out\.graphify...
+C:\Users\samsung\Desktop\H2\new\graphify-out\.graphify...
+C:\Users\samsung\Desktop\H2\.graphifyignore              
+C:\Users\samsung\Desktop\H2\run_graphify.py              
+C:\Users\samsung\Desktop\H2\run_graphify_cluster.py      
+
+
+

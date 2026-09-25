@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+CodeGraph Status
+
+Project: C:\Users\samsung\Desktop\H2
+
+Index Statistics:
+  Files:     546
+  Nodes:     7,040
+  Edges:     16,067
+  DB Size:   23.37 MB
+  Backend:   node:sqlite - built-in (full WAL)
+  Journal:   wal
+
+Nodes by Kind:
+  variable        2,002
+  import          1,995
+  function        1,052
+  method          728
+  file            540
+  class           260
+  constant        249
+  route           214
+
+Files by Language:
+  python          400
+  jsx             73
+  javascript      69
+  yaml            4
+
+[OK] Index is up to date
+
+

@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+site_assets/audit_maker_checker.png True
+site_assets/compliance_reports.png True
+site_assets/dashboard_full.png True
+site_assets/facility_management.png True
+site_assets/favicon.png True
+site_assets/logo.png True
+site_assets/scope1_agr_engine.png True
+site_assets/scope1_combustion.png True
+site_assets/stoichiometry_factors.png True
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Missing images: None! All OK!
+

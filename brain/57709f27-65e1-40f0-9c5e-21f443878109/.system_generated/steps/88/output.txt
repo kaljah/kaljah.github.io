@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+admin_portal.png               1440x1000 (RGB)
+analytics_kpi.png              1440x900  (RGB)
+audit_maker_checker.png        1440x1000 (RGB)
+audit_verification.png         1440x900  (RGB)
+compliance_reports.png         1440x900  (RGB)
+dashboard_full.png             1440x900  (RGB)
+facility_management.png        1440x1000 (RGB)
+favicon.png                     230x320  (RGBA)
+geographic_mapping.png         1440x1000 (RGB)
+hero_mockup.jpg                 896x1200 (RGB)
+logo.png                       1024x359  (RGBA)
+logo_transparent.png           1024x359  (RGBA)
+scope1_agr_engine.png          1440x900  (RGB)
+scope1_combustion.png          1440x900  (RGB)
+scope1_selection.png           1440x900  (RGB)
+stoichiometry_factors.png      1440x900  (RGB)
+

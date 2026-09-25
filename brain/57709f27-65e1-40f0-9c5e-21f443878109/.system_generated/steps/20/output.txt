@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+T  CodeGraph v1.6.0
+  Warning: Could not parse mcp_config.json: Unexpected end of JSON input
+  A backup will be created before overwriting.
+  Warning: Could not parse mcp_config.json: Expected ',' or '}' after property value in JSON at position 187 (line 6 column 4)
+  A backup will be created before overwriting.
+|
+*  Antigravity IDE: Updated ~\.gemini\config\mcp_config.json
+|
+•  Antigravity IDE: Restart Antigravity for MCP changes to take effect.
+|
+o  Next: index a project --------------------------------------------------+
+|                                                                          |
+|  cd <your-project>                                                       |
+|  codegraph init        # build a project’s graph (one time; auto-syncs   |
+|  after)                                                                  |
+|  # (codegraph install --init does both steps in one command)             |
+|                                                                          |
++--------------------------------------------------------------------------+
+|
+—  Done! Restart your agent to use CodeGraph.
+
+

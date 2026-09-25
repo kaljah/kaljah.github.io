@@ -1,0 +1,225 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+138	                        pass
+139	                    time.sleep(POLL_INTERVAL)
+140	
+141	            # Instruct browser EventSource to reconnect cleanly without treating end-of-stream as an error
+142	            yield "retry: 1000\n\n"
+143	            yield ": session-cycle\n\n"
+144	        finally:
+145	            # Explicitly return DB connection to pool when worker thread finishes or client disconnects
+146	            try:
+147	                db.session.remove()
+148	            except Exception:
+149	                pass
+150	
+151	    return Response(
+152	        stream_with_context(generate(user_id, last_id)),
+153	        mimetype="text/event-stream",
+154	        headers={
+155	            "Cache-Control": "no-cache",
+156	            "X-Accel-Buffering": "no",
+157	            "Connection": "keep-alive",
+158	        },
+159	    )
+160	
+161	
+162	from utils import get_current_user
+163	
+164	
+165	@notifications_bp.route("/<int:id>/read", methods=["PUT"])
+
+... (gap) ...
+
+232	    return jsonify({"success": True})
+233	
+234	
+235	@notifications_bp.route("/<int:id>", methods=["DELETE"])
+236	@login_required
+237	def delete_notification(id):
+238	    """Permanently delete a single notification."""
+239	    user = get_current_user()
+240	    if not user:
+241	        return jsonify({"error": "Not authenticated"}), 401
+242	
+243	    n = Notification.query.get_or_404(id)
+244	    if n.user_id is None:
+245	        if user.role not in ["admin", "superuser"]:
+246	            return jsonify({"error": "Only administrators can delete system notifications"}), 403
+247	    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+248	        return jsonify({"error": "Unauthorized"}), 403
+249	
+250	    try:
+251	        db.session.delete(n)
+252	        db.session.commit()
+253	    except Exception as e:
+254	        db.session.rollback()
+255	        return jsonify({"error": "Failed to delete notification"}), 500
+256	    return jsonify({"success": True})
+257	
+258	
+259	@notifications_bp.route("/all", methods=["DELETE"])
+260	@login_required
+261	def delete_all_notifications():
+262	    """Permanently delete all notifications for the current user."""
+263	    user = get_current_user()
+264	    if not user:
+265	        return jsonify({"error": "Not authenticated"}), 401
+266	
+267	    try:
+268	        deleted = Notification.query.filter_by(user_id=user.id).delete()
+269	        db.session.commit()
+270	    except Exception as e:
+271	        db.session.rollback()
+272	        return jsonify({"error": "Failed to delete notifications"}), 500
+273	    return jsonify({"success": True, "deleted": deleted})
+274	
+```
+
+**`new/server/models.py`** — utc_now(references), utc_now(function), User(class), Facility(class), Emission(class), ProductionData(class), EmissionSource(class), CustomFactor(class), ActivityLog(class), Goal(class), +4 more
+
+```python
+3	from werkzeug.security import generate_password_hash, check_password_hash
+4	
+5	
+6	def utc_now():
+7	    return datetime.now(timezone.utc)
+8	
+9	
+10	class User(db.Model):
+
+... (gap) ...
+
+24	    consolidationApproach = db.Column(db.String(50))
+25	    role = db.Column(db.String(20), default="user")
+26	    status = db.Column(db.String(20), default="active")
+27	    password_updated_at = db.Column(db.DateTime, default=utc_now)
+28	    last_login = db.Column(db.DateTime)
+29	    preferences = db.Column(
+30	        db.Text
+
+... (gap) ...
+
+66	    latitude = db.Column(db.Float)
+67	    longitude = db.Column(db.Float)
+68	    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+69	    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+70	    created_at = db.Column(db.DateTime, default=utc_now)
+71	
+72	    # Cascading Deletes
+
+... (gap) ...
+
+175	
+176	    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+177	    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+178	    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+179	    timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+180	    # Maker-Checker Approval
+181	    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
+... (gap) ...
+
+222	    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / Pétrochimie
+223	
+224	    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+225	    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+226	    created_at = db.Column(db.DateTime, default=utc_now)
+227	
+228	    __table_args__ = (
+229	        db.UniqueConstraint(
+230	            "facility_id", "month", "year", name="_facility_month_year_uc"
+231	        ),
+232	        db.Index("ix_prod_yr_fac_units", "year", "facility_id", "oil_unit", "gas_unit"),
+233	    )
+234	
+235	
+236	class EmissionSource(db.Model):
+237	    __tablename__ = "emission_sources"
+238	    id = db.Column(db.Integer, primary_key=True)
+239	    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"))
+240	    name = db.Column(db.String(120))
+241	    type = db.Column(db.String(50))
+242	    equipment_id = db.Column(db.String(50))
+243	    fuel_type = db.Column(db.String(50))
+244	    design_capacity = db.Column(db.String(50))
+245	    installation_date = db.Column(db.String(20))
+246	    status = db.Column(db.String(20), default="Active")
+247	    description = db.Column(db.Text)
+248	
+249	    activity = db.Column(db.String(100))
+250	    division = db.Column(db.String(100))
+251	    region = db.Column(db.String(100))
+252	    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / Pétrochimie
+253	    code = db.Column(db.String(50), unique=True)
+254	    external_id = db.Column(db.String(50))
+255	
+256	    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+257	    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+258	    created_at = db.Column(db.DateTime, default=utc_now)
+259	
+260	
+261	class CustomFactor(db.Model):
+
+... (gap) ...
+
+279	    n2o_uncertainty = db.Column(db.Float)
+280	    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+281	    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+282	    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+283	    created_at = db.Column(db.DateTime, default=utc_now)
+284	
+285	
+286	class ActivityLog(db.Model):
+287	    __tablename__ = "activity_log"
+288	    id = db.Column(db.Integer, primary_key=True)
+289	    action = db.Column(db.String(50), index=True)  # DB-03 FIX: add index
+290	    record_id = db.Column(db.String(50))
+291	    user_name = db.Column(db.String(120))
+292	    details = db.Column(db.Text)
+293	    old_values = db.Column(db.Text, nullable=True)  # JSON before-state diff
+
+... (gap) ...
+
+468	    notes = db.Column(db.Text)
+469	
+470	
+471	class Notification(db.Model):
+472	    __tablename__ = "notifications"
+473	    id = db.Column(db.Integer, primary_key=True)
+474	    user_id = db.Column(
+475	        db.Integer, db.ForeignKey("users.id"), nullable=True
+476	    )  # Nullable for system-wide
+477	    type = db.Column(
+478	        db.String(50)
+479	    )  # 'goal', 'audit', 'system', 'critical', 'warning', 'info'
+480	    title = db.Column(db.String(120))
+481	    message = db.Column(db.Text)
+482	    is_read = db.Column(db.Boolean, default=False)
+483	    created_at = db.Column(db.DateTime, default=utc_now)
+484	    metadata_json = db.Column("metadata", db.Text)  # JSON string for extra data
+485	
+486	    @staticmethod
+487	    def create(title, message, type="info", user_id=None, metadata=None):
+488	        import json
+489	
+490	        n = Notification(
+491	            title=title,
+492	            message=message,
+493	            type=type,
+494	            user_id=user_id,
+495	            metadata_json=json.dumps(metadata) if metadata else None,
+496	        )
+497	        db.session.add(n)
+498	        # NOTE: Do NOT call db.session.commit() here.
+499	        # The caller (log_activity_and_notify → route handler) commits the full
+500	        # transaction atomically: emission/data + activity log + notification.
+501	        return n
+502	
+503	
+504	class CbamProductExport(db.Model):
+```
+
+

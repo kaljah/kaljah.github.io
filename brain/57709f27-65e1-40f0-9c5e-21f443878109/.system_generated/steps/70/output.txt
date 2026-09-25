@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\site_assets
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/25/2026   3:03 PM         201014 analytics_kpi.png                                                    
+-a----         9/25/2026   7:42 PM         169800 audit_maker_checker.png                                              
+-a----         9/25/2026   3:04 PM         122412 compliance_reports.png                                               
+-a----         9/25/2026   2:58 PM         204325 dashboard_full.png                                                   
+-a----         9/25/2026   7:35 PM         103354 facility_management.png                                              
+-a----         9/25/2026   3:51 PM         545012 hero_mockup.jpg                                                      
+-a----         9/25/2026   7:46 PM         448117 logo.png                                                             
+-a----         9/25/2026   7:38 PM         174745 scope1_agr_engine.png                                                
+-a----         9/25/2026   3:14 PM         130287 scope1_combustion.png                                                
+-a----         9/25/2026   7:42 PM          66330 stoichiometry_factors.png                                            
+
+
+

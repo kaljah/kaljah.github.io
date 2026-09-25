@@ -1,0 +1,46 @@
+
+The command exited with code 0.
+Output:
+
+Search Results for "main":
+
+function    main
+  validation/scripts/run_full_validation_suite.py:57
+  ()
+
+function    main
+  audit/tools/report_bug.py:47
+  ()
+
+file        main.jsx
+  new/client/src/main.jsx:1
+
+function    do
+  audit/tools/report_bug.py:53
+  ()
+
+function    do
+  audit/tools/report_bug.py:65
+  ()
+
+function    NotificationCenter
+  new/client/src/components/NotificationCenter.jsx:266
+  ()
+
+function    Scope1ImportWizard
+  new/client/src/components/Scope1ImportWizard.jsx:509
+  ({ onClose, onUploadSuccess })
+
+function    Scope2ImportWizard
+  new/client/src/components/Scope2ImportWizard.jsx:267
+  ({ onClose, onUploadSuccess })
+
+function    Scope3ImportWizard
+  new/client/src/components/Scope3ImportWizard.jsx:294
+  ({ onClose, onUploadSuccess })
+
+function    UploadProgress
+  new/client/src/components/UploadProgress.jsx:113
+  ({ jobId, onComplete, onCancel })
+
+
