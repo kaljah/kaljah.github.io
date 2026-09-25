@@ -1,0 +1,5 @@
+Using prompt: The exact same corporate print advertisement scene, composition, engineer, computer monitor, and lighting as the reference image, but in French. At top left, emerald green pill badge 'PLATEFORME ÉNERGÉTIQUE SOUVERAINE' and bold headline 'Vos Gisements Sont Plus Propres Que Les Forfaits UE. Prouvez-le Grâce à la Physique Réelle.' Top right shows 'NeoCarbon'. On the computer screen, the GHG & Carbon Emissions Calculator shows: 'Calculateur d'Émissions GES Pétrole & Gaz', facility 'CPF Hassi Messaoud', 'Scope 1 Torchage & Combustion: 14 280 t CO2e', 'Intensité Méthane: 0.08% - Conforme UE 2024/1787', bar chart comparing real emissions (green) vs EU penalty default (red), and '38 512 940 € Économisés'. Ultra-sharp 8k resolution, commercial advertising photography.
+
+Generated image is saved at C:\Users\samsung\.gemini\antigravity\brain\6859af66-53ad-4daf-b68a-e5f1b66e9123\neocarbon_calc_dashboard_hero_fr_1790346381352.jpg.
+
+ Do not output the path of this image to show to the user since the user can already see it. However, you can embed this image in artifacts for the USER's review.

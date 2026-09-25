@@ -1,0 +1,83 @@
+
+The command exited with code 0.
+Output:
+
+Name                                           Length LastWriteTime        
+----                                           ------ -------------        
+.dockerignore                                     176 1/6/2026 6:18:54 PM  
+.gitignore                                       1452 9/22/2026 6:54:56 PM 
+.graphifyignore                                    90 9/25/2026 3:38:49 PM 
+.python-version                                     7 9/19/2026 4:15:33 PM 
+1k_scope1_comprehensive_test.csv               183038 8/15/2026 4:36:38 AM 
+agyhub_summaries_proto.pb                       16493 9/19/2026 4:04:52 PM 
+antigravity_state.pbtxt                           852 9/19/2026 4:04:52 PM 
+AUDIT_FINDINGS.md                              114816 9/25/2026 3:14:47 PM 
+AUDIT_MEMORY.md                                 23169 9/13/2026 12:08:34 AM
+AUDIT_SCOPE.md                                  10853 9/25/2026 2:59:58 PM 
+berkine_extracted_tables.json                   52084 9/24/2026 8:11:52 PM 
+build_pitch_deck.py                             44240 8/7/2026 3:21:53 PM  
+CarbonTech_PitchDeck_StartupAlgeria.pptx      1439638 8/7/2026 3:50:51 PM  
+cbam_diff_CarbonIntensity.patch                   434 8/11/2026 4:05:54 PM 
+cbam_diff_CarbonIntensity_css.patch               434 8/11/2026 4:05:54 PM 
+cbam_diff_data.patch                              326 8/11/2026 4:05:54 PM 
+cbam_diff_ManageData.patch                        394 8/11/2026 4:05:54 PM 
+cbam_removal.patch                             770516 8/11/2026 4:06:12 PM 
+cbam_removal_utf8.patch                        385688 8/11/2026 4:06:38 PM 
+chrome_err.log                                 116570 9/24/2026 9:04:15 PM 
+CLAUDE.md                                        7112 9/25/2026 2:44:54 PM 
+custom_factors.csv                              40976 8/12/2026 1:53:21 PM 
+docker-compose.yml                                865 9/14/2026 12:25:27 AM
+Dockerfile                                       2221 9/19/2026 4:04:52 PM 
+El_Merk_2025_Annual_GHG_Report.pdf            1901139 9/24/2026 8:45:51 PM 
+emission_sources.csv                           971347 8/12/2026 1:53:21 PM 
+emission_sources_v2.csv                        816010 8/12/2026 2:05:47 PM 
+FINAL_VALIDATION_REPORT.pdf                     21896 9/20/2026 4:14:41 PM 
+fix_ui.py                                        6024 8/11/2026 4:17:45 PM 
+fix_ui_2.py                                      3720 8/11/2026 4:17:58 PM 
+fix_ui_tab.py                                    1685 8/11/2026 4:21:03 PM 
+generate_mock_data.py                            4212 8/12/2026 1:52:45 PM 
+generate_mock_data_v2.py                         4396 8/12/2026 2:05:23 PM 
+generate_pdf_report.py                          38028 9/20/2026 4:14:36 PM 
+generate_pitch_assets.py                        13075 8/7/2026 3:08:52 PM  
+Groupement_Berkine_2025_Annual_GHG_Report.pdf 1912094 9/24/2026 8:20:37 PM 
+icon.png                                       441498 1/4/2026 8:10:34 PM  
+mcp_config.json                                   366 9/19/2026 4:04:57 PM 
+mitigation_projects.csv                       1292587 8/12/2026 1:53:21 PM 
+mitigation_projects_v2.csv                    1240893 8/12/2026 2:05:47 PM 
+napec_flyer.html                                34956 9/25/2026 3:30:05 PM 
+napec_flyer_fr.html                             35498 9/25/2026 3:30:38 PM 
+neocarbon_computer_hero.jpg                    545012 9/25/2026 3:51:49 PM 
+neocarbon_computer_hero_fr.jpg                 475876 9/25/2026 3:52:07 PM 
+neocarbon_flyer.html                            34607 9/25/2026 4:32:30 PM 
+neocarbon_flyer.pdf                           1045868 9/25/2026 4:33:37 PM 
+neocarbon_flyer_fr.html                         34833 9/25/2026 4:33:12 PM 
+neocarbon_flyer_fr.pdf                        1039076 9/25/2026 4:33:39 PM 
+neocarbon_flyer_page1_en.jpg                   605988 9/25/2026 4:31:17 PM 
+neocarbon_flyer_page1_fr.jpg                   581804 9/25/2026 4:31:17 PM 
+old_ManageData.jsx                             304628 8/11/2026 4:05:29 PM 
+package-lock.json                              251944 4/25/2026 4:20:12 PM 
+package.json                                     1183 2/2/2026 11:00:36 PM 
+patch.py                                         6404 8/11/2026 4:12:02 PM 
+patch_ci.py                                      1977 8/11/2026 4:13:28 PM 
+patch_ci_css.py                                   433 8/11/2026 4:13:34 PM 
+patch_manage_data.py                             5334 8/11/2026 4:13:11 PM 
+patch_manage_data_ui.py                           942 8/11/2026 4:13:18 PM 
+patch_ui.py                                       457 8/11/2026 4:12:44 PM 
+preview_en_page_1.png                         1040475 9/25/2026 4:33:37 PM 
+preview_en_page_2.png                           98689 9/25/2026 4:33:37 PM 
+preview_fr_page_1.png                          978672 9/25/2026 4:33:40 PM 
+preview_fr_page_2.png                          101145 9/25/2026 4:33:40 PM 
+production_data.csv                            781882 8/12/2026 1:53:21 PM 
+production_data_v2.csv                         600634 8/12/2026 2:05:47 PM 
+pytest.ini                                        145 9/20/2026 3:04:40 PM 
+README.md                                        6241 9/13/2026 12:04:21 AM
+regions_upload.csv                               4011 8/12/2026 1:22:49 PM 
+run_graphify.py                                   318 8/11/2026 1:24:23 AM 
+run_graphify_cluster.py                           334 8/11/2026 1:28:43 AM 
+script.py                                        4941 8/11/2026 4:19:22 PM 
+seed_demo_data.py                                7920 9/21/2026 1:48:17 PM 
+seed_production_and_cbam.py                      7247 9/21/2026 8:10:25 PM 
+users_v2.db                                         0 9/24/2026 9:07:45 PM 
+
+
+
