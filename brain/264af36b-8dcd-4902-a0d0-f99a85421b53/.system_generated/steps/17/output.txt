@@ -1,0 +1,79 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026  12:54 PM            190 App.css                                                              
+-a----         9/19/2026   5:22 PM          10142 index.css                                                            
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\components
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          9/5/2026   6:02 PM           8420 BatchReviewWizard.css                                                
+-a----         8/11/2026  12:54 PM           4482 BulkImportModal.css                                                  
+-a----         9/14/2026  11:58 PM           8606 CalculationDetails.css                                               
+-a----         8/11/2026  12:54 PM          14488 ColumnMappingWizard.css                                              
+-a----         8/11/2026  12:54 PM           6466 CsvUploader.css                                                      
+-a----         9/19/2026   5:41 PM           2553 CustomDropdown.css                                                   
+-a----         9/19/2026   9:50 PM           2555 Drawer.css                                                           
+-a----         9/22/2026   9:58 PM           5987 EmissionResult.css                                                   
+-a----         8/11/2026  12:54 PM           2892 ErrorBoundary.css                                                    
+-a----         8/11/2026  12:54 PM           3402 FormField.css                                                        
+-a----         8/11/2026  12:54 PM           4396 GasCompositionCalculator.css                                         
+-a----         8/16/2026   4:02 AM           4708 LoadingSpinner.css                                                   
+-a----         8/11/2026  12:54 PM           2305 Modal.css                                                            
+-a----         9/24/2026   1:00 PM           6545 Scope1Form.css                                                       
+-a----          9/5/2026   5:35 PM          24488 Scope1ImportWizard.css                                               
+-a----         8/11/2026  12:54 PM           1475 ScopeTables.css                                                      
+-a----         8/11/2026  12:54 PM           2120 Toast.css                                                            
+-a----         9/16/2026  12:59 AM          11092 UploadProgress.css                                                   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\components\charts
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          9/5/2026   5:34 PM            972 ChartWrappers.css                                                    
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\components\layout
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   5:25 PM           1241 Layout.css                                                           
+-a----         9/19/2026   9:29 PM           9645 Sidebar.css                                                          
+-a----         9/19/2026   9:15 PM           4852 TopBar.css                                                           
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\pages
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/12/2026  11:12 PM          20513 AuditTrail.css                                                       
+-a----          9/5/2026   5:34 PM          18347 CarbonIntensity.css                                                  
+-a----         9/24/2026   5:16 PM          30798 Dashboard.css                                                        
+-a----         8/11/2026  12:54 PM           4192 Diagnostics.css                                                      
+-a----         9/19/2026   5:22 PM          14752 Emissions.css                                                        
+-a----          9/1/2026   8:44 PM           7682 Login.css                                                            
+-a----         9/19/2026   5:22 PM          20288 ManageData.css                                                       
+-a----         9/12/2026   5:25 PM          31177 MethaneExplorer.css                                                  
+-a----         9/19/2026   9:20 PM          18009 QADashboard.css                                                      
+-a----          9/1/2026   9:33 PM           3712 ReferenceData.css                                                    
+-a----         9/12/2026   6:53 PM           9655 Reports.css                                                          
+-a----          9/8/2026  11:37 PM           8563 SbtiDashboard.css                                                    
+-a----         8/11/2026  12:54 PM          21484 Settings.css                                                         
+-a----         9/12/2026   7:13 PM           8999 UncertaintyAssessment.css                                            
+
+
+

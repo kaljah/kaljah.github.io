@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/25/2026   3:37 PM                dist                                                                 
+d-----         9/22/2026   4:43 PM                e2e                                                                  
+d-----         9/20/2026   5:29 PM                node_modules                                                         
+d-----         9/19/2026   4:04 PM                public                                                               
+d-----         9/24/2026  12:56 PM                src                                                                  
+d-----         9/22/2026   6:03 PM                test-results                                                         
+d-----         9/16/2026   7:54 PM                tests                                                                
+-a----         8/11/2026  12:40 AM             47 .env                                                                 
+-a----          8/5/2026   2:26 PM            306 .env.example                                                         
+-a----         7/14/2026   9:13 PM            143 .env.production                                                      
+-a----         1/19/2026   7:53 PM            253 .gitignore                                                           
+-a----         1/19/2026   7:53 PM            758 eslint.config.js                                                     
+-a----         9/22/2026   9:55 AM           1535 generate_storage_state.js                                            
+-a----         9/19/2026   4:04 PM           1013 index.html                                                           
+-a----         9/20/2026   5:29 PM         206438 package-lock.json                                                    
+-a----         9/20/2026   5:29 PM           1586 package.json                                                         
+-a----         9/22/2026   9:56 AM            765 playwright.config.js                                                 
+-a----         9/25/2026   3:37 PM        1416548 stats.html                                                           
+-a----         9/22/2026   9:55 AM            401 storageState.json                                                    
+-a----         8/11/2026  12:22 PM           1908 tailwind.config.js                                                   
+-a----         9/16/2026  12:57 PM           4127 test_ui_numerical_parity.mjs                                         
+-a----         9/24/2026  11:31 PM           1411 vite.config.js                                                       
+
+
+

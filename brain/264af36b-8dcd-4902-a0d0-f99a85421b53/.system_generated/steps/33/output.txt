@@ -1,0 +1,69 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:593:          color: "#10b981",
+new\client\src\pages\DashboardEnhanced.jsx:598:          color: "#ff6600",
+new\client\src\pages\DashboardEnhanced.jsx:603:          color: "#f59e0b",
+new\client\src\pages\DashboardEnhanced.jsx:608:          color: "#3b82f6",
+new\client\src\pages\DashboardEnhanced.jsx:626:  // Palette: one distinct color per activity
+new\client\src\pages\DashboardEnhanced.jsx:627:  const ACTIVITY_PALETTE = [
+new\client\src\pages\DashboardEnhanced.jsx:637:  const ACTIVITY_COLOR_MAP = {
+new\client\src\pages\DashboardEnhanced.jsx:657:        color:
+new\client\src\pages\DashboardEnhanced.jsx:658:          ACTIVITY_COLOR_MAP[entry.name] ||
+new\client\src\pages\DashboardEnhanced.jsx:659:          ACTIVITY_PALETTE[index % ACTIVITY_PALETTE.length],
+new\client\src\pages\DashboardEnhanced.jsx:721:            border: "1px solid var(--border-color, rgba(226, 232, 240, 
+0.8))",
+new\client\src\pages\DashboardEnhanced.jsx:734:              background: gwpHorizon === "100" ? "var(--accent-color, 
+#ff6600)" : "transparent",
+new\client\src\pages\DashboardEnhanced.jsx:735:              color: gwpHorizon === "100" ? "#fff" : 
+"var(--text-secondary)",
+new\client\src\pages\DashboardEnhanced.jsx:752:              color: gwpHorizon === "20" ? "#fff" : 
+"var(--text-secondary)",
+new\client\src\pages\DashboardEnhanced.jsx:763:            <span style={{ fontSize: "0.8rem", color: 
+"var(--text-secondary)" }}>
+new\client\src\pages\DashboardEnhanced.jsx:764:              Target {goal.year}: <strong style={{ color: 
+"var(--text-primary)" }}>{Number(goal.target_amount).toLocaleString()} tCO�e</strong>
+new\client\src\pages\DashboardEnhanced.jsx:951:                  color: "#fff",
+new\client\src\pages\DashboardEnhanced.jsx:965:                <h3 style={{ margin: 0, fontSize: "1.1rem", color: 
+"var(--text-primary)" }}>
+new\client\src\pages\DashboardEnhanced.jsx:968:                <p style={{ margin: "2px 0 0 0", fontSize: "0.875rem", 
+color: "var(--text-secondary)" }}>
+new\client\src\pages\DashboardEnhanced.jsx:983:                  border: "1px solid var(--border-color)",
+new\client\src\pages\DashboardEnhanced.jsx:988:                <div style={{ fontSize: "0.75rem", fontWeight: 700, 
+color: "#10b981", textTransform: "uppercase" }}>
+new\client\src\pages\DashboardEnhanced.jsx:992:                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", 
+color: "var(--text-secondary)" }}>
+new\client\src\pages\DashboardEnhanced.jsx:1006:                  border: "1px solid var(--border-color)",
+new\client\src\pages\DashboardEnhanced.jsx:1011:                <div style={{ fontSize: "0.75rem", fontWeight: 700, 
+color: "#3b82f6", textTransform: "uppercase" }}>
+new\client\src\pages\DashboardEnhanced.jsx:1015:                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", 
+color: "var(--text-secondary)" }}>
+new\client\src\pages\DashboardEnhanced.jsx:1029:                  border: "1px solid var(--border-color)",
+new\client\src\pages\DashboardEnhanced.jsx:1034:                <div style={{ fontSize: "0.75rem", fontWeight: 700, 
+color: "#f59e0b", textTransform: "uppercase" }}>
+new\client\src\pages\DashboardEnhanced.jsx:1038:                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", 
+color: "var(--text-secondary)" }}>
+new\client\src\pages\DashboardEnhanced.jsx:1052:                  border: "1px solid var(--border-color)",
+new\client\src\pages\DashboardEnhanced.jsx:1057:                <div style={{ fontSize: "0.75rem", fontWeight: 700, 
+color: "#8b5cf6", textTransform: "uppercase" }}>
+new\client\src\pages\DashboardEnhanced.jsx:1061:                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", 
+color: "var(--text-secondary)" }}>
+new\client\src\pages\DashboardEnhanced.jsx:1102:                  border: '1px solid var(--border-color)',
+new\client\src\pages\DashboardEnhanced.jsx:1106:                  color: 'var(--text-primary)',
+new\client\src\pages\DashboardEnhanced.jsx:1111:                <svg width="15" height="15" viewBox="0 0 24 24" 
+fill="none" stroke="currentColor" strokeWidth="2">
+new\client\src\pages\DashboardEnhanced.jsx:1190:                    color: !hasProductionData && stats.totalEmissions 
+> 0 ? "#f59e0b" : "#8b5cf6",
+new\client\src\pages\DashboardEnhanced.jsx:1209:                  <span style={{ color: "#d97706", fontWeight: 600 
+}}>Production figures required</span>
+new\client\src\pages\DashboardEnhanced.jsx:1332:                    <span style={{ color: flaringData.is_compliant ? 
+"#15803d" : "#b91c1c", fontWeight: 700 }}>
+new\client\src\pages\DashboardEnhanced.jsx:1337:                  <span style={{ fontSize: "0.78rem", color: "#64748b" 
+}}>
+new\client\src\pages\DashboardEnhanced.jsx:1343:                    className="flaring-progress-fill"
+new\client\src\pages\DashboardEnhanced.jsx:1346:                      backgroundColor: flaringData.is_compliant ? 
+"#10b981" : "#ef4444",
+
+
+

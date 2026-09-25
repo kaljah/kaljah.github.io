@@ -1,0 +1,114 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+----                 -------------         ------ ----                                                                 
+-a----         9/23/2026   3:52 PM          25107 golden_cases.json                                                    
+-a----         9/20/2026   6:25 PM          26649 golden_generator.py                                                  
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\golden_dataset
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026  10:29 AM                __pycache__                                                          
+-a----         9/20/2026  10:29 AM          23974 dataset_generator.py                                                 
+-a----         9/20/2026  10:29 AM          23744 golden_cases.json                                                    
+-a----         9/20/2026  10:09 AM            173 __init__.py                                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\mutation
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   6:37 PM                __pycache__                                                          
+-a----         9/20/2026  11:41 AM           7242 test_calculation_mutations.py                                        
+-a----         9/20/2026   6:37 PM           9869 test_clean_mutations.py                                              
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\property
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   6:34 PM                __pycache__                                                          
+-a----         9/20/2026   6:33 PM           5873 test_clean_properties.py                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\reference_model
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/25/2026   3:35 PM                __pycache__                                                          
+-a----         9/20/2026  10:09 AM           2683 aggregation_intensity.py                                             
+-a----         9/20/2026  10:17 AM           9255 combustion_flaring.py                                                
+-a----         9/20/2026  10:08 AM           3721 fugitives.py                                                         
+-a----         9/20/2026  10:08 AM           1780 gwp.py                                                               
+-a----         9/20/2026  10:09 AM           7075 midstream.py                                                         
+-a----         9/20/2026  10:09 AM           2746 ogmp.py                                                              
+-a----         9/20/2026   6:27 PM           6198 ref_combustion.py                                                    
+-a----         9/20/2026   6:23 PM           3818 ref_constants.py                                                     
+-a----         9/20/2026   6:27 PM           5196 ref_flaring.py                                                       
+-a----         9/20/2026   6:24 PM           2506 ref_fugitives.py                                                     
+-a----         9/20/2026   6:24 PM           2002 ref_intensity.py                                                     
+-a----         9/20/2026   6:27 PM           3211 ref_midstream.py                                                     
+-a----         9/20/2026   6:24 PM           2220 ref_scope2.py                                                        
+-a----         9/20/2026   6:24 PM           2103 ref_scope3.py                                                        
+-a----         9/20/2026   6:24 PM           1599 ref_stoichiometry.py                                                 
+-a----         9/20/2026   6:24 PM           2358 ref_uncertainty.py                                                   
+-a----         9/20/2026   6:27 PM           4732 ref_venting.py                                                       
+-a----         9/20/2026  10:09 AM           3443 scope2.py                                                            
+-a----         9/20/2026  10:09 AM           1651 scope3.py                                                            
+-a----         9/20/2026  10:16 AM           2782 uncertainty.py                                                       
+-a----         9/20/2026  10:10 AM           8812 unit_conversions.py                                                  
+-a----         9/25/2026   3:35 PM          12199 vented_processes.py                                                  
+-a----         9/23/2026   3:47 PM           3555 __init__.py                                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\regression
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   3:32 PM                __pycache__                                                          
+-a----         9/20/2026   3:32 PM           8426 test_regression_archive.py                                           
+-a----         9/20/2026  10:10 AM             72 __init__.py                                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\reports
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/23/2026   5:34 PM           8461 differential_report.json                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\scripts
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026  11:41 AM           4493 run_full_validation_suite.py                                         
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\test_cases
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026  12:52 PM                __pycache__                                                          
+-a----         9/20/2026  10:10 AM            668 test_definitions.py                                                  
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026  10:09 AM            222 __init__.cpython-312.pyc                                             
+
+
+

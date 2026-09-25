@@ -1,0 +1,44 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\pages
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/12/2026  11:12 PM          20513 AuditTrail.css                                                       
+-a----         9/13/2026   7:51 PM          31918 AuditTrail.jsx                                                       
+-a----          9/5/2026   5:34 PM          18347 CarbonIntensity.css                                                  
+-a----         9/24/2026  11:28 PM          37328 CarbonIntensity.jsx                                                  
+-a----         9/24/2026   5:16 PM          30798 Dashboard.css                                                        
+-a----         9/24/2026  11:28 PM          76205 DashboardEnhanced.jsx                                                
+-a----         8/11/2026  12:54 PM           4192 Diagnostics.css                                                      
+-a----         9/13/2026  11:46 PM            349 Diagnostics.jsx                                                      
+-a----         9/19/2026   5:22 PM          14752 Emissions.css                                                        
+-a----          9/8/2026  11:48 PM          11191 Emissions.jsx                                                        
+-a----         8/15/2026   7:11 PM           6479 ErpSync.jsx                                                          
+-a----          9/1/2026   8:44 PM           7682 Login.css                                                            
+-a----         9/15/2026   1:26 AM          14298 Login.jsx                                                            
+-a----         9/19/2026   5:22 PM          20288 ManageData.css                                                       
+-a----         9/25/2026   3:18 PM         284854 ManageData.jsx                                                       
+-a----         9/12/2026   5:25 PM          31177 MethaneExplorer.css                                                  
+-a----         9/20/2026   7:17 PM          60610 MethaneExplorer.jsx                                                  
+-a----         9/19/2026  10:32 PM          61006 MethaneIntensity.jsx                                                 
+-a----         9/19/2026   9:20 PM          18009 QADashboard.css                                                      
+-a----         9/19/2026   9:20 PM          69195 QADashboard.jsx                                                      
+-a----          9/1/2026   9:33 PM           3712 ReferenceData.css                                                    
+-a----         9/12/2026  11:51 PM          18928 ReferenceData.jsx                                                    
+-a----         9/12/2026   6:53 PM           9655 Reports.css                                                          
+-a----         9/24/2026   8:46 PM          47894 Reports.jsx                                                          
+-a----          9/8/2026  11:37 PM           8563 SbtiDashboard.css                                                    
+-a----          9/8/2026  11:36 PM          25355 SbtiDashboard.jsx                                                    
+-a----         8/11/2026  12:54 PM          21484 Settings.css                                                         
+-a----         9/24/2026  11:26 PM          47982 Settings.jsx                                                         
+-a----         9/12/2026   7:13 PM           8999 UncertaintyAssessment.css                                            
+-a----         9/19/2026  10:33 PM          12728 UncertaintyAssessment.jsx                                            
+-a----         9/24/2026  11:26 PM          67043 UserManagement.jsx                                                   
+
+
+

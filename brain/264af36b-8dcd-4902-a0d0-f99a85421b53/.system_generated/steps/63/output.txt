@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+
+build_pitch_deck.py:6:from pptx.dml.color import RGBColor
+build_pitch_deck.py:9:# Initialize Presentation
+build_pitch_deck.py:14:# Color Palette Definitions
+build_pitch_deck.py:15:NAVY = RGBColor(30, 78, 140)       # #1E4E8C
+build_pitch_deck.py:16:DARK_NAVY = RGBColor(17, 45, 85)   # #112D55
+build_pitch_deck.py:17:TEAL = RGBColor(0, 191, 165)       # #00BFA5
+build_pitch_deck.py:18:EMERALD = RGBColor(5, 150, 105)    # #059669
+build_pitch_deck.py:19:CARD_BG = RGBColor(248, 250, 252)  # #F8FAFC
+build_pitch_deck.py:20:CARD_BORDER = RGBColor(203, 213, 225) # #CBD5E1
+build_pitch_deck.py:21:TEXT_DARK = RGBColor(30, 41, 59)   # #1E293B
+build_pitch_deck.py:22:TEXT_MUTED = RGBColor(100, 116, 139) # #64748B
+build_pitch_deck.py:23:WHITE = RGBColor(255, 255, 255)
+build_pitch_deck.py:24:RED_ACCENT = RGBColor(225, 29, 72) # #E11D48
+build_pitch_deck.py:25:AMBER = RGBColor(217, 119, 6)      # #D97706
+build_pitch_deck.py:31:    # Left accent indicator bar
+build_pitch_deck.py:34:    bar.fill.fore_color.rgb = NAVY
+build_pitch_deck.py:35:    bar.line.color.rgb = NAVY
+build_pitch_deck.py:37:    # Header category & title text
+build_pitch_deck.py:48:    p.font.color.rgb = NAVY
+build_pitch_deck.py:50:def add_card(slide, left, top, width, height, bg_color=CARD_BG, border_color=CARD_BORDER):
+build_pitch_deck.py:54:    shape.fill.fore_color.rgb = bg_color
+build_pitch_deck.py:55:    if border_color:
+build_pitch_deck.py:56:        shape.line.color.rgb = border_color
+build_pitch_deck.py:62:# ==========================================
+build_pitch_deck.py:63:# SLIDE 1: TITLE SLIDE
+build_pitch_deck.py:64:# ==========================================
+build_pitch_deck.py:65:s1 = prs.slides.add_slide(prs.slide_layouts[6]) # blank layout
+build_pitch_deck.py:67:# Top subtle accent line
+build_pitch_deck.py:70:top_line.fill.fore_color.rgb = TEAL
+build_pitch_deck.py:73:# Main Title Container
+
+
+

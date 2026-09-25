@@ -1,0 +1,56 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\charts\BarChart.jsx:22:  color = "#10b981",
+new\client\src\components\charts\BarChart.jsx:85:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\charts\BarChart.jsx:101:            stroke="#e2e8f0"
+new\client\src\components\charts\BarChart.jsx:106:            stroke="#cbd5e1"
+new\client\src\components\charts\BarChart.jsx:107:            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
+new\client\src\components\charts\BarChart.jsx:112:            stroke="#cbd5e1"
+new\client\src\components\charts\BarChart.jsx:113:            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
+new\client\src\components\charts\LineChart.jsx:83:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\charts\LineChart.jsx:113:              <stop offset="5%" stopColor="#ff6600" 
+stopOpacity={0.2} />
+new\client\src\components\charts\LineChart.jsx:114:              <stop offset="95%" stopColor="#ff6600" 
+stopOpacity={0} />
+new\client\src\components\charts\LineChart.jsx:117:              <stop offset="5%" stopColor="#3b82f6" 
+stopOpacity={0.2} />
+new\client\src\components\charts\LineChart.jsx:118:              <stop offset="95%" stopColor="#3b82f6" 
+stopOpacity={0} />
+new\client\src\components\charts\LineChart.jsx:123:            stroke="#e2e8f0"
+new\client\src\components\charts\LineChart.jsx:129:            stroke="#cbd5e1"
+new\client\src\components\charts\LineChart.jsx:130:            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 
+}}
+new\client\src\components\charts\LineChart.jsx:136:            stroke="#cbd5e1"
+new\client\src\components\charts\LineChart.jsx:137:            tick={{ fill: "#475569", fontSize: 11, fontWeight: 600 
+}}
+new\client\src\components\charts\LineChart.jsx:145:              stroke: "#cbd5e1",
+new\client\src\components\charts\LineChart.jsx:180:                        fill: "#ffffff",
+new\client\src\components\charts\LineChart.jsx:189:                    : { fill: line.color, stroke: "#fff", 
+strokeWidth: 2, r: 6 }
+new\client\src\components\charts\PieChart.jsx:13:  "#3b82f6",
+new\client\src\components\charts\PieChart.jsx:14:  "#10b981",
+new\client\src\components\charts\PieChart.jsx:15:  "#f59e0b",
+new\client\src\components\charts\PieChart.jsx:16:  "#ef4444",
+new\client\src\components\charts\PieChart.jsx:17:  "#8b5cf6",
+new\client\src\components\charts\PieChart.jsx:18:  "#6366f1",
+new\client\src\components\charts\PieChart.jsx:75:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\charts\PieChart.jsx:102:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\layout\Layout.jsx:60:            background: "#fef2f2",
+new\client\src\components\layout\Layout.jsx:61:            border: "1px solid #fecaca",
+new\client\src\components\layout\Layout.jsx:62:            color: "#991b1b",
+new\client\src\components\layout\Layout.jsx:81:              background: "#dc2626",
+new\client\src\components\layout\Layout.jsx:82:              color: "#ffffff",
+new\client\src\components\layout\Layout.jsx:102:            background: "#fffbeb",
+new\client\src\components\layout\Layout.jsx:103:            border: "1px solid #fde68a",
+new\client\src\components\layout\Layout.jsx:104:            color: "#92400e",
+new\client\src\components\layout\Layout.jsx:123:              background: "#d97706",
+new\client\src\components\layout\Layout.jsx:124:              color: "#ffffff",
+new\client\src\components\layout\TopBar.jsx:40:          <Building size={16} style={{ color: "var(--accent-color, 
+#ff6600)" }} />
+new\client\src\components\scope1\AdipicAcidForm.jsx:21:            <span style={{ color: "#ef4444", marginLeft: "3px" 
+}}>*</span>
+
+
+

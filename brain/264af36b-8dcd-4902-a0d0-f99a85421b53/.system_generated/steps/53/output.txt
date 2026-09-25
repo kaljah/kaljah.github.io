@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\QADashboard.jsx:321:    const healthColor = healthScore >= 80 ? '#10b981' : healthScore >= 60 ? 
+'#f59e0b' : '#ef4444';
+new\client\src\pages\QADashboard.jsx:375:                            <span style={{ fontWeight: 600, color: '#0f172a' 
+}}>
+new\client\src\pages\QADashboard.jsx:534:                            <div className="qa-kpi-icon-wrap" style={{ color: 
+'#f59e0b', background: 'rgba(245, 158, 11, 0.12)' }}>
+new\client\src\pages\QADashboard.jsx:539:                            <span className="qa-kpi-value" style={{ color: 
+'#d97706' }}>
+new\client\src\pages\QADashboard.jsx:555:                            <div className="qa-kpi-icon-wrap" style={{ color: 
+'#ef4444', background: 'rgba(239, 68, 68, 0.12)' }}>
+new\client\src\pages\QADashboard.jsx:560:                            <span className="qa-kpi-value" style={{ color: 
+anomaliesSummary.all > 0 ? '#ef4444' : '#10b981' }}>
+new\client\src\pages\QADashboard.jsx:567:                            <span>Verified: <strong style={{ color: '#10b981' 
+}}>{anomaliesSummary.verified}</strong></span>
+new\client\src\pages\QADashboard.jsx:568:                            <span>Rejected: <strong style={{ color: '#ef4444' 
+}}>{anomaliesSummary.rejected}</strong></span>
+new\client\src\pages\QADashboard.jsx:576:                            <div className="qa-kpi-icon-wrap" style={{ color: 
+'#3b82f6', background: 'rgba(59, 130, 246, 0.12)' }}>
+new\client\src\pages\QADashboard.jsx:686:                                    <span style={{ fontSize: '0.82rem', 
+color: '#9a3412', fontWeight: 600 }}>
+new\client\src\pages\QADashboard.jsx:708:                                        style={{ background: 'none', border: 
+'none', color: '#64748b', cursor: 'pointer', fontSize: '0.78rem', textDecoration: 'underline' }}
+new\client\src\pages\QADashboard.jsx:715:                                <span style={{ fontSize: '0.82rem', color: 
+'#64748b' }}>
+new\client\src\pages\QADashboard.jsx:727:                                            background: '#ecfdf5', color: 
+'#10b981', width: '64px', height: '64px', 
+new\client\src\pages\QADashboard.jsx:733:                                        <h3 style={{ fontSize: '1.25rem', 
+color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
+new\client\src\pages\QADashboard.jsx:736:                                        <p style={{ color: '#64748b', 
+maxWidth: '440px', margin: '0 auto' }}>
+new\client\src\pages\QADashboard.jsx:744:                                            background: '#fef3c7', color: 
+'#b45309', width: '64px', height: '64px', 
+new\client\src\pages\QADashboard.jsx:750:                                        <h3 style={{ fontSize: '1.25rem', 
+color: '#0f172a', fontWeight: 700, marginBottom: '8px' }}>
+new\client\src\pages\QADashboard.jsx:753:                                        <p style={{ color: '#64748b', 
+maxWidth: '440px', margin: '0 auto 16px auto' }}>
+new\client\src\pages\QADashboard.jsx:810:                                                        <td className="qa-td" 
+style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0f172a' }}>
+new\client\src\pages\QADashboard.jsx:818:                                                        <td className="qa-td" 
+style={{ color: '#475569' }}>
+
+
+

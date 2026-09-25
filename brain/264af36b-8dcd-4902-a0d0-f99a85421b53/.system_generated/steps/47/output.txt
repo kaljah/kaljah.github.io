@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\SbtiDashboard.jsx:220:      color: "#10b981",
+new\client\src\pages\SbtiDashboard.jsx:226:      color: "#ff6600",
+new\client\src\pages\SbtiDashboard.jsx:232:      color: "#059669",
+new\client\src\pages\SbtiDashboard.jsx:239:      color: "#3b82f6",
+new\client\src\pages\SbtiDashboard.jsx:246:      color: "#94a3b8",
+new\client\src\pages\SbtiDashboard.jsx:254:    { dataKey: "scope1", name: "Scope 1 (Direct)", color: "#ff6600", 
+stackId: "a" },
+new\client\src\pages\SbtiDashboard.jsx:255:    { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#3b82f6", 
+stackId: "a" },
+new\client\src\pages\SbtiDashboard.jsx:256:    { dataKey: "scope3", name: "Scope 3 (Value Chain)", color: "#8b5cf6", 
+stackId: "a" },
+new\client\src\pages\SbtiDashboard.jsx:350:                      background: targetForm.pathway_type === "1.5C" ? 
+"rgba(16, 185, 129, 0.15)" : "var(--input-bg, #f8fafc)",
+new\client\src\pages\SbtiDashboard.jsx:351:                      borderColor: targetForm.pathway_type === "1.5C" ? 
+"#10b981" : "var(--border-color, #e2e8f0)",
+new\client\src\pages\SbtiDashboard.jsx:352:                      color: targetForm.pathway_type === "1.5C" ? "#065f46" 
+: "var(--text-secondary, #475569)",
+new\client\src\pages\SbtiDashboard.jsx:364:                      background: targetForm.pathway_type === "WB2C" ? 
+"rgba(59, 130, 246, 0.15)" : "var(--input-bg, #f8fafc)",
+new\client\src\pages\SbtiDashboard.jsx:365:                      borderColor: targetForm.pathway_type === "WB2C" ? 
+"#3b82f6" : "var(--border-color, #e2e8f0)",
+new\client\src\pages\SbtiDashboard.jsx:366:                      color: targetForm.pathway_type === "WB2C" ? "#1e40af" 
+: "var(--text-secondary, #475569)",
+new\client\src\pages\SbtiDashboard.jsx:552:              <div style={{ display: "flex", justifyContent: "center", 
+alignItems: "center", height: "100%", color: "#94a3b8" }}>
+new\client\src\pages\SbtiDashboard.jsx:578:              <div style={{ display: "flex", justifyContent: "center", 
+alignItems: "center", height: "100%", color: "#94a3b8" }}>
+new\client\src\pages\SbtiDashboard.jsx:635:                      <td style={{ color: "var(--text-primary, #0f172a)", 
+fontWeight: 500 }}>{formatNumber(row.bau_projection, 1)} tCO2e</td>
+new\client\src\pages\SbtiDashboard.jsx:636:                      <td style={{ fontWeight: hasActual ? 700 : 400, 
+color: hasActual ? "var(--text-primary, #0f172a)" : "#64748b" }}>
+new\client\src\pages\SbtiDashboard.jsx:645:                          <span style={{ color: variance <= 0 ? "#10b981" : 
+"#ef4444", fontWeight: 600 }}>
+new\client\src\pages\SbtiDashboard.jsx:662:                  <td colSpan="10" style={{ textAlign: "center", padding: 
+"30px", color: "#94a3b8" }}>
+
+
+

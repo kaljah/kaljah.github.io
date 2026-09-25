@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\CarbonIntensity.jsx:551:                      ? { fontSize: "1.25rem", color: "#f59e0b" }
+new\client\src\pages\CarbonIntensity.jsx:586:                      ? { fontSize: "1.25rem", color: "#f59e0b" }
+new\client\src\pages\CarbonIntensity.jsx:742:                                                <td><strong style={{ 
+color: '#0d9488' }}>{typeof directInt === 'number' ? directInt.toFixed(4) : '-'}</strong></td>
+new\client\src\pages\CarbonIntensity.jsx:766:                  style={{ background: "#0d9488" }}
+new\client\src\pages\CarbonIntensity.jsx:781:                color="#0d9488"
+new\client\src\pages\CarbonIntensity.jsx:792:                  style={{ background: "#2563eb" }}
+new\client\src\pages\CarbonIntensity.jsx:813:                    color: "#2563eb",
+new\client\src\pages\CarbonIntensity.jsx:815:                  { dataKey: "scope2", name: "Scope 2 (Indirect)", color: 
+"#0ea5e9" },
+new\client\src\pages\CarbonIntensity.jsx:828:                  style={{ background: "#ea580c" }}
+new\client\src\pages\CarbonIntensity.jsx:840:                color="#ea580c"
+new\client\src\pages\CarbonIntensity.jsx:851:                  style={{ background: "#8b5cf6" }}
+new\client\src\pages\CarbonIntensity.jsx:863:                color="#8b5cf6"
+new\client\src\pages\CarbonIntensity.jsx:912:                    color: "#0d9488",
+new\client\src\pages\CarbonIntensity.jsx:917:                    color: "#ea580c",
+
+
+

@@ -1,0 +1,92 @@
+
+The command exited with code 0.
+Output:
+<truncated 439 lines>
+-a----         9/23/2026  11:51 AM          38894 exhaustive_dashboard_verification_report.json                        
+-a----         9/23/2026   3:19 PM          19914 exhaustive_intensity_sbti_audit_report.json                          
+-a----         9/23/2026  11:50 AM          24560 exhaustive_verify_all_options_buttons_charts.py                      
+-a----         9/23/2026  11:55 AM          24910 exhaustive_verify_intensity_and_sbti.py                              
+-a----         9/23/2026   2:15 PM          31939 exhaustive_verify_remaining_pages.py                                 
+-a----         9/23/2026  11:40 AM           1388 inspect_dom_elements.py                                              
+-a----         9/23/2026   2:07 PM            627 inspect_login_dom.py                                                 
+-a----         9/23/2026  11:43 AM          21847 press_all_dashboard_buttons_and_verify_charts.py                     
+-a----         9/23/2026   3:20 PM           5408 remaining_pages_audit_results.json                                   
+-a----         9/23/2026   9:54 AM          22945 run_20_beta_testers_20k.py                                           
+-a----         9/23/2026  11:32 AM          23575 run_20_beta_testers_dashboard_20k.py                                 
+-a----         9/23/2026   2:03 PM           8139 test_remaining_pages_backend.py                                      
+
+
+    Directory: C:\Users\samsung\Desktop\H2\specs
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/15/2026   9:49 PM                001-batch-approve-reject                                             
+d-----         8/15/2026  10:19 PM                002-qa-qc-ipcc-iso14064                                              
+
+
+    Directory: C:\Users\samsung\Desktop\H2\temp_old
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026   4:05 PM          23876 CarbonIntensity.css                                                  
+-a----         8/11/2026   4:05 PM          65932 CarbonIntensity.jsx                                                  
+-a----         8/11/2026   4:07 PM           7979 cbam_diff_new_client_src_pages_CarbonIntensity.css.txt               
+-a----         8/11/2026   4:07 PM          11067 cbam_diff_new_client_src_pages_CarbonIntensity.jsx.txt               
+-a----         8/11/2026   4:07 PM          32075 cbam_diff_new_client_src_pages_ManageData.jsx.txt                    
+-a----         8/11/2026   4:07 PM          23850 cbam_diff_new_client_src_pages_MethaneIntensity.jsx.txt              
+-a----         8/11/2026   4:07 PM          46904 cbam_diff_new_client_src_pages_Settings.jsx.txt                      
+-a----         8/11/2026   4:07 PM           6177 cbam_diff_new_server_background_processor.py.txt                     
+-a----         8/11/2026   4:07 PM           6513 cbam_diff_new_server_migrate_ogmp.py.txt                             
+-a----         8/11/2026   4:07 PM           6715 cbam_diff_new_server_models.py.txt                                   
+-a----         8/11/2026   4:07 PM          20988 cbam_diff_new_server_routes_auth.py.txt                              
+-a----         8/11/2026   4:07 PM           5747 cbam_diff_new_server_routes_custom_factors.py.txt                    
+-a----         8/11/2026   4:07 PM          14018 cbam_diff_new_server_routes_dashboard.py.txt                         
+-a----         8/11/2026   4:07 PM          14797 cbam_diff_new_server_routes_data.py.txt                              
+-a----         8/11/2026   4:07 PM          20948 cbam_diff_new_server_routes_reports.py.txt                           
+-a----         8/11/2026   4:07 PM           2521 cbam_diff_new_server_seed_admin.py.txt                               
+-a----         8/11/2026   4:07 PM           2389 cbam_diff_new_server_tests_test_api_security.py.txt                  
+-a----         8/11/2026   4:07 PM           1965 cbam_diff_README.md.txt                                              
+-a----         8/11/2026   4:05 PM          36226 data.py                                                              
+-a----         8/11/2026   4:05 PM         304628 ManageData.jsx                                                       
+
+
+    Directory: C:\Users\samsung\Desktop\H2\test_results
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/22/2026   6:03 PM                screenshots                                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   6:23 PM                accessibility                                                        
+d-----         9/20/2026   6:23 PM                api                                                                  
+d-----         9/20/2026   6:32 PM                calculation                                                          
+d-----         9/20/2026   6:23 PM                database                                                             
+d-----         9/20/2026   6:38 PM                differential                                                         
+d-----         9/20/2026   6:23 PM                e2e                                                                  
+d-----         9/20/2026  10:10 AM                expected_results                                                     
+d-----         9/20/2026   6:25 PM                golden_data                                                          
+d-----         9/20/2026  10:10 AM                golden_dataset                                                       
+d-----         9/20/2026   6:23 PM                integration                                                          
+d-----         9/20/2026   6:34 PM                mutation                                                             
+d-----         9/20/2026   6:23 PM                performance                                                          
+d-----         9/20/2026   6:33 PM                property                                                             
+d-----         9/25/2026   3:35 PM                reference_model                                                      
+d-----         9/20/2026  10:11 AM                regression                                                           
+d-----         9/20/2026   6:39 PM                reports                                                              
+d-----         9/20/2026  10:34 AM                scripts                                                              
+d-----         9/20/2026   6:23 PM                security                                                             
+d-----         9/20/2026  10:10 AM                test_cases                                                           
+d-----         9/20/2026   6:23 PM                unit                                                                 
+d-----         9/20/2026  10:09 AM                __pycache__                                                          
+-a----         9/20/2026  10:08 AM             67 __init__.py                                                          
+
+
+

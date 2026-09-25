@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\charts\BarChart.jsx:22:  color = "#10b981",
+new\client\src\components\charts\BarChart.jsx:54:              style={{ color: entry.color || entry.fill }}
+new\client\src\components\charts\BarChart.jsx:85:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\charts\BarChart.jsx:126:                fill={b.color || color}
+new\client\src\components\charts\BarChart.jsx:132:            <Bar dataKey={finalDataKey} fill={color} radius={[6, 6, 
+0, 0]} />
+new\client\src\components\charts\ChartWrappers.css:14:  color: var(--text-primary);
+new\client\src\components\charts\ChartWrappers.css:30:  color: #64748b;
+new\client\src\components\charts\ChartWrappers.css:38:  color: #1e293b;
+new\client\src\components\charts\ChartWrappers.css:43:  color: var(--text-primary) !important;
+new\client\src\components\charts\LineChart.jsx:52:              style={{ color: entry.color }}
+new\client\src\components\charts\LineChart.jsx:83:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\charts\LineChart.jsx:112:            <linearGradient id="colorScope1" x1="0" y1="0" x2="0" 
+y2="1">
+new\client\src\components\charts\LineChart.jsx:113:              <stop offset="5%" stopColor="#ff6600" 
+stopOpacity={0.2} />
+new\client\src\components\charts\LineChart.jsx:114:              <stop offset="95%" stopColor="#ff6600" 
+stopOpacity={0} />
+new\client\src\components\charts\LineChart.jsx:116:            <linearGradient id="colorScope2" x1="0" y1="0" x2="0" 
+y2="1">
+new\client\src\components\charts\LineChart.jsx:117:              <stop offset="5%" stopColor="#3b82f6" 
+stopOpacity={0.2} />
+new\client\src\components\charts\LineChart.jsx:118:              <stop offset="95%" stopColor="#3b82f6" 
+stopOpacity={0} />
+new\client\src\components\charts\LineChart.jsx:151:            <Legend wrapperStyle={{ color: "var(--text-primary)" }} 
+/>
+new\client\src\components\charts\LineChart.jsx:161:              line.dataKey === "scope2" ? "colorScope2" : 
+"colorScope1";
+new\client\src\components\charts\LineChart.jsx:169:                stroke={line.color}
+new\client\src\components\charts\LineChart.jsx:181:                        stroke: line.color,
+new\client\src\components\charts\LineChart.jsx:189:                    : { fill: line.color, stroke: "#fff", 
+strokeWidth: 2, r: 6 }
+new\client\src\components\charts\PieChart.jsx:12:const DEFAULT_COLORS = [
+new\client\src\components\charts\PieChart.jsx:26:  colors = DEFAULT_COLORS,
+new\client\src\components\charts\PieChart.jsx:45:            style={{ color: payload[0].payload.fill }}
+new\client\src\components\charts\PieChart.jsx:75:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\charts\PieChart.jsx:102:            color: "var(--text-muted, #94a3b8)",
+new\client\src\components\charts\PieChart.jsx:141:                fill={entry.color || colors[index % colors.length]}
+new\client\src\components\layout\Layout.css:5:  background-color: transparent; /* Rely on index.css body background */
+new\client\src\components\layout\Layout.css:25:  scrollbar-color: var(--text-secondary) transparent;
+
+
+

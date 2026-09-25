@@ -1,0 +1,44 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/11/2026   4:23 PM                .benchmarks                                                          
+d-----         8/15/2026   9:34 PM                .gemini                                                              
+d-----          8/7/2026   4:00 PM                .pytest_cache                                                        
+d-----         8/15/2026   9:34 PM                .specify                                                             
+d-----         9/24/2026   7:59 PM                client                                                               
+d-----         8/15/2026   5:19 AM                graphify-out                                                         
+d-----         8/15/2026   4:46 AM                instance                                                             
+d-----         9/25/2026   4:05 PM                server                                                               
+d-----         9/24/2026   9:11 PM                test_results                                                         
+d-----         9/20/2026  12:52 PM                __pycache__                                                          
+-a----         9/13/2026  12:07 AM             64 analyze_all.py                                                       
+-a----         9/13/2026  12:07 AM             64 cbam_restore.py                                                      
+-a----         8/15/2026   5:21 AM          27754 file_by_file_analysis.md                                             
+-a----         9/13/2026  12:07 AM             60 found_route.txt                                                      
+-a----         9/13/2026  12:07 AM            138 ManageData_old.jsx                                                   
+-a----         9/17/2026  11:24 AM          25836 master_button_audit_results.json                                     
+-a----          8/5/2026   5:12 PM         418738 server.rar                                                           
+-a----          2/8/2026   6:53 PM            681 setup.bat                                                            
+-a----          2/8/2026   6:53 PM            409 start_all.bat                                                        
+-a----         9/17/2026  12:01 PM          18910 test_all_apis_health.py                                              
+-a----         9/17/2026  11:04 AM          15052 test_deep_button_audit.py                                            
+-a----         7/10/2026   9:40 PM            761 test_emissions_upload.csv                                            
+-a----         9/13/2026  12:07 AM            128 test_final.py                                                        
+-a----         9/13/2026  12:07 AM             64 test_final_v2.py                                                     
+-a----         9/13/2026  12:07 AM             64 test_final_v3.py                                                     
+-a----         9/17/2026  11:12 AM          11751 test_master_button_audit.py                                          
+-a----         9/13/2026  12:07 AM             64 test_pipeline.py                                                     
+-a----         9/13/2026  12:07 AM             64 test_pipeline_robust.py                                              
+-a----         9/13/2026  12:07 AM             64 update_logs.py                                                       
+-a----         9/13/2026  12:07 AM             64 update_logs_part2.py                                                 
+-a----         9/13/2026  12:07 AM             64 update_logs_part3.py                                                 
+
+
+

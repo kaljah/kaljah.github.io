@@ -1,0 +1,13 @@
+
+The command exited with code 1.
+Output:
+Select-String : Cannot find path 'C:\Users\samsung\Desktop\H2\new\client\src\pages\Dashboard.jsx' because it does not 
+exist.
+At line:1 char:1
++ Select-String -Path .\new\client\src\pages\Dashboard.jsx -Pattern "#[ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\samsun...s\Dashboard.jsx:String) [Select-String], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+
