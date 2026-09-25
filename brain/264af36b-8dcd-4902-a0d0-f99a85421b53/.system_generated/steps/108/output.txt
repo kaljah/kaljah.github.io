@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+CommandType     Name                                               Version    Source                                   
+-----------     ----                                               -------    ------                                   
+Application     graphify.exe                                       0.0.0.0    C:\Users\samsung\.local\bin\graphify.exe 
+
+
+

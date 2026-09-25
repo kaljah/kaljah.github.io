@@ -1,0 +1,45 @@
+
+The command exited with code 0.
+Output:
+new/client/src/pages/DashboardEnhanced.jsx-946-          >
+new/client/src/pages/DashboardEnhanced.jsx-947-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+new/client/src/pages/DashboardEnhanced.jsx-948-              <div
+new/client/src/pages/DashboardEnhanced.jsx-949-                style={{
+new/client/src/pages/DashboardEnhanced.jsx-950-                  background: "#10b981",
+new/client/src/pages/DashboardEnhanced.jsx-951-                  color: "#fff",
+new/client/src/pages/DashboardEnhanced.jsx-952-                  borderRadius: "8px",
+new/client/src/pages/DashboardEnhanced.jsx-953-                  width: "36px",
+new/client/src/pages/DashboardEnhanced.jsx-954-                  height: "36px",
+new/client/src/pages/DashboardEnhanced.jsx-955-                  display: "flex",
+new/client/src/pages/DashboardEnhanced.jsx-956-                  alignItems: "center",
+new/client/src/pages/DashboardEnhanced.jsx-957-                  justifyContent: "center",
+new/client/src/pages/DashboardEnhanced.jsx-958-                  fontWeight: 700,
+new/client/src/pages/DashboardEnhanced.jsx-959-                  fontSize: "1.2rem",
+new/client/src/pages/DashboardEnhanced.jsx-960-                }}
+new/client/src/pages/DashboardEnhanced.jsx-961-              >
+new/client/src/pages/DashboardEnhanced.jsx-962-                ✦
+new/client/src/pages/DashboardEnhanced.jsx-963-              </div>
+new/client/src/pages/DashboardEnhanced.jsx-964-              <div>
+new/client/src/pages/DashboardEnhanced.jsx-965-                <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--text-primary)" }}>
+new/client/src/pages/DashboardEnhanced.jsx:966:                  Welcome to Antigravity GHG Inventory
+new/client/src/pages/DashboardEnhanced.jsx-967-                </h3>
+new/client/src/pages/DashboardEnhanced.jsx-968-                <p style={{ margin: "2px 0 0 0", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
+new/client/src/pages/DashboardEnhanced.jsx-969-                  Your emissions workspace is initialized. Follow this 4-step workflow to establish your inventory:
+new/client/src/pages/DashboardEnhanced.jsx-970-                </p>
+new/client/src/pages/DashboardEnhanced.jsx-971-              </div>
+new/client/src/pages/DashboardEnhanced.jsx-972-            </div>
+new/client/src/pages/DashboardEnhanced.jsx-973-            <div
+new/client/src/pages/DashboardEnhanced.jsx-974-              style={{
+new/client/src/pages/DashboardEnhanced.jsx-975-                display: "grid",
+new/client/src/pages/DashboardEnhanced.jsx-976-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+new/client/src/pages/DashboardEnhanced.jsx-977-                gap: "14px",
+new/client/src/pages/DashboardEnhanced.jsx-978-              }}
+new/client/src/pages/DashboardEnhanced.jsx-979-            >
+new/client/src/pages/DashboardEnhanced.jsx-980-              <div
+new/client/src/pages/DashboardEnhanced.jsx-981-                style={{
+new/client/src/pages/DashboardEnhanced.jsx-982-                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
+new/client/src/pages/DashboardEnhanced.jsx-983-                  border: "1px solid var(--border-color)",
+new/client/src/pages/DashboardEnhanced.jsx-984-                  borderRadius: "8px",
+new/client/src/pages/DashboardEnhanced.jsx-985-                  padding: "14px",
+new/client/src/pages/DashboardEnhanced.jsx-986-                }}
+

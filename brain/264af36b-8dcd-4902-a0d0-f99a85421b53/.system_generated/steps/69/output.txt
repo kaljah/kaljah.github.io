@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+Select-String : A parameter cannot be found that matches parameter name 'Recurse'.
+At line:1 char:59
++ Select-String -Path .\* -Pattern "Welcome to Antigravity" -Recurse
++                                                           ~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

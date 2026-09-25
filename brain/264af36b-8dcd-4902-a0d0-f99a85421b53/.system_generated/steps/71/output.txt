@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+new/client/src/pages/DashboardEnhanced.jsx:                  Welcome to Antigravity GHG Inventory
+
