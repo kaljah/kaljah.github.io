@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+13 medium Rate limiting: 25 wrong-password login attempts | No rate limiting after 25 attempts. Statuses: set()
+14 medium 100KB JSON login payload | Connection failed on large payload
+15 medium 1MB notes field in emissions POST | Connection failed on 1MB payload
+24 high Session cookie security flags | Missing Secure flag (cookie sent over HTTP)
+21 info DELETE /api/emissions/1 as admin | HTTP 400
+25 critical Session fixation: reuse cookie after logout | Old session cookie still valid after logout!
+

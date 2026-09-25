@@ -1,0 +1,97 @@
+
+The command exited with code 0.
+Output:
+commit 393817f83624a18354443f8a6a121ec2c5621162
+Merge: 152f365 bf852d3
+Author: kaljah <148354441+kaljah@users.noreply.github.com>
+Date:   Sat Sep 19 16:04:02 2026 +0200
+
+    Merge branch 'main' into fix/audit-remediation
+
+commit 152f3656a0aa9f4b53ce8b70b53480f4f643edb6
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 15:55:24 2026 +0200
+
+    g
+
+diff --git a/new/client/src/App.jsx b/new/client/src/App.jsx
+index 40bc97c..e6a95f6 100644
+--- a/new/client/src/App.jsx
++++ b/new/client/src/App.jsx
+@@ -57,6 +57,14 @@ const AdminRoute = ({ children }) => {
+   return children;
+ };
+ 
++const SuperuserRoute = ({ children }) => {
++  const { user, loading } = useAuth();
++  if (loading) return <LoadingSpinner fullScreen />;
++  if (!user) return <Navigate to="/login" />;
++  if (!["admin", "superuser"].includes(user.role)) return <Navigate to="/" />;
++  return children;
++};
++
+ const AuditRoute = ({ children }) => {
+   const { user, loading } = useAuth();
+   if (loading) return <LoadingSpinner fullScreen />;
+@@ -106,9 +114,9 @@ const AppRoutes = () => {
+         <Route
+           path="qa-dashboard"
+           element={
+-            <AdminRoute>
++            <SuperuserRoute>
+               <QADashboard />
+-            </AdminRoute>
++            </SuperuserRoute>
+           }
+         />
+         <Route
+@@ -167,14 +175,10 @@ const AppRoutes = () => {
+             </NonITRoute>
+           }
+         />
+-        {/* NEW-01 FIX */}
++        {/* Unified QA/QC & Diagnostics */}
+         <Route
+           path="diagnostics"
+-          element={
+-            <AdminRoute>
+-              <Diagnostics />
+-            </AdminRoute>
+-          }
++          element={<Navigate to="/qa-dashboard" replace />}
+         />
+         {/* NEW-01 FIX */}
+         <Route
+@@ -196,9 +200,9 @@ const AppRoutes = () => {
+         <Route
+           path="settings"
+           element={
+-            <NonITRoute>
++            <PrivateRoute>
+               <Settings />
+-            </NonITRoute>
++            </PrivateRoute>
+           }
+         />
+       </Route>
+
+commit 5e3e6c9c2f53098bc6a52f930d1a5cbe39899447
+Author: kaljah <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 15:16:00 2026 +0200
+
+    Configure GitHub Pages deployment, SPA routing, and cross-origin authentication
+
+diff --git a/new/client/src/App.jsx b/new/client/src/App.jsx
+index 9291fa7..9d76a19 100644
+--- a/new/client/src/App.jsx
++++ b/new/client/src/App.jsx
+@@ -197,7 +197,7 @@ const App = () => {
+ 
+   return (
+     <ErrorBoundary>
+-      <BrowserRouter>
++      <BrowserRouter basename={import.meta.env.BASE_URL}>
+         <LayoutProvider>
+           <AuthProvider>
+             <ToastProvider>
+

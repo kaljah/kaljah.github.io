@@ -1,0 +1,19 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-4081
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-4081.log
+Log output:
+<truncated 64 lines>
+------------------- Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.147s] [ReqID: 5c61eabf-0f61-47cb-b09d-69cc056b9ba8]
+INFO     app:app.py:184 POST /api/emissions/ 201 [0.030s] [ReqID: c97b8d95-2145-435a-b475-a88e4b73fdf4]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_tier2_api_e2e.py::test_tier2_ianor_diesel_preset_e2e - asse...
+=================== 1 failed, 2 passed, 1 warning in 2.20s ====================
+
+Last progress: 5s ago

@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/emissions.py:2039: mimetype="text/csv",
+new/server/routes/emissions.py:2094: def add_comment(cell, text, author="GHG Platform"):
+new/server/routes/emissions.py:2095: c = Comment(text, author)
+new/server/routes/emissions.py:2973: mimetype="text/csv",
+

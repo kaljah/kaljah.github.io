@@ -1,0 +1,22 @@
+Task: 27c02a8e-c733-4647-8ef6-0eaabc90602c/task-99
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\27c02a8e-c733-4647-8ef6-0eaabc90602c\.system_generated\tasks\task-99.log
+Log output:
+<truncated 386 lines>
+rogram. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+
+Last progress: 0s ago

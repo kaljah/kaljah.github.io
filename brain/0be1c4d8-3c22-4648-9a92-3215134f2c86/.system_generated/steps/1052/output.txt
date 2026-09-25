@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\BulkImportModal.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -544,8 +544,23 @@
+ 
+   const downloadTemplate = async () => {
+     if (type === "activity") {
+-      // Use the backend's comprehensive template generator for emissions data
+-      window.location.href = `http://127.0.0.1:5000/api/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`;
++      try {
++        const res = await api.get(
++          `/emissions/template/csv?tier=${selectedTier}&process=${selectedProcess}`,
++          { responseType: "blob" }
++        );
++        const url = window.URL.createObjectURL(new Blob([res.data], { type: "text/csv" }));
++        const a = document.createElement("a");
++        a.href = url;
++        a.download = `scope1_template_${selectedProcess || "all"}.csv`;
++        document.body.appendChild(a);
++        a.click();
++        a.remove();
++        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
++      } catch (err) {
++        console.error("Template download failed:", err);
++        toast.error("Failed to download emissions template.");
++      }
+       return;
+     }
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

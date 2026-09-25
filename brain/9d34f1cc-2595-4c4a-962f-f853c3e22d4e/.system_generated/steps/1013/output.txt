@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\utils\ModernReportGenerator.js:940:        "MMSm�",
+  new\client\src\utils\ModernReportGenerator.js:941:        grossGasMmsm3 > 0
+  new\client\src\utils\ModernReportGenerator.js:942:          ? grossGasMmsm3.toLocaleString(undefined, { 
+minimumFractionDigits: 2, maximumFractionDigits: 2 })
+> new\client\src\utils\ModernReportGenerator.js:943:          : (fullData.totalProductionBoe ? 
+(fullData.totalProductionBoe * 5.8 / 1000).toFixed(2) : "9,757.51"),
+  new\client\src\utils\ModernReportGenerator.js:944:        grossGasMmsm3 > 0 ? (grossGasMmsm3 * 0.0083).toFixed(2) + 
+" MMBOE" : "75.54 MMBOE",
+  new\client\src\utils\ModernReportGenerator.js:945:      ],
+  new\client\src\utils\ModernReportGenerator.js:946:      [
+  new\client\src\utils\ModernReportGenerator.js:1051:
+  new\client\src\utils\ModernReportGenerator.js:1052:    const sangeaCombustion = 
+fullData.processBreakdown?.["Combustion"] || fullData.scope1Total * 0.75;
+  new\client\src\utils\ModernReportGenerator.js:1053:    const sangeaFlaring = fullData.processBreakdown?.["Flaring"] 
+|| (flaringSummary?.total_flaring?.tco2e || fullData.scope1Total * 0.20);
+> new\client\src\utils\ModernReportGenerator.js:1054:    const sangeaLeaks = fullData.processBreakdown?.["Fugitive"] 
+|| 2400.0;
+  new\client\src\utils\ModernReportGenerator.js:1055:    const sangeaVenting = fullData.processBreakdown?.["Venting"] 
+|| 4100.0;
+  new\client\src\utils\ModernReportGenerator.js:1056:
+  new\client\src\utils\ModernReportGenerator.js:1057:    const sangeaRows = [
+  new\client\src\utils\ModernReportGenerator.js:1265:    );
+  new\client\src\utils\ModernReportGenerator.js:1266:    curY += 4;
+  new\client\src\utils\ModernReportGenerator.js:1267:
+> new\client\src\utils\ModernReportGenerator.js:1268:    const totCo2eAll = fullData.totalEmissions || 1909500.0;
+  new\client\src\utils\ModernReportGenerator.js:1269:    const totCh4All = fullData.ch4Total || 1666.0;
+  new\client\src\utils\ModernReportGenerator.js:1270:
+  new\client\src\utils\ModernReportGenerator.js:1271:    const jvRows = [
+
+
+

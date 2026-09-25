@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Operational Facilities counts: [(1, 571), (3, 552), (4, 628)]
+Total preserved records: 2573
+Verified records: 2573
+

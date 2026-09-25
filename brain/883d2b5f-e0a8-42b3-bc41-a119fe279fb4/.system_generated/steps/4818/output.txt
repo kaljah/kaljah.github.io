@@ -1,0 +1,134 @@
+
+Encountered error in step execution: context canceled
+Output:
+
+--- Logging in as admin (admin@ghg.com) ---
+
+[CONSOLE ERROR] http://127.0.0.1:5173/login : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/login : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/login : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/login : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+Logged in successfully as admin.
+
+---> Auditing View: Dashboard (/)
+
+[CONSOLE ERROR] http://127.0.0.1:5173/ : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/ : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/ : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+  [Main View] Pressed 3 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope Select (/emissions)
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+  [Main View] Pressed 3 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope 1 (/emissions?scope=1)
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=1 : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=1 : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=1 : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+  [Main View] Pressed 3 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope 2 (/emissions?scope=2)
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=2 : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=2 : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=2 : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+  [Main View] Pressed 3 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope 3 (/emissions?scope=3)
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=3 : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=3 : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/emissions?scope=3 : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+  [Main View] Pressed 3 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Pending Review (/manage-data?tab=pending)
+
+[CONSOLE ERROR] http://127.0.0.1:5173/manage-data?tab=pending : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/manage-data?tab=pending : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/manage-data?tab=pending : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+  [Main View] Pressed 3 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Factors (/manage-data?tab=factors)
+
+[CONSOLE ERROR] http://127.0.0.1:5173/manage-data?tab=factors : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/manage-data?tab=factors : Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+
+
+[CONSOLE ERROR] http://127.0.0.1:5173/manage-data?tab=factors : Failed to fetch CSRF token: AxiosError: Request failed with status code 500
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=34e72bb5:2255:41)
+    at async fetchCsrfToken (http://127.0.0.1:5173/src/api.js:16:22)
+
+

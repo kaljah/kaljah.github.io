@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+18: compute_emissions,
+815: em_result, method = compute_emissions(
+3107: # Call compute_emissions to calculate the actual emissions
+3111: em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
+3553: calculated_em, method = compute_emissions(
+3894: em_result, method = compute_emissions(
+

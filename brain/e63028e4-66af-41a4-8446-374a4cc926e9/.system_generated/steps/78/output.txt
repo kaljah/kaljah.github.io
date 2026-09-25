@@ -1,0 +1,97 @@
+
+The command exited with code 1.
+Output:
+<truncated 2467 lines>
+FROM facilities 
+WHERE lower(facilities.region) LIKE lower(?) OR lower(facilities.location) LIKE lower(?) OR lower(facilities.name) LIKE lower(?)
+ LIMIT ? OFFSET ?]
+[parameters: ('Algiers', 'Algiers', 'Algiers', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.InterfaceError: bad parameter or other API misuse
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 497, in me
+    user_defaults = get_user_operational_defaults(user)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 40, in get_user_operational_defaults
+    ).first()
+      ^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\query.py", line 2728, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 2236, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\context.py", line 293, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 2353, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.InterfaceError: (sqlite3.InterfaceError) bad parameter or other API misuse
+[SQL: SELECT facilities.id AS facilities_id, facilities.name AS facilities_name, facilities.location AS facilities_location, facilities.description AS facilities_description, facilities.boundary_notes AS facilities_boundary_notes, facilities.boundary_type AS facilities_boundary_type, facilities.boundary_detail AS facilities_boundary_detail, facilities.activity AS facilities_activity, facilities.division AS facilities_division, facilities.region AS facilities_region, facilities.field AS facilities_field, facilities.code AS facilities_code, facilities.external_id AS facilities_external_id, facilities.segment AS facilities_segment, facilities.operator_status AS facilities_operator_status, facilities.country AS facilities_country, facilities.ogmp_membership_year AS facilities_ogmp_membership_year, facilities.reconciliation_threshold AS facilities_reconciliation_threshold, facilities.latitude AS facilities_latitude, facilities.longitude AS facilities_longitude, facilities.created_by AS facilities_created_by, facilities.updated_at AS facilities_updated_at, facilities.created_at AS facilities_created_at 
+FROM facilities 
+WHERE lower(facilities.region) LIKE lower(?) OR lower(facilities.location) LIKE lower(?) OR lower(facilities.name) LIKE lower(?)
+ LIMIT ? OFFSET ?]
+[parameters: ('Algiers', 'Algiers', 'Algiers', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+
+INFO     app:app.py:177 GET /api/auth/me 500 [0.042s] [ReqID: b75585e7-ba49-493e-b506-de81c7eb50f7]
+INFO     app:app.py:177 POST /api/auth/login 200 [0.432s] [ReqID: 2856b5a3-9a4d-497f-a307-bb2e36a20443]
+INFO     app:app.py:177 GET /api/auth/me 200 [0.007s] [ReqID: 1712a804-baea-4632-ad19-85a7b6bee539]
+INFO     app:app.py:177 GET /api/auth/me 200 [0.014s] [ReqID: 9043294c-d0a0-4fbd-9e23-2c1dc8950495]
+INFO     app:app.py:177 POST /api/auth/login 200 [0.373s] [ReqID: bcc83d79-99a8-422f-b81b-88eef95d6939]
+INFO     app:app.py:177 POST /api/auth/login 200 [0.406s] [ReqID: a33168c0-c413-4263-a264-8cbbfb8b0066]
+INFO     app:app.py:177 GET /api/auth/me 200 [0.006s] [ReqID: 872387e1-7d79-4087-bfdd-d6ce0e1497ac]
+INFO     app:app.py:177 GET /api/auth/me 200 [0.005s] [ReqID: dbb52e92-e9de-4d84-8ca9-741f3ca91af8]
+INFO     app:app.py:177 POST /api/auth/login 200 [0.296s] [ReqID: b666d5f8-53bb-4358-b993-2ea02f237bf7]
+INFO     app:app.py:177 GET /api/auth/me 200 [0.005s] [ReqID: cc9a91f2-c9f0-42eb-a9ee-69f6e98f7136]
+INFO     app:app.py:177 POST /api/auth/login 200 [0.319s] [ReqID: eacb7d59-345a-4152-b2c2-755a43362440]
+INFO     app:app.py:177 GET /api/auth/me 200 [0.004s] [ReqID: 05cf12b5-98d4-46e1-acd1-430f3c1b7c70]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation
+======================== 2 failed, 1 warning in 5.66s =========================
+

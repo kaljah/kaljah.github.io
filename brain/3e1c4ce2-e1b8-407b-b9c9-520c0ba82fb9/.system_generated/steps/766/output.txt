@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+At line:10 char:1
++ FROM emissions WHERE status = 'Verified'
++ ~~~~
+The 'from' keyword is not supported in this version of the language.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : ReservedKeywordNotAllowed
+ 
+

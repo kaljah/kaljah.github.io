@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\MultiSelectDropdown.jsx:4:const MultiSelectDropdown = ({
+new\client\src\components\MultiSelectDropdown.jsx:164:export default MultiSelectDropdown;
+new\client\src\pages\Reports.jsx:7:import MultiSelectDropdown from "../components/MultiSelectDropdown";
+new\client\src\pages\Reports.jsx:610:                  <MultiSelectDropdown
+
+
+

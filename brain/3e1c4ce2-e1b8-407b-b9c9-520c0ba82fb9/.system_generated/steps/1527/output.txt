@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:47:3 › Carbon Intensity Page Deep Audit › 1. Core Layout & KPI Cards Verification (5.5s)
+  ok 2 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:107:3 › Carbon Intensity Page Deep Audit › 2. Dual GWP Horizon Dynamic Toggle (100-Yr vs 20-Yr) (7.1s)
+  ok 3 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:141:3 › Carbon Intensity Page Deep Audit › 3. Cascading Filters Interaction (6.4s)
+  ok 4 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:166:3 › Carbon Intensity Page Deep Audit › 4. EU CBAM Product Specific Embedded Emissions Table (7.3s)
+  ok 5 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:204:3 › Carbon Intensity Page Deep Audit › 5. Regional Bar Charts Rendering (4.9s)
+  ok 6 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:221:3 › Carbon Intensity Page Deep Audit › 6. Historical Trends View Switching (Chart vs Heatmap) (7.1s)
+
+  6 passed (40.0s)
+

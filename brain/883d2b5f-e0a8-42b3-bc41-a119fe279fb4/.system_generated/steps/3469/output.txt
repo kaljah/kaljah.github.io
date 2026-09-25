@@ -1,0 +1,77 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 20 items
+
+new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads 
+[CONCURRENCY RESULTS] 30 concurrent operations in 0.93s:
+   Throughput: 32.3 requests/sec
+   P50 Latency: 28.6 ms | P95 Latency: 325.0 ms
+   Lock Failures: 0 | HTTP 500s: 0
+PASSED
+new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation PASSED
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_dashboard_summary_high_volume_latency 
+[VOLUME TEST] /api/dashboard/summary aggregated in 17.89 ms (11 year buckets)
+PASSED
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_dashboard_batch_all_parallel_threads_under_volume 
+[VOLUME TEST] /api/dashboard/batch-all 7-thread parallel query completed in 127.71 ms
+PASSED
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_excel_export_streaming_under_volume 
+[VOLUME TEST] Export document (37.6 KB, application/pdf) generated in 441.88 ms
+PASSED
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_mathematical_aggregation_grand_total_fidelity PASSED
+new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_eight_concurrent_bulk_upload_jobs 
+[BULK PIPELINE RESULTS] 8 concurrent jobs (200 rows) processed in 2.38s:
+   Throughput: 84.2 rows/sec
+   Completed Jobs: 8/8 (100% Success)
+   Thread Deadlocks: 0 | Corrupted States: 0
+PASSED
+new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_background_job_polling_contention PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_astronomical_quantities_resilience PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_microscopic_quantities_resilience PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_nan_infinity_rejection_or_handling PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_nan_and_inf_api_rejection PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_giant_one_megabyte_string_payload PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_formula_injection_sanitization PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_corrupted_and_empty_json_payloads PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_unicode_and_special_character_burst PASSED
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_calculation_loop_memory_profile 
+[CALCULATION LOOP MEMORY PROFILE]
+   Iterations: 10,000
+   Elapsed Time: 2.88s (3,473 calcs/sec)
+   Warmup Memory: 0.02 MB
+   Final Current Memory: 0.02 MB
+   Peak Memory: 0.02 MB
+   Net Memory Growth: 0.0000 MB
+PASSED
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_unit_conversions_zero_leak 
+[UNIT CONVERSION SUSTAINED PROFILE]
+   Conversions: 25,000
+   Elapsed: 0.13s (187,907 conv/sec)
+   Net Growth: 0.0000 MB
+PASSED
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_uncertainty_propagation_loop 
+[UNCERTAINTY PROPAGATION PROFILE]
+   Iterations: 5,000 (x3 calculations each)
+   Elapsed: 0.15s (34,013 ops/sec)
+   Net Growth: 0.0001 MB
+PASSED
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_gc_stability_and_cycle_cleanup 
+[GC STABILITY CHECK] Unreachable objects collected: 0, Uncollectable: 0
+PASSED
+
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 20 passed, 1 warning in 11.01s ========================
+

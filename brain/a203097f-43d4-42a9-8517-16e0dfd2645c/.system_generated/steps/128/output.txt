@@ -1,0 +1,16 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-126
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-126.log
+Log output:
+<truncated 284 lines>
+TestCleanScope1Combustion::test_combustion_tier3_gas_composition_carbon_balance
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_zero_quantity_boundary
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_elevated_dual_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_enclosed_high_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_pneumatic_devices_intermittent
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_blowdown_depressuring
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_acid_gas_removal_sweetening
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_component_fugitives_valve_leaks
+============================= 10 failed in 2.21s ==============================
+
+Last progress: 1s ago

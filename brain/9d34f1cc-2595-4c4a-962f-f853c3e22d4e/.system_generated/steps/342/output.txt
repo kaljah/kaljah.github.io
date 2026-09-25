@@ -1,0 +1,52 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\stoichiometry.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -13,11 +13,11 @@
+         super().__init__("Stoichiometric Mass Balance", "Section 4.1")
+ 
+     def calculate(
+-        self, fuel_mass, carbon_content, uncertainties, mass_unit="kg", gwp_dict=None
++        self, fuel_mass, carbon_content, uncertainties=None, mass_unit="kg", oxidation_factor=1.0, gwp_dict=None
+     ):
+         """
+         API Equation 4-3/4-4: CO2 from carbon content
+-        CO2 = Mass * Carbon_Content * (44.01 / 12.011)
++        CO2 = Mass * Carbon_Content * Oxidation_Factor * (44.01 / 12.011)
+         """
+         self.validate_inputs(
+             {"mass": fuel_mass, "carbon_content": carbon_content},
+@@ -48,10 +48,22 @@
+         # stoichiometric ratio CO2/C
+         ratio = 44.01 / 12.011
+ 
+-        # carbon_content expected as fraction (e.g. 0.85)
+-        co2_kg = norm_mass * carbon_content * ratio
++        # carbon_content normalized to fraction (e.g. 0.85 or 85.0 -> 0.85)
++        c = float(carbon_content)
++        if c > 1.0:
++            c /= 100.0
++        c = max(0.0, min(1.0, c))
++
++        # oxidation factor (default 1.0, e.g. 0.99 for solid fuels)
++        ox = float(oxidation_factor if oxidation_factor is not None else 1.0)
++        if ox > 1.0:
++            ox /= 100.0
++        ox = max(0.0, min(1.0, ox))
++
++        co2_kg = norm_mass * c * ox * ratio
+         co2_tonnes = co2_kg / 1000.0
+ 
++        uncertainties = uncertainties or {}
+         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+         co2_res = propagate_uncertainty(
+             co2_tonnes,
+@@ -66,6 +66,6 @@
+         return self.format_result(
+             co2=co2_res,
+             total_co2e=total_co2e,
+-            inputs={"fuel_mass": fuel_mass, "carbon_content": carbon_content},
++            inputs={"fuel_mass": fuel_mass, "carbon_content": carbon_content, "oxidation_factor": ox},
+         )
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

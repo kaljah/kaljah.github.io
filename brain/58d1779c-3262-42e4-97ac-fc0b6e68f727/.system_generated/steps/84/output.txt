@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-kilowatt_hour]
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-mwh]
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-megawatt_hour]
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-therm]
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-therms]
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveTransitivity::test_volume_transitivity
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveTransitivity::test_mass_transitivity
+tests/test_unit_conversions_exhaustive.py::TestExhaustiveTransitivity::test_energy_transitivity
+tests/test_unit_conversions_exhaustive.py::TestThermodynamicTemperatureAndPressure::test_temperature_canonical_points
+tests/test_unit_conversions_exhaustive.py::TestThermodynamicTemperatureAndPressure::test_pressure_gauge_to_absolute
+tests/test_unit_conversions_exhaustive.py::TestThermodynamicTemperatureAndPressure::test_pressure_round_trip
+tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_at_standard_conditions_is_identity
+tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_higher_temp_decreases_standard_volume
+tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_higher_pressure_increases_standard_volume
+tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_z_factor_scaling
+tests/test_user_profile_update.py::test_update_user_profile_information
+tests/test_user_profile_update.py::test_update_user_email_collision_rejected
+tests/test_vented.py::test_tanks_calculator
+tests/test_vented.py::test_pneumatics_calculator
+tests/test_vented.py::test_pneumatics_intermittent_actuation
+tests/test_vented.py::test_liquids_unloading_units
+tests/test_vented.py::test_blowdown_calculator
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+880 tests collected in 4.92s
+

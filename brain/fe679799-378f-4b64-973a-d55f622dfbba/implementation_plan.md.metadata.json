@@ -1,0 +1,6 @@
+{
+  "summary": "Comprehensive technical implementation plan for upgrading the Tier 2 workflow in the frontend UI and backend integration. Implements explicit Tier 1/Tier 2/Tier 3 badges, dual-mode Tier 2 fuel property overrides with official citations (IANOR NA 8110, NA 11042, CREG Décret 21-64, Sonatrach ISO 6976, API Compendium 2021), live calculation impact preview, and inline custom factor quick-add modal.",
+  "updatedAt": "2026-09-24T10:53:39.829638700Z",
+  "requestFeedback": true,
+  "userFacing": true
+}

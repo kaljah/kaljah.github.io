@@ -1,0 +1,100 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\utils\ModernReportGenerator.js:284:    const fullData = await fetchAllReportData(
+  new\client\src\utils\ModernReportGenerator.js:285:      api,
+  new\client\src\utils\ModernReportGenerator.js:286:      selectedYear,
+  new\client\src\utils\ModernReportGenerator.js:287:      reportData,
+  new\client\src\utils\ModernReportGenerator.js:288:      params,
+  new\client\src\utils\ModernReportGenerator.js:289:      productionData,
+  new\client\src\utils\ModernReportGenerator.js:290:      resolvedGwp.factors,
+  new\client\src\utils\ModernReportGenerator.js:291:    );
+  new\client\src\utils\ModernReportGenerator.js:292:
+  new\client\src\utils\ModernReportGenerator.js:293:    // Comparison Data
+  new\client\src\utils\ModernReportGenerator.js:294:    let compData = null;
+  new\client\src\utils\ModernReportGenerator.js:295:    if (isComparison) {
+  new\client\src\utils\ModernReportGenerator.js:296:      const compParams = { ...params, year: comparisonYear };
+  new\client\src\utils\ModernReportGenerator.js:297:      try {
+  new\client\src\utils\ModernReportGenerator.js:298:        const cRes = await api.get("/emissions", { params: 
+compParams });
+  new\client\src\utils\ModernReportGenerator.js:299:        let cReportData = cRes.data.emissions || cRes.data || [];
+  new\client\src\utils\ModernReportGenerator.js:300:        if (Array.isArray(regionId)) {
+  new\client\src\utils\ModernReportGenerator.js:301:          cReportData = cReportData.filter((r) =>
+  new\client\src\utils\ModernReportGenerator.js:302:            regionId.includes(String(r.facility_id)),
+  new\client\src\utils\ModernReportGenerator.js:303:          );
+  new\client\src\utils\ModernReportGenerator.js:304:        }
+  new\client\src\utils\ModernReportGenerator.js:305:        const cProdRes = await 
+api.get("/dashboard/intensity-stats", {
+  new\client\src\utils\ModernReportGenerator.js:306:          params: { year: comparisonYear },
+  new\client\src\utils\ModernReportGenerator.js:307:        });
+> new\client\src\utils\ModernReportGenerator.js:308:        compData = await fetchAllReportData(
+  new\client\src\utils\ModernReportGenerator.js:309:          api,
+  new\client\src\utils\ModernReportGenerator.js:310:          comparisonYear,
+  new\client\src\utils\ModernReportGenerator.js:311:          cReportData,
+  new\client\src\utils\ModernReportGenerator.js:312:          compParams,
+  new\client\src\utils\ModernReportGenerator.js:313:          cProdRes.data || [],
+  new\client\src\utils\ModernReportGenerator.js:314:          resolvedGwp.factors,
+  new\client\src\utils\ModernReportGenerator.js:315:        );
+  new\client\src\utils\ModernReportGenerator.js:316:      } catch (e) {
+  new\client\src\utils\ModernReportGenerator.js:317:        console.warn("Comparison Fetch Failed", e);
+  new\client\src\utils\ModernReportGenerator.js:318:      }
+  new\client\src\utils\ModernReportGenerator.js:319:    }
+  new\client\src\utils\ModernReportGenerator.js:320:
+  new\client\src\utils\ModernReportGenerator.js:321:    // Initialize PDF
+  new\client\src\utils\ModernReportGenerator.js:322:    const doc = new jsPDF("p", "mm", "a4");
+  new\client\src\utils\ModernReportGenerator.js:323:    const pageWidth = doc.internal.pageSize.getWidth();
+  new\client\src\utils\ModernReportGenerator.js:324:    const pageHeight = doc.internal.pageSize.getHeight();
+  new\client\src\utils\ModernReportGenerator.js:325:    const margin = 20;
+  new\client\src\utils\ModernReportGenerator.js:326:
+  new\client\src\utils\ModernReportGenerator.js:327:    // --- HELPERS ---
+  new\client\src\utils\ModernReportGenerator.js:328:    function drawBackground() {
+  new\client\src\utils\ModernReportGenerator.js:329:      doc.setFillColor(255, 255, 255);
+  new\client\src\utils\ModernReportGenerator.js:330:      doc.rect(0, 0, pageWidth, pageHeight, "F");
+  new\client\src\utils\ModernReportGenerator.js:331:    }
+  new\client\src\utils\ModernReportGenerator.js:332:
+  new\client\src\utils\ModernReportGenerator.js:333:    function drawFooter(pageNumberOverride = null) {
+  new\client\src\utils\ModernReportGenerator.js:334:      const pageNumber = pageNumberOverride || 
+doc.internal.getNumberOfPages();
+  new\client\src\utils\ModernReportGenerator.js:335:      doc.setFillColor(250, 250, 250);
+  new\client\src\utils\ModernReportGenerator.js:336:      doc.rect(0, pageHeight - 15, pageWidth, 15, "F"); // Light 
+footer bg
+  new\client\src\utils\ModernReportGenerator.js:337:      doc.setFontSize(8);
+  new\client\src\utils\ModernReportGenerator.js:338:      doc.setTextColor(...THEME.textMuted);
+> new\client\src\utils\ModernReportGenerator.js:1583:async function fetchAllReportData(
+  new\client\src\utils\ModernReportGenerator.js:1584:  api,
+  new\client\src\utils\ModernReportGenerator.js:1585:  year,
+  new\client\src\utils\ModernReportGenerator.js:1586:  rawReportData,
+  new\client\src\utils\ModernReportGenerator.js:1587:  params,
+  new\client\src\utils\ModernReportGenerator.js:1588:  productionData = [],
+  new\client\src\utils\ModernReportGenerator.js:1589:  gwpFactors = DEFAULT_GWP,
+  new\client\src\utils\ModernReportGenerator.js:1590:) {
+  new\client\src\utils\ModernReportGenerator.js:1591:  let co2Total = 0,
+  new\client\src\utils\ModernReportGenerator.js:1592:    ch4Total = 0,
+  new\client\src\utils\ModernReportGenerator.js:1593:    n2oTotal = 0;
+  new\client\src\utils\ModernReportGenerator.js:1594:  let scope1Total = 0,
+  new\client\src\utils\ModernReportGenerator.js:1595:    scope2Total = 0,
+  new\client\src\utils\ModernReportGenerator.js:1596:    scope3Total = 0;
+  new\client\src\utils\ModernReportGenerator.js:1597:  let processBreakdown = {
+  new\client\src\utils\ModernReportGenerator.js:1598:    Combustion: 0,
+  new\client\src\utils\ModernReportGenerator.js:1599:    Flaring: 0,
+  new\client\src\utils\ModernReportGenerator.js:1600:    Venting: 0,
+  new\client\src\utils\ModernReportGenerator.js:1601:    Fugitive: 0,
+  new\client\src\utils\ModernReportGenerator.js:1602:    Other: 0,
+  new\client\src\utils\ModernReportGenerator.js:1603:  };
+  new\client\src\utils\ModernReportGenerator.js:1604:  let facilityBreakdown = {};
+  new\client\src\utils\ModernReportGenerator.js:1605:  let monthlyData = {};
+  new\client\src\utils\ModernReportGenerator.js:1606:
+  new\client\src\utils\ModernReportGenerator.js:1607:  const co2_factor = (gwpFactors && gwpFactors.CO2 !== undefined) 
+? Number(gwpFactors.CO2) : 1;
+  new\client\src\utils\ModernReportGenerator.js:1608:  const ch4_factor = (gwpFactors && gwpFactors.CH4 !== undefined) 
+? Number(gwpFactors.CH4) : 28;
+  new\client\src\utils\ModernReportGenerator.js:1609:  const n2o_factor = (gwpFactors && gwpFactors.N2O !== undefined) 
+? Number(gwpFactors.N2O) : 265;
+  new\client\src\utils\ModernReportGenerator.js:1610:
+  new\client\src\utils\ModernReportGenerator.js:1611:  const scope1Rows = rawReportData.map((r) => {
+  new\client\src\utils\ModernReportGenerator.js:1612:    const co2Val = Number(r.co2_emissions || 0);
+  new\client\src\utils\ModernReportGenerator.js:1613:    const ch4Val = Number(r.ch4_emissions || 0);
+
+
+

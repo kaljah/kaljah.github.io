@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1523,11 +1523,8 @@
+ 
+         # Exact GWP20 formula using dynamic active standard
+         total_s1 = ed["total_co2e"] - ed["total_s2"]
+-        s1_gwp20 = (
+-            ed["total_co2"]
+-            + (ed["total_ch4"] * ch4_gwp20)
+-            + (ed["total_n2o"] * n2o_gwp20)
+-        )
++        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * (n2o_gwp20 - 265.0))
++        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
+         total_gwp20 = s1_gwp20 + ed["total_s2"]
+ 
+         if boe > 0:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

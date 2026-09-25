@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+new/server/models.py:522:class OgmpSurvey(db.Model):
+new/server/models.py-523-    __tablename__ = "ogmp_surveys"
+new/server/models.py-524-    id = db.Column(db.Integer, primary_key=True)
+new/server/models.py-525-    facility_id = db.Column(
+new/server/models.py-526-        db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False
+new/server/models.py-527-    )
+new/server/models.py-528-    facility = db.relationship("Facility", overlaps="facility_parent,ogmp_surveys")
+new/server/models.py-529-    year = db.Column(db.Integer, index=True, nullable=False)
+new/server/models.py-530-    survey_date = db.Column(db.String(20), nullable=False)  # YYYY-MM-DD
+new/server/models.py-531-    survey_type = db.Column(
+new/server/models.py-532-        db.String(50), nullable=False
+new/server/models.py-533-    )  # Satellite (Sentinel-5P/MethaneSAT), Flyover/Aerial, Drone OGI, Continuous Monitor, Site Survey
+new/server/models.py-534-    measured_rate_kg_hr = db.Column(db.Float, nullable=False, default=0.0)
+new/server/models.py-535-    operating_hours_year = db.Column(db.Float, default=8760.0)
+new/server/models.py-536-    estimated_annual_tch4 = db.Column(db.Float, default=0.0)
+new/server/models.py-537-    detection_threshold = db.Column(db.Float)  # kg/hr
+new/server/models.py-538-    instrument_vendor = db.Column(
+new/server/models.py-539-        db.String(100)
+new/server/models.py-540-    )  # FLIR GF320, Bridger LiDAR, GHGSat, etc.
+new/server/models.py-541-    raw_file_ref = db.Column(db.String(255))
+new/server/models.py-542-    bottom_up_tch4 = db.Column(db.Float, default=0.0)
+new/server/models.py-543-    variance_pct = db.Column(db.Float, default=0.0)
+new/server/models.py-544-    variance_flag = db.Column(db.Boolean, default=False)
+new/server/models.py-545-    reconciliation_status = db.Column(
+new/server/models.py-546-        db.String(50), default="Reconciled"
+new/server/models.py-547-    )  # Reconciled, Discrepancy Flagged, Pending
+new/server/models.py-548-    status = db.Column(db.String(50), default="pending")  # pending, reviewed, reported
+new/server/models.py-549-    operator_notes = db.Column(db.Text)
+new/server/models.py-550-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+new/server/models.py-551-    created_at = db.Column(db.DateTime, default=utc_now)
+new/server/models.py-552-
+new/server/models.py-553-
+new/server/models.py-554-class MethaneSourceType(db.Model):
+new/server/models.py-555-    __tablename__ = "methane_source_types"
+new/server/models.py-556-    id = db.Column(db.Integer, primary_key=True)
+new/server/models.py-557-    code = db.Column(db.String(50), unique=True, index=True, nullable=False)
+

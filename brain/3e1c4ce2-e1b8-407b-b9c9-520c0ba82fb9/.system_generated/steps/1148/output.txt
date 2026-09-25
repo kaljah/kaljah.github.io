@@ -1,0 +1,49 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\notifications.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -154,9 +154,9 @@
+ 
+     n = Notification.query.get_or_404(id)
+     if n.user_id is None:
+-        if user.role != "admin":
+-            return jsonify({"error": "Only administrators can modify system notifications"}), 403
+-    elif n.user_id != user.id:
++        # Broadcast/system notification: allowed to mark read by any authenticated user
++        pass
++    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+         return jsonify({"error": "Unauthorized"}), 403
+ 
+     n.is_read = True
+@@ -174,9 +174,15 @@
+     if not user:
+         return jsonify({"error": "Not authenticated"}), 401
+ 
+-    Notification.query.filter_by(user_id=user.id, is_read=False).update(
+-        {"is_read": True}
+-    )
++    if user.role in ["admin", "superuser"]:
++        Notification.query.filter(
++            ((Notification.user_id == user.id) | (Notification.user_id == None)),
++            Notification.is_read == False,
++        ).update({"is_read": True}, synchronize_session="fetch")
++    else:
++        Notification.query.filter_by(user_id=user.id, is_read=False).update(
++            {"is_read": True}
++        )
+     try:
+         db.session.commit()
+     except Exception as e:
+@@ -194,9 +194,9 @@
+ 
+     n = Notification.query.get_or_404(id)
+     if n.user_id is None:
+-        if user.role != "admin":
++        if user.role not in ["admin", "superuser"]:
+             return jsonify({"error": "Only administrators can delete system notifications"}), 403
+-    elif n.user_id != user.id:
++    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+         return jsonify({"error": "Unauthorized"}), 403
+ 
+     try:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

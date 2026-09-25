@@ -1,0 +1,17 @@
+Task: 9d34f1cc-2595-4c4a-962f-f853c3e22d4e/task-1136
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\.system_generated\tasks\task-1136.log
+Log output:
+<truncated 55 lines>
+ses::test_mmscf_unit_combustion PASSED [  3%]
+test_emission_calculations.py::TestEdgeCases::test_negative_quantity_raises PASSED [  3%]
+test_emission_calculations.py::TestEdgeCases::test_tank_zero_gor_returns_zero PASSED [  4%]
+test_emission_calculations.py::TestEdgeCases::test_zero_quantity_combustion PASSED [  4%]
+test_emission_calculations.py::TestTier3CombustionGasComposition::test_tier3_combustion_co2 PASSED [  4%]
+test_emission_calculations.py::TestProcessRowIntegration::test_combustion_process_row PASSED [  4%]
+test_emission_calculations.py::TestProcessRowIntegration::test_flaring_process_row PASSED [  4%]
+test_emission_calculations.py::TestProcessRowIntegration::test_missing_date_returns_error PASSED [  4%]
+test_emission_calculations.py::TestProcessRowIntegration::test_missing_facility_returns_error PASSED [  4%]
+test_emission_calculations.py::TestProcessRowIntegration::test_venting_process_row PASSED [  4%]
+test_performance.py::test_benchmark_uncertainty_propagation 
+Last progress: 1s ago

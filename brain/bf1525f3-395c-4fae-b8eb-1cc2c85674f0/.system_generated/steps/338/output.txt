@@ -1,0 +1,209 @@
+
+The command exited with code 0.
+Output:
+<truncated 120 lines>
+index 7ca7376..c32095a 100644
+--- a/new/client/src/components/layout/TopBar.jsx
++++ b/new/client/src/components/layout/TopBar.jsx
+@@ -1,5 +1,5 @@
+ import React, { useState, useRef, useEffect } from "react";
+-import { User, Building } from "lucide-react";
++import { User, Building, Menu } from "lucide-react";
+ import { useAuth } from "../../context/AuthContext";
+ import { useLayout } from "../../context/LayoutContext";
+ import NotificationCenter from "../NotificationCenter";
+@@ -7,7 +7,7 @@ import "./TopBar.css";
+ 
+ const TopBar = () => {
+   const { user, logout } = useAuth();
+-  const { topBarLeft, topBarRight } = useLayout();
++  const { topBarLeft, topBarRight, toggleMobileNav } = useLayout();
+   const [isProfileOpen, setIsProfileOpen] = useState(false);
+   const profileRef = useRef(null);
+ 
+@@ -24,6 +24,18 @@ const TopBar = () => {
+   return (
+     <header className="top-bar">
+       <div className="top-bar-left-section">
++        <button
++          className="mobile-hamburger-btn"
++          onClick={(e) => {
++            e.stopPropagation();
++            toggleMobileNav();
++          }}
++          aria-label="Open navigation menu"
++          type="button"
++        >
++          <Menu size={22} />
++        </button>
++
+         <div className="breadcrumbs">
+           <Building size={16} style={{ color: "var(--accent-color, #ff6600)" }} />
+           <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>Corporate ESG</span>
+@@ -39,11 +51,12 @@ const TopBar = () => {
+ 
+         <NotificationCenter />
+ 
+-        <div style={{ position: "relative" }} ref={profileRef}>
++        <div style={{ position: "relative" }} ref={profileRef} className="user-profile-tab-wrapper">
+           <button
+-            className="icon-button"
++            className="icon-button user-profile-tab-btn"
+             onClick={() => setIsProfileOpen(!isProfileOpen)}
+             title="User Profile"
++            aria-label="User Profile"
+           >
+             <User size={18} />
+           </button>
+@@ -53,8 +66,8 @@ const TopBar = () => {
+                 <div style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--text-primary)" }}>
+                   {user?.fullName || user?.email}
+                 </div>
+-                <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", textTransform: "uppercase", marginTop: "2px" }}>
+-                  Role: {user?.role}
++                <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
++                  {user?.jobTitle || user?.role || ""}
+                 </div>
+               </div>
+               <button className="top-drop-item logout-btn-top" onClick={logout} style={{ width: "100%", textAlign: "left", padding: "10px 14px" }}>
+diff --git a/new/server/app.py b/new/server/app.py
+index 8774ff9..c61bef3 100644
+--- a/new/server/app.py
++++ b/new/server/app.py
+@@ -308,7 +308,7 @@ def ensure_admin_seeded():
+                     role=u["role"],
+                     sector="Oil & Gas",
+                     department="Sustainability & IT",
+-                    jobTitle="Administrator",
++                    jobTitle="Sustainability Manager",
+                     location="Global",
+                     status="active",
+                 )
+@@ -318,6 +318,8 @@ def ensure_admin_seeded():
+                 user.set_password(u["password"])
+                 user.status = "active"
+                 user.role = u["role"]
++                if not user.jobTitle:
++                    user.jobTitle = "Sustainability Manager"
+         db.session.commit()
+     except Exception as e:
+         app.logger.error(f"Failed to auto-seed admin: {e}")
+diff --git a/new/server/routes/auth.py b/new/server/routes/auth.py
+index fad3977..caba247 100644
+--- a/new/server/routes/auth.py
++++ b/new/server/routes/auth.py
+@@ -123,6 +123,29 @@ def it_admin_required(f):
+     return decorated_function
+ 
+ 
++def it_access_required(f):
++    """Allows IT Admin and IT roles — for accessing user list and resetting passwords."""
++    @wraps(f)
++    def decorated_function(*args, **kwargs):
++        if request.method == "OPTIONS":
++            return ("", 204)
++        user_id = session.get("user_id")
++        if not user_id:
++            return jsonify({"error": "Not authenticated"}), 401
++        user = db.session.get(User, user_id)
++        if not user:
++            session.pop("user_id", None)
++            return jsonify({"error": "User not found"}), 401
++        if user.status != "active":
++            session.pop("user_id", None)
++            return jsonify({"error": "Account disabled"}), 403
++        if user.role not in ["it_admin", "it"]:
++            return jsonify({"error": "IT privileges required"}), 403
++        return f(*args, **kwargs)
++
++    return decorated_function
++
++
+ def admin_required(f):
+     """Restricts access to business/data Admin role only."""
+     @wraps(f)
+@@ -290,6 +313,8 @@ def login():
+                     "email": user.email,
+                     "role": user.role,
+                     "orgName": user.orgName,
++                    "jobTitle": user.jobTitle,
++                    "department": user.department,
+                 },
+             }
+         )
+@@ -707,6 +732,9 @@ def update_settings():
+     }
+     has_operational_keys = any(k in data for k in operational_keys)
+ 
++    if user and user.role == "it":
++        return jsonify({"error": "IT role is not authorized to modify settings."}), 403
++
+     if user and user.role == "it_admin" and has_operational_keys:
+         return jsonify({"error": "IT administrators are not authorized to modify operational GHG calculation standards or settings."}), 403
+ 
+@@ -816,7 +844,7 @@ def update_settings():
+ 
+ 
+ @auth_bp.route("/users", methods=["GET"])
+-@it_admin_required
++@it_access_required
+ def get_users():
+     # Force expire session cache so we always read fresh data from DB
+     db.session.expire_all()
+@@ -857,7 +885,7 @@ def update_user(id):
+ 
+     data = request.get_json()
+ 
+-    ROLE_RANK = {"user": 0, "superuser": 1, "admin": 2, "it_admin": 3}
++    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4}
+     VALID_ROLES = set(ROLE_RANK.keys())
+     requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
+ 
+@@ -870,6 +898,25 @@ def update_user(id):
+             return jsonify({"error": "Cannot assign a role higher than your own"}), 403
+         user.role = new_role
+ 
++    if "fullName" in data and data["fullName"]:
++        new_name = str(data["fullName"]).strip()
++        if new_name:
++            user.fullName = new_name
++
++    if "email" in data and data["email"]:
++        new_email = str(data["email"]).strip().lower()
++        if new_email and new_email != (user.email or "").lower():
++            existing = User.query.filter(User.email == new_email, User.id != user.id).first()
++            if existing:
++                return jsonify({"error": "Email is already in use by another account"}), 400
++            user.email = new_email
++
++    if "department" in data:
++        user.department = str(data["department"]).strip() if data["department"] else ""
++
++    if "jobTitle" in data:
++        user.jobTitle = str(data["jobTitle"]).strip() if data["jobTitle"] else ""
++
+     if "location" in data:
+         user.location = data["location"]
+     if "status" in data:
+@@ -892,8 +939,11 @@ def update_user(id):
+                 "id": user.id,
+                 "fullName": user.fullName,
+                 "email": user.email,
++                "orgName": user.orgName,
+                 "role": user.role,
+                 "location": user.location,
++                "department": user.department,
++                "jobTitle": user.jobTitle,
+                 "status": user.status,
+             },
+         }
+@@ -963,7 +1013,7 @@ def delete_user(id):
+ 
+ 
+ @auth_bp.route("/users/<int:id>/reset-password", methods=["POST"])
+-@it_admin_required
++@it_access_required
+ def admin_reset_password(id):
+     """
+     IT Admin resets a user's password directly (global authority).
+

@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":291,"LineContent":"/* Data Tables */"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":292,"LineContent":".table-container {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":301,"LineContent":".data-table {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":307,"LineContent":".data-table th {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":320,"LineContent":".data-table td {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":326,"LineContent":".data-table tr:last-child td {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":330,"LineContent":".data-table tr:hover td {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":657,"LineContent":"/* Enhanced Review Table */"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":658,"LineContent":".pending-table-card {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":668,"LineContent":".pending-table-header {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":676,"LineContent":".pending-table {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":682,"LineContent":".pending-table th {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":695,"LineContent":".pending-table td {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":702,"LineContent":".pending-table tr:hover td {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":706,"LineContent":".pending-table tr.row-selected td {"}

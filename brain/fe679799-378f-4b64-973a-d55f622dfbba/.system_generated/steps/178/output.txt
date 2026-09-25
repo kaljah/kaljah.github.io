@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+9222
+/devtools/browser/7df5ee38-e668-4dbe-b023-de4ab799c26a
+

@@ -1,0 +1,96 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 44 items / 42 deselected / 2 selected
+
+tests/test_qfull_validation.py::TestBlowdown::test_blowdown_standard FAILED [ 50%]
+tests/test_qfull_validation.py::TestBlowdown::test_blowdown_single_event FAILED [100%]
+
+================================== FAILURES ===================================
+_____________________ TestBlowdown.test_blowdown_standard _____________________
+
+self = <test_qfull_validation.TestBlowdown object at 0x0000021FD34140B0>
+
+    def test_blowdown_standard(self):
+        payload = {
+            'process_type': 'blowdown',
+            'quantity': 5.0,
+            'unit': 'm3',
+            'factor_source': 'specific',
+            'blowdown_volume': 5.0,
+            'blowdown_pressure': 500.0,
+            'blowdown_temp': 60.0,
+            'blowdown_events': 10,
+            'ch4_content': 0.85
+        }
+        p_abs = 500.0 + STD_PRESS_PSIA
+        p_factor = p_abs / STD_PRESS_PSIA
+        t_abs_k = ref_f_to_k(60.0)
+        t_factor = STD_TEMP_K / t_abs_k
+        v_std = 5.0 * p_factor * t_factor
+        total_v = v_std * 10
+        ch4_vol = total_v * 0.85
+        ch4_tonnes = ch4_vol * DENSITY_CH4 / 1000
+    
+        em, method = compute_emissions(payload, {}, GWP_AR5)
+>       assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
+E       assert 0.9810933040158258 == 1.0099295984074592 � 1.0e-04
+E         
+E         comparison failed
+E         Obtained: 0.9810933040158258
+E         Expected: 1.0099295984074592 � 1.0e-04
+
+tests\test_qfull_validation.py:631: AssertionError
+___________________ TestBlowdown.test_blowdown_single_event ___________________
+
+self = <test_qfull_validation.TestBlowdown object at 0x0000021FD34148F0>
+
+    def test_blowdown_single_event(self):
+        payload = {
+            'process_type': 'blowdown',
+            'quantity': 10.0,
+            'unit': 'm3',
+            'factor_source': 'specific',
+            'blowdown_volume': 10.0,
+            'blowdown_pressure': 100.0,
+            'blowdown_temp': 60.0,
+            'blowdown_events': 1,
+            'ch4_content': 0.90
+        }
+        p_abs = 100.0 + STD_PRESS_PSIA
+        p_factor = p_abs / STD_PRESS_PSIA
+        t_abs_k = ref_f_to_k(60.0)
+        t_factor = STD_TEMP_K / t_abs_k
+        v_std = 10.0 * p_factor * t_factor
+        total_v = v_std * 1
+        ch4_vol = total_v * 0.90
+        ch4_tonnes = ch4_vol * DENSITY_CH4 / 1000
+    
+        em, method = compute_emissions(payload, {}, GWP_AR5)
+>       assert em['ch4'] == pytest.approx(ch4_tonnes, rel=1e-4)
+E       assert 0.04155218699361145 == 0.04765869639419259 � 4.8e-06
+E         
+E         comparison failed
+E         Obtained: 0.04155218699361145
+E         Expected: 0.04765869639419259 � 4.8e-06
+
+tests\test_qfull_validation.py:655: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_qfull_validation.py::TestBlowdown::test_blowdown_standard
+FAILED tests/test_qfull_validation.py::TestBlowdown::test_blowdown_single_event
+================= 2 failed, 42 deselected, 1 warning in 1.65s =================
+

@@ -1,0 +1,122 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+[DASHBOARD API] Total Scope 1 (API): 261430.27045173704
+[PAGINATION CHECK] Previous Page 1 of 242 Next
+  ok 4 [chromium] › e2e\test_bulk_csv_uploader.spec.js:159:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 2. Tier 3 Bulk CSV Upload: 360 Scenarios per Region (1,080 Total Rows) (7.3s)
+
+======================================================
+[KPI RE-AUDIT] Validating updated metrics on Dashboard...
+======================================================
+BROWSER LOG: Converting 50000 m3 to 1765735 scf
+[YEAR TEST] 2026 -> Gross Emissions: 261.4K
+[TIER 1 DB VERIFIED] Row ID=2419, Facility=1, CO2=2.7060600000000004, CH4=0.00005100000000000001, Total CO2e=2.7088395000000007 tCO2e
+[YEAR TEST] 2024 -> Gross Emissions: 0
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Steel & Iron (Acier DRI)	Complexe Sidérurgique DRI/EAF (Tosyali)	Metallurgy	Industrial Zone	-	-	combustion	Natural Gas	Default	1,765,735.00 scf	2.706	0.00005	0.00001	2.709	±6%	±11%	±11%	±11%	±22%	±22%	
+
+========================================
+[TIER 1 TEST] Testing Region: Center (GICA)
+========================================
+[POST-BULK DASHBOARD KPI] Gross: 261.4K, Net: 261.4K, CH4: 385.7
+[POST-BULK SCOPE 1 PILL] 261.4K tCO₂e
+[YEAR TEST] 2023 -> Gross Emissions: 0
+[POST-BULK GWP-20 VALUE] Gross: 283K
+[TIER 1 TEST] Auto-filled Activity: Cement & Clinker
+[YEAR TEST] 2022 -> Gross Emissions: 0
+BROWSER LOG: Converting 12000 m3 to 3170064.0000000005 gal
+[YEAR TEST] All Years -> Gross Emissions: 261.4K
+[TIER 1 DB VERIFIED] Row ID=2420, Facility=3, CO2=122.47775999999999, CH4=0.004968, Total CO2e=122.880168 tCO2e
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Cement & Clinker	Cimenterie Industrielle de Chlef (GICA)	Building Materials	Chlef Plant	-	-	combustion	Diesel (No. 2 Fuel Oil)	Default	3,170,064.00 gal	122.478	0.00497	0.00099	122.880	±5%	±13%	±16%	±10%	±27%	±32%	
+
+========================================
+[TIER 1 TEST] Testing Region: South (Sonatrach)
+========================================
+
+[KPI RE-AUDIT] Validating Carbon Intensity...
+[SUPPLY CHAIN TEST] Upstream -> Gross: 0
+[SUPPLY CHAIN TEST] Midstream -> Gross: 0
+[TIER 1 TEST] Auto-filled Activity: Upstream & Midstream Gas
+[SUPPLY CHAIN TEST] Downstream -> Gross: 0
+BROWSER LOG: Converting 80000 m3 to 2825176 scf
+[POST-BULK CARBON INTENSITY] GHG: 1.01, S1: 1.01
+
+[KPI RE-AUDIT] Validating Methane Intensity...
+[SUPPLY CHAIN TEST] All Supply Chains -> Gross: 261.4K
+[TIER 1 DB VERIFIED] Row ID=2421, Facility=4, CO2=4.329696000000001, CH4=0.00008160000000000002, Total CO2e=4.334143200000001 tCO2e
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Exploration & Production	HMD Field	-	-	combustion	Natural Gas	Default	2,825,176.00 scf	4.330	0.00008	0.00001	4.334	±6%	±11%	±11%	±11%	±22%	±22%	
+  ok 3 [chromium] › e2e\test_scope1_form_engine.spec.js:91:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) (39.7s)
+[REGION/FACILITY TEST] West (Tosyali) -> Gross: 75.8K
+[POST-BULK METHANE INTENSITY] Card 1: 0.0015
+  ok 5 [chromium] › e2e\test_bulk_csv_uploader.spec.js:218:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 3. Post-Calculation KPI Recalculation & Re-Audit (Dashboard, Carbon & Methane) (18.8s)
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+[GWP TOGGLE] Switched from GWP-100 -> Gross: 261.4K
+[DETAILED BREAKDOWN] Rows found: 15
+[DETAILED BREAKDOWN] Combustion: 65.1K, Total: 261.4K
+[TIER 3 DB VERIFIED] Combustion (Tier 3) -> ID: 2422, CO2: 0, CH4: 0.00015749999999999998, Total: 0.00858375 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Flaring (Tier 3)
+========================================
+[DASHBOARD] Charts verified successfully.
+  ok 2 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:54:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity (49.9s)
+[CARBON INTENSITY] GHG: 1.01, S1: 1.01, Flare: 0.09, S3: 0.00
+[CARBON INTENSITY GWP20] GHG Intensity 20-Yr: 1.09
+[TIER 3 DB VERIFIED] Flaring (Tier 3) -> ID: 2423, CO2: 40.515831, CH4: 0.30023625000000026, Total: 48.988696000000004 tCO2e
+[CBAM TABLE] Product rows: 6
+  ok 7 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:245:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table (6.5s)
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Storage Tanks (Tier 3)
+========================================
+[METHANE INTENSITY] KPI Cards count: 4
+[METHANE INTENSITY] Card 1 Value: 0.0015
+[METHANE INTENSITY] OGMP 2.0 Gold Standard section verified
+  ok 8 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:298:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges (4.6s)
+[TIER 3 DB VERIFIED] Storage Tanks (Tier 3) -> ID: 2424, CO2: 0, CH4: 25.9375235571072, Total: 726.2506595990016 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Steel & Iron (Acier DRI)	Complexe Sidérurgique DRI/EAF (Tosyali)	Metallurgy	Industria...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Acid Gas Removal - AGR (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Acid Gas Removal - AGR (Tier 3) -> ID: 2425, CO2: 80.15312794322995, CH4: 0.2835835908910387, Total: 88.09346848817903 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Glycol Dehydrator (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Glycol Dehydrator (Tier 3) -> ID: 2426, CO2: 0, CH4: 1.0971219065924291, Total: 30.719413384588016 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Pneumatic Devices (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Pneumatic Devices (Tier 3) -> ID: 2427, CO2: 0, CH4: 11.996830895821681, Total: 335.91126508300704 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Liquids Unloading (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Liquids Unloading (Tier 3) -> ID: 2428, CO2: 0, CH4: 1.0158690021490293, Total: 28.44433206017282 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Well Completions Flowback (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Well Completions Flowback (Tier 3) -> ID: 2429, CO2: 0, CH4: 0.9959992657919999, Total: 27.887979442175997 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Blowdowns & Venting (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Blowdowns & Venting (Tier 3) -> ID: 2430, CO2: 0, CH4: 31.84231404316049, Total: 891.5847932084937 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+  ok 6 [chromium] › e2e\test_scope1_form_engine.spec.js:210:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (51.7s)
+
+  8 passed (1.6m)
+

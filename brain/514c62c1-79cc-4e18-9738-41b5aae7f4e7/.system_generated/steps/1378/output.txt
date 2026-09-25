@@ -1,0 +1,101 @@
+
+The command exited with code 0.
+Output:
+
+> client@0.0.0 build
+> vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 3200 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                     1.19 kB │ gzip:   0.60 kB
+dist/assets/loading_animation-C8krc-v_.mp4      2,614.27 kB
+dist/assets/LineChart-pztqu6Ix.css                  0.76 kB │ gzip:   0.38 kB
+dist/assets/Modal-DNDrukR3.css                      1.88 kB │ gzip:   0.67 kB
+dist/assets/CustomDropdown-DhXyWYnn.css             2.01 kB │ gzip:   0.77 kB
+dist/assets/ReferenceData-BHAshPEH.css              3.10 kB │ gzip:   1.01 kB
+dist/assets/UncertaintyAssessment-C7e06SOJ.css      6.67 kB │ gzip:   1.71 kB
+dist/assets/SbtiDashboard-DLJtCXYC.css              6.92 kB │ gzip:   1.76 kB
+dist/assets/Reports-BZkv_tB4.css                    7.29 kB │ gzip:   2.11 kB
+dist/assets/QADashboard-_ccG0lwx.css               13.07 kB │ gzip:   3.11 kB
+dist/assets/CarbonIntensity-DbBZznsc.css           14.27 kB │ gzip:   3.13 kB
+dist/assets/AuditTrail-CO1oUm-b.css                14.78 kB │ gzip:   3.52 kB
+dist/assets/Settings-C-nAeTDh.css                  16.75 kB │ gzip:   3.38 kB
+dist/assets/ColumnMappingWizard-DM2Ni1mj.css       16.91 kB │ gzip:   3.82 kB
+dist/assets/Dashboard-DosbThlA.css                 20.40 kB │ gzip:   4.49 kB
+dist/assets/ManageData-CcsGA9jy.css                21.94 kB │ gzip:   4.49 kB
+dist/assets/index-y_zDY7T3.css                     31.32 kB │ gzip:   7.48 kB
+dist/assets/MethaneExplorer-BXdWdWZi.css           38.44 kB │ gzip:  11.28 kB
+dist/assets/Emissions-CSCzyNvv.css                 45.13 kB │ gzip:   8.27 kB
+dist/assets/check-BvcUQxyy.js                       0.12 kB │ gzip:   0.14 kB
+dist/assets/chevron-up-RreLDzQU.js                  0.13 kB │ gzip:   0.14 kB
+dist/assets/chevron-down-CPmmpLWu.js                0.13 kB │ gzip:   0.14 kB
+dist/assets/chevron-left-D0s4-xQM.js                0.13 kB │ gzip:   0.15 kB
+dist/assets/chevron-right-Ce4oLmUZ.js               0.13 kB │ gzip:   0.14 kB
+dist/assets/clock-CnwFz-F_.js                       0.17 kB │ gzip:   0.17 kB
+dist/assets/arrow-right-BuGq93TK.js                 0.17 kB │ gzip:   0.16 kB
+dist/assets/search-C-nK7E4K.js                      0.17 kB │ gzip:   0.17 kB
+dist/assets/circle-check-icYz2pGx.js                0.17 kB │ gzip:   0.17 kB
+dist/assets/circle-check-big-5zAZHuiy.js            0.19 kB │ gzip:   0.18 kB
+dist/assets/flame-BJDtE1k1.js                       0.20 kB │ gzip:   0.18 kB
+dist/assets/rotate-ccw-Cwx5bQwp.js                  0.20 kB │ gzip:   0.19 kB
+dist/assets/target-kLrRYT7z.js                      0.22 kB │ gzip:   0.16 kB
+dist/assets/copy-DydZR2WQ.js                        0.23 kB │ gzip:   0.21 kB
+dist/assets/download-noTK1iz_.js                    0.23 kB │ gzip:   0.19 kB
+dist/assets/activity-CBBRo26Y.js                    0.24 kB │ gzip:   0.20 kB
+dist/assets/globe-Chn3OvaQ.js                       0.24 kB │ gzip:   0.19 kB
+dist/assets/database-Dursstuy.js                    0.24 kB │ gzip:   0.20 kB
+dist/assets/wind-DlqYbHYR.js                        0.25 kB │ gzip:   0.20 kB
+dist/assets/circle-alert-BDe_Lpmf.js                0.25 kB │ gzip:   0.19 kB
+dist/assets/funnel-Bs-ioMoW.js                      0.25 kB │ gzip:   0.21 kB
+dist/assets/eye-CLIlnuKq.js                         0.25 kB │ gzip:   0.20 kB
+dist/assets/calendar-YFStYfzW.js                    0.26 kB │ gzip:   0.21 kB
+dist/assets/shield-DMrbNwoJ.js                      0.27 kB │ gzip:   0.23 kB
+dist/assets/shield-check-C5SxFOYP.js                0.32 kB │ gzip:   0.25 kB
+dist/assets/refresh-cw-B9XcrzNy.js                  0.32 kB │ gzip:   0.23 kB
+dist/assets/save-DgfN4F8B.js                        0.33 kB │ gzip:   0.23 kB
+dist/assets/plus-Gp2qJqJw.js                        0.34 kB │ gzip:   0.24 kB
+dist/assets/radio-0FnQX77k.js                       0.38 kB │ gzip:   0.25 kB
+dist/assets/layers-Ddz6MLHu.js                      0.42 kB │ gzip:   0.24 kB
+dist/assets/sliders-vertical-CnW0BBjn.js            0.42 kB │ gzip:   0.24 kB
+dist/assets/CarbonIntensity-BLRtk6tT.js             0.45 kB │ gzip:   0.28 kB
+dist/assets/sparkles-l79rGlmd.js                    0.50 kB │ gzip:   0.29 kB
+dist/assets/constants-DoE7j_h0.js                   0.60 kB │ gzip:   0.37 kB
+dist/assets/Modal-DBPDNPaW.js                       0.76 kB │ gzip:   0.41 kB
+dist/assets/Diagnostics-BB5mOPOV.js                 0.76 kB │ gzip:   0.42 kB
+dist/assets/satellite-BRAxAwxW.js                   0.81 kB │ gzip:   0.39 kB
+dist/assets/formatters-CvjY8bs1.js                  0.81 kB │ gzip:   0.38 kB
+dist/assets/ConfirmModal-DL9SKVAo.js                1.30 kB │ gzip:   0.71 kB
+dist/assets/CustomDropdown-DNFU27NL.js              2.68 kB │ gzip:   1.24 kB
+dist/assets/UncertaintyAssessment-BbXcYlXO.js       7.52 kB │ gzip:   2.64 kB
+dist/assets/ReferenceData-Bj9qaB76.js              12.87 kB │ gzip:   4.64 kB
+dist/assets/SbtiDashboard-BthQLOVx.js              15.96 kB │ gzip:   4.78 kB
+dist/assets/CarbonIntensity-CD1jfivI.js            18.02 kB │ gzip:   5.11 kB
+dist/assets/AuditTrail-C6fasyXp.js                 18.56 kB │ gzip:   5.74 kB
+dist/assets/BarChart-UZdbNRX0.js                   18.84 kB │ gzip:   6.65 kB
+dist/assets/purify.es-Bzr520pe.js                  22.45 kB │ gzip:   8.63 kB
+dist/assets/Reports-CRd1Qq8i.js                    24.55 kB │ gzip:   6.76 kB
+dist/assets/MethaneIntensity-DRC3hhf2.js           28.82 kB │ gzip:   8.27 kB
+dist/assets/Settings-D5d_DkC9.js                   29.53 kB │ gzip:   7.99 kB
+dist/assets/QADashboard-9Nxgcoj_.js                30.37 kB │ gzip:   8.01 kB
+dist/assets/UserManagement-CsTCviNx.js             37.14 kB │ gzip:   9.40 kB
+dist/assets/vendor-SjBvI3G2.js                     48.18 kB │ gzip:  17.13 kB
+dist/assets/DashboardEnhanced-DPo6geK0.js          50.31 kB │ gzip:  14.88 kB
+dist/assets/ColumnMappingWizard-MHcbHKlX.js        82.87 kB │ gzip:  22.16 kB
+dist/assets/ManageData-3sY82NV5.js                136.94 kB │ gzip:  28.32 kB
+dist/assets/index.es-CWVFqLN9.js                  158.66 kB │ gzip:  52.97 kB
+dist/assets/Emissions-CFC73fkR.js                 184.91 kB │ gzip:  41.91 kB
+dist/assets/MethaneExplorer-DxpNSdiE.js           186.19 kB │ gzip:  54.61 kB
+dist/assets/html2canvas.esm-DXEQVQnt.js           201.04 kB │ gzip:  47.43 kB
+dist/assets/LineChart-mzclFkSa.js                 358.95 kB │ gzip: 107.08 kB
+dist/assets/index-BILwbXC7.js                     404.27 kB │ gzip: 129.74 kB
+dist/assets/ModernReportGenerator-BegopByH.js     651.89 kB │ gzip: 215.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 10.36s
+

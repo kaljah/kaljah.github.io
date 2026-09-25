@@ -1,0 +1,6 @@
+
+Encountered error in step execution: context canceled
+Output:
+[INFO] Starting safe online backup from ghg_app.db to backups\ghg_app_20260920_172952.db...
+<string>:3: SyntaxWarning: invalid escape sequence '\g'
+

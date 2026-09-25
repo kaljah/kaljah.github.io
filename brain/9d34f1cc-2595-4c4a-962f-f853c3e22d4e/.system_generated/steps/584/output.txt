@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+new/server/emission_factors_api2021.py-516-        "unit": "tonne CO₂/tonne product",
+new/server/emission_factors_api2021.py-517-        "usage": ["chemical_production"],
+new/server/emission_factors_api2021.py-518-        "segment": "Downstream",
+new/server/emission_factors_api2021.py-519-        "process_category": "chemical_production",
+new/server/emission_factors_api2021.py-520-        "source": "API Compendium 2021 Section 6, Table 6-167",
+new/server/emission_factors_api2021.py-521-    },
+new/server/emission_factors_api2021.py-522-}
+new/server/emission_factors_api2021.py-523-
+new/server/emission_factors_api2021.py-524-# N₂O EMISSION FACTORS (Section 6, pg 407)
+new/server/emission_factors_api2021.py-525-N2O_PRODUCTION_FACTORS = {
+new/server/emission_factors_api2021.py:526:    "Nitric Acid - With NSCR": {
+new/server/emission_factors_api2021.py-527-        "code": "HNO3_NSCR",
+new/server/emission_factors_api2021.py-528-        "co2": 0,
+new/server/emission_factors_api2021.py-529-        "ch4": 0,
+new/server/emission_factors_api2021.py-530-        "n2o": 2.0,  # kg N₂O/tonne HNO₃
+new/server/emission_factors_api2021.py-531-        "uncertainty": {"co2": 0, "ch4": 0, "n2o": 0.10},
+new/server/emission_factors_api2021.py-532-        "unit": "kg N₂O/tonne product",
+new/server/emission_factors_api2021.py-533-        "usage": ["nitric_acid_production"],
+new/server/emission_factors_api2021.py-534-        "segment": "Downstream",
+new/server/emission_factors_api2021.py-535-        "process_category": "nitric_acid_production",
+new/server/emission_factors_api2021.py-536-        "source": "API Compendium 2021 Section 6, pg 407",
+new/server/emission_factors_api2021.py-537-    },
+new/server/emission_factors_api2021.py:538:    "Nitric Acid - Without NSCR": {
+new/server/emission_factors_api2021.py-539-        "code": "HNO3_NoNSCR",
+new/server/emission_factors_api2021.py-540-        "co2": 0,
+new/server/emission_factors_api2021.py-541-        "ch4": 0,
+new/server/emission_factors_api2021.py-542-        "n2o": 9.0,  # kg N₂O/tonne HNO₃
+new/server/emission_factors_api2021.py-543-        "uncertainty": {"co2": 0, "ch4": 0, "n2o": 0.20},
+new/server/emission_factors_api2021.py-544-        "unit": "kg N₂O/tonne product",
+new/server/emission_factors_api2021.py-545-        "usage": ["nitric_acid_production"],
+new/server/emission_factors_api2021.py-546-        "segment": "Downstream",
+new/server/emission_factors_api2021.py-547-        "process_category": "nitric_acid_production",
+new/server/emission_factors_api2021.py-548-        "source": "API Compendium 2021 Section 6, pg 407",
+

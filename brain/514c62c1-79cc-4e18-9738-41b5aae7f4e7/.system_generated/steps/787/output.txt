@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\reports.py:123:    total_co2e = sum(e.get("total_co2e", 0) for e in emissions_data)
+new\server\routes\reports.py:128:        e.get("total_co2e", 0) for e in emissions_data if e.get("scope") == 1
+new\server\routes\reports.py:131:        e.get("total_co2e", 0) for e in emissions_data if e.get("scope") == 2
+new\server\routes\reports.py:134:        e.get("total_co2e", 0) for e in emissions_data if e.get("scope") == 3
+new\server\routes\reports.py:147:        ["Total CO�e (Grand Total)", f"{total_co2e:,.2f} tCO�e"],
+new\server\routes\reports.py:203:                f"{emission.get('total_co2e', 0):,.2f}",
+new\server\routes\reports.py:350:                        "total_co2e": e.co2e_total or 0,
+new\server\routes\reports.py:393:                        "total_co2e": e.co2e or 0,
+new\server\routes\reports.py:423:                        "total_co2e": e.co2e or 0,
+new\server\routes\reports.py:572:                        "total_co2e": e.co2e_total or 0,
+new\server\routes\reports.py:627:                        "total_co2e": e.co2e or 0,
+new\server\routes\reports.py:665:                        "total_co2e": e.co2e or 0,
+new\server\routes\reports.py:1048:            ws2.cell(row=row_curr, column=11, value=round(em.co2e_total or 0, 2))
+
+
+

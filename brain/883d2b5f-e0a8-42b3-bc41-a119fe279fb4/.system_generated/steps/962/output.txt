@@ -1,0 +1,132 @@
+
+The command exited with code 1.
+Output:
+<truncated 1585 lines>
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: IntegrityError
+
+The above exception was the direct cause of the following exception:
+
+db_session = <sqlalchemy.orm.scoping.scoped_session object at 0x000001DB21497D10>
+
+    @pytest.fixture
+    def test_user(db_session):
+        u = User.query.filter_by(email="adversarial_qa@ghg.com").first()
+        if not u:
+            u = User(
+                email="adversarial_qa@ghg.com",
+                fullName="Metrology Auditor",
+                orgName="GHG Metrology",
+                role="admin",
+                location="Global",
+            )
+            u.set_password("SecureMetrology2026!")
+            db_session.add(u)
+>           db_session.commit()
+
+new\server\tests\test_csv_engine_matrix.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\scoping.py:597: in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:2017: in commit
+    trans.commit(_to_root=True)
+<string>:2: in commit
+    ???
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:139: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1302: in commit
+    self._prepare_impl()
+<string>:2: in _prepare_impl
+    ???
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:139: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1277: in _prepare_impl
+    self.session.flush()
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4341: in flush
+    self._flush(objects)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4476: in _flush
+    with util.safe_reraise():
+..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4437: in _flush
+    flush_context.execute()
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py:466: in execute
+    rec.execute(self)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py:93: in save_obj
+    _emit_insert_statements(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1418: in execute
+    return meth(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py:515: in _execute_on_connection
+    return connection._execute_clauseelement(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1640: in _execute_clauseelement
+    ret = self._execute_context(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1846: in _execute_context
+    return self._exec_single_context(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:2353: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000001DB24673770>
+cursor = <sqlite3.Cursor object at 0x000001DB25728340>
+statement = 'INSERT INTO users ("fullName", "orgName", password_hash, sector, email, "jobTitle", department, phone, location, bio,...assword_updated_at, last_login, preferences, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+parameters = ('Metrology Auditor', 'GHG Metrology', 'scrypt:32768:8:1$A2ntfTq1ksINc2ew$2d95051a48ef12423d7b2bb0f04f3631a00be40e60a5...070b3b593a5cc5bfd785acef7b0aa2e6c9df3a59eee6d1e6cbc15b7e91f944b4fd38e337e3', None, 'adversarial_qa@ghg.com', None, ...)
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x000001DB251465D0>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: users.sector
+E       [SQL: INSERT INTO users ("fullName", "orgName", password_hash, sector, email, "jobTitle", department, phone, location, bio, "profilePic", "consolidationApproach", role, status, password_updated_at, last_login, preferences, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+E       [parameters: ('Metrology Auditor', 'GHG Metrology', 'scrypt:32768:8:1$A2ntfTq1ksINc2ew$2d95051a48ef12423d7b2bb0f04f3631a00be40e60a54482ce1ba6070b3b593a5cc5bfd785acef7b0aa2e6c9df3a59eee6d1e6cbc15b7e91f944b4fd38e337e3', None, 'adversarial_qa@ghg.com', None, None, None, 'Global', None, None, None, 'admin', 'active', '2026-09-15 23:16:01.806854', None, None, '2026-09-15 23:16:01.806854')]
+E       (Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: IntegrityError
+================================== FAILURES ===================================
+___ TestMetrologyAndEngineeringPrecision.test_dispatcher_nan_and_inf_guard ____
+
+self = <test_csv_engine_matrix.TestMetrologyAndEngineeringPrecision object at 0x000001DB24E0B680>
+
+    def test_dispatcher_nan_and_inf_guard(self):
+        """Proves that dispatcher.dispatch rejects NaN and Inf quantities."""
+        with pytest.raises(ValueError, match="cannot be NaN or Infinite"):
+>           dispatcher.dispatch(
+                inputs={
+                    "process_type": "stationary_combustion",
+                    "fuel": "Diesel",
+                    "quantity": float("nan"),
+                    "unit": "m3",
+                    "factor_source": "default",
+                },
+                emission_factors={"co2": 2.68, "ch4": 0.0001, "n2o": 0.0001},
+                uncertainties={},
+            )
+E           TypeError: CalculationDispatcher.dispatch() missing 1 required positional argument: 'process_type'
+
+new\server\tests\test_csv_engine_matrix.py:372: TypeError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_dispatcher_nan_and_inf_guard
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_delimiters_semicolon
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_delimiters_tab_and_pipe
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_encoding_utf8_bom_and_windows_1252
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_row_terminator_crlf_and_legacy_cr
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_whitespace_and_empty_rows
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_volumetric_extremes
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_process_type_missing_signature_fallback
+============== 1 failed, 45 passed, 1 warning, 7 errors in 6.46s ==============
+

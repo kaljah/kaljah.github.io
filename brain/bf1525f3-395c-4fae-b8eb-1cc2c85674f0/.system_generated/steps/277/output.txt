@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Updated rows: 5
+(6, 'a', 'Admin User', 'admin', 'Sustainability Manager')
+(4, 'a@a', 'Admin User', 'admin', 'Sustainability Manager')
+(8, 'admin@ghg.com', 'System Administrator', 'admin', 'Sustainability Manager')
+(2, 'admin@test.com', 'Admin User', 'admin', 'Sustainability Manager')
+(1, 'test@example.com', 'Test', 'admin', 'Sustainability Manager')
+

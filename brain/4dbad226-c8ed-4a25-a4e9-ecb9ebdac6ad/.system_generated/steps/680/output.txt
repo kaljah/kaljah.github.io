@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\stoichiometry.py","LineNumber":11,"LineContent":"class StoichiometricCalculator(BaseCalculator):"}

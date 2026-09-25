@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":136,"LineContent":"  const [mapBaseLayer, setMapBaseLayer] = useState(\"streets\"); // Default clean light vector"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":790,"LineContent":"                  className={`seg-btn ${mapBaseLayer === key ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":856,"LineContent":"            key={mapBaseLayer}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":857,"LineContent":"            url={BASE_MAPS[mapBaseLayer].url}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":858,"LineContent":"            attribution={BASE_MAPS[mapBaseLayer].attribution}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":859,"LineContent":"            subdomains={BASE_MAPS[mapBaseLayer].subdomains || \"abc\"}"}

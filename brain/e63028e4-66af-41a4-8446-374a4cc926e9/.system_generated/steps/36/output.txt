@@ -1,0 +1,28 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":143,"LineContent":"            \"flowback_volume\": 15000.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":6,"LineContent":"2. Well Completion Flowback (metered_volume, rate_duration, gor_liquid, flaring split)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":23,"LineContent":"    CompletionFlowbackCalculator,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":76,"LineContent":"class TestWellCompletionFlowbackBattery:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":77,"LineContent":"    \"\"\"Verifies completions and workovers flowback across all 3 methodologies.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":80,"LineContent":"        calc = CompletionFlowbackCalculator()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":82,"LineContent":"        res = calc.calculate(flowback_volume=vol_m3, ch4_content=0.88, control_efficiency=0.0, gwp_dict=GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":83,"LineContent":"        ref = IndependentCompletions.calculate(method=\"metered_volume\", flowback_volume=vol_m3, ch4_content=0.88, control_efficiency=0.0, gwp_standard=\"AR5\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":89,"LineContent":"        calc = CompletionFlowbackCalculator()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":91,"LineContent":"        hours = 72.0         # 3 days flowback"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":95,"LineContent":"            flowback_rate=rate_mscfd,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":96,"LineContent":"            flowback_duration_hours=hours,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":105,"LineContent":"            flowback_rate=rate_mscfd,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":120,"LineContent":"        calc = CompletionFlowbackCalculator()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_midstream_process_equipment.py","LineNumber":125,"LineContent":"            liquid_flowback_bbl=bbl,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":226,"LineContent":"def test_completions_flowback_methods():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":46,"LineContent":"    CompletionFlowbackCalculator,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":181,"LineContent":"        # 10. Completions Flowback"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":182,"LineContent":"        assert CompletionFlowbackCalculator().calculate(0, 0, 0.85, {})[\"total_co2e\"] == 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":607,"LineContent":"    \"\"\"API §6.3: Well completion flowback (3 calculation methods).\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":612,"LineContent":"        1000 m3 flowback, 85% CH4"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":619,"LineContent":"        flowback_m3 = 1000.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":622,"LineContent":"        expected_ch4 = flowback_m3 * ch4_frac * DENSITY_CH4 / 1000.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":627,"LineContent":"            \"quantity\": flowback_m3,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_boundary_sensitivity.py","LineNumber":101,"LineContent":"        \"\"\"BOUNDARY: Zero flowback gas = zero CH4 from completions.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_unit_conversions.py","LineNumber":226,"LineContent":"# TEST CLASS: Completions Flowback Volume Units"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_unit_conversions.py","LineNumber":249,"LineContent":"        \"\"\"1000 m3 flowback, 85% CH4 = 0.576725 t CH4.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":23,"LineContent":"    CompletionFlowbackCalculator,"}

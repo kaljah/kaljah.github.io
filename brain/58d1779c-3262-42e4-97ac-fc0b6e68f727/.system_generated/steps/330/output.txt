@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_rate_limiting.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -17,10 +17,10 @@
+     with flask_app.app_context():
+         db.create_all()
+         yield flask_app.test_client()
+-        db.drop_all()
+     limiter.enabled = False
+ 
+ 
++
+ def test_login_rate_limit_exceeded(rate_limit_client):
+     """Verify login endpoint rate limiting triggers after 20 attempts."""
+     payload = {"email": "test_rl@example.com", "password": "WrongPassword123!"}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

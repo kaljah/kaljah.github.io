@@ -1,0 +1,45 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -846,11 +846,7 @@
+ 
+     # 3. Resolve NAICS and Spend
+     naics = str(row.get("naics_code") or "").strip()
+-    try:
+-        spend_usd = float(row.get("spend_usd") or 0)
+-    except:
+-        return None, [f"Invalid spend amount: {row.get('spend_usd')}"]
+-
++    spend_usd = _clean_float(row.get("spend_usd"), default=-1.0)
+     if spend_usd <= 0:
+         return None, ["Spend amount must be greater than zero"]
+ 
+@@ -922,23 +922,12 @@
+     cat = row.get("category", "11")
+     sub_cat = row.get("sub_category")
+ 
+-    try:
+-        amt = float(row.get("amount") or 0)
+-    except:
+-        amt = 0
+-
+-    try:
+-        ef = float(row.get("emission_factor") or 0)
+-    except:
+-        ef = 0
+-
++    amt = _clean_float(row.get("amount"), default=0.0)
++    ef = _clean_float(row.get("emission_factor"), default=0.0)
+     ef_unit = str(row.get("ef_unit") or "kg").lower()
+ 
+     if row.get("co2e"):
+-        try:
+-            co2e = float(row.get("co2e"))
+-        except:
+-            co2e = 0
++        co2e = _clean_float(row.get("co2e"), default=0.0)
+     elif "t" in ef_unit or "tonne" in ef_unit:
+         co2e = amt * ef
+     else:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

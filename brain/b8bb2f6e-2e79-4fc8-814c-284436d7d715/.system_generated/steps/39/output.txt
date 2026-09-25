@@ -1,0 +1,6 @@
+Found 5 results
+__pycache__/test_csv_uploader.cpython-312-pytest-9.1.1.pyc
+__pycache__/test_emission_calculations.cpython-312-pytest-9.1.1.pyc
+__pycache__/test_performance.cpython-312-pytest-9.1.1.pyc
+__pycache__/test_runner.cpython-312-pytest-9.1.1.pyc
+pytest.ini

@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\regression\test_regression_archive.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -159,4 +159,16 @@
+         lvl_default = IndependentOGMPModel.classify_source_level(factor_source="default")
+         assert lvl_specific == 4
+         assert lvl_default == 2
++
++    def test_reg_b15_client_constants_gwp20_n2o_alignment(self):
++        """
++        Bug ID: B15 / Client Parity
++        Description: Frontend constants getActiveGwpFactors fallback returned 264 for 20-year N2O.
++        Original Failure: Fallback expression 'std.N2O_20 || 264' reintroduced legacy AR4-era value.
++        Expected Behavior: Active GWP 20-year N2O must strictly equal 268 (IPCC AR5 WG1 Table 8.7).
++        """
++        gwp_20 = IndependentGWPModel.get_gwp("AR5", "20")
++        assert gwp_20["N2O"] == 268.0
++        assert gwp_20["CH4"] == 82.5
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

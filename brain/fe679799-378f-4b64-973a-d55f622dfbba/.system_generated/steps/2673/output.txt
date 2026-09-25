@@ -1,0 +1,1 @@
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":457,"LineContent":"class Notification(db.Model):"}

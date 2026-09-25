@@ -1,0 +1,129 @@
+
+The command exited with code 0.
+Output:
+Dashboard filters: ['All Years', 'All Supply Chains', 'All Activities', 'All Divisions', 'All Regions']
+Dashboard text excerpt:
+ Carbon tech
+Dashboard
+Carbon Intensity
+Methane Intensity
+SBTi Net-Zero
+Calculations
+Emissions Map
+Manage Data
+Reports
+Reference Data
+Uncertainty
+Audit Trail
+QA/QC & Diagnostics
+Settings
+A
+Administrator
+Sustainability Lead
+Corporate ESG
+All Years
+All Supply Chains
+All Activities
+All Divisions
+All Regions
+GWP-100
+GWP-20
++ Set Target
+Administrator
+GHG Emissions Dashboard
+Live Content • Updated 09:25 PM
+EMISSIONS OVERVIEW
+All Regions
+Export Executive Brief (PDF)
+GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)
+10.2K
+tCO₂e
+NET EMISSIONS
+10.2K
+tCO₂e
+Less
+0
+Mitigation
+TOTAL CH4 (METHANE)
+338.9
+tCH₄
+PERFORMANCE INTENSITY
+0.04
+kg/BOE
+CO₂e Intensity (Scope 1+2)
+Scope 1 (Direct)
+10.2K tCO₂e
+Scope 2 (Indirect)
+0 tCO₂e
+Scope 3 (Supply Chain)
+0 tCO₂e
+Emissions Trend & Projection
+
+Historical inventory trajectory with 5-year predictive forecast
+
+Compare Regions
+
+2026
+
+Total Emissions: 10.2k
+
+Scope 1: 10.2k
+
+ForecastScope 1Target PathTotal Emissions
+2026
+0
+3.0k
+6.0k
+9.0k
+12.0k
+Emissions by Activity
+E&P (Upstream)
+Emissions by Source
+CombustionFlaringOtherVenting
+Categorical Emissions Overview
+Activity → Division → Region
+E&P (Upstream)
+DP
+RNS - GF
+10.2K tCO₂e
+LQS (Liquefaction)
+No emissions data for this activity
+RPC (Refining)
+No emissions data for this activity
+Cement & Clinker
+No emissions data for this activity
+Chemicals & Fertilizers
+No emissions data for this activity
+Steel & Iron (Acier DRI)
+No emissions data for this activity
+Upstream & Midstream Gas
+No emissions data for this activity
+Detailed Breakdown
+CATEGORY / SOURCE	RESULTS (TCO₂E)
+Scope 1 (Direct)	10.2K
+Stationary Combustion	191.5
+Flaring	210.2
+Venting	6.7K
+Other Sources	3K
+Scope 2 (Indirect - Energy)	0
+Scope 3 (Supply Chain)	0
+Total Footprint (Scopes 1+2+3)	10.2K
+Net Footprint	10.2K
+ORGANIZATIONAL BREAKDOWN
+▶E&P (Upstream)	10.2K
+Reference Libraries
+API Compendium: 2021
+ISO 14064-1:2018
+GRI 305 Standards
+Manage Custom Factors
+0
+Dashboard cards count: 0
+
+Scope 1 Table rows count: 10
+Row 0: '2026\tActivité E&P\tRNS\tDP\tGF\tRNS\t25\tseparation\tSeparator Venting - Gas Well\tDefault\t1,000.00 m3\t0.000\t0.00000\t0.00000\t0.000\t—\t—\t—\t—\t—\t—\t'
+Row 1: '2026\tActivité E&P\tRNS\tDP\tGF\tRNS\t24\tloading\tLoading - Crude Oil (Tank Truck)\tDefault\t1,000.00 bbl\t0.000\t0.00016\t0.00000\t0.004\t±6%\t±16%\t±11%\t±11%\t±32%\t±22%\t'
+Row 2: '2026\tActivité E&P\tRNS\tDP\tGF\tRNS\t23\tfugitive\tFugitive - Valve (Gas/Vapor)\tDefault\t10.00 m3\t0.000\t0.00004\t0.00000\t0.001\t±18%\t±18%\t±18%\t±36%\t±36%\t±36%\t'
+Row 3: '2026\tActivité E&P\tRNS\tDP\tGF\tRNS\t22\tfugitive\tFugitive - Valve (Gas/Vapor)\tDefault\t50.00 m3\t0.000\t0.00022\t0.00000\t0.006\t±18%\t±18%\t±18%\t±36%\t±36%\t±36%\t'
+Row 4: '2026\tActivité E&P\tRNS\tDP\tGF\tRNS\t21\tmobile\tMotor Gasoline\tDefault\t5,000.00 gal\t43.888\t0.00188\t0.00037\t44.039\t±5%\t±13%\t±16%\t±10%\t±27%\t±32%\t'
+Pagination text: []
+

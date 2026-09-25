@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['Natural Gas', 'Landfill Gas', 'Coke Oven Gas', 'Blast Furnace Gas', 'Propane (Gas)', 'Refinery Fuel Gas', 'Motor Gasoline', 'Natural Gas (Flaring - Elevated)', 'Natural Gas (Flaring - Ground)', 'Natural Gas (Flaring)', 'Natural Gas (Flaring - Enclosed)', 'Associated Gas (Flaring)', 'Sour Gas (Flaring)', 'Refinery Gas (Flaring)', 'Natural Gas (Venting/Blowdown)', 'Tank - Gas-Well Condensate (Small, ≤10 bbl/d)', 'Tank - Gas-Well Condensate (Large, >10 bbl/d)', 'Drilling - Mud Degassing (Water Based)', 'Drilling - Mud Degassing (Oil Based)', 'Wellhead - Gas']
+

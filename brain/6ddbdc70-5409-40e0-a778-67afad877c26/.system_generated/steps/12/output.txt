@@ -1,0 +1,175 @@
+
+The command exited with code 0.
+Output:
+<truncated 32 lines>
+[10:27:12]   [FAIL] S3-T4: Status is Verified after approval | Status=UNKNOWN
+[10:27:12]   BUG [HIGH] Approval does not change status to Verified
+[10:27:16]   Logout: 200
+[10:27:16] 
+--- SECTION 4: Edit After Approval ---
+[10:27:21]   Login test_user@ghg-test.com: 200 - {"message":"Login successful","user":{"default_activity":"Production","default_division":"Upstream","default_facility_id":"160","default_facility_name":"Updated Facility","default_region":"North Afric
+[10:27:21]   [PASS] S4-T1: User login for post-approval edit | 
+[10:27:25]   Edit after approval: 200 - {"message": "Record updated"}
+[10:27:25]   [FAIL] S4-T2: Edit after approval blocked (403) | Expected 403, got 200
+[10:27:29]   Notes check: 405 - {"code": 405, "error": "The method is not allowed for the requested URL.", "request_id": "a13d157c-98b1-48d6-a21d-12e30cb5e0aa"}
+[10:27:29]   [PASS] S4-T3: Notes unchanged after edit attempt | Notes=''
+[10:27:29]   BUG [MED] Edit of verified emission returned wrong HTTP code
+[10:27:33]   Logout: 200
+[10:27:33] 
+--- SECTION 5: Admin Reject Workflow ---
+[10:27:37]   Login a: 200 - {"message":"Login successful","user":{"default_activity":null,"default_division":null,"default_facility_id":null,"default_facility_name":null,"default_region":null,"department":"Sustainability & IT","
+[10:27:37]   [PASS] S5-T1: Admin login | 
+[10:27:41]   Admin create emission: 201 - {"calculation_method": "api2021_generic", "emissions": {"ch4": 0.0003, "co2": 15.918, "n2o": 3e-05, "totalCo2e": 15.934349999999998, "uncertainty": {"ch4": 0.1118033988749895, "co2": 0.05590169943749475, "n2o": 0.1118033988749895}}, "id": 664, "message": "Record added", "record": {"amount": null, "f
+[10:27:41]   [PASS] S5-T2: Admin emission created | status=UNKNOWN, ID=664
+[10:27:45]   Logout: 200
+[10:27:45]   Creating user emission to be rejected...
+[10:27:50]   Login test_user@ghg-test.com: 200 - {"message":"Login successful","user":{"default_activity":"Production","default_division":"Upstream","default_facility_id":"160","default_facility_name":"Updated Facility","default_region":"North Afric
+[10:27:54]   Create to-reject emission: 201 - {"calculation_method": "Stationary Combustion", "emissions": {"ch4": 4.1400000000000003e-05, "co2": 1.020648, "n2o": 8.279999999999999e-06, "totalCo2e": 1.0240014, "uncertainty": {"ch4": 0.13462912017836262, "co2": 0.050990195135927854, "n2o": 0.15811388300841897}}, "id": 665, "message": "Record add
+[10:27:54]   [FAIL] S5-T3: User creates emission to reject (Pending) | REJECT_ID=665, status=UNKNOWN
+[10:27:58]   Logout: 200
+[10:27:58]   REJECT_ID=665
+[10:28:02]   Login a: 200 - {"message":"Login successful","user":{"default_activity":null,"default_division":null,"default_facility_id":null,"default_facility_name":null,"default_region":null,"department":"Sustainability & IT","
+[10:28:06]   Admin reject: 200 - {"message": "Record updated"}
+[10:28:06]   [PASS] S5-T4: Admin rejects emission (200) | 
+[10:28:10]   Confirm Rejected: 405 - {"code": 405, "error": "The method is not allowed for the requested URL.", "request_id": "a1c2866e-c238-45d7-845a-f8321d4846e0"}
+[10:28:10]   [FAIL] S5-T5: Status is Rejected after rejection | Status=UNKNOWN
+[10:28:10]   BUG [MED] Rejected emission shows wrong status
+[10:28:14]   Logout: 200
+[10:28:14] 
+--- SECTION 6: Audit Trail ---
+[10:28:19]   Login a: 200 - {"message":"Login successful","user":{"default_activity":null,"default_division":null,"default_facility_id":null,"default_facility_name":null,"default_region":null,"department":"Sustainability & IT","
+[10:28:23]   Audit /audit/: 200 - {"limit": 50, "logs": [{"action": "LOGIN", "description": "User logged in: a", "details": "User logged in: a", "entity": "User", "entityId": "1", "id": 1233, "ipAddress": "127.0.0.1", "new_values": nu
+[10:28:23]   [PASS] S6-T1: Audit trail endpoint accessible | Total=50, status-change entries=2
+[10:28:27]   Logout: 200
+[10:28:27] 
+============================================================
+[10:28:27] FINAL SUMMARY
+[10:28:27] ============================================================
+[10:28:27] Total tests: 18
+[10:28:27] Passed: 10
+[10:28:27] Failed: 8
+[10:28:27] Total bugs: 6
+[10:28:27] Bugs by severity: {'High': 3, 'Critical': 1, 'Medium': 2}
+[10:28:27] JSON saved: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_08_bugs.json
+[10:28:27] Markdown saved: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_08_report.md
+
+__AGENT8_DONE__
+{
+  "total_tests": 18,
+  "passed": 10,
+  "failed": 8,
+  "total_bugs": 6,
+  "bugs_by_severity": {
+    "High": 3,
+    "Critical": 1,
+    "Medium": 2
+  },
+  "bugs": [
+    {
+      "bug_id": "BUG-08-002",
+      "severity": "High",
+      "title": "New user emission not Pending",
+      "description": "Emission created by regular user should be Pending but got different status",
+      "evidence": {
+        "status_code": 201,
+        "response": {
+          "calculation_method": "Stationary Combustion",
+          "emissions": {
+            "ch4": 0.00075,
+            "co2": 39.795,
+            "n2o": 7.5e-05,
+            "totalCo2e": 39.835875,
+            "uncertainty": {
+              "ch4": 0.1118033988749895,
+              "co2": 0.05590169943749475,
+              "n2o": 0.1118033988749895
+            }
+          },
+          "id": 661,
+          "message": "Record added",
+          "record": {
+            "amount": null,
+            "facility_name": "Complexe Sid\u00e9rurgique DRI/EAF (Tosyali)",
+            "fuel": null,
+            "month": 9,
+            "process_type": "Combustion",
+            "unit": "MMBtu",
+            "year": 2024
+          }
+        }
+      },
+      "timestamp": "2026-09-24T10:26:35.329857"
+    },
+    {
+      "bug_id": "BUG-08-003",
+      "severity": "Critical",
+      "title": "Maker can self-approve emission",
+      "description": "User approved their own emission. PUT=200, status=UNKNOWN",
+      "evidence": {
+        "put_status_code": 200,
+        "put_response": {
+          "message": "Record updated"
+        },
+        "status_after": "UNKNOWN"
+      },
+      "timestamp": "2026-09-24T10:26:51.920645"
+    },
+    {
+      "bug_id": "BUG-08-005",
+      "severity": "High",
+      "title": "Superuser cannot view pending emissions from others",
+      "description": "GET /api/emissions/661 returned 405 for superuser",
+      "evidence": {
+        "status_code": 405,
+        "response": {
+          "code": 405,
+          "error": "The method is not allowed for the requested URL.",
+          "request_id": "2583f74f-b053-4df4-aa7d-a67fc7bb5791"
+        }
+      },
+      "timestamp": "2026-09-24T10:27:04.437024"
+    },
+    {
+      "bug_id": "BUG-08-008",
+      "severity": "High",
+      "title": "Approval does not change status to Verified",
+      "description": "After superuser PUT with status=Verified, status is still UNKNOWN",
+      "evidence": {
+        "status": "UNKNOWN",
+        "response": {
+          "code": 405,
+          "error": "The method is not allowed for the requested URL.",
+          "request_id": "c65e63f5-21cc-4870-a712-434116993cb4"
+        }
+      },
+      "timestamp": "2026-09-24T10:27:12.715414"
+    },
+    {
+      "bug_id": "BUG-08-011",
+      "severity": "Medium",
+      "title": "Edit of verified emission returned wrong HTTP code",
+      "description": "Edit returned 200 instead of 403, change not persisted",
+      "evidence": {
+        "edit_status_code": 200,
+        "notes": ""
+      },
+      "timestamp": "2026-09-24T10:27:29.262848"
+    },
+    {
+      "bug_id": "BUG-08-015",
+      "severity": "Medium",
+      "title": "Rejected emission shows wrong status",
+      "description": "After rejection, status is 'UNKNOWN' instead of 'Rejected'",
+      "evidence": {
+        "status": "UNKNOWN",
+        "response": {
+          "code": 405,
+          "error": "The method is not allowed for the requested URL.",
+          "request_id": "a1c2866e-c238-45d7-845a-f8321d4846e0"
+        }
+      },
+      "timestamp": "2026-09-24T10:28:10.885168"
+    }
+  ]
+}
+

@@ -1,0 +1,136 @@
+
+The command exited with code 1.
+Output:
+<truncated 64 lines>
+    test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:254:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .dashboard-grid, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .dashboard-grid, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .dashboard-grid, .sidebar').first()
+
+
+      44 |   }
+      45 |
+    > 46 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+         |                                                                                   ^
+      47 |   await page.waitForTimeout(1500);
+      48 |
+      49 |   // If navigating to subpage
+        at loginAndSetup (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:46:83)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:255:5
+
+    Error Context: test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .dashboard-grid, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .dashboard-grid, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .dashboard-grid, .sidebar').first()
+
+
+      44 |   }
+      45 |
+    > 46 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+         |                                                                                   ^
+      47 |   await page.waitForTimeout(1500);
+      48 |
+      49 |   // If navigating to subpage
+        at loginAndSetup (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:46:83)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:255:5
+
+    Error Context: test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:307:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .dashboard-grid, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .dashboard-grid, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .dashboard-grid, .sidebar').first()
+
+
+      44 |   }
+      45 |
+    > 46 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+         |                                                                                   ^
+      47 |   await page.waitForTimeout(1500);
+      48 |
+      49 |   // If navigating to subpage
+        at loginAndSetup (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:46:83)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:308:5
+
+    Error Context: test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .dashboard-grid, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .dashboard-grid, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .dashboard-grid, .sidebar').first()
+
+
+      44 |   }
+      45 |
+    > 46 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+         |                                                                                   ^
+      47 |   await page.waitForTimeout(1500);
+      48 |
+      49 |   // If navigating to subpage
+        at loginAndSetup (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:46:83)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:308:5
+
+    Error Context: test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:63:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity 
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:254:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table 
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:307:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges 
+

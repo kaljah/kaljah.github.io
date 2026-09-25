@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":23,"LineContent":"@qaqc_bp.route(\"/dashboard\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":592,"LineContent":"@qaqc_bp.route(\"/export\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":714,"LineContent":"@qaqc_bp.route(\"/resolve/\u003cint:record_id\u003e\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":788,"LineContent":"@qaqc_bp.route(\"/bulk-resolve\", methods=[\"POST\"])"}

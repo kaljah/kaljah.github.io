@@ -1,0 +1,3 @@
+Successfully navigated to http://localhost:5173/settings.
+## Pages
+1: http://localhost:5173/settings [selected]

@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+[2026-09-23 12:06:41,830] INFO in app: Updated account: a
+[2026-09-23 12:06:41,921] INFO in app: Updated account: a@a
+[2026-09-23 12:06:42,008] INFO in app: Updated account: z
+[2026-09-23 12:06:42,094] INFO in app: Updated account: z@z
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+AttributeError: 'User' object has no attribute 'username'
+

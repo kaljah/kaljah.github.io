@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+380: def _query_summary(
+1093: def get_ogmp_metrics():
+1259: def get_intensity_stats():
+

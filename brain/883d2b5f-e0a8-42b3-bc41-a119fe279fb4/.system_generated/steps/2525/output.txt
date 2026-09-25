@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -973,18 +973,14 @@
+                 raw_co2_in = self._require_float(
+                     flat_inputs, ["agr_co2_in", "co2_in", "co2_content"], "inlet CO2 mole %"
+                 )
+-                raw_co2_out = self._optional_fraction(
+-                    flat_inputs, ["agr_co2_out", "co2_out"], 0.001
+-                )
+-
+-                if raw_co2_in > 1.0:
+-                    co2_in = raw_co2_in / 100.0
++                raw_co2_out_val = flat_inputs.get("agr_co2_out") or flat_inputs.get("co2_out")
++                raw_co2_out = float(raw_co2_out_val) if raw_co2_out_val not in [None, "", "-"] else 0.001
++
++                if raw_co2_in > 1.0 or raw_co2_out > 1.0:
++                    co2_in = raw_co2_in / 100.0 if raw_co2_in > 1.0 else raw_co2_in
++                    co2_out = (raw_co2_out / 100.0) if raw_co2_in > 1.0 else (raw_co2_out / 100.0 if raw_co2_out > 1.0 else raw_co2_out)
+                 else:
+                     co2_in = raw_co2_in
+-
+-                if raw_co2_out > 1.0:
+-                    co2_out = raw_co2_out / 100.0
+-                else:
+                     co2_out = raw_co2_out
+ 
+                 if co2_out > co2_in:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

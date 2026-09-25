@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\AuditTrail.css:129:.export-menu {
+new\client\src\pages\AuditTrail.css:154:.export-menu button {
+new\client\src\pages\AuditTrail.css:168:.export-menu button:hover {
+
+
+

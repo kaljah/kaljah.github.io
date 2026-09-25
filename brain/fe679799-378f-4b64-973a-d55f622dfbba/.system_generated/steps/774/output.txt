@@ -1,0 +1,67 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\scratch\check_browser_dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -13,23 +13,52 @@
+ 
+     ws = websocket.create_connection(tab["webSocketDebuggerUrl"])
+     
+-    # Check page state
++    # Perform login via form inputs
++    login_js = """
++    (async () => {
++        const emailInput = document.querySelector('input[type="email"]') || document.querySelector('input[name="email"]') || document.querySelector('input');
++        const passInput = document.querySelector('input[type="password"]');
++        const btn = document.querySelector('button[type="submit"]') || document.querySelector('button');
++        if (emailInput && passInput && btn) {
++            emailInput.value = 'a@a';
++            emailInput.dispatchEvent(new Event('input', { bubbles: true }));
++            passInput.value = 'a';
++            passInput.dispatchEvent(new Event('input', { bubbles: true }));
++            btn.click();
++            return { loggedIn: true };
++        }
++        return { loggedIn: false };
++    })()
++    """
++    cmd = {"id": 1, "method": "Runtime.evaluate", "params": {"expression": login_js, "awaitPromise": True, "returnByValue": True}}
++    ws.send(json.dumps(cmd))
++    res1 = json.loads(ws.recv())
++    print("Login Triggered:", res1.get("result", {}).get("result", {}).get("value"))
++    
++    # Wait for React router transition and batch-all fetch
++    time.sleep(3.0)
++    
++    # Check DashboardEnhanced state
+     check_js = """
+     (() => {
++        const text = document.body.innerText;
+         return {
+             url: window.location.href,
+             title: document.title,
+-            bodySnippet: document.body.innerText.substring(0, 400),
+-            cards: document.querySelectorAll('.metric-card, .kpi-card, .dashboard-card, div[class*="card"]').length,
+-            charts: document.querySelectorAll('svg, canvas').length
++            bodySnippet: text.substring(0, 500),
++            hasTotalEmissions: text.includes('Total Emissions') || text.includes('Gross Emissions') || text.includes('Net Emissions') || text.includes('Scope 1'),
++            hasIntensity: text.includes('Intensity') || text.includes('BOE') || text.includes('kg CO2e'),
++            cardsCount: document.querySelectorAll('.metric-card, .kpi-card, .card, [class*="kpi"], [class*="card"]').length,
++            chartsCount: document.querySelectorAll('svg, canvas, [class*="recharts"]').length,
++            hasError: text.includes('Error') || text.includes('Something went wrong')
+         };
+     })()
+     """
+-    cmd = {"id": 1, "method": "Runtime.evaluate", "params": {"expression": check_js, "returnByValue": True}}
+-    ws.send(json.dumps(cmd))
+-    res = json.loads(ws.recv())
+-    val = res.get("result", {}).get("result", {}).get("value", {})
+-    print("DOM Verification Result:")
++    cmd2 = {"id": 2, "method": "Runtime.evaluate", "params": {"expression": check_js, "returnByValue": True}}
++    ws.send(json.dumps(cmd2))
++    res2 = json.loads(ws.recv())
++    val = res2.get("result", {}).get("result", {}).get("value", {})
++    print("\nRendered Dashboard Verification Result:")
+     print(json.dumps(val, indent=2))
+     ws.close()
+ except Exception as e:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,65 @@
+
+The command exited with code 0.
+Output:
+                    }
+                    res = client.post("/api/emissions", json=payload)
+                    op_type = "scope1_write"
+                elif task_type == 1:
+                    # Scope 2 Write
+                    payload = {
+                        "year": 2025,
+                        "month": (task_id % 12) + 1,
+                        "facility_id": facility_id,
+                        "source_type": "electricity",
+                        "electricity_kwh": 5000 + task_id * 50,
+                        "grid_region": "US Average",
+                        "status": "Verified",
+                    }
+                    res = client.post("/api/scope2", json=payload)
+                    op_type = "scope2_write"
+                elif task_type == 2:
+                    # Scope 3 Write
+                    payload = {
+                        "year": 2025,
+                        "month": (task_id % 12) + 1,
+                        "facility_id": facility_id,
+                        "category": "1",
+                        "sub_category": "Purchased Materials",
+                        "activity_data": 2000 + task_id * 20,
+                        "unit": "USD",
+                        "emission_factor": 0.35,
+                        "status": "Verified",
+                    }
+                    res = client.post("/api/scope3", json=payload)
+                    op_type = "scope3_write"
+                else:
+                    # Dashboard Read
+                    res = client.get("/api/dashboard/summary?year=2025")
+                    op_type = "dashboard_read"
+    
+                elapsed = (time.perf_counter() - start) * 1000.0
+                return {"task_id": task_id, "type": op_type, "status": res.status_code, "latency": elapsed}
+    
+        # Run parallel execution using ThreadPoolExecutor
+        t_start = time.perf_counter()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+            futures = [executor.submit(worker_task, i) for i in range(num_threads)]
+            results = [f.result() for f in concurrent.futures.as_completed(futures)]
+        total_duration = time.perf_counter() - t_start
+    
+        # Assertions
+        statuses = [r["status"] for r in results]
+        latencies = [r["latency"] for r in results if r["latency"] > 0]
+        failures = [r for r in results if r["status"] not in [200, 201]]
+    
+        # Zero DB lock errors (500s)
+>       assert len(failures) == 0, f"Encountered {len(failures)} failures under concurrency: {failures}"
+E       AssertionError: Encountered 14 failures under concurrency: [{'task_id': 8, 'type': 'scope1_write', 'status': 403, 'latency': 35.6801999732852}, {'task_id': 4, 'type': 'scope1_write', 'status': 401, 'latency': 14.637899992521852}, {'task_id': 2, 'type': 'scope3_write', 'status': 401, 'latency': 76.97260001441464}, {'task_id': 1, 'type': 'login', 'status': 401, 'latency': 0}, {'task_id': 10, 'type': 'scope3_write', 'status': 500, 'latency': 237.61309997644275}, {'task_id': 3, 'type': 'login', 'status': 401, 'latency': 0}, {'task_id': 13, 'type': 'login', 'status': 500, 'latency': 0}, {'task_id': 0, 'type': 'scope1_write', 'status': 500, 'latency': 425.77900004107505}, {'task_id': 25, 'type': 'login', 'status': 500, 'latency': 0}, {'task_id': 22, 'type': 'login', 'status': 500, 'latency': 0}, {'task_id': 17, 'type': 'scope2_write', 'status': 500, 'latency': 119.25699998391792}, {'task_id': 18, 'type': 'login', 'status': 500, 'latency': 0}, {'task_id': 16, 'type': 'scope1_write', 'status': 500, 'latency': 207.8052000142634}, {'task_id': 29, 'type': 'scope2_write', 'status': 500, 'latency': 37.81049995450303}]
+E       assert 14 == 0
+E        +  where 14 = len([{'task_id': 8, 'type': 'scope1_write', 'status': 403, 'latency': 35.6801999732852}, {'task_id': 4, 'type': 'scope1_wr...ite', 'status': 500, 'latency': 237.61309997644275}, {'task_id': 3, 'type': 'login', 'status': 401, 'latency': 0}, ...])
+
+new\server\tests\test_stress_concurrency.py:157: AssertionError
+---------------------------- Captured stdout call -----------------------------
+Audit Log Error: Instance '<Emission at 0x25969303980>' has been deleted, or its row is otherwise not present.
+
+

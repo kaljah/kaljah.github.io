@@ -1,0 +1,127 @@
+
+The command exited with code 1.
+Output:
+Logging in as Admin (admin@ghg.com)...
+
+==========================================
+ Crawling route: /
+==========================================
+Found 0 tabs/subviews on /
+  [Main View] Found 8 visible buttons/controls
+  [Main View] Successfully pressed 8 buttons without crash.
+
+==========================================
+ Crawling route: /emissions
+==========================================
+Found 0 tabs/subviews on /emissions
+  [Main View] Found 2 visible buttons/controls
+  [Main View] Successfully pressed 2 buttons without crash.
+
+==========================================
+ Crawling route: /manage-data
+==========================================
+Found 0 tabs/subviews on /manage-data
+  [Main View] Found 13 visible buttons/controls
+  [Main View] Successfully pressed 12 buttons without crash.
+
+==========================================
+ Crawling route: /qa-dashboard
+==========================================
+Found 0 tabs/subviews on /qa-dashboard
+  [Main View] Found 213 visible buttons/controls
+  [Main View] Successfully pressed 7 buttons without crash.
+
+==========================================
+ Crawling route: /reports
+==========================================
+Found 0 tabs/subviews on /reports
+  [Main View] Found 9 visible buttons/controls
+  [Main View] Successfully pressed 8 buttons without crash.
+
+==========================================
+ Crawling route: /carbon-intensity
+==========================================
+Found 0 tabs/subviews on /carbon-intensity
+  [Main View] Found 2 visible buttons/controls
+  [Main View] Successfully pressed 2 buttons without crash.
+
+==========================================
+ Crawling route: /methane-intensity
+==========================================
+Found 0 tabs/subviews on /methane-intensity
+  [Main View] Found 11 visible buttons/controls
+  [Main View] Successfully pressed 10 buttons without crash.
+
+==========================================
+ Crawling route: /methane-explorer
+==========================================
+Found 0 tabs/subviews on /methane-explorer
+  [Main View] Found 2 visible buttons/controls
+  [Main View] Successfully pressed 2 buttons without crash.
+
+==========================================
+ Crawling route: /sbti
+==========================================
+Found 0 tabs/subviews on /sbti
+  [Main View] Found 0 visible buttons/controls
+  [Main View] Successfully pressed 0 buttons without crash.
+
+==========================================
+ Crawling route: /uncertainty
+==========================================
+Found 0 tabs/subviews on /uncertainty
+  [Main View] Found 3 visible buttons/controls
+  [Main View] Successfully pressed 2 buttons without crash.
+
+==========================================
+ Crawling route: /reference-data
+==========================================
+Found 0 tabs/subviews on /reference-data
+  [Main View] Found 2 visible buttons/controls
+  [Main View] Successfully pressed 2 buttons without crash.
+
+==========================================
+ Crawling route: /audit-trail
+==========================================
+Found 0 tabs/subviews on /audit-trail
+  [Main View] Found 0 visible buttons/controls
+  [Main View] Successfully pressed 0 buttons without crash.
+
+==========================================
+ Crawling route: /settings
+==========================================
+Found 0 tabs/subviews on /settings
+  [Main View] Found 2 visible buttons/controls
+  [Main View] Successfully pressed 2 buttons without crash.
+
+Logging in as IT Admin (itadmin@ghg.com)...
+
+==========================================
+ Crawling route: /user-management
+==========================================
+Found 0 tabs/subviews on /user-management
+  [Main View] Found 115 visible buttons/controls
+  [Main View] Successfully pressed 114 buttons without crash.
+
+==========================================
+ Crawling route: /audit-trail
+==========================================
+Found 0 tabs/subviews on /audit-trail
+  [Main View] Found 56 visible buttons/controls
+  [Main View] Successfully pressed 7 buttons without crash.
+
+============================================================
+ CRAWLER AUDIT SUMMARY
+============================================================
+Total buttons clicked successfully: 178
+Total console errors encountered: 0
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\run_full_button_crawler.py", line 294, in <module>
+    run_crawler()
+  File "C:\Users\samsung\Desktop\H2\new\run_full_button_crawler.py", line 290, in run_crawler
+    print("\n\U0001f389 ALL BUTTONS CLICKED CLEANLY WITH 0 CONSOLE ERRORS!")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f389' in position 2: character maps to <undefined>
+

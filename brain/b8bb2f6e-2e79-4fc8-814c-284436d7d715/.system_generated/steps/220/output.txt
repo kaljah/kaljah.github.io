@@ -1,0 +1,28 @@
+Task: b8bb2f6e-2e79-4fc8-814c-284436d7d715/task-212
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8bb2f6e-2e79-4fc8-814c-284436d7d715\.system_generated\tasks\task-212.log
+Log output:
+<truncated 87 lines>
+emory Growth: {net_leak_mb:.4f} MB")
+    
+        # Assertions
+        assert net_leak_mb < 5.0, f"Memory leak detected: grew by {net_leak_mb:.2f} MB"
+>       assert calcs_per_sec >= 1500, f"Throughput SLA failed: {calcs_per_sec:.0f} calcs/sec"
+E       AssertionError: Throughput SLA failed: 1310 calcs/sec
+E       assert 1309.9797651371116 >= 1500
+
+tests\test_stress_memory_leaks.py:102: AssertionError
+---------------------------- Captured stdout call -----------------------------
+
+[CALCULATION LOOP MEMORY PROFILE]
+   Iterations: 10,000
+   Elapsed Time: 7.63s (1,310 calcs/sec)
+   Warmup Memory: 2.42 MB
+   Final Current Memory: 2.42 MB
+   Peak Memory: 2.46 MB
+   Net Memory Growth: 0.0000 MB
+=========================== short test summary info ===========================
+FAILED tests/test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_calculation_loop_memory_profile
+======================== 1 failed, 3 passed in 10.79s =========================
+
+Last progress: 0s ago

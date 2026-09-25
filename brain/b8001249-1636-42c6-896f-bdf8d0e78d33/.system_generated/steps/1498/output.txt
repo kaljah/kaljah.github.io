@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\config.py:112:    # This is correct for single-process (dev / single gunicorn worker) deployments.
+  new\server\config.py:113:    # To scale to multi-worker production, install Redis and set:
+> new\server\config.py:114:    #   RATELIMIT_STORAGE_URI=redis://localhost:6379/0  in your .env file
+> new\server\config.py:115:    RATELIMIT_STORAGE_URI = os.environ.get("RATELIMIT_STORAGE_URI", "memory://")
+> new\server\config.py:116:    # Expose X-RateLimit-* response headers so clients can self-throttle
+> new\server\config.py:117:    RATELIMIT_HEADERS_ENABLED = True
+
+
+

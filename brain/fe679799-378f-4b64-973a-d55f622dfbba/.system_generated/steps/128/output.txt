@@ -1,0 +1,44 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 1190 lines>
+[25820:27440:0922/225153.546:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:82] Adding resolver for service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local
+[25820:27440:0922/225153.547:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:98] OnResolveComplete: service_type: _googlecast._tcp.local, service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local, status: 0
+[25820:27440:0922/225153.556:VERBOSE1:chrome\browser\web_applications\locks\partitioned_lock_manager.cc:262] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for ScheduleAllFixes@chrome\browser\web_applications\generated_icon_fix_manager.cc:79
+[25820:27440:0922/225153.556:VERBOSE1:chrome\browser\web_applications\locks\partitioned_lock_manager.cc:243] All locks acquired for ScheduleAllFixes@chrome\browser\web_applications\generated_icon_fix_manager.cc:79
+[25820:27440:0922/225153.557:VERBOSE1:chrome\browser\web_applications\locks\partitioned_lock_manager.cc:286] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by ScheduleAllFixes@chrome\browser\web_applications\generated_icon_fix_manager.cc:79
+[25820:5812:0922/225156.580:VERBOSE1:net\dns\mdns_client_impl.cc:204] Sockets ready:4
+[25820:27440:0922/225156.580:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:54] OnServiceUpdated: service_type: _googlecast._tcp.local, service_name: , update: 3
+[25820:27440:0922/225156.580:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:42] DiscoverNewDevices: service_type: _googlecast._tcp.local
+[25820:27440:0922/225156.580:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:42] DiscoverNewDevices: service_type: _googlecast._tcp.local
+[25820:27440:0922/225156.619:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:54] OnServiceUpdated: service_type: _googlecast._tcp.local, service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local, update: 0
+[25820:27440:0922/225156.619:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:82] Adding resolver for service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local
+[25820:27440:0922/225156.619:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:98] OnResolveComplete: service_type: _googlecast._tcp.local, service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local, status: 0
+[25820:27440:0922/225157.324:VERBOSE1:chrome\browser\web_applications\locks\partitioned_lock_manager.cc:262] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for ScheduleAllFixes@chrome\browser\web_applications\generated_icon_fix_manager.cc:79
+[25820:27440:0922/225157.324:VERBOSE1:chrome\browser\web_applications\locks\partitioned_lock_manager.cc:243] All locks acquired for ScheduleAllFixes@chrome\browser\web_applications\generated_icon_fix_manager.cc:79
+[25820:27440:0922/225157.324:VERBOSE1:chrome\browser\web_applications\locks\partitioned_lock_manager.cc:286] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by ScheduleAllFixes@chrome\browser\web_applications\generated_icon_fix_manager.cc:79
+[25820:5812:0922/225200.345:VERBOSE1:net\dns\mdns_client_impl.cc:204] Sockets ready:4
+[25820:27440:0922/225200.345:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:54] OnServiceUpdated: service_type: _googlecast._tcp.local, service_name: , update: 3
+[25820:27440:0922/225200.345:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:42] DiscoverNewDevices: service_type: _googlecast._tcp.local
+[25820:27440:0922/225200.345:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:42] DiscoverNewDevices: service_type: _googlecast._tcp.local
+[25820:27440:0922/225200.510:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:54] OnServiceUpdated: service_type: _googlecast._tcp.local, service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local, update: 0
+[25820:27440:0922/225200.510:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:82] Adding resolver for service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local
+[25820:27440:0922/225200.511:VERBOSE1:chrome\browser\local_discovery\service_discovery_device_lister.cc:98] OnResolveComplete: service_type: _googlecast._tcp.local, service_name: onn.-4K-Streaming-Bo-04f28229c9978a67f99e8012793c9d1c._googlecast._tcp.local, status: 0
+[25820:27440:0922/225603.354:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/225603.354:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/225703.348:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/225703.348:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/225703.348:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/225703.348:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/225903.407:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/225903.407:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/231003.421:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/231003.421:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/231103.366:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/231103.366:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/232103.432:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/232103.432:VERBOSE1:components\signin\internal\identity_manager\mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[25820:27440:0922/232109.574:VERBOSE1:components\device_event_log\device_event_log_impl.cc:214] [23:21:09.575] USB: USER: usb_service_win.cc:575 USB device removed: path=\\?\usb#vid_1a2c&pid_6004#5&1da89637&0&5#{a5dcbf10-6530-11d2-901f-00c04fb951ed} guid=2f2498b4-20c5-4260-a381-c51465026c54
+[25820:27440:0922/232110.172:VERBOSE1:components\device_event_log\device_event_log_impl.cc:214] [23:21:10.172] USB: USER: usb_service_win.cc:663 USB device added: path=\\?\usb#vid_1a2c&pid_6004#5&1da89637&0&5#{a5dcbf10-6530-11d2-901f-00c04fb951ed} vendor=6700 "SEMICO", product=24580 "USB Keyboard", serial="", driver="usbccgp", guid=dea16421-4cdd-45d3-ab71-b93f03ba1352
+[25820:27440:0922/232118.808:ERROR:components\device_event_log\device_event_log_impl.cc:211] [23:21:18.808] USB: usb_service_win.cc:236 SetupDiEnumDeviceInterfaces: No more data is available. (0x103)
+

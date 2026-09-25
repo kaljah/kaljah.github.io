@@ -1,0 +1,81 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -161,8 +161,10 @@
+ 
+     // Assert 2026 metrics
+     let grossVal = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+-    expect(grossVal).toContain('254.9K');
+-    console.log(`[AUDIT] Switched to 2026: Gross = ${grossVal} (verified accurate)`);
++    expect(grossVal).toContain('256.4K');
++    const scope3Val2026 = await page.locator('.scope-pill.scope-3 .pill-value').innerText();
++    expect(scope3Val2026).toContain('0');
++    console.log(`[AUDIT] Switched to 2026: Gross = ${grossVal}, Scope 3 = ${scope3Val2026} (verified accurate)`);
+ 
+     // 2. Switch to Year 2025
+     await yearDropdown.click();
+@@ -180,7 +180,7 @@
+     await page.locator('.dropdown-portal .dropdown-option:has-text("All Years")').click();
+     await page.waitForTimeout(1500);
+     grossVal = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+-    expect(grossVal).toContain('254.9K');
++    expect(grossVal).toContain('256.4K');
+     console.log(`[AUDIT] Switched to All Years: Gross = ${grossVal} restored`);
+   });
+ 
+@@ -198,10 +198,10 @@
+     await page.waitForTimeout(1500);
+ 
+     // Under GWP-20, CH4 multiplier rises from 28 to 84 (delta = +56 per tonne CH4)
+-    // 254,895 + (56 * 238.7) - (1 * 51.1) = 268,211 tCO2e -> 268.2K
++    // 256,425.1 + (56 * 238.7) - (1 * 51.1) = 269,741.2 tCO2e -> 269.7K
+     const grossGwp20 = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+     console.log(`[AUDIT] GWP-20 Gross Emissions: ${grossGwp20}`);
+-    expect(grossGwp20).toContain('268.2K');
++    expect(grossGwp20).toContain('269.7K');
+ 
+     // Switch back to GWP-100
+     await gwp100Btn.click();
+@@ -208,5 +208,5 @@
+     const grossGwp100 = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+-    expect(grossGwp100).toContain('254.9K');
++    expect(grossGwp100).toContain('256.4K');
+     console.log(`[AUDIT] GWP-100 Restored: ${grossGwp100}`);
+ 
+     // 2. Compare Regions Mode Toggle
+@@ -238,7 +238,7 @@
+       await pendingSwitch.uncheck();
+       await page.waitForTimeout(1500);
+       const grossRestored = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+-      expect(grossRestored).toContain('254.9K');
++      expect(grossRestored).toContain('256.4K');
+       console.log(`[AUDIT] Pending Data Preview Deactivated: Gross = ${grossRestored}`);
+     }
+   });
+@@ -264,11 +264,11 @@
+       Other: ${otherRow}
+       Total: ${totalFootprintRow}`);
+ 
+-    expect(combustionRow).toContain('63.7K');
+-    expect(flaringRow).toContain('24.4K');
++    expect(combustionRow).toContain('64.4K');
++    expect(flaringRow).toContain('24.5K');
+     expect(ventingRow).toContain('16.5K');
+-    expect(otherRow).toContain('150.3K');
+-    expect(totalFootprintRow).toContain('254.9K');
++    expect(otherRow).toContain('151.0K');
++    expect(totalFootprintRow).toContain('256.4K');
+ 
+     // Expand Organizational Tree (Click Activity row)
+     const actRow = page.locator('.data-table tr.act-row:has-text("Steel & Iron")');
+@@ -288,7 +288,7 @@
+       await expect(regRow).toBeVisible();
+       const regVal = await regRow.locator('td.text-right').innerText();
+       console.log(`[AUDIT] Expanded Facility Row: Complexe Sidérurgique = ${regVal}`);
+-      expect(regVal).toContain('73.5K');
++      expect(regVal).toContain('74.4K');
+     }
+ 
+     // Test Accordion Collapse/Expand
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

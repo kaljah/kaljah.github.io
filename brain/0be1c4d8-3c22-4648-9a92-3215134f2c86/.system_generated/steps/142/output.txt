@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+C:\Users\samsung\.gemini\antigravity\brain\0be1c4d8-3c22-4648-9a92-3215134f2c86\scratch\generate_system_memory.py:293: SyntaxWarning: invalid escape sequence '\c'
+  content.append("""---
+Generated c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md successfully. Total characters: 102404
+

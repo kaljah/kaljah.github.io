@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Dumped 18 pages of tables to berkine_extracted_tables.json
+

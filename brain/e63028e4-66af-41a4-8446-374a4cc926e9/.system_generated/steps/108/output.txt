@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":37,"LineContent":"        (\"AR5\", \"20\",  82.5, 268.0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":39,"LineContent":"        (\"AR6\", \"20\",  82.5, 273.0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":50,"LineContent":"        For AR5: 82.5 / 28.0 = 2.9464x increase in reported CO2e."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":61,"LineContent":"        assert co2e_20 == 50.0 * 82.5   # 4,125.0 tonnes CO2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":62,"LineContent":"        assert pytest.approx(co2e_20 / co2e_100, rel=1e-5) == (82.5 / 28.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":139,"LineContent":"        # Difference in total CO2e must equal unburnt CH4 * (GWP_20 - GWP_100) = 2.8836 * (82.5 - 28.0) = 157.158 tonnes CO2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":141,"LineContent":"        expected_diff = unburnt_ch4 * (82.5 - 28.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_carbon_intensity_validation.py","LineNumber":279,"LineContent":"        ch4_gwp20 = float(gwp20_factors.get(\"CH4\", 82.5))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":23,"LineContent":"    assert ar5_20[\"CH4\"] == 82.5"}

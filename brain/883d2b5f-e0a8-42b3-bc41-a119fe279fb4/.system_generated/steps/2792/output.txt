@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -692,6 +692,10 @@
+         ("fuel", "fuel"),
+         ("fuel", "activity/fuel"),
+         ("factor_type", "factor type"),
++        ("factor_type", "factor source"),
++        ("factor_type", "factorsource"),
++        ("factor_type", "factor_source"),
++        ("factor_type", "tier"),
+         ("quantity", "quantity"),
+         ("unit", "unit"),
+         ("year", "year"),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

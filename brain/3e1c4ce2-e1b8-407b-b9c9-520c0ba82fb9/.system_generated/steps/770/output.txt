@@ -1,0 +1,55 @@
+
+The command exited with code 0.
+Output:
+=== 1. VERIFIED EMISSIONS IN DB ===
+Total Verified records: 11
+{'id': 830, 'record_id': '81df664e-3934-4c2c-a6b0-160ba67bfd31', 'facility_id': 1, 'year': 2025, 'month': 1, 'process_type': 'combustion', 'fuel_type': 'natural_gas', 'quantity': 1000.0, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default', 'status': 'Verified'}
+{'id': 831, 'record_id': '7de05d4f-0c62-4619-ac51-d7f4b7205730', 'facility_id': 1, 'year': 2025, 'month': 1, 'process_type': 'combustion', 'fuel_type': 'natural_gas', 'quantity': 1000.0, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default', 'status': 'Verified'}
+{'id': 1, 'record_id': 'REC-2026-0001', 'facility_id': 1, 'year': 2026, 'month': 1, 'process_type': 'Stationary Combustion', 'fuel_type': 'Natural Gas DRI', 'quantity': 500000.0, 'unit': 'm3', 'co2_emissions': 45000.0, 'ch4_emissions': 12.5, 'n2o_emissions': 2.1, 'co2e_total': 45906.5, 'calc_method': 'ef_facility_specific', 'status': 'Verified'}
+{'id': 2, 'record_id': 'REC-2026-0002', 'facility_id': 1, 'year': 2026, 'month': 2, 'process_type': 'Stoichiometry', 'fuel_type': 'Carbon Electrodes EAF', 'quantity': 12000.0, 'unit': 'tonnes', 'co2_emissions': 28000.0, 'ch4_emissions': 5.0, 'n2o_emissions': 1.2, 'co2e_total': 28458.0, 'calc_method': 'direct_measurement', 'status': 'Verified'}
+{'id': 3, 'record_id': 'REC-2026-0003', 'facility_id': 2, 'year': 2026, 'month': 1, 'process_type': 'Steam Methane Reforming', 'fuel_type': 'Feedstock Gas', 'quantity': 650000.0, 'unit': 'm3', 'co2_emissions': 52000.0, 'ch4_emissions': 8.0, 'n2o_emissions': 1.5, 'co2e_total': 52621.5, 'calc_method': 'engineering_estimate', 'status': 'Verified'}
+{'id': 4, 'record_id': 'REC-2026-0004', 'facility_id': 2, 'year': 2026, 'month': 2, 'process_type': 'Vented Tail Gas', 'fuel_type': 'N2O Abatement', 'quantity': 45.0, 'unit': 'tonnes', 'co2_emissions': 1500.0, 'ch4_emissions': 0.0, 'n2o_emissions': 45.0, 'co2e_total': 13425.0, 'calc_method': 'direct_measurement', 'status': 'Verified'}
+{'id': 5, 'record_id': 'REC-2026-0005', 'facility_id': 3, 'year': 2026, 'month': 1, 'process_type': 'Calcination Process', 'fuel_type': 'Limestone (CaCO3)', 'quantity': 75000.0, 'unit': 'tonnes', 'co2_emissions': 38500.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 38500.0, 'calc_method': 'ef_facility_specific', 'status': 'Verified'}
+{'id': 6, 'record_id': 'REC-2026-0006', 'facility_id': 3, 'year': 2026, 'month': 1, 'process_type': 'Stationary Combustion', 'fuel_type': 'Natural Gas Kiln', 'quantity': 210000.0, 'unit': 'm3', 'co2_emissions': 18200.0, 'ch4_emissions': 3.2, 'n2o_emissions': 0.8, 'co2e_total': 18501.6, 'calc_method': 'ef_facility_specific', 'status': 'Verified'}
+{'id': 7, 'record_id': 'REC-2026-0007', 'facility_id': 4, 'year': 2026, 'month': 1, 'process_type': 'AGR Acid Gas Removal', 'fuel_type': 'Amine Flash', 'quantity': 350000.0, 'unit': 'm3', 'co2_emissions': 31000.0, 'ch4_emissions': 15.0, 'n2o_emissions': 0.0, 'co2e_total': 31420.0, 'calc_method': 'engineering_estimate', 'status': 'Verified'}
+{'id': 8, 'record_id': 'REC-2026-0008', 'facility_id': 4, 'year': 2026, 'month': 1, 'process_type': 'Flaring', 'fuel_type': 'High Pressure Flare Gas', 'quantity': 180000.0, 'unit': 'm3', 'co2_emissions': 22000.0, 'ch4_emissions': 85.0, 'n2o_emissions': 0.5, 'co2e_total': 24512.5, 'calc_method': 'ef_facility_specific', 'status': 'Verified'}
+{'id': 9, 'record_id': 'REC-2026-0009', 'facility_id': 4, 'year': 2026, 'month': 1, 'process_type': 'Compressor Fugitive', 'fuel_type': 'Wet Seal Methane', 'quantity': 110.0, 'unit': 'kg', 'co2_emissions': 0.0, 'ch4_emissions': 110.0, 'n2o_emissions': 0.0, 'co2e_total': 3080.0, 'calc_method': 'direct_measurement', 'status': 'Verified'}
+
+=== 2. VERIFIED EMISSIONS BY YEAR ===
+{'year': 2025, 'count': 2, 'sum_co2': 0.0, 'sum_ch4': 0.0, 'sum_n2o': 0.0, 'sum_co2e': 0.0}
+{'year': 2026, 'count': 9, 'sum_co2': 236200.0, 'sum_ch4': 238.7, 'sum_n2o': 51.1, 'sum_co2e': 256425.1}
+
+=== 3. PENDING EMISSIONS BY YEAR ===
+{'year': 2022, 'count': 239, 'sum_co2': 1017433.7600644799, 'sum_ch4': 20413.94324928, 'sum_n2o': 0.0, 'sum_co2e': 1586982.7767193918}
+{'year': 2023, 'count': 234, 'sum_co2': 976094.8573727999, 'sum_ch4': 22382.641420799988, 'sum_n2o': 0.0, 'sum_co2e': 1600570.5530131196}
+{'year': 2024, 'count': 347, 'sum_co2': 505175.18237999995, 'sum_ch4': 15801.387120000009, 'sum_n2o': 0.0, 'sum_co2e': 946033.8830280001}
+
+=== 4. SCOPE 2 EMISSIONS ===
+Scope 2 rows: 0
+
+=== 5. SCOPE 3 EMISSIONS ===
+Scope 3 rows: 0
+
+=== 6. MITIGATION PROJECTS / RECORDS ===
+Mitigation Projects rows: 0
+Mitigation Records rows: 0
+
+=== 7. PRODUCTION DATA ===
+Production data rows: 0
+
+=== 8. GOALS & BASE YEAR ===
+Goals rows: 0
+Base year recalculations rows: 0
+
+=== 9. FACILITIES ===
+{'id': 1, 'name': 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'activity': 'Steel & Iron (Acier DRI)', 'division': 'Metallurgy', 'region': 'West', 'segment': 'Heavy Industry', 'operator_status': 'operated'}
+{'id': 2, 'name': 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'activity': 'Chemicals & Fertilizers', 'division': 'Petrochemicals', 'region': 'West', 'segment': 'Heavy Industry', 'operator_status': 'operated'}
+{'id': 3, 'name': 'Cimenterie Industrielle de Chlef (GICA)', 'activity': 'Cement & Clinker', 'division': 'Building Materials', 'region': 'Center', 'segment': 'Heavy Industry', 'operator_status': 'operated'}
+{'id': 4, 'name': 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)', 'activity': 'Upstream & Midstream Gas', 'division': 'Exploration & Production', 'region': 'South', 'segment': 'Oil & Gas', 'operator_status': 'operated'}
+{'id': 5, 'name': 'ADR', 'activity': 'Activit� E&P', 'division': 'DP', 'region': None, 'segment': 'Upstream', 'operator_status': 'operated'}
+{'id': 6, 'name': 'REB', 'activity': 'Activit� E&P', 'division': 'DP', 'region': None, 'segment': 'Upstream', 'operator_status': 'operated'}
+{'id': 7, 'name': 'HBK', 'activity': 'Activit� E&P', 'division': 'DP', 'region': None, 'segment': 'Upstream', 'operator_status': 'operated'}
+{'id': 8, 'name': 'GTL', 'activity': 'Activit� E&P', 'division': 'DP', 'region': None, 'segment': 'Upstream', 'operator_status': 'operated'}
+{'id': 9, 'name': 'OHT', 'activity': 'Activit� E&P', 'division': 'DP', 'region': None, 'segment': 'Upstream', 'operator_status': 'operated'}
+{'id': 10, 'name': 'STAH', 'activity': 'Activit� E&P', 'division': 'DP', 'region': None, 'segment': 'Upstream', 'operator_status': 'operated'}
+

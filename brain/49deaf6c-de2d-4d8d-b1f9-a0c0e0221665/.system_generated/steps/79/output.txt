@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+new\server\background_processor.py:1888:                        existing_obj.uncertainty = (
+new\server\routes\custom_factors.py:203:            factor.uncertainty = 
+_parse_non_negative_float(data["uncertainty"], "uncertainty")
+new\server\routes\emissions.py:3573:            record.uncertainty = (
+new\server\routes\emissions.py:3593:                    record.uncertainty = float(user_unc["co2"]) / 100.0
+new\server\routes\scope2.py:464:        emission.uncertainty = float(data["uncertainty"] or 0)
+new\server\routes\scope3.py:141:    emission.uncertainty = final_uncertainty
+new\server\routes\scope3.py:287:        emission.uncertainty = float(data["uncertainty"] or 0)
+
+
+

@@ -1,0 +1,66 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -468,7 +468,26 @@
+     e.preventDefault();
+     try {
+       if (editingUser) {
+-        const payload = { role: formData.role, location: formData.location };
++        if (!formData.fullName.trim()) {
++          toast.error("Full Name is required.");
++          return;
++        }
++        if (
++          !formData.email.trim() ||
++          !/^[^@]+@[^@]+\.[^@]+$/.test(formData.email)
++        ) {
++          toast.error("A valid Email address is required.");
++          return;
++        }
++
++        const payload = {
++          fullName: formData.fullName.trim(),
++          email: formData.email.trim(),
++          department: (formData.department || "").trim(),
++          jobTitle: (formData.jobTitle || "").trim(),
++          role: formData.role,
++          location: formData.location,
++        };
+         const res = await api.put(`/auth/users/${editingUser.id}`, payload);
+         const updated = res.data?.user;
+         if (updated) {
+@@ -478,7 +478,15 @@
+           setUsers((prev) =>
+             prev.map((u) =>
+               u.id === editingUser.id
+-                ? { ...u, role: formData.role, location: formData.location }
++                ? {
++                    ...u,
++                    fullName: payload.fullName,
++                    email: payload.email,
++                    department: payload.department,
++                    jobTitle: payload.jobTitle,
++                    role: formData.role,
++                    location: formData.location,
++                  }
+                 : u,
+             ),
+           );
+@@ -575,7 +575,14 @@
+   };
+ 
+   const handleOpenResetPassword = (u) => {
+-    setResetTarget({ id: u.id, fullName: u.fullName, email: u.email });
++    setResetTarget({
++      id: u.id,
++      fullName: u.fullName,
++      email: u.email,
++      role: u.role,
++      location: u.location,
++      department: u.department,
++    });
+     setResetPwd("");
+     setResetPwdConfirm("");
+     setResetPwdShow(false);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

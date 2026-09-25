@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_battery_midstream_process_equipment.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -241,12 +241,12 @@
+             z_factor=z,
+             gwp_dict=GWP_AR5,
+         )
+-        ref = IndependentBlowdowns.calculate(
+-            volume=v_phys_m3,
+-            pressure=p_psig,
+-            events=events,
+-            ch4_content=ch4,
+-            temp_val=temp_f,
++        ref = IndependentBlowdown.calculate(
++            blowdown_volume=v_phys_m3,
++            pressure=p_psig,
++            events=events,
++            ch4_content=ch4,
++            temp=temp_f,
+             z_factor=z,
+             press_unit="psig",
+             temp_unit="F",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

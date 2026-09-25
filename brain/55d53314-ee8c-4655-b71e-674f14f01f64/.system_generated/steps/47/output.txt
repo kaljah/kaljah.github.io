@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+head : The term 'head' is not recognized as the name of a cmdlet, function, script file, or operable program. Check 
+the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:66
++ ... ep -n -A 10 "uncertainty" new/server/emission_factors.py | head -n 30
++                                                                ~~~~
+    + CategoryInfo          : ObjectNotFound: (head:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+

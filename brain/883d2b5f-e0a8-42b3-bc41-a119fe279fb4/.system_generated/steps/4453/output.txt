@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -541,10 +541,10 @@
+         is_flashing = process_type in ["tank_flashing", "tank", "storage_tanks"]
+ 
+         if is_flashing:
+-            total_gas_scf = float(throughput) * float(gas_oil_ratio)
+-            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
+-
+-            ch4_vol_scf = total_gas_scf * float(ch4_content)
++            total_gas_scf = float(throughput) * float(gas_oil_ratio or 0.0)
++            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
++
++            ch4_vol_scf = total_gas_scf * float(ch4_content if ch4_content is not None else 0.85)
+             ch4_vol_m3 = convert(ch4_vol_scf, "scf", "m3")
+             ch4_mass_kg = ch4_vol_m3 * CONVERSIONS["density_ch4"]
+             ch4_tonnes = ch4_mass_kg / 1000.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

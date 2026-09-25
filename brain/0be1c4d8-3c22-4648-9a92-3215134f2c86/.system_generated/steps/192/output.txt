@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+229: Emission.source_payload.label("source_payload"),
+270: literal(None).label("source_payload"),
+310: literal(None).label("source_payload"),
+387: and hasattr(r, "source_payload")
+388: and getattr(r, "source_payload", None)
+393: payload = json.loads(r.source_payload)
+837: source_payload=json.dumps(calc_data),
+3082: source_payload=json.dumps(data),
+3436: # Build merged calc_payload from existing source_payload / record fields and new data
+3438: if record.source_payload:
+3440: calc_payload = json.loads(record.source_payload)
+3470: record.source_payload = json.dumps(calc_payload)
+3848: source_payload=json.dumps(rec_data),
+

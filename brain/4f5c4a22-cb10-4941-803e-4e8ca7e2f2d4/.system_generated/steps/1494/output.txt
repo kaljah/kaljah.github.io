@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -528,9 +528,14 @@
+                 )
+ 
+             elif process_type == "completions":
+-                comp_method = flat_inputs.get("comp_method") or flat_inputs.get(
+-                    "calculation_method", "metered_volume"
+-                )
++                comp_method = (
++                    flat_inputs.get("comp_method")
++                    or flat_inputs.get("calc_method")
++                    or flat_inputs.get("calculation_method", "metered_volume")
++                )
++                events_val = float(flat_inputs.get("amount") or flat_inputs.get("events") or 1.0)
++                gas_sales_mcf = float(flat_inputs.get("comp_gas_produced_mcf") or 0.0)
++                gas_sales_scf = gas_sales_mcf * 1000.0
+ 
+                 vol_m3 = 0.0
+                 if comp_method == "metered_volume" or (
+@@ -579,6 +579,8 @@
+                     well_head_pressure=flat_inputs.get("comp_whp"),
+                     hhv=float(flat_inputs.get("hhv") or emission_factors.get("hhv") or 1020.0),
+                     gwp_dict=gwp_dict,
++                    events=events_val,
++                    gas_produced_sales_scf=gas_sales_scf,
+                 )
+ 
+             elif process_type in ["liquids_unloading", "unloading"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

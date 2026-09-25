@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2498,7 +2498,7 @@
+                                                     <td>{ACTIVITY_LABELS[f.activity] || f.activity}</td>
+                                                     <td>{f.division}</td>
+                                                     <td>{f.location || '-'}</td>
+-                                                    <td>{f.boundary_notes || '-'}</td>
++                                                    <td>{f.boundary_notes || (f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? ' - ' + f.boundary_detail : ''}` : '-')}</td>
+                                                     <td>{f.segment || '-'}</td>
+                                                     <td style={{ fontSize: '0.8rem' }}>{f.latitude ? `${f.latitude}, ${f.longitude}` : 'Not Set'}</td>
+                                                     {['admin', 'superuser'].includes(user?.role) && (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

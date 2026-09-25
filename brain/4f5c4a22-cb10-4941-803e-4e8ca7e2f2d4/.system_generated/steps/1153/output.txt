@@ -1,0 +1,138 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+      304 |       await closeAnyOverlay(page);
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:301:40
+
+    Error Context: test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_scope1_extended_scenarios.spec.js:315:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 2. Tier 3 Extended Engineering Scenarios: Drilling, Fugitives, Controlled Tanks & Advanced Engineering 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.result-overlay')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.result-overlay') with timeout 15000ms
+      - waiting for locator('.result-overlay')
+
+
+      645 |       // Wait for Result Overlay
+      646 |       const resultOverlay = page.locator('.result-overlay');
+    > 647 |       await expect(resultOverlay).toBeVisible({ timeout: 15000 });
+          |                                   ^
+      648 |
+      649 |       // Screenshot
+      650 |       const safeName = ef.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:647:35
+
+    Error Context: test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.result-overlay')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.result-overlay') with timeout 15000ms
+      - waiting for locator('.result-overlay')
+
+
+      645 |       // Wait for Result Overlay
+      646 |       const resultOverlay = page.locator('.result-overlay');
+    > 647 |       await expect(resultOverlay).toBeVisible({ timeout: 15000 });
+          |                                   ^
+      648 |
+      649 |       // Screenshot
+      650 |       const safeName = ef.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:647:35
+
+    Error Context: test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_scope1_extended_scenarios.spec.js:672:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 3. Maker-Checker Batch Approval & Post-Calculation KPI Recalculation 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-kpi-card, .metric-card, .kpi-card').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-kpi-card, .metric-card, .kpi-card').first() with timeout 10000ms
+      - waiting for locator('.hero-kpi-card, .metric-card, .kpi-card').first()
+
+
+      725 |     // Read Hero Gross Emissions
+      726 |     const heroGross = page.locator('.hero-kpi-card, .metric-card, .kpi-card').first();
+    > 727 |     await expect(heroGross).toBeVisible({ timeout: 10000 });
+          |                             ^
+      728 |     const heroText = await heroGross.innerText();
+      729 |     console.log('[DASHBOARD RECALCULATED HERO]', heroText.replace(/\n/g, ' '));
+      730 |     expect(heroText).not.toContain('NaN');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:727:29
+
+    Error Context: test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-kpi-card, .metric-card, .kpi-card').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-kpi-card, .metric-card, .kpi-card').first() with timeout 10000ms
+      - waiting for locator('.hero-kpi-card, .metric-card, .kpi-card').first()
+
+
+      725 |     // Read Hero Gross Emissions
+      726 |     const heroGross = page.locator('.hero-kpi-card, .metric-card, .kpi-card').first();
+    > 727 |     await expect(heroGross).toBeVisible({ timeout: 10000 });
+          |                             ^
+      728 |     const heroText = await heroGross.innerText();
+      729 |     console.log('[DASHBOARD RECALCULATED HERO]', heroText.replace(/\n/g, ' '));
+      730 |     expect(heroText).not.toContain('NaN');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:727:29
+
+    Error Context: test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e\test_scope1_extended_scenarios.spec.js:163:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 1. Tier 1 Extended Scenarios: Fuels, Units, Streams, Equipment Factors & Uncertainties 
+    [chromium] › e2e\test_scope1_extended_scenarios.spec.js:315:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 2. Tier 3 Extended Engineering Scenarios: Drilling, Fugitives, Controlled Tanks & Advanced Engineering 
+    [chromium] › e2e\test_scope1_extended_scenarios.spec.js:672:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 3. Maker-Checker Batch Approval & Post-Calculation KPI Recalculation 
+

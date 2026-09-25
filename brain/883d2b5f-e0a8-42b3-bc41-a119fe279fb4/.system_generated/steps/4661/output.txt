@@ -1,0 +1,11 @@
+Task: 883d2b5f-e0a8-42b3-bc41-a119fe279fb4/task-4653
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\.system_generated\tasks\task-4653.log
+Log output:
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+
+Last progress: 1m13s ago

@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+      --branch <branch>       checkout a specific branch (default: repo default)
+      --out <dir>             clone to a custom directory (default: ~/.graphify/repos/<owner>/<repo>)
+>   add <url>               fetch a URL and save it to ./raw, then update the graph
+      --author "Name"         tag the author of the content
+      --contributor "Name"    tag who added it to the corpus
+      --dir <path>            target directory (default: ./raw)
+    watch <path>            watch a folder and rebuild the graph on code changes
+>   update <path>           re-extract code files and update the graph (no LLM needed)
+      --force                 overwrite graph.json even if the rebuild has fewer nodes
+                              (also: GRAPHIFY_FORCE=1 env var; use after refactors that delete code)
+      --half-life-days N      signal weight halves every N days (default 30)
+      --min-corroboration N   distinct useful results to prefer a node (default 2)
+>   check-update <path>     check needs_update flag and notify if semantic re-extraction is pending (cron-safe)
+    tree                    emit a D3 v7 collapsible-tree HTML for graph.json
+      --graph PATH            path to graph.json (default graphify-out/graph.json)
+      --global                also merge the resulting graph into the global graph
+      --as <tag>              repo tag for --global (default: target directory name)
+>   global add <graph.json>  add/update a project graph in the global graph (~/.graphify/global-graph.json)
+      --as <tag>               repo tag (default: parent directory name)
+    global remove <tag>      remove a repo's nodes from the global graph
+
+
+

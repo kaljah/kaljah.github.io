@@ -1,0 +1,52 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -620,15 +620,14 @@
+           return;
+         }
+       } else if (processType === "unloading") {
+-        if (
+-          !formData.unload_depth ||
+-          !formData.unload_diameter ||
+-          !formData.unload_pressure ||
+-          !formData.unload_time ||
+-          !formData.unload_events
+-        ) {
+-          toast.warning(
+-            "All well unloading parameters (depth, diameter, pressure, time, events) are required",
++        const hasDepth = formData.unload_depth;
++        const hasDiam = formData.unload_diam || formData.unload_diameter;
++        const hasPress = formData.unload_press || formData.unload_pressure;
++        const hasEvents =
++          formData.unload_freq || formData.unload_events || formData.amount;
++        if (!hasDepth || !hasDiam || !hasPress || !hasEvents) {
++          toast.warning(
++            "Well unloading parameters (depth, diameter, pressure, events) are required",
+           );
+           return;
+         }
+@@ -640,13 +640,15 @@
+           return;
+         }
+       } else if (processType === "completions") {
+-        if (
+-          !formData.comp_volume ||
+-          !formData.comp_pressure ||
+-          !formData.comp_events
+-        ) {
+-          toast.warning(
+-            "Well completions parameters (volume, pressure, events) are required",
++        const hasRateDur = formData.comp_duration && formData.comp_rate;
++        const hasGor = formData.comp_liquid_bbl && formData.comp_gor;
++        const hasVol =
++          formData.comp_volume ||
++          formData.amount ||
++          formData.flowback_volume;
++        if (!hasRateDur && !hasGor && !hasVol) {
++          toast.warning(
++            "Well completions parameters (rate & duration OR liquid & GOR OR volume) are required",
+           );
+           return;
+         }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

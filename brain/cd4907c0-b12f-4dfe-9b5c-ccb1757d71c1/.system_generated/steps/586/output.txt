@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":401,"LineContent":"  const [regions, setRegions] = useState([]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":403,"LineContent":"  const [filterRegion, setFilterRegion] = useState(\"\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":456,"LineContent":"    // --- Regions call (independent) ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":460,"LineContent":"      setRegions(Array.isArray(data) ? data : []);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":462,"LineContent":"      setRegions([]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":581,"LineContent":"              : \"Please select an Assigned Region for this user.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":725,"LineContent":"    const byRegion ="}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":726,"LineContent":"      !filterRegion ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":727,"LineContent":"      u.location === filterRegion ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":732,"LineContent":"    return byRegion \u0026\u0026 byRole;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":780,"LineContent":"            value={filterRegion}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":781,"LineContent":"            onChange={(e) =\u003e setFilterRegion(e.target.value)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":784,"LineContent":"            \u003coption value=\"\"\u003eAll Regions\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":858,"LineContent":"            label: \"Regions\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":910,"LineContent":"                  \"Region Access\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1081,"LineContent":"                      {/* Region Access */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1092,"LineContent":"                            All Regions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1448,"LineContent":"                    \u003clabel style={{ ...S.label, marginBottom: 0 }}\u003eAssigned Region\u003c/label\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1476,"LineContent":"                    \u003coption value=\"\"\u003e— Select a Region —\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":68,"LineContent":"      title: \"Custom \u0026 Regional Factors\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":416,"LineContent":"          \u003coption value=\"custom\"\u003eCustom \u0026 Regional\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1006,"LineContent":"              \u003cdiv className=\"spec-desc\"\u003eRegional \u0026 Basin Plume Scale\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":26,"LineContent":"      label: \"Region\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":58,"LineContent":"    { id: \"facility_id\", label: \"Region\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":59,"LineContent":"    { id: \"facility_name\", label: \"Region / Facility\", required: false },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":174,"LineContent":"    { id: \"facility_id\", label: \"Region\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":177,"LineContent":"    { id: \"grid_region\", label: \"Grid Region\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":182,"LineContent":"    { id: \"facility_id\", label: \"Region\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":254,"LineContent":"    { id: \"facility_id\", label: \"Region\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":266,"LineContent":"    { id: \"facility_id\", label: \"Region\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":288,"LineContent":"    { id: \"name\", label: \"Region Name\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1300,"LineContent":"                    ? \"Overwrite existing Regions with the same name\" "}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":561,"LineContent":"    const [filterRegion, setFilterRegion] = useState('');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":566,"LineContent":"    }, [activeTab, searchTerm, filterActivity, filterDivision, filterRegion, filterYear]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":878,"LineContent":"            toast.success('Region added!');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":938,"LineContent":"            return toast.error('Region, Year and Month are required');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":953,"LineContent":"        if (!sourceForm.facility_id || !sourceForm.name) return toast.error('Name and Region required');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1073,"LineContent":"            title: \"Delete Region\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1075,"LineContent":"            confirmLabel: \"Delete Region\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1080,"LineContent":"                    toast.success('Region deleted');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1219,"LineContent":"        const matchesRegion = filterRegion ? f.location === filterRegion : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1220,"LineContent":"        return matchesSearch \u0026\u0026 matchesActivity \u0026\u0026 matchesDivision \u0026\u0026 matchesRegion;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1229,"LineContent":"        const matchesRegion = filterRegion ? (fac \u0026\u0026 fac.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1231,"LineContent":"        return matchesSearch \u0026\u0026 matchesActivity \u0026\u0026 matchesDivision \u0026\u0026 matchesRegion \u0026\u0026 matchesYear;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1239,"LineContent":"        const matchesRegion = filterRegion ? (fac \u0026\u0026 fac.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1240,"LineContent":"        return matchesSearch \u0026\u0026 matchesActivity \u0026\u0026 matchesDivision \u0026\u0026 matchesRegion;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1251,"LineContent":"        const matchesRegion = filterRegion ? (m.region === filterRegion || fac?.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1253,"LineContent":"        return matchesSearch \u0026\u0026 matchesActivity \u0026\u0026 matchesDivision \u0026\u0026 matchesRegion \u0026\u0026 matchesYear;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1273,"LineContent":"        const matchesRegion = filterRegion ? (fac \u0026\u0026 fac.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1275,"LineContent":"        return isOilAndGas \u0026\u0026 matchesSearch \u0026\u0026 matchesActivity \u0026\u0026 matchesDivision \u0026\u0026 matchesRegion \u0026\u0026 matchesYear;"}
+(...199 more results not shown)

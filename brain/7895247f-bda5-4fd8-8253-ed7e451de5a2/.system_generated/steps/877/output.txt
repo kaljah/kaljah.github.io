@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+[2026-09-24 20:38:01,616] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: cannot import name 'create_app' from 'app' (C:\Users\samsung\Desktop\H2\new\server\app.py)
+

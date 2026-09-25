@@ -1,0 +1,55 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/24/2026  12:21 AM                __pycache__                                                          
+-a----         9/23/2026   9:49 PM           3128 agent_01_launcher.py                                                 
+-a----         9/24/2026  10:23 AM           1528 agent_01_report.md                                                   
+-a----         9/24/2026  10:26 AM           2318 agent_02_bugs.json                                                   
+-a----         9/24/2026  10:26 AM           2035 agent_02_credentials.json                                            
+-a----         9/24/2026  10:26 AM           4680 agent_02_report.md                                                   
+-a----         9/23/2026  10:08 PM          16827 agent_02_seed.py                                                     
+-a----         9/23/2026   9:50 PM           6071 agent_02_seeder.py                                                   
+-a----         9/23/2026  10:12 PM          11283 agent_02_seed_db.py                                                  
+-a----         9/24/2026  12:28 AM          11220 agent_03_admin_api.py                                                
+-a----         9/24/2026  10:28 AM           2050 agent_03_bugs.json                                                   
+-a----         9/24/2026  10:28 AM           5183 agent_03_report.md                                                   
+-a----         9/24/2026  12:33 AM              2 agent_04_bugs.json                                                   
+-a----         9/24/2026  12:33 AM           1196 agent_04_report.md                                                   
+-a----         9/24/2026  12:29 AM           6367 agent_04_superuser_api.py                                            
+-a----         9/24/2026  12:36 AM              2 agent_05_bugs.json                                                   
+-a----         9/24/2026  12:36 AM            945 agent_05_report.md                                                   
+-a----         9/24/2026  10:27 AM          36197 agent_05_test.py                                                     
+-a----         9/24/2026  12:35 AM           6576 agent_05_user_api.py                                                 
+-a----         9/24/2026  10:27 AM           8328 agent_06_bugs.json                                                   
+-a----         9/24/2026  12:38 AM           3850 agent_06_itadmin_api.py                                              
+-a----         9/24/2026  12:39 AM            847 agent_06_report.md                                                   
+-a----         9/24/2026  10:26 AM          16781 agent_07_bugs.json                                                   
+-a----         9/24/2026  10:26 AM           6021 agent_07_report.md                                                   
+-a----         9/24/2026  10:24 AM          23346 agent_07_runner.py                                                   
+-a----         9/24/2026  10:26 AM            427 agent_07_summary.txt                                                 
+-a----         9/23/2026  11:01 PM           4209 agent_07_viewer_api.py                                               
+-a----         9/23/2026  11:08 PM          12020 agent_08_admin_playwright.py                                         
+-a----         9/24/2026  10:28 AM          14388 agent_08_bugs.json                                                   
+-a----         9/24/2026  10:28 AM           4403 agent_08_report.md                                                   
+-a----         9/24/2026  12:39 AM              2 agent_09_bugs.json                                                   
+-a----         9/23/2026  11:10 PM            756 agent_09_report.md                                                   
+-a----         9/23/2026  11:08 PM          13271 agent_09_superuser_selenium.py                                       
+-a----         9/24/2026  12:40 AM              2 agent_10_bugs.json                                                   
+-a----         9/23/2026  11:10 PM           1946 agent_10_report.md                                                   
+-a----         9/23/2026  11:08 PM           9278 agent_10_user_playwright.py                                          
+-a----         9/24/2026  12:40 AM              2 agent_11_bugs.json                                                   
+-a----         9/23/2026  11:09 PM           9176 agent_11_itadmin_selenium.py                                         
+-a----         9/23/2026  11:11 PM            502 agent_11_report.md                                                   
+-a----         9/23/2026  11:12 PM           8274 agent_12_compiler.py                                                 
+-a----         9/24/2026  12:21 AM           5713 api_tester_base.py                                                   
+-a----         9/24/2026  10:26 AM          12102 MASTER_BUG_REPORT.md                                                 
+
+
+

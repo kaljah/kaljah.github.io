@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+ method="rate_duration",
+            flowback_rate=rate_mscfd,
+            duration_hours=hours,
+            ch4_content=0.85,
+            co2_content=0.03,
+            control_efficiency=ctrl_eff,
+            hhv=1050.0,
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-4) == ref["ch4"]
+E       assert 36.50965815898411 � 0.00365097 == 1.5212357566243382
+E         
+E         comparison failed
+E         Obtained: 1.5212357566243382
+E         Expected: 36.50965815898411 � 0.00365097
+
+new\server\tests\test_battery_midstream_process_equipment.py:114: AssertionError
+_________ TestCSVBufferIngestionMatrix.test_csv_delimiters_semicolon __________
+
+self = <test_csv_engine_matrix.TestCSVBufferIngestionMatrix object at 0x000002C3B56400E0>
+

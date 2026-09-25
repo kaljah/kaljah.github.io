@@ -1,0 +1,9 @@
+
+The command exited with code 1.
+Output:
+<string>:5: SyntaxWarning: invalid escape sequence '\]'
+  File "<string>", line 5
+    if 'round(em_result[" totalCo2e\]'
+                                      ^
+SyntaxError: expected ':'
+

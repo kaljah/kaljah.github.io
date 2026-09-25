@@ -1,0 +1,133 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1031,35 +1031,107 @@
+     const qty = entry.amount || entry.quantity || 0;
+     const unitVal = entry.unit || "unit";
+ 
++    let payload = {};
++    if (entry.source_payload) {
++      try {
++        payload =
++          typeof entry.source_payload === "string"
++            ? JSON.parse(entry.source_payload)
++            : entry.source_payload;
++      } catch (e) {}
++    }
++
++    const co2Val = Number(entry.co2_emissions || 0);
++    const ch4Val = Number(entry.ch4_emissions || 0);
++    const n2oVal = Number(entry.n2o_emissions || 0);
++    const co2eVal = Number(entry.co2e_total || 0);
++
++    const numQty = Number(qty) || 0;
++    const efCo2 =
++      entry.ef_used_co2 ??
++      payload.ef_used_co2 ??
++      payload.factor_co2 ??
++      (numQty > 0 ? (co2Val * 1000) / numQty : null);
++    const efCh4 =
++      entry.ef_used_ch4 ??
++      payload.ef_used_ch4 ??
++      payload.factor_ch4 ??
++      (numQty > 0 ? (ch4Val * 1000) / numQty : null);
++    const efN2o =
++      entry.ef_used_n2o ??
++      payload.ef_used_n2o ??
++      payload.factor_n2o ??
++      (numQty > 0 ? (n2oVal * 1000) / numQty : null);
++
++    const fSource =
++      entry.factor_source ||
++      entry.factor_type ||
++      payload.factor_source ||
++      "API Compendium 2021 (Default)";
++    const facName =
++      entry.facility_name ||
++      facilities.find((f) => f.id === entry.facility_id)?.name ||
++      `Facility #${entry.facility_id || "N/A"}`;
++    const pLabel =
++      PROCESS_TYPES[entry.process || entry.process_type]?.label || pType;
++
+     setInspectRecord({
+-      process_type: `Scope 1 - ${pType}`,
++      process_type: `Scope 1 - ${pLabel}`,
+       fuel: fuelVal,
+       amount: qty,
+       unit: unitVal,
++      facility: facName,
++      year: entry.year,
++      month: entry.month,
++      equipment_id: entry.equipment_id || "-",
++      status: entry.status || "Verified",
++      factor_source: fSource,
++      method:
++        entry.calc_method ||
++        entry.calculation_method ||
++        (fSource.toLowerCase().includes("specific")
++          ? "Tier 3 Engineering / CEMS"
++          : "API Compendium / Tier 1-2"),
+       emissions: {
+-        totalCo2e: entry.co2e_total || 0,
+-        co2: entry.co2_emissions || 0,
+-        ch4: entry.ch4_emissions || 0,
+-        n2o: entry.n2o_emissions || 0,
++        totalCo2e: co2eVal,
++        co2: co2Val,
++        ch4: ch4Val,
++        n2o: n2oVal,
+       },
+       factors: {
+-        co2: entry.factor_co2 || null,
+-        ch4: entry.factor_ch4 || null,
+-        n2o: entry.factor_n2o || null,
+-      },
+-      method: entry.calculation_method || "API Compendium / Tier 3 Rigorous",
++        co2: efCo2,
++        ch4: efCh4,
++        n2o: efN2o,
++        gwp_ch4: 28.0,
++        gwp_n2o: 265.0,
++        source: fSource,
++      },
++      uncertainty: {
++        co2: entry.uncertainty_co2,
++        ch4: entry.uncertainty_ch4,
++        n2o: entry.uncertainty_n2o,
++      },
+       steps: [
+         {
+-          name: "Activity Input",
+-          desc: `${formatNumber(qty, 2)} ${unitVal} of ${fuelVal} for facility ID ${entry.facility_id}`,
+-        },
+-        {
+-          name: "GHG Species Calculation",
+-          desc: `CO₂: ${formatNumber(entry.co2_emissions || 0, 3)} t | CH₄: ${formatNumber(entry.ch4_emissions || 0, 5)} t | N₂O: ${formatNumber(entry.n2o_emissions || 0, 5)} t`,
+-        },
+-        {
+-          name: "GWP Weighted Total",
+-          desc: `Total CO₂e: ${formatNumber(entry.co2e_total || 0, 3)} tCO₂e`,
++          name: "1. Operational Activity & Facility Scope",
++          desc: `Logged consumption / activity of ${formatNumber(qty, 2)} ${unitVal} for ${fuelVal} at ${facName} (${entry.year}-${String(entry.month || 1).padStart(2, "0")}).`,
++          formula: `Activity = ${formatNumber(qty, 2)} ${unitVal}`,
++        },
++        {
++          name: "2. Emission Factor Application & Species Mass",
++          desc: `Calculated direct chemical emission masses using ${fSource} methodology:`,
++          formula: `CO₂: ${formatNumber(co2Val, 4)} t | CH₄: ${formatNumber(ch4Val, 6)} t | N₂O: ${formatNumber(n2oVal, 6)} t`,
++        },
++        {
++          name: "3. Global Warming Potential (GWP AR5) Weighting",
++          desc: `Weighted summation to CO₂ equivalent using standard IPCC AR5 factors (CO₂: 1.0, CH₄: 28.0, N₂O: 265.0):`,
++          formula: `CO₂e = (${formatNumber(co2Val, 4)} × 1.0) + (${formatNumber(ch4Val, 6)} × 28.0) + (${formatNumber(n2oVal, 6)} × 265.0)`,
++          result: co2eVal,
++          unit: "tCO₂e",
++        },
++        {
++          name: "4. Quality Assurance & Uncertainty Profile",
++          desc: `Standard combined uncertainty (1σ): CO₂ ${entry.uncertainty_co2 != null ? '±' + (entry.uncertainty_co2 * 100).toFixed(0) + '%' : '—'}, CH₄ ${entry.uncertainty_ch4 != null ? '±' + (entry.uncertainty_ch4 * 100).toFixed(0) + '%' : '—'}, N₂O ${entry.uncertainty_n2o != null ? '±' + (entry.uncertainty_n2o * 100).toFixed(0) + '%' : '—'}. Verification Status: ${entry.status || 'Verified'}.`,
+         },
+       ],
+     });
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

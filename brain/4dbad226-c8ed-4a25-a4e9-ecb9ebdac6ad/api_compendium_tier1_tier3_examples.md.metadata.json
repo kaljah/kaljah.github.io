@@ -1,0 +1,5 @@
+{
+  "summary":  "Comprehensive extraction of all Tier 1 and Tier 3 calculation examples from the API Compendium 2021 as implemented in this codebase. Covers 16 process types: stationary combustion, flaring, venting/blowdown, liquids unloading, storage tanks, pneumatic devices, fugitive leaks (wellhead, separator, compressor, component-level, gathering, processing, LNG, refinery, offshore), acid gas removal, glycol dehydrators, chemical production, N₂O production, asphalt blowing, mud degassing, well completion flowback, Scope 2 electricity, and Scope 3 value chain. Each process type includes: API section reference, Tier 1 formula with emission factor table, and Tier 3 engineering formula with worked example inputs. Includes the full uncertainty tier hierarchy.",
+  "updatedAt":  "2026-09-22T18:26:35.666262400Z",
+  "userFacing":  true
+}

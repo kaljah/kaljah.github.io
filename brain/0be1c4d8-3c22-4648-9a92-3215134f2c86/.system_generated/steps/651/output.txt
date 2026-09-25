@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -4578,24 +4578,15 @@
+             q = q.filter(model.facility_id.in_(allowed_fids))
+         if target_ids is not None:
+             q = q.filter(model.id.in_(target_ids))
+-        records_to_reject = q.all()
+         now_utc = datetime.datetime.now(datetime.timezone.utc)
+-        for rec in records_to_reject:
+-            rec.status = "Rejected"
+-            if hasattr(rec, "qa_flag"):
+-                rec.qa_flag = f"Rejected: {reason}"
+-            rec.approved_by = user.id
+-            rec.approved_at = now_utc
+-            rec_id = getattr(rec, "record_id", f"{scope_label}-{rec.id}")
+-            log_activity_and_notify(
+-                action="UPDATE",
+-                record_id=str(rec_id),
+-                details=f"{scope_label} emission batch rejected by {user.fullName}: {reason}",
+-                user=user,
+-                entity=f"scope{scope_label[-1] if scope_label[-1].isdigit() else '1'}_emission",
+-                entity_id=rec.id,
+-            )
+-        return len(records_to_reject)
++        update_vals = {
++            "status": "Rejected",
++            "approved_by": user.id,
++            "approved_at": now_utc,
++        }
++        if hasattr(model, "qa_flag"):
++            update_vals["qa_flag"] = f"Rejected: {reason}"
++        return q.update(update_vals, synchronize_session=False)
+ 
+     if scope == "all" and reject_all:
+         deleted_count = (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

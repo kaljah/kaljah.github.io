@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1862,7 +1862,7 @@
+         # GWP 20-Year Horizon: dynamic resolution per active standard
+         gwp20_factors = get_active_gwp(horizon="20")
+         ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
+-        n2o_gwp20 = float(gwp20_factors.get("N2O", 264.0))
++        n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
+         s1_gwp20 = (
+             ed["total_co2"]
+             + (ed["total_ch4"] * ch4_gwp20)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

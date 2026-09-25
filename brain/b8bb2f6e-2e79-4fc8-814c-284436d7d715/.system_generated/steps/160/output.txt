@@ -1,0 +1,19 @@
+Task: b8bb2f6e-2e79-4fc8-814c-284436d7d715/task-57
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8bb2f6e-2e79-4fc8-814c-284436d7d715\.system_generated\tasks\task-57.log
+Log output:
+<truncated 161 lines>
+S (Kops/s)  Rounds  Iterations
+----------------------------------------------------------------------------------------------------------------------------------------
+test_benchmark_uncertainty_propagation     3.3000  479.8000  5.3839  5.2312  4.5000  1.2000  2753;4109      185.7374   38760           1
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Legend:
+  Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
+  OPS: Operations Per Second, computed as 1 / Mean
+=========================== short test summary info ===========================
+FAILED tests/test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_calculation_loop_memory_profile
+FAILED tests/test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_excel_export_streaming_under_volume
+2 failed, 932 passed, 13 warnings in 153.75s (0:02:33)
+
+Last progress: 6s ago

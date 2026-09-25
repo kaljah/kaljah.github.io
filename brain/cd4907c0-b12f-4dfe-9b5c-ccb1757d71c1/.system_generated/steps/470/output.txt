@@ -1,0 +1,26 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":35,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":41,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":2,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":27,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":3,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":61,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":4,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":22,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":4,"LineContent":"import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":9,"LineContent":"    const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":2,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":33,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":15,"LineContent":"import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":62,"LineContent":"    const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.jsx","LineNumber":2,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.jsx","LineNumber":85,"LineContent":"  const { login, sessionExpired, setSessionExpired } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":3,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":11,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":2,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":27,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":23,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":65,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":3,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":397,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":9,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":17,"LineContent":"  const { user } = useAuth();"}

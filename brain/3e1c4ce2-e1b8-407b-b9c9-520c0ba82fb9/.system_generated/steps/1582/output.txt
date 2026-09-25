@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -36,10 +36,17 @@
+     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 12000 }).catch(() => {});
+   }
+ 
+-  // Navigate to Carbon Intensity page
+-  await page.goto(`${FRONTEND}/carbon-intensity`, { waitUntil: 'domcontentloaded', timeout: 20000 });
++  // Ensure App layout is loaded
++  await expect(page.locator('.app-container, .sidebar').first()).toBeVisible({ timeout: 15000 });
++
++  // Click Carbon Intensity in sidebar
++  const ciLink = page.locator('a[href="/carbon-intensity"], a[title="Carbon Intensity"]').first();
++  await ciLink.click();
++  await page.waitForURL(url => url.toString().includes('/carbon-intensity'), { timeout: 10000 }).catch(() => {});
++
++  // Wait for Carbon Intensity grid to mount
+   await expect(page.locator('.intensity-grid, .hero-card').first()).toBeVisible({ timeout: 15000 });
+-  await page.waitForTimeout(1000);
++  await page.waitForTimeout(800);
+ }
+ 
+ test.describe('Carbon Intensity Page Deep Audit', () => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

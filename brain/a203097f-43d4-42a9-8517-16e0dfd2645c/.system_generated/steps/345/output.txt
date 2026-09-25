@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\mutation\test_clean_mutations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -28,10 +28,9 @@
+ sys.path.insert(0, BASE_DIR)
+ sys.path.insert(0, SERVER_DIR)
+ 
+-from calculations.combustion import CombustionCalculator
+-from calculations.flaring import FlaringCalculator
+-from calculations.venting import AGRCalculator
+-from calculations.scope2 import IndirectSteamCalculator
++from calculations.combustion import CombustionCalculator, FlaringCalculator
++from calculations.midstream import AGRCalculator
++from calculations.indirect import IndirectSteamCalculator
+ from calculations.units import compute_scope3_co2e, calculate_co2e
+ from validation.reference_model import (
+     ref_calculate_combustion,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

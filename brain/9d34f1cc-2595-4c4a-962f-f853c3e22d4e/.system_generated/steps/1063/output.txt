@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\DashboardEnhanced.jsx:16:} from "../utils/formatters";
+  new\client\src\pages\DashboardEnhanced.jsx:17:import { useLayout } from "../context/LayoutContext";
+> new\client\src\pages\DashboardEnhanced.jsx:18:import { getUserOperationalDefaults, isUnrestrictedLocation } from 
+"../utils/userDefaults";
+  new\client\src\pages\DashboardEnhanced.jsx:19:import {
+  new\client\src\pages\DashboardEnhanced.jsx:20:  ChevronDown,
+  new\client\src\pages\DashboardEnhanced.jsx:145:        });
+  new\client\src\pages\DashboardEnhanced.jsx:146:
+> new\client\src\pages\DashboardEnhanced.jsx:147:        const opDefaults = getUserOperationalDefaults(user, 
+facilitiesData);
+  new\client\src\pages\DashboardEnhanced.jsx:148:        if (opDefaults.isRestricted || facilitiesData.length === 1) {
+  new\client\src\pages\DashboardEnhanced.jsx:149:          if (opDefaults.defaultActivity) 
+setCurrentActivity(opDefaults.defaultActivity);
+
+
+

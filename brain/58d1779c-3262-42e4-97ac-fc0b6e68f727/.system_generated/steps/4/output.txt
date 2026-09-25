@@ -1,0 +1,32 @@
+{"name":".benchmarks", "isDir":true}
+{"name":".gemini", "isDir":true}
+{"name":".pytest_cache", "isDir":true}
+{"name":".specify", "isDir":true}
+{"name":"ManageData_old.jsx", "sizeBytes":"138"}
+{"name":"__pycache__", "isDir":true}
+{"name":"analyze_all.py", "sizeBytes":"64"}
+{"name":"cbam_restore.py", "sizeBytes":"64"}
+{"name":"client", "isDir":true}
+{"name":"file_by_file_analysis.md", "sizeBytes":"27754"}
+{"name":"found_route.txt", "sizeBytes":"60"}
+{"name":"graphify-out", "isDir":true}
+{"name":"instance", "isDir":true}
+{"name":"master_button_audit_results.json", "sizeBytes":"25836"}
+{"name":"server", "isDir":true}
+{"name":"server.rar", "sizeBytes":"418738"}
+{"name":"setup.bat", "sizeBytes":"681"}
+{"name":"start_all.bat", "sizeBytes":"409"}
+{"name":"test_all_apis_health.py", "sizeBytes":"18910"}
+{"name":"test_deep_button_audit.py", "sizeBytes":"15052"}
+{"name":"test_emissions_upload.csv", "sizeBytes":"761"}
+{"name":"test_final.py", "sizeBytes":"128"}
+{"name":"test_final_v2.py", "sizeBytes":"64"}
+{"name":"test_final_v3.py", "sizeBytes":"64"}
+{"name":"test_master_button_audit.py", "sizeBytes":"11751"}
+{"name":"test_pipeline.py", "sizeBytes":"64"}
+{"name":"test_pipeline_robust.py", "sizeBytes":"64"}
+{"name":"update_logs.py", "sizeBytes":"64"}
+{"name":"update_logs_part2.py", "sizeBytes":"64"}
+{"name":"update_logs_part3.py", "sizeBytes":"64"}
+
+Summary: This directory contains 9 subdirectories and 21 files.

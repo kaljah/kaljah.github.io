@@ -1,0 +1,47 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":8,"LineContent":"    ProductionData, ActivityLog, User, Facility, OgmpSurvey, "}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":30,"LineContent":"    query = ProductionData.query"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":33,"LineContent":"        query = query.filter(ProductionData.facility_id.in_(allowed_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":103,"LineContent":"        existing = ProductionData.query.filter_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":121,"LineContent":"            prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":145,"LineContent":"            entity='ProductionData',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":178,"LineContent":"    prod = db.session.get(ProductionData, record_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":191,"LineContent":"            entity='ProductionData',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":259,"LineContent":"        existing = ProductionData.query.filter_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":278,"LineContent":"            prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":13,"LineContent":"    ProductionData,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":834,"LineContent":"    years4 = db.session.query(ProductionData.year).distinct().all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1316,"LineContent":"        ProductionData.year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1317,"LineContent":"        ProductionData.facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1318,"LineContent":"        ProductionData.oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1319,"LineContent":"        ProductionData.gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1320,"LineContent":"        func.sum(ProductionData.oil_amount).label(\"total_oil_raw\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1321,"LineContent":"        func.sum(ProductionData.gas_amount).label(\"total_gas_raw\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1322,"LineContent":"    ).filter(ProductionData.year.in_(year_list))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1324,"LineContent":"        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1326,"LineContent":"        prod_q = prod_q.filter(ProductionData.facility_id == int(facility_id))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1329,"LineContent":"            Facility, ProductionData.facility_id == Facility.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1332,"LineContent":"        prod_q = prod_q.filter(ProductionData.activity == activity)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1334,"LineContent":"        prod_q = prod_q.filter(ProductionData.division == division)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1336,"LineContent":"        ProductionData.year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1337,"LineContent":"        ProductionData.facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1338,"LineContent":"        ProductionData.oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1339,"LineContent":"        ProductionData.gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1664,"LineContent":"        ProductionData.facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1665,"LineContent":"        ProductionData.oil_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1666,"LineContent":"        ProductionData.gas_unit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1667,"LineContent":"        func.sum(ProductionData.oil_amount).label(\"total_oil_raw\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1668,"LineContent":"        func.sum(ProductionData.gas_amount).label(\"total_gas_raw\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1672,"LineContent":"        prod_query = prod_query.filter(ProductionData.facility_id.in_(allowed_fids))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1674,"LineContent":"        prod_query = prod_query.filter(ProductionData.year == int(year))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1676,"LineContent":"        prod_query = prod_query.filter(ProductionData.facility_id == int(facility_id))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1679,"LineContent":"            Facility, ProductionData.facility_id == Facility.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1682,"LineContent":"        prod_query = prod_query.filter(ProductionData.activity == activity)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1684,"LineContent":"        prod_query = prod_query.filter(ProductionData.division == division)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1687,"LineContent":"        ProductionData.facility_id, ProductionData.oil_unit, ProductionData.gas_unit"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":8,"LineContent":"    ProductionData,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":540,"LineContent":"        db.session.query(ProductionData.year)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":542,"LineContent":"        .order_by(ProductionData.year.desc())"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":559,"LineContent":"        db.session.query(distinct(ProductionData.year)),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":24,"LineContent":"    ProductionData,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":874,"LineContent":"            prod_q = ProductionData.query.filter(ProductionData.facility_id == f.id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":876,"LineContent":"                prod_q = prod_q.filter(ProductionData.year == year_filter)"}

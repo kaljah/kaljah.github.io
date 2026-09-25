@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Case sensitive count: 24210
+Case insensitive count: 24158
+Process types in DB: [(None, 45), ("=cmd|'/C calc'!A0", 1), ('Combustion', 60), ('Flaring', 5), ('Fugitive', 1), ('Liquids Unloading', 2), ('Pneumatics', 1), ('Venting', 50), ('combustion', 23978), ('flaring', 50), ('fugitive', 1), ('fugitive_component', 14), ('hydrogen_production', 17), ('pneumatics', 6)]
+

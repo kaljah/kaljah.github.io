@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -82,6 +82,11 @@
+     factor_denom = f_unit.split("/")[1] if "/" in f_unit else f_unit
+ 
+     # Handle Energy-based factor denominator (e.g. kg/MMBtu)
++    f_type_str = str(fuel_type or "").lower()
++    is_liquid_fuel = (
++        f_type_str in ["liquids", "liquid"]
++        or any(k in f_type_str for k in ["diesel", "gasoil", "gasoline", "oil", "petroleum", "kerosene", "jet"])
++    )
+     if "mmbtu" in factor_denom or "mm_btu" in factor_denom:
+         if a_unit in ["mmbtu", "mm_btu"]:
+             return val
+@@ -90,8 +90,8 @@
+             return val * 0.1
+         if a_unit in ["scf", "cf", "ft3"]:
+             return val * ((hhv or 1020.0) / 1_000_000.0)
+-        if a_unit in ["m3", "cubic_meters", "m3"]:
+-            if fuel_type == "liquids":
++        if a_unit in ["m3", "cubic_meters", "m³"]:
++            if is_liquid_fuel:
+                 return val * (264.172 * (hhv or 138000.0) / 1_000_000.0)
+             else:
+                 return val * (35.3147 * (hhv or 1020.0) / 1_000_000.0)
+@@ -104,7 +104,7 @@
+             return val * (42.0 * (hhv or 138000.0) / 1_000_000.0)
+         if a_unit in ["l", "liter", "liters"]:
+             return val * (0.264172 * (hhv or 138000.0) / 1_000_000.0)
+-        return val * ((hhv or 1020.0) / 1_000_000.0)
++        return val * ((hhv or (138000.0 if is_liquid_fuel else 1020.0)) / 1_000_000.0)
+ 
+     # Physical denominator conversions separated into Volume and Mass groups
+     vol_conv = {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

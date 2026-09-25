@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":425,"LineContent":"@app.route(\"/api/auth/init-admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":5,"LineContent":"  - The /api/auth/init-admin public route has been removed"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":62,"LineContent":"    SECURITY REGRESSION: The /api/auth/init-admin unauthenticated route must"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":65,"LineContent":"    resp = client.get(\"/api/auth/init-admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":67,"LineContent":"        f\"SECURITY FAILURE: /api/auth/init-admin returned {resp.status_code}. \""}

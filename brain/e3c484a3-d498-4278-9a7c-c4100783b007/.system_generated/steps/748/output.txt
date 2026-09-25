@@ -1,0 +1,21 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":143,"LineContent":"    co2_biogenic = db.Column(db.Float, default=0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1708,"LineContent":"        func.sum(Emission.co2_biogenic).label(\"total_biogenic\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1744,"LineContent":"                \"total_biogenic\": 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1759,"LineContent":"        bio = float(rec.total_biogenic or 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1765,"LineContent":"        em_map[fid][\"total_biogenic\"] += bio"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1823,"LineContent":"                \"total_biogenic\": 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1881,"LineContent":"                \"total_biogenic\": 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1949,"LineContent":"                \"total_biogenic\": 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1996,"LineContent":"            biogenic_int = (ed[\"total_biogenic\"] * 1000.0) / boe"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2000,"LineContent":"            ) = biogenic_int = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2161,"LineContent":"                \"biogenic_intensity\": biogenic_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2202,"LineContent":"                \"total_biogenic\": ed[\"total_biogenic\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":8,"LineContent":"4. Biogenic CO2 Segregation outside fossil Scope 1 totals."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":85,"LineContent":"class TestBiogenicReportingSegregationBattery:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":86,"LineContent":"    \"\"\"Verifies GHG Protocol requirement that biogenic CO2 is segregated outside fossil totals.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":88,"LineContent":"    def test_biogenic_fuel_segregation(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":98,"LineContent":"            is_biogenic=True,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":102,"LineContent":"        # Biogenic CO2 must be populated in metadata / biogenic field"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":103,"LineContent":"        # Fossil Scope 1 total MUST only include CH4 and N2O (non-CO2 biogenic emissions)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":108,"LineContent":"        # The biogenic CO2 is 900 tonnes"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":109,"LineContent":"        assert res.get(\"biogenic_co2_tonnes\", 0.0) == pytest.approx(900.0, rel=1e-5)"}

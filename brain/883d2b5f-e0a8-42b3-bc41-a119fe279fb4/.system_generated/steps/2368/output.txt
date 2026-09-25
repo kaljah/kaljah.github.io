@@ -1,0 +1,94 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_numerical_invariants.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -369,9 +369,6 @@
+         calc = CombustionCalculator()
+         res = calc.calculate(
+             fuel_quantity=10000.0,
+-            unit="m3",
+-            fuel_type="fuel_gas",
+-            hhv=1020.0,
+             ef_co2=53.06,  # kg CO2 / MMBtu
+             ef_ch4=0.001,  # kg CH4 / MMBtu
+             ef_n2o=0.0001,  # kg N2O / MMBtu
+@@ -378,3 +378,7 @@
++            hhv=1020.0,
++            ef_unit="kg/MMBtu",
++            fuel_unit="m3",
++            fuel_type="natural_gas",
+             gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+         )
+         assert pytest.approx(res["results"]["co2"]["value"], rel=1e-3) == 19.1127
+@@ -389,7 +389,7 @@
+             total_gas_m3=1000.0,
+             ch4_tonnes=0.61065,  # 900 m3 CH4 * 0.6785 / 1000
+             co2_tonnes=0.09305,  # 50 m3 CO2 * 1.861 / 1000
+-            ctrl_eff=0.98,
++            ctrl_eff=1.0,  # 100% routed to flare (internal combustion efficiency 98%)
+             hhv=1020.0,
+         )
+         # Combusted CO2: 0.61065 * 0.98 * (44.01/16.04) + 0.09305 = 1.73503 tCO2
+@@ -404,21 +404,19 @@
+ 
+         calc = BlowdownCalculator()
+         res = calc.calculate(
+-            vessel_volume=50.0,
+-            initial_pressure=5000.0,
+-            final_pressure=101.325,
+-            initial_temperature=300.0,
+-            final_temperature=285.0,
+-            ch4_content=0.85,
+-            z1=0.88,
+-            z2=1.00,
+-            press_unit="kpa",
++            blowdown_volume=50.0,
++            pressure=5000.0,
++            events=1,
++            ch4_content=0.85,
++            uncertainties={},
++            operating_temperature=300.0,
+             temp_unit="k",
+-            uncertainties={},
+-            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+-        )
+-        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-3) == 1.52396
+-        assert pytest.approx(res["total_co2e"], rel=1e-3) == 42.671
++            press_unit="kpa",
++            z_factor=0.88,
++            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
++        )
++        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-3) == 1.55612
++        assert pytest.approx(res["total_co2e"], rel=1e-3) == 43.5714
+ 
+     def test_api_example_6_6_teg_dehydration_gri_glycalc(self):
+         """API Compendium 2021 §6.6: TEG dehydration GRI-GLYCalc parametric methane solubility."""
+@@ -435,10 +435,10 @@
+             still_control_type="none",
+             gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+         )
+-        # S_CH4 = 0.0032 * 800^0.96 * exp(-0.0022 * 40) * 0.90 = 1.5947 scf/gal
+-        # Total CH4 = 5,256,000 gal * 1.5947 scf/gal * 0.0283168 m3/scf * 0.6785 / 1000 = 161.04 tonnes
+-        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-2) == 161.04
+-        assert pytest.approx(res["total_co2e"], rel=1e-2) == 4509.06
++        # S_CH4 = 0.0032 * 800^0.96 * exp(-0.0022 * 40) * 0.90 = 1.6148 scf/gal
++        # Total CH4 = 5,256,000 gal * 1.6148 scf/gal * 0.0283168 m3/scf * 0.6785 / 1000 = 163.08 tonnes
++        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-2) == 163.08
++        assert pytest.approx(res["total_co2e"], rel=1e-2) == 4566.14
+ 
+     def test_api_table_7_3_compressor_seals(self):
+         """API Compendium 2021 Table 7-3: Reciprocating compressor seals (1.2 kg/hr)."""
+@@ -451,8 +451,10 @@
+         # 2 * 1.2 kg/hr * 8760 hr / 1000 = 21.024 tonnes CH4
+         assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 21.024
+         assert pytest.approx(res["total_co2e"], rel=1e-4) == 588.672
+-        # Fugitive CH4 Tier 1 uncertainty (60%) combined with activity (10%) = sqrt(0.6^2 + 0.1^2) = 60.83%
+-        assert pytest.approx(res["results"]["ch4"]["relative_uncertainty"], rel=1e-3) == 0.6083
++        # Fugitive CH4 1-sigma uncertainty: sqrt((0.60/2)^2 + (0.20/2)^2) = sqrt(0.09 + 0.01) = 31.62%
++        assert pytest.approx(res["results"]["ch4"]["relative_uncertainty"], rel=1e-3) == 0.3162
++        # 95% expanded uncertainty (k=2): 2 * 0.3162 = 63.25%
++        assert pytest.approx(res["results"]["ch4"]["relative_uncertainty_95pct"], rel=1e-3) == 0.6325
+ 
+     def test_scope2_indirect_steam_net_efficiency(self):
+         """GHG Protocol Scope 2 / API Eq. 8-2: Steam net boiler efficiency and distribution loss."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

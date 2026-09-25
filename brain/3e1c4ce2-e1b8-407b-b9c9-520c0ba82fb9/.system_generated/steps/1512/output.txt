@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_carbon_intensity_validation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -334,11 +334,12 @@
+ def test_zero_production_resilience(ci_setup):
+     """Verify facilities with 0 production safely return 0.0 intensities without crashing."""
+     with flask_app.app_context():
+-        # Query fac1 for a year with no production
+-        stats = _query_intensity_stats(year="2015", facility_id=str(ci_setup["fac1"].id))
++        # fac3 has emissions in 2026 but zero production records
++        stats = _query_intensity_stats(year="2026", facility_id=str(ci_setup["fac3"].id))
+         assert len(stats) >= 1
+         rec = stats[0]
+         assert rec["total_boe"] == 0.0
++        assert rec["total_co2e"] == 200.0
+         assert rec["co2_intensity"] == 0.0
+         assert rec["scope1_intensity"] == 0.0
+         assert rec["scope1_intensity_gwp20"] == 0.0
+@@ -384,7 +384,7 @@
+     assert sample["cn_code"] == "7203 10 00"
+     assert sample["specific_embedded_direct"] == 1.125
+     assert sample["specific_embedded_indirect"] == 0.245
+-    assert sample["total_embedded_emissions"] == 5000.0 * (1.125 + 0.245)
++    assert abs(sample["total_embedded_emissions"] - 6850.0) < 1e-4
+ 
+ 
+ def test_cbam_exports_cache_invalidation(auth_client, ci_setup):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

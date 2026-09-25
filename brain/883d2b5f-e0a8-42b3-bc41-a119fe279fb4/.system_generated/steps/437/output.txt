@@ -1,0 +1,95 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_all_bulk_imports.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -461,4 +461,89 @@
+         assert s1 is not None
+         assert s1.process_type == "combustion"
+         assert s1.co2e_total > 0
++
++def test_bulk_import_duplicate_prevention_and_overwrite(logged_client, app):
++    """DEF-04 Verification: Ensure duplicate rows are skipped by default and updated when overwrite_duplicates=True."""
++    client = logged_client
++    with app.app_context():
++        fac = Facility.query.filter_by(name="Test Facility A").first()
++        if not fac:
++            fac = Facility(name="Test Facility A")
++            db.session.add(fac)
++            db.session.commit()
++        # Clean test records
++        Emission.query.filter_by(year=2025, month=1).delete()
++        db.session.commit()
++
++    csv_data = (
++        "facility_name,date,process,fuel,quantity,unit\n"
++        "Test Facility A,2025-01,combustion,Natural Gas,1000,scf\n"
++    )
++    mapping = {
++        "facility_name": "facility_name",
++        "date": "date",
++        "process": "process",
++        "fuel": "fuel",
++        "quantity": "quantity",
++        "unit": "unit"
++    }
++
++    # First upload: should insert 1 record
++    res1 = client.post("/api/emissions/upload/start", data={
++        "scope": "1",
++        "global_factor_type": "default",
++        "mapping": json.dumps(mapping),
++        "file": (io.BytesIO(csv_data.encode("utf-8")), "scope1_test.csv")
++    }, content_type="multipart/form-data")
++    assert res1.status_code == 200
++    job1 = wait_for_job(client, res1.get_json()["job_id"])
++    assert job1["status"] == "completed"
++
++    with app.app_context():
++        count1 = Emission.query.filter_by(year=2025, month=1).count()
++        assert count1 == 1
++
++    # Second upload WITHOUT overwrite: should skip the duplicate row
++    res2 = client.post("/api/emissions/upload/start", data={
++        "scope": "1",
++        "global_factor_type": "default",
++        "overwrite_duplicates": "false",
++        "mapping": json.dumps(mapping),
++        "file": (io.BytesIO(csv_data.encode("utf-8")), "scope1_test.csv")
++    }, content_type="multipart/form-data")
++    assert res2.status_code == 200
++    job2 = wait_for_job(client, res2.get_json()["job_id"])
++    assert job2["status"] == "completed"
++    assert job2["skipped_count"] == 1
++    assert "Duplicate record" in job2["skipped_preview"][0]["reason"]
++
++    with app.app_context():
++        # Count MUST still be 1 (NOT silently doubled to 2!)
++        count2 = Emission.query.filter_by(year=2025, month=1).count()
++        assert count2 == 1
++
++    # Third upload WITH overwrite and new quantity: should update in place
++    csv_updated = (
++        "facility_name,date,process,fuel,quantity,unit\n"
++        "Test Facility A,2025-01,combustion,Natural Gas,2500,scf\n"
++    )
++    res3 = client.post("/api/emissions/upload/start", data={
++        "scope": "1",
++        "global_factor_type": "default",
++        "overwrite_duplicates": "true",
++        "mapping": json.dumps(mapping),
++        "file": (io.BytesIO(csv_updated.encode("utf-8")), "scope1_updated.csv")
++    }, content_type="multipart/form-data")
++    assert res3.status_code == 200
++    job3 = wait_for_job(client, res3.get_json()["job_id"])
++    assert job3["status"] == "completed"
++
++    with app.app_context():
++        count3 = Emission.query.filter_by(year=2025, month=1).count()
++        assert count3 == 1
++        updated_rec = Emission.query.filter_by(year=2025, month=1).first()
++        assert updated_rec.quantity == 2500
++        # Cleanup
++        Emission.query.filter_by(year=2025, month=1).delete()
++        db.session.commit()
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

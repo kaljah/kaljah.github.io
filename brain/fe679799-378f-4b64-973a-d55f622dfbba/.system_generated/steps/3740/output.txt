@@ -1,0 +1,33 @@
+The search for ""spécifications" carburants Algerie "journal officiel" OR "arrêté" gasoil essence "pouvoir calorifique"" returned the following summary:
+En Algérie, les spécifications techniques des carburants (essence, gasoil, GPL) sont régies par des **normes algériennes (NA)** homologuées[1][2], auxquelles font référence les textes réglementaires publiés au **Journal officiel** (notamment les décrets exécutifs relatifs aux activités d'hydrocarbures et à la tarification des produits pétroliers)[3][4][5].
+
+### Cadre Réglementaire
+La réglementation algérienne impose que les produits pétroliers mis sur le marché national respectent les normes de qualité et les spécifications techniques en vigueur[1][6] :
+*   **Textes de référence :** Les décrets exécutifs (tels que le décret n° 21-63[3][5] ou ceux relatifs au stockage et au transport des hydrocarbures[1][6]) précisent que les essences et le gasoil doivent être conformes aux spécifications ou normes algériennes.
+*   **Normes spécifiques (exemples) :** 
+    *   **NA 8108 :** Concerne l'essence normale et l'essence super[2].
+    *   **NA 11042 :** Concerne l'essence sans plomb[2][7].
+    *   **NA 8110 :** Concerne le gasoil[8].
+
+### Pouvoir Calorifique
+Le pouvoir calorifique est une propriété physique utilisée dans les méthodes d'essai normalisées pour caractériser la qualité énergétique des carburants[9][2].
+*   **Méthodologie :** Les normes algériennes intègrent souvent des méthodes d'essai internationales (ISO/EN) pour déterminer ces caractéristiques[10][7]. Par exemple, la norme **NA 2802** porte sur l'estimation du pouvoir calorifique inférieur des carburants aviation (basée sur l'ISO 3648)[10].
+*   **Utilisation :** Bien que les valeurs précises soient contenues dans les fiches techniques des produits pétroliers et les documents de normalisation, elles sont calculées selon les protocoles techniques stricts mentionnés dans le catalogue de l'**Institut Algérien de Normalisation (IANOR)**[10][7].
+
+### Où consulter les détails techniques ?
+Pour obtenir les valeurs exactes du pouvoir calorifique ou les spécifications détaillées (teneur en soufre, indice d'octane, masse volumique, etc.), il est recommandé de consulter :
+1.  **Le catalogue des normes algériennes** édité par l'IANOR[10][7].
+2.  **Les fiches techniques de production** fournies par l'exploitant (généralement Sonatrach/Naftal), qui doivent être conformes à ces normes[8].
+3.  **Le Journal officiel** pour les textes d'application qui rendent obligatoire le respect de ces normes techniques[3][4].
+
+Sources:
+[1] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGUUDouHplVYqF0hkvcVTCPLVlXGOv0kNNNpjyMHzdUDtZmacIFOZ8gdLBaW9lD9MjnunyG7cWe3-hu-n5u3hUCBLYrZVLYJajd_rdcb-trGe_OfSDCMOIbZmufohOn8rCRuRTbLLf68Q54Hf7cjMs1doK86LunD3Pw9NXRzbY=)
+[2] [univ-ouargla.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFq7BjaHUBrrOWbmPEEo1HPSJdPxvI_XE0zvfe5skZJvPbgmGGZGGtaBpCvJbqtp1d9L4BjSCSAxJZpFtnkbmJ3bkuK5U6Yt58BakkkydZqM5KekbuNUhPT43nyo1Xm2jcCuVJSqOzPmLmtZjh6C9KJabh2WeNQHJq5YNx6AjyDtDFMTx0dwQo4m2IoNCQTuZtv3C4=)
+[3] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGAY57YrKRse7ahOJu6TvjwN1e7jJ_teAlfrLiSzPpXw_jXevaY1nhGM--MWxQkKpq5SRCGhqcUBmeDa0SblmAmaHo2E9j7p5CZ_gX3a3ApwCZxUJMcj6WufLTNvF3iZgMcQh7RXm2d_4RHWCeO_aEJuZ-S342D7o8Cv8pH3q3c3SeTq4Tr0_5hQjCCCYZNTRK5biVTzYw2_mMRxmikBFbYP7nFeZe36H0YYFHrO5RYf09m3iJSpkiMCmCjGdnZaNzMve2sQaZJF6c077zRdcD-feNF_q1OqugSrDmbXWfmRJzrCy_MvyeRs0qXySoy4TmcBaoDxZAxKhgY)
+[4] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGAY57YrKRse7ahOJu6TvjwN1e7jJ_teAlfrLiSzPpXw_jXevaY1nhGM--MWxQkKpq5SRCGhqcUBmeDa0SblmAmaHo2E9j7p5CZ_gX3a3ApwCZxUJMcj6WufLTNvF3iZgMcQh7RXm2d_4RHWCeO_aEJuZ-S342D7o8Cv8pH3q3c3SeTq4Tr0_5hQjCCCYZNTRK5biVTzYw2_mMRxmikBFbYP7nFeZe36H0YYFHrO5RYf09m3iJSpkiMCmCjGdnZaNzMve2sQaZJF6c077zRdcD-feNF_q1OqugSrDmbXWfmRJzrCy_MvyeRs0qXySoy4TmcBaoDxZAxKhgY)
+[5] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGAY57YrKRse7ahOJu6TvjwN1e7jJ_teAlfrLiSzPpXw_jXevaY1nhGM--MWxQkKpq5SRCGhqcUBmeDa0SblmAmaHo2E9j7p5CZ_gX3a3ApwCZxUJMcj6WufLTNvF3iZgMcQh7RXm2d_4RHWCeO_aEJuZ-S342D7o8Cv8pH3q3c3SeTq4Tr0_5hQjCCCYZNTRK5biVTzYw2_mMRxmikBFbYP7nFeZe36H0YYFHrO5RYf09m3iJSpkiMCmCjGdnZaNzMve2sQaZJF6c077zRdcD-feNF_q1OqugSrDmbXWfmRJzrCy_MvyeRs0qXySoy4TmcBaoDxZAxKhgY)
+[6] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGUUDouHplVYqF0hkvcVTCPLVlXGOv0kNNNpjyMHzdUDtZmacIFOZ8gdLBaW9lD9MjnunyG7cWe3-hu-n5u3hUCBLYrZVLYJajd_rdcb-trGe_OfSDCMOIbZmufohOn8rCRuRTbLLf68Q54Hf7cjMs1doK86LunD3Pw9NXRzbY=)
+[7] [ianor.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOXCWLmDmPPMNHMsH87kWEXAMkw47Lu9L1Nn3UiazhBE5PhMH7_JAtA2SLPYKqLHpX7bjzgOG8PCQfvHsTQNvnAihTmYFesbADwzk6uNysAK5UWv62OFtcx8l6HzvtcB_GJfcx-1Z4YqzJZqY6w3kAKBwHMM_KbZWm_cLsbRl6eR1dzrQ=)
+[8] [petrobaraka.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFE3LRvqGNPORJVS_N76rY3indRXx9xWSMMXnYixrVoaAdczG6gtrIU45sM6LFY-Y3h4CeRse0bwLHetA6m_WMfZ3FMugIC6Ka8UxNtyxbWFZPJjOp0pbZhjIhdBY4O7BVO00X3tKkaf0eeBAEUIivrlQ_QQW8eWHdNAFeO9McEZE5HR4J5wm5oyT5MLl834tDNJ7qPkg15DV0mWGpWZNa75G89aJ9t)
+[9] [wikipedia.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFos7IhQIETPYgVMrh-32IVKT7Yylf2F-iAkfFe3fZr9KT4EuetEuOAEieAB54tKySyAom03vZMXSTuqa8eHv0HWw9cyybKoSNHXV-YMw4GshO5RnCwQ__c2_hE3HNZGtVKAkP-PWPP)
+[10] [ianor.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOXCWLmDmPPMNHMsH87kWEXAMkw47Lu9L1Nn3UiazhBE5PhMH7_JAtA2SLPYKqLHpX7bjzgOG8PCQfvHsTQNvnAihTmYFesbADwzk6uNysAK5UWv62OFtcx8l6HzvtcB_GJfcx-1Z4YqzJZqY6w3kAKBwHMM_KbZWm_cLsbRl6eR1dzrQ=)

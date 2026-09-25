@@ -1,0 +1,20 @@
+Task: 58d1779c-3262-42e4-97ac-fc0b6e68f727/task-317
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\58d1779c-3262-42e4-97ac-fc0b6e68f727\.system_generated\tasks\task-317.log
+Log output:
+<truncated 1417 lines>
+b\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_audit.py::test_audit_rbac_regular_user_forbidden - sqlalchem...
+ERROR tests/test_audit.py::test_audit_admin_and_it_admin_authorized - sqlalch...
+ERROR tests/test_audit.py::test_audit_search_and_filtering - sqlalchemy.exc.O...
+ERROR tests/test_audit.py::test_audit_entity_id_fallback - sqlalchemy.exc.Ope...
+ERROR tests/test_audit.py::test_audit_stats_endpoint - sqlalchemy.exc.Operati...
+ERROR tests/test_audit.py::test_audit_export_csv_and_formula_injection_defense
+ERROR tests/test_audit.py::test_audit_pagination_limits - sqlalchemy.exc.Oper...
+=================== 9 passed, 1 warning, 7 errors in 4.96s ====================
+
+Last progress: 1s ago

@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Rendered neocarbon_flyer.pdf
+Captured preview_en_page_1.png
+Captured preview_en_page_2.png
+Rendered neocarbon_flyer_fr.pdf
+Captured preview_fr_page_1.png
+Captured preview_fr_page_2.png
+

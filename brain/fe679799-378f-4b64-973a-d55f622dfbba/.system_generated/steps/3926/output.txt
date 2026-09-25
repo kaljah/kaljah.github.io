@@ -1,0 +1,219 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -152,4 +152,213 @@
+   color: #ff6b00;
+   /* Accent color */
+ }
++
++/* ==========================================================================
++   Tier 2 UI & Methodology Selector Styles
++   ========================================================================== */
++
++.methodology-toggle {
++  background: #f3f4f6;
++  padding: 3px;
++  border-radius: 8px;
++  display: flex;
++  gap: 4px;
++  border: 1px solid #e5e7eb;
++}
++
++.tier-selector-btn {
++  display: flex;
++  align-items: center;
++  gap: 6px;
++  padding: 4px 10px;
++  border-radius: 6px;
++  border: none;
++  background: transparent;
++  color: #6b7280;
++  font-size: 0.75rem;
++  font-weight: 500;
++  cursor: pointer;
++  transition: all 0.15s ease;
++}
++
++.tier-selector-btn:hover {
++  color: #374151;
++  background: rgba(255, 255, 255, 0.5);
++}
++
++.tier-selector-btn.active {
++  background: #ffffff;
++  color: var(--accent-color, #ff6600);
++  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
++  font-weight: 600;
++}
++
++.tier-selector-btn .tier-tag {
++  padding: 1px 5px;
++  border-radius: 4px;
++  font-size: 0.68rem;
++  font-weight: 700;
++  background: #e5e7eb;
++  color: #4b5563;
++}
++
++.tier-selector-btn.active .tier-tag {
++  background: rgba(255, 102, 0, 0.12);
++  color: var(--accent-color, #ff6600);
++}
++
++.tier2-mode-container {
++  margin-top: 10px;
++  background: #fafafa;
++  border: 1px solid #e5e7eb;
++  border-radius: 8px;
++  padding: 14px;
++}
++
++.tier2-mode-tabs {
++  display: flex;
++  gap: 6px;
++  margin-bottom: 12px;
++  border-bottom: 1px solid #e5e7eb;
++  padding-bottom: 8px;
++}
++
++.tier2-mode-btn {
++  display: flex;
++  align-items: center;
++  gap: 6px;
++  padding: 6px 12px;
++  border-radius: 6px;
++  border: 1px solid transparent;
++  background: transparent;
++  color: #6b7280;
++  font-size: 0.75rem;
++  font-weight: 500;
++  cursor: pointer;
++  transition: all 0.15s ease;
++}
++
++.tier2-mode-btn:hover {
++  background: #f3f4f6;
++  color: #374151;
++}
++
++.tier2-mode-btn.active {
++  background: #ffffff;
++  border-color: #d1d5db;
++  color: var(--accent-color, #ff6600);
++  font-weight: 600;
++  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
++}
++
++.tier2-override-card {
++  display: flex;
++  flex-direction: column;
++  gap: 12px;
++}
++
++.official-presets-section {
++  background: #ffffff;
++  border: 1px solid #e5e7eb;
++  border-radius: 6px;
++  padding: 10px 12px;
++}
++
++.official-presets-header {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  margin-bottom: 8px;
++}
++
++.official-presets-title {
++  display: flex;
++  align-items: center;
++  gap: 6px;
++  font-size: 0.75rem;
++  font-weight: 600;
++  color: #374151;
++}
++
++.official-presets-chips {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 6px;
++}
++
++.preset-chip {
++  display: flex;
++  align-items: center;
++  gap: 6px;
++  padding: 4px 8px;
++  border-radius: 6px;
++  border: 1px solid #e5e7eb;
++  background: #f9fafb;
++  font-size: 0.72rem;
++  color: #374151;
++  cursor: pointer;
++  transition: all 0.15s ease;
++}
++
++.preset-chip:hover {
++  background: #f3f4f6;
++  border-color: #cbd5e1;
++  transform: translateY(-1px);
++}
++
++.preset-chip.active {
++  background: rgba(255, 102, 0, 0.08);
++  border-color: var(--accent-color, #ff6600);
++  color: var(--accent-color, #ff6600);
++  font-weight: 600;
++}
++
++.preset-citation-badge {
++  padding: 1px 4px;
++  border-radius: 3px;
++  font-size: 0.65rem;
++  font-weight: 700;
++  text-transform: uppercase;
++  letter-spacing: 0.02em;
++}
++
++.preset-citation-badge.legal {
++  background: #dbeafe;
++  color: #1e40af;
++}
++
++.preset-citation-badge.standard {
++  background: #fef3c7;
++  color: #92400e;
++}
++
++.preset-citation-badge.api {
++  background: #e0e7ff;
++  color: #3730a3;
++}
++
++.tier2-inputs-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 12px;
++}
++
++@media (max-width: 640px) {
++  .tier2-inputs-grid {
++    grid-template-columns: 1fr;
++  }
++}
++
++.tier2-preview-badge {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  padding: 8px 12px;
++  background: #ecfdf5;
++  border: 1px solid #a7f3d0;
++  border-radius: 6px;
++  flex-wrap: wrap;
++  gap: 6px;
++}
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\extensions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -6,17 +6,27 @@
+ db = SQLAlchemy()
+ 
+ # ── Rate limiting ─────────────────────────────────────────────────────────────
+-# Storage URI is configured in config.py (RATELIMIT_STORAGE_URI).
+-# Default: SQLite on disk → shared across all workers on the same machine.
+-# Scale-out: set RATELIMIT_STORAGE_URI=redis://localhost:6379/0 in .env
+-#
+-# Flask-Limiter reads RATELIMIT_STORAGE_URI from the Flask app config
+-# automatically when init_app() is called, so we leave storage_uri unset here
+-# and let the config drive it.  This avoids duplicating the path.
++# Global defaults apply to ALL endpoints unless overridden by a per-route
++# @limiter.limit(...) decorator.
++#
++# Default: 200 requests/minute and 2000 requests/hour per IP address.
++# Override via RATELIMIT_DEFAULT env var (e.g. "100 per minute").
++#
++# Auth endpoints have stricter per-route limits (e.g. login: 20/15min).
++# Calculation-heavy endpoints have their own limits (e.g. 100/min).
++#
++# Storage: reads RATELIMIT_STORAGE_URI from Flask app.config during init_app().
++# Default: memory:// (single process only — safe for dev and single-worker).
++# Multi-worker production: set RATELIMIT_STORAGE_URI=redis://host:6379/0
++#
+ limiter = Limiter(
+     key_func=get_remote_address,
+-    default_limits=[],
++    default_limits=[
++        os.environ.get("RATELIMIT_DEFAULT", "200 per minute"),
++        "2000 per hour",
++    ],
+     # storage_uri is intentionally NOT set here — it is read from
+     # app.config["RATELIMIT_STORAGE_URI"] during init_app() call in app.py.
+ )
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

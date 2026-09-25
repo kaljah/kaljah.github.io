@@ -1,0 +1,4 @@
+## Console messages
+Showing 1-2 of 2 (Page 1 of 1).
+msgid=6 [issue] No label associated with a form field (count: 14)
+msgid=7 [issue] A form field element should have an id or name attribute (count: 11)

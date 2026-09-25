@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+============================================================
+VISUAL AUDIT: Heatmaps, Trends, Pie Charts, and Data Tables
+============================================================
+
+--- Audit 1: Chart formatValue Resilience ---
+PASS: Chart formatValue handles null
+PASS: Chart formatValue handles undefined
+PASS: Chart formatValue handles NaN
+PASS: Chart formatValue handles Infinity
+PASS: Chart formatValue handles -Infinity
+PASS: Chart formatValue handles 0
+PASS: Chart formatValue formats 1,250 as 1.3k
+PASS: Chart formatValue formats 2.5M
+PASS: Chart formatValue formats negative thousands
+
+--- Audit 2: PieChart Data Sanitization and Zero-Sum Handling ---
+PASS: PieChart triggers empty state on all-zero values
+PASS: PieChart clamps negative slice to 0
+PASS: PieChart correctly totals sanitized non-negative slices
+
+--- Audit 3: Heatmap Classification Guardrails ---
+PASS: Carbon heatmap maps null to heat-null
+PASS: Carbon heatmap maps undefined to heat-null
+PASS: Carbon heatmap maps NaN to heat-null
+PASS: Carbon heatmap maps 0 to heat-null
+PASS: Carbon heatmap maps 12 to heat-lux (< 18)
+PASS: Carbon heatmap maps 55 to heat-crit (>= 48)
+PASS: Methane heatmap maps null to heat-null
+PASS: Methane heatmap maps undefined to heat-null
+PASS: Methane heatmap maps NaN to heat-null
+PASS: Methane heatmap maps 0 to heat-null
+PASS: Methane heatmap maps 0.02% to heat-lux (< 0.05%)
+PASS: Methane heatmap maps 0.65% to heat-crit (>= 0.5%)
+
+--- Audit 4: Table Column Alignment Verification ---
+PASS: Scope1Form header has exactly 22 columns (found 22)
+PASS: Scope1Form tfoot columns span 14 (label) + 1 (total) + 7 (trailing) = 22
+PASS: Scope1Form empty state spans 22 columns
+PASS: Scope2Form header has exactly 11 columns (found 11)
+PASS: Scope2Form tfoot columns span 7 (label) + 1 (total) + 3 (trailing) = 11
+PASS: Scope2Form empty and loading states span 11 columns
+
+--- Audit 5: Backend Year Sorting Resilience ---
+PASS: Backend year query filters nulls, non-digits, deduplicates, and sorts descending
+
+============================================================
+VISUAL AUDIT COMPLETE: 31/31 checks PASSED (100%)
+============================================================
+
+

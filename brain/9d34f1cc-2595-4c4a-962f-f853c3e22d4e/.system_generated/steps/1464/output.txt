@@ -1,0 +1,93 @@
+
+The command exited with code 1.
+Output:
+........................................................................ [  6%]
+........................................................................ [ 12%]
+........................................................................ [ 19%]
+........................................................................ [ 25%]
+.....................................................F.................. [ 31%]
+........................................................................ [ 38%]
+........................................................................ [ 44%]
+........................................F............................... [ 50%]
+........................................................................ [ 57%]
+........................................................................ [ 63%]
+........................................................................ [ 69%]
+........................................................................ [ 76%]
+........................................................................ [ 82%]
+........................................................................ [ 88%]
+........................................................................ [ 95%]
+................................................F.......                 [100%]
+================================== FAILURES ===================================
+_________ TestBlowdownBattery.test_blowdown_with_z_factor_correction __________
+tests\test_battery_midstream_process_equipment.py:262: in test_blowdown_with_z_factor_correction
+    assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-4) == ref["ch4"]
+E   assert 19.25426758192284 � 0.00192543 == 18.944918118949417
+E     
+E     comparison failed
+E     Obtained: 18.944918118949417
+E     Expected: 19.25426758192284 � 0.00192543
+______________ TestDifferentialScope1.test_diff_vessel_blowdown _______________
+tests\test_independent_differential.py:215: in test_diff_vessel_blowdown
+    assert pytest.approx(res_prod["results"]["ch4"]["value"], rel=1e-4) == res_ref["ch4"]
+E   assert 8.34630752909345 � 8.3e-04 == 8.009979915279324
+E     
+E     comparison failed
+E     Obtained: 8.009979915279324
+E     Expected: 8.34630752909345 � 8.3e-04
+__________________________ test_blowdown_calculator ___________________________
+tests\test_vented.py:87: in test_blowdown_calculator
+    assert abs(res["results"]["ch4"]["value"] - 0.111) < 0.01
+E   assert 0.016456723105201312 < 0.01
+E    +  where 0.016456723105201312 = abs((0.1274567231052013 - 0.111))
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_audit_remediation.py::test_scope3_tonne_factor_handling
+tests/test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_delimiters_semicolon
+tests/test_reports.py::test_reports_it_admin_forbidden
+tests/test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+tests/test_ui_calculation_parity.py::TestScope2UINumericalParity::test_indirect_steam_heat_ui_parity
+  C:\Users\samsung\Desktop\H2\new\server\app.py:123: SADeprecationWarning: The _ConnectionFairy.connection attribute is deprecated; please use 'driver_connection' (deprecated since: 2.0)
+    driver_conn = getattr(conn, "driver_connection", getattr(conn, "connection", None))
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\packaging\core.py:99: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.datetime.utcnow()
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\writer\excel.py:292: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    workbook.properties.modified = datetime.datetime.utcnow()
+
+tests/test_zero_trust_adversarial.py::test_notification_broadcast_handling
+  C:\Users\samsung\anaconda3\Lib\site-packages\flask_sqlalchemy\query.py:30: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    rv = self.get(ident)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+----------------------------------------------------------- benchmark: 1 tests ----------------------------------------------------------
+Name (time in us)                             Min       Max    Mean  StdDev  Median     IQR    Outliers  OPS (Kops/s)  Rounds  Iterations
+-----------------------------------------------------------------------------------------------------------------------------------------
+test_benchmark_uncertainty_propagation     2.6000  694.1000  4.4290  4.5010  3.3000  0.6000  2980;10884      225.7837   50762           1
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Legend:
+  Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
+  OPS: Operations Per Second, computed as 1 / Mean
+=========================== short test summary info ===========================
+FAILED tests/test_battery_midstream_process_equipment.py::TestBlowdownBattery::test_blowdown_with_z_factor_correction
+FAILED tests/test_independent_differential.py::TestDifferentialScope1::test_diff_vessel_blowdown
+FAILED tests/test_vented.py::test_blowdown_calculator - assert 0.016456723105...
+3 failed, 1133 passed, 19 warnings in 44.51s
+

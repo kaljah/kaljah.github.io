@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+ M graphify-out/.graphify_analysis.json
+ M graphify-out/.graphify_labels.json
+ M graphify-out/.graphify_labels.json.sig
+ M graphify-out/GRAPH_REPORT.md
+ D graphify-out/cache/semantic/pf33081f95084/48bb5dde6d577f5a4071dcb3fb534a111db09c8cbcb771770150519571854812.json
+ D graphify-out/cache/semantic/pf33081f95084/79ef7cdc91f1823ac2836a8c761d7de000ffd4cb911a109ebe6006fc16d092ff.json
+ D graphify-out/cache/semantic/pf33081f95084/be1990ab15c3a4079e63a86357f8d09d77a1a44f10527fc50ccdb2926909b147.json
+ D graphify-out/cache/semantic/pf33081f95084/eaaafe7816887a8a280f1f0dec30d0adac71401b04fa32fbba2ad42c0f5f4853.json
+ M graphify-out/graph.html
+ M graphify-out/graph.json
+ M graphify-out/manifest.json
+ M new/client/src/components/Scope1Form.css
+ M new/client/src/components/Scope1Form.jsx
+ M new/client/stats.html
+ M new/server/calculations/combustion.py
+ M new/server/calculations/dispatcher.py
+ M new/server/calculations/legacy_engine.py
+ M new/server/routes/auth.py
+ M new/server/routes/emissions.py
+ M new/server/tests/test_tier_scope_kpi_numerical.py
+?? graphify-out/2026-09-24/
+?? new/client/src/components/QuickAddCustomFactorModal.jsx
+?? new/client/src/constants/
+?? new/server/tests/test_tier2_api_e2e.py
+

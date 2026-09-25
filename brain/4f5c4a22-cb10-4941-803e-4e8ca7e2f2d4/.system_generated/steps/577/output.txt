@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -215,6 +215,15 @@
+           if (await specificBtn.isVisible()) await specificBtn.click();
+           await page.waitForTimeout(300);
+ 
++          const factorDropdown = page.locator('.input-group:has-text("Emission Factor") .dropdown-selected').first();
++          if (await factorDropdown.isVisible().catch(() => false)) {
++            await factorDropdown.click();
++            await page.waitForTimeout(300);
++            const fuelOption = page.locator('.dropdown-portal .dropdown-option:has-text("Natural Gas")').first();
++            if (await fuelOption.isVisible().catch(() => false)) await fuelOption.click();
++            else await page.keyboard.press('Escape');
++          }
++
+           const qty = page.locator('.combustion-form input[placeholder="0.00"]').first();
+           if (await qty.isVisible()) await qty.fill('150000');
+ 
+@@ -234,6 +234,15 @@
+           if (await specificBtn.isVisible()) await specificBtn.click();
+           await page.waitForTimeout(300);
+ 
++          const factorDropdown = page.locator('.input-group:has-text("Emission Factor") .dropdown-selected').first();
++          if (await factorDropdown.isVisible().catch(() => false)) {
++            await factorDropdown.click();
++            await page.waitForTimeout(300);
++            const fuelOption = page.locator('.dropdown-portal .dropdown-option:has-text("Natural Gas")').first();
++            if (await fuelOption.isVisible().catch(() => false)) await fuelOption.click();
++            else await page.keyboard.press('Escape');
++          }
++
+           const qty = page.locator('.combustion-form input[placeholder="0.00"]').first();
+           if (await qty.isVisible()) await qty.fill('25000');
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

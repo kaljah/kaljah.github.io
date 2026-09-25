@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1465,4 +1465,34 @@
+   - Codebase knowledge graph synchronized: **`graphify update .`** (2,201 nodes, 4,663 edges, 207 communities).
+ - **Status:** Complete, verified, and in full synchronization with the repository.
+ 
++### [2026-09-16T09:30:00Z] - ARCHITECTURAL INCOHERENCY REMEDIATION & METROLOGICAL REALIGNMENT
++- **Action:** Resolved foundational architectural incoherencies across CSV ingestion factor resolution, vented/fugitive deduplication keys, OGMP 2.0 Gold Standard prerequisites, and dashboard pending data operational visibility.
++- **Files Modified & Hardened:**
++  - `new/server/background_processor.py`:
++    - Hardened `_process_row` (line 1614) in `global_factor_type == "auto"` mode to recognize site-specific and engineering factor classifications (`"specific"`, `"site_specific"`, `"engineering"`, `"tier3"`, `"tier_3"`, `"t3"`, `"cems"`), correctly mapping to `factor_source = "specific"` (Tier 3) rather than silently downgrading to Tier 1 default factors.
++    - Defined `NON_COMBUSTION_PROCESSES` constant covering pneumatics, venting, blowdowns, liquids unloading, tank flashing, dehydrators, AGR, and fugitive leaks.
++    - Canonicalized `fuel_k = ""` for all non-combustion processes in `batch_scope1_map` and database deduplication queries, ensuring fugitive and vented equipment leaks are deduplicated by equipment/process/period regardless of arbitrary fuel strings entered by operators.
++  - `new/server/services/ogmp.py`:
++    - Updated `compute_facility_ogmp_level` with `bottom_up_level: Optional[int] = None` and auto-resolution from facility emission records.
++    - Enforced strict UNEP OGMP 2.0 Gold Standard rule: reconciling top-down and bottom-up within threshold only awards Level 5 if bottom-up is Level 4 (source-level measured / Tier 3 engineering). Reconciling top-down surveys against Level 2 or Level 3 desk estimates is strictly capped at Level 4.
++  - `new/server/routes/dashboard.py`:
++    - Updated `_query_summary` to accept `include_pending: bool = False`. When True, includes both `"Verified"` and `"Pending"` records across Scope 1, Scope 2, and activity queries.
++    - In `get_batch_dashboard_data`, extracted `includePending` query parameter, passed to summary queries, and computed `pending_stats = {"count": N, "totalCo2e": Y}` returned in JSON response.
++  - `new/client/src/pages/DashboardEnhanced.jsx`:
++    - Added `includePending` toggle and `pendingCo2e` state tracking.
++    - Replaced admin-only static pending banner with interactive banner visible to all users with `[ ] Preview Pending Data` toggle, allowing operators to preview in-flight data on charts before admin verification without violating the Maker-Checker governance invariant.
++  - `new/server/tests/test_csv_engine_matrix.py`:
++    - Added `test_auto_factor_type_supports_tier3_specific` verifying that CSV rows with factor type `"specific"` correctly assign `factor_source = "specific"` (Tier 3) in auto mode.
++  - `new/server/tests/test_all_bulk_imports.py`:
++    - Added `test_vented_fuel_key_deduplication_normalization` verifying that non-combustion sources (e.g., pneumatics) normalize `fuel_k` to empty string and skip duplicate rows even when different fuel labels are present.
++  - `new/server/tests/test_tier_scope_kpi_numerical.py`:
++    - Added `test_ogmp_facility_level_5_requires_level_4_bottom_up` verifying that facility OGMP classification caps at Level 4 if `bottom_up_level < 4`, even when top-down survey variance is within 5%.
++- **Verification:**
++  - Automated targeted verification passed: **87 passed, 1 warning** in 10.31s (`python -m pytest new/server/tests/test_csv_engine_matrix.py new/server/tests/test_all_bulk_imports.py new/server/tests/test_tier_scope_kpi_numerical.py`).
++  - Full backend pytest suite passed: **217 passed, 52 warnings** in 21.58s (`python -m pytest new/server/tests/`).
++  - Frontend production build passed: **`npm run build` completed in 10.41s** (0 errors, 3,200 modules).
++  - Codebase knowledge graph synchronized: **`graphify update .`** (2,208 nodes, 4,678 edges, 215 communities).
++- **Status:** Complete, verified, and in full synchronization with the repository.
++
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

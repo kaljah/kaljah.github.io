@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx
+  417:6  warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 1 problem (0 errors, 1 warning)
+
+

@@ -1,0 +1,49 @@
+
+The command exited with code 0.
+Output:
+======================================================================
+STARTING INDEPENDENT GHG VALIDATION SUITE EXECUTION
+======================================================================
+
+[RUNNING] Permanent Regression Archive (test_regression_archive.py)...
+[PASSED] in 2.99s | Summary: ============================== 9 passed in 0.53s ==============================
+
+[RUNNING] Independent Differential Suite (test_independent_differential.py)...
+[PASSED] in 4.87s | Summary: ============================= 16 passed in 0.63s ==============================
+
+[RUNNING] Golden Dataset Validation Suite (test_golden_dataset_validation.py)...
+[PASSED] in 5.25s | Summary: ============================= 25 passed in 0.62s ==============================
+
+[RUNNING] Exhaustive Unit Conversions (test_unit_conversions_exhaustive.py)...
+[PASSED] in 5.46s | Summary: ============================= 277 passed in 0.97s =============================
+
+[RUNNING] Property Invariants (Hypothesis) (test_property_invariants.py)...
+[PASSED] in 5.68s | Summary: ============================== 6 passed in 1.14s ==============================
+
+[RUNNING] Emission Factor Selection (test_emission_factor_selection.py)...
+[PASSED] in 4.97s | Summary: ============================= 10 passed in 0.55s ==============================
+
+[RUNNING] Boundary & Resilience Suite (test_boundary_and_negative.py)...
+[PASSED] in 5.00s | Summary: ============================= 13 passed in 0.54s ==============================
+
+[RUNNING] Aggregation & Reconciliation (test_aggregation_reconciliation.py)...
+[PASSED] in 4.94s | Summary: ============================== 6 passed in 0.57s ==============================
+
+======================================================================
+VALIDATION SUITE SUMMARY REPORT
+======================================================================
+Suite Name                          | Status   | Time (s) | Results
+----------------------------------------------------------------------
+Permanent Regression Archive        | PASSED   | 2.99     | ============================== 9 passed in 0.53s ==============================
+Independent Differential Suite      | PASSED   | 4.87     | ============================= 16 passed in 0.63s ==============================
+Golden Dataset Validation Suite     | PASSED   | 5.25     | ============================= 25 passed in 0.62s ==============================
+Exhaustive Unit Conversions         | PASSED   | 5.46     | ============================= 277 passed in 0.97s =============================
+Property Invariants (Hypothesis)    | PASSED   | 5.68     | ============================== 6 passed in 1.14s ==============================
+Emission Factor Selection           | PASSED   | 4.97     | ============================= 10 passed in 0.55s ==============================
+Boundary & Resilience Suite         | PASSED   | 5.00     | ============================= 13 passed in 0.54s ==============================
+Aggregation & Reconciliation        | PASSED   | 4.94     | ============================== 6 passed in 0.57s ==============================
+----------------------------------------------------------------------
+Total Validation Wall-Clock Time: 39.16s
+Overall Validation Result: ALL SUITES PASSED / VERIFIED
+======================================================================
+

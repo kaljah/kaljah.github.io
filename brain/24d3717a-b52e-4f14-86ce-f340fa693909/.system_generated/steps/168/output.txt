@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"labels":[],"inputs":[],"triggersCount":7}
+```

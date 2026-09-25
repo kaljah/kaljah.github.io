@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\ColumnMappingWizard.jsx:293:    { id: "boundary_type", label: "Consolidation Approach", 
+required: true },
+new\client\src\components\ColumnMappingWizard.jsx:680:      csvContent = `${headers}\nHassi R'Mel,Exploration & 
+Production,Production,Block A,Laghouat,Operational Control,Details here,Upstream,33.8,3.2`;
+new\client\src\pages\DashboardEnhanced.jsx:973:                  Define production facilities, segments, and 
+operational control.
+new\client\src\pages\ManageData.jsx:575:        boundary_type: '', boundary_detail: '',
+new\client\src\pages\ManageData.jsx:924:                ? `${facilityForm.boundary_type} - 
+${facilityForm.boundary_detail}`
+new\client\src\pages\ManageData.jsx:925:                : facilityForm.boundary_type;
+new\client\src\pages\ManageData.jsx:934:                boundary_type: '', boundary_detail: '',
+new\client\src\pages\ManageData.jsx:2454:                                                    name="boundary_type"
+new\client\src\pages\ManageData.jsx:2455:                                                    
+value={facilityForm.boundary_type}
+new\client\src\pages\ManageData.jsx:2456:                                                    onChange={(e) => 
+setFacilityForm({ ...facilityForm, boundary_type: e.target.value, boundary_detail: '' })}
+new\client\src\pages\ManageData.jsx:2472:                                                    
+disabled={!facilityForm.boundary_type}
+new\client\src\pages\ManageData.jsx:2475:                                                    
+{facilityForm.boundary_type && BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map(detail => (
+new\client\src\pages\ManageData.jsx:2534:                                                    <td>{f.boundary_notes || 
+(f.boundary_type ? `${f.boundary_type}${f.boundary_detail ? ' - ' + f.boundary_detail : ''}` : '-')}</td>
+
+
+

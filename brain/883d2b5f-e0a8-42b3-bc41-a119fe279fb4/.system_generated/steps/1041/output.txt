@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -327,7 +327,7 @@
+         # 0-byte file
+         status_zero = self._execute_sync_thread(app, b"", "zero.csv", test_user.id)
+         assert status_zero["processed"] == 0
+-        assert status_zero["status"] == "complete"
++        assert status_zero["status"] == "completed"
+ 
+         # Header-only file
+         header_only = b"Facility,Date,Process,Fuel,Quantity,Unit\n"
+@@ -334,5 +334,5 @@
+         assert status_hdr["processed"] == 0
+-        assert status_hdr["status"] == "complete"
++        assert status_hdr["status"] == "completed"
+ 
+     def test_process_type_missing_signature_fallback(self, app, test_user, test_facility):
+         """Verifies that rows lacking process type are rejected deterministically with explicit diagnostics."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,9 @@
+{"name":"Layout.css", "sizeBytes":"1241"}
+{"name":"Layout.jsx", "sizeBytes":"5238"}
+{"name":"Sidebar.css", "sizeBytes":"9682"}
+{"name":"Sidebar.jsx", "sizeBytes":"22313"}
+{"name":"TopBar.css", "sizeBytes":"4627"}
+{"name":"TopBar.jsx", "sizeBytes":"2952"}
+{"name":"patch_sidebar.py", "sizeBytes":"1652"}
+
+Summary: This directory contains 0 subdirectories and 7 files.

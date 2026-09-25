@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":86,"LineContent":"    # Indirect (Steam, Cogen, Electricity)"}

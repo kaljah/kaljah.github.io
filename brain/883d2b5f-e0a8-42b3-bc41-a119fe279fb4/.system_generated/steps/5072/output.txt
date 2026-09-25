@@ -1,0 +1,53 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_all_apis_health.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -275,7 +275,38 @@
+                     })
+                 continue
+ 
+-    # Step 5: Summary and Evaluation
++    # Step 5: Unauthenticated Security & RBAC Probing
++    print("\n" + "=" * 80)
++    print("PROBING UNAUTHENTICATED SECURITY BOUNDARIES & RBAC INTEGRITY")
++    print("=" * 80)
++    unauth_session = requests.Session()
++    
++    probe_routes = [
++        ("GET", "/api/auth/me"),
++        ("GET", "/api/emissions/"),
++        ("GET", "/api/facilities"),
++        ("GET", "/api/dashboard/summary"),
++        ("POST", "/api/reports/generate"),
++        ("GET", "/api/audit/logs"),
++    ]
++    
++    unauth_passed = 0
++    for m, p in probe_routes:
++        try:
++            if m == "GET":
++                r = unauth_session.get(f"{BASE_URL}{p}", timeout=5)
++            else:
++                r = unauth_session.post(f"{BASE_URL}{p}", json={}, timeout=5)
++            
++            # An unauthenticated request to protected endpoint should yield 401 or 403, never 200 or 500
++            is_secure = r.status_code in (401, 403)
++            if is_secure:
++                unauth_passed += 1
++            print(f"  [Unauth Probe] {m:4s} {p:25s} -> Status: {r.status_code} ({'SECURE' if is_secure else 'FAILED'})")
++        except Exception as e:
++            print(f"  [Unauth Probe] {m:4s} {p:25s} -> Exception: {e}")
++
++    # Step 6: Summary and Evaluation
+     print("\n" + "=" * 80)
+     print("API HEALTH AUDIT RESULTS SUMMARY")
+     print("=" * 80)
+@@ -291,6 +291,7 @@
+     print(f"Total API Endpoints / Methods Tested: {total_tested}")
+     print(f"Healthy (Status < 500):               {healthy_count} / {total_tested} ({healthy_count/total_tested*100:.1f}%)")
+     print(f"Failed (500 Server Crash):            {failing_count}")
++    print(f"Unauthenticated Security Probes:      {unauth_passed} / {len(probe_routes)} protected endpoints verified")
+     print(f"Latency Profile:                      Avg: {avg_lat:.1f}ms | Min: {min_lat:.1f}ms | Max: {max_lat:.1f}ms")
+ 
+     # Status code distribution
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

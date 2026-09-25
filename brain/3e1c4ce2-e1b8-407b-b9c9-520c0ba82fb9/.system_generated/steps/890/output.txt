@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+AVAILABLE FILTERS YEARS: [2026, 2024, 2023, 2022]
+

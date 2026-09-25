@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UncertaintyAssessment.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -40,6 +40,8 @@
+           if (selectedYear === "all") {
+             setSelectedYear(filterRes.data.years[0].toString());
+           }
++        } else {
++          setLoading(false);
+         }
+         if (facRes.data) {
+           setFacilities(
+@@ -47,6 +47,7 @@
+         }
+       } catch (err) {
+         console.error("Failed to load filters:", err);
++        setLoading(false);
+       }
+     };
+     loadFilters();
+@@ -53,7 +53,10 @@
+ 
+   // Fetch uncertainty data when filters change
+   useEffect(() => {
+-    if (selectedYear === "all") return;
++    if (selectedYear === "all") {
++      setLoading(false);
++      return;
++    }
+ 
+     const fetchData = async () => {
+       setLoading(true);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

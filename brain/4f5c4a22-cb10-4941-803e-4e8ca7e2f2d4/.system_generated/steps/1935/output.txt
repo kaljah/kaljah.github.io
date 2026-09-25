@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -742,12 +742,12 @@
+     }
+ 
+     // 2. Audit Dashboard KPIs
+-    await ensureAuthenticated(page, '/dashboard');
++    await ensureAuthenticated(page, '/');
+     await page.waitForTimeout(2000);
+ 
+     // Hero Gross Emissions Card
+-    const heroCard = page.locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first();
+-    await expect(heroCard).toBeVisible({ timeout: 15000 });
++    const heroCard = page.locator('.hero-card, .card.hero-card, .stat-item, .dashboard-grid').first();
++    await expect(heroCard).toBeVisible({ timeout: 20000 });
+     const heroText = await heroCard.innerText();
+     expect(heroText).not.toContain('NaN');
+     expect(heroText).not.toContain('undefined');
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

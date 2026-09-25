@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Total zero/null quantity records: 282
+  ID: 232, facility_id: 14, year: 2020, process_type: combustion, fuel_type: Diesel, quantity: 0.0, qa_flag: None
+  ID: 241, facility_id: 14, year: 2024, process_type: combustion, fuel_type: Diesel, quantity: 0.0, qa_flag: None
+  ID: 372, facility_id: 14, year: 2024, process_type: Venting, fuel_type: None, quantity: None, qa_flag: None
+  ID: 373, facility_id: 14, year: 2024, process_type: None, fuel_type: None, quantity: None, qa_flag: [Verified] Outlier
+  ID: 379, facility_id: 14, year: 2024, process_type: Venting, fuel_type: None, quantity: None, qa_flag: None
+

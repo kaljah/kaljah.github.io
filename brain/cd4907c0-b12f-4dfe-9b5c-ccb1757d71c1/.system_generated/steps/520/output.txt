@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":62,"LineContent":"    loadFacilities();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":89,"LineContent":"  const loadFacilities = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":117,"LineContent":"    loadFacilities();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":400,"LineContent":"  const loadFacilities = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":188,"LineContent":"    loadFacilities();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":234,"LineContent":"  const loadFacilities = async () =\u003e {"}

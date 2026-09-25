@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[(0, 'id', 'INTEGER', 1, None, 1), (1, 'fullName', 'VARCHAR(120)', 1, None, 0), (2, 'orgName', 'VARCHAR(120)', 1, None, 0), (3, 'password_hash', 'VARCHAR(256)', 1, None, 0), (4, 'sector', 'VARCHAR(50)', 1, None, 0), (5, 'email', 'VARCHAR(120)', 0, None, 0), (6, 'jobTitle', 'VARCHAR(100)', 0, None, 0), (7, 'department', 'VARCHAR(100)', 0, None, 0), (8, 'phone', 'VARCHAR(20)', 0, None, 0), (9, 'location', 'VARCHAR(100)', 0, None, 0), (10, 'bio', 'TEXT', 0, None, 0), (11, 'profilePic', 'VARCHAR(255)', 0, None, 0), (12, 'consolidationApproach', 'VARCHAR(50)', 0, None, 0), (13, 'role', 'VARCHAR(20)', 0, None, 0), (14, 'status', 'VARCHAR(20)', 0, None, 0), (15, 'password_updated_at', 'DATETIME', 0, None, 0), (16, 'last_login', 'DATETIME', 0, None, 0), (17, 'preferences', 'TEXT', 0, None, 0), (18, 'created_at', 'DATETIME', 0, None, 0)]
+

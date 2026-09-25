@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1148,24 +1148,6 @@
+                     heat_unit=flat_inputs.get("heat_unit", "btu"),
+                 )
+ 
+-            elif process_type == "stoichiometry":
+-                fuel_mass = self._require_float(
+-                    flat_inputs, ["quantity", "amount", "fuel_mass"], "fuel mass"
+-                )
+-                carbon_content = self._require_float(
+-                    flat_inputs,
+-                    ["carbon_content"],
+-                    "fuel carbon mass fraction (e.g. 0.85)",
+-                )
+-
+-                return calculator.calculate(
+-                    fuel_mass=fuel_mass,
+-                    carbon_content=carbon_content,
+-                    uncertainties=uncertainties,
+-                    mass_unit=unit,
+-                    gwp_dict=gwp_dict,
+-                )
+-
+             else:
+                 return self._generic_calculation(
+                     flat_inputs,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

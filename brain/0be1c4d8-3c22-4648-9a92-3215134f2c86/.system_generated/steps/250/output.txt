@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+28: PROCESS_TYPES as PROCESS_TYPES_MAP,
+38: const PROCESS_TYPES = PROCESS_TYPES_MAP;
+

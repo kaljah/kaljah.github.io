@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+API_FACTORS count: 90
+Sample keys: ['Natural Gas', 'Landfill Gas', 'Coke Oven Gas', 'Blast Furnace Gas', 'Propane (Gas)', 'Refinery Fuel Gas', 'Marine Diesel Oil', 'Diesel (No. 2 Fuel Oil)', 'Residual Fuel Oil (No. 6)', 'Kerosene', 'Motor Gasoline', 'Jet Fuel', 'Propane (Liquid/LPG)', 'Ethane', 'Crude Oil', 'Anthracite Coal', 'Bituminous Coal', 'Sub-Bituminous Coal', 'Lignite Coal', 'Petroleum Coke']
+Natural Gas factor: {'code': 'NG', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.001, 'n2o': 0.0001, 'uncertainty': {'co2': 0.05, 'ch4': 0.2, 'n2o': 0.2}, 'unit': 'kg/MMBtu', 'usage': ['combustion'], 'segment': 'Upstream', 'process_category': 'stationary_combustion', 'type': 'gases', 'source': 'API Compendium 2021 Section 5, Table 5-1'}
+natural_gas factor: None
+

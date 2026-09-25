@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -47,6 +47,12 @@
+     bg: "#fffbeb",
+     border: "rgba(245,158,11,.25)",
+   },
++  it: {
++    label: "IT",
++    color: "#0284c7",
++    bg: "#f0f9ff",
++    border: "rgba(2,132,199,.25)",
++  },
+   superuser: {
+     label: "Super User",
+     color: "#8b5cf6",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

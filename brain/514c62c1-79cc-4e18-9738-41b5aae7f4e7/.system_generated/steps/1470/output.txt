@@ -1,0 +1,210 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -712,204 +712,6 @@
+         </div>
+       </div>
+ 
+-      {/* ── Debug Panel ── */}
+-      <div
+-        style={{
+-          marginBottom: "20px",
+-          border: `1.5px solid ${showDebug ? "#f59e0b" : "var(--border-color)"}`,
+-          borderRadius: "14px",
+-          overflow: "hidden",
+-          background: "var(--bg-card)",
+-          boxShadow: showDebug ? "0 0 0 3px rgba(245,158,11,.12)" : "none",
+-          transition: "all .2s",
+-        }}
+-      >
+-        <button
+-          onClick={() => {
+-            setShowDebug((s) => !s);
+-            if (!showDebug) fetchData(true);
+-          }}
+-          style={{
+-            width: "100%",
+-            display: "flex",
+-            alignItems: "center",
+-            justifyContent: "space-between",
+-            padding: "11px 18px",
+-            background: showDebug ? "rgba(245,158,11,.08)" : "transparent",
+-            border: "none",
+-            cursor: "pointer",
+-            fontFamily: "inherit",
+-            fontSize: "0.82rem",
+-            fontWeight: 700,
+-            color: showDebug ? "#d97706" : "var(--text-secondary)",
+-            letterSpacing: ".4px",
+-            transition: "all .2s",
+-            textTransform: "uppercase",
+-          }}
+-        >
+-          <span style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}>
+-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+-            API Debugger — click to{" "}
+-            {showDebug ? "hide" : "inspect live API calls"}
+-          </span>
+-          <span
+-            style={{
+-              fontSize: "1rem",
+-              transform: showDebug ? "rotate(180deg)" : "none",
+-              transition: "transform .2s",
+-            }}
+-          >
+-            ▾
+-          </span>
+-        </button>
+-
+-        {showDebug && (
+-          <div
+-            style={{
+-              padding: "16px 20px",
+-              borderTop: "1px solid var(--border-color)",
+-              display: "flex",
+-              flexDirection: "column",
+-              gap: "14px",
+-            }}
+-          >
+-            {/* Refresh button */}
+-            <div
+-              style={{
+-                display: "flex",
+-                alignItems: "center",
+-                justifyContent: "space-between",
+-              }}
+-            >
+-              <span
+-                style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}
+-              >
+-                Last fetch:{" "}
+-                <code
+-                  style={{
+-                    background: "var(--bg-body)",
+-                    padding: "2px 6px",
+-                    borderRadius: "4px",
+-                  }}
+-                >
+-                  {debugInfo.lastFetch || "not yet"}
+-                </code>
+-              </span>
+-              <button
+-                onClick={() => fetchData(true)}
+-                style={{
+-                  ...S.btnPrimary,
+-                  padding: "6px 14px",
+-                  fontSize: "0.78rem",
+-                  boxShadow: "none",
+-                }}
+-              >
+-                ↻ Re-run now
+-              </button>
+-            </div>
+-
+-            {/* Users call */}
+-            {[
+-              {
+-                label: "GET /auth/users",
+-                status: debugInfo.usersStatus,
+-                ok: debugInfo.usersStatus === 200,
+-                detail: debugInfo.usersError
+-                  ? `Error: ${debugInfo.usersError}`
+-                  : `Returned ${debugInfo.usersCount} user(s)`,
+-              },
+-              {
+-                label: "GET /facilities/all-regions",
+-                status: debugInfo.regionsStatus,
+-                ok: debugInfo.regionsStatus === 200,
+-                detail: debugInfo.regionsError
+-                  ? `Error: ${debugInfo.regionsError}`
+-                  : `Returned ${Array.isArray(debugInfo.regionsData) ? debugInfo.regionsData.length : 0} region(s): ${Array.isArray(debugInfo.regionsData) ? debugInfo.regionsData.slice(0, 8).join(", ") + (debugInfo.regionsData.length > 8 ? "…" : "") : debugInfo.regionsData}`,
+-              },
+-            ].map((row) => (
+-              <div
+-                key={row.label}
+-                style={{
+-                  display: "flex",
+-                  alignItems: "flex-start",
+-                  gap: "12px",
+-                  padding: "12px 14px",
+-                  borderRadius: "10px",
+-                  background: row.ok
+-                    ? "rgba(16,185,129,.06)"
+-                    : row.status === null
+-                      ? "rgba(100,116,139,.06)"
+-                      : "rgba(239,68,68,.06)",
+-                  border: `1px solid ${row.ok ? "rgba(16,185,129,.2)" : row.status === null ? "rgba(100,116,139,.15)" : "rgba(239,68,68,.2)"}`,
+-                }}
+-              >
+-                <span
+-                  style={{
+-                    flexShrink: 0,
+-                    width: "52px",
+-                    textAlign: "center",
+-                    padding: "2px 0",
+-                    borderRadius: "6px",
+-                    fontWeight: 800,
+-                    fontSize: "0.8rem",
+-                    background: row.ok
+-                      ? "#ecfdf5"
+-                      : row.status === null
+-                        ? "#f1f5f9"
+-                        : "#fef2f2",
+-                    color: row.ok
+-                      ? "#059669"
+-                      : row.status === null
+-                        ? "#64748b"
+-                        : "#dc2626",
+-                  }}
+-                >
+-                  {row.status ?? "—"}
+-                </span>
+-                <div>
+-                  <div
+-                    style={{
+-                      fontWeight: 700,
+-                      fontSize: "0.82rem",
+-                      fontFamily: "monospace",
+-                      color: "var(--text-primary)",
+-                      marginBottom: "3px",
+-                    }}
+-                  >
+-                    {row.label}
+-                  </div>
+-                  <div
+-                    style={{
+-                      fontSize: "0.78rem",
+-                      color: row.ok
+-                        ? "#059669"
+-                        : row.status === null
+-                          ? "var(--text-secondary)"
+-                          : "#dc2626",
+-                    }}
+-                  >
+-                    {row.status === null ? "Not fetched yet" : row.detail}
+-                  </div>
+-                </div>
+-              </div>
+-            ))}
+-
+-            <p
+-              style={{
+-                margin: 0,
+-                fontSize: "0.72rem",
+-                color: "var(--text-secondary)",
+-                fontStyle: "italic",
+-              }}
+-            >
+-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline", verticalAlign: "middle", marginRight: "4px" }}><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+-              If /facilities/all-regions returns 404 → server needs restart.
+-              If 403 → auth issue. If 200 but empty → no region values in DB.
+-            </p>
+-          </div>
+-        )}
+-      </div>
+-
+       {/* ── Stats Row ── */}
+ 
+       <div style={S.statsRow}>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

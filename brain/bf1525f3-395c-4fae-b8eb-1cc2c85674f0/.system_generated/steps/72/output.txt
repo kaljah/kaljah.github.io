@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1,"LineContent":"import React, { useState, useEffect, useRef, useCallback, useMemo } from \"react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":125,"LineContent":"  const isFirstLoadRef = useRef(true);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":153,"LineContent":"  const satellitePollRef = useRef(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":154,"LineContent":"  const selectedFacilityRef = useRef(null);"}

@@ -1,0 +1,21 @@
+Task: cd4907c0-b12f-4dfe-9b5c-ccb1757d71c1/task-770
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\cd4907c0-b12f-4dfe-9b5c-ccb1757d71c1\.system_generated\tasks\task-770.log
+Log output:
+<truncated 61 lines>
+         + Production
+
+tests\test_operational_defaults.py:56: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:160 POST /api/auth/login 200 [0.123s] [ReqID: 78dbbdcc-c5d4-4c15-8e0f-e9a11c2e7018]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_operational_defaults.py::test_login_and_me_operational_defaults_regular_user
+=================== 1 failed, 2 passed, 1 warning in 4.11s ====================
+
+Last progress: 2s ago

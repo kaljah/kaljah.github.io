@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+  TCP    0.0.0.0:5173           0.0.0.0:0              LISTENING       28312
+  TCP    127.0.0.1:5000         0.0.0.0:0              LISTENING       25956
+  TCP    127.0.0.1:5000         127.0.0.1:54252        ESTABLISHED     25956
+  TCP    127.0.0.1:5173         127.0.0.1:50360        TIME_WAIT       0
+  TCP    127.0.0.1:5173         127.0.0.1:51215        ESTABLISHED     28312
+  TCP    127.0.0.1:5173         127.0.0.1:54251        ESTABLISHED     28312
+  TCP    127.0.0.1:5173         127.0.0.1:58663        ESTABLISHED     28312
+  TCP    127.0.0.1:5173         127.0.0.1:58744        TIME_WAIT       0
+  TCP    127.0.0.1:5173         127.0.0.1:62529        ESTABLISHED     28312
+  TCP    127.0.0.1:9222         0.0.0.0:0              LISTENING       23412
+  TCP    127.0.0.1:50361        127.0.0.1:5000         TIME_WAIT       0
+  TCP    127.0.0.1:51215        127.0.0.1:5173         ESTABLISHED     9928
+  TCP    127.0.0.1:54251        127.0.0.1:5173         ESTABLISHED     9928
+  TCP    127.0.0.1:54252        127.0.0.1:5000         ESTABLISHED     28312
+  TCP    127.0.0.1:58663        127.0.0.1:5173         ESTABLISHED     13860
+  TCP    127.0.0.1:58745        127.0.0.1:5000         TIME_WAIT       0
+  TCP    127.0.0.1:62529        127.0.0.1:5173         ESTABLISHED     9928
+

@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\indirect.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -39,6 +39,8 @@
+             energy_btu = heat_energy * 947817.12  # 1 GJ = 947,817 BTU
+         elif u in ["mj", "megajoule"]:
+             energy_btu = heat_energy * 947.817
++        elif u in ["therm", "therms"]:
++            energy_btu = heat_energy * 100_000.0
+         elif u in ["mwh", "mw-hr"]:
+             energy_btu = heat_energy * 3_412_142.0
+         elif u in ["ton", "us_ton", "short_ton"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

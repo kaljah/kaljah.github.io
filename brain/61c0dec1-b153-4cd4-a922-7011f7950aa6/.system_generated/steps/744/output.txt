@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -66,7 +66,7 @@
+     user = db.session.get(User, user_id)
+ 
+     data = request.get_json()
+-    factor_name = (data.get("factor_name") or data.get("name") or "").strip() if data else ""
++    factor_name = (data.get("factor_name") or data.get("name") or data.get("fuel_name") or "").strip() if data else ""
+     if not factor_name:
+         return jsonify({"error": "Factor name is required"}), 400
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

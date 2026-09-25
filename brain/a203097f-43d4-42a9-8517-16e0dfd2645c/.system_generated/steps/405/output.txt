@@ -1,0 +1,88 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\mutation\test_clean_mutations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -54,10 +54,11 @@
+         activity = 1500.0  # m3
+         ef_co2 = 1.93  # kg/m3
+ 
+-        # Legitimate calculation
++        # Legitimate calculation (returns tonnes)
+         valid_res = ref_calculate_combustion(activity, ef_co2=ef_co2)
+-
+-        # Mutants
++        valid_co2_kg = valid_res["co2"] * 1000.0
++
++        # Mutants (in kg)
+         mutant_plus = activity + ef_co2
+         mutant_div = activity / ef_co2
+ 
+@@ -64,6 +64,6 @@
+         tolerance = 1e-4
+-        assert abs(mutant_plus - valid_res["co2_emissions_kg"]) > tolerance, "Mutant (Activity + EF) survived!"
+-        assert abs(mutant_div - valid_res["co2_emissions_kg"]) > tolerance, "Mutant (Activity / EF) survived!"
++        assert abs(mutant_plus - valid_co2_kg) > tolerance, "Mutant (Activity + EF) survived!"
++        assert abs(mutant_div - valid_co2_kg) > tolerance, "Mutant (Activity / EF) survived!"
+ 
+     def test_kill_gwp_omission_mutation(self):
+         """Mutant: CH4 GWP multiplier omitted (treating 1 kg CH4 = 1 kg CO2e).
+@@ -88,7 +88,7 @@
+ 
+         # Stoichiometry for Methane: CH4 + 2 O2 -> CO2 + 2 H2O
+         legit_stoich = ref_calculate_hydrocarbon_stoichiometry(1, 4)
+-        assert legit_stoich["balance_error"] < 1e-9
++        assert legit_stoich["mass_balance_error"] < 1e-9
+ 
+         # In mutant stoichiometry, CO2 molar mass is corrupted (14 + 31.998 = 45.998 vs 44.009)
+         mw_co2_mutant = mutant_mw_c + 2 * MW_O
+@@ -115,10 +115,10 @@
+         destruction_eff = 0.98  # 2% slip
+ 
+         legit_flare = ref_calculate_flaring(
+-            flare_volume_m3=flare_volume_m3,
+-            ch4_mole_fraction=ch4_vol_frac,
+-            combustion_efficiency=0.98,
+-            destruction_efficiency=0.98,
++            gas_volume=flare_volume_m3,
++            ch4_fraction=ch4_vol_frac,
++            combustion_eff=0.98,
++            destruction_eff=destruction_eff,
+         )
+ 
+         # Mutant: 100% destruction, 0 slip
+@@ -125,6 +125,7 @@
+-
+-        assert legit_flare["uncombusted_ch4_kg"] > 0.0
+-        assert abs(legit_flare["uncombusted_ch4_kg"] - mutant_slip_ch4_kg) > 50.0, "Flaring slip mutant survived!"
++        legit_slip_ch4_kg = legit_flare["ch4"] * 1000.0
++
++        assert legit_slip_ch4_kg > 0.0
++        assert abs(legit_slip_ch4_kg - mutant_slip_ch4_kg) > 50.0, "Flaring slip mutant survived!"
+ 
+     def test_kill_agr_methane_coabsorption_omission_mutation(self):
+         """Mutant: Acid Gas Removal drops API Table 6-5 0.1% methane slip.
+@@ -133,9 +133,9 @@
+         ch4_mole_frac = 0.90
+ 
+         legit_agr = ref_calculate_agr(
+-            feed_gas_flow_m3=feed_gas_m3,
+-            co2_mol_fraction=co2_mole_frac,
+-            ch4_mol_fraction=ch4_mole_frac,
++            feed_gas_volume=feed_gas_m3,
++            co2_inlet_fraction=co2_mole_frac,
++            ch4_inlet_fraction=ch4_mole_frac,
+             ch4_slip_fraction=0.001,  # API standard
+         )
+ 
+@@ -142,6 +142,7 @@
+-
+-        assert legit_agr["ch4_slip_kg"] > 0.0
+-        assert abs(legit_agr["ch4_slip_kg"] - mutant_agr_ch4) > 10.0, "AGR slip mutant survived!"
++        legit_agr_ch4_kg = legit_agr["ch4"] * 1000.0
++
++        assert legit_agr_ch4_kg > 0.0
++        assert abs(legit_agr_ch4_kg - mutant_agr_ch4) > 10.0, "AGR slip mutant survived!"
+ 
+     def test_kill_steam_boiler_efficiency_multiplication_mutation(self):
+         """Mutant: Steam emissions formula calculates (Fuel = Steam * Efficiency) instead of (Steam / Efficiency).
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

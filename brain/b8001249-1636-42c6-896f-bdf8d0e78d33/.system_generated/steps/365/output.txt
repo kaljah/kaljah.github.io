@@ -1,0 +1,60 @@
+
+The command exited with code 0.
+Output:
+[Agent8] ## Login Page
+[Agent8] ✅ Login page loaded
+[Agent8] ✅ Logged in as admin (test_admin@ghg-test.com)
+[Agent8] ## Dashboard
+[Agent8] 🐛 BUG [🟠 High] Dashboard: Dashboard content didn't appear after login
+[Agent8] ## Navigation: Sidebar Links
+[Agent8] ✅ Dashboard page (/) renders
+[Agent8] ✅ Manage Data page (/manage-data) renders
+[Agent8] ✅ Carbon Intensity page (/carbon-intensity) renders
+[Agent8] ✅ Methane Explorer page (/methane-explorer) renders
+[Agent8] ✅ Methane Intensity page (/methane-intensity) renders
+[Agent8] 🐛 BUG [🟠 High] Navigation: QA/QC page appears blank
+[Agent8] ✅ Reports page (/reports) renders
+[Agent8] 🐛 BUG [🟠 High] Navigation: Audit Trail page appears blank
+[Agent8] ✅ Settings page (/settings) renders
+[Agent8] ✅ User Management page (/user-management) renders
+[Agent8] ✅ Reference Data page (/reference-data) renders
+[Agent8] ✅ Uncertainty Assessment page (/uncertainty) renders
+[Agent8] ✅ SBTi Dashboard page (/sbti) renders
+[Agent8] ## ManageData: Create Emission
+[Agent8] 🐛 BUG [🟡 Medium] ManageData: Could not open new emission form
+[Agent8] ## Reports: Generate
+[Agent8] 🐛 BUG [🟡 Medium] Reports: Reports generate failed: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/reports", waiting until "networkidle"
+
+[Agent8] ## User Management
+[Agent8] 🐛 BUG [🟡 Medium] UserMgmt: User Management page error: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/user-management", waiting until "networkidle"
+
+[Agent8] ## Settings
+[Agent8] 🐛 BUG [🟡 Medium] Settings: Settings page error: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/settings", waiting until "networkidle"
+
+[Agent8] ## Logout
+[Agent8] 🐛 BUG [🟡 Medium] Session: Logout flow error: Locator.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("button:has-text(\"Logout\"), a:has-text(\"Logout\"), button:has-text(\"Sign out\")").first
+    - locator resolved to <button id="logout-btn-drop" class="dropdown-item logout-item">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+      - waiting 100ms
+    9 × waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+      - waiting 500ms
+
+[Agent8] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_08_report.md
+

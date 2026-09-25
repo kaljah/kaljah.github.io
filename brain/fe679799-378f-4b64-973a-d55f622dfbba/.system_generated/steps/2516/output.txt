@@ -1,0 +1,88 @@
+
+The command exited with code 1.
+Output:
+<truncated 135 lines>
+    bulk_persistence._bulk_insert(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\bulk_persistence.py", line 200, in _bulk_insert
+    result = persistence._emit_insert_statements(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\background_processor.py", line 592, in _process_file_thread
+    db.session.bulk_save_objects(chunk)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\scoping.py", line 1361, in bulk_save_objects
+    return self._proxied.bulk_save_objects(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1048, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 4574, in bulk_save_objects
+    self._bulk_save_mappings(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 4751, in _bulk_save_mappings
+    with util.safe_reraise():
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 4740, in _bulk_save_mappings
+    bulk_persistence._bulk_insert(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 2353, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\bulk_persistence.py", line 200, in _bulk_insert
+    result = persistence._emit_insert_statements(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1048, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.InterfaceError: (sqlite3.InterfaceError) bad parameter or other API misuse
+[SQL: INSERT INTO emissions (record_id, year, month, group_name, equipment_id, process_type, fuel_type, quantity, unit, factor_source, ef_used_co2, ef_used_ch4, ef_used_n2o, ef_used_co, co2_emissions, ch4_emissions, n2o_emissions, co_emissions, co2e_total, co2_biogenic, combustion_efficiency, status, facility_id, activity, division, region, field, calc_method, ogmp_level, gwp_version, source_payload, created_by, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('60ed13ab-e7b3-48f0-b41f-ce1a43023310', 2024, 2, '', '', 'flaring', 'Field Gas', 351.0, 'm3', 'API', 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 'Pending', 1, 'Gathering', 'Production', 'South', 'Gas Field', 'server_default', 3, 'AR5', '{"year": 2024, "month": 2, "facility_id": 1, "process_type": "flaring", "fuel": "Field Gas", "amount": 351.0, "unit": "m3", "factor_source": "default ... (61 characters truncated) ... antity": "351.0", "factorsource": "default", "facility_name": "Bulk Pipeline Hub", "factor_type": "default", "ch4_content": 85.0, "co2_content": 2.0}', 1, '2026-09-23 14:04:42.005365')]
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 2353, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.InterfaceError: (sqlite3.InterfaceError) bad parameter or other API misuse
+[SQL: INSERT INTO emissions (record_id, year, month, group_name, equipment_id, process_type, fuel_type, quantity, unit, factor_source, ef_used_co2, ef_used_ch4, ef_used_n2o, ef_used_co, co2_emissions, ch4_emissions, n2o_emissions, co_emissions, co2e_total, co2_biogenic, combustion_efficiency, uncertainty, uncertainty_ch4, uncertainty_n2o, status, facility_id, activity, division, region, field, calc_method, ogmp_level, gwp_version, source_payload, created_by, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('d285762b-4261-4d2b-a15b-229b62393a10', 2024, 7, '', '', 'combustion', 'Natural Gas', 306.0, 'm3', 'gases', 53.06, 0.001, 0.0001, 0.0, 0.58484982614184, 1.1022424164e-05, 1.1022424164e-06, 0.0, 0.5854505482587781, 0.0, 0.0, 0.05590169943749475, 0.1118033988749895, 0.1118033988749895, 'Pending', 1, 'Gathering', 'Production', 'South', 'Gas Field', 'Stationary Combustion', 3, 'AR5', '{"year": 2024, "month": 7, "facility_id": 1, "process_type": "combustion", "fuel": "Natural Gas", "amount": 306.0, "unit": "m3", "factor_source": "de ... (84 characters truncated) ... ", "factorsource": "default", "facility_name": "Bulk Pipeline Hub", "factor_type": "default", "ch4_content": 85.0, "co2_content": 2.0, "hhv": 1020.0}', 1, '2026-09-23 14:04:42.104524')]
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_eight_concurrent_bulk_upload_jobs
+=================== 1 failed, 1 passed, 1 warning in 1.83s ====================
+

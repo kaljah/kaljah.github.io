@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":5,"LineContent":"import Drawer from \"../components/Drawer\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1205,"LineContent":"      {/* ── Slide-Over Drawer: Add / Edit User ── */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1206,"LineContent":"      \u003cDrawer"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1538,"LineContent":"      \u003c/Drawer\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1540,"LineContent":"      {/* ── Slide-Over Drawer: Reset Password ── */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1541,"LineContent":"      \u003cDrawer"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1834,"LineContent":"      \u003c/Drawer\u003e"}

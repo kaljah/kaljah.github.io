@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":21,"LineContent":"        it_admin_email = os.environ.get(\"IT_ADMIN_EMAIL\", \"itadmin@ghg.com\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_all_apis_health.py","LineNumber":344,"LineContent":"        json={\"email\": \"itadmin@ghg.com\", \"password\": \"admin123\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_all_apis_health.py","LineNumber":348,"LineContent":"    print(f\"  IT Admin Login (itadmin@ghg.com) -\u003e HTTP {it_login.status_code} ({'OK' if it_ok else 'FAIL'})\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_deep_button_audit.py","LineNumber":320,"LineContent":"        print(\"\\nLogging in as IT Admin (itadmin@ghg.com)...\", flush=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_deep_button_audit.py","LineNumber":323,"LineContent":"        page.fill('input[placeholder=\"Email Address\"]', \"itadmin@ghg.com\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_master_button_audit.py","LineNumber":263,"LineContent":"        print(\"\\nAuthenticating as IT Admin (itadmin@ghg.com)...\", flush=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_master_button_audit.py","LineNumber":266,"LineContent":"        page.fill('input[placeholder=\"Email Address\"]', \"itadmin@ghg.com\")"}

@@ -1,0 +1,27 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+_____ ERROR collecting tests/test_battery_midstream_process_equipment.py ______
+ImportError while importing test module 'C:\Users\samsung\Desktop\H2\new\server\tests\test_battery_midstream_process_equipment.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+new\server\tests\test_battery_midstream_process_equipment.py:30: in <module>
+    from validation.reference_model.vented_processes import (
+E   ImportError: cannot import name 'IndependentBlowdowns' from 'validation.reference_model.vented_processes' (C:\Users\samsung\Desktop\H2\validation\reference_model\vented_processes.py)
+=========================== short test summary info ===========================
+ERROR new\server\tests\test_battery_midstream_process_equipment.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 0.82s ===============================
+

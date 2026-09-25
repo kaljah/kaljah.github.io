@@ -1,0 +1,9 @@
+
+The command exited with code 1.
+Output:
+<string>:3: SyntaxWarning: invalid escape sequence '\:'
+  File "<string>", line 3
+    print('Count of if user and user.role == " it_admin\::',
+         ^
+SyntaxError: '(' was never closed
+

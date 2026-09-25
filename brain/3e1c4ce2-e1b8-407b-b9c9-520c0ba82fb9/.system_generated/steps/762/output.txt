@@ -1,0 +1,63 @@
+
+The command exited with code 0.
+Output:
+<truncated 26 lines>
+
+--- TABLE: facilities (43 rows) ---
+Columns: id, name, location, description, boundary_notes, boundary_type, boundary_detail, activity, division, region, field, code, external_id, segment, operator_status...
+  Sample Row: {'id': 1, 'name': 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'location': 'Bethioua, Oran', 'description': None, 'boundary_notes': None, 'boundary_type': 'Operational Control', 'boundary_detail': None, 'activity': 'Steel & Iron (Acier DRI)', 'division': 'Metallurgy', 'region': 'West', 'field': 'Industrial Zone', 'code': 'STL-TOS-01', 'external_id': None, 'segment': 'Heavy Industry', 'operator_status': 'operated', 'country': 'Algeria', 'ogmp_membership_year': 2023, 'reconciliation_threshold': 20.0, 'latitude': None, 'longitude': None, 'created_by': 1, 'updated_at': None, 'created_at': '2026-09-20 16:52:24.040976'}
+  Sample Row: {'id': 2, 'name': 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'location': 'Arzew, Oran', 'description': None, 'boundary_notes': None, 'boundary_type': 'Operational Control', 'boundary_detail': None, 'activity': 'Chemicals & Fertilizers', 'division': 'Petrochemicals', 'region': 'West', 'field': 'Arzew Port', 'code': 'FERT-ARZ-01', 'external_id': None, 'segment': 'Heavy Industry', 'operator_status': 'operated', 'country': 'Algeria', 'ogmp_membership_year': 2023, 'reconciliation_threshold': 20.0, 'latitude': None, 'longitude': None, 'created_by': 1, 'updated_at': None, 'created_at': '2026-09-20 16:52:24.040976'}
+
+--- TABLE: goals (0 rows) ---
+Columns: year, target_amount, created_at
+
+--- TABLE: level_upgrade_logs (0 rows) ---
+Columns: id, facility_id, source_type_code, old_level, new_level, target_date, justification, changed_at, created_by
+
+--- TABLE: methane_source_types (0 rows) ---
+Columns: id, code, name, category, default_ef_reference, default_level, created_at
+
+--- TABLE: mitigation_projects (0 rows) ---
+Columns: id, name, project_type, year, quantity_tco2e, status, start_date, end_date, investment_amount, description, facility_id, created_by, created_at
+
+--- TABLE: mitigation_records (0 rows) ---
+Columns: id, year, type, subtype, quantity_tco2e, notes, reference_id, date_added
+
+--- TABLE: notifications (12 rows) ---
+Columns: id, user_id, type, title, message, is_read, created_at, metadata
+  Sample Row: {'id': 1, 'user_id': 1, 'type': 'audit', 'title': 'Scope 1 Bulk Upload Pending Review', 'message': '0 new Scope 1 emission records were imported by Administrator and are awaiting your approval.', 'is_read': 0, 'created_at': '2026-09-20 16:56:01.411360', 'metadata': None}
+  Sample Row: {'id': 2, 'user_id': 2, 'type': 'audit', 'title': 'Scope 1 Bulk Upload Pending Review', 'message': '0 new Scope 1 emission records were imported by Administrator and are awaiting your approval.', 'is_read': 0, 'created_at': '2026-09-20 16:56:01.411360', 'metadata': None}
+
+--- TABLE: ogmp_surveys (0 rows) ---
+Columns: id, facility_id, year, survey_date, survey_type, measured_rate_kg_hr, operating_hours_year, estimated_annual_tch4, detection_threshold, instrument_vendor, raw_file_ref, bottom_up_tch4, variance_pct, variance_flag, reconciliation_status...
+
+--- TABLE: production_data (0 rows) ---
+Columns: id, facility_id, month, year, oil_amount, gas_amount, unit, oil_unit, gas_unit, activity, division, region, field, created_by, updated_at...
+
+--- TABLE: reporting_metadata (0 rows) ---
+Columns: id, year, has_reduction_target, target_description, is_tcfd_aligned, assurance_level, assurance_provider, notes
+
+--- TABLE: sbti_targets (0 rows) ---
+Columns: id, base_year, base_year_emissions, target_year, reduction_rate_pct, pathway_type, created_at, created_by
+
+--- TABLE: scope2_emissions (0 rows) ---
+Columns: id, facility_id, year, month, source_type, electricity_kwh, steam_ton, heat_mmbtu, cooling_ton, emission_factor, co2e, uncertainty, uncertainty_pct, qa_flag, location...
+
+--- TABLE: scope3_data (0 rows) ---
+Columns: id, year, category, method, product_type, volume, unit, emission_factor, emissions_tco2e, notes, created_at
+
+--- TABLE: scope3_emissions (0 rows) ---
+Columns: id, facility_id, year, month, category, sub_category, activity_data, unit, emission_factor, co2e, uncertainty, uncertainty_pct, qa_flag, calculation_method, data_quality...
+
+--- TABLE: system_settings (1 rows) ---
+Columns: key, value, updated_at
+  Row: {'key': '_dashboard_cache_epoch', 'value': '1789989131.9069126', 'updated_at': None}
+
+--- TABLE: users (7 rows) ---
+Columns: id, fullName, orgName, password_hash, sector, email, jobTitle, department, phone, location, bio, profilePic, consolidationApproach, role, status...
+  Row: {'id': 1, 'fullName': 'Administrator', 'orgName': 'GHG Operations', 'password_hash': 'scrypt:32768:8:1$WqQUbFZOkCcjgXRw$e6355dbc1c49582d3af7faf52c9f0d1072e32b205d0aa3aec9cd162aa1f3068a8c61b3cb5e2d4fce7eb1282de1eed6bbbf92318656aabe108b122351bd28449a', 'sector': 'Oil & Gas', 'email': 'a', 'jobTitle': 'Sustainability Lead', 'department': 'Sustainability & IT', 'phone': None, 'location': 'Global', 'bio': None, 'profilePic': None, 'consolidationApproach': None, 'role': 'admin', 'status': 'active', 'password_updated_at': '2026-09-20 16:51:18.942968', 'last_login': '2026-09-21 11:33:01.768234', 'preferences': '{"s5p_seen_product_ids": ["d1afd124-fa38-4021-9967-524d1aa4a14d", "ed2d922f-244b-4ffb-a109-9cf7211888b5"]}', 'created_at': '2026-09-20 16:51:18.942968'}
+  Row: {'id': 2, 'fullName': 'Administrator', 'orgName': 'GHG Operations', 'password_hash': 'scrypt:32768:8:1$DYCULvzd4mc1n8Pj$5d56943636cb6940869d00b77c94a661655e376ce16316c45f4425ed4791e0941a4afcfcb2737fb77103265d8034441d1becb803ea893151b7ca548c34dc2625', 'sector': 'Oil & Gas', 'email': 'a@a', 'jobTitle': 'Sustainability Lead', 'department': 'Sustainability & IT', 'phone': None, 'location': 'Global', 'bio': None, 'profilePic': None, 'consolidationApproach': None, 'role': 'admin', 'status': 'active', 'password_updated_at': '2026-09-20 16:51:19.133066', 'last_login': '2026-09-20 16:52:39.236450', 'preferences': None, 'created_at': '2026-09-20 16:51:19.133066'}
+  Row: {'id': 3, 'fullName': 'IT Manager', 'orgName': 'GHG Operations', 'password_hash': 'scrypt:32768:8:1$x3J9c3on6ZtWTxcH$12dae428911ff68f2be71f608ea2ff3eafce9fb2467fa8f8a808b554c499decf123a4488e94181fb29a926e6d5498d8f0041c6a669e98d69666c7b7c8bf08569', 'sector': 'Oil & Gas', 'email': 'z', 'jobTitle': 'IT Systems Manager', 'department': 'Sustainability & IT', 'phone': None, 'location': 'Global', 'bio': None, 'profilePic': None, 'consolidationApproach': None, 'role': 'it_manager', 'status': 'active', 'password_updated_at': '2026-09-20 16:51:19.276203', 'last_login': '2026-09-20 17:02:56.446447', 'preferences': None, 'created_at': '2026-09-20 16:51:19.276203'}
+  Row: {'id': 4, 'fullName': 'IT Manager', 'orgName': 'GHG Operations', 'password_hash': 'scrypt:32768:8:1$5PZCMAk3AuVMdxhY$ff9751925bf9dedfab685b19975f1fb079e85cb138952cf21430341241e3e91cc51f95d1cadd0469ab0d3fd5ab7253f4c18d27201aee9e68d394aabfbf152538', 'sector': 'Oil & Gas', 'email': 'z@z', 'jobTitle': 'IT Systems Manager', 'department': 'Sustainability & IT', 'phone': None, 'location': 'Global', 'bio': None, 'profilePic': None, 'consolidationApproach': None, 'role': 'it_manager', 'status': 'active', 'password_updated_at': '2026-09-20 16:51:19.402618', 'last_login': '2026-09-20 16:52:39.536863', 'preferences': None, 'created_at': '2026-09-20 16:51:19.402618'}
+  Row: {'id': 5, 'fullName': 'Administrator', 'orgName': 'GHG Operations', 'password_hash': 'scrypt:32768:8:1$WxxHht02XXVEAqQK$4ea8328a5c5bd7a9b08d03099c8ce3c08fdfe0888bfd02a66b5ef6bee0c6b29e364bb123869607bfe3722633d803ebfb4ff7e9a85f454983460893d4f1125483', 'sector': 'Oil & Gas', 'email': 'admin@ghg.com', 'jobTitle': 'Sustainability Lead', 'department': 'Sustainability & IT', 'phone': None, 'location': 'Global', 'bio': None, 'profilePic': None, 'consolidationApproach': None, 'role': 'admin', 'status': 'active', 'password_updated_at': '2026-09-20 16:51:20.054040', 'last_login': None, 'preferences': None, 'created_at': '2026-09-20 16:51:20.054040'}
+

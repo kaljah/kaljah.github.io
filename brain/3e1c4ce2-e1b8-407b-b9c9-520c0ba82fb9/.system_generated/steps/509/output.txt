@@ -1,0 +1,74 @@
+
+The command exited with code 1.
+Output:
+
+Running 7 tests using 1 worker
+
+  x  1 [chromium] › e2e\test_dashboard_deep_audit.spec.js:51:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification (0ms)
+  -  2 [chromium] › e2e\test_dashboard_deep_audit.spec.js:95:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population
+  -  3 [chromium] › e2e\test_dashboard_deep_audit.spec.js:151:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation
+  -  4 [chromium] › e2e\test_dashboard_deep_audit.spec.js:186:3 › Dashboard Page Deep Audit › 4. Mode Toggles: GWP Horizon, Compare Regions, Pending Preview
+  -  5 [chromium] › e2e\test_dashboard_deep_audit.spec.js:246:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree
+  -  6 [chromium] › e2e\test_dashboard_deep_audit.spec.js:307:3 › Dashboard Page Deep Audit › 6. Notification Center Panel, Real-time Counter & Actions
+  -  7 [chromium] › e2e\test_dashboard_deep_audit.spec.js:340:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons
+  x  8 [chromium] › e2e\test_dashboard_deep_audit.spec.js:51:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification (retry #1) (1ms)
+  -  9 [chromium] › e2e\test_dashboard_deep_audit.spec.js:95:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population (retry #1)
+  -  10 [chromium] › e2e\test_dashboard_deep_audit.spec.js:151:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation (retry #1)
+  -  11 [chromium] › e2e\test_dashboard_deep_audit.spec.js:186:3 › Dashboard Page Deep Audit › 4. Mode Toggles: GWP Horizon, Compare Regions, Pending Preview (retry #1)
+  -  12 [chromium] › e2e\test_dashboard_deep_audit.spec.js:246:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree (retry #1)
+  -  13 [chromium] › e2e\test_dashboard_deep_audit.spec.js:307:3 › Dashboard Page Deep Audit › 6. Notification Center Panel, Real-time Counter & Actions (retry #1)
+  -  14 [chromium] › e2e\test_dashboard_deep_audit.spec.js:340:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons (retry #1)
+
+
+  1) [chromium] › e2e\test_dashboard_deep_audit.spec.js:51:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification 
+
+    TimeoutError: page.waitForURL: Timeout 12000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      40 |
+      41 |     // Wait for Dashboard layout
+    > 42 |     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 12000 });
+         |                ^
+      43 |     await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+      44 |     await page.waitForTimeout(1500);
+      45 |   });
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:42:16
+
+    Error Context: test-results\test_dashboard_deep_audit--e74b5-nitial-Numbers-Verification-chromium\error-context.md
+
+    Error Context: test-results\test_dashboard_deep_audit--e74b5-nitial-Numbers-Verification-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForURL: Timeout 12000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      40 |
+      41 |     // Wait for Dashboard layout
+    > 42 |     await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 12000 });
+         |                ^
+      43 |     await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+      44 |     await page.waitForTimeout(1500);
+      45 |   });
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:42:16
+
+    Error Context: test-results\test_dashboard_deep_audit--e74b5-nitial-Numbers-Verification-chromium-retry1\error-context.md
+
+    Error Context: test-results\test_dashboard_deep_audit--e74b5-nitial-Numbers-Verification-chromium-retry1\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--e74b5-nitial-Numbers-Verification-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--e74b5-nitial-Numbers-Verification-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:51:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification 
+  6 did not run
+

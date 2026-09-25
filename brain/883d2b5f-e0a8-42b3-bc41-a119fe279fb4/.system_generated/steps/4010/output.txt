@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -244,6 +244,34 @@
+ - **`calculateTrend` Divide-by-Zero Resilience:** Replaced raw division with finite numeric checks, returning `"—"` whenever the baseline value is $0$, `NaN`, or non-finite.
+ - **`formatDate` Date Parsing Exception Guard:** Added `try...catch` block to handle invalid date strings gracefully without throwing errors.
+ 
++---
++
++## 9. Full-Stack Audit of Heatmaps, Trends, Charts & Tables (`test_ui_audit_visuals.mjs`)
++
++An exhaustive full-stack audit across backend aggregators and frontend visual presentation components was conducted to eliminate rendering defects, tooltip runtime exceptions, divide-by-zero states, and table column misalignments.
++
++### A. Summary of Audit Findings & Remediations
++
++| Component | Defect Discovered | Root Cause | Engineering Solution Implemented | Verification Status |
++| :--- | :--- | :--- | :--- | :---: |
++| **`PieChart.jsx`** | All-zero or negative slices caused Recharts $0/0 = \text{NaN}$ coordinates, rendering broken SVG rings. | Slices were passed un-sanitized to `<Pie>`, and empty state only checked array length, not total value sum. | Added data sanitization clamping negative slices to $0$ (`Math.max(0, val)`), calculated `totalValue`, and triggered empty state (`"No data available"`) when `totalValue <= 0`. | **PASS** |
++| **`LineChart.jsx`** | Tooltip and axis formatters threw `TypeError: Cannot read properties of null (reading 'toLocaleString')` on null/undefined/NaN entries. Caller `dash: "5 5"` was ignored. | Raw `val.toLocaleString()` without type guarding; line mapping checked only `line.strokeDasharray`. | Hardened `formatValue` with `isFinite()` checks returning `"0"` for invalid values. Added `line.dash` fallback alias for `line.strokeDasharray` and `line.label` for `name`. | **PASS** |
++| **`BarChart.jsx`** | Missing empty state fallback; hydration layout flicker; `formatValue` rendered `"NaN"`. | No empty data guard; lacked `isMounted` state lifecycle; un-sanitized number conversions. | Added `isMounted` hook, empty state container (`"No data available"`), and safe finite numeric formatting. | **PASS** |
++| **`CarbonIntensity.jsx` Heatmap** | Cells with `val === null`, `undefined`, or `NaN` fell through all `<` checks to alarming red `"heat-crit"`. Tooltip `val.toFixed(3)` crashed on undefined. | `getHeatmapClass` checked only `val === null \|\| val === 0`. Missing NaN and undefined checks. | Guarded `getHeatmapClass` with `isNaN(val) \|\| val === undefined` returning `"heat-null"`. Ensured `val` is finite before `val.toFixed(3)`. | **PASS** |
++| **`MethaneIntensity.jsx` Heatmap** | Missing loss rates rendered as `"heat-crit"` instead of `"heat-null"`. Tooltip formatted non-finite values as `NaN%`. | Lacked undefined/NaN guardrails in `getHeatmapClass`. | Guarded with `val === null \|\| val === undefined \|\| isNaN(val) \|\| val === 0` -> `"heat-null"`. Sanitized tooltip with `isFinite()` check. | **PASS** |
++| **`Scope1Form.jsx` Table Alignment** | Table header had 22 columns, but footer had `colSpan="18"` + 1 + 1 = 20 columns. Total sum was misaligned under `CO2 95%CI` instead of `Total (tCO2e)`. | Column count discrepancy between header definitions and footer cells. | Realigned footer: `colSpan="14"` (label) + 1 (col 15 total) + `colSpan="7"` (empty trailing) = **22 columns**. Updated empty state to `colSpan="22"`. | **PASS** |
++| **`Scope2Form.jsx` Table Alignment** | Table header had 11 columns, but footer had `colSpan="6"` + 1 + 1 = 8 columns. Total was under EF instead of Total tCO2e. Loading had `colSpan="8"`. | Column count discrepancy. | Fixed loading state to `colSpan="11"`. Realigned footer: `colSpan="7"` (label) + 1 (col 8 total) + `colSpan="3"` (empty trailing) = **11 columns**. | **PASS** |
++| **Backend `dashboard.py` Year Query** | `_query_available_years` threw `TypeError: '<' not supported between instances of 'NoneType' and 'int'` if any record had `year is None`. | `sorted(list(set(...)))` without filtering `None` or non-integer values. | Filtered with `if y[0] is not None and str(y[0]).isdigit()` and cast to integer set before sorting descending. | **PASS** |
++| **Database Connection Pool** | High-concurrency stress test (`test_stress_concurrency.py`) exhausted SQLite QueuePool (size 5, overflow 10 = 15 max connections). | Default SQLAlchemy pool size was too small for 30–50 parallel threads. | Configured `SQLALCHEMY_ENGINE_OPTIONS = {"pool_size": 25, "max_overflow": 25, "pool_timeout": 60}` in `config.py`. | **PASS** |
++
++### B. Final Verification Results
++- **Visual Audit Suite (`test_ui_audit_visuals.mjs`):** **31 / 31 checks PASSED (100%)**.
++- **Frontend Production Compilation (`npm run build`):** **Built cleanly in 10.50s** with 0 errors.
++- **Backend Automated Test Suite (`pytest`):** **431 / 431 passed in 44.45s** (100% pass rate).
++- **Client UI Stress Suite (`test_ui_stress_runner.mjs`):** All 4 pillars passed in 2.52s.
++- **Knowledge Graph Synchronization:** Updated via `graphify update .` (2,505 nodes, 5,275 edges, 228 communities).
++
++
+ 
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

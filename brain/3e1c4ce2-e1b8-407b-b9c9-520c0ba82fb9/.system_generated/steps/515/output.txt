@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Status: 200
+Text: {"message":"Login successful","user":{"email":"a","fullName":"Administrator","id":1,"orgName":"GHG Operations","role":"admin"}}
+
+

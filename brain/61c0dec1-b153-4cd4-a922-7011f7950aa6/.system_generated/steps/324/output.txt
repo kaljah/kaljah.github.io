@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":824,"LineContent":"        (\"boundary_type\", \"consolidation approach\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":825,"LineContent":"        (\"boundary_detail\", \"boundary details\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":849,"LineContent":"    # Pass 2: Word-boundary match for remaining unmapped keys"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1565,"LineContent":"            \"boundary_notes\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1566,"LineContent":"            \"boundary_type\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1567,"LineContent":"            \"boundary_detail\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1604,"LineContent":"            boundary_notes=row.get(\"boundary_notes\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1605,"LineContent":"            boundary_type=row.get(\"boundary_type\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1606,"LineContent":"            boundary_detail=row.get(\"boundary_detail\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":140,"LineContent":"    # Standard representative fuel densities (kg/m3) when crossing mass/volume boundary"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":47,"LineContent":"    boundary_notes = db.Column(db.Text)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":48,"LineContent":"    boundary_type = db.Column(db.String(100), default=\"Operational Control\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":49,"LineContent":"    boundary_detail = db.Column(db.Text)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":837,"LineContent":"# EDGE CASES \u0026 BOUNDARY CONDITIONS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\sentinel5p.py","LineNumber":435,"LineContent":"          is accepted for boundary-layer transport profile scaling and downstream API compatibility."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":49,"LineContent":"                \"boundary_notes\": f.boundary_notes,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":150,"LineContent":"        boundary_notes=data.get(\"boundary_notes\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":231,"LineContent":"    if \"boundary_notes\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":232,"LineContent":"        facility.boundary_notes = data[\"boundary_notes\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":280,"LineContent":"                \"boundary_notes\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":417,"LineContent":"            boundary_notes=fac_data.get(\"boundary_notes\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":387,"LineContent":"                \"title\": \"Unassigned Facility Boundary\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":388,"LineContent":"                \"description\": f\"{missing_facility_count} emission record(s) lack facility assignment, breaking GHG Protocol organizational boundary requirements.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":511,"LineContent":"                \"description\": f\"{unused_facilities} facility boundary(ies) are registered in master data but have no emissions reported for this period.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":65,"LineContent":"                boundary_type=\"Operational Control\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":101,"LineContent":"def test_dispatcher_fraction_boundary():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":102,"LineContent":"    \"\"\"Verify _require_fraction handles boundary values and percentages cleanly.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":496,"LineContent":"def test_agr_zero_removal_boundary():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":497,"LineContent":"    \"\"\"Finding 2: Verify AGR zero removal boundary condition does not create false 99% removal.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1109,"LineContent":"        \"reason\": \"Boundary revision\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_boundary_and_negative.py","LineNumber":2,"LineContent":"Boundary Conditions, Resilience, and Negative Test Suite."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_boundary_and_negative.py","LineNumber":4,"LineContent":"Rigorous edge-case and boundary verification:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_boundary_and_negative.py","LineNumber":10,"LineContent":"6. Thermodynamic boundary conditions."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":5,"LineContent":"and boundary conditions across all calculation engines and route logic in the software."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":148,"LineContent":"# 2. BOUNDARY CONDITIONS \u0026 ZERO/EXTREME INPUTS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":151,"LineContent":"class TestBoundaryConditions:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":2,"LineContent":"test_stress_boundary_resilience.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":12,"LineContent":"6. Multi-language Unicode, emoji, and boundary characters."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":25,"LineContent":"def boundary_client():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":32,"LineContent":"        admin = User.query.filter_by(email=\"boundary_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":35,"LineContent":"                email=\"boundary_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":36,"LineContent":"                fullName=\"Boundary Stress Admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":42,"LineContent":"            admin.set_password(\"BoundaryPass2026!\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":76,"LineContent":"class TestBoundaryResilienceEngine:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":158,"LineContent":"class TestBoundaryResilienceAPI:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":161,"LineContent":"    def test_nan_and_inf_api_rejection(self, boundary_client):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":163,"LineContent":"        client = boundary_client[\"client\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":164,"LineContent":"        fac_id = boundary_client[\"facility_id\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":182,"LineContent":"    def test_giant_one_megabyte_string_payload(self, boundary_client):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":184,"LineContent":"        client = boundary_client[\"client\"]"}
+(...9 more results not shown)

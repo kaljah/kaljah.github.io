@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\BulkImportModal.jsx:582:            if (t.id === "field") return "Bir Berkine";
+new\client\src\components\BulkImportModal.jsx:633:      csvContent = `${headers}\nHassi Messaoud,Exploration & 
+Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf`;
+new\client\src\components\ColumnMappingWizard.jsx:670:      csvContent = `${headers}\nHassi Messaoud,Exploration & 
+Production,Production,Bir Berkine,2024,1,50000,bbl,12000,mscf`;
+new\client\src\components\ColumnMappingWizard.jsx:674:      csvContent = `${headers}\nExploration & 
+Production,Production,Hassi Messaoud,Bir Berkine,Combustion Unit A,EQ-001,combustion,Natural Gas,1000,scf,2024,1`;
+new\client\src\components\Scope1ImportWizard.jsx:180:      { key: "field",         label: "Field",          required: 
+false, hint: "e.g. Bir Berkine" },
+new\client\src\components\Scope2ImportWizard.jsx:119:      { key: "field",         label: "Field",          required: 
+false, hint: "e.g. Bir Berkine" },
+new\client\src\pages\Reports.jsx:299:      const reportTitle = isElMerk ? "El Merk (Block 208) Master Report" : 
+"Groupement Berkine Master Report";
+new\client\src\pages\Reports.jsx:300:      const downloadFilename = isElMerk ? "El_Merk_2025_Annual_GHG_Report.pdf" : 
+"Groupement_Berkine_2025_Annual_GHG_Report.pdf";
+new\client\src\pages\Reports.jsx:1153:                    Authentic Groupement Berkine (HBNS & El Merk) 2021-2025
+new\client\src\pages\Reports.jsx:1158:                    <li><strong>18 Multi-Year Appendix Tables</strong>: Complete 
+raw tables A.1 through A.16 matching Groupement Berkine's corporate reporting standards.</li>
+new\client\src\utils\ModernReportGenerator.js:1238:      ["Carbon Intensity (Saleable Product)", `${ciSal} kg CO�e / 
+BOE`, "Groupement Berkine Protocol", "Normalized to commercial export sales"],
+new\client\src\utils\ModernReportGenerator.js:1564:    const filename = 
+`Groupement_Berkine_Master_GHG_Report_${selectedYear}.pdf`;
+
+
+

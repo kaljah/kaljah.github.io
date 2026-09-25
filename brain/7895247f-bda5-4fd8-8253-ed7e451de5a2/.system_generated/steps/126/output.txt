@@ -1,0 +1,48 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\base.py:8:    Base class for all API Compendium 2021 calculation modules.
+new\server\calculations\combustion.py:2:API Compendium 2021 - Section 5: Combustion and Flaring
+new\server\calculations\combustion.py:496:        # Calculate Combusted CO2 per API Compendium (2021) Eq. 5-4
+new\server\calculations\combustion.py:530:        _ef_n2o = float(ef_n2o) if ef_n2o is not None else 0.0001  # API 
+Compendium 2021 Table 5-3
+new\server\calculations\fugitive.py:2:API Compendium 2021 - Section 7: Fugitive Emissions
+new\server\calculations\indirect.py:2:API Compendium 2021 - Section 8: Indirect Emissions
+new\server\calculations\legacy_engine.py:328:        # API Compendium simplified:
+new\server\calculations\legacy_engine.py:346:        API Compendium 2021, Section 6.4, Equation 6-3
+new\server\calculations\legacy_engine.py:711:            # (API Compendium Table 4-1; 0.1176 was slightly wrong)
+new\server\calculations\legacy_engine.py:854:    # Apply process-specific gas calculation rules per API Compendium 2021
+new\server\calculations\midstream.py:2:API Compendium 2021 - Section 6: Midstream & Process Emissions
+new\server\calculations\midstream.py:37:        API Compendium 2021 �6.5 & Table 6-5:
+new\server\calculations\midstream.py:63:        # 2. CH4 Methane Slip (API Compendium 2021 �6.5 & Table 6-5)
+new\server\calculations\midstream.py:126:                "standard_reference": "API Compendium 2021 �6.5 & Table 6-5",
+new\server\calculations\midstream.py:160:        API Compendium 2021 �6.6 & GRI-GLYCalc Parametric Solubility Model 
+(CALC-02 Remediation).
+new\server\calculations\midstream.py:173:            # API Compendium 2021 Table 6-6 & EPA Subpart W Table W-1A: Tier 
+1 default = 0.266 tonnes CH4 / MMscf (uncontrolled)
+new\server\calculations\midstream.py:230:            # API Compendium 2021 �6.6 / GRI-GLYCalc parametric methane 
+solubility in TEG:
+new\server\calculations\midstream.py:237:            # API Compendium 2021 Table 6-5 standard rule of thumb: 3.0 scf 
+CH4 / gal TEG
+new\server\calculations\midstream.py:245:        # Stripping gas calculation (API Compendium �6.6 / GRI-GLYCalc / EPA 
+Subpart W �98.233(e))
+new\server\calculations\midstream.py:354:                "method": "API Compendium �6.6 Parametric GRI-GLYCalc Model",
+new\server\calculations\stoichiometry.py:2:API Compendium 2021 - Section 4: Calculation Fundamentals
+new\server\calculations\uncertainty.py:8:  - API Compendium 2021 �2.4 (Uncertainty ranges by source type)
+new\server\calculations\uncertainty.py:54:# Values align with API Compendium 2021 �2.4 and IPCC 2006 GL Vol.1 Annex 3A
+new\server\calculations\units.py:3:# Standard Thermodynamic Conditions (API Compendium 2021 �4.2.1, ISO 13443)
+new\server\calculations\units.py:16:    # Volume (API Compendium 2021 �4.2 / ISO 13443 at 60�F, 14.696 psia)
+new\server\calculations\units.py:149:    API Compendium 2021 �4.2.1: Converts gas volume measured at actual/operating 
+conditions
+new\server\calculations\vented.py:2:API Compendium 2021 - Section 6: Vented and Process Emissions
+new\server\calculations\vented.py:31:    D-01 / API Compendium 2021 stoichiometric flaring partition helper.
+new\server\calculations\vented.py:192:        API Compendium 2021 �6.3 & EPA Subpart W �98.233(c) Completions & 
+Workovers Flowback:
+new\server\calculations\vented.py:283:                "standard": "API Compendium �6.3 / EPA Subpart W �98.233(c)",
+new\server\calculations\vented.py:518:                "standard": "API Compendium Eq. 6-4 (T & P corrected)",
+new\server\calculations\vented.py:544:        Calculates Tank Emissions (API Compendium Section 6.8 & EPA Subpart W 
+�98.233(j)).
+
+
+

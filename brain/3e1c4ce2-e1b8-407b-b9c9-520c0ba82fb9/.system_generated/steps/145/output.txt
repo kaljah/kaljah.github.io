@@ -1,0 +1,61 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+collecting ... collected 29 items
+
+tests/test_qfull_api_pipeline.py::TestCombustionTier1Pipeline::test_combustion_tier1_post_returns_correct_values FAILED [  3%]
+tests/test_qfull_api_pipeline.py::TestCombustionTier1Pipeline::test_combustion_tier1_stored_values_match_calculation PASSED [  6%]
+tests/test_qfull_api_pipeline.py::TestCombustionTier3Pipeline::test_tier3_combustion_carbon_mass_balance PASSED [ 10%]
+tests/test_qfull_api_pipeline.py::TestCombustionTier3Pipeline::test_tier3_pure_methane_combustion PASSED [ 13%]
+tests/test_qfull_api_pipeline.py::TestFlaringTier3Pipeline::test_flaring_elevated_default_efficiency PASSED [ 17%]
+tests/test_qfull_api_pipeline.py::TestFlaringTier3Pipeline::test_flaring_with_native_co2 PASSED [ 20%]
+tests/test_qfull_api_pipeline.py::TestFlaringTier3Pipeline::test_flaring_enclosed_higher_efficiency PASSED [ 24%]
+tests/test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_water_based_mud PASSED [ 27%]
+tests/test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_oil_based_mud PASSED [ 31%]
+tests/test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_synthetic_mud PASSED [ 34%]
+tests/test_qfull_api_pipeline.py::TestMudDegassingPipeline::test_oil_to_water_ratio_2_333 PASSED [ 37%]
+tests/test_qfull_api_pipeline.py::TestCompletionsPipeline::test_metered_volume_no_control PASSED [ 41%]
+tests/test_qfull_api_pipeline.py::TestCompletionsPipeline::test_rate_duration_method PASSED [ 44%]
+tests/test_qfull_api_pipeline.py::TestPneumaticsPipeline::test_continuous_bleed_standard PASSED [ 48%]
+tests/test_qfull_api_pipeline.py::TestPneumaticsPipeline::test_count_doubles_emissions PASSED [ 51%]
+tests/test_qfull_api_pipeline.py::TestAGRPipeline::test_agr_co2_mass_balance PASSED [ 55%]
+tests/test_qfull_api_pipeline.py::TestBlowdownPipeline::test_blowdown_standard_conditions PASSED [ 58%]
+tests/test_qfull_api_pipeline.py::TestGWPValidation::test_gwp_ar5_default_values PASSED [ 62%]
+tests/test_qfull_api_pipeline.py::TestGWPValidation::test_gwp_ar4_values PASSED [ 65%]
+tests/test_qfull_api_pipeline.py::TestGWPValidation::test_gwp_ar6_values PASSED [ 68%]
+tests/test_qfull_api_pipeline.py::TestGWPValidation::test_ar5_gives_higher_ch4_co2e_than_ar4 PASSED [ 72%]
+tests/test_qfull_api_pipeline.py::TestGWPValidation::test_co2e_formula_verification PASSED [ 75%]
+tests/test_qfull_api_pipeline.py::TestIntermediateValues::test_combustion_t3_carbon_moles_calculation PASSED [ 79%]
+tests/test_qfull_api_pipeline.py::TestIntermediateValues::test_combustion_t3_co2_vol_from_carbon_moles PASSED [ 82%]
+tests/test_qfull_api_pipeline.py::TestIntermediateValues::test_flaring_dual_efficiency_intermediate_split PASSED [ 86%]
+tests/test_qfull_api_pipeline.py::TestIntermediateValues::test_agr_co2_intermediate_unit_chain PASSED [ 89%]
+tests/test_qfull_api_pipeline.py::TestTankFlashingPipeline::test_tank_flashing_gor_method PASSED [ 93%]
+tests/test_qfull_api_pipeline.py::TestLiquidsUnloadingPipeline::test_standard_well_unloading PASSED [ 96%]
+tests/test_qfull_api_pipeline.py::TestIndirectSteamPipeline::test_indirect_steam_mmbtu PASSED [100%]
+
+================================== FAILURES ===================================
+_ TestCombustionTier1Pipeline.test_combustion_tier1_post_returns_correct_values _
+tests\test_qfull_api_pipeline.py:176: in test_combustion_tier1_post_returns_correct_values
+    assert resp.status_code in (200, 201), (
+E   AssertionError: POST failed with 405: {'code': 405, 'error': 'The method is not allowed for the requested URL.', 'request_id': '6e3961d3-f955-4a9d-a4a3-9e518e717bdb'}
+E   assert 405 in (200, 201)
+E    +  where 405 = <WrapperTestResponse streamed [405 METHOD NOT ALLOWED]>.status_code
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-21 09:44:48,937] INFO in app: POST /api/auth/login 200 [0.101s] [ReqID: e63a78aa-72c7-4cc8-9c99-d671ca167dee]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:177 POST /api/auth/login 200 [0.101s] [ReqID: e63a78aa-72c7-4cc8-9c99-d671ca167dee]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-21 09:44:48,943] INFO in app: POST /api/emissions/add 405 [0.000s] [ReqID: 6e3961d3-f955-4a9d-a4a3-9e518e717bdb]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:177 POST /api/emissions/add 405 [0.000s] [ReqID: 6e3961d3-f955-4a9d-a4a3-9e518e717bdb]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_qfull_api_pipeline.py::TestCombustionTier1Pipeline::test_combustion_tier1_post_returns_correct_values
+=================== 1 failed, 28 passed, 1 warning in 3.13s ===================
+

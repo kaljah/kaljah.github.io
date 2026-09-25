@@ -1,0 +1,16 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":901,"LineContent":"      title={`Bulk Import: ${type === \"sources\" ? \"Equipment\" : type === \"custom_factors\" ? \"Custom Factors\" : \"Activity Data\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":737,"LineContent":"                There are currently no records awaiting Maker-Checker approval. Staged bulk import entries will appear here automatically."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.jsx","LineNumber":57,"LineContent":"          Bulk Import CSV"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":641,"LineContent":"            ↑ Bulk Import (Wizard)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":894,"LineContent":"            toast.success(\"Bulk import completed successfully\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":645,"LineContent":"              \u003ch2 className=\"s1w-title\"\u003eScope 1 Bulk Import\u003c/h2\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":390,"LineContent":"              \u003ch2 className=\"s1w-title\"\u003eScope 3 Bulk Import\u003c/h2\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2373,"LineContent":"            ↑ Bulk Import (Wizard)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":737,"LineContent":"            ↑ Bulk Import (Wizard)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":894,"LineContent":"            toast.success(\"Bulk import completed successfully\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":363,"LineContent":"              \u003ch2 className=\"s1w-title\"\u003eScope 2 Bulk Import\u003c/h2\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1907,"LineContent":"                                                There are currently no bulk import records awaiting Maker-Checker approval. Staged emissions records will appear here as soon as files are imported."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2164,"LineContent":"                                        \u003cUpload size={16} /\u003e Bulk Import (CSV)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2505,"LineContent":"                                                \u003cUpload size={16} /\u003e Bulk Import (CSV)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2577,"LineContent":"                                        \u003cUpload size={16} /\u003e Bulk Import (CSV)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3290,"LineContent":"                                        \u003cUpload size={16} /\u003e Bulk Import (CSV)"}

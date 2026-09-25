@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_extension.py:364: UserWarning: Using the in-memory storage for tracking rate limits as no storage was explicitly specified. This is not recommended for production use. See: https://flask-limiter.readthedocs.io#configuring-a-storage-backend for documentation about configuring the storage backend.
+  warnings.warn(
+test1 7th status: 429
+test2 7th status: 429
+

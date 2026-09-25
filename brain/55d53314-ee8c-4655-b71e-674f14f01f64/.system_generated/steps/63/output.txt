@@ -1,0 +1,88 @@
+
+The command exited with code 0.
+Output:
+<truncated 54 lines>
+new/server/calculations/legacy_engine.py:496:    use_tier1 = False
+new/server/calculations/legacy_engine.py:500:            use_tier1 = True
+new/server/calculations/legacy_engine.py:502:    if use_tier1:
+new/server/calculations/legacy_engine.py:508:        # --- TIER 3 / ENGINEERING ---
+new/server/calculations/legacy_engine.py:522:            # Tier 1: Factor-based (UnloadPlunger / UnloadNonPlunger)
+new/server/calculations/legacy_engine.py:533:                return em, "server_unloading_tier1"
+new/server/calculations/legacy_engine.py:535:            # Engineering Calc (Tier 3)
+new/server/calculations/midstream.py:17:from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
+new/server/calculations/midstream.py:94:        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+new/server/calculations/midstream.py:97:            resolve_ef_uncertainty("midstream", "co2", _tier, uncertainties.get("co2")),
+new/server/calculations/midstream.py:98:            tier=_tier,
+new/server/calculations/midstream.py:104:            resolve_ef_uncertainty("midstream", "ch4", _tier, uncertainties.get("ch4")),
+new/server/calculations/midstream.py:105:            tier=_tier,
+new/server/calculations/midstream.py:171:        # 1. Check if Tier 1 (Default Emission Factor based on throughput alone)
+new/server/calculations/midstream.py:173:            # API Compendium 2021 Table 6-6 & EPA Subpart W Table W-1A: Tier 1 default = 0.266 tonnes CH4 / MMscf (uncontrolled)
+new/server/calculations/midstream.py:180:            _tier = resolve_tier("default")
+new/server/calculations/midstream.py:184:                    "midstream", "ch4", _tier, uncertainties.get("ch4")
+new/server/calculations/midstream.py:186:                tier=_tier,
+new/server/calculations/midstream.py:197:                    "tier": "Tier 1 (Default Factor)",
+new/server/calculations/midstream.py:204:        # 2. Tier 3 Parametric Engineering Calculation
+new/server/calculations/midstream.py:313:        _tier = resolve_tier(uncertainties.get("_factor_source", "specific"))
+new/server/calculations/midstream.py:316:            resolve_ef_uncertainty("midstream", "ch4", _tier, uncertainties.get("ch4")),
+new/server/calculations/midstream.py:317:            tier=_tier,
+new/server/calculations/midstream.py:324:                resolve_ef_uncertainty("midstream", "co2", _tier, uncertainties.get("co2")),
+new/server/calculations/midstream.py:325:                tier=_tier,
+new/server/calculations/stoichiometry.py:8:from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
+new/server/calculations/stoichiometry.py:56:        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+new/server/calculations/stoichiometry.py:60:                "stoichiometric", "co2", _tier, uncertainties.get("co2")
+new/server/calculations/stoichiometry.py:62:            tier=_tier,
+new/server/calculations/uncertainty.py:9:  - OGMP 2.0 Framework §5 (Tier-specific uncertainty requirements)
+new/server/calculations/uncertainty.py:16:Activity-data uncertainty is tier-specific per IPCC GL Vol.1 Table 3.1:
+new/server/calculations/uncertainty.py:17:  Tier 1 (allocation/default):        ±10–15%
+new/server/calculations/uncertainty.py:18:  Tier 2 (regional/custom factors):   ±7%
+new/server/calculations/uncertainty.py:19:  Tier 3 (calibrated meters/CEMS):    ±2%
+new/server/calculations/uncertainty.py:26:# TIER CONSTANTS
+new/server/calculations/uncertainty.py:30:class Tier:
+new/server/calculations/uncertainty.py:31:    """Calculation tier following IPCC 2006 GL Vol.1 §2.4 hierarchy."""
+new/server/calculations/uncertainty.py:38:# Activity-data uncertainty by tier — IPCC GL Vol.1 Table 3.1
+new/server/calculations/uncertainty.py:40:    Tier.T1: 0.10,  # ±10% — metering without calibration, allocation methods
+new/server/calculations/uncertainty.py:41:    Tier.T2: 0.07,  # ±7%  — regional data, estimated throughput
+new/server/calculations/uncertainty.py:42:    Tier.T3: 0.02,  # ±2%  — calibrated CEMS / Coriolis meters
+new/server/calculations/uncertainty.py:242:    tier=Tier.T1,
+new/server/calculations/uncertainty.py:260:                                Pass 0.0 if the EF is exact (Tier 3 mass balance).
+new/server/calculations/uncertainty.py:262:                                           If None, derived from tier.
+new/server/calculations/uncertainty.py:263:        tier (int): Tier.T1 / Tier.T2 / Tier.T3
+new/server/calculations/uncertainty.py:279:          tier                  — tier used
+new/server/calculations/uncertainty.py:289:    # --- Resolve activity uncertainty from tier if not explicitly provided ---
+new/server/calculations/uncertainty.py:295:            if tier == Tier.T3:
+new/server/calculations/uncertainty.py:296:                activity_uncertainty = ACTIVITY_UNCERTAINTY[Tier.T3]
+new/server/calculations/uncertainty.py:301:                tier, ACTIVITY_UNCERTAINTY[Tier.T1]
+new/server/calculations/uncertainty.py:369:        "tier": tier,
+new/server/calculations/uncertainty.py:376:# HELPER: resolve tier from factor_source string
+new/server/calculations/uncertainty.py:380:def resolve_tier(factor_source: str) -> int:
+new/server/calculations/uncertainty.py:382:    Map factor_source string to a Tier integer.
+new/server/calculations/uncertainty.py:386:        return Tier.T1
+new/server/calculations/uncertainty.py:394:        "tier3",
+new/server/calculations/uncertainty.py:395:        "tier_3",
+new/server/calculations/uncertainty.py:398:        return Tier.T3
+new/server/calculations/uncertainty.py:399:    if fs in ["custom", "regional", "tier2", "tier_2", "t2"]:
+new/server/calculations/uncertainty.py:400:        return Tier.T2
+new/server/calculations/uncertainty.py:401:    return Tier.T1  # 'default' or unknown → Tier 1
+new/server/calculations/uncertainty.py:405:    process_type: str, gas: str, tier: int, measured_u: float = None
+new/server/calculations/uncertainty.py:408:    Return the EF uncertainty for a given process, gas, and tier.
+new/server/calculations/uncertainty.py:415:        tier: Tier.T1 / T2 / T3
+new/server/calculations/uncertainty.py:426:    tier_key = {Tier.T1: "T1", Tier.T2: "T2", Tier.T3: "T3"}.get(tier, "T1")
+new/server/calculations/uncertainty.py:428:        return DEFAULT_EF_UNCERTAINTY[category][gas_lu][tier_key]
+new/server/calculations/vented.py:18:from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty
+new/server/calculations/vented.py:90:    _tier = resolve_tier(factor_source)
+new/server/calculations/vented.py:93:        resolve_ef_uncertainty(process_category, "ch4", _tier, (uncertainties or {}).get("ch4")),
+new/server/calculations/vented.py:94:        tier=_tier,
+new/server/calculations/vented.py:101:            resolve_ef_uncertainty(process_category, "co2", _tier, (uncertainties or {}).get("co2")),
+new/server/calculations/vented.py:102:            tier=_tier,
+new/server/calculations/vented.py:112:            resolve_ef_uncertainty(process_category, "n2o", _tier, (uncertainties or {}).get("n2o")),
+new/server/calculations/vented.py:113:            tier=_tier,
+new/server/calculations/vented.py:147:        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+new/server/calculations/vented.py:150:            resolve_ef_uncertainty("vented", "ch4", _tier, uncertainties.get("ch4")),
+new/server/calculations/vented.py:151:            tier=_tier,
+new/server/calculations/vented.py:594:            _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+new/server/calculations/vented.py:597:                resolve_ef_uncertainty("tank", "ch4", _tier, uncertainties.get("ch4")),
+new/server/calculations/vented.py:598:                tier=_tier,
+new/server/calculations/vented.py:671:        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+new/server/calculations/vented.py:674:            resolve_ef_uncertainty("pneumatic", "ch4", _tier, uncertainties.get("ch4")),
+new/server/calculations/vented.py:675:            tier=_tier,
+

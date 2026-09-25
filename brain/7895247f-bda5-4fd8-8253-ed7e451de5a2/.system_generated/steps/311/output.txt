@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+Select-String : Cannot convert 'System.String' to the type 'System.Management.Automation.SwitchParameter' required by 
+parameter 'CaseSensitive'. 
+At line:1 char:97
++ ... src/pages/DashboardEnhanced.jsx' -Pattern 'flar' -CaseSensitive:False
++                                                                     ~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgument,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

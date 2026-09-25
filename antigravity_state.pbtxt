@@ -10,6 +10,8 @@ seen_nuxs: {
   uids: 24
   uids: 45
   uids: 38
+  uids: 36
+  uids: 46
 }
 agent_onboarding_completed: AGENT_ONBOARDING_STATE_COMPLETED
 last_selected_agent_model: MODEL_PLACEHOLDER_M318

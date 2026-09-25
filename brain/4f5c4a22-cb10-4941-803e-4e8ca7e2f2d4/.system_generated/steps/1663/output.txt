@@ -1,0 +1,27 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py","LineNumber":4,"LineContent":"from .legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":16,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":4,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":43,"LineContent":"def test_legacy_engine_dynamic_gwp():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":208,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":261,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":320,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":379,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":432,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":474,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":514,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":542,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":564,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":584,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":617,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":651,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":701,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":737,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":782,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":847,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":921,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":1070,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":1126,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":1188,"LineContent":"        from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_boundary_sensitivity.py","LineNumber":23,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_unit_conversions.py","LineNumber":25,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_validation.py","LineNumber":23,"LineContent":"from calculations.legacy_engine import compute_emissions"}

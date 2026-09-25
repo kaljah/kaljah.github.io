@@ -1,0 +1,128 @@
+
+The command exited with code 0.
+Output:
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .github/workflows/deploy-pages.yml
+	modified:   .gitignore
+	modified:   docs/validation/FINAL_VALIDATION_REPORT.md
+	modified:   docs/validation/HUMAN_REVIEW_REQUIRED.md
+	modified:   graphify-out/.graphify_labels.json
+	modified:   graphify-out/.graphify_labels.json.sig
+	modified:   graphify-out/2026-09-20/.graphify_labels.json
+	modified:   graphify-out/2026-09-20/GRAPH_REPORT.md
+	modified:   graphify-out/2026-09-20/graph.json
+	modified:   graphify-out/2026-09-20/manifest.json
+	modified:   graphify-out/GRAPH_REPORT.md
+	modified:   graphify-out/graph.html
+	modified:   graphify-out/graph.json
+	modified:   graphify-out/manifest.json
+	modified:   new/client/package-lock.json
+	modified:   new/client/package.json
+	modified:   new/client/src/App.jsx
+	modified:   new/client/src/components/Scope1Form.jsx
+	modified:   new/client/src/components/scope1/CombustionForm.jsx
+	modified:   new/client/src/components/scope1/TankForm.jsx
+	modified:   new/client/src/pages/CarbonIntensity.jsx
+	modified:   new/client/src/pages/DashboardEnhanced.jsx
+	modified:   new/client/src/pages/ManageData.jsx
+	modified:   new/client/src/pages/MethaneExplorer.jsx
+	modified:   new/client/src/pages/Reports.jsx
+	modified:   new/client/src/utils/userDefaults.js
+	modified:   new/client/stats.html
+	modified:   new/client/vite.config.js
+	modified:   new/server/.env.example
+	modified:   new/server/app.py
+	modified:   new/server/background_processor.py
+	modified:   new/server/calculations/combustion.py
+	modified:   new/server/calculations/constants.py
+	modified:   new/server/calculations/dispatcher.py
+	modified:   new/server/calculations/legacy_engine.py
+	modified:   new/server/calculations/vented.py
+	modified:   new/server/config.py
+	modified:   new/server/emission_factors.py
+	modified:   new/server/extensions.py
+	modified:   new/server/requirements.txt
+	modified:   new/server/restore_full_data.py
+	modified:   new/server/routes/auth.py
+	modified:   new/server/routes/custom_factors.py
+	modified:   new/server/routes/dashboard.py
+	modified:   new/server/routes/data.py
+	modified:   new/server/routes/emissions.py
+	modified:   new/server/routes/facilities.py
+	modified:   new/server/routes/managedata.py
+	modified:   new/server/routes/notifications.py
+	modified:   new/server/seed_admin.py
+	modified:   new/server/tests/conftest.py
+	modified:   seed_demo_data.py
+	modified:   validation/reference_model/__init__.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	FINAL_VALIDATION_REPORT.pdf
+	docs/validation/00-current-architecture.md
+	docs/validation/00-repository-audit.md
+	docs/validation/01-calculation-inventory.md
+	docs/validation/01-testing-inventory.md
+	docs/validation/02-calculation-inventory.md
+	docs/validation/02-test-inventory.md
+	docs/validation/03-security-audit.md
+	docs/validation/04-database-audit.md
+	docs/validation/05-performance-audit.md
+	docs/validation/06-accessibility-audit.md
+	docs/validation/07-browser-audit.md
+	docs/validation/08-production-readiness.md
+	docs/validation/09-calculation-validation.md
+	docs/validation/10-human-review.md
+	docs/validation/CALCULATION_VALIDATION_REPORT.md
+	docs/validation/FINAL_VALIDATION_REPORT.pdf
+	docs/validation/LEGACY_TEST_AUDIT.md
+	generate_pdf_report.py
+	graphify-out/2026-09-21/
+	graphify-out/2026-09-22/
+	new/client/e2e/
+	new/client/generate_storage_state.js
+	new/client/playwright.config.js
+	new/client/src/__tests__/
+	new/client/src/test-setup.js
+	new/server/backups/
+	new/server/bulk_tier1_all_fuels.csv
+	new/server/bulk_tier3_360_per_region.csv
+	new/server/generate_bulk_test_csvs.py
+	new/server/scripts/
+	new/server/tests/test_carbon_intensity_validation.py
+	new/server/tests/test_log_handler.py
+	new/server/tests/test_n2o_flaring_consistency.py
+	new/server/tests/test_production_smoke.py
+	new/server/tests/test_qfull_api_pipeline.py
+	new/server/tests/test_qfull_boundary_sensitivity.py
+	new/server/tests/test_qfull_unit_conversions.py
+	new/server/tests/test_qfull_validation.py
+	new/server/tests/test_rate_limiting.py
+	new/server/tests/test_security_hardening.py
+	new/server/tests/test_zero_trust_adversarial.py
+	seed_production_and_cbam.py
+	validation/calculation/
+	validation/differential/
+	validation/golden_data/
+	validation/mutation/test_clean_mutations.py
+	validation/property/
+	validation/reference_model/ref_combustion.py
+	validation/reference_model/ref_constants.py
+	validation/reference_model/ref_flaring.py
+	validation/reference_model/ref_fugitives.py
+	validation/reference_model/ref_intensity.py
+	validation/reference_model/ref_midstream.py
+	validation/reference_model/ref_scope2.py
+	validation/reference_model/ref_scope3.py
+	validation/reference_model/ref_stoichiometry.py
+	validation/reference_model/ref_uncertainty.py
+	validation/reference_model/ref_venting.py
+	validation/reports/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+

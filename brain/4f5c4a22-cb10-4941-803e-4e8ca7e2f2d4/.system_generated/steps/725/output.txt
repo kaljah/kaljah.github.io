@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":105,"LineContent":"  const [calculationResult, setCalculationResult] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2657,"LineContent":"      {calculationResult \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2659,"LineContent":"          result={calculationResult}"}

@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -278,6 +278,7 @@
+             chunk = []
+             skipped_rows = []  # Store raw row data for error CSV
+             anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
++            batch_prod_map = {}  # In-batch duplicate tracking for production upserts
+ 
+             # Initialize anomaly detector
+             from calculations.anomaly import AnomalyDetector
+@@ -331,7 +331,7 @@
+                     )
+                 elif str(scope) == "production":
+                     emission_obj, row_errors = _process_row_production(
+-                        mapped_data, user_id, fac_name_map, fac_id_map
++                        mapped_data, user_id, fac_name_map, fac_id_map, batch_prod_map
+                     )
+                 elif str(scope) == "mitigation":
+                     emission_obj, row_errors = _process_row_mitigation(
+@@ -429,7 +429,7 @@
+                     _update_job(
+                         job_id,
+                         processed=processed,
+-                        progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else 0,
++                        progress=min(99, int((processed / total_rows) * 100)) if total_rows > 0 else min(95, int(100 * (1.0 - (0.98 ** (processed / 100.0))))),
+                     )
+ 
+             # Final chunk commit
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

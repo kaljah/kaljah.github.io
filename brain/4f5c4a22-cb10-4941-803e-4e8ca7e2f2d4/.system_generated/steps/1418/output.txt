@@ -1,0 +1,52 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\emissions.py:21:from emission_factors import API_FACTORS
+  new\server\routes\emissions.py:22:from routes.auth import login_required
+  new\server\routes\emissions.py:23:import datetime
+  new\server\routes\emissions.py:24:import uuid
+  new\server\routes\emissions.py:25:import json
+  new\server\routes\emissions.py:26:from sqlalchemy import cast, String, literal, Float, union_all, or_
+> new\server\routes\emissions.py:38:def _lookup_api_factor(fuel_name: str) -> dict:
+  new\server\routes\emissions.py:39:    """Look up an emission factor from API_FACTORS supporting exact, normalized, 
+and alias matches."""
+  new\server\routes\emissions.py:40:    if not fuel_name:
+  new\server\routes\emissions.py:41:        return {}
+  new\server\routes\emissions.py:42:    if fuel_name in API_FACTORS:
+  new\server\routes\emissions.py:43:        return API_FACTORS[fuel_name]
+> new\server\routes\emissions.py:2999:    factor_data = _lookup_api_factor(data.get("fuel") or data.get("fuel_type"))
+  new\server\routes\emissions.py:3000:
+  new\server\routes\emissions.py:3001:    # Custom Factor Override
+  new\server\routes\emissions.py:3002:    custom_factor_id = data.get("custom_factor_id")
+  new\server\routes\emissions.py:3003:    if custom_factor_id:
+  new\server\routes\emissions.py:3004:        cf = db.session.get(CustomFactor, custom_factor_id)
+> new\server\routes\emissions.py:3264:                    # BUG-04 FIX: safe facility name lookup
+  new\server\routes\emissions.py:3265:                    "facility_name": (
+  new\server\routes\emissions.py:3266:                        db.session.get(Facility, data["facility_id"]).name
+  new\server\routes\emissions.py:3267:                        if data.get("facility_id") and db.session.get(Facility, 
+data["facility_id"])
+  new\server\routes\emissions.py:3268:                        else "Unknown"
+  new\server\routes\emissions.py:3269:                    ),
+> new\server\routes\emissions.py:3426:        factor_data = _lookup_api_factor(data.get("fuel") or 
+data.get("fuel_type") or record.fuel_type)
+  new\server\routes\emissions.py:3427:        # Handle Custom Factor in update
+  new\server\routes\emissions.py:3428:        cf_id = data.get("custom_factor_id")
+  new\server\routes\emissions.py:3429:        if cf_id:
+  new\server\routes\emissions.py:3430:            cf = db.session.get(CustomFactor, cf_id)
+  new\server\routes\emissions.py:3431:            if cf:
+> new\server\routes\emissions.py:3668:    # Cache for facility lookups to avoid redundant queries
+  new\server\routes\emissions.py:3669:    facility_cache = {}
+  new\server\routes\emissions.py:3670:
+  new\server\routes\emissions.py:3671:    for i, rec_data in enumerate(records_data):
+  new\server\routes\emissions.py:3672:        try:
+  new\server\routes\emissions.py:3673:            # 1. Resolve facility_id (could be a name string from CSV)
+> new\server\routes\emissions.py:4020:    # Batch facility lookup to prevent N+1 queries
+  new\server\routes\emissions.py:4021:    all_facs = {f.id: f for f in Facility.query.all()}
+  new\server\routes\emissions.py:4022:
+  new\server\routes\emissions.py:4023:    export_data = []
+  new\server\routes\emissions.py:4024:
+  new\server\routes\emissions.py:4025:    # 1. SCOPE 1
+
+
+

@@ -1,0 +1,126 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+          <Function test_all_15_categories_activity_based[3-Fuel- and Energy-Related Activities]>
+          <Function test_all_15_categories_activity_based[4-Upstream Transportation and Distribution]>
+          <Function test_all_15_categories_activity_based[5-Waste Generated in Operations]>
+          <Function test_all_15_categories_activity_based[6-Business Travel]>
+          <Function test_all_15_categories_activity_based[7-Employee Commuting]>
+          <Function test_all_15_categories_activity_based[8-Upstream Leased Assets]>
+          <Function test_all_15_categories_activity_based[9-Downstream Transportation and Distribution]>
+          <Function test_all_15_categories_activity_based[10-Processing of Sold Products]>
+          <Function test_all_15_categories_activity_based[11-Use of Sold Products]>
+          <Function test_all_15_categories_activity_based[12-End-of-Life Treatment of Sold Products]>
+          <Function test_all_15_categories_activity_based[13-Downstream Leased Assets]>
+          <Function test_all_15_categories_activity_based[14-Franchises]>
+          <Function test_all_15_categories_activity_based[15-Investments]>
+          <Function test_scope3_spend_based_eeio>
+          <Function test_scope3_tonnes_numerator_unit>
+          <Function test_scope3_zero_boundary>
+      <Module test_clean_stoichiometry.py>
+        <Class TestCleanStoichiometry>
+          <Function test_hydrocarbon_mass_balance_closure[Methane-1-4]>
+          <Function test_hydrocarbon_mass_balance_closure[Ethane-2-6]>
+          <Function test_hydrocarbon_mass_balance_closure[Propane-3-8]>
+          <Function test_hydrocarbon_mass_balance_closure[Butane-4-10]>
+          <Function test_hydrocarbon_mass_balance_closure[Pentane-5-12]>
+          <Function test_hydrocarbon_mass_balance_closure[Hexane-6-14]>
+          <Function test_production_stoichiometric_calculator_vs_reference>
+          <Function test_stoichiometric_mass_unit_conversions>
+      <Module test_clean_uncertainty.py>
+        <Class TestCleanUncertainty>
+          <Function test_tier_resolution_logic>
+          <Function test_analytical_gaussian_propagation>
+          <Function test_non_negative_lower_bound>
+          <Function test_production_propagate_uncertainty_structure>
+          <Function test_sum_propagation_independent_sources>
+      <Module test_clean_units.py>
+        <Class TestCleanUnitConversions>
+          <Function test_round_trip_conversions_a_to_b_to_a[100.0-scf-m3-0.028316846592]>
+          <Function test_round_trip_conversions_a_to_b_to_a[10.0-mscf-m3-28.316846592]>
+          <Function test_round_trip_conversions_a_to_b_to_a[50.0-bbl-m3-0.158987294928]>
+          <Function test_round_trip_conversions_a_to_b_to_a[1000.0-lb-kg-0.45359237]>
+          <Function test_round_trip_conversions_a_to_b_to_a[5.0-short_ton-kg-907.18474]>
+          <Function test_round_trip_conversions_a_to_b_to_a[25.0-mmbtu-mj-1055.05585262]>
+          <Function test_round_trip_conversions_a_to_b_to_a[1000.0-kwh-mj-3.6]>
+          <Function test_extreme_values_and_precision>
+          <Function test_incompatible_unit_error>
+          <Function test_temperature_conversions>
+          <Function test_pressure_conversions>
+    <Dir differential>
+      <Module test_clean_differential.py>
+        <Class TestCleanDifferential>
+          <Function test_golden_case_differential[GOLDEN-S1-COMB-001]>
+          <Function test_golden_case_differential[GOLDEN-S1-COMB-002]>
+          <Function test_golden_case_differential[GOLDEN-S1-COMB-003]>
+          <Function test_golden_case_differential[GOLDEN-S1-COMB-004]>
+          <Function test_golden_case_differential[GOLDEN-S1-COMB-005]>
+          <Function test_golden_case_differential[GOLDEN-S1-COMB-006]>
+          <Function test_golden_case_differential[GOLDEN-S1-FLARE-001]>
+          <Function test_golden_case_differential[GOLDEN-S1-FLARE-002]>
+          <Function test_golden_case_differential[GOLDEN-S1-FLARE-003]>
+          <Function test_golden_case_differential[GOLDEN-S1-VENT-001]>
+          <Function test_golden_case_differential[GOLDEN-S1-VENT-002]>
+          <Function test_golden_case_differential[GOLDEN-S1-MID-001]>
+          <Function test_golden_case_differential[GOLDEN-S1-FUG-001]>
+          <Function test_golden_case_differential[GOLDEN-S2-ELEC-001]>
+          <Function test_golden_case_differential[GOLDEN-S2-ELEC-002]>
+          <Function test_golden_case_differential[GOLDEN-S2-STEAM-001]>
+          <Function test_golden_case_differential[GOLDEN-S3-CAT1-001]>
+          <Function test_golden_case_differential[GOLDEN-S3-CAT4-001]>
+          <Function test_golden_case_differential[GOLDEN-S3-CAT6-001]>
+          <Function test_golden_case_differential[GOLDEN-S3-CAT11-001]>
+          <Function test_golden_case_differential[GOLDEN-STOICH-001]>
+          <Function test_golden_case_differential[GOLDEN-STOICH-002]>
+          <Function test_golden_case_differential[GOLDEN-STOICH-003]>
+          <Function test_golden_case_differential[GOLDEN-STOICH-004]>
+    <Dir mutation>
+      <Module test_clean_mutations.py>
+        <Class TestCleanMutations>
+          <Function test_kill_operator_mutation_combustion>
+          <Function test_kill_gwp_omission_mutation>
+          <Function test_kill_carbon_atomic_weight_mutation>
+          <Function test_kill_thermodynamic_standard_condition_mutation>
+          <Function test_kill_flaring_methane_slip_omission_mutation>
+          <Function test_kill_agr_methane_coabsorption_omission_mutation>
+          <Function test_kill_steam_boiler_efficiency_multiplication_mutation>
+          <Function test_kill_scope3_spend_unit_scale_mutation>
+          <Function test_kill_negative_activity_boundary_mutation>
+          <Function test_kill_zero_efficiency_division_by_zero_mutation>
+    <Dir property>
+      <Module test_clean_properties.py>
+        <Class TestCleanMathematicalProperties>
+          <Function test_zero_property_invariance>
+          <Function test_linear_scaling_property>
+          <Function test_additivity_property>
+          <Function test_monotonicity_property>
+          <Function test_unit_invariance_property>
+
+=================================== ERRORS ====================================
+_____ ERROR collecting validation/mutation/test_calculation_mutations.py ______
+ImportError while importing test module 'C:\Users\samsung\Desktop\H2\validation\mutation\test_calculation_mutations.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+validation\mutation\test_calculation_mutations.py:23: in <module>
+    from validation.reference_model import (
+E   ImportError: cannot import name 'IndependentCombustionModel' from 'validation.reference_model' (C:\Users\samsung\Desktop\H2\validation\reference_model\__init__.py)
+______ ERROR collecting validation/regression/test_regression_archive.py ______
+ImportError while importing test module 'C:\Users\samsung\Desktop\H2\validation\regression\test_regression_archive.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+validation\regression\test_regression_archive.py:6: in <module>
+    from validation.reference_model import (
+E   ImportError: cannot import name 'IndependentUnitConverter' from 'validation.reference_model' (C:\Users\samsung\Desktop\H2\validation\reference_model\__init__.py)
+=========================== short test summary info ===========================
+ERROR validation/mutation/test_calculation_mutations.py
+ERROR validation/regression/test_regression_archive.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!
+=================== 108 tests collected, 2 errors in 2.20s ====================
+

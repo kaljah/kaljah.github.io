@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_security_hardening.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -5,6 +5,7 @@
+   - The /api/auth/init-admin public route has been removed
+   - The CSRF token endpoint sets a double-submit cookie
+ """
++import os
+ import pytest
+ from app import app as flask_app
+ from extensions import db, limiter
+@@ -16,8 +16,10 @@
+         "WTF_CSRF_ENABLED": False,
+         "SECRET_KEY": "security-hardening-test-secret",
+         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+-        "SEED_ADMIN": "false",
++        "SQLALCHEMY_ENGINE_OPTIONS": {"connect_args": {"check_same_thread": False}},
+     })
++    # Ensure SEED_ADMIN is off — new code must not seed any accounts
++    os.environ.pop("SEED_ADMIN", None)
+     limiter.enabled = False
+     with flask_app.app_context():
+         db.create_all()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+You had inaccuracies in your replacement chunks, so you should review the file contents before making further edits. It is important that you get the target content EXACTLY right, otherwise you will make more mistakes.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.

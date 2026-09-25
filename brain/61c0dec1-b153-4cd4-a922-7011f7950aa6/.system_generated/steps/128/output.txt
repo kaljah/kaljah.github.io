@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 52 items
+
+new\server\tests\test_audit_bug_fixes.py::test_component_fugitive_calculator_scalar_counts PASSED [  1%]
+new\server\tests\test_audit_bug_fixes.py::test_tank_flashing_calculator_null_gor PASSED [  3%]
+new\server\tests\test_audit_bug_fixes.py::test_delete_mitigation_invalid_id_format PASSED [  5%]
+new\server\tests\test_audit_bug_fixes.py::test_ogmp_survey_null_measured_rate PASSED [  7%]
+new\server\tests\test_audit_remediation.py::test_dispatcher_kg_per_tonne_factor PASSED [  9%]
+new\server\tests\test_audit_remediation.py::test_dispatcher_fraction_boundary PASSED [ 11%]
+new\server\tests\test_audit_remediation.py::test_stoichiometry_short_ton PASSED [ 13%]
+new\server\tests\test_audit_remediation.py::test_base_calculator_uncertainty_k_factor PASSED [ 15%]
+new\server\tests\test_audit_remediation.py::test_profile_location_immutability PASSED [ 17%]
+new\server\tests\test_audit_remediation.py::test_audit_sod_for_it_admin PASSED [ 19%]
+new\server\tests\test_audit_remediation.py::test_scope3_server_side_calculation PASSED [ 21%]
+new\server\tests\test_audit_remediation.py::test_production_upsert_and_delete_audit PASSED [ 23%]
+new\server\tests\test_audit_remediation.py::test_scope2_rbac_and_creator_ownership PASSED [ 25%]
+new\server\tests\test_audit_remediation.py::test_scope2_case_insensitive_recalc_and_steam_amount PASSED [ 26%]
+new\server\tests\test_audit_remediation.py::test_bulk_anomaly_flag_persistence PASSED [ 28%]
+new\server\tests\test_audit_remediation.py::test_fugitive_screening_count_and_fraction PASSED [ 30%]
+new\server\tests\test_audit_remediation.py::test_agr_zero_removal_boundary PASSED [ 32%]
+new\server\tests\test_audit_remediation.py::test_dispatcher_generic_volume_and_mass_conversions PASSED [ 34%]
+new\server\tests\test_audit_remediation.py::test_dispatcher_mmbtu_liquid_fuel_hhv PASSED [ 36%]
+new\server\tests\test_audit_remediation.py::test_dispatcher_gram_factor_numerator PASSED [ 38%]
+new\server\tests\test_audit_remediation.py::test_combustion_factor_prefix_tco2_and_gram PASSED [ 40%]
+new\server\tests\test_audit_remediation.py::test_sentinel5p_column_mass_flux PASSED [ 42%]
+new\server\tests\test_audit_remediation.py::test_uncertainty_combine_sum_negative_sinks PASSED [ 44%]
+new\server\tests\test_audit_remediation.py::test_anomaly_iqr_quantile_interpolation PASSED [ 46%]
+new\server\tests\test_audit_remediation.py::test_scope3_tonne_factor_handling PASSED [ 48%]
+new\server\tests\test_audit_remediation.py::test_dashboard_sbti_zero_actuals PASSED [ 50%]
+new\server\tests\test_audit_remediation.py::test_unit_conversions_mscf_mcf_bidirectional PASSED [ 51%]
+new\server\tests\test_audit_remediation.py::test_dehydrator_stoichiometric_co2_combustion PASSED [ 53%]
+new\server\tests\test_audit_remediation.py::test_dashboard_intensity_mmscf_scaling PASSED [ 55%]
+new\server\tests\test_audit_remediation.py::test_dashboard_ogmp_target_status_segment_specific PASSED [ 57%]
+new\server\tests\test_audit_remediation.py::test_ogmp_survey_zero_top_down_no_false_discrepancy PASSED [ 59%]
+new\server\tests\test_audit_remediation.py::test_notifications_stream_heartbeat_init PASSED [ 61%]
+new\server\tests\test_audit_remediation.py::test_scope2_steam_recalculation_enthalpy PASSED [ 63%]
+new\server\tests\test_audit_remediation.py::test_scope3_eeio_per_thousand_scaling_defect PASSED [ 65%]
+new\server\tests\test_audit_remediation.py::test_custom_factor_percentage_uncertainty_in_add_emission PASSED [ 67%]
+new\server\tests\test_audit_remediation.py::test_update_emission_preserves_calc_payload PASSED [ 69%]
+new\server\tests\test_audit_remediation.py::test_bulk_import_scope2_and_3_rbac PASSED [ 71%]
+new\server\tests\test_audit_remediation.py::test_qaqc_maker_checker_and_it_admin_blocked PASSED [ 73%]
+new\server\tests\test_audit_remediation.py::test_base_year_recalculation_rbac_and_singleton PASSED [ 75%]
+new\server\tests\test_audit_remediation.py::test_cbam_export_existing_record_facility_check PASSED [ 76%]
+new\server\tests\test_audit_remediation.py::test_background_processor_upload_jobs_lock PASSED [ 78%]
+new\server\tests\test_audit_remediation.py::test_delete_mitigation_record_admin_required PASSED [ 80%]
+new\server\tests\test_audit_remediation.py::test_auth_update_user_role_whitelist PASSED [ 82%]
+new\server\tests\test_audit_remediation.py::test_qaqc_fuel_completeness_non_combustion PASSED [ 84%]
+new\server\tests\test_audit_remediation.py::test_scope2_authoritative_calculation_overrides_injected_co2e PASSED [ 86%]
+new\server\tests\test_audit_remediation.py::test_compressor_seal_and_storage_tank_uncertainty_mapping PASSED [ 88%]
+new\server\tests\test_audit_remediation.py::test_stoichiometry_dispatcher_gwp_propagation PASSED [ 90%]
+new\server\tests\test_audit_remediation.py::test_compute_scope3_co2e_units PASSED [ 92%]
+new\server\tests\test_audit_remediation.py::test_scope3_bulk_import_and_create_authoritative_calculation PASSED [ 94%]
+new\server\tests\test_audit_remediation.py::test_background_processor_scope3_units PASSED [ 96%]
+new\server\tests\test_audit_remediation.py::test_qaqc_dashboard_regional_facility_scoping PASSED [ 98%]
+new\server\tests\test_audit_remediation.py::test_csv_formula_injection_whitespace_and_tab_escaping PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 52 passed, 1 warning in 4.41s ========================
+

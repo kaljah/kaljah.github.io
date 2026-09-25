@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":2949,"LineContent":"-import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":2966,"LineContent":"+import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":3004,"LineContent":"-    const { user, preferences, updatePreferences } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":3007,"LineContent":"+    const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":2949,"LineContent":"-import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":2966,"LineContent":"+import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":3004,"LineContent":"-    const { user, preferences, updatePreferences } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":3007,"LineContent":"+    const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\GRAPH_REPORT.md","LineNumber":167,"LineContent":"- useAuth"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\GRAPH_REPORT.md","LineNumber":913,"LineContent":"### Community 209 - \"useAuth\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":10,"LineContent":"import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":44,"LineContent":"    const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":3284,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":3295,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":3307,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":3319,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":3982,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4178,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4305,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4501,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4746,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4758,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4769,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4781,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4792,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":4804,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5330,"LineContent":"      \"label\": \"useAuth()\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5336,"LineContent":"      \"id\": \"new_client_src_context_authcontext_useauth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5338,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5339,"LineContent":"      \"norm_label\": \"useauth()\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5349,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5360,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5384,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5440,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5452,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5475,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5510,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5567,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5579,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5718,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5741,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5810,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5833,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5867,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5878,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":5890,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":6515,"LineContent":"      \"community_name\": \"useAuth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":69497,"LineContent":"      \"target\": \"new_client_src_context_authcontext_useauth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":69899,"LineContent":"      \"target\": \"new_client_src_context_authcontext_useauth\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.json","LineNumber":69911,"LineContent":"      \"target\": \"new_client_src_context_authcontext_useauth\","}
+(...57 more results not shown)

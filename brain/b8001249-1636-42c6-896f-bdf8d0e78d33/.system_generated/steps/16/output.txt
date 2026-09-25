@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":618,"LineContent":"                        role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":382,"LineContent":"                    role=u[\"role\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":395,"LineContent":"                user.role = u[\"role\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":25,"LineContent":"    role = db.Column(db.String(20), default=\"user\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":193,"LineContent":"                role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":204,"LineContent":"            user.role = \"admin\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":215,"LineContent":"                role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":232,"LineContent":"                role=\"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":243,"LineContent":"            mgmt_z.role = \"it_manager\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":254,"LineContent":"                role=\"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":99,"LineContent":"                    user.role = u_data[\"role\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":112,"LineContent":"                    role=u_data[\"role\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":44,"LineContent":"                role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":36,"LineContent":"    if user.role == \"admin\" or ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":37,"LineContent":"        user.role == \"superuser\" and is_unrestricted_location(user.location)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":65,"LineContent":"    if user.role == \"admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":120,"LineContent":"        if user.role == \"superuser\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":121,"LineContent":"            admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":129,"LineContent":"        elif user.role == \"user\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":130,"LineContent":"            superusers = User.query.filter_by(role=\"superuser\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\upload_test_s2_s3.py","LineNumber":16,"LineContent":"        admin = User.query.filter_by(role='admin').first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":136,"LineContent":"    if user.role == \"superuser\" and not is_unrestricted_location(user.location):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":410,"LineContent":"    if user.role == \"superuser\" and not is_unrestricted_location(user.location):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":94,"LineContent":"        initial_status = \"Verified\" if user.role == \"admin\" else \"Pending\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":170,"LineContent":"            admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":234,"LineContent":"    if user.role == \"user\" and emission.created_by is not None and emission.created_by != user.id:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":238,"LineContent":"    if user.role not in [\"admin\", \"superuser\"] and emission.status == \"Verified\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":281,"LineContent":"        if emission.status == \"Verified\" and user.role != \"admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":389,"LineContent":"    bulk_status = \"Verified\" if user.role == \"admin\" else \"Pending\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":481,"LineContent":"            admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":302,"LineContent":"                admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":372,"LineContent":"    if user.role == \"user\" and emission.created_by is not None and emission.created_by != user.id:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":376,"LineContent":"    if user.role not in [\"admin\", \"superuser\"] and emission.status == \"Verified\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":950,"LineContent":"                    admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3160,"LineContent":"            else (\"Verified\" if user.role == \"admin\" else \"Pending\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3162,"LineContent":"        approved_by=user.id if (data.get(\"status\") != \"Draft\" and user.role == \"admin\") else None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3165,"LineContent":"            if (data.get(\"status\") != \"Draft\" and user.role == \"admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3199,"LineContent":"            admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3377,"LineContent":"    if user.role == \"user\" and record.created_by is not None and record.created_by != user.id:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3381,"LineContent":"    if user.role not in [\"admin\", \"superuser\"] and record.status == \"Verified\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3436,"LineContent":"        if record.status == \"Verified\" and user.role != \"admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3942,"LineContent":"                details=f\"Bulk imported {imported_count} emission records (status: {'Verified' if user.role == 'admin' else 'Pending'})\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3944,"LineContent":"            if user.role != \"admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3945,"LineContent":"                admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3962,"LineContent":"            \"status\": \"Verified\" if user.role == \"admin\" else \"Pending\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":111,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":134,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":205,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":212,"LineContent":"    if user.role == \"viewer\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":371,"LineContent":"    if user.role == \"it_admin\":"}
+(...68 more results not shown)

@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\indirect.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -111,6 +111,8 @@
+         power_output,
+         method="wri_efficiency",
+         uncertainties=None,
++        heat_unit="mmbtu",
++        power_unit="mmbtu",
+     ):
+         """
+         API Section 8.3 - Allocation of Cogeneration Emissions
+@@ -124,8 +124,12 @@
+             ["total_emissions", "heat_output", "power_output"],
+         )
+ 
+-        # Convert power_output (MWh) to MMBtu (3.412142 MMBtu/MWh) for consistent energy allocation
+-        power_mmbtu = power_output * 3.412142
++        p_unit = str(power_unit or "mmbtu").lower().strip()
++        if p_unit in ["mwh", "megawatt_hours", "kwh"]:
++            mult = 3.412142 if p_unit != "kwh" else 0.003412142
++            power_mmbtu = power_output * mult
++        else:
++            power_mmbtu = power_output
+ 
+         if method == "wri_efficiency":
+             # API Equation 8-5: WRI/WBCSD Efficiency Method
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

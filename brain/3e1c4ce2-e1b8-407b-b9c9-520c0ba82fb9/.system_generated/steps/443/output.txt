@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 12:42:56,071] INFO in app: Updated account: a
+[2026-09-21 12:42:56,174] INFO in app: Updated account: a@a
+[2026-09-21 12:42:56,265] INFO in app: Updated account: z
+[2026-09-21 12:42:56,361] INFO in app: Updated account: z@z
+Total verified 2026 records: 9
+ID 7: fac=4, proc=AGR Acid Gas Removal, co2=31000.0, ch4=15.0, n2o=0.0, stored_co2e=31420.0, calc_co2e=31420.0
+ID 5: fac=3, proc=Calcination Process, co2=38500.0, ch4=0.0, n2o=0.0, stored_co2e=38500.0, calc_co2e=38500.0
+ID 9: fac=4, proc=Compressor Fugitive, co2=0.0, ch4=110.0, n2o=0.0, stored_co2e=3080.0, calc_co2e=3080.0
+ID 8: fac=4, proc=Flaring, co2=22000.0, ch4=85.0, n2o=0.5, stored_co2e=24400.0, calc_co2e=24512.5
+ID 1: fac=1, proc=Stationary Combustion, co2=45000.0, ch4=12.5, n2o=2.1, stored_co2e=45350.0, calc_co2e=45906.5
+ID 6: fac=3, proc=Stationary Combustion, co2=18200.0, ch4=3.2, n2o=0.8, stored_co2e=18320.0, calc_co2e=18501.6
+ID 3: fac=2, proc=Steam Methane Reforming, co2=52000.0, ch4=8.0, n2o=1.5, stored_co2e=52250.0, calc_co2e=52621.5
+ID 2: fac=1, proc=Stoichiometry, co2=28000.0, ch4=5.0, n2o=1.2, stored_co2e=28150.0, calc_co2e=28458.0
+ID 4: fac=2, proc=Vented Tail Gas, co2=1500.0, ch4=0.0, n2o=45.0, stored_co2e=13425.0, calc_co2e=13425.0
+

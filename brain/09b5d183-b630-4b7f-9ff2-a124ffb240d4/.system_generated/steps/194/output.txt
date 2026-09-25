@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+test_login_and_me_operational_defaults_regular_user _____________
+
+client = <FlaskClient <Flask 'app'>>
+
+    def test_login_and_me_operational_defaults_regular_user(client):
+        """Verify regular user login and /me return assigned region, division, activity defaults."""
+        with app.app_context():
+            fac = Facility.query.filter_by(code="FAC-TEST-REGIONAL").first()
+            if not fac:
+                fac = Facility(
+                    name="Hassi Messaoud Central Plant",
+                    code="FAC-TEST-REGIONAL",
+                    region="Hassi Messaoud",
+                    location="Ouargla",
+                    division="Exploration & Production",
+                    activity="Upstream",
+                    segment="Upstream",
+                )
+                db.session.add(fac)
+                db.session.commit()
+    
+            user = User.query.filter_by(email="reg_user_test@defaults.com").first()
+            if not user:
+                user = User(
+                    email="reg_user_test@defaults.com",
+                    fullName="Regional User Defaults Tester",
+                    orgName="Sonatrach",
+                    sector="Energy",
+     
+

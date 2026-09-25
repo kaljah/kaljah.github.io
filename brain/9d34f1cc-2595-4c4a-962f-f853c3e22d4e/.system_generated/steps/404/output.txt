@@ -1,0 +1,44 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 5 items
+
+tests\test_vented.py ....F                                               [100%]
+
+================================== FAILURES ===================================
+__________________________ test_blowdown_calculator ___________________________
+
+    def test_blowdown_calculator():
+        calc = BlowdownCalculator()
+        data = {
+            "blowdown_volume": 1000 * 0.0283168,  # 1000 ft3 converted to m3
+            "pressure": 100,
+            "events": 1,
+            "ch4_content": 0.85,
+            "uncertainties": {},
+        }
+        res = calc.calculate(**data)
+        # API Eq 6-4: v_std = v_phys * (p_abs / p_std)
+        # 28.32 m3 * (114.696 / 14.696) = ~220.97 m3 at std conditions
+        # ch4 = 220.97 * 0.85 * 0.6785 kg/m3 / 1000 = ~0.127 tonnes
+>       assert abs(res["results"]["ch4"]["value"] - 0.127) < 0.01
+E       assert 0.015874308515378632 < 0.01
+E        +  where 0.015874308515378632 = abs((0.11112569148462137 - 0.127))
+
+tests\test_vented.py:87: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_vented.py::test_blowdown_calculator - assert 0.015874308515...
+=================== 1 failed, 4 passed, 1 warning in 1.62s ====================
+

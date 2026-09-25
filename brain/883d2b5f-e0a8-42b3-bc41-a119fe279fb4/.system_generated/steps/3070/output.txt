@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\legacy_engine.py:333:            # Flaring logic
+new\server\calculations\legacy_engine.py:739:    # Standard / Specific (Combustion, Flaring, etc.)
+new\server\calculations\legacy_engine.py:783:        if process in ["combustion", "flaring", "venting"]:
+new\server\calculations\legacy_engine.py:851:    elif process == "flaring":
+
+
+

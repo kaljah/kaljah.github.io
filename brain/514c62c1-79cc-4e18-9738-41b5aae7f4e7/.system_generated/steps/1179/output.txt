@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":171,"LineContent":"          path=\"reference-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.css","LineNumber":1,"LineContent":".reference-data {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":340,"LineContent":"    \u003cdiv className=\"reference-data\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":273,"LineContent":"                  to=\"/reference-data\""}

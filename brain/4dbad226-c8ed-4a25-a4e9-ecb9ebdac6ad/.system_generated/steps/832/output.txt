@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\test_factors.py", line 1, in <module>
+    from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS, EQUIPMENT_FACTORS
+ModuleNotFoundError: No module named 'emission_factors'
+

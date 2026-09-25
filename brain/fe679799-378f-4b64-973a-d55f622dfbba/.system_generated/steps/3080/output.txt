@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_exhaustive_matrix_test.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -783,6 +783,13 @@
+         return False
+     print("SUCCESS: Authenticated. Session cookies established.")
+ 
++    # Refresh CSRF token for the authenticated session
++    csrf_res2 = session.get(f"{BASE_URL}/api/csrf-token")
++    if csrf_res2.status_code == 200:
++        csrf_tok2 = csrf_res2.json().get("csrf_token")
++        session.headers.update({"X-CSRFToken": csrf_tok2})
++        print(f"Authenticated session CSRF token updated: {csrf_tok2[:12]}...")
++
+     # 3. Upload Scope 1 Exhaustive Matrix CSV
+     print(f"\n[Step 2] Uploading Scope 1 Exhaustive Scenario Matrix ({len(s1_rows)} rows)...")
+     with open(s1_csv_path, "rb") as f:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

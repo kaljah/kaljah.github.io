@@ -1,0 +1,23 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1128,"LineContent":"            \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1352,"LineContent":"                    \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":600,"LineContent":"            \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":614,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1237,"LineContent":"                    \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1502,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1587,"LineContent":"          \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\FormField.jsx","LineNumber":67,"LineContent":"      \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\BlowdownForm.jsx","LineNumber":25,"LineContent":"            \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CombustionForm.jsx","LineNumber":133,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CombustionForm.jsx","LineNumber":219,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":411,"LineContent":"          \u003cselect className={`s1w-map-select ${mapped ? \"matched\" : \"\"}`} value={value} onChange={e =\u003e onChange(e.target.value)}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":885,"LineContent":"              \u003cselect className=\"s1w-factor-select\" value={globalFactor} onChange={e =\u003e setGlobalFactor(e.target.value)}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":507,"LineContent":"            \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":566,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":211,"LineContent":"          \u003cselect className={`s1w-map-select ${mapped ? \"matched\" : \"\"}`} value={value} onChange={e =\u003e onChange(e.target.value)}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":410,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":502,"LineContent":"                  \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":184,"LineContent":"          \u003cselect className={`s1w-map-select ${mapped ? \"matched\" : \"\"}`} value={value} onChange={e =\u003e onChange(e.target.value)}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1386,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1655,"LineContent":"                                \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2189,"LineContent":"          \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2207,"LineContent":"          \u003cselect"}

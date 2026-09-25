@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Successfully reset password for audit_viewer@test.com to viewer123
+

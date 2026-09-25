@@ -1,0 +1,34 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":117,"LineContent":"        boundary_type: '', boundary_detail: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":276,"LineContent":"                ? `${facilityForm.boundary_type} - ${facilityForm.boundary_detail}`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":277,"LineContent":"                : facilityForm.boundary_type;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":286,"LineContent":"                boundary_type: '', boundary_detail: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":962,"LineContent":"                                                    name=\"boundary_type\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":963,"LineContent":"                                                    value={facilityForm.boundary_type}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":964,"LineContent":"                                                    onChange={(e) =\u003e setFacilityForm({ ...facilityForm, boundary_type: e.target.value, boundary_detail: '' })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":980,"LineContent":"                                                    disabled={!facilityForm.boundary_type}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":983,"LineContent":"                                                    {facilityForm.boundary_type \u0026\u0026 BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map(detail =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":117,"LineContent":"        boundary_type: '', boundary_detail: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":276,"LineContent":"                ? `${facilityForm.boundary_type} - ${facilityForm.boundary_detail}`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":277,"LineContent":"                : facilityForm.boundary_type;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":286,"LineContent":"                boundary_type: '', boundary_detail: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":962,"LineContent":"                                                    name=\"boundary_type\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":963,"LineContent":"                                                    value={facilityForm.boundary_type}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":964,"LineContent":"                                                    onChange={(e) =\u003e setFacilityForm({ ...facilityForm, boundary_type: e.target.value, boundary_detail: '' })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":980,"LineContent":"                                                    disabled={!facilityForm.boundary_type}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":983,"LineContent":"                                                    {facilityForm.boundary_type \u0026\u0026 BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map(detail =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":65,"LineContent":"                boundary_type=\"Operational Control\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":718,"LineContent":"    const uniqueBoundaries = [...new Set(reportFacilities.map(f =\u003e f.boundary_type || \"Operational Control\"))].join(\" and \");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":48,"LineContent":"    boundary_type = db.Column(db.String(100), default=\"Operational Control\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":575,"LineContent":"        boundary_type: '', boundary_detail: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":915,"LineContent":"                ? `${facilityForm.boundary_type} - ${facilityForm.boundary_detail}`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":916,"LineContent":"                : facilityForm.boundary_type;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":925,"LineContent":"                boundary_type: '', boundary_detail: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2421,"LineContent":"                                                    name=\"boundary_type\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2422,"LineContent":"                                                    value={facilityForm.boundary_type}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2423,"LineContent":"                                                    onChange={(e) =\u003e setFacilityForm({ ...facilityForm, boundary_type: e.target.value, boundary_detail: '' })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2439,"LineContent":"                                                    disabled={!facilityForm.boundary_type}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2442,"LineContent":"                                                    {facilityForm.boundary_type \u0026\u0026 BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map(detail =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":824,"LineContent":"        (\"boundary_type\", \"consolidation approach\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1566,"LineContent":"            \"boundary_type\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1605,"LineContent":"            boundary_type=row.get(\"boundary_type\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":293,"LineContent":"    { id: \"boundary_type\", label: \"Consolidation Approach\", required: true },"}

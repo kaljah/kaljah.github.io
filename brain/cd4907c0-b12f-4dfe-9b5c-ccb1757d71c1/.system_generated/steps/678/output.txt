@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -83,6 +83,12 @@
+         } else {
+           setYear("all");
+         }
++
++        const opDefaults = getUserOperationalDefaults(user, facilitiesData);
++        if (opDefaults.isRestricted || facilitiesData.length === 1) {
++          if (opDefaults.defaultFacilityId) setRegionId(opDefaults.defaultFacilityId);
++          if (opDefaults.defaultDivision) setDivision(opDefaults.defaultDivision);
++        }
+       } catch (err) {
+         console.error("Error fetching initial data", err);
+         toast.error("Failed to load filter data");
+@@ -89,6 +89,6 @@
+     };
+     loadInitialData();
+-  }, []);
++  }, [user]);
+ 
+   // Reset page to 1 whenever filters change (but not on page itself changing)
+   const prevFiltersRef = React.useRef({
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 17
+    print(f'  Year {y}: GWP-100 = {row[" scope1_total\]}
+                                       ^
+SyntaxError: unterminated string literal (detected at line 17)
+

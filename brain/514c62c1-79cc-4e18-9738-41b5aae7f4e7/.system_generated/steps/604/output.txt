@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[2026-09-19 18:15:23,200] INFO in app: GET /api/dashboard/batch-all 200 [0.154s] [ReqID: a1a0f269-a87f-481b-9bea-89b4a3c1ff90]
+Cat sample: {'activity': 'Extraction', 'division': 'Production', 'field': 'Chaos Field', 'region': 'Resilience Testing Facility', 'scope3_emissions': 0, 'total_emissions': 26.99613106017917, 'total_emissions_all': 26.99613106017917}
+

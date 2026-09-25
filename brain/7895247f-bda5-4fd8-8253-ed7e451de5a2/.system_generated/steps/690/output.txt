@@ -1,0 +1,14 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 11, in <module>
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u25aa' in position 51: character maps to <undefined>
+Total pages: 41
+Page 1: GROUPEMENT BERKINE | MARCH 10, 2026 | 2025
+Page 2: TABLE OF CONTENTS | TABLE OF CONTENTS N� APPENDICES N� | Glossary 3 Production � 2021 to 2025 24-25
+Page 3: GLOSSARY | TERM DEFINITION TERM DEFINITION | API American Petroleum Institute JV PARTNER Joint Venture Partner
+

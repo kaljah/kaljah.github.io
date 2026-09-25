@@ -1,0 +1,23 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-2250
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-2250.log
+Log output:
+<truncated 215 lines>
+ is_pass else "FAIL",
+            "notes": notes,
+        }
+        TestCleanDifferential.differential_results.append(record)
+    
+>       assert is_pass, f"Differential FAIL for {test_id}: prod={prod_co2e}, ref={ref_co2e}, abs_diff={abs_diff}, rel_diff={rel_diff:.4%}"
+E       AssertionError: Differential FAIL for GOLDEN-S1-COMB-002: prod=9.70375, ref=69.042358890248, abs_diff=59.338608890248, rel_diff=85.9452%
+E       assert False
+
+validation\differential\test_clean_differential.py:273: AssertionError
+-------------------------- Captured stdout teardown ---------------------------
+
+[Differential Report saved to C:\Users\samsung\Desktop\H2\validation\reports\differential_report.json]
+=========================== short test summary info ===========================
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-002]
+====================== 1 failed, 23 deselected in 2.41s =======================
+
+Last progress: 4s ago

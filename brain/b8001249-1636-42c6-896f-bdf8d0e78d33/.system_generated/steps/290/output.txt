@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+[Agent6/it_admin] ✅ Login as test_itadmin@ghg-test.com
+[Agent6/it_admin] ✅ GET /auth/me → 200
+[Agent6/it_admin] 
+## RBAC (it_admin)
+[Agent6/it_admin]   it_admin can list users — check if this is intended
+[Agent6/it_admin] 🐛 BUG [🔴 Critical] RBAC: Role 'it_admin' should be DENIED it_admin tries to create admin user but got 405
+[Agent6/it_admin] 
+## Satellite Data
+[Agent6/it_admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /satellite/data
+[Agent6/it_admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /satellite/summary
+[Agent6/it_admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /satellite/alerts
+[Agent6/it_admin] 
+## Emission Access (it_admin)
+[Agent6/it_admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /emissions list
+[Agent6/it_admin] 
+## Facilities (it_admin)
+[Agent6/it_admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /facilities
+[Agent6/it_admin] 
+## Dashboard & Reports (it_admin)
+[Agent6/it_admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/summary
+[Agent6/it_admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /reports/list
+[Agent6/it_admin] 
+## Audit Trail (it_admin)
+[Agent6/it_admin] 
+## Cross-role data leak checks
+[Agent6] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_06_report.md | Bugs: 8
+

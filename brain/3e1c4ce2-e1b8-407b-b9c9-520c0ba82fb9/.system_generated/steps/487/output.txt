@@ -1,0 +1,125 @@
+
+The command exited with code 1.
+Output:
+<truncated 52 lines>
+    waiting for navigation until "load"
+    ============================================================
+
+      37 |
+      38 |   // Wait for Dashboard layout
+    > 39 |   await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+         |              ^
+      40 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+      41 |   await page.waitForTimeout(2000);
+      42 | }
+        at setupDashboard (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:39:14)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:251:5
+
+    Error Context: test-results\test_dashboard_deep_audit--13c5d-ganizational-Hierarchy-Tree-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--13c5d-ganizational-Hierarchy-Tree-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--13c5d-ganizational-Hierarchy-Tree-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_dashboard_deep_audit.spec.js:313:3 › Dashboard Page Deep Audit › 6. Notification Center Panel, Real-time Counter & Actions 
+
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      37 |
+      38 |   // Wait for Dashboard layout
+    > 39 |   await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+         |              ^
+      40 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+      41 |   await page.waitForTimeout(2000);
+      42 | }
+        at setupDashboard (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:39:14)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:314:5
+
+    Error Context: test-results\test_dashboard_deep_audit--4b651-l-Real-time-Counter-Actions-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      37 |
+      38 |   // Wait for Dashboard layout
+    > 39 |   await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+         |              ^
+      40 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+      41 |   await page.waitForTimeout(2000);
+      42 | }
+        at setupDashboard (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:39:14)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:314:5
+
+    Error Context: test-results\test_dashboard_deep_audit--4b651-l-Real-time-Counter-Actions-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--4b651-l-Real-time-Counter-Actions-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--4b651-l-Real-time-Counter-Actions-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_dashboard_deep_audit.spec.js:345:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons 
+
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      37 |
+      38 |   // Wait for Dashboard layout
+    > 39 |   await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+         |              ^
+      40 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+      41 |   await page.waitForTimeout(2000);
+      42 | }
+        at setupDashboard (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:39:14)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:346:5
+
+    Error Context: test-results\test_dashboard_deep_audit--5ae3f-d-Reference-Library-Buttons-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForURL: Timeout 10000ms exceeded.
+    =========================== logs ===========================
+    waiting for navigation until "load"
+    ============================================================
+
+      37 |
+      38 |   // Wait for Dashboard layout
+    > 39 |   await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+         |              ^
+      40 |   await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+      41 |   await page.waitForTimeout(2000);
+      42 | }
+        at setupDashboard (C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:39:14)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:346:5
+
+    Error Context: test-results\test_dashboard_deep_audit--5ae3f-d-Reference-Library-Buttons-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--5ae3f-d-Reference-Library-Buttons-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--5ae3f-d-Reference-Library-Buttons-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:250:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:313:3 › Dashboard Page Deep Audit › 6. Notification Center Panel, Real-time Counter & Actions 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:345:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons 
+  4 passed (2.2m)
+

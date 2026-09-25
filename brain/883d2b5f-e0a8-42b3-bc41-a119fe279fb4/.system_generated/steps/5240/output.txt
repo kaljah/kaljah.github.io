@@ -1,0 +1,92 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -379,7 +379,85 @@
+   - **0 Console Errors.**
+ - **Full Server Test Suite:** **435 / 435 tests passing** in 61.64s.
+ - **Production Bundle Build:** Clean compilation with `npm run build` in 13.17s.
+-- **Knowledge Graph Synchronization:** Updated via `graphify update .` (2,552 nodes, 5,346 edges, 237 communities).
++- **Knowledge Graph Synchronization:** Updated via `graphify update .` (2,536 nodes, 5,328 edges, 211 communities).
++
++---
++
++## 13. Full-Stack API Health & Resilience Audit
++
++### A. Executive Audit Overview
++A comprehensive, automated API health and resilience test suite was developed in [`test_all_apis_health.py`](file:///c:/Users/samsung/Desktop/H2/new/test_all_apis_health.py) to exhaustively probe every registered route and HTTP method across all 15 Flask blueprints and core endpoints against the live backend (`http://127.0.0.1:5000`).
++
++The audit evaluated endpoint availability, latency profiles, parameter resolution, CSRF protection, unauthenticated security gates, and multi-persona Role-Based Access Control (RBAC).
++
++```mermaid
++graph TD
++    Client[Automated API Health Runner] --> Health[Phase 1: Core Health /api/health]
++    Health --> CSRF[Phase 2: CSRF Security Architecture]
++    CSRF --> Admin[Phase 3: Admin Auth & Session Generation]
++    Admin --> Fuzz[Phase 4: 171 Live Route Fuzzing & Latency Profile]
++    Fuzz --> Unauth[Phase 5: Unauthenticated Gateway Probes - 401]
++    Unauth --> Viewer[Phase 6: Viewer RBAC Enforcements - 403]
++    Viewer --> SoD[Phase 7: IT Admin Segregation of Duties - 403]
++    SoD --> Report[Phase 8: Audit Scorecard & Zero 500 Certification]
++```
++
++---
++
++### B. Audit Scorecard & Metrics
++
++| Metric | Measured Value | Standard Required | Status |
++| :--- | :--- | :--- | :--- |
++| **Total API Endpoints / Methods Tested** | **171** | 100% of registered routes | **PASSED** |
++| **Healthy Endpoints (Status < 500)** | **171 / 171 (100.0%)** | 100.0% | **PASSED** |
++| **Server Crashes (500 Internal Server Error)** | **0** | 0 unhandled exceptions | **PASSED** |
++| **Unauthenticated Security Gates** | **7 / 7 (100.0%)** | 100.0% rejected with 401 | **PASSED** |
++| **Viewer Role RBAC Gates** | **5 / 5 (100.0%)** | 100.0% read allowed, mutations 403 | **PASSED** |
++| **IT Admin Segregation of Duties (SoD)** | **3 / 3 (100.0%)** | User admin allowed, emissions 403 | **PASSED** |
++| **Average API Response Latency** | **80.8 ms** | < 200 ms | **OPTIMAL** |
++| **Minimum Response Latency** | **4.8 ms** | Fast cache / lightweight routes | **OPTIMAL** |
++| **Maximum Response Latency** | **5,771 ms** | External satellite fallback timeout | **HANDLED** |
++
++---
++
++### C. HTTP Status Code Distribution
++
++- **HTTP 200 (OK - Successful execution):** `76 endpoints`
++  - Core health, metadata, search catalogs, emission factor lookups, dashboard aggregates, SSE streams, reporting exports, facilities list.
++- **HTTP 400 (Bad Request - Handled validation rejection):** `90 endpoints`
++  - Strict payload validation preventing malformed or incomplete data mutations from causing unhandled crashes.
++- **HTTP 403 (Forbidden - Role-based authorization barrier):** `2 endpoints` (in admin session) + `100% enforced` across RBAC personas.
++  - Correct enforcement of segregation of duties and role permissions.
++- **HTTP 404 (Not Found - Graceful missing entity response):** `3 endpoints`
++  - Graceful handling when querying or deleting non-existent entity IDs without throwing exceptions.
++- **HTTP 500 (Internal Server Error):** `0 endpoints` (Zero unhandled crashes).
++
++---
++
++### D. Multi-Persona Authorization & Segregation of Duties Verification
++
++1. **Unauthenticated Persona:**
++   - Attempted access to `/api/emissions/`, `/api/facilities`, `/api/dashboard/summary`, `/api/audit/`, `/api/scope2`, `/api/scope3`, and `/api/auth/users`.
++   - **Result:** `100%` rejected with `HTTP 401 Unauthorized`.
++2. **Viewer Role Persona (`audit_viewer@test.com`):**
++   - Read permissions: `GET /api/emissions/` -> `HTTP 200 OK`.
++   - Mutation blocks: `POST /api/emissions/` -> `HTTP 403 Forbidden`.
++   - ERP sync block: `POST /api/emissions/erp/sync` -> `HTTP 403 Forbidden`.
++   - Facility deletion block: `DELETE /api/facilities/999999` -> `HTTP 403 Forbidden`.
++   - Administrative block: `GET /api/auth/users` -> `HTTP 403 Forbidden`.
++3. **IT Administrator Persona (`itadmin@ghg.com`):**
++   - User administration: `GET /api/auth/users` -> `HTTP 200 OK`.
++   - Segregation of Duties: `GET /api/reports/export` -> `HTTP 403 Forbidden`.
++   - Segregation of Duties: `GET /api/reports/ogmp-export` -> `HTTP 403 Forbidden`.
++
++---
++
++### E. Code Hardening Remediations
++- **Viewer Role Access Control in [`routes/emissions.py:2943`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/emissions.py#L2943):**
++  Added explicit role restriction ensuring `viewer` and `auditor` roles are strictly blocked from creating emission records via `POST /api/emissions/`, returning `HTTP 403 Forbidden`.
++- **Full Test Suite & Knowledge Graph Integrity:**
++  - **Pytest:** `435 / 435 passed` (100%).
++  - **Graphify Knowledge Graph:** Re-synchronized cleanly (2,536 nodes, 5,328 edges, 211 communities).
+ 
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

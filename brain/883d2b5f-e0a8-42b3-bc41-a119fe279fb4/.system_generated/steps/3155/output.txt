@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\Reports.jsx:59:          api.get("/facilities"),
+new\client\src\pages\Reports.jsx:60:          api.get("/filters/available"),
+new\client\src\pages\Reports.jsx:163:      const res = await api.get("/emissions", { params });
+new\client\src\pages\Reports.jsx:199:      const res = await api.get("/emissions/export", {
+new\client\src\pages\Reports.jsx:234:      const response = await api.get(`/reports/export?${params.toString()}`, {
+new\client\src\pages\Reports.jsx:263:      const response = await api.get(`/reports/ogmp-export?year=${yr}`, {
+
+
+

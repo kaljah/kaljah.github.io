@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":10,"LineContent":"    calculate_co2e,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":155,"LineContent":"        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":257,"LineContent":"        total_co2e = calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":388,"LineContent":"        total_co2e = calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":490,"LineContent":"        total_co2e = calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":596,"LineContent":"        total_co2e = calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":670,"LineContent":"        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)"}

@@ -1,0 +1,50 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":194,"LineContent":"    f = None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":278,"LineContent":"                f = io.StringIO(decoded_text)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":279,"LineContent":"                reader = csv.reader(f, delimiter=delimiter)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":332,"LineContent":"            fac_name_map = {f.name.lower(): f for f in all_facilities}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":333,"LineContent":"            for f in all_facilities:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":334,"LineContent":"                if f.region and f.region.lower() not in fac_name_map:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":335,"LineContent":"                    fac_name_map[f.region.lower()] = f"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":336,"LineContent":"            fac_id_map = {str(f.id): f for f in all_facilities}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":520,"LineContent":"                        f\"Unknown scope identifier: '{scope}'. Cannot process row.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":559,"LineContent":"                                flag_msg = anomaly.get('message') or f\"Statistical Anomaly: Z-score {anomaly.get('z_score', 0):.2f}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":623,"LineContent":"                    scope_label = f\"Scope {scope}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":629,"LineContent":"                            title=f\"{scope_label} Bulk Upload Pending Review\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":631,"LineContent":"                                f\"{success_count} new {scope_label} emission records were imported \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":632,"LineContent":"                                f\"by {user_obj.fullName if user_obj else 'a user'} and are \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":633,"LineContent":"                                f\"awaiting your approval.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":660,"LineContent":"                    upload_jobs[job_id][\"errors\"].append(f\"Fatal error: {str(e)}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":665,"LineContent":"            if f:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":666,"LineContent":"                f.close()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":906,"LineContent":"        errors.append(f\"Facility '{fac_input}' not found\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":989,"LineContent":"            errors.append(f\"Row {row_idx}: Unknown unit '{unit}' for indirect steam\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":997,"LineContent":"            errors.append(f\"Row {row_idx}: Net efficiency must be greater than 0 (got {net_eff:.4f})\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1017,"LineContent":"            errors.append(f\"Row {row_idx}: Unknown unit '{unit}' for electricity. Must be kWh, MWh, or GWh.\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1027,"LineContent":"                    f\"Duplicate record: Scope 2 emission for '{facility.name}' \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1028,"LineContent":"                    f\"({year}-{month:02d}, source '{source_type}') already exists. \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1029,"LineContent":"                    f\"Enable 'Overwrite Duplicates' to replace it.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1068,"LineContent":"        emission.qa_flag = f\"Outlier detected: usage {amount} exceeds 10,000,000 threshold\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1113,"LineContent":"        return None, [f\"Facility '{fac_raw}' not found\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1133,"LineContent":"                    f\"Duplicate record: Scope 3 emission for facility '{facility.name}' \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1134,"LineContent":"                    f\"({year}-{month:02d}, Category 1) already exists. \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1135,"LineContent":"                    f\"Enable 'Overwrite Duplicates' to replace it.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1141,"LineContent":"                    existing_obj.sub_category = f\"Spend-based: {factor_data['name']} (NAICS {naics})\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1156,"LineContent":"        sub_category=f\"Spend-based: {factor_data['name']} (NAICS {naics})\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1170,"LineContent":"        emission.qa_flag = f\"Outlier detected: activity data {spend_usd} exceeds 10,000,000 threshold\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1217,"LineContent":"        errors.append(f\"Facility '{fac_input}' not found\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1221,"LineContent":"    cat_str = f\"Category {cat}\" if not str(cat).startswith(\"Category\") else cat"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1262,"LineContent":"                    f\"Duplicate record: Scope 3 emission for facility '{facility.name}' \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1263,"LineContent":"                    f\"({year}-{month:02d}, {cat_str}) already exists. \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1264,"LineContent":"                    f\"Enable 'Overwrite Duplicates' to replace it.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1298,"LineContent":"        emission.qa_flag = f\"Outlier detected: activity data {amt} exceeds 10,000,000 threshold\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1329,"LineContent":"        errors.append(f\"Facility '{fac_input}' not found\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1366,"LineContent":"        errors.append(f\"Facility '{fac_input}' not found\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1466,"LineContent":"        errors.append(f\"Facility '{fac_input}' not found\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1561,"LineContent":"            errors.append(f\"Region '{name}' already exists. Choose 'Overwrite' to update it.\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1686,"LineContent":"                return None, [f\"Access denied: Region '{fac_raw}' exists but your account does not have permission to upload data for it.\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1687,"LineContent":"        return None, [f\"Region '{fac_raw}' not found. Check that the region name matches exactly a region in the system.\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1692,"LineContent":"        return None, [f\"Invalid quantity: {row.get('quantity')}\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1865,"LineContent":"                        f\"Duplicate record: Scope 1 emission for facility '{facility.name}' \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1866,"LineContent":"                        f\"({year}-{month:02d}, process '{process_type}', fuel '{fuel}') already exists. \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1867,"LineContent":"                        f\"Enable 'Overwrite Duplicates' to replace it.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1940,"LineContent":"        return None, [f\"Calculation error: {str(e)}\"]"}

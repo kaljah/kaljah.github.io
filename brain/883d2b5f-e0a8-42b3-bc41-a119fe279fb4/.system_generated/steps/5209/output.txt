@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_all_apis_health.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -306,6 +306,10 @@
+     )
+     viewer_ok = (v_login.status_code == 200)
+     print(f"  Viewer Login (audit_viewer@test.com) -> HTTP {v_login.status_code} ({'OK' if viewer_ok else 'FAIL'})")
++    if viewer_ok:
++        v_csrf_fresh = viewer_session.get(f"{BASE_URL}/api/csrf-token", timeout=5).json().get("csrf_token")
++        if v_csrf_fresh:
++            viewer_session.headers.update({"X-CSRFToken": v_csrf_fresh})
+     
+     viewer_checks = [
+         ("GET",  "/api/emissions/", 200, "Read-only operational data access"),
+@@ -341,6 +341,10 @@
+     )
+     it_ok = (it_login.status_code == 200)
+     print(f"  IT Admin Login (itadmin@ghg.com) -> HTTP {it_login.status_code} ({'OK' if it_ok else 'FAIL'})")
++    if it_ok:
++        it_csrf_fresh = it_session.get(f"{BASE_URL}/api/csrf-token", timeout=5).json().get("csrf_token")
++        if it_csrf_fresh:
++            it_session.headers.update({"X-CSRFToken": it_csrf_fresh})
+     
+     it_checks = [
+         ("GET", "/api/auth/users", 200, "User directory administration"),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,286 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=427_0 RootWebArea "Carbon Tech" url="http://localhost:5173/"
+  uid=507_0 complementary
+    uid=507_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=507_2 StaticText "Carbon tech"
+    uid=507_3 navigation
+      uid=507_4 link "Dashboard" url="http://localhost:5173/"
+        uid=507_5 StaticText "Dashboard"
+      uid=507_6 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=507_7 StaticText "Carbon Intensity"
+      uid=507_8 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=507_9 StaticText "Methane Intensity"
+      uid=507_10 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=507_11 StaticText "SBTi Net-Zero"
+      uid=507_12 link "Calculations" url="http://localhost:5173/emissions"
+        uid=507_13 StaticText "Calculations"
+      uid=507_14 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=507_15 StaticText "Emissions Map"
+      uid=507_16 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=507_17 StaticText "Manage Data"
+      uid=507_18 link "Reports" url="http://localhost:5173/reports"
+        uid=507_19 StaticText "Reports"
+      uid=507_20 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=507_21 StaticText "Reference Data"
+      uid=507_22 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=507_23 StaticText "Uncertainty"
+      uid=507_24 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=507_25 StaticText "Audit Trail"
+      uid=507_26 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=507_27 StaticText "QA/QC & Diagnostics"
+    uid=507_28 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=507_29 StaticText "Settings"
+    uid=507_30 StaticText "A"
+    uid=507_31 StaticText "Administrator"
+    uid=507_32 StaticText "Sustainability Lead"
+  uid=507_33 main
+    uid=507_34 StaticText "Corporate ESG"
+    uid=507_35 StaticText "All Years"
+    uid=507_36 StaticText "All Supply Chains"
+    uid=507_37 StaticText "All Activities"
+    uid=507_38 StaticText "All Divisions"
+    uid=507_39 StaticText "All Regions"
+    uid=507_40 button "GWP-100"
+    uid=507_41 button "GWP-20"
+    uid=507_42 button "+ Set Target" description="Set emission targets in Manage Data"
+    uid=507_43 button "Notifications"
+    uid=507_44 button "User Profile" description="User Profile"
+    uid=507_45 StaticText "Administrator"
+    uid=507_46 heading "GHG Emissions Dashboard" level="1"
+    uid=507_47 StaticText "Live Content • Updated 11:30 PM"
+    uid=507_48 heading "EMISSIONS OVERVIEW" level="2"
+    uid=507_49 StaticText "All Regions"
+    uid=507_50 button "Export Executive Brief (PDF)" description="Export multi-page executive summary PDF"
+    uid=507_51 StaticText "GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)"
+    uid=507_52 StaticText "10.2K"
+    uid=507_53 StaticText "tCO₂e"
+    uid=507_54 StaticText "NET EMISSIONS"
+    uid=507_55 StaticText "10.2K"
+    uid=507_56 StaticText "tCO₂e"
+    uid=507_57 StaticText "Less"
+    uid=507_58 StaticText "0"
+    uid=507_59 StaticText "Mitigation"
+    uid=507_60 StaticText "TOTAL CH4 (METHANE)"
+    uid=507_61 StaticText "338.9"
+    uid=507_62 StaticText "tCH₄"
+    uid=507_63 StaticText "PERFORMANCE INTENSITY"
+    uid=507_64 StaticText "0.04"
+    uid=507_65 StaticText "kg/BOE"
+    uid=507_66 StaticText "CO₂e Intensity (Scope 1+2)"
+    uid=507_67 StaticText "Scope 1 (Direct)"
+    uid=507_68 StaticText "10.2K"
+    uid=507_69 StaticText " tCO₂e"
+    uid=507_70 StaticText "Scope 2 (Indirect)"
+    uid=507_71 StaticText "52.2"
+    uid=507_72 StaticText " tCO₂e"
+    uid=507_73 StaticText "Scope 3 (Supply Chain)"
+    uid=507_74 StaticText "216.9"
+    uid=507_75 StaticText " tCO₂e"
+    uid=507_76 heading "Emissions Trend & Projection" level="3"
+    uid=507_77 StaticText "Historical inventory trajectory with 5-year predictive forecast"
+    uid=507_78 button "Compare Regions"
+    uid=507_79 image "Forecast legend icon"
+    uid=507_80 StaticText "Forecast"
+    uid=507_81 image "Scope 1 legend icon"
+    uid=507_82 StaticText "Scope 1"
+    uid=507_83 image "Target Path legend icon"
+    uid=507_84 StaticText "Target Path"
+    uid=507_85 image "Total Emissions legend icon"
+    uid=507_86 StaticText "Total Emissions"
+    uid=507_87 application
+      uid=507_88 group
+      uid=507_89 group
+      uid=507_90 group
+      uid=507_91 group
+      uid=507_92 group
+      uid=507_93 group
+      uid=507_94 group
+      uid=507_95 group
+      uid=507_96 group
+      uid=507_97 group
+      uid=507_98 group
+      uid=507_99 group
+        uid=507_100 StaticText "2026"
+        uid=507_101 StaticText "0"
+        uid=507_102 StaticText "3.0k"
+        uid=507_103 StaticText "6.0k"
+        uid=507_104 StaticText "9.0k"
+        uid=507_105 StaticText "12.0k"
+    uid=507_106 heading "Emissions by Activity" level="3"
+    uid=507_107 image "E&P (Upstream) legend icon"
+    uid=507_108 StaticText "E&P (Upstream)"
+    uid=507_109 image "Steel & Iron (Acier DRI) legend icon"
+    uid=507_110 StaticText "Steel & Iron (Acier DRI)"
+    uid=507_111 application
+      uid=507_112 group
+      uid=507_113 group
+      uid=507_114 group
+        uid=507_115 group
+          uid=508_0 group
+            uid=508_1 graphics-symbol
+          uid=508_2 group
+            uid=508_3 graphics-symbol
+      uid=507_120 group
+      uid=507_121 group
+      uid=507_122 group
+      uid=507_123 group
+      uid=507_124 group
+      uid=507_125 group
+      uid=507_126 group
+      uid=507_127 group
+      uid=507_128 group
+    uid=507_129 heading "Emissions by Source" level="3"
+    uid=507_130 image "Combustion legend icon"
+    uid=507_131 StaticText "Combustion"
+    uid=507_132 image "Flaring legend icon"
+    uid=507_133 StaticText "Flaring"
+    uid=507_134 image "Other legend icon"
+    uid=507_135 StaticText "Other"
+    uid=507_136 image "Venting legend icon"
+    uid=507_137 StaticText "Venting"
+    uid=507_138 application
+      uid=507_139 group
+      uid=507_140 group
+      uid=507_141 group
+        uid=507_142 group
+          uid=508_4 group
+            uid=508_5 graphics-symbol
+          uid=508_6 group
+            uid=508_7 graphics-symbol
+          uid=508_8 group
+            uid=508_9 graphics-symbol
+          uid=508_10 group
+            uid=508_11 graphics-symbol
+      uid=507_151 group
+      uid=507_152 group
+      uid=507_153 group
+      uid=507_154 group
+      uid=507_155 group
+      uid=507_156 group
+      uid=507_157 group
+      uid=507_158 group
+      uid=507_159 group
+    uid=507_160 heading "SBTi Decarbonization Trajectory (1.5C)" level="3"
+    uid=507_161 StaticText "Progress monitoring against corporate Net-Zero targets from Base Year "
+    uid=507_162 StaticText "2026"
+    uid=507_163 StaticText " to Target Year "
+    uid=507_164 StaticText "2050"
+    uid=507_165 button "View Full SBTi Dashboard →"
+    uid=507_166 image "Actual Verified Emissions legend icon"
+    uid=507_167 StaticText "Actual Verified Emissions"
+    uid=507_168 image "Business as Usual (+1.5%/yr) legend icon"
+    uid=507_169 StaticText "Business as Usual (+1.5%/yr)"
+    uid=507_170 image "SBTi 1.5°C Linear Target legend icon"
+    uid=507_171 StaticText "SBTi 1.5°C Linear Target"
+    uid=507_172 application
+      uid=507_173 group
+      uid=507_174 group
+      uid=507_175 group
+      uid=507_176 group
+      uid=507_177 group
+      uid=507_178 group
+      uid=507_179 group
+      uid=507_180 group
+      uid=507_181 group
+      uid=507_182 group
+      uid=507_183 group
+      uid=507_184 group
+        uid=507_185 StaticText "2026"
+        uid=507_186 StaticText "2027"
+        uid=507_187 StaticText "2028"
+        uid=507_188 StaticText "2029"
+        uid=507_189 StaticText "2030"
+        uid=507_190 StaticText "2031"
+        uid=507_191 StaticText "2032"
+        uid=507_192 StaticText "2033"
+        uid=507_193 StaticText "2034"
+        uid=507_194 StaticText "2035"
+        uid=507_195 StaticText "2036"
+        uid=507_196 StaticText "2037"
+        uid=507_197 StaticText "2038"
+        uid=507_198 StaticText "2039"
+        uid=507_199 StaticText "2040"
+        uid=507_200 StaticText "2041"
+        uid=507_201 StaticText "2042"
+        uid=507_202 StaticText "2043"
+        uid=507_203 StaticText "2044"
+        uid=507_204 StaticText "2045"
+        uid=507_205 StaticText "2046"
+        uid=507_206 StaticText "2047"
+        uid=507_207 StaticText "2048"
+        uid=507_208 StaticText "2049"
+        uid=507_209 StaticText "2050"
+        uid=507_210 StaticText "0"
+        uid=507_211 StaticText "4.0k"
+        uid=507_212 StaticText "8.0k"
+        uid=507_213 StaticText "12.0k"
+        uid=507_214 StaticText "16.0k"
+    uid=507_215 heading "Categorical Emissions Overview" level="3"
+    uid=507_216 StaticText "Activity → Division → Region"
+    uid=507_217 StaticText "E&P (Upstream)"
+    uid=507_218 StaticText "DP"
+    uid=507_219 StaticText "RNS"
+    uid=507_220 StaticText " "
+    uid=507_221 StaticText "- "
+    uid=507_222 StaticText "GF"
+    uid=507_223 StaticText "10.2K"
+    uid=507_224 StaticText " "
+    uid=507_225 StaticText "tCO₂e"
+    uid=507_226 StaticText "LQS (Liquefaction)"
+    uid=507_227 StaticText "No emissions data for this activity"
+    uid=507_228 StaticText "RPC (Refining)"
+    uid=507_229 StaticText "No emissions data for this activity"
+    uid=507_230 StaticText "Cement & Clinker"
+    uid=507_231 StaticText "No emissions data for this activity"
+    uid=507_232 StaticText "Chemicals & Fertilizers"
+    uid=507_233 StaticText "No emissions data for this activity"
+    uid=507_234 StaticText "Steel & Iron (Acier DRI)"
+    uid=507_235 StaticText "METALLURGY"
+    uid=507_236 StaticText "Complexe Sidérurgique DRI/EAF (Tosyali)"
+    uid=507_237 StaticText " "
+    uid=507_238 StaticText "- "
+    uid=507_239 StaticText "Industrial Zone"
+    uid=507_240 StaticText "54.1"
+    uid=507_241 StaticText " "
+    uid=507_242 StaticText "tCO₂e"
+    uid=507_243 StaticText "Upstream & Midstream Gas"
+    uid=507_244 StaticText "No emissions data for this activity"
+    uid=507_245 heading "Detailed Breakdown" level="3"
+    uid=507_246 StaticText "CATEGORY / SOURCE"
+    uid=507_247 StaticText "RESULTS (TCO₂E)"
+    uid=507_248 StaticText "Scope 1 (Direct)"
+    uid=507_249 StaticText "10.2K"
+    uid=507_250 StaticText "Stationary Combustion"
+    uid=507_251 StaticText "193.4"
+    uid=507_252 StaticText "Flaring"
+    uid=507_253 StaticText "210.2"
+    uid=507_254 StaticText "Venting"
+    uid=507_255 StaticText "6.7K"
+    uid=507_256 StaticText "Other Sources"
+    uid=507_257 StaticText "3K"
+    uid=507_258 StaticText "Scope 2 (Indirect - Energy)"
+    uid=507_259 StaticText "52.2"
+    uid=507_260 StaticText "Scope 3 (Supply Chain)"
+    uid=507_261 StaticText "216.9"
+    uid=507_262 StaticText "Total Footprint (Scopes 1+2+3)"
+    uid=507_263 StaticText "10.5K"
+    uid=507_264 StaticText "Net Footprint"
+    uid=507_265 StaticText "10.5K"
+    uid=507_266 StaticText "ORGANIZATIONAL BREAKDOWN"
+    uid=507_267 StaticText "▶"
+    uid=507_268 StaticText "Steel & Iron (Acier DRI)"
+    uid=507_269 StaticText "54.1"
+    uid=507_270 StaticText "▶"
+    uid=507_271 StaticText "E&P (Upstream)"
+    uid=507_272 StaticText "10.2K"
+    uid=507_273 heading "Reference Libraries" level="3"
+    uid=507_274 StaticText "API Compendium: 2021"
+    uid=507_275 StaticText "ISO 14064-1:2018"
+    uid=507_276 StaticText "GRI 305 Standards"
+    uid=507_277 button "Manage Custom Factors"
+
+</current_snapshot>

@@ -1,0 +1,71 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -101,6 +101,8 @@
+ 
+ ---
+ 
++---
++
+ ## 4. Verification & Test Matrix Results
+ 
+ ### A. Full Backend Pytest Suite
+@@ -107,10 +107,10 @@
+ ```bash
+-python -m pytest new/server/tests/
+-====================== 379 passed, 13 warnings in 22.90s ======================
+-```
+-- **379 tests passed**, 0 failed.
+-- All 13 remaining warnings originate from third-party `openpyxl`.
+-- Zero deprecation warnings in application code.
++python -m pytest new/server/tests/ -q
++393 passed, 13 warnings in 23.11s
++```
++- **393 tests passed**, 0 failed, 0 errors across 100% of test suites.
++- 14 newly added end-to-end stress tests in `test_deep_injection_matrix.py`.
++- Zero calculation or ingestion regressions across any module.
+ 
+ ### B. Frontend Production Build
+ ```bash
+@@ -123,6 +123,37 @@
+ Synchronized AST graph:
+ ```bash
+ graphify update .
+-Rebuilt: 2296 nodes, 4839 edges, 219 communities
+-```
++Rebuilt: 2339 nodes, 4941 edges, 233 communities
++```
++
++---
++
++## 5. Deep Testing Matrix: Manual Injection & Bulk CSV Upload Pipeline (`test_deep_injection_matrix.py`)
++
++An exhaustive automated testing pipeline was constructed to stress test manual data injection across all physical unit dimensions, operational regimes, and bulk file upload ingestion across all 3 Tiers, Scope 2, and Scope 3:
++
++### A. Dimensional Unit Invariance Matrix (100% Equivalent $\text{CO}_2\text{e}$)
++| Dimension | Units Tested | Verification Benchmark | Result |
++| :--- | :--- | :--- | :---: |
++| **Volume (13 Units)** | `m3`, `scf`, `cf`, `ft3`, `mscf`, `mcf`, `mmscf`, `bbl`, `barrel`, `gal`, `gallon`, `liter`, `l` | $1,000\text{ m}^3$ natural gas stationary combustion converted across all 13 units | **PASS** (within $0.1\%$) |
++| **Mass (12 Units)** | `tonne`, `tonnes`, `metric_ton`, `mt`, `t`, `kg`, `lb`, `lbs`, `pound`, `ton`, `short_ton`, `g` | $10\text{ tonnes}$ carbon mass balance stoichiometry ($44.01/12.011 \to 31.144\text{ tCO}_2$) | **PASS** (exact to $10^{-3}$) |
++| **Energy (7 Units)** | `mmbtu`, `btu`, `gj`, `mj`, `kwh`, `mwh`, `therm` | $1,000\text{ MMBtu}$ steam heat indirect emissions | **PASS** (within $0.1\%$) |
++| **Temperature (4 Units)**| `°C`, `°F`, `K`, `°R` | Vessel blowdown gas expansion at $20^\circ\text{C} = 68^\circ\text{F} = 293.15\text{ K} = 527.67^\circ\text{R}$ | **PASS** (exact to $10^{-3}$) |
++| **Pressure (7 Units)** | `kPa`, `MPa`, `bar`, `mbar`, `psia`, `psig`, `Pa` | Vessel blowdown at $1,000\text{ kPa} = 1.0\text{ MPa} = 10\text{ bar} = 145.038\text{ psia}$ | **PASS** (exact to $10^{-3}$) |
++
++### B. Operational & Thermodynamic Scenarios
++- **Real Gas Compressibility ($Z$ Factor):** Tested $Z = 0.80$ (dense gas, higher emissions) vs $Z = 1.0$ (ideal gas) vs $Z = 1.20$ (expanded gas, lower emissions). Verified strict inverse scaling ($1/Z$).
++- **Flaring Destruction Efficiency Variations:** Tested $95.0\%$, $98.0\%$, and $99.5\%$ destruction efficiencies. Verified unburnt methane slip vs converted $\text{CO}_2$ stoichiometry.
++- **Heavy Hydrocarbon Gas Stoichiometry ($C_2+$):** Tested rich associated gas streams ($70\%\text{ }C_1$, $15\%\text{ }C_2$, $10\%\text{ }C_3$, $5\%\text{ }C_4$), verifying multi-carbon atom molar combustion to $\text{CO}_2$.
++- **Dynamic Global Warming Potentials:** Verified deterministic methane scaling across IPCC AR4 ($25$), AR5 ($28$), and AR6 ($29.8$).
++
++### C. End-to-End Bulk CSV Upload Pipeline (All Tiers & Scopes)
++| Scope & Tier | Data Tested | Processing Verification | DB Insertion Assertion | Status |
++| :--- | :--- | :--- | :--- | :---: |
++| **Scope 1 Tier 1** | Default catalog factors across combustion, flaring, venting, pneumatics, and compressor fugitives | File parser $\to$ column mapping $\to$ asynchronous job runner $\to$ auto factor resolution | Verified `co2e_total > 0` for all processes | **PASS** |
++| **Scope 1 Tier 2** | Regional custom emission factors (`Regional Saharan Sweet Gas`, $51.25\text{ kg/MMBtu}$) | Custom factor DB lookup $\to$ unit conversion $\to$ emission calculation | Verified `fuel_type` & `co2e_total > 0` | **PASS** |
++| **Scope 1 Tier 3** | Engineering parameters: $C_1$, $C_2$, $\text{CO}_2\text{ mol}\%$, $\text{HHV}$, combustion efficiency, well depth, tubing diameter, shut-in pressure, event frequencies | Physical parameter extraction $\to$ Tier 3 engineering branch routing | Verified combustion, flaring & liquids unloading | **PASS** |
++| **Scope 2** | Location-based grid electricity, Market-based renewable PPA ($0.0\text{ tCO}_2\text{e}$), and purchased steam | Grid factors registry lookup $\to$ market factor override $\to$ steam net boiler efficiency | Verified location & market records | **PASS** |
++| **Scope 3** | Physical mass (`Category 1`), spend EEIO (`Category 2`), freight tonne-km (`Category 4`), business travel passenger-km (`Category 6`) | Dynamic numerator/denominator parsing $\to$ EEIO per-$\$1,000$ scaling $\to$ metric tonnes conversion | Verified exact $\text{tCO}_2\text{e}$ for cement ($40.0\text{t}$) and spend ($52.5\text{t}$) | **PASS** |
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":42,"LineContent":".dashboard-filters {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":49,"LineContent":".dashboard-filters .filter-wrapper {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":55,"LineContent":".dashboard-filters .custom-dropdown-btn,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":56,"LineContent":".dashboard-filters .custom-dropdown-button {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":942,"LineContent":".dashboard-filters {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":1063,"LineContent":"  .dashboard-filters {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":1071,"LineContent":"  .dashboard-filters::-webkit-scrollbar {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":1075,"LineContent":"  .dashboard-filters .filter-wrapper {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":341,"LineContent":"      \u003cdiv className=\"dashboard-filters\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":614,"LineContent":"      \u003cdiv className=\"dashboard-filters\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":511,"LineContent":"      \u003cdiv className=\"dashboard-filters\"\u003e"}

@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+Liveness Probe: 200 {'status': 'alive', 'version': '1.0.0'}
+Readiness Probe: 200 {'database': 'connected', 'status': 'ready', 'version': '1.0.0'}
+Admin Login: 200
+Audit Chain Verification: 200 verified Records: 3503 Head: 39b6ac9bcac8a0ed
+GWP-100 Status: 200 Items: 11
+GWP-20 Status: 200 Items: 11
+GWP-100 Sample Scope1: 0.0
+GWP-20  Sample Scope1: 0.0
+

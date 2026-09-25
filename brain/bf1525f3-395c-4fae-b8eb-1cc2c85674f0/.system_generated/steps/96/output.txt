@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":64,"LineContent":"            username=\"copernicus_user@domain.com\", password=\"securePassword123\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":80,"LineContent":"            \"error_description\": \"Invalid user credentials\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":86,"LineContent":"            username=\"copernicus_user@domain.com\", password=\"wrong_password\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_satellite.py","LineNumber":90,"LineContent":"        assert \"Invalid user credentials\" in result[\"message\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":6,"LineContent":"from models import User, Facility, OgmpSurvey, Emission, ActivityLog"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":8,"LineContent":"from utils import get_current_user, get_allowed_facility_ids"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":16,"LineContent":"def _get_user_copernicus_credentials(user_id: int = None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":19,"LineContent":"    falling back to user preferences for the specific requesting user only (no cross-user leakage)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":26,"LineContent":"    if _app_settings.get(\"copernicus_username\") or _app_settings.get(\"copernicus_client_id\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":28,"LineContent":"            \"copernicus_username\": _app_settings.get(\"copernicus_username\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":37,"LineContent":"    # 2. Check user's own preferences ONLY if user_id is provided"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":38,"LineContent":"    if user_id:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":39,"LineContent":"        user = db.session.get(User, user_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":40,"LineContent":"        if user and user.preferences:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":43,"LineContent":"                    json.loads(user.preferences)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":44,"LineContent":"                    if isinstance(user.preferences, str)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":45,"LineContent":"                    else user.preferences"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":47,"LineContent":"                if prefs.get(\"copernicus_username\") or prefs.get(\"copernicus_client_id\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":49,"LineContent":"                        \"copernicus_username\": prefs.get(\"copernicus_username\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":59,"LineContent":"                    f\"Error parsing user preferences for Copernicus credentials: {e}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":70,"LineContent":"    using either request payload or saved user preferences."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":72,"LineContent":"    user_id = session.get(\"user_id\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":75,"LineContent":"    username = data.get(\"username\") or data.get(\"copernicus_username\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":80,"LineContent":"    # Fallback to saved user/system credentials if masked or missing"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":81,"LineContent":"    if (not username or not password or password == \"********\" or not client_id or not client_secret or client_secret == \"********\") and user_id:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":82,"LineContent":"        saved_creds = _get_user_copernicus_credentials(user_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":83,"LineContent":"        if not username:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":84,"LineContent":"            username = saved_creds.get(\"copernicus_username\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":93,"LineContent":"        username=username,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":108,"LineContent":"    user = get_current_user()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":109,"LineContent":"    if not user:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":111,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":118,"LineContent":"    creds = _get_user_copernicus_credentials(user.id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":131,"LineContent":"    user = get_current_user()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":132,"LineContent":"    if not user:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":134,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":142,"LineContent":"    user_id = user.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":146,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":183,"LineContent":"    creds = _get_user_copernicus_credentials(user_id) if user_id else {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":202,"LineContent":"    user = get_current_user()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":203,"LineContent":"    if not user:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":205,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":212,"LineContent":"    if user.role == \"viewer\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":220,"LineContent":"    user_id = user.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":227,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":297,"LineContent":"    survey_status = \"Verified\" if (user and user.role in [\"admin\", \"superuser\"]) else \"Pending\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":314,"LineContent":"        created_by=user_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":324,"LineContent":"        user_id=user_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":360,"LineContent":"    before for this user), a Notification is created in the DB so it is"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":368,"LineContent":"    user = get_current_user()"}
+(...15 more results not shown)

@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":173,"LineContent":"          co2e: totalEmissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":230,"LineContent":"      : entry.heat_mmbtu || entry.co2e || 0;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":249,"LineContent":"        totalCo2e: entry.co2e || 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":250,"LineContent":"        co2: entry.co2e || 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":274,"LineContent":"            ? `(${formatNumber(amountVal, 2)} kWh × ${entry.emission_factor}) ÷ 1,000 = ${formatNumber(entry.co2e, 3)} tCO₂e`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":275,"LineContent":"            : `Total Calculated Emissions = ${formatNumber(entry.co2e, 3)} tCO₂e`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":311,"LineContent":"    const val = entry.electricity_kwh ?? entry.heat_mmbtu ?? entry.co2e ?? \"\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":695,"LineContent":"                    consumptionDisplay = `${formatNumber(entry.co2e, 3)} tCO₂e allocated`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":730,"LineContent":"                        {formatNumber(entry.co2e, 3)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":832,"LineContent":"                    entries.reduce((sum, e) =\u003e sum + (e.co2e || 0), 0),"}

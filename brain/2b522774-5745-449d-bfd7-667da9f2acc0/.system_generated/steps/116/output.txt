@@ -1,0 +1,76 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:656:        fetchProduction();
+  new\client\src\pages\ManageData.jsx:657:        fetchSources();
+  new\client\src\pages\ManageData.jsx:658:        fetchMitigations();
+  new\client\src\pages\ManageData.jsx:659:        fetchCbamExports();
+  new\client\src\pages\ManageData.jsx:660:        fetchOgmpSurveys();
+  new\client\src\pages\ManageData.jsx:661:        fetchGoals();
+  new\client\src\pages\ManageData.jsx:662:        fetchBaseYears();
+  new\client\src\pages\ManageData.jsx:663:        fetchPendingEmissions();
+  new\client\src\pages\ManageData.jsx:664:        fetchSbti();
+  new\client\src\pages\ManageData.jsx:665:    }, []);
+  new\client\src\pages\ManageData.jsx:666:
+> new\client\src\pages\ManageData.jsx:762:    const fetchProduction = async () => {
+  new\client\src\pages\ManageData.jsx:763:        try {
+  new\client\src\pages\ManageData.jsx:764:            const res = await api.get('/data/production');
+  new\client\src\pages\ManageData.jsx:765:            const data = Array.isArray(res.data) ? res.data : 
+(res.data?.data || []);
+  new\client\src\pages\ManageData.jsx:766:            setProductionData(data);
+  new\client\src\pages\ManageData.jsx:767:            const years = [...new Set(data.map(d => d.year))].sort((a, b) => 
+b - a);
+  new\client\src\pages\ManageData.jsx:768:            setAvailableFilters(prev => ({ ...prev, years }));
+  new\client\src\pages\ManageData.jsx:769:        } catch (err) { console.error(err); }
+  new\client\src\pages\ManageData.jsx:770:    };
+  new\client\src\pages\ManageData.jsx:771:
+  new\client\src\pages\ManageData.jsx:772:    const fetchSources = async () => {
+> new\client\src\pages\ManageData.jsx:1013:            fetchProduction();
+  new\client\src\pages\ManageData.jsx:1014:            setProdForm(prev => ({
+  new\client\src\pages\ManageData.jsx:1015:                ...prev,
+  new\client\src\pages\ManageData.jsx:1016:                oil_amount: '', gas_amount: '',
+  new\client\src\pages\ManageData.jsx:1017:                gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', 
+injected_gas_mmsm3: '',
+  new\client\src\pages\ManageData.jsx:1018:                crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
+  new\client\src\pages\ManageData.jsx:1019:                total_production_mmboe: '', saleable_production_mmboe: ''
+  new\client\src\pages\ManageData.jsx:1020:            }));
+  new\client\src\pages\ManageData.jsx:1021:        } catch (err) { toast.error('Failed to save production'); }
+  new\client\src\pages\ManageData.jsx:1022:    };
+  new\client\src\pages\ManageData.jsx:1023:
+> new\client\src\pages\ManageData.jsx:1171:                    fetchProduction();
+  new\client\src\pages\ManageData.jsx:1172:                } catch (err) {
+  new\client\src\pages\ManageData.jsx:1173:                    toast.error(err?.response?.data?.error || 'Failed to 
+delete production record');
+  new\client\src\pages\ManageData.jsx:1174:                }
+  new\client\src\pages\ManageData.jsx:1175:            }
+  new\client\src\pages\ManageData.jsx:1176:        });
+  new\client\src\pages\ManageData.jsx:1177:    };
+  new\client\src\pages\ManageData.jsx:1178:
+  new\client\src\pages\ManageData.jsx:1179:    const handleDeleteSource = (id) => {
+  new\client\src\pages\ManageData.jsx:1180:        requestConfirm({
+  new\client\src\pages\ManageData.jsx:1181:            title: "Delete Emission Source",
+> new\client\src\pages\ManageData.jsx:4129:                        if (importModal.type === 'production') 
+fetchProduction();
+  new\client\src\pages\ManageData.jsx:4130:                        if (importModal.type === 'mitigation') 
+fetchMitigations();
+  new\client\src\pages\ManageData.jsx:4131:                        if (importModal.type === 'facilities') 
+fetchFacilities();
+  new\client\src\pages\ManageData.jsx:4132:                        if (importModal.type === 'activity') {
+> new\client\src\pages\ManageData.jsx:4133:                            fetchProduction();
+  new\client\src\pages\ManageData.jsx:4134:                            toast.success('Activity data imported and 
+emissions calculated!');
+  new\client\src\pages\ManageData.jsx:4135:                        }
+  new\client\src\pages\ManageData.jsx:4136:                    }}
+  new\client\src\pages\ManageData.jsx:4137:                />
+  new\client\src\pages\ManageData.jsx:4138:            )}
+  new\client\src\pages\ManageData.jsx:4139:
+  new\client\src\pages\ManageData.jsx:4140:            <Modal
+  new\client\src\pages\ManageData.jsx:4141:                isOpen={convertModal.isOpen}
+  new\client\src\pages\ManageData.jsx:4142:                onClose={() => setConvertModal(prev => ({ ...prev, isOpen: 
+false }))}
+  new\client\src\pages\ManageData.jsx:4143:                title={`Convert Volume (${convertModal.type === 'gas' ? 
+'Gas: m�  mscf' : 'Oil: m�  bbl'})`}
+
+
+

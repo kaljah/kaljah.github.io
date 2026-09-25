@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:290:    function addSectionHeader(
+new\client\src\utils\ModernReportGenerator.js:738:    curY = addSectionHeader(2, "ORGANIZATIONAL BOUNDARIES", null, 
+true);
+new\client\src\utils\ModernReportGenerator.js:762:    curY = addSectionHeader(3, "REPORTING BOUNDARIES", null, true);
+new\client\src\utils\ModernReportGenerator.js:799:    curY = addSectionHeader(4, "QUANTIFIED GHG INVENTORY", null, 
+true);
+new\client\src\utils\ModernReportGenerator.js:1046:    curY = addSectionHeader(5, "GHG REDUCTION INITIATIVES", null, 
+true);
+new\client\src\utils\ModernReportGenerator.js:1077:    curY = addSectionHeader(6, "QUALITY ASSURANCE & QUALITY 
+CONTROL", null, true);
+new\client\src\utils\ModernReportGenerator.js:1114:    curY = addSectionHeader(7, "REGULATORY FRAMEWORK & REFERENCES", 
+null, true);
+
+
+

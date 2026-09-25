@@ -1,0 +1,114 @@
+
+The command exited with code 1.
+Output:
+<truncated 1289 lines>
+
+INFO     app:app.py:183 POST /api/scope2 500 [0.163s] [ReqID: b1cfa56f-28af-476c-ada4-a77e662825de]
+INFO     app:app.py:183 POST /api/scope3 201 [0.175s] [ReqID: 6806d97f-2cf9-4d6a-8ad9-947deffa0891]
+INFO     app:app.py:183 POST /api/scope2 201 [0.244s] [ReqID: 198a2da5-17cd-41e7-bbc3-d03db7814420]
+INFO     app:app.py:183 POST /api/scope2 201 [0.171s] [ReqID: 4a3a0f92-2e76-459f-84c1-46fb1fc93bd0]
+INFO     app:app.py:183 POST /api/scope3 201 [0.225s] [ReqID: 7d9dc57c-2dca-44b3-927a-229a9e875250]
+INFO     app:app.py:183 POST /api/scope2 201 [0.244s] [ReqID: d63deee7-9c3f-414f-94c4-eaca88fe3eb0]
+ERROR    app:app.py:233 Unhandled Exception: Instance '<Emission at 0x2b028540140>' has been deleted, or its row is otherwise not present.
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 152, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py", line 3269, in add_emission
+    "id": record.id,
+          ^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 566, in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1086, in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1116, in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 796, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\loading.py", line 1682, in load_scalar_attributes
+    raise orm_exc.ObjectDeletedError(state)
+sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Emission at 0x2b028540140>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/emissions 500 [0.305s] [ReqID: ac601b6b-d454-480a-8ef8-a2faf44b4d2e]
+INFO     app:app.py:183 POST /api/emissions 201 [0.297s] [ReqID: 97440a03-5cc4-49fd-8f1e-166d6d00c282]
+INFO     app:app.py:183 POST /api/emissions 201 [0.257s] [ReqID: c55cdce9-3c35-4c18-b61e-cde6700422a8]
+INFO     app:app.py:183 POST /api/emissions 201 [0.335s] [ReqID: eef27e75-6722-428c-aaf6-3b7a408b449f]
+ERROR    app:app.py:233 Unhandled Exception: Instance '<Emission at 0x2b0284363c0>' has been deleted, or its row is otherwise not present.
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 152, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py", line 3269, in add_emission
+    "id": record.id,
+          ^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 566, in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1086, in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1116, in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 796, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\loading.py", line 1682, in load_scalar_attributes
+    raise orm_exc.ObjectDeletedError(state)
+sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Emission at 0x2b0284363c0>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/emissions 500 [0.224s] [ReqID: 56f28b9d-9a50-4e51-ad51-c205e8e60777]
+ERROR    app:app.py:233 Unhandled Exception: Instance '<Emission at 0x2b0284f8d70>' has been deleted, or its row is otherwise not present.
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 152, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py", line 3269, in add_emission
+    "id": record.id,
+          ^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 566, in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1086, in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1116, in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 796, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\loading.py", line 1682, in load_scalar_attributes
+    raise orm_exc.ObjectDeletedError(state)
+sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Emission at 0x2b0284f8d70>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/emissions 500 [0.282s] [ReqID: 8445b3ef-601c-4c50-965b-3c2fa53cfa48]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+=================== 1 failed, 1 passed, 1 warning in 3.73s ====================
+

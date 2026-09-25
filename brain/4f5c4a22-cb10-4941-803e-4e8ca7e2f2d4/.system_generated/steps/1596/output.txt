@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+
+LocalAddress  : 127.0.0.1
+LocalPort     : 5000
+OwningProcess : 31344
+ProcessName   : python
+StartTime     : 9/22/2026 4:43:27 PM
+
+
+
+

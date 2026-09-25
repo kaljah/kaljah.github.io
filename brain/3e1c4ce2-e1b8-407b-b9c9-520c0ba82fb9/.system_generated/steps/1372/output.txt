@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":53,"LineContent":"from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":110,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":896,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":897,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":63,"LineContent":"def clear_dashboard_cache():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1073,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":152,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":153,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":180,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":181,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":284,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":285,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":498,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":499,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":537,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":538,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3330,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3332,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3591,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3593,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3633,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3635,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4447,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4449,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4498,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4500,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4580,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4582,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4672,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4674,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":327,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":329,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":349,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":350,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":374,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":375,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":428,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":429,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":736,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":737,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":794,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":795,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":825,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":826,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":940,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":941,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":978,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":979,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":991,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":1069,"LineContent":"        clear_dashboard_cache()"}
+(...24 more results not shown)

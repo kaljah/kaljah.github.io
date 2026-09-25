@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\ref_combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -134,12 +134,10 @@
+         c1 = float(gas_composition.get("c1") or 0.0)
+         c2 = float(gas_composition.get("c2") or 0.0)
+         c3 = float(gas_composition.get("c3") or 0.0)
+-        ic4 = float(gas_composition.get("ic4") or 0.0)
+-        nc4 = float(gas_composition.get("nc4") or 0.0)
+-        ic5 = float(gas_composition.get("ic5") or 0.0)
+-        nc5 = float(gas_composition.get("nc5") or 0.0)
++        c4_val = float(gas_composition.get("c4") or (float(gas_composition.get("ic4") or 0.0) + float(gas_composition.get("nc4") or 0.0)))
++        c5_val = float(gas_composition.get("c5") or (float(gas_composition.get("ic5") or 0.0) + float(gas_composition.get("nc5") or 0.0)))
+         c6_plus = float(gas_composition.get("c6_plus") or gas_composition.get("c6") or 0.0)
+-        co2_native = float(gas_composition.get("co2") or gas_composition.get("co2_comp") or 0.0)
++        co2_native = float(gas_composition.get("co2_comp") or gas_composition.get("co2_mol") or gas_composition.get("co2") or 0.0)
+ 
+         # Moles of carbon per mole of gas
+         total_c_moles = (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

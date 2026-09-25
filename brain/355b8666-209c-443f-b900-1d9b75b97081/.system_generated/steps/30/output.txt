@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":26,"LineContent":"const SbtiDashboard = React.lazy(() =\u003e import(\"./pages/SbtiDashboard\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":163,"LineContent":"          path=\"sbti\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":166,"LineContent":"              \u003cSbtiDashboard /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":94,"LineContent":"  const [sbtiData, setSbtiData] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":228,"LineContent":"      // Fetch SBTi Trajectory Data"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":230,"LineContent":"        const sbtiRes = await api.get('/dashboard/sbti-trajectory');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":231,"LineContent":"        if (sbtiRes.data \u0026\u0026 sbtiRes.data.has_target) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":232,"LineContent":"            setSbtiData(sbtiRes.data);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":234,"LineContent":"            setSbtiData(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":237,"LineContent":"        console.error(\"Failed to load SBTi data\", err);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1347,"LineContent":"        {/* SBTi Trajectory Pathway - Full Width Banner */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1348,"LineContent":"        {sbtiData \u0026\u0026 sbtiData.trajectory \u0026\u0026 sbtiData.trajectory.length \u003e 0 \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1353,"LineContent":"                  SBTi Decarbonization Trajectory ({sbtiData.pathway_type || \"1.5°C\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1356,"LineContent":"                  Progress monitoring against corporate Net-Zero targets from Base Year {sbtiData.base_year} to Target Year {sbtiData.target_year}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1374,"LineContent":"                onClick={() =\u003e navigate(\"/sbti\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1376,"LineContent":"                View Full SBTi Dashboard →"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1381,"LineContent":"                data={sbtiData.trajectory}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1391,"LineContent":"                    dataKey: \"sbti_target\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1392,"LineContent":"                    name: \"SBTi 1.5°C Linear Target\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":144,"LineContent":"    const [sbtiConfig, setSbtiConfig] = useState({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":151,"LineContent":"    const [hasSbti, setHasSbti] = useState(false);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":153,"LineContent":"    const fetchSbti = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":155,"LineContent":"            const res = await api.get('/manage/sbti');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":157,"LineContent":"                setHasSbti(true);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":158,"LineContent":"                setSbtiConfig({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":169,"LineContent":"    const handleSaveSbti = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":171,"LineContent":"            await api.post('/manage/sbti', sbtiConfig);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":172,"LineContent":"            toast.success('SBTi Target saved successfully');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":173,"LineContent":"            setHasSbti(true);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":175,"LineContent":"            toast.error('Failed to save SBTi Target');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":661,"LineContent":"        fetchSbti();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3197,"LineContent":"                                {/* Section 3: SBTi Science-Based Net-Zero Targets */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3202,"LineContent":"                                                \u003cTarget size={22} color=\"var(--accent-color, #ff6600)\" /\u003e Science-Based Targets (SBTi 1.5°C Trajectory)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3205,"LineContent":"                                                Configure enterprise decarbonization targets aligned with SBTi Net-Zero and Paris Agreement 1.5°C pathways."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3208,"LineContent":"                                        {hasSbti \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3210,"LineContent":"                                                \u003cCheckCircle size={14} /\u003e SBTi Target Active"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3220,"LineContent":"                                                value={sbtiConfig.base_year}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3221,"LineContent":"                                                onChange={e =\u003e setSbtiConfig({ ...sbtiConfig, base_year: parseInt(e.target.value) || 2024 })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3229,"LineContent":"                                                value={sbtiConfig.base_year_emissions}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3230,"LineContent":"                                                onChange={e =\u003e setSbtiConfig({ ...sbtiConfig, base_year_emissions: parseFloat(e.target.value) || 0 })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3239,"LineContent":"                                                value={sbtiConfig.target_year}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3240,"LineContent":"                                                onChange={e =\u003e setSbtiConfig({ ...sbtiConfig, target_year: parseInt(e.target.value) || 2050 })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3249,"LineContent":"                                                value={sbtiConfig.reduction_rate_pct}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3250,"LineContent":"                                                onChange={e =\u003e setSbtiConfig({ ...sbtiConfig, reduction_rate_pct: parseFloat(e.target.value) || 4.2 })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3258,"LineContent":"                                                value={sbtiConfig.pathway_type}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3259,"LineContent":"                                                onChange={e =\u003e setSbtiConfig({ ...sbtiConfig, pathway_type: e.target.value })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3262,"LineContent":"                                                \u003coption value=\"1.5C\"\u003eSBTi 1.5°C Aligned (Recommended, 4.2%/yr linear)\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3269,"LineContent":"                                        \u003cbutton className=\"action-btn\" onClick={handleSaveSbti} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3270,"LineContent":"                                            \u003cCheck size={16} /\u003e Save SBTi Target Configuration"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.css","LineNumber":1,"LineContent":".sbti-container {"}
+(...165 more results not shown)

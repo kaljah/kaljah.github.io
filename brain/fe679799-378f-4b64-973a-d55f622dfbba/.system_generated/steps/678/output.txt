@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+127: if user and user.role == "it_admin":
+347: if user and user.role == "it_admin":
+849: if user and user.role == "it_admin":
+877: if user and user.role == "it_admin":
+894: if user and user.role == "it_admin":
+919: if user and user.role == "it_admin":
+999: if user and user.role == "it_admin":
+1027: if user.role == "it_admin":
+1099: if user and user.role == "it_admin":
+1265: if user and user.role == "it_admin":
+2265: if user.role == "it_admin":
+2630: if user and user.role == "it_admin":
+2666: if user.role == "it_admin":
+

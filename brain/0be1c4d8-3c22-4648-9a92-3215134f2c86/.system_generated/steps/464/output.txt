@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -264,8 +264,8 @@
+             if c2_plus_total > 0.10:
+                 heavy_hc_warning = True
+ 
+-            # Use passed combustion_efficiency
+-            eta_c = combustion_efficiency or 0.995
++            # Use passed combustion_efficiency (safely normalized to fraction)
++            eta_c = _normalize_efficiency(combustion_efficiency, default=0.995)
+ 
+             total_carbon_moles = (
+                 c_fractions["c1"] * 1
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

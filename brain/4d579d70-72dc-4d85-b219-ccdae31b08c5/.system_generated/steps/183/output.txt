@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":596,"LineContent":"  const downloadTemplate = async (fmt) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":790,"LineContent":"                \u003cbutton className=\"s1w-template-btn\" onClick={() =\u003e downloadTemplate(\"excel\")}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":797,"LineContent":"                \u003cbutton className=\"s1w-template-btn\" onClick={() =\u003e downloadTemplate(\"csv\")}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":638,"LineContent":"  const downloadTemplate = async (fmt) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1353,"LineContent":"                    onClick={() =\u003e downloadTemplate(\"excel\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1368,"LineContent":"                  onClick={() =\u003e downloadTemplate(\"csv\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":545,"LineContent":"  const downloadTemplate = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1226,"LineContent":"                  downloadTemplate();"}

@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":979,"LineContent":"    VALID_ROLES = set(ROLE_RANK.keys())"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":984,"LineContent":"        if new_role not in VALID_ROLES:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":985,"LineContent":"            return jsonify({\"error\": f\"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}\"}), 400"}

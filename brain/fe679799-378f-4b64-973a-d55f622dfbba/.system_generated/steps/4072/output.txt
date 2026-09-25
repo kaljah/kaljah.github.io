@@ -1,0 +1,174 @@
+
+The command exited with code 1.
+Output:
+<truncated 4 lines>
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 3 items
+
+tests/test_tier2_api_e2e.py::test_tier2_sonatrach_preset_e2e ERROR       [ 33%]
+tests/test_tier2_api_e2e.py::test_tier2_ianor_diesel_preset_e2e ERROR    [ 66%]
+tests/test_tier2_api_e2e.py::test_tier2_quick_add_custom_factor_and_submit ERROR [100%]
+
+=================================== ERRORS ====================================
+______________ ERROR at setup of test_tier2_sonatrach_preset_e2e ______________
+
+    @pytest.fixture
+    def test_facility():
+        with app.app_context():
+            fac = Facility.query.filter_by(name="Hassi R'Mel Gas Field").first()
+            if not fac:
+>               fac = Facility(
+                    name="Hassi R'Mel Gas Field",
+                    region="Laghouat",
+                    division="Upstream Gas",
+                    field="HRM South",
+                    status="Active",
+                )
+
+tests\test_tier2_api_e2e.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<string>:4: in __init__
+    ???
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:564: in _initialize_instance
+    with util.safe_reraise():
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:562: in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Facility (transient 2512505707728)>
+kwargs = {'name': "Hassi R'Mel Gas Field", 'region': 'Laghouat', 'division': 'Upstream Gas', 'field': 'HRM South', ...}
+
+    def _declarative_constructor(self: Any, **kwargs: Any) -> None:
+        """A simple constructor that allows initialization from kwargs.
+    
+        Sets attributes on the constructed instance using the names and
+        values in ``kwargs``.
+    
+        Only keys that are present as
+        attributes of the instance's class are allowed. These could be,
+        for example, any mapped columns or relationships.
+        """
+        cls_ = type(self)
+        for k in kwargs:
+            if not hasattr(cls_, k):
+>               raise TypeError(
+                    "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+                )
+E               TypeError: 'status' is an invalid keyword argument for Facility
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py:2139: TypeError
+____________ ERROR at setup of test_tier2_ianor_diesel_preset_e2e _____________
+
+    @pytest.fixture
+    def test_facility():
+        with app.app_context():
+            fac = Facility.query.filter_by(name="Hassi R'Mel Gas Field").first()
+            if not fac:
+>               fac = Facility(
+                    name="Hassi R'Mel Gas Field",
+                    region="Laghouat",
+                    division="Upstream Gas",
+                    field="HRM South",
+                    status="Active",
+                )
+
+tests\test_tier2_api_e2e.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<string>:4: in __init__
+    ???
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:564: in _initialize_instance
+    with util.safe_reraise():
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:562: in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Facility (transient 2512507073744)>
+kwargs = {'name': "Hassi R'Mel Gas Field", 'region': 'Laghouat', 'division': 'Upstream Gas', 'field': 'HRM South', ...}
+
+    def _declarative_constructor(self: Any, **kwargs: Any) -> None:
+        """A simple constructor that allows initialization from kwargs.
+    
+        Sets attributes on the constructed instance using the names and
+        values in ``kwargs``.
+    
+        Only keys that are present as
+        attributes of the instance's class are allowed. These could be,
+        for example, any mapped columns or relationships.
+        """
+        cls_ = type(self)
+        for k in kwargs:
+            if not hasattr(cls_, k):
+>               raise TypeError(
+                    "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+                )
+E               TypeError: 'status' is an invalid keyword argument for Facility
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py:2139: TypeError
+_______ ERROR at setup of test_tier2_quick_add_custom_factor_and_submit _______
+
+    @pytest.fixture
+    def test_facility():
+        with app.app_context():
+            fac = Facility.query.filter_by(name="Hassi R'Mel Gas Field").first()
+            if not fac:
+>               fac = Facility(
+                    name="Hassi R'Mel Gas Field",
+                    region="Laghouat",
+                    division="Upstream Gas",
+                    field="HRM South",
+                    status="Active",
+                )
+
+tests\test_tier2_api_e2e.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<string>:4: in __init__
+    ???
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:564: in _initialize_instance
+    with util.safe_reraise():
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:562: in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Facility (transient 2512507065872)>
+kwargs = {'name': "Hassi R'Mel Gas Field", 'region': 'Laghouat', 'division': 'Upstream Gas', 'field': 'HRM South', ...}
+
+    def _declarative_constructor(self: Any, **kwargs: Any) -> None:
+        """A simple constructor that allows initialization from kwargs.
+    
+        Sets attributes on the constructed instance using the names and
+        values in ``kwargs``.
+    
+        Only keys that are present as
+        attributes of the instance's class are allowed. These could be,
+        for example, any mapped columns or relationships.
+        """
+        cls_ = type(self)
+        for k in kwargs:
+            if not hasattr(cls_, k):
+>               raise TypeError(
+                    "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+                )
+E               TypeError: 'status' is an invalid keyword argument for Facility
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py:2139: TypeError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_tier2_api_e2e.py::test_tier2_sonatrach_preset_e2e - TypeErro...
+ERROR tests/test_tier2_api_e2e.py::test_tier2_ianor_diesel_preset_e2e - TypeE...
+ERROR tests/test_tier2_api_e2e.py::test_tier2_quick_add_custom_factor_and_submit
+======================== 1 warning, 3 errors in 1.96s =========================
+

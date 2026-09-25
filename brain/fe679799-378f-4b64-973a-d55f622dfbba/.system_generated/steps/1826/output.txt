@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Subtitle: Complete history of all recorded emissions and compliance data.Total Records: 130 | Showing: 50
+Table text: None
+Loading spinner: False
+Filters: [{'name': 'component-select', 'val': '2026', 'text': '2026'}, {'name': 'component-select', 'val': 'none', 'text': 'None (Single Year)'}, {'name': 'component-select', 'val': 'AR5', 'text': 'IPCC AR5 (100-yr: CH4=28, N2O=265)'}, {'name': 'component-select', 'val': 'all', 'text': 'Total Inventory (Scope 1,2,3)'}, {'name': 'component-select', 'val': '2026', 'text': '2026'}, {'name': 'component-select', 'val': 'all', 'text': 'All Months'}, {'name': 'component-select', 'val': 'all', 'text': 'All Regions'}, {'name': 'component-select', 'val': 'all', 'text': 'All Divisions'}, {'name': 'component-select', 'val': 'all', 'text': 'All Fields'}, {'name': 'component-select', 'val': 'all', 'text': 'All Methods'}, {'name': 'component-select', 'val': 'none', 'text': 'No Grouping'}]
+Api error on page: None
+

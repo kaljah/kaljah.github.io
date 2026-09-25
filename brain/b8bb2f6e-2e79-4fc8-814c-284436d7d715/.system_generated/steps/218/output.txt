@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\emissionFactorsAPI.js","LineNumber":243,"LineContent":"    m3_gal: 264.172,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\emissionFactorsAPI.js","LineNumber":245,"LineContent":"    l_gal: 0.264172,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":41,"LineContent":"      N2O: std.N2O_20 || 264,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":71,"LineContent":"    gal: { gal: 1, bbl: 42, L: 0.264172, m3: 264.172 },"}

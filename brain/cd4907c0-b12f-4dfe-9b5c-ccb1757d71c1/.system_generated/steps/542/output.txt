@@ -1,0 +1,38 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":68,"LineContent":"  const [currentRegion, setCurrentRegion] = useState(\"all\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":157,"LineContent":"    currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":173,"LineContent":"        facilityId: currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":650,"LineContent":"            value={currentRegion}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":740,"LineContent":"    currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":781,"LineContent":"        regionId: currentRegion !== \"all\" ? currentRegion : undefined,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1029,"LineContent":"                {currentRegion !== \"all\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1030,"LineContent":"                  ? facilities.find((f) =\u003e f.id.toString() === currentRegion)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":34,"LineContent":"  const [currentRegion, setCurrentRegion] = useState(\"all\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":117,"LineContent":"    currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":127,"LineContent":"  }, [selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":131,"LineContent":"  }, [selectedYear, currentRegion, currentActivity, currentDivision, currentSegment]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":137,"LineContent":"      if (currentRegion \u0026\u0026 currentRegion !== 'all') params.append('facilityId', currentRegion);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":157,"LineContent":"        facilityId: currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":252,"LineContent":"      if (currentRegion \u0026\u0026 currentRegion !== \"all\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":253,"LineContent":"        params.append(\"facilityId\", currentRegion);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":383,"LineContent":"            value={currentRegion}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":400,"LineContent":"    currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":409,"LineContent":"      if (currentRegion !== \"all\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":411,"LineContent":"          (d) =\u003e d.facility_id.toString() === currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":435,"LineContent":"  }, [rawTrendData, currentRegion, gwpHorizon]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":40,"LineContent":"  const [currentRegion, setCurrentRegion] = useState(\"all\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":153,"LineContent":"    currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":163,"LineContent":"  }, [selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":174,"LineContent":"        facilityId: currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":299,"LineContent":"      if (currentRegion \u0026\u0026 currentRegion !== \"all\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":300,"LineContent":"        params.append(\"facilityId\", currentRegion);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":322,"LineContent":"      if (currentRegion \u0026\u0026 currentRegion !== \"all\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":323,"LineContent":"        params.append(\"facilityId\", currentRegion);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":382,"LineContent":"      if (currentRegion \u0026\u0026 currentRegion !== \"all\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":383,"LineContent":"        params.append(\"facilityId\", currentRegion);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":403,"LineContent":"      if (currentRegion \u0026\u0026 currentRegion !== \"all\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":404,"LineContent":"        params.append(\"facility_id\", currentRegion);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":553,"LineContent":"            value={currentRegion}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":582,"LineContent":"    currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":592,"LineContent":"      if (currentRegion !== \"all\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":594,"LineContent":"          (d) =\u003e d.facility_id.toString() === currentRegion,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":658,"LineContent":"  }, [rawTrendData, currentRegion, upstreamTargetPct, midstreamTargetPct]);"}

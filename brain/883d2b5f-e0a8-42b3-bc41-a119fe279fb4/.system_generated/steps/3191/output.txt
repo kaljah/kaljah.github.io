@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_ui_calculation_parity.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -496,6 +496,27 @@
+         assert pytest.approx(rec["co2e"], 1e-2) == 12.00
+         assert ui_format_number(rec["co2e"], 3) == "12.000"
+ 
++    def test_scope3_business_travel_ui_parity(self, client, auth_admin, test_facility):
++        """Category 6 Business Travel: 45,000 passenger-km via air at 0.13 kg CO2e/p-km."""
++        payload = {
++            "year": 2025,
++            "month": 10,
++            "facility_id": test_facility,
++            "category": "6",
++            "sub_category": "Air Travel (Commercial)",
++            "activity_data": 45000,
++            "unit": "passenger-km",
++            "emission_factor": 0.13,
++            "status": "Verified",
++        }
++        res = client.post("/api/scope3", json=payload)
++        assert res.status_code == 201
++        rec = res.get_json()["record"]
++        # 45,000 * 0.13 / 1000 = 5.850 tCO2e
++        assert pytest.approx(rec["co2e"], 1e-3) == 5.850
++        assert ui_format_number(rec["co2e"], 3) == "5.850"
++        assert ui_format_number(rec["activity_data"], 2) == "45,000.00"
++
+ 
+ # ==============================================================================
+ # 4. DASHBOARD KPIS & SUMMARY AGGREGATION PARITY
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

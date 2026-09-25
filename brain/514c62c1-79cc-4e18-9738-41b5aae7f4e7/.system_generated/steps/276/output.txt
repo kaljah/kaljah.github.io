@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":166,"LineContent":"                _query_summary,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":366,"LineContent":"@cached(cache=DASHBOARD_CACHE, key=make_cache_key(\"_query_summary\"), lock=CACHE_LOCK)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":367,"LineContent":"def _query_summary("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":808,"LineContent":"    Delegates to _query_summary() for thread-safe reuse."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":820,"LineContent":"        _query_summary("}

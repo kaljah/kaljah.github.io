@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 7
+    c.execute(" SELECT id facility_id year process_type fuel_type quantity unit co2_emissions ch4_emissions co2e_total calc_method FROM emissions WHERE status = Pending AND co2e_total == 0.0 LIMIT 10\)
+              ^
+SyntaxError: unterminated string literal (detected at line 7)
+

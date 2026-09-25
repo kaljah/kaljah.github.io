@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope3Form.jsx:5:import { formatNumber } from "../utils/formatters";
+new\client\src\components\Scope3Form.jsx:318:  const handleInspect = (entry) => {
+new\client\src\components\Scope3Form.jsx:347:          desc: `(${entry.activity_data || entry.volume || 0} � 
+${entry.emission_factor}) � 1,000 = ${formatNumber(entry.co2e || entry.emissions_tco2e, 3)} tCO�e`,
+new\client\src\components\Scope3Form.jsx:774:                      {formatNumber(entry.activity_data || entry.volume, 
+2)}{" "}
+new\client\src\components\Scope3Form.jsx:777:                    <td>{formatNumber(entry.emission_factor, 2)}</td>
+new\client\src\components\Scope3Form.jsx:779:                      {formatNumber(entry.co2e || entry.emissions_tco2e, 
+3)}
+new\client\src\components\Scope3Form.jsx:783:                        ? `${formatNumber(entry.uncertainty * 100, 1)}%`
+new\client\src\components\Scope3Form.jsx:788:                        ? `${formatNumber(entry.uncertainty * 1.96 * 100, 
+1)}%`
+new\client\src\components\Scope3Form.jsx:808:                        onClick={() => handleInspect(entry)}
+new\client\src\components\Scope3Form.jsx:836:                  {formatNumber(
+
+
+

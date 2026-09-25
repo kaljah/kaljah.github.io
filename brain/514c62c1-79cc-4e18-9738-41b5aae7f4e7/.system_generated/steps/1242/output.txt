@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+Old missing fuel count: 143
+New missing fuel count: 93
+Count of new missing fuel records: 93
+  ID: 373, facility_id: 14, year: 2024, process_type: None, fuel_type: None, qa_flag: [Verified] Outlier
+  ID: 380, facility_id: 14, year: 2024, process_type: Combustion, fuel_type: None, qa_flag: None
+  ID: 382, facility_id: 14, year: 2024, process_type: Combustion, fuel_type: None, qa_flag: None
+  ID: 384, facility_id: 14, year: 2024, process_type: Combustion, fuel_type: None, qa_flag: None
+  ID: 394, facility_id: 14, year: 2024, process_type: Combustion, fuel_type: None, qa_flag: None
+  ID: 396, facility_id: 14, year: 2024, process_type: None, fuel_type: None, qa_flag: [Verified] Outlier
+  ID: 409, facility_id: 14, year: 2024, process_type: Combustion, fuel_type: None, qa_flag: None
+  ID: 411, facility_id: 14, year: 2024, process_type: None, fuel_type: None, qa_flag: [Verified] Outlier
+  ID: 418, facility_id: 14, year: 2024, process_type: Combustion, fuel_type: None, qa_flag: None
+  ID: 420, facility_id: 14, year: 2024, process_type: None, fuel_type: None, qa_flag: [Verified] Outlier
+

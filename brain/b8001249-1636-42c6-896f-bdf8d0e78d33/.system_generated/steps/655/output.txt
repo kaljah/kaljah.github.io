@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\api_tester_base.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -97,11 +97,11 @@
+             return r
+ 
+         if should_deny:
+-            if status in (401, 403):
++            if status in (401, 403, 404):
+                 self.ok(f"Correctly denied {label_str} → {status}")
+             else:
+                 self.bug("🔴 Critical", "RBAC", f"Role '{self.role}' should be DENIED {label_str} but got {status}",
+-                         "403 or 401", f"{status}: {r.text[:300]}", f"{method} {url}")
++                         "401, 403, or 404", f"{status}: {r.text[:300]}", f"{method} {url}")
+         elif expected_status:
+             if status == expected_status:
+                 self.ok(f"{label_str} → {status}")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

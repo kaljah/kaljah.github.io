@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\specs\002-qa-qc-ipcc-iso14064
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/15/2026  10:02 PM                checklists                                                           
+-a----         8/15/2026  10:18 PM            913 data-model.md                                                        
+-a----         8/15/2026  10:18 PM           2319 plan.md                                                              
+-a----         8/15/2026  10:18 PM           1181 quickstart.md                                                        
+-a----         8/15/2026  10:17 PM           1785 research.md                                                          
+-a----         8/15/2026  10:13 PM           4306 spec.md                                                              
+-a----         8/15/2026  10:25 PM           3452 tasks.md                                                             
+
+
+

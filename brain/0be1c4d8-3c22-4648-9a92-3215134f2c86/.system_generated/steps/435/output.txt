@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+Total round calls in emissions.py: 12
+  round(em_result["totalCo2e"], 2)
+  round(item["quantity"], 2)
+  round(item["co2"], 2)
+  round(item["ch4"], 2)
+  round(item["n2o"], 2)
+  round(item["co2e_total"], 2)
+  round(total_qty, 2)
+  round(total_co2, 2)
+  round(total_ch4, 2)
+  round(total_n2o, 2)
+  round(total_co2e, 2)
+  round(val, 2)
+

@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\emissions.py:3424:    if user.role not in ["admin", "superuser"] and record.status == "Verified":
+> new\server\routes\emissions.py:3425:        record.status = "Pending"
+  new\server\routes\emissions.py:3426:        record.approved_by = None
+  new\server\routes\emissions.py:3427:        record.approved_at = None
+> new\server\routes\emissions.py:3479:        if record.status == "Verified" and user.role != "admin":
+> new\server\routes\emissions.py:3480:            record.status = "Pending"
+  new\server\routes\emissions.py:3481:            record.approved_by = None
+  new\server\routes\emissions.py:3482:            record.approved_at = None
+> new\server\routes\emissions.py:4085:        q1 = Emission.query.filter(Emission.status == "Verified")
+  new\server\routes\emissions.py:4086:        if allowed_ids is not None:
+  new\server\routes\emissions.py:4087:            q1 = q1.filter(Emission.facility_id.in_(allowed_ids))
+> new\server\routes\emissions.py:4139:        q2 = Scope2Emission.query.filter(Scope2Emission.status == "Verified")
+  new\server\routes\emissions.py:4140:        if allowed_ids is not None:
+  new\server\routes\emissions.py:4141:            q2 = q2.filter(Scope2Emission.facility_id.in_(allowed_ids))
+> new\server\routes\emissions.py:4187:        q3 = Scope3Emission.query.filter(Scope3Emission.status == "Verified")
+  new\server\routes\emissions.py:4188:        if allowed_ids is not None:
+  new\server\routes\emissions.py:4189:            q3 = q3.filter(Scope3Emission.facility_id.in_(allowed_ids))
+> new\server\routes\emissions.py:4492:    emission.status = "Verified"
+  new\server\routes\emissions.py:4493:    emission.approved_by = user.id
+  new\server\routes\emissions.py:4494:    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
+> new\server\routes\emissions.py:4541:    emission.status = "Rejected"
+  new\server\routes\emissions.py:4542:    if hasattr(emission, "qa_flag"):
+  new\server\routes\emissions.py:4543:        emission.qa_flag = f"Rejected: {reason}"
+
+
+

@@ -1,0 +1,170 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 24 ===
+Products | Unit | 2021 | 2022 | 2023 | 2024 | 2025
+Gross Gas Production | MMSm3 | 5,088.03 | 5,497.26 | 5,541.74 | 5,723.88 | 5,517.62
+MMBOE | 42.26 | 45.62 | 46.16 | 47.68 | 45.96
+Gas Production without Injected Gas | MMSm3 | 765.51 | 808.06 | 772.85 | 544.06 | 392.69
+MMBOE | 6.36 | 6.71 | 6.44 | 4.53 | 3.27
+LiquidProduction �Crude, Condensates, LPG | MMBOE | 24.85 | 26.56 | 24.98 | 22.17 | 24.20
+Total Production [1] | MMBOE | 67.11 | 72.18 | 71.15 | 69.85 | 70.16
+Total Production without Injected Gas [2] | MMBOE | 31.21 | 33.27 | 31.42 | 26.70 | 27.47
+Total Saleable Production [3] | MMBOE | 28.36 | 30.45 | 28.77 | 24.50 | 25.44
+=== PAGE 25 ===
+Products | Unit | 2021 | 2022 | 2023 | 2024 | 2025
+Gross Gas Production | MMSm3 | 3,655.66 | 3,964.74 | 4,244.53 | 4,353.68 | 4,239.89
+MMBOE | 26.27 | 28.10 | 29.75 | 30.46 | 29.58
+Gas Production without Injected Gas | MMSm3 | 338.35 | 380.95 | 369.26 | 369.25 | 374.81
+MMBOE | 2.43 | 2.71 | 2.59 | 2.58 | 2.62
+LiquidProduction �Crude, Condensates, LPG | MMBOE | 32.92 | 32.60 | 34.99 | 33.97 | 31.18
+Total Production [1] | MMBOE | 59.19 | 60.71 | 64.74 | 64.43 | 60.77
+Total Production without Injected Gas [2] | MMBOE | 35.35 | 35.32 | 37.58 | 36.56 | 33.80
+Total Saleable Production [3] | MMBOE | 32.92 | 32.60 | 34.99 | 33.97 | 31.18
+=== PAGE 15 ===
+HBNS Total Flaring 100 89.68 80 63.44 63.59 s d n 60 50.66 47.75 a s u o 40 h T 20 0 2021 2022 2023 2024 2025 Total Flaring (KNm3)
+HBNS 2025 4% 40% 56% Routine Flaring (KNm3) Non-Routine Flaring (KNm3) Safety Flaring (KNm3)
+=== PAGE 16 ===
+=== PAGE 18 ===
+
+ |  | 
+
+ |  |  |  | 
+0.96% |  | 1.17% |  | 0.91%
+ |  |  |  | 
+ |  |  |  | 
+ | 
+ |  |  |  | 
+ |  |  |  | 
+1.27% |  | 1.29% |  | 
+ |  |  |  | 1.22%
+ |  |  |  | 
+ |  |  |  | 
+ | 
+ |  |  |  | 
+ |  |  |  | 
+ |  |  |  | 
+1.64% |  | 1.45% |  | 1.63%
+ |  |  |  | 
+ |  |  |  | 
+=== PAGE 19 ===
+45.0 40.0 35.0 30.0 25.0 20.0 15.0 10.0 5.0 0.0 GHG Intensity GHG Intensity by Total by Saleable Production Product (CO2e (CO2e Kg/BOE) Kg/BOE) 2021 16.6 39.3 2022 15.2 39.5 2023 14.6 36.1 |  | 2.50% 2.00% 1.50% 1.00% 0.50% 0.00% Flaring Intensity CH4 Intensity Flaring Gas / NGSI Method Total Gas (wt.%) Production (vol.%) 2021 0.17% 1.91% 2022 0.15% 1.51% 2023 0.15% 1.10%
+ |  | 
+ |  |  |  | 
+ |  |  |  |  | 
+ |  |  |  |  | 
+ |  |  |  |  | 
+ | 
+ |  |  |  |  |  |  |  |  |  |  | 
+ |  |  |  |  |  |  |  |  |  |  | 
+GHG Intensity by Total Production (CO2e Kg/BOE) 16.6 15.2 14.6 | GHG Intensity by Saleable Product (CO2e Kg/BOE) 39.3 39.5 36.1
+40.0 35.0 30.0 25.0 20.0 15.0 10.0 5.0 0.0 GHG Intensity by GHG Intensity by Total Production Saleable Product (CO2e Kg/BOE) (CO2e Kg/BOE) 2021 18.4 33.1 2022 20.2 37.6 2023 19.3 37.5
+ | 
+
+ |  |  |  | 
+ | 
+ |  |  |  |  | 
+ |  |  |  |  | 
+ |  |  |  |  |  |  |  | 
+ |  |  |  |  |  |  |  |  |  |  | 
+ |  |  |  |  |  |  |  |  |  |  | 
+ |  |  |  |  |  |  |  |  |  |  | 
+GHG Intensity by Total Production (CO2e Kg/BOE) 18.4 20.2 19.3 | GHG Intensity by Saleable Product (CO2e Kg/BOE) 33.1 37.6 37.5
+3.50% 3.00% 2.50% 2.00% 1.50% 1.00% 0.50% 0.00% Flaring Intensity CH4 Intensity Flaring Gas / NGSI Method Total Gas (wt.%) Production (vol.%) 2021 0.16% 2.87% 2022 0.18% 3.27%
+
+ | 
+
+ |  | 
+ |  | 
+
+ |  |  |  |  | 
+ |  |  |  |  | 
+ |  |  |  |  | 
+CH4 Intensity NGSI Method (wt.%) 0.16% 0.18% | Flaring Intensity Flaring Gas / Total Gas Production (vol.%) 2.87% 3.27%
+
+ | 
+
+ |  |  |  | 
+ |  |  |  | 
+CH4 Intensity NGSI Method (wt.%) 0.17% 0.15% 0.15% | Flaring Intensity Flaring Gas / Total Gas Production (vol.%) 1.91% 1.51% 1.10%
+ |  | 
+KEY OBSERVATIONS | 
+Y OBSERVATIONS
+=== PAGE 20 ===
+
+ | 
+ | 
+
+ |  |  |  |  |  | 
+ |  | 
+
+
+ |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 
+ |  | 
+ | 
+ |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 
+ |  |  |  | 
+ |  |  | 
+Sonatrach | Occidental | Eni | Total Energies | Pertamina | Repsol
+2021 | 996,798 | 478,544 | 400,986 | 239,284 | 58,913 | 31,638
+2022 | 1,054,768 | 506,738 | 370,917 | 253,314 | 87,159 | 46,951
+2023 | 765,112 | 636,932 | 430,384 | 318,448 | 88,725 | 47,596
+2024 | 531,820 | 620,453 | 402,614 | 310,227 | 80,457 | 43,062
+2025 | 510,456 | 595,572 | 382,461 | 297,786 | 79,865 | 42,744
+=== PAGE 21 ===
+
+
+ | 
+ | 
+
+ |  | 
+
+ |  |  |  |  |  | 
+ | 
+
+ |  |  |  |  |  |  |  |  |  |  |  | 
+ |  |  | 
+ |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 
+Sonatrach | Occidental | Eni | Total Energies | Pertamina | Repsol
+2021 | 3,242 | 1,557 | 1,198 | 778 | 228 | 122
+2022 | 3,377 | 1,622 | 1,110 | 811 | 331 | 178
+2023 | 2,273 | 1,900 | 1,228 | 950 | 301 | 161
+2024 | 723 | 843 | 569 | 422 | 95 | 51
+2025 | 443 | 517 | 343 | 258 | 62 | 33
+=== PAGE 22 ===
+HBNS 2000 1500 1000 500 0 NO2 CO SO2 PM VOC 2021 2022 2023 2024 2025
+KEY OBSERVATIONS
+
+ | 
+
+ |  |  | 
+
+
+ |  |  |  |  |  |  |  | 
+ | 
+
+
+ |  |  |  |  |  |  |  |  |  |  |  |  |  | 
+
+
+ |  |  | 
+ |  |  |  |  | 
+ | 
+
+ |  |  |  |  |  |  |  |  |  |  | 
+
+
+ | 
+ |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 
+
+
+ |  |  | 
+ |  |  | 
+Site | HBNS | ELM
+CAP | Tonnes | Mg/Nm3 | Limit Mg/Nm3 | Tonnes | Mg/Nm3 | Limit Mg/Nm3
+NO2 | 1,414.70 | 788.00 | 200 | 1,760.78 | 980.77 | 200
+CO | 668.58 | 7.50 | 150 | 875.66 | 9.84 | 150
+SO2 | 6.35 | 0.00 | 800 | 14.08 | 0.00 | 800
+PM | 156.91 | 0.00 | 30 | 204.26 | 0.00 | 30
+VOC | 406.37 | 11.13 | 150 | 130.45 | 3.41 | 150
+

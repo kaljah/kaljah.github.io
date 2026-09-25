@@ -1,0 +1,82 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\auth.py:11:from extensions import db, limiter, csrf
+> new\server\routes\auth.py:12:from utils import log_activity_and_notify, is_unrestricted_location
+  new\server\routes\auth.py:13:
+  new\server\routes\auth.py:14:
+  new\server\routes\auth.py:15:def get_user_operational_defaults(user):
+  new\server\routes\auth.py:16:    """
+  new\server\routes\auth.py:17:    Computes default region, division, activity, and facility for a user.
+  new\server\routes\auth.py:18:    For regional users and superusers tied to a location/region,
+  new\server\routes\auth.py:300:    try:
+> new\server\routes\auth.py:301:        log_activity_and_notify(
+  new\server\routes\auth.py:302:            action="REGISTER",
+  new\server\routes\auth.py:303:            record_id=str(user.id),
+  new\server\routes\auth.py:304:            user=user,
+  new\server\routes\auth.py:305:            request=request,
+  new\server\routes\auth.py:306:            entity="User",
+  new\server\routes\auth.py:307:            details=f"User registered: {user.email}",
+  new\server\routes\auth.py:387:        try:
+> new\server\routes\auth.py:388:            log_activity_and_notify(
+  new\server\routes\auth.py:389:                action="LOGIN",
+  new\server\routes\auth.py:390:                record_id=str(user.id),
+  new\server\routes\auth.py:391:                user=user,
+  new\server\routes\auth.py:392:                request=request,
+  new\server\routes\auth.py:393:                entity="User",
+  new\server\routes\auth.py:394:                details=f"User logged in: {user.email}",
+  new\server\routes\auth.py:457:        try:
+> new\server\routes\auth.py:458:            log_activity_and_notify(
+  new\server\routes\auth.py:459:                action="SECURITY",
+  new\server\routes\auth.py:460:                record_id=str(user.id),
+  new\server\routes\auth.py:461:                user=user,
+  new\server\routes\auth.py:462:                request=request,
+  new\server\routes\auth.py:463:                entity="User",
+  new\server\routes\auth.py:464:                details=f"Password reset requested for: {user.email}",
+  new\server\routes\auth.py:495:            try:
+> new\server\routes\auth.py:496:                log_activity_and_notify(
+  new\server\routes\auth.py:497:                    action="LOGOUT",
+  new\server\routes\auth.py:498:                    record_id=str(user.id),
+  new\server\routes\auth.py:499:                    user=user,
+  new\server\routes\auth.py:500:                    request=request,
+  new\server\routes\auth.py:501:                    entity="User",
+  new\server\routes\auth.py:502:                    details=f"User logged out: {user.email}",
+  new\server\routes\auth.py:622:    try:
+> new\server\routes\auth.py:623:        log_activity_and_notify(
+  new\server\routes\auth.py:624:            action="UPDATE",
+  new\server\routes\auth.py:625:            record_id=str(user.id),
+  new\server\routes\auth.py:626:            user=user,
+  new\server\routes\auth.py:627:            request=request,
+  new\server\routes\auth.py:628:            entity="User",
+  new\server\routes\auth.py:629:            details=f"Password changed for user: {user.email}",
+  new\server\routes\auth.py:915:        try:
+> new\server\routes\auth.py:916:            log_activity_and_notify(
+  new\server\routes\auth.py:917:                action="UPDATE",
+  new\server\routes\auth.py:918:                record_id=str(user.id),
+  new\server\routes\auth.py:919:                user=user,
+  new\server\routes\auth.py:920:                request=request,
+  new\server\routes\auth.py:921:                entity="User",
+  new\server\routes\auth.py:922:                details=f"Updated settings for user: {user.email} (GWP: 
+{_app_settings.get('gwp_standard', 'AR4')})",
+  new\server\routes\auth.py:1031:
+> new\server\routes\auth.py:1032:    log_activity_and_notify(
+  new\server\routes\auth.py:1033:        action="UPDATE",
+  new\server\routes\auth.py:1034:        record_id=str(user.id),
+  new\server\routes\auth.py:1035:        user=it_admin,
+  new\server\routes\auth.py:1036:        request=request,
+  new\server\routes\auth.py:1037:        entity="User",
+  new\server\routes\auth.py:1038:        details=f"User {user.email} updated by {it_admin.fullName if it_admin else 
+'IT Admin'}",
+  new\server\routes\auth.py:1157:    try:
+> new\server\routes\auth.py:1158:        log_activity_and_notify(
+  new\server\routes\auth.py:1159:            action="UPDATE",
+  new\server\routes\auth.py:1160:            record_id=str(user.id),
+  new\server\routes\auth.py:1161:            user=admin_user or user,
+  new\server\routes\auth.py:1162:            request=request,
+  new\server\routes\auth.py:1163:            entity="User",
+  new\server\routes\auth.py:1164:            details=f"Password reset for {user.email} by IT Admin {admin_user.email 
+if admin_user else 'system'}",
+
+
+

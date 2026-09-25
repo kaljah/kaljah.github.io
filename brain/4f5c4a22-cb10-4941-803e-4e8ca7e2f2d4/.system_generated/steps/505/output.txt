@@ -1,0 +1,22 @@
+Task: 4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/task-449
+Status: CANCELED
+Log: C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-449.log
+Log output:
+
+Running 1 test using 1 worker
+
+
+========================================
+[TIER 1 TEST] Testing Region: West (Tosyali)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Steel & Iron (Acier DRI)
+[TIER 1 DB VERIFIED] Row ID=831, Facility=1, CO2=2.7060600000000004, CH4=0.00005100000000000001, Total CO2e=2.7088752000000005 tCO2e
+  x  1 [chromium] › e2e\test_scope1_form_engine.spec.js:84:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) (2.0m)
+
+========================================
+[TIER 1 TEST] Testing Region: West (Tosyali)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Steel & Iron (Acier DRI)
+[TIER 1 DB VERIFIED] Row ID=832, Facility=1, CO2=2.7060600000000004, CH4=0.00005100000000000001, Total CO2e=2.7088752000000005 tCO2e
+
+Last progress: 2m13s ago

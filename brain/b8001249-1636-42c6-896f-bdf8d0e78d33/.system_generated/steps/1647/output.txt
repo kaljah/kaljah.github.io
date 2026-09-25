@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+src\pages\ManageData.jsx:2:import { useLocation } from 'react-router-dom';
+src\pages\ManageData.jsx:19:  ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, 
+src\pages\ManageData.jsx:20:  Database, Shield, Zap, Upload, Target, Calendar, Edit2, Trash2, CheckCircle, 
+src\pages\ManageData.jsx:129:    const location = useLocation();
+src\pages\ManageData.jsx:180:    const [searchTerm, setSearchTerm] = useState('');
+src\pages\ManageData.jsx:185:    const [pendingSearch, setPendingSearch] = useState('');
+src\pages\ManageData.jsx:347:            if (pendingSearch.trim()) {
+src\pages\ManageData.jsx:348:                const q = pendingSearch.toLowerCase().trim();
+src\pages\ManageData.jsx:359:    }, [allPendingRecords, pendingScopeFilter, pendingQaFilter, pendingSearch, 
+facilities]);
+src\pages\ManageData.jsx:539:        const queryTab = new URLSearchParams(location.search).get('tab');
+src\pages\ManageData.jsx:548:    }, [location.state, location.search]);
+src\pages\ManageData.jsx:553:        setSearchTerm('');
+src\pages\ManageData.jsx:567:    }, [activeTab, searchTerm, filterActivity, filterDivision, filterRegion, filterYear]);
+src\pages\ManageData.jsx:585:    const [editingFactorId, setEditingFactorId] = useState(null);
+src\pages\ManageData.jsx:621:  const [editingCbamId, setEditingCbamId] = useState(null);
+src\pages\ManageData.jsx:630:    const [editingOgmpId, setEditingOgmpId] = useState(null);
+src\pages\ManageData.jsx:636:    const [editingGoalYear, setEditingGoalYear] = useState(null);
+src\pages\ManageData.jsx:826:            toast.success(editingGoalYear ? 'Emission goal updated!' : 'Emission goal 
+saved!');
+src\pages\ManageData.jsx:827:            setEditingGoalYear(null);
+src\pages\ManageData.jsx:835:    const handleEditGoal = (goal) => {
+
+
+

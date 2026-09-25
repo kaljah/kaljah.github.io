@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\constants.js:3:export const STAGE_FACTOR_CALCULATOR = "FACTOR_CALCULATOR";
+new\client\src\utils\constants.js:4:export const STAGE_EMISSION_CALCULATOR = "EMISSION_CALCULATOR";
+
+
+

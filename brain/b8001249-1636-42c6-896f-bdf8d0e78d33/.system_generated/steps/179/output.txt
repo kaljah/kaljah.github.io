@@ -1,0 +1,20 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_03_admin_api.py", line 192, in <module>
+    run()
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_03_admin_api.py", line 15, in run
+    if not t.login():
+           ^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\api_tester_base.py", line 59, in login
+    self.ok(f"Login as {self.email}")
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\api_tester_base.py", line 40, in ok
+    self.log(f"\u2705 {msg}")
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\api_tester_base.py", line 26, in log
+    print(f"[Agent{self.agent_num}/{self.role}] {msg}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 15: character maps to <undefined>
+

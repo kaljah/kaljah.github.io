@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+<truncated 7 lines>
+
+--- TEST 3: GET /api/dashboard/batch-all (default: year=all) ---
+Batch all status: 200
+Keys in batch response: ['base_year', 'categorical_breakdown', 'goal', 'intensity_stats', 'mitigation', 'pending_stats', 'scope3_summary', 'summary', 'uncertainty', 'years']
+Summary rows: 2
+Summary content: [
+  {
+    "ch4_total": 0.0,
+    "co2_total": 0.0,
+    "combustion": 0.0,
+    "facility_id": "total",
+    "flaring": 0,
+    "gwp_horizon": 100,
+    "n2o_total": 0.0,
+    "other": 0,
+    "scope1_total": 0.0,
+    "scope1_total_gwp100": 0.0,
+    "scope1_total_gwp20": 0.0,
+    "scope2_energy": 0,
+    "scope2_total": 0,
+    "venting": 0,
+    "year": 2025
+  },
+  {
+    "ch4_total": 238.7,
+    "co2_total": 236200.0,
+    "combustion": 63670.0,
+    "facility_id": "total",
+    "flaring": 24400.0,
+    "gwp_horizon": 100,
+    "n2o_total": 51.1,
+    "other": 150320.0,
+    "scope1_total": 254895.0,
+    "scope1_total_gwp100": 254895.0,
+    "scope1_total_gwp20": 268211.1,
+    "scope2_energy": 0,
+    "scope2_total": 0,
+    "venting": 16505.0,
+    "year": 2026
+  }
+]
+Pending stats: {'count': 820, 'totalCo2e': 4133587.21}
+Scope 3 summary: {'by_year': {}, 'total': 0.0}
+Intensity stats: [{'activity': 'Steel & Iron (Acier DRI)', 'api_flaring_intensity': 0.0, 'biogenic_intensity': 0.0, 'ch4_combustion': 17.5, 'ch4_flaring': 0, 'ch4_fugitive': 0, 'ch4_intensity': 0.0, 'ch4_venting': 0, 'co2_intensity': 0.0, 'co2_intensity_gwp20': 0.0, 'country': 'Algeria', 'current_ogmp_level': 4, 'deadline_years': 3, 'division': 'Metallurgy', 'excess_ch4_tonnes': 17.5, 'facility_id': 1, 'facility_name': 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'flaring_emissions': 0, 'flaring_rate_pct': 0.0, 'flaring_volume': 0, 'gold_pathway_status': 'Level 4 Pathway (Target Met)', 'methane_loss_rate_pct': 0.0, 'ogmp_gold_standard_target': 0.05, 'ogmp_l3_pct': 0.0, 'ogmp_l4_pct': 100.0, 'ogmp_membership_year': 2023, 'ogmp_target_status': 'Compliant', 'operator_status': 'operated', 'reconciliation_ratio': None, 'reconciliation_status': 'Bottom-Up Only', 'reconciliation_threshold': 20.0, 'region': 'West', 'scope1_intensity': 0.0, 'scope2_intensity': 0.0, 'scope3_intensity': 0.0, 'segment': 'Heavy Industry', 'target_gold_year': 2026, 'top_down_tch4': 0.0, 'total_biogenic': 0.0, 'total_boe': 0, 'total_ch4': 17.5, 'total_co2': 73000.0, 'total_co2e': 73500.0, 'total_co2e_all': 73500.0, 'total_co2e_gwp20': 74480.15, 'total_co2e_s3': 0.0, 'total_gas': 0, 'total_gas_m3': 0, 'total_n2o': 3.3, 'total_oil': 0, 'total_scope1': 73500.0, 'total_scope2': 0, 'total_scope3': 0.0, 'variance_flag': False, 'variance_pct': None, 'wec_fee_usd': 26250.0, 'wec_status': 'Taxable Liability'}, {'activity': 'Chemicals & Fertilizers', 'api_flaring_intensity': 0.0, 'biogenic_intensity': 0.0, 'ch4_combustion': 8.0, 'ch4_flaring': 0, 'ch4_fugitive': 0, 'ch4_intensity': 0.0, 'ch4_venting': 0.0, 'co2_intensity': 0.0, 'co2_intensity_gwp20': 0.0, 'country': 'Algeria', 'current_ogmp_level': 4, 'deadline_years': 3, 'division': 'Petrochemicals', 'excess_ch4_tonnes': 8.0, 'facility_id': 2, 'facility_name': 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'flaring_emissions': 0, 'flaring_rate_pct': 0.0, 'flaring_volume': 0, 'gold_pathway_status': 'Level 4 Pathway (Target Met)', 'methane_loss_rate_pct': 0.0, 'ogmp_gold_standard_target': 0.05, 'ogmp_l3_pct': 0.0, 'ogmp_l4_pct': 100.0, 'ogmp_membership_year': 2023, 'ogmp_target_status': 'Compliant', 'operator_status': 'operated', 'reconciliation_ratio': None, 'reconciliation_status': 'Bottom-Up Only', 'reconciliation_threshold': 20.0, 'region': 'West', 'scope1_intensity': 0.0, 'scope2_intensity': 0.0, 'scope3_intensity': 0.0, 'segment': 'Heavy Industry', 'target_gold_year': 2026, 'top_down_tch4': 0.0, 'total_biogenic': 0.0, 'total_boe': 0, 'total_ch4': 8.0, 'total_co2': 53500.0, 'total_co2e': 65675.0, 'total_co2e_all': 65675.0, 'total_co2e_gwp20': 66483.0, 'total_co2e_s3': 0.0, 'total_gas': 0, 'total_gas_m3': 0, 'total_n2o': 46.5, 'total_oil': 0, 'total_scope1': 65675.0, 'total_scope2': 0, 'total_scope3': 0.0, 'variance_flag': False, 'variance_pct': None, 'wec_fee_usd': 12000.0, 'wec_status': 'Taxable Liability'}, {'activity': 'Cement & Clinker', 'api_flaring_intensity': 0.0, 'biogenic_intensity': 0.0, 'ch4_combustion': 3.2, 'ch4_flaring': 0, 'ch4_fugitive': 0, 'ch4_intensity': 0.0, 'ch4_venting': 0, 'co2_intensity': 0.0, 'co2_intensity_gwp20': 0.0, 'country': 'Algeria', 'current_ogmp_level': 4, 'deadline_years': 3, 'division': 'Building Materials', 'excess_ch4_tonnes': 3.2, 'facility_id': 3, 'facility_name': 'Cimenterie Industrielle de Chlef (GICA)', 'flaring_emissions': 0, 'flaring_rate_pct': 0.0, 'flaring_volume': 0, 'gold_pathway_status': 'Level 4 Pathway (Target Met)', 'methane_loss_rate_pct': 0.0, 'ogmp_gold_standard_target': 0.05, 'ogmp_l3_pct': 0.0, 'ogmp_l4_pct': 100.0, 'ogmp_membership_year': 2023, 'ogmp_target_status': 'Compliant', 'operator_status': 'operated', 'reconciliation_ratio': None, 'reconciliation_status': 'Bottom-Up Only', 'reconciliation_threshold': 20.0, 'region': 'Center', 'scope1_intensity': 0.0, 'scope2_intensity': 0.0, 'scope3_intensity': 0.0, 'segment': 'Heavy Industry', 'target_gold_year': 2026, 'top_down_tch4': 0.0, 'total_biogenic': 0.0, 'total_boe': 0, 'total_ch4': 3.2, 'total_co2': 56700.0, 'total_co2e': 56820.0, 'total_co2e_all': 56820.0, 'total_co2e_gwp20': 57000.8, 'total_co2e_s3': 0.0, 'total_gas': 0, 'total_gas_m3': 0, 'total_n2o': 0.8, 'total_oil': 0, 'total_scope1': 56820.0, 'total_scope2': 0, 'total_scope3': 0.0, 'variance_flag': False, 'variance_pct': None, 'wec_fee_usd': 4800.0, 'wec_status': 'Taxable Liability'}, {'activity': 'Upstream & Midstream Gas', 'api_flaring_intensity': 0.0, 'biogenic_intensity': 0.0, 'ch4_combustion': 100.0, 'ch4_flaring': 0, 'ch4_fugitive': 110.0, 'ch4_intensity': 0.0, 'ch4_venting': 0, 'co2_intensity': 0.0, 'co2_intensity_gwp20': 0.0, 'country': 'Algeria', 'current_ogmp_level': 4, 'deadline_years': 3, 'division': 'Exploration & Production', 'excess_ch4_tonnes': 210.0, 'facility_id': 4, 'facility_name': 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)', 'flaring_emissions': 24400.0, 'flaring_rate_pct': 0.0, 'flaring_volume': 180000.0, 'gold_pathway_status': 'Level 4 Pathway (Target Met)', 'methane_loss_rate_pct': 0.0, 'ogmp_gold_standard_target': 0.05, 'ogmp_l3_pct': 0.0, 'ogmp_l4_pct': 100.0, 'ogmp_membership_year': 2023, 'ogmp_target_status': 'Compliant', 'operator_status': 'operated', 'reconciliation_ratio': None, 'reconciliation_status': 'Bottom-Up Only', 'reconciliation_threshold': 20.0, 'region': 'South', 'scope1_intensity': 0.0, 'scope2_intensity': 0.0, 'scope3_intensity': 0.0, 'segment': 'Oil & Gas', 'target_gold_year': 2026, 'top_down_tch4': 0.0, 'total_biogenic': 0.0, 'total_boe': 0, 'total_ch4': 210.0, 'total_co2': 53000.0, 'total_co2e': 58900.0, 'total_co2e_all': 58900.0, 'total_co2e_gwp20': 70349.0, 'total_co2e_s3': 0.0, 'total_gas': 0, 'total_gas_m3': 0, 'total_n2o': 0.5, 'total_oil': 0, 'total_scope1': 58900.0, 'total_scope2': 0, 'total_scope3': 0.0, 'variance_flag': False, 'variance_pct': None, 'wec_fee_usd': 315000.0, 'wec_status': 'Taxable Liability'}]
+Goal: None
+Base year: None
+Categorical breakdown count: 4
+Categorical sample: [{'activity': 'Cement & Clinker', 'division': 'Building Materials', 'field': 'Chlef Plant', 'region': 'Cimenterie Industrielle de Chlef (GICA)', 'scope3_emissions': 0, 'total_emissions': 56820.0, 'total_emissions_all': 56820.0}, {'activity': 'Steel & Iron (Acier DRI)', 'division': 'Metallurgy', 'field': 'Industrial Zone', 'region': 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'scope3_emissions': 0, 'total_emissions': 73500.0, 'total_emissions_all': 73500.0}, {'activity': 'Chemicals & Fertilizers', 'division': 'Petrochemicals', 'field': 'Arzew Port', 'region': 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'scope3_emissions': 0, 'total_emissions': 65675.0, 'total_emissions_all': 65675.0}]
+

@@ -1,0 +1,46 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":304,"LineContent":"                \"region\": (f.location or f.region or f.name) if f else \"-\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":225,"LineContent":"        location=data.get(\"location\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":256,"LineContent":"                    \"location\": user.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":451,"LineContent":"            \"location\": user.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":472,"LineContent":"    # Update allowed fields (location is immutable via /profile to prevent RBAC bypass; managed via /users/\u003cid\u003e)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":863,"LineContent":"                \"location\": u.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":920,"LineContent":"    if \"location\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":921,"LineContent":"        user.location = data[\"location\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":944,"LineContent":"                \"location\": user.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":4,"LineContent":"from utils import get_allowed_facility_ids, log_activity_and_notify, is_unrestricted_location"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":45,"LineContent":"                \"location\": f.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":74,"LineContent":"    actual facilities when a user's location is matched later."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":129,"LineContent":"    if user.role == \"superuser\" and not is_unrestricted_location(user.location):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":130,"LineContent":"        user_loc = (user.location or \"\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":132,"LineContent":"        fac_location = (data.get(\"location\") or \"\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":134,"LineContent":"        if user_loc not in (fac_region, fac_location, fac_name):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":137,"LineContent":"                    {\"error\": f\"Superusers can only create facilities in their assigned region: {user.location}\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":144,"LineContent":"        location=data.get(\"location\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":186,"LineContent":"                    \"location\": fac.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":227,"LineContent":"    if \"location\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":228,"LineContent":"        facility.location = data[\"location\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":278,"LineContent":"                \"location\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":363,"LineContent":"                    \"location\": facility.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":395,"LineContent":"    if user.role == \"superuser\" and not is_unrestricted_location(user.location):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":396,"LineContent":"        user_loc = (user.location or \"\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":399,"LineContent":"            fac_location = (fac_data.get(\"location\") or \"\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":401,"LineContent":"            if user_loc not in (fac_region, fac_location, fac_name):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":405,"LineContent":"                            \"error\": f\"Superusers can only import facilities in their assigned region: {user.location}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":415,"LineContent":"            location=fac_data.get(\"location\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":500,"LineContent":"                            \"location\": f.location or f.field or \"General\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":270,"LineContent":"            literal(\"Location-based\").label(\"factor_type\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":748,"LineContent":"            \"allocation_method\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":74,"LineContent":"def _calc_cogen_allocation(data):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":77,"LineContent":"    ci = data.get(\"calc_inputs\", {}).get(\"cogen_allocation\", {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":84,"LineContent":"    method = data.get(\"allocation_method\") or ci.get(\"allocation_method\", \"wri_efficiency\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":141,"LineContent":"                    \"location\": e.location,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":197,"LineContent":"        grid_region = data.get(\"grid_region\") or data.get(\"location\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":212,"LineContent":"    elif source_type == \"cogen_allocation\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":214,"LineContent":"            co2e = _calc_cogen_allocation(data)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":216,"LineContent":"            return jsonify({\"error\": f\"CHP allocation calculation failed: {exc}\"}), 422"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":268,"LineContent":"        location=data.get(\"location\") or data.get(\"grid_region\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":269,"LineContent":"        grid_region=data.get(\"grid_region\") or data.get(\"location\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":342,"LineContent":"                    \"location\": emission.location or emission.grid_region,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":463,"LineContent":"    if \"location\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":464,"LineContent":"        emission.location = data[\"location\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":645,"LineContent":"                location=grid_region,"}

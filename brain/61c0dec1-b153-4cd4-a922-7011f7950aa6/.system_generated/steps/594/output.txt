@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,10 +1,28 @@
+ import { jsPDF } from "jspdf";
+ import autoTable from "jspdf-autotable";
+ import { Chart, registerables } from "chart.js";
+-import { DEFAULT_GWP } from "../constants";
++import { DEFAULT_GWP, getActiveGwpFactors, GWP_STANDARDS } from "../constants";
+ 
+ Chart.register(...registerables);
+ 
++export function resolveGwpFactors(gwpChoice) {
++  const str = String(gwpChoice || "AR5").toUpperCase().trim();
++  let standard = "AR5";
++  let horizon = "100";
++  if (str.includes("AR4")) standard = "AR4";
++  else if (str.includes("AR6")) standard = "AR6";
++  else standard = "AR5";
++
++  if (str.includes("20")) horizon = "20";
++  const factors = getActiveGwpFactors(standard, horizon);
++  return {
++    standard,
++    horizon,
++    factors,
++    label: `IPCC ${standard} (${horizon}-yr: CH₄=${factors.CH4}, N₂O=${factors.N2O})`
++  };
++}
++
+ // Sonatrach Brand Colors (White Theme)
+ const THEME = {
+   primary: [255, 255, 255], // White
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

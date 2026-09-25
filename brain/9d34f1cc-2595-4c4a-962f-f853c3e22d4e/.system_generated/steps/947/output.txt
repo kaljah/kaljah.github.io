@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -373,11 +373,12 @@
+         rejected_anomalies += q3_flags.filter(Scope3Emission.status.ilike("%rejected%")).count()
+ 
+         # Completeness rates per dimension
+-        if s1_count > 0:
+-            fac_completeness = round(max(0.0, (s1_count - missing_facility_count) / s1_count * 100), 1)
++        denom = total_records_count if total_records_count > 0 else s1_count
++        if denom > 0:
++            fac_completeness = round(max(0.0, (denom - missing_facility_count) / denom * 100), 1)
+             fuel_completeness = round(max(0.0, (comb_count - missing_fuel_count) / comb_count * 100), 1) if comb_count > 0 else 100.0
+-            amount_completeness = round(max(0.0, (s1_count - missing_amount_count) / s1_count * 100), 1)
+-            calc_completeness = round(max(0.0, (s1_count - missing_co2e_count) / s1_count * 100), 1)
++            amount_completeness = round(max(0.0, (denom - missing_amount_count) / denom * 100), 1)
++            calc_completeness = round(max(0.0, (denom - missing_co2e_count) / denom * 100), 1)
+             overall_completeness = round(
+                 (fac_completeness + fuel_completeness + amount_completeness + calc_completeness) / 4, 1
+             )
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

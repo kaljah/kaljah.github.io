@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+z/z: 200
+itadmin/admin123: 401
+itadmin/ChangeMeITAdmin2026!: 200
+

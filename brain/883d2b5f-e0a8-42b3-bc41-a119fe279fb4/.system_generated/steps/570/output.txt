@@ -1,0 +1,105 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -795,19 +795,26 @@
+         setEditingGoalYear(goal.year);
+     };
+ 
+-    const handleDeleteGoal = async (year) => {
+-        if (!confirm(`Delete emission goal for year ${year}?`)) return;
+-        try {
+-            await api.delete(`/goals/${year}`);
+-            toast.success('Emission goal deleted');
+-            if (editingGoalYear === year) {
+-                setEditingGoalYear(null);
+-                setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
+-            }
+-            fetchGoals();
+-        } catch (err) {
+-            toast.error(err.response?.data?.error || 'Failed to delete goal');
+-        }
++    const handleDeleteGoal = (year) => {
++        requestConfirm({
++            title: "Delete Emission Goal",
++            message: `Delete emission goal for year ${year}?`,
++            confirmLabel: "Delete Goal",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/goals/${year}`);
++                    toast.success('Emission goal deleted');
++                    if (editingGoalYear === year) {
++                        setEditingGoalYear(null);
++                        setGoalForm({ year: new Date().getFullYear(), target_amount: '' });
++                    }
++                    fetchGoals();
++                } catch (err) {
++                    toast.error(err.response?.data?.error || 'Failed to delete goal');
++                }
++            }
++        });
+     };
+ 
+     const handleSaveBaseYear = async () => {
+@@ -833,15 +833,22 @@
+         }
+     };
+ 
+-    const handleDeleteBaseYearRecalc = async (id) => {
+-        if (!confirm('Delete this base year recalculation entry?')) return;
+-        try {
+-            await api.delete(`/base-years/${id}`);
+-            toast.success('Base year record deleted');
+-            fetchBaseYears();
+-        } catch (err) {
+-            toast.error(err.response?.data?.error || 'Failed to delete base year record');
+-        }
++    const handleDeleteBaseYearRecalc = (id) => {
++        requestConfirm({
++            title: "Delete Base Year Recalculation",
++            message: 'Delete this base year recalculation entry?',
++            confirmLabel: "Delete Record",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/base-years/${id}`);
++                    toast.success('Base year record deleted');
++                    fetchBaseYears();
++                } catch (err) {
++                    toast.error(err.response?.data?.error || 'Failed to delete base year record');
++                }
++            }
++        });
+     };
+ 
+ 
+@@ -885,13 +885,20 @@
+         } catch (err) { toast.error('Failed to save factor'); }
+     };
+ 
+-    const handleDeleteFactor = async (id) => {
+-        if (!confirm('Delete this factor?')) return;
+-        try {
+-            await api.delete(`/custom-factors/${id}`);
+-            toast.success('Factor deleted!');
+-            fetchCustomFactors();
+-        } catch (err) { toast.error('Failed to delete factor'); }
++    const handleDeleteFactor = (id) => {
++        requestConfirm({
++            title: "Delete Custom Factor",
++            message: 'Delete this factor?',
++            confirmLabel: "Delete Factor",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/custom-factors/${id}`);
++                    toast.success('Factor deleted!');
++                    fetchCustomFactors();
++                } catch (err) { toast.error('Failed to delete factor'); }
++            }
++        });
+     };
+ 
+     const handleEditFactor = (factor) => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

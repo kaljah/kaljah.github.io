@@ -1,0 +1,76 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -129,6 +129,20 @@
+             const res = await api.post('/qaqc/bulk-resolve', { records, resolution });
+             toast.success(res.data.message || `Updated ${records.length} records to ${resolution}`);
+             setSelectedIds(new Set());
++            // Optimistically update local flagged records
++            setData(prev => {
++                if (!prev?.flagged_records) return prev;
++                const idSet = new Set(records.map(r => `${r.scope}-${r.id}`));
++                return {
++                    ...prev,
++                    flagged_records: prev.flagged_records.map(r => {
++                        if (idSet.has(`${r.scope}-${r.id}`)) {
++                            return { ...r, status: resolution };
++                        }
++                        return r;
++                    })
++                };
++            });
+             fetchDashboard();
+         } catch (err) {
+             toast.error(err.response?.data?.error || 'Bulk resolve failed');
+@@ -147,6 +147,19 @@
+                 next.delete(`${scope}-${id}`);
+                 return next;
+             });
++            // Optimistically update local flagged records
++            setData(prev => {
++                if (!prev?.flagged_records) return prev;
++                return {
++                    ...prev,
++                    flagged_records: prev.flagged_records.map(r => {
++                        if (r.scope === scope && r.id === id) {
++                            return { ...r, status: resolution };
++                        }
++                        return r;
++                    })
++                };
++            });
+             fetchDashboard();
+         } catch (err) {
+             toast.error(err.response?.data?.error || 'Resolution failed');
+@@ -188,13 +188,22 @@
+     const filteredRecords = useMemo(() => {
+         if (!data?.flagged_records) return [];
+         return data.flagged_records.filter(r => {
+-            // Status match
+-            if (statusFilter !== 'all') {
+-                const s = (r.status || 'pending').toLowerCase();
+-                if (statusFilter === 'pending' && !s.includes('pending')) return false;
+-                if (statusFilter === 'verified' && !s.includes('verified')) return false;
+-                if (statusFilter === 'rejected' && !s.includes('rejected')) return false;
+-            }
++            const s = (r.status || 'pending').toLowerCase();
++            const isRejected = s.includes('rejected');
++
++            // Status match:
++            // "All Statuses" strictly excludes rejected records so reviewers focus on active items.
++            // Rejected records ONLY show in the 'rejected' tab.
++            if (statusFilter === 'all') {
++                if (isRejected) return false;
++            } else if (statusFilter === 'pending') {
++                if (!s.includes('pending')) return false;
++            } else if (statusFilter === 'verified') {
++                if (!s.includes('verified')) return false;
++            } else if (statusFilter === 'rejected') {
++                if (!isRejected) return false;
++            }
++
+             // Search query match
+             if (searchQuery.trim()) {
+                 const q = searchQuery.toLowerCase();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

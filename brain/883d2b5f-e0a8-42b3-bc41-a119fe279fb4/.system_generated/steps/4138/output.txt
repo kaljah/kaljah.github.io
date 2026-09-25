@@ -1,0 +1,160 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2253,26 +2253,40 @@
+     include_s2 = scope in ("all", "2")
+     include_s3 = scope in ("all", "3")
+ 
+-    # 1. SCOPE 1 — lightweight column projection
++    # 1. SCOPE 1 — aggregate directly in SQL by process/fuel/method/uncertainty
+     s1_emissions = []
+     if include_s1:
+         s1_q = db.session.query(
+-            Emission.co2e_total,
+-            Emission.uncertainty,
+-            Emission.uncertainty_ch4,
+-            Emission.uncertainty_n2o,
+-            Emission.calc_method,
+-            Emission.process_type,
+-            Emission.fuel_type,
++            Emission.process_type,
++            Emission.fuel_type,
++            Emission.calc_method,
++            Emission.uncertainty,
++            Emission.uncertainty_ch4,
++            Emission.uncertainty_n2o,
++            func.sum(Emission.co2e_total).label("co2e_total"),
++            func.sum(Emission.co2e_total * Emission.co2e_total).label("co2e_sq"),
+         ).filter(Emission.year == year, Emission.status == "Verified")
+         if effective_fids is not None:
+             s1_q = s1_q.filter(Emission.facility_id.in_(effective_fids))
++        s1_q = s1_q.group_by(
++            Emission.process_type,
++            Emission.fuel_type,
++            Emission.calc_method,
++            Emission.uncertainty,
++            Emission.uncertainty_ch4,
++            Emission.uncertainty_n2o,
++        )
+         s1_emissions = s1_q.all()
+ 
+-    # 2. SCOPE 2 — lightweight column projection
++    # 2. SCOPE 2 — aggregate directly in SQL by source_type/uncertainty
+     s2_emissions = []
+     if include_s2:
+-        s2_q = db.session.query(Scope2Emission.co2e, Scope2Emission.source_type).filter(
++        s2_q = db.session.query(
++            Scope2Emission.source_type,
++            Scope2Emission.uncertainty,
++            func.sum(Scope2Emission.co2e).label("co2e"),
++            func.sum(Scope2Emission.co2e * Scope2Emission.co2e).label("co2e_sq"),
++        ).filter(
+             Scope2Emission.year == year, Scope2Emission.status == "Verified"
+         )
+         if effective_fids is not None:
+@@ -2279,9 +2279,18 @@
++        s2_q = s2_q.group_by(
++            Scope2Emission.source_type,
++            Scope2Emission.uncertainty,
++        )
+         s2_emissions = s2_q.all()
+ 
+-    # 3. SCOPE 3 — lightweight column projection
++    # 3. SCOPE 3 — aggregate directly in SQL by category/uncertainty
+     s3_emissions = []
+     if include_s3:
+-        s3_q = db.session.query(Scope3Emission.co2e, Scope3Emission.category).filter(
++        s3_q = db.session.query(
++            Scope3Emission.category,
++            Scope3Emission.uncertainty,
++            func.sum(Scope3Emission.co2e).label("co2e"),
++            func.sum(Scope3Emission.co2e * Scope3Emission.co2e).label("co2e_sq"),
++        ).filter(
+             Scope3Emission.year == year, Scope3Emission.status == "Verified"
+         )
+         if effective_fids is not None:
+@@ -2288,3 +2288,7 @@
++        s3_q = s3_q.group_by(
++            Scope3Emission.category,
++            Scope3Emission.uncertainty,
++        )
+         s3_emissions = s3_q.all()
+ 
+     def get_ef_uncertainty(em, scope=1):
+@@ -2355,14 +2355,18 @@
+         if ptype not in groups:
+             groups[ptype] = {"emissions": [], "total_e": 0}
+         u = get_ef_uncertainty(em, scope=1)
++        tot_e = float(em.co2e_total or 0)
++        e_sq = float(em.co2e_sq or (tot_e * tot_e))
++        u_eff = (u * math.sqrt(e_sq) / tot_e) if tot_e > 0 else u
+         groups[ptype]["emissions"].append(
+             {
+-                "e": float(em.co2e_total or 0),
++                "e": tot_e,
+                 "u": u,
++                "u_eff": u_eff,
+                 "name": em.fuel_type or em.process_type or "Unknown",
+             }
+         )
+-        groups[ptype]["total_e"] += float(em.co2e_total or 0)
++        groups[ptype]["total_e"] += tot_e
+ 
+     # Process Scope 2
+     if s2_emissions:
+@@ -2369,13 +2369,17 @@
+         for em in s2_emissions:
+             u = get_ef_uncertainty(em, scope=2)
++            tot_e = float(em.co2e or 0)
++            e_sq = float(em.co2e_sq or (tot_e * tot_e))
++            u_eff = (u * math.sqrt(e_sq) / tot_e) if tot_e > 0 else u
+             groups["Scope 2 (Indirect)"]["emissions"].append(
+                 {
+-                    "e": float(em.co2e or 0),
+-                    "u": u,
++                    "e": tot_e,
++                    "u": u,
++                    "u_eff": u_eff,
+                     "name": em.source_type or "Electricity",
+                 }
+             )
+-            groups["Scope 2 (Indirect)"]["total_e"] += float(em.co2e or 0)
++            groups["Scope 2 (Indirect)"]["total_e"] += tot_e
+ 
+     # Process Scope 3
+     if s3_emissions:
+@@ -2382,9 +2382,17 @@
+         for em in s3_emissions:
+             u = get_ef_uncertainty(em, scope=3)
++            tot_e = float(em.co2e or 0)
++            e_sq = float(em.co2e_sq or (tot_e * tot_e))
++            u_eff = (u * math.sqrt(e_sq) / tot_e) if tot_e > 0 else u
+             groups["Scope 3 (Value Chain)"]["emissions"].append(
+-                {"e": float(em.co2e or 0), "u": u, "name": em.category or "Value Chain"}
+-            )
+-            groups["Scope 3 (Value Chain)"]["total_e"] += float(em.co2e or 0)
++                {
++                    "e": tot_e,
++                    "u": u,
++                    "u_eff": u_eff,
++                    "name": em.category or "Value Chain",
++                }
++            )
++            groups["Scope 3 (Value Chain)"]["total_e"] += tot_e
+ 
+     results = []
+     all_source_items = []  # Collect all items for srss_inventory
+@@ -2393,9 +2393,9 @@
+         if group["total_e"] <= 0:
+             continue
+ 
+-        # Build source list for this group's SRSS
++        # Build source list for this group's SRSS using variance-preserving u_eff
+         group_sources = [
+-            {"value": item["e"], "relative_uncertainty": item["u"]}
++            {"value": item["e"], "relative_uncertainty": item.get("u_eff", item["u"])}
+             for item in group["emissions"]
+             if item["e"] > 0
+         ]
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

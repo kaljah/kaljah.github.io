@@ -1,0 +1,93 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -293,11 +293,13 @@
+ 
+ def ensure_admin_seeded():
+     """
+-    Seeds essential development and admin accounts:
+-    - Admin: user 'a' / password 'a' (role: admin) and 'a@a'
+-    - IT Manager: user 'z' / password 'z' (role: it_manager) and 'z@z'
+-    In production when SEED_ADMIN=true, also configures explicit production credentials.
+-    """
++    Seeds essential development and admin accounts when SEED_ADMIN=true.
++    """
++    seed_flag = os.environ.get("SEED_ADMIN", "").strip().lower()
++    if seed_flag not in ["1", "true", "yes"]:
++        app.logger.info("Admin seeding skipped (SEED_ADMIN is not set)")
++        return
++
+     _env_name = (
+         os.environ.get("FLASK_ENV")
+         or os.environ.get("APP_ENV")
+@@ -305,36 +305,38 @@
+     ).lower()
+     is_production = _env_name in ["production", "prod", "staging"]
+ 
+-    accounts = [
+-        {
+-            "email": "a",
+-            "password": "a",
+-            "role": "admin",
+-            "fullName": "Administrator",
+-            "jobTitle": "Sustainability Lead",
+-        },
+-        {
+-            "email": "a@a",
+-            "password": "a",
+-            "role": "admin",
+-            "fullName": "Administrator",
+-            "jobTitle": "Sustainability Lead",
+-        },
+-        {
+-            "email": "z",
+-            "password": "z",
+-            "role": "it_manager",
+-            "fullName": "IT Manager",
+-            "jobTitle": "IT Operations Manager",
+-        },
+-        {
+-            "email": "z@z",
+-            "password": "z",
+-            "role": "it_manager",
+-            "fullName": "IT Manager",
+-            "jobTitle": "IT Operations Manager",
+-        },
+-    ]
++    accounts = []
++    if not is_production:
++        accounts.extend([
++            {
++                "email": "a",
++                "password": "a",
++                "role": "admin",
++                "fullName": "Administrator",
++                "jobTitle": "Sustainability Lead",
++            },
++            {
++                "email": "a@a",
++                "password": "a",
++                "role": "admin",
++                "fullName": "Administrator",
++                "jobTitle": "Sustainability Lead",
++            },
++            {
++                "email": "z",
++                "password": "z",
++                "role": "it_manager",
++                "fullName": "IT Manager",
++                "jobTitle": "IT Operations Manager",
++            },
++            {
++                "email": "z@z",
++                "password": "z",
++                "role": "it_manager",
++                "fullName": "IT Manager",
++                "jobTitle": "IT Operations Manager",
++            },
++        ])
+ 
+     admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
+     admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":546,"LineContent":"                                co2e_val = getattr(emission_obj, 'co2e_total', 0) or 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1861,"LineContent":"                        existing_obj.co2e_total = total"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1901,"LineContent":"            co2e_total=total,"}

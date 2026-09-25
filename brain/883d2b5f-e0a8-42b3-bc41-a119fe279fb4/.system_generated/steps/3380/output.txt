@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2943,7 +2943,7 @@
+     if user.role == "it_admin":
+         return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+ 
+-    data = request.get_json()
++    data = request.get_json(silent=True) or {}
+ 
+     # Validation
+     required = ["year", "month", "facility_id", "process_type"]
+@@ -2950,8 +2950,13 @@
+         if field not in data:
+             return jsonify({"error": f"Missing field: {field}"}), 422
+ 
+-    allowed_ids = get_allowed_facility_ids(user)
+-    if allowed_ids is not None and int(data["facility_id"]) not in allowed_ids:
++    try:
++        fac_id = int(data["facility_id"])
++    except (ValueError, TypeError):
++        return jsonify({"error": "Invalid facility_id: must be an integer"}), 422
++
++    allowed_ids = get_allowed_facility_ids(user)
++    if allowed_ids is not None and fac_id not in allowed_ids:
+         return jsonify({"error": "Unauthorized for this facility"}), 403
+ 
+     # Calculate Emissions
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

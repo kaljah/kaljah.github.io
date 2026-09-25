@@ -1,0 +1,16 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":241,"LineContent":"app.register_blueprint(auth_bp, url_prefix=\"/api/auth\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":243,"LineContent":"app.register_blueprint(emissions_bp, url_prefix=\"/api/emissions\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":244,"LineContent":"app.register_blueprint(facilities_bp, url_prefix=\"/api/facilities\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":245,"LineContent":"app.register_blueprint(data_bp, url_prefix=\"/api/data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":246,"LineContent":"app.register_blueprint(reports_bp, url_prefix=\"/api/reports\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":247,"LineContent":"app.register_blueprint(dashboard_bp, url_prefix=\"/api/dashboard\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":248,"LineContent":"app.register_blueprint(custom_factors_bp, url_prefix=\"/api/custom-factors\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":249,"LineContent":"app.register_blueprint(scope2_bp, url_prefix=\"/api/scope2\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":250,"LineContent":"app.register_blueprint(scope3_bp, url_prefix=\"/api/scope3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":251,"LineContent":"app.register_blueprint(managedata_bp, url_prefix=\"/api\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":252,"LineContent":"app.register_blueprint(factors_bp)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":253,"LineContent":"app.register_blueprint(notifications_bp, url_prefix=\"/api/notifications\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":254,"LineContent":"app.register_blueprint(audit_bp, url_prefix=\"/api/audit\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":255,"LineContent":"app.register_blueprint(satellite_bp, url_prefix=\"/api/satellite\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":256,"LineContent":"app.register_blueprint(qaqc_bp, url_prefix=\"/api/qaqc\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":272,"LineContent":"        app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)"}

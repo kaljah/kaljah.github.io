@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 6
+    m = re.findall(r'(" ef_used_\w+\|\factor_\w+\)',
+                  ^
+SyntaxError: '(' was never closed
+

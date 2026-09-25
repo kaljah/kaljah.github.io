@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 09:51:07,861] INFO in app: Updated account: a
+[2026-09-23 09:51:07,946] INFO in app: Updated account: a@a
+[2026-09-23 09:51:08,056] INFO in app: Updated account: z
+[2026-09-23 09:51:08,150] INFO in app: Updated account: z@z
+

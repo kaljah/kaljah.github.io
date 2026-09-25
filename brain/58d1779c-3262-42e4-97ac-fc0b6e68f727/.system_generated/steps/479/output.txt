@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_production_smoke.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -71,12 +71,14 @@
+     assert data.get("user", {}).get("role") == "admin"
+ 
+ 
+-def test_smoke_05_unauthenticated_access_blocked(smoke_client):
++def test_smoke_05_unauthenticated_access_blocked():
+     """SMOKE-05: Protected emission endpoints reject unauthenticated access with 401."""
+-    resp = smoke_client.get("/api/emissions/")
++    fresh_client = flask_app.test_client()
++    resp = fresh_client.get("/api/emissions/")
+     assert resp.status_code == 401
+ 
+ 
++
+ def test_smoke_06_calculation_engine_dispatches(smoke_client):
+     """SMOKE-06: Calculation engine dispatches a basic stationary combustion query."""
+     from calculations.dispatcher import CalculationDispatcher
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

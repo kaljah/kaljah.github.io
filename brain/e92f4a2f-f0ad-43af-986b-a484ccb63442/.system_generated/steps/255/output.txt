@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1249,"LineContent":"    ...facilities.map((f) =\u003e ({"}

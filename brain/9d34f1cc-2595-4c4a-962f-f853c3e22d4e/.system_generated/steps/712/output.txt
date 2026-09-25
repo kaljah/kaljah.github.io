@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/dashboard.py:2263:def get_uncertainty_analysis():
+new/server/routes/dashboard.py:2342:def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope="all"):
+new/server/routes/dashboard.py:2433:    def get_ef_uncertainty(em, scope=1):
+

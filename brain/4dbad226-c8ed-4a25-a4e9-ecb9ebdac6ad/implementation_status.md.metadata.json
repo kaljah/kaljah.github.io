@@ -1,0 +1,5 @@
+{
+  "summary":  "Implementation status of all 16 process types from the API Compendium 2021 Tier 1 and Tier 3 extraction. Shows backend calculator class, dispatcher route keys, frontend UI form, and implementation status for each process type. Identifies that asphalt_blowing is the only process with an emission factor in the database but no dedicated calculator or form. All other 15 process types are fully implemented backend + frontend.",
+  "updatedAt":  "2026-09-22T18:31:23.145741200Z",
+  "userFacing":  true
+}

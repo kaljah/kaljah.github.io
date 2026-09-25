@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+52: region = db.Column(db.String(100))
+116: class Emission(db.Model):
+161: region = db.Column(db.String(100))
+

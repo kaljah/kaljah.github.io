@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":38,"LineContent":"                \"uncertainty\": float(f.uncertainty or 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":39,"LineContent":"                \"co2_uncertainty\": float(f.co2_uncertainty or 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":40,"LineContent":"                \"ch4_uncertainty\": float(f.ch4_uncertainty or 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":41,"LineContent":"                \"n2o_uncertainty\": float(f.n2o_uncertainty or 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":108,"LineContent":"        uncertainty = _parse_non_negative_float(data.get(\"uncertainty\"), \"uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":109,"LineContent":"        co2_uncertainty = _parse_non_negative_float(data.get(\"co2_uncertainty\"), \"co2_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":110,"LineContent":"        ch4_uncertainty = _parse_non_negative_float(data.get(\"ch4_uncertainty\"), \"ch4_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":111,"LineContent":"        n2o_uncertainty = _parse_non_negative_float(data.get(\"n2o_uncertainty\"), \"n2o_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":128,"LineContent":"        uncertainty=uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":129,"LineContent":"        co2_uncertainty=co2_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":130,"LineContent":"        ch4_uncertainty=ch4_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":131,"LineContent":"        n2o_uncertainty=n2o_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":202,"LineContent":"        if \"uncertainty\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":203,"LineContent":"            factor.uncertainty = _parse_non_negative_float(data[\"uncertainty\"], \"uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":204,"LineContent":"        if \"co2_uncertainty\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":205,"LineContent":"            factor.co2_uncertainty = _parse_non_negative_float(data[\"co2_uncertainty\"], \"co2_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":206,"LineContent":"        if \"ch4_uncertainty\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":207,"LineContent":"            factor.ch4_uncertainty = _parse_non_negative_float(data[\"ch4_uncertainty\"], \"ch4_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":208,"LineContent":"        if \"n2o_uncertainty\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":209,"LineContent":"            factor.n2o_uncertainty = _parse_non_negative_float(data[\"n2o_uncertainty\"], \"n2o_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":325,"LineContent":"            uncertainty = _parse_non_negative_float(factor_data.get(\"uncertainty\"), \"uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":326,"LineContent":"            co2_uncertainty = _parse_non_negative_float(factor_data.get(\"co2_uncertainty\"), \"co2_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":327,"LineContent":"            ch4_uncertainty = _parse_non_negative_float(factor_data.get(\"ch4_uncertainty\"), \"ch4_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":328,"LineContent":"            n2o_uncertainty = _parse_non_negative_float(factor_data.get(\"n2o_uncertainty\"), \"n2o_uncertainty\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":345,"LineContent":"            uncertainty=uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":346,"LineContent":"            co2_uncertainty=co2_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":347,"LineContent":"            ch4_uncertainty=ch4_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":348,"LineContent":"            n2o_uncertainty=n2o_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":163,"LineContent":"        uncertainty_year = int(year) if year and year != \"all\" else None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":238,"LineContent":"            f_uncertainty = executor.submit("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":241,"LineContent":"                _query_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":242,"LineContent":"                year=uncertainty_year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":322,"LineContent":"            \"uncertainty\": f_uncertainty.result(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2252,"LineContent":"@dashboard_bp.route(\"/uncertainty\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2254,"LineContent":"def get_uncertainty_analysis():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2256,"LineContent":"    Quantifies inventory uncertainty per ISO 14064-1 §4.6.5."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2257,"LineContent":"    Delegates to _query_uncertainty() for thread-safe reuse."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2263,"LineContent":"        export (str, optional): \"csv\" to download uncertainty breakdown as CSV."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2285,"LineContent":"    result = _query_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2307,"LineContent":"        writer.writerow([\"Category\", \"Total Emissions (tCO2e)\", \"Uncertainty (±%)\", \"Level\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2312,"LineContent":"                _safe_csv(cat[\"uncertainty_pct\"]),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2316,"LineContent":"        writer.writerow([\"Overall Inventory Uncertainty\", \"\", _safe_csv(result[\"inventory_uncertainty_pct\"]), \"\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2324,"LineContent":"            headers={\"Content-Disposition\": f\"attachment; filename=uncertainty_{result['year']}.csv\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2331,"LineContent":"    cache=DASHBOARD_CACHE, key=make_cache_key(\"_query_uncertainty\"), lock=CACHE_LOCK"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2333,"LineContent":"def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, scope=\"all\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2335,"LineContent":"    Pure query logic for /uncertainty — returns a plain Python dict."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2336,"LineContent":"    Quantifies inventory uncertainty per ISO 14064-1 §4.6.5"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2340,"LineContent":"    via calculations.uncertainty.srss_inventory()."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2346,"LineContent":"    from calculations.uncertainty import srss_inventory, COVERAGE_FACTOR_95"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2361,"LineContent":"    # 1. SCOPE 1 — aggregate directly in SQL by process/fuel/method/uncertainty"}
+(...242 more results not shown)

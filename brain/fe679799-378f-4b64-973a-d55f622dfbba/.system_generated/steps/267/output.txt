@@ -1,0 +1,65 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope3Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -616,59 +616,6 @@
+         </div>
+ 
+ 
+-        {/* EEIO Quick Spend Calculator */}
+-        <div style={{ marginTop: "20px", marginBottom: "10px", padding: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
+-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }} onClick={() => setShowEeioCalc(!showEeioCalc)}>
+-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+-              <span style={{ fontSize: "1.2rem" }}>💰</span>
+-              <strong style={{ color: "#334155" }}>EEIO Quick Spend Calculator</strong>
+-              <span style={{ fontSize: "0.8rem", color: "#64748b", marginLeft: "10px" }}>Convert financial spend to CO₂e using NAICS factors</span>
+-            </div>
+-            <span>{showEeioCalc ? "▲" : "▼"}</span>
+-          </div>
+-          
+-          {showEeioCalc && (
+-            <div style={{ marginTop: "16px", display: "flex", gap: "16px", alignItems: "flex-end" }}>
+-              <div className="input-group" style={{ flex: 1 }}>
+-                <label>NAICS Code (3-6 digits)</label>
+-                <input
+-                  type="text"
+-                  className="mole-input"
+-                  placeholder="e.g. 541 (Consulting)"
+-                  value={eeioNaics}
+-                  onChange={(e) => setEeioNaics(e.target.value)}
+-                />
+-              </div>
+-              <div className="input-group" style={{ flex: 1 }}>
+-                <label>Spend Amount (USD)</label>
+-                <input
+-                  type="number"
+-                  className="mole-input"
+-                  placeholder="0.00"
+-                  value={eeioSpend}
+-                  onChange={(e) => setEeioSpend(e.target.value)}
+-                />
+-              </div>
+-              <button 
+-                className="action-btn" 
+-                style={{ height: "38px", padding: "0 16px", background: "#3b82f6", color: "white" }}
+-                onClick={handleCalculateEeio}
+-              >
+-                Calculate & Auto-fill
+-              </button>
+-            </div>
+-          )}
+-          {eeioResult && showEeioCalc && (
+-            <div style={{ marginTop: "12px", padding: "12px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "6px" }}>
+-              <div style={{ fontSize: "0.85rem", color: "#1e3a8a" }}>
+-                <strong>Industry:</strong> {eeioResult.industry_name} <br/>
+-                <strong>Factor:</strong> {eeioResult.emission_factor} {eeioResult.ef_unit} <br/>
+-                <strong>Estimated Emissions:</strong> <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>{eeioResult.co2e.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span> tCO₂e
+-              </div>
+-            </div>
+-          )}
+-        </div>
+-
+         <div
+           style={{
+             display: "flex",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

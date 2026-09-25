@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_independent_differential.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -263,7 +263,7 @@
+             "agr_co2_in": 4.5,  # 4.5%
+             "agr_co2_out": 0.05,  # 0.05%
+             "agr_ch4_in": 85.0,
+-            "agr_ch4_slip": 0.1,  # 0.1%
++            "agr_ch4_slip_pct": 0.1,  # 0.1%
+             "agr_control_eff": 0.0,
+             "factor_source": "specific",
+         }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

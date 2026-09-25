@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+users 0
+facilities 0
+emissions 0
+production_data 0
+custom_factors 0
+scope2_emissions 0
+scope3_emissions 0
+

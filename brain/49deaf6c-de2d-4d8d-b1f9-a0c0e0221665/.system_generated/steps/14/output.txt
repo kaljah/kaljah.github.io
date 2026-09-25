@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\services
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/16/2026  10:14 AM                __pycache__                                                          
+-a----         9/17/2026   1:04 PM           5022 email_service.py                                                     
+-a----         8/15/2026   7:10 PM           3189 erp_integration.py                                                   
+-a----         9/16/2026   9:21 AM           5186 ogmp.py                                                              
+-a----         9/14/2026   1:46 AM          18468 sentinel5p.py                                                        
+-a----          8/7/2026   4:50 PM             19 __init__.py                                                          
+
+
+

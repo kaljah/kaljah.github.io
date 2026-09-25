@@ -1,0 +1,60 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -258,18 +258,24 @@
+         # Tier 3 Gas Composition Override (Carbon Mass Balance)
+         heavy_hc_warning = False
+         if "c1" in comps and comps["c1"] not in [None, "", "-"]:
+-            c_fractions = {
+-                "c1": float(comps.get("c1") or 0),
+-                "c2": float(comps.get("c2") or 0),
+-                "c3": float(comps.get("c3") or 0),
+-                "c4": float(comps.get("c4") or 0),
+-                "c5": float(comps.get("c5") or 0),
+-                "c6": float(comps.get("c6") or 0),
+-                "c7": float(comps.get("c7") or 0),
+-                "c8": float(comps.get("c8") or 0),
+-                "c9": float(comps.get("c9") or 0),
+-                "c10": float(comps.get("c10") or 0),
+-            }
++            raw_c = {f"c{i}": float(comps.get(f"c{i}") or 0.0) for i in range(1, 11)}
++            raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
++            total_raw = sum(raw_c.values()) + raw_co2
++
++            if total_raw > 1.5:  # Entered as percentages (> 1.0)
++                c_fractions = {k: v / 100.0 for k, v in raw_c.items()}
++                co2_native_fraction = raw_co2 / 100.0
++                total_sum = total_raw / 100.0
++            else:
++                c_fractions = dict(raw_c)
++                co2_native_fraction = raw_co2
++                total_sum = total_raw
++
++            # Strictly normalize to 1.0 if not exactly 1.0 (API Compendium 2021 Section 4.2)
++            if total_sum > 0 and abs(total_sum - 1.0) > 1e-4:
++                for k in c_fractions:
++                    c_fractions[k] /= total_sum
++                co2_native_fraction /= total_sum
+ 
+             c2_plus_total = sum(
+                 c_fractions[k]
+@@ -317,9 +317,6 @@
+                 co2_combusted_kg = co2_combusted_vol * density_co2
+ 
+                 # Native CO2
+-                co2_native_fraction = float(
+-                    comps.get("co2_comp") or comps.get("co2_mol") or 0
+-                )
+                 co2_native_kg = (vol_m3 * co2_native_fraction) * density_co2
+ 
+                 co2_val = (co2_combusted_kg + co2_native_kg) / 1000.0
+@@ -330,6 +330,7 @@
+                     ch4_val = (ch4_slip_vol * density_ch4) / 1000.0
+ 
+         # Resolve tier from factor_source (passed via uncertainties dict sidecar or defaults)
++        uncertainties = uncertainties or {}
+         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+         _cat = "combustion"
+         # Propagate uncertainty — tier-aware, 95% CI, non-negative bounds
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

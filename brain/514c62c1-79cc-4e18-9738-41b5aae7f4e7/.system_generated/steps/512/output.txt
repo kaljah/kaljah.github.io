@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId CommandLine                                                                              
+--------- -----------                                                                              
+    14232 "node"   "C:\Users\samsung\Desktop\H2\new\client\node_modules\.bin\\..\vite\bin\vite.js" 
+
+
+

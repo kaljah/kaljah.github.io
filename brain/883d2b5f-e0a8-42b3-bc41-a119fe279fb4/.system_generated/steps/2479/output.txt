@@ -1,0 +1,44 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -263,8 +263,10 @@
+         if process_type in [
+             "stationary_combustion",
+             "combustion",
++            "mobile_combustion",
+             "mobile",
+             "flaring",
++            "flare",
+             "separation",
+         ]:
+             if factor_source == "specific" and (
+@@ -292,7 +292,12 @@
+         # Only requires standard activity data; never fails on missing engineering inputs.
+         # =========================================================================
+         if factor_source in ["default", "custom"]:
+-            if process_type in ["stationary_combustion", "combustion"]:
++            if process_type in [
++                "stationary_combustion",
++                "combustion",
++                "mobile_combustion",
++                "mobile",
++            ]:
+                 hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
+                 if hhv_val:
+                     return calculator.calculate(
+@@ -333,7 +333,12 @@
+         # Strict validation with zero silent defaults.
+         # =========================================================================
+         try:
+-            if process_type in ["stationary_combustion", "combustion"]:
++            if process_type in [
++                "stationary_combustion",
++                "combustion",
++                "mobile_combustion",
++                "mobile",
++            ]:
+                 hhv_val = self._require_float(
+                     flat_inputs, ["hhv"], "Higher Heating Value (HHV)"
+                 )
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

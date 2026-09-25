@@ -1,0 +1,75 @@
+
+The command exited with code 0.
+Output:
+graphify-out/.graphify_analysis.json:      "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-19/GRAPH_REPORT.md:Nodes (21): errorhandler, listens_for, after_request(), before_request(), ensure_admin_seeded(), get_csrf_token(), health_check(), health_liveness() (+13 more)
+graphify-out/2026-09-19/graph.json:      "label": "ensure_admin_seeded()",
+graphify-out/2026-09-19/graph.json:      "id": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-19/graph.json:      "norm_label": "ensure_admin_seeded()"
+graphify-out/2026-09-19/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-19/graph.json:      "source": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-19/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-20/GRAPH_REPORT.md:Nodes (17): ensure_admin_seeded(), Seeds admin accounts ONLY when SEED_ADMIN=true environment variable is set. In…, client(), fixture, Security hardening regression tests — Phase 1.2. Verifies that: - Hard-coded…, ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:…, SECURITY REGRESSION (CRIT-02): The 'a@a' dev shortcut account must not be auto-…, SECURITY REGRESSION (CRIT-02): The 'a' dev shortcut account (not even a valid… (+9 more)
+graphify-out/2026-09-20/graph.json:      "label": "ensure_admin_seeded()",
+graphify-out/2026-09-20/graph.json:      "id": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-20/graph.json:      "norm_label": "ensure_admin_seeded()"
+graphify-out/2026-09-20/graph.json:      "label": "ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:\u2026",
+graphify-out/2026-09-20/graph.json:      "norm_label": "ensure_admin_seeded() must be a no-op when seed_admin is not set (default:..."
+graphify-out/2026-09-20/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-20/graph.json:      "source": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-20/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-20/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-20/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-21/GRAPH_REPORT.md:Nodes (27): ensure_admin_seeded(), get_csrf_token(), health_check(), health_liveness(), health_readiness(), index(), init_admin_route(), route (+19 more)
+graphify-out/2026-09-21/graph.json:      "label": "ensure_admin_seeded()",
+graphify-out/2026-09-21/graph.json:      "id": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-21/graph.json:      "norm_label": "ensure_admin_seeded()"
+graphify-out/2026-09-21/graph.json:      "label": "ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:\u2026",
+graphify-out/2026-09-21/graph.json:      "norm_label": "ensure_admin_seeded() must be a no-op when seed_admin is not set (default:..."
+graphify-out/2026-09-21/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-21/graph.json:      "source": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-21/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-21/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-21/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-21/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-22/GRAPH_REPORT.md:Nodes (18): ensure_admin_seeded(), init_admin_route(), Seeds essential development and admin accounts: - Admin: user 'a' / password…, client(), fixture, Security hardening regression tests — Phase 1.2. Verifies that: - Hard-coded…, ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:…, SECURITY REGRESSION (CRIT-02): The 'a@a' dev shortcut account must not be auto-… (+10 more)
+graphify-out/2026-09-22/graph.json:      "label": "ensure_admin_seeded()",
+graphify-out/2026-09-22/graph.json:      "id": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-22/graph.json:      "norm_label": "ensure_admin_seeded()"
+graphify-out/2026-09-22/graph.json:      "label": "ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:\u2026",
+graphify-out/2026-09-22/graph.json:      "norm_label": "ensure_admin_seeded() must be a no-op when seed_admin is not set (default:..."
+graphify-out/2026-09-22/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-22/graph.json:      "source": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-22/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-22/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-22/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-22/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-23/GRAPH_REPORT.md:Nodes (38): errorhandler, listens_for, after_request(), before_request(), ensure_admin_seeded(), get_csrf_token(), handle_csrf_error(), health_check() (+30 more)
+graphify-out/2026-09-23/graph.json:      "label": "ensure_admin_seeded()",
+graphify-out/2026-09-23/graph.json:      "id": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-23/graph.json:      "norm_label": "ensure_admin_seeded()"
+graphify-out/2026-09-23/graph.json:      "label": "ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:\u2026",
+graphify-out/2026-09-23/graph.json:      "norm_label": "ensure_admin_seeded() must be a no-op when seed_admin is not set (default:..."
+graphify-out/2026-09-23/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-23/graph.json:      "source": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-23/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-23/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/2026-09-23/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/GRAPH_REPORT.md:Nodes (15): client(), fixture, Security hardening regression tests — Phase 1.2. Verifies that: - Hard-coded…, ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:…, SECURITY REGRESSION (CRIT-02): The 'a@a' dev shortcut account must not be auto-…, SECURITY REGRESSION (CRIT-02): The 'a' dev shortcut account (not even a valid…, SECURITY REGRESSION: The /api/auth/init-admin unauthenticated route must return…, CSRF token endpoint must return a non-empty token. (+7 more)
+graphify-out/GRAPH_REPORT.md:Nodes (23): errorhandler, listens_for, after_request(), before_request(), ensure_admin_seeded(), get_csrf_token(), handle_csrf_error(), health_check() (+15 more)
+graphify-out/graph.json:      "label": "ensure_admin_seeded()",
+graphify-out/graph.json:      "id": "new_server_app_ensure_admin_seeded",
+graphify-out/graph.json:      "norm_label": "ensure_admin_seeded()"
+graphify-out/graph.json:      "label": "ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set (default:\u2026",
+graphify-out/graph.json:      "norm_label": "ensure_admin_seeded() must be a no-op when seed_admin is not set (default:..."
+graphify-out/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/graph.json:      "source": "new_server_app_ensure_admin_seeded",
+graphify-out/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+graphify-out/graph.json:      "target": "new_server_app_ensure_admin_seeded",
+new/server/app.py:def ensure_admin_seeded():
+new/server/app.py:    ensure_admin_seeded()
+new/server/tests/test_security_hardening.py:    ensure_admin_seeded() must be a no-op when SEED_ADMIN is not set
+new/server/tests/test_security_hardening.py:            from app import ensure_admin_seeded
+new/server/tests/test_security_hardening.py:            ensure_admin_seeded()  # Must be a no-op
+

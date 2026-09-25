@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -33,7 +33,14 @@
+ 
+ 
+ # Enable CORS
+-CORS(app, origins=app.config.get("ALLOWED_ORIGINS", []), supports_credentials=True)
++CORS(
++    app,
++    origins=app.config.get("ALLOWED_ORIGINS", []),
++    supports_credentials=True,
++    allow_headers=["Content-Type", "Authorization", "X-CSRFToken", "X-Request-ID", "Accept"],
++    methods=["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
++    expose_headers=["X-Request-ID", "Content-Disposition"],
++)
+ 
+ # Database
+ db.init_app(app)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

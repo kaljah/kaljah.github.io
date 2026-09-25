@@ -1,0 +1,93 @@
+
+The command exited with code 0.
+Output:
+ M .github/workflows/deploy-pages.yml
+ M docs/validation/FINAL_VALIDATION_REPORT.md
+ M docs/validation/HUMAN_REVIEW_REQUIRED.md
+ M graphify-out/.graphify_labels.json
+ M graphify-out/.graphify_labels.json.sig
+ M graphify-out/2026-09-20/.graphify_labels.json
+ M graphify-out/2026-09-20/GRAPH_REPORT.md
+ M graphify-out/2026-09-20/graph.json
+ M graphify-out/2026-09-20/manifest.json
+ M graphify-out/GRAPH_REPORT.md
+ M graphify-out/graph.html
+ M graphify-out/graph.json
+ M graphify-out/manifest.json
+ M new/client/package-lock.json
+ M new/client/package.json
+ M new/client/src/pages/DashboardEnhanced.jsx
+ M new/client/src/pages/ManageData.jsx
+ M new/client/src/pages/MethaneExplorer.jsx
+ M new/client/src/pages/Reports.jsx
+ M new/client/src/utils/userDefaults.js
+ M new/client/stats.html
+ M new/client/vite.config.js
+ M new/server/.env.example
+ M new/server/app.py
+ M new/server/calculations/combustion.py
+ M new/server/config.py
+ M new/server/extensions.py
+ M new/server/requirements.txt
+ M new/server/restore_full_data.py
+ M new/server/routes/auth.py
+ M new/server/routes/custom_factors.py
+ M new/server/routes/emissions.py
+ M new/server/routes/facilities.py
+ M new/server/seed_admin.py
+ M new/server/tests/conftest.py
+ M seed_demo_data.py
+ M validation/reference_model/__init__.py
+?? FINAL_VALIDATION_REPORT.pdf
+?? docs/validation/00-current-architecture.md
+?? docs/validation/00-repository-audit.md
+?? docs/validation/01-calculation-inventory.md
+?? docs/validation/01-testing-inventory.md
+?? docs/validation/02-calculation-inventory.md
+?? docs/validation/02-test-inventory.md
+?? docs/validation/03-security-audit.md
+?? docs/validation/04-database-audit.md
+?? docs/validation/05-performance-audit.md
+?? docs/validation/06-accessibility-audit.md
+?? docs/validation/07-browser-audit.md
+?? docs/validation/08-production-readiness.md
+?? docs/validation/09-calculation-validation.md
+?? docs/validation/10-human-review.md
+?? docs/validation/CALCULATION_VALIDATION_REPORT.md
+?? docs/validation/FINAL_VALIDATION_REPORT.pdf
+?? docs/validation/LEGACY_TEST_AUDIT.md
+?? generate_pdf_report.py
+?? new/client/e2e/
+?? new/client/playwright.config.js
+?? new/client/src/__tests__/
+?? new/client/src/test-setup.js
+?? new/client/test-results/
+?? new/server/backups/
+?? new/server/scripts/
+?? new/server/tests/test_log_handler.py
+?? new/server/tests/test_n2o_flaring_consistency.py
+?? new/server/tests/test_production_smoke.py
+?? new/server/tests/test_qfull_api_pipeline.py
+?? new/server/tests/test_qfull_boundary_sensitivity.py
+?? new/server/tests/test_qfull_unit_conversions.py
+?? new/server/tests/test_qfull_validation.py
+?? new/server/tests/test_rate_limiting.py
+?? new/server/tests/test_security_hardening.py
+?? validation/calculation/
+?? validation/differential/
+?? validation/golden_data/
+?? validation/mutation/test_clean_mutations.py
+?? validation/property/
+?? validation/reference_model/ref_combustion.py
+?? validation/reference_model/ref_constants.py
+?? validation/reference_model/ref_flaring.py
+?? validation/reference_model/ref_fugitives.py
+?? validation/reference_model/ref_intensity.py
+?? validation/reference_model/ref_midstream.py
+?? validation/reference_model/ref_scope2.py
+?? validation/reference_model/ref_scope3.py
+?? validation/reference_model/ref_stoichiometry.py
+?? validation/reference_model/ref_uncertainty.py
+?? validation/reference_model/ref_venting.py
+?? validation/reports/
+

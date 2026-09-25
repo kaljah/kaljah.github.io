@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_exhaustive_matrix_test.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -766,7 +766,14 @@
+     # 2. Login to Live Backend
+     BASE_URL = "http://127.0.0.1:5000"
+     session = requests.Session()
+-    print("\n[Step 1] Authenticating with Live Backend as admin@ghg.com...")
++
++    print("\n[Step 1] Fetching CSRF Token and Authenticating as admin@ghg.com...")
++    csrf_res = session.get(f"{BASE_URL}/api/csrf-token")
++    if csrf_res.status_code == 200:
++        csrf_tok = csrf_res.json().get("csrf_token")
++        session.headers.update({"X-CSRFToken": csrf_tok})
++        print(f"CSRF token obtained: {csrf_tok[:12]}...")
++
+     login_res = session.post(f"{BASE_URL}/api/auth/login", json={
+         "email": "admin@ghg.com",
+         "password": "Admin12345!"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

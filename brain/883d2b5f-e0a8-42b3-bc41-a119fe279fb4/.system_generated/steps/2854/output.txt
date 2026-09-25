@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":424,"LineContent":"        (4, \"tonne-km\", 0.12, \"kg CO2e / tonne-km\"),         # Upstream transportation \u0026 distribution"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":429,"LineContent":"        (9, \"tonne-km\", 0.08, \"kg CO2e / tonne-km\"),         # Downstream transportation \u0026 distribution"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":480,"LineContent":"            f\"{test_facility.name},2024-03,Category 4: Upstream Transportation,25000,tonne-km,0.12,kg CO2e / tonne-km\\n\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":351,"LineContent":"        Activity: 250,000 tonne-km by diesel heavy truck."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":352,"LineContent":"        Secondary Emission Factor: 0.085 kg CO2e / tonne-km."}

@@ -1,0 +1,134 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\Dashboard.css:399:.scope-pills-row {
+  new\client\src\pages\Dashboard.css:400:  display: flex;
+  new\client\src\pages\Dashboard.css:401:  gap: 16px;
+  new\client\src\pages\Dashboard.css:402:  background: rgba(255, 255, 255, 0.4);
+  new\client\src\pages\Dashboard.css:403:  padding: 16px;
+  new\client\src\pages\Dashboard.css:404:  border-radius: 16px;
+> new\client\src\pages\Dashboard.css:408:.scope-pill {
+  new\client\src\pages\Dashboard.css:409:  flex: 1;
+  new\client\src\pages\Dashboard.css:410:  display: flex;
+  new\client\src\pages\Dashboard.css:411:  justify-content: space-between;
+  new\client\src\pages\Dashboard.css:412:  align-items: center;
+  new\client\src\pages\Dashboard.css:413:  padding: 10px 16px;
+> new\client\src\pages\Dashboard.css:419:.scope-pill.scope-1 {
+  new\client\src\pages\Dashboard.css:420:  background: #fee2e2;
+  new\client\src\pages\Dashboard.css:421:  color: #b91c1c;
+  new\client\src\pages\Dashboard.css:422:}
+  new\client\src\pages\Dashboard.css:423:
+> new\client\src\pages\Dashboard.css:424:.scope-pill.scope-2 {
+  new\client\src\pages\Dashboard.css:425:  background: #dbeafe;
+  new\client\src\pages\Dashboard.css:426:  color: #1e40af;
+  new\client\src\pages\Dashboard.css:427:}
+  new\client\src\pages\Dashboard.css:428:
+> new\client\src\pages\Dashboard.css:429:.scope-pill.scope-3 {
+  new\client\src\pages\Dashboard.css:430:  background: #f3e8ff;
+  new\client\src\pages\Dashboard.css:431:  color: #6b21a8;
+  new\client\src\pages\Dashboard.css:432:}
+  new\client\src\pages\Dashboard.css:433:
+  new\client\src\pages\Dashboard.css:434:.pill-value {
+> new\client\src\pages\Dashboard.css:1105:  .scope-pills-row {
+  new\client\src\pages\Dashboard.css:1106:    flex-direction: column;
+  new\client\src\pages\Dashboard.css:1107:    gap: 10px;
+  new\client\src\pages\Dashboard.css:1108:  }
+  new\client\src\pages\Dashboard.css:1109:
+  new\client\src\pages\Dashboard.css:1110:  .card-header-row {
+> new\client\src\pages\Dashboard.css:1150:  .scope-pills-row {
+  new\client\src\pages\Dashboard.css:1151:    display: grid;
+  new\client\src\pages\Dashboard.css:1152:    grid-template-columns: 1fr;
+  new\client\src\pages\Dashboard.css:1153:    width: 100%;
+  new\client\src\pages\Dashboard.css:1154:  }
+  new\client\src\pages\Dashboard.css:1155:}
+> new\client\src\pages\Dashboard.css:1188:   Pending Records Notification & Live Preview Banner
+  new\client\src\pages\Dashboard.css:1189:   
+========================================================================== */
+> new\client\src\pages\Dashboard.css:1190:.pending-banner-card {
+  new\client\src\pages\Dashboard.css:1191:  display: flex;
+  new\client\src\pages\Dashboard.css:1192:  justify-content: space-between;
+  new\client\src\pages\Dashboard.css:1193:  align-items: center;
+  new\client\src\pages\Dashboard.css:1194:  flex-wrap: wrap;
+  new\client\src\pages\Dashboard.css:1195:  gap: 16px;
+> new\client\src\pages\Dashboard.css:1209:.pending-banner-card::before {
+  new\client\src\pages\Dashboard.css:1210:  content: "";
+  new\client\src\pages\Dashboard.css:1211:  position: absolute;
+  new\client\src\pages\Dashboard.css:1212:  top: 0;
+  new\client\src\pages\Dashboard.css:1213:  left: 0;
+  new\client\src\pages\Dashboard.css:1214:  bottom: 0;
+> new\client\src\pages\Dashboard.css:1220:.pending-banner-card.active-preview {
+  new\client\src\pages\Dashboard.css:1221:  border-color: rgba(255, 102, 0, 0.4);
+  new\client\src\pages\Dashboard.css:1222:  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, 
+rgba(255, 247, 237, 0.9) 100%);
+  new\client\src\pages\Dashboard.css:1223:  box-shadow: 0 6px 24px -2px rgba(255, 102, 0, 0.12), 0 2px 8px -1px 
+rgba(15, 23, 42, 0.04);
+  new\client\src\pages\Dashboard.css:1224:}
+  new\client\src\pages\Dashboard.css:1225:
+> new\client\src\pages\Dashboard.css:1226:.pending-banner-left {
+  new\client\src\pages\Dashboard.css:1227:  display: flex;
+  new\client\src\pages\Dashboard.css:1228:  align-items: center;
+  new\client\src\pages\Dashboard.css:1229:  gap: 14px;
+  new\client\src\pages\Dashboard.css:1230:  flex: 1;
+  new\client\src\pages\Dashboard.css:1231:  min-width: 280px;
+> new\client\src\pages\Dashboard.css:1234:.pending-banner-icon {
+  new\client\src\pages\Dashboard.css:1235:  width: 42px;
+  new\client\src\pages\Dashboard.css:1236:  height: 42px;
+  new\client\src\pages\Dashboard.css:1237:  border-radius: 12px;
+  new\client\src\pages\Dashboard.css:1238:  display: flex;
+  new\client\src\pages\Dashboard.css:1239:  align-items: center;
+> new\client\src\pages\Dashboard.css:1249:.pending-banner-card:hover .pending-banner-icon {
+  new\client\src\pages\Dashboard.css:1250:  transform: scale(1.05);
+  new\client\src\pages\Dashboard.css:1251:}
+  new\client\src\pages\Dashboard.css:1252:
+> new\client\src\pages\Dashboard.css:1253:.pending-banner-info {
+  new\client\src\pages\Dashboard.css:1254:  display: flex;
+  new\client\src\pages\Dashboard.css:1255:  flex-direction: column;
+  new\client\src\pages\Dashboard.css:1256:  gap: 4px;
+  new\client\src\pages\Dashboard.css:1257:}
+  new\client\src\pages\Dashboard.css:1258:
+> new\client\src\pages\Dashboard.css:1259:.pending-banner-header {
+  new\client\src\pages\Dashboard.css:1260:  display: flex;
+  new\client\src\pages\Dashboard.css:1261:  align-items: center;
+  new\client\src\pages\Dashboard.css:1262:  gap: 10px;
+  new\client\src\pages\Dashboard.css:1263:  flex-wrap: wrap;
+  new\client\src\pages\Dashboard.css:1264:}
+> new\client\src\pages\Dashboard.css:1266:.pending-banner-title {
+  new\client\src\pages\Dashboard.css:1267:  margin: 0;
+  new\client\src\pages\Dashboard.css:1268:  font-size: 0.98rem;
+  new\client\src\pages\Dashboard.css:1269:  font-weight: 700;
+  new\client\src\pages\Dashboard.css:1270:  color: var(--text-primary, #0f172a);
+  new\client\src\pages\Dashboard.css:1271:  letter-spacing: -0.01em;
+> new\client\src\pages\Dashboard.css:1295:.pending-banner-desc {
+  new\client\src\pages\Dashboard.css:1296:  margin: 0;
+  new\client\src\pages\Dashboard.css:1297:  font-size: 0.84rem;
+  new\client\src\pages\Dashboard.css:1298:  color: var(--text-secondary, #64748b);
+  new\client\src\pages\Dashboard.css:1299:  line-height: 1.45;
+  new\client\src\pages\Dashboard.css:1300:}
+> new\client\src\pages\Dashboard.css:1302:.pending-banner-desc strong {
+  new\client\src\pages\Dashboard.css:1303:  color: var(--text-primary, #0f172a);
+  new\client\src\pages\Dashboard.css:1304:  font-weight: 700;
+  new\client\src\pages\Dashboard.css:1305:}
+  new\client\src\pages\Dashboard.css:1306:
+  new\client\src\pages\Dashboard.css:1307:.pending-co2e-highlight {
+> new\client\src\pages\Dashboard.css:1319:.pending-banner-actions {
+  new\client\src\pages\Dashboard.css:1320:  display: flex;
+  new\client\src\pages\Dashboard.css:1321:  align-items: center;
+  new\client\src\pages\Dashboard.css:1322:  gap: 12px;
+  new\client\src\pages\Dashboard.css:1323:  flex-wrap: wrap;
+  new\client\src\pages\Dashboard.css:1324:}
+> new\client\src\pages\Dashboard.css:1435:  .pending-banner-card {
+  new\client\src\pages\Dashboard.css:1436:    flex-direction: column;
+  new\client\src\pages\Dashboard.css:1437:    align-items: stretch;
+  new\client\src\pages\Dashboard.css:1438:    padding: 14px 16px;
+  new\client\src\pages\Dashboard.css:1439:  }
+  new\client\src\pages\Dashboard.css:1440:  
+> new\client\src\pages\Dashboard.css:1441:  .pending-banner-actions {
+  new\client\src\pages\Dashboard.css:1442:    justify-content: space-between;
+  new\client\src\pages\Dashboard.css:1443:    width: 100%;
+  new\client\src\pages\Dashboard.css:1444:    margin-top: 4px;
+  new\client\src\pages\Dashboard.css:1445:    padding-top: 10px;
+  new\client\src\pages\Dashboard.css:1446:    border-top: 1px solid rgba(226, 232, 240, 0.8);
+
+
+

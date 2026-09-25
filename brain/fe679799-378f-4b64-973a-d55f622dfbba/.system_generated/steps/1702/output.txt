@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":696,"LineContent":"@reports_bp.route(\"/ogmp-export\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":186,"LineContent":"    assert client.get(\"/api/reports/ogmp-export\").status_code == 401"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":200,"LineContent":"    assert client.get(\"/api/reports/ogmp-export\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":309,"LineContent":"    \"\"\"Ensure GET /api/reports/ogmp-export produces a multi-sheet OGMP 2.0 workbook.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":314,"LineContent":"    res = client.get(f\"/api/reports/ogmp-export?year=2024\u0026facility_id={test_setup['facility_id']}\")"}

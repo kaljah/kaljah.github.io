@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+194:     f = None
+278:                 f = io.StringIO(decoded_text)
+332:             fac_name_map = {f.name.lower(): f for f in all_facilities}
+333:             for f in all_facilities:
+336:             fac_id_map = {str(f.id): f for f in all_facilities}
+

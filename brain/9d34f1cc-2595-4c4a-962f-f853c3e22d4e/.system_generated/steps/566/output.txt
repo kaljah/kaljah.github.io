@@ -1,0 +1,63 @@
+
+The command exited with code 0.
+Output:
+<truncated 26 lines>
+new/server/bulk_tier1_all_fuels.csv:2025-04,Centre de Traitement Gazier Hassi Messaoud (Sonatrach),Upstream & Midstream Gas,Exploration & Production,Combustion,Coal (Anthracite),Default,13492,tonne
+new/server/calculations/combustion.py:        elif any(k in fuel_lower for k in ["coal", "coke", "lignite", "solid"]):
+new/server/emission_factors/eeio_factors.py:    "324": {"name": "Petroleum and Coal Products Manufacturing", "kg_co2e_per_1000_usd": 4100.2},
+new/server/emission_factors_api2021.py:    "Anthracite Coal": {
+new/server/emission_factors_api2021.py:        "code": "CoalAnth",
+new/server/emission_factors_api2021.py:    "Bituminous Coal": {
+new/server/emission_factors_api2021.py:        "code": "CoalBit",
+new/server/emission_factors_api2021.py:    "Sub-Bituminous Coal": {
+new/server/emission_factors_api2021.py:        "code": "CoalSub",
+new/server/emission_factors_api2021.py:    "Lignite Coal": {
+new/server/emission_factors_api2021.py:        "code": "CoalLig",
+new/server/exhaustive_test_upload.csv:2026-07-13,Permian Basin Alpha,Combustion,Coal,custom,8871.441763460858,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-27,Eagle Ford Site B,Combustion,Coal,default,,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:,Permian Basin Alpha,Combustion,Coal,specific,6875.788420297087,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-01,Eagle Ford Site B,Combustion,Coal,,4391.451239283755,m3,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-07,,Combustion,Coal,specific,7110.381273937262,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-27,Unknown Facility 99,Combustion,Coal,custom,6723.413966801687,m3,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-01,Bakken Facility C,Combustion,Coal,,8936.77556759006,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-07,Eagle Ford Site B,Combustion,Coal,default,invalid_number,bbl,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-10,,Combustion,Coal,,2820.3168058801243,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-13,Bakken Facility C,Combustion,Coal,default,8391.743525385633,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-15,Eagle Ford Site B,Combustion,Coal,,474.36587235818405,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-23,,Combustion,Coal,default,6845.84111491793,bbl,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-22,Eagle Ford Site B,Combustion,Coal,,3104.974838958442,m3,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-15,Permian Basin Alpha,Combustion,Coal,custom,1802.9315189278486,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-14,Eagle Ford Site B,Combustion,Coal,default,,bbl,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-22,Bakken Facility C,Combustion,Coal,custom,6707.965170072037,m3,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-24,Permian Basin Alpha,Combustion,Coal,specific,3399.283220802685,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-14,Permian Basin Alpha,Combustion,Coal,specific,6805.546685123037,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-23,Permian Basin Alpha,Combustion,Coal,custom,2319.701962048547,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-13,,Combustion,Coal,custom,3836.1224231373444,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-25,Eagle Ford Site B,Combustion,Coal,custom,1192.2251927734699,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-26,Unknown Facility 99,Combustion,Coal,default,813.7947339438657,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-03,,Combustion,Coal,custom,9177.057834857209,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-20,Bakken Facility C,Combustion,Coal,,2435.3826266300566,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:07/01/2026,Bakken Facility C,Combustion,Coal,specific,invalid_number,bbl,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-12,,Combustion,Coal,specific,3707.999837436337,m3,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-05,Bakken Facility C,Combustion,Coal,custom,,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-16,Permian Basin Alpha,Combustion,Coal,invalid_factor,6093.829595916258,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-19,Eagle Ford Site B,Combustion,Coal,,6628.229487268952,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-25,Bakken Facility C,Combustion,Coal,,7208.330198941502,bbl,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-19,Unknown Facility 99,Combustion,Coal,,229.5181441486022,gal,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-20,Permian Basin Alpha,Combustion,Coal,specific,7001.726789223769,m3,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-05,Bakken Facility C,Combustion,Coal,custom,8829.847905050554,event,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/exhaustive_test_upload.csv:2026-07-14,Unknown Facility 99,Combustion,Coal,default,5011.17259116812,bbl,,,,,,,,,,,138000,kg/mmbtu,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+new/server/generate_bulk_test_csvs.py:    ("Coal (Bituminous)", ["ton", "tonne", "kg"]),
+new/server/generate_bulk_test_csvs.py:    ("Coal (Sub-bituminous)", ["ton", "tonne"]),
+new/server/generate_bulk_test_csvs.py:    ("Coal (Lignite)", ["ton", "tonne"]),
+new/server/generate_bulk_test_csvs.py:    ("Coal (Anthracite)", ["ton", "tonne"]),
+new/server/routes/auth.py:                func.coalesce(Emission.co2_emissions, 0.0) * co2_factor
+new/server/routes/auth.py:                + func.coalesce(Emission.ch4_emissions, 0.0) * ch4_factor
+new/server/routes/auth.py:                + func.coalesce(Emission.n2o_emissions, 0.0) * n2o_factor
+new/server/routes/dashboard.py:            func.sum(func.coalesce(Emission.co2e_total, Emission.co2_emissions, 0)),
+new/server/routes/dashboard.py:            func.sum(func.coalesce(Scope2Emission.co2e, 0)),
+new/server/routes/dashboard.py:            func.sum(func.coalesce(Scope3Emission.co2e, 0)),
+new/server/routes/data.py:        total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter(
+new/server/routes/data.py:        total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter(
+new/server/routes/emissions.py:        "coal": "Bituminous Coal",
+

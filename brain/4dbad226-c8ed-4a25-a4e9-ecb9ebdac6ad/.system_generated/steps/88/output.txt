@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":67,"LineContent":"  const [sourceType, setSourceType] = useState(\"default\"); // 'default', 'custom', 'specific'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":187,"LineContent":"    if (sourceType === \"default\" || sourceType === \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":226,"LineContent":"    sourceType,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":319,"LineContent":"      if (sourceType === \"custom\" \u0026\u0026 !isCustomId) return { ...prev, fuel: \"\" };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":321,"LineContent":"        (sourceType === \"default\" || sourceType === \"specific\") \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":328,"LineContent":"  }, [sourceType]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":333,"LineContent":"      sourceType === \"specific\" \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":380,"LineContent":"  }, [sourceType, formData.fuel, processType, formData.mud_type]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":572,"LineContent":"      (sourceType === \"default\" || sourceType === \"custom\") \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":582,"LineContent":"      sourceType === \"specific\" \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":601,"LineContent":"    if (sourceType === \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":783,"LineContent":"        sourceType === \"default\" \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":813,"LineContent":"        if (sourceType === \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":826,"LineContent":"      } else if (processType === \"drilling\" \u0026\u0026 sourceType !== \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":850,"LineContent":"        if (sourceType === \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":866,"LineContent":"      if (processType === \"completions\" \u0026\u0026 sourceType === \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":876,"LineContent":"      if (processType === \"unloading\" \u0026\u0026 sourceType === \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":884,"LineContent":"        sourceType === \"specific\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":908,"LineContent":"      if (processType === \"dehydrator\" \u0026\u0026 sourceType === \"specific\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":934,"LineContent":"        factor_source: sourceType, // 'default', 'custom', 'specific'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":939,"LineContent":"          sourceType === \"custom\" ? parseInt(formData.fuel) : undefined,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":944,"LineContent":"          if (sourceType !== \"specific\" || !formData.hhv) return {};"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":995,"LineContent":"          sourceType === \"specific\" \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1000,"LineContent":"          sourceType === \"specific\" \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1005,"LineContent":"          sourceType === \"specific\" ? userUncertainty : undefined,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1007,"LineContent":"          sourceType === \"specific\" ? meterUncertaintyPct : undefined,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1009,"LineContent":"          sourceType === \"specific\" ? gcUncertaintyPct : undefined,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1198,"LineContent":"      sourceType,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1204,"LineContent":"      sourceType !== \"specific\" \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1225,"LineContent":"        return sourceType === \"specific\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1527,"LineContent":"                          className={`btn-toggle-sm ${sourceType === type ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1552,"LineContent":"                              sourceType === type ? \"#fff\" : \"transparent\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1554,"LineContent":"                              sourceType === type"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1561,"LineContent":"                              sourceType === type"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1572,"LineContent":"                {sourceType === \"default\" \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1581,"LineContent":"                {sourceType === \"custom\" \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1589,"LineContent":"                {sourceType === \"specific\" \u0026\u0026"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1727,"LineContent":"            {sourceType === \"specific\" \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1876,"LineContent":"                  {sourceType === \"specific\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1950,"LineContent":"                  {sourceType === \"specific\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2024,"LineContent":"                  {sourceType === \"specific\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2085,"LineContent":"                {sourceType === \"default\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":39,"LineContent":"  const [sourceType, setSourceType] = useState(\"electricity\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":148,"LineContent":"      (sourceType === \"electricity\" \u0026\u0026 !gridRegion) ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":158,"LineContent":"      if (val \u003c= 0 \u0026\u0026 sourceType !== \"cogen_allocation\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":173,"LineContent":"      if (sourceType === \"electricity\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":192,"LineContent":"      } else if (sourceType === \"indirect_steam\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":207,"LineContent":"      } else if (sourceType === \"cogen_allocation\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":459,"LineContent":"                value={sourceType}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":463,"LineContent":"            {sourceType === \"electricity\" \u0026\u0026 ("}
+(...17 more results not shown)

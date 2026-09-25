@@ -1,0 +1,19 @@
+Task: e63028e4-66af-41a4-8446-374a4cc926e9/task-78
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\e63028e4-66af-41a4-8446-374a4cc926e9\.system_generated\tasks\task-78.log
+Log output:
+<truncated 2548 lines>
+0]
+INFO     app:app.py:177 GET /api/auth/me 200 [0.004s] [ReqID: 05cf12b5-98d4-46e1-acd1-430f3c1b7c70]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation
+======================== 2 failed, 1 warning in 5.66s =========================
+
+Last progress: 1s ago

@@ -1,0 +1,43 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\managedata.py:8:    ProductionData,
+  new\server\routes\managedata.py:9:    Emission,
+  new\server\routes\managedata.py:10:    Scope2Emission,
+  new\server\routes\managedata.py:11:    Scope3Emission,
+  new\server\routes\managedata.py:12:    Notification,
+  new\server\routes\managedata.py:13:    Goal,
+  new\server\routes\managedata.py:14:    BaseYear,
+  new\server\routes\managedata.py:15:    BaseYearRecalculation,
+  new\server\routes\managedata.py:16:)
+  new\server\routes\managedata.py:17:from extensions import db
+  new\server\routes\managedata.py:18:from utils import log_activity_and_notify, get_current_user, 
+get_allowed_facility_ids
+> new\server\routes\managedata.py:540:        db.session.query(ProductionData.year)
+  new\server\routes\managedata.py:541:        .distinct()
+> new\server\routes\managedata.py:542:        .order_by(ProductionData.year.desc())
+  new\server\routes\managedata.py:543:        .all()
+  new\server\routes\managedata.py:544:    )
+  new\server\routes\managedata.py:545:    return jsonify([y[0] for y in years])
+  new\server\routes\managedata.py:546:
+  new\server\routes\managedata.py:547:
+  new\server\routes\managedata.py:548:# --- Global Available Filters ---
+  new\server\routes\managedata.py:549:@managedata_bp.route("/filters/available", methods=["GET"])
+  new\server\routes\managedata.py:550:@login_required
+  new\server\routes\managedata.py:551:def get_available_filters():
+  new\server\routes\managedata.py:552:    user = get_current_user()
+> new\server\routes\managedata.py:559:        db.session.query(distinct(ProductionData.year)),
+  new\server\routes\managedata.py:560:        db.session.query(distinct(MitigationRecord.year)),
+  new\server\routes\managedata.py:561:        db.session.query(distinct(Scope2Emission.year)),
+  new\server\routes\managedata.py:562:        db.session.query(distinct(Scope3Emission.year)),
+  new\server\routes\managedata.py:563:    ]
+  new\server\routes\managedata.py:564:
+  new\server\routes\managedata.py:565:    available_years = set()
+  new\server\routes\managedata.py:566:    for query in year_queries:
+  new\server\routes\managedata.py:567:        try:
+  new\server\routes\managedata.py:568:            results = query.all()
+  new\server\routes\managedata.py:569:            for r in results:
+
+
+

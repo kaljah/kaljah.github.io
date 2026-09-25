@@ -1,0 +1,73 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\Dashboard.css:293:.hero-stats-grid {
+  new\client\src\pages\Dashboard.css:294:  display: grid;
+  new\client\src\pages\Dashboard.css:295:  grid-template-columns: repeat(4, 1fr);
+  new\client\src\pages\Dashboard.css:296:  gap: 0;
+  new\client\src\pages\Dashboard.css:297:  margin-bottom: 24px;
+  new\client\src\pages\Dashboard.css:298:}
+  new\client\src\pages\Dashboard.css:299:
+> new\client\src\pages\Dashboard.css:300:.stat-item {
+  new\client\src\pages\Dashboard.css:301:  padding: 0 24px;
+  new\client\src\pages\Dashboard.css:302:}
+  new\client\src\pages\Dashboard.css:303:
+> new\client\src\pages\Dashboard.css:304:.stat-item:first-child {
+  new\client\src\pages\Dashboard.css:305:  padding-left: 0;
+  new\client\src\pages\Dashboard.css:306:}
+  new\client\src\pages\Dashboard.css:307:
+> new\client\src\pages\Dashboard.css:308:.stat-item.border-left {
+  new\client\src\pages\Dashboard.css:309:  border-left: 1px solid var(--border-color, #e2e8f0);
+  new\client\src\pages\Dashboard.css:310:}
+  new\client\src\pages\Dashboard.css:311:
+  new\client\src\pages\Dashboard.css:312:.stat-label {
+  new\client\src\pages\Dashboard.css:313:  font-size: 0.85rem;
+  new\client\src\pages\Dashboard.css:314:  font-weight: 600;
+  new\client\src\pages\Dashboard.css:315:  color: var(--text-secondary, #64748b);
+  new\client\src\pages\Dashboard.css:316:  margin-bottom: 12px;
+  new\client\src\pages\Dashboard.css:317:  text-transform: uppercase;
+  new\client\src\pages\Dashboard.css:318:  letter-spacing: 1px;
+> new\client\src\pages\Dashboard.css:1044:  .hero-stats-grid {
+  new\client\src\pages\Dashboard.css:1045:    grid-template-columns: repeat(2, 1fr);
+  new\client\src\pages\Dashboard.css:1046:    row-gap: 30px;
+  new\client\src\pages\Dashboard.css:1047:  }
+  new\client\src\pages\Dashboard.css:1048:
+  new\client\src\pages\Dashboard.css:1049:  .categorical-hierarchy-grid {
+  new\client\src\pages\Dashboard.css:1050:    grid-template-columns: repeat(2, 1fr);
+  new\client\src\pages\Dashboard.css:1051:  }
+  new\client\src\pages\Dashboard.css:1052:
+> new\client\src\pages\Dashboard.css:1053:  .stat-item.border-left:nth-child(3) {
+  new\client\src\pages\Dashboard.css:1054:    border-left: none; /* remove border on 2nd row first item */
+  new\client\src\pages\Dashboard.css:1055:  }
+  new\client\src\pages\Dashboard.css:1056:}
+  new\client\src\pages\Dashboard.css:1057:
+  new\client\src\pages\Dashboard.css:1058:/* Mobile (max-width: 768px) */
+  new\client\src\pages\Dashboard.css:1059:@media (max-width: 768px) {
+  new\client\src\pages\Dashboard.css:1060:  .dashboard-content {
+  new\client\src\pages\Dashboard.css:1061:    padding: 14px 12px 36px;
+  new\client\src\pages\Dashboard.css:1062:  }
+  new\client\src\pages\Dashboard.css:1063:
+> new\client\src\pages\Dashboard.css:1091:  .hero-stats-grid {
+  new\client\src\pages\Dashboard.css:1092:    grid-template-columns: 1fr;
+  new\client\src\pages\Dashboard.css:1093:    gap: 20px;
+  new\client\src\pages\Dashboard.css:1094:  }
+  new\client\src\pages\Dashboard.css:1095:
+  new\client\src\pages\Dashboard.css:1096:  .categorical-hierarchy-grid {
+  new\client\src\pages\Dashboard.css:1097:    grid-template-columns: 1fr;
+  new\client\src\pages\Dashboard.css:1098:  }
+  new\client\src\pages\Dashboard.css:1099:
+> new\client\src\pages\Dashboard.css:1100:  .stat-item {
+  new\client\src\pages\Dashboard.css:1101:    padding: 0 !important;
+  new\client\src\pages\Dashboard.css:1102:    border-left: none !important;
+  new\client\src\pages\Dashboard.css:1103:  }
+  new\client\src\pages\Dashboard.css:1104:
+  new\client\src\pages\Dashboard.css:1105:  .scope-pills-row {
+  new\client\src\pages\Dashboard.css:1106:    flex-direction: column;
+  new\client\src\pages\Dashboard.css:1107:    gap: 10px;
+  new\client\src\pages\Dashboard.css:1108:  }
+  new\client\src\pages\Dashboard.css:1109:
+  new\client\src\pages\Dashboard.css:1110:  .card-header-row {
+
+
+

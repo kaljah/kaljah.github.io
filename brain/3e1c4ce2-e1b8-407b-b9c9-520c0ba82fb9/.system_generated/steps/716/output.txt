@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -358,9 +358,30 @@
+ 
+     // 2. Reference Libraries Card & Manage Custom Factors button
+     const manageFactorsBtn = page.locator('.manage-factors-btn');
+-    await manageFactorsBtn.scrollIntoViewIfNeeded();
++    manageFactorsBtn.scrollIntoViewIfNeeded();
+     await expect(manageFactorsBtn).toBeVisible();
+     console.log('[AUDIT] Manage Custom Factors button is visible and accessible');
+   });
++
++  test('8. Performance Intensity Card & Scope 3 Filter Parity', async ({ page }) => {
++    await setupDashboard(page);
++
++    // Performance Intensity Card initial state (Pending / Production figures required when no production data)
++    const intensityCard = page.locator('.stat-item:has-text("Performance Intensity")');
++    await expect(intensityCard).toBeVisible();
++    const intensityLabel = await intensityCard.locator('.stat-label').innerText();
++    expect(intensityLabel).toBe('Performance Intensity');
++
++    // Scope 3 Year Filter check: Ensure Scope 3 displays 0 when year has no scope 3 records
++    const yearDropdown = page.locator('.top-bar-injected-left .filter-wrapper').nth(0).locator('.dropdown-selected');
++    await yearDropdown.click();
++    await page.waitForTimeout(400);
++    await page.locator('.dropdown-portal .dropdown-option:has-text("2026")').click();
++    await page.waitForTimeout(1000);
++
++    const s3Pill = await page.locator('.scope-pill.scope-3 .pill-value').innerText();
++    expect(s3Pill).toBe('0 tCO₂e');
++    console.log('[AUDIT] Verified Scope 3 evaluates to 0 tCO2e for 2026 (Bug 2 fix confirmed)');
++  });
+ });
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":196,"LineContent":"              \u003cUserManagement /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.jsx","LineNumber":60,"LineContent":"            \u003cUser size={18} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":245,"LineContent":"            \u003cUserIcon size={14} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":756,"LineContent":"                          \u003cUserIcon size={12} className=\"badge-user-icon\" /\u003e"}

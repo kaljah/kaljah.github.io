@@ -1,0 +1,113 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:117:class Emission(db.Model):
+  new\server\models.py:118:    __tablename__ = "emissions"
+  new\server\models.py:119:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:120:    record_id = db.Column(db.String(50), unique=True, index=True)
+  new\server\models.py:121:    year = db.Column(db.Integer, index=True)
+  new\server\models.py:122:    month = db.Column(db.Integer)
+  new\server\models.py:123:    company_name = db.Column(db.String(120))
+  new\server\models.py:124:    group_name = db.Column(db.String(120), index=True)
+  new\server\models.py:125:    equipment_id = db.Column(db.String(50))
+  new\server\models.py:126:    process_type = db.Column(db.String(50), index=True)
+  new\server\models.py:127:    fuel_type = db.Column(db.String(50))
+  new\server\models.py:128:    quantity = db.Column(db.Float)
+  new\server\models.py:129:    unit = db.Column(db.String(20))
+  new\server\models.py:130:    factor_source = db.Column(db.String(50))
+  new\server\models.py:131:
+  new\server\models.py:132:    # EF Used
+  new\server\models.py:133:    ef_used_co2 = db.Column(db.Float)
+  new\server\models.py:134:    ef_used_ch4 = db.Column(db.Float)
+  new\server\models.py:135:    ef_used_n2o = db.Column(db.Float)
+  new\server\models.py:136:    ef_used_co = db.Column(db.Float, default=0)
+  new\server\models.py:137:
+  new\server\models.py:138:    # Calculated Emissions
+  new\server\models.py:139:    co2_emissions = db.Column(db.Float)
+  new\server\models.py:140:    ch4_emissions = db.Column(db.Float)
+  new\server\models.py:141:    n2o_emissions = db.Column(db.Float)
+  new\server\models.py:142:    co_emissions = db.Column(db.Float, default=0)
+> new\server\models.py:236:class EmissionSource(db.Model):
+  new\server\models.py:237:    __tablename__ = "emission_sources"
+  new\server\models.py:238:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:239:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"))
+  new\server\models.py:240:    name = db.Column(db.String(120))
+  new\server\models.py:241:    type = db.Column(db.String(50))
+  new\server\models.py:242:    equipment_id = db.Column(db.String(50))
+  new\server\models.py:243:    fuel_type = db.Column(db.String(50))
+  new\server\models.py:244:    design_capacity = db.Column(db.String(50))
+  new\server\models.py:245:    installation_date = db.Column(db.String(20))
+  new\server\models.py:246:    status = db.Column(db.String(20), default="Active")
+  new\server\models.py:247:    description = db.Column(db.Text)
+  new\server\models.py:248:
+  new\server\models.py:249:    activity = db.Column(db.String(100))
+  new\server\models.py:250:    division = db.Column(db.String(100))
+  new\server\models.py:251:    region = db.Column(db.String(100))
+  new\server\models.py:252:    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P�trochimie
+  new\server\models.py:253:    code = db.Column(db.String(50), unique=True)
+  new\server\models.py:254:    external_id = db.Column(db.String(50))
+  new\server\models.py:255:
+  new\server\models.py:256:    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+  new\server\models.py:257:    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+  new\server\models.py:258:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:259:
+  new\server\models.py:260:
+  new\server\models.py:261:class CustomFactor(db.Model):
+> new\server\models.py:353:class Scope2Emission(db.Model):
+  new\server\models.py:354:    __tablename__ = "scope2_emissions"
+  new\server\models.py:355:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:356:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+  new\server\models.py:357:    facility = db.relationship("Facility", overlaps="facility_parent,scope2_emissions")
+  new\server\models.py:358:    year = db.Column(db.Integer, index=True)
+  new\server\models.py:359:    month = db.Column(db.Integer)
+  new\server\models.py:360:    source_type = db.Column(db.String(50))  # electricity, steam, heat, cooling
+  new\server\models.py:361:    electricity_kwh = db.Column(db.Float, default=0)
+  new\server\models.py:362:    steam_ton = db.Column(db.Float, default=0)
+  new\server\models.py:363:    heat_mmbtu = db.Column(db.Float, default=0)
+  new\server\models.py:364:    cooling_ton = db.Column(db.Float, default=0)
+  new\server\models.py:365:    emission_factor = db.Column(db.Float)
+  new\server\models.py:366:    co2e = db.Column(db.Float)
+  new\server\models.py:367:    uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+  new\server\models.py:368:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+  new\server\models.py:369:    qa_flag = db.Column(db.String(255), nullable=True)
+  new\server\models.py:370:    location = db.Column(db.String(100))
+  new\server\models.py:371:    grid_region = db.Column(db.String(100))
+  new\server\models.py:372:
+  new\server\models.py:373:    # Matching Scope 1 Identity
+  new\server\models.py:374:    activity = db.Column(db.String(100), index=True)
+  new\server\models.py:375:    division = db.Column(db.String(100), index=True)
+  new\server\models.py:376:    region = db.Column(db.String(100))
+  new\server\models.py:377:    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P�trochimie
+  new\server\models.py:378:
+> new\server\models.py:392:class Scope3Emission(db.Model):
+  new\server\models.py:393:    __tablename__ = "scope3_emissions"
+  new\server\models.py:394:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:395:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+  new\server\models.py:396:    facility = db.relationship("Facility", overlaps="facility_parent,scope3_emissions")
+  new\server\models.py:397:    year = db.Column(db.Integer, index=True)
+  new\server\models.py:398:    month = db.Column(db.Integer)
+  new\server\models.py:399:    category = db.Column(db.String(100))  # Category 11, etc.
+  new\server\models.py:400:    sub_category = db.Column(db.String(100))
+  new\server\models.py:401:    activity_data = db.Column(db.Float, default=0)
+  new\server\models.py:402:    unit = db.Column(db.String(50))
+  new\server\models.py:403:    emission_factor = db.Column(db.Float)
+  new\server\models.py:404:    co2e = db.Column(db.Float)
+  new\server\models.py:405:    uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+  new\server\models.py:406:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+  new\server\models.py:407:    qa_flag = db.Column(db.String(255), nullable=True)
+  new\server\models.py:408:    calculation_method = db.Column(db.String(50))
+  new\server\models.py:409:    data_quality = db.Column(db.String(50))
+  new\server\models.py:410:    notes = db.Column(db.Text)
+  new\server\models.py:411:    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+  new\server\models.py:412:    status = db.Column(db.String(20), default="Pending", index=True)
+  new\server\models.py:413:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:414:    # Maker-Checker Approval
+  new\server\models.py:415:    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+  new\server\models.py:416:    approved_at = db.Column(db.DateTime, nullable=True)
+  new\server\models.py:417:
+
+
+

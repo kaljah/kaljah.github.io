@@ -1,0 +1,59 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -83,7 +83,7 @@
+ 
+ def test_uncertainty_default_response(client, admin_user):
+     """Admin users receive a well-formed uncertainty response."""
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
+     res = client.get("/api/dashboard/uncertainty")
+     assert res.status_code == 200
+ 
+@@ -103,7 +103,7 @@
+ 
+ def test_uncertainty_year_filter(client, admin_user):
+     """Specifying year= returns that year in the response."""
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
+     res = client.get("/api/dashboard/uncertainty?year=2024")
+     assert res.status_code == 200
+     data = res.get_json()
+@@ -116,7 +116,7 @@
+ 
+ def test_uncertainty_scope_filter(client, admin_user):
+     """scope=1 should only return Scope 1 categories (no Scope 2/3 groups)."""
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
+     res = client.get("/api/dashboard/uncertainty?scope=1")
+     assert res.status_code == 200
+     data = res.get_json()
+@@ -133,7 +133,7 @@
+ 
+ def test_uncertainty_csv_export(client, admin_user):
+     """export=csv should return text/csv with correct headers."""
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
+     res = client.get("/api/dashboard/uncertainty?export=csv")
+     assert res.status_code == 200
+     assert "text/csv" in res.content_type
+@@ -154,7 +154,7 @@
+     Verify that inventory_uncertainty_decimal ≈ 2 × inventory_uncertainty_1sigma.
+     This confirms the GUM §6.2 coverage factor k=2 is applied correctly.
+     """
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
+     res = client.get("/api/dashboard/uncertainty")
+     assert res.status_code == 200
+     data = res.get_json()
+@@ -170,7 +170,7 @@
+ 
+ def test_uncertainty_category_95ci(client, admin_user):
+     """Verify per-category uncertainty_decimal is also 95% CI (2× 1sigma)."""
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "uncert_admin@example.com", "password": "AdminPass123!"})
+     res = client.get("/api/dashboard/uncertainty")
+     assert res.status_code == 200
+     data = res.get_json()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

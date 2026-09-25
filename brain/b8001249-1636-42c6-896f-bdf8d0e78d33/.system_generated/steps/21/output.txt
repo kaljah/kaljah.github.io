@@ -1,0 +1,1 @@
+A1: I want the agents to start the app themselves before testing

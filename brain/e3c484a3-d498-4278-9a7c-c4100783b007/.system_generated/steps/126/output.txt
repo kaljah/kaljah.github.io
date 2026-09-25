@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":35,"LineContent":"  const val = Number(record.co2e_total ?? record.co2e ?? 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":44,"LineContent":"    reasons.push(`Extreme emission spike: ${val.toLocaleString()} tCO2e`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":179,"LineContent":"        tco2e: Number(r.co2e_total || 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":197,"LineContent":"        tco2e: Number(r.co2e || 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":215,"LineContent":"        tco2e: Number(r.co2e || 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":227,"LineContent":"    const totalTco2e = normalizedRecords.reduce((acc, r) =\u003e acc + r.tco2e, 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":234,"LineContent":"    return { totalCount, totalTco2e, count1, count2, count3, weirdCount, cleanCount };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":271,"LineContent":"  const selectedImpactTco2e = useMemo(() =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":274,"LineContent":"      if (selectedKeys.has(r.key)) total += r.tco2e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":525,"LineContent":"              \u003cstrong\u003e{stats.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} tCO₂e\u003c/strong\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":691,"LineContent":"                Impact: \u003cstrong style={{ color: '#ffffff' }}\u003e{selectedImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\u003c/strong\u003e tCO₂e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":813,"LineContent":"                          {item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":269,"LineContent":"      { id: \"co2e\", label: \"CO2e\", required: false },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":364,"LineContent":"      { id: \"quantity_tco2e\", label: \"tCO2e Avoided\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.jsx","LineNumber":302,"LineContent":"                  {formatNumber(emissions?.totalCo2e || emissions?.co2e_total || 0)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":275,"LineContent":"    { id: \"quantity_tco2e\", label: \"tCO2e Avoided\", required: true },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":57,"LineContent":"    totalCo2Emissions: 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":58,"LineContent":"    totalCo2EmissionsGwp20: 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":191,"LineContent":"        tCo2e = 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":192,"LineContent":"        tCo2eGwp20 = 0;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":203,"LineContent":"        tCo2e += d.total_co2e || 0;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":204,"LineContent":"        tCo2eGwp20 += d.total_co2e_gwp20 || d.total_co2e || 0;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":218,"LineContent":"        avgCo2Intensity: tBoe \u003e 0 ? wCo2Sum / tBoe : (tCo2e \u003e 0 ? null : 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":219,"LineContent":"        avgCo2IntensityGwp20: tBoe \u003e 0 ? wCo2Gwp20Sum / tBoe : (tCo2eGwp20 \u003e 0 ? null : 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":224,"LineContent":"        totalCo2Emissions: tCo2e,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":225,"LineContent":"        totalCo2EmissionsGwp20: tCo2eGwp20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":456,"LineContent":"  const currentDisplayTotalCo2e ="}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":458,"LineContent":"      ? stats.totalCo2EmissionsGwp20"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":459,"LineContent":"      : stats.totalCo2Emissions;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":550,"LineContent":"                  \u003cstrong\u003e{formatNumber(currentDisplayTotalCo2e)} tCO₂e\u003c/strong\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":932,"LineContent":"                            title={`${yData.year} Intensity: ${val.toFixed(3)} kg CO2e/BOE`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":1307,"LineContent":".pending-co2e-highlight {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":107,"LineContent":"  const [pendingCo2e, setPendingCo2e] = useState(0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":209,"LineContent":"        setPendingCo2e(batch.pending_stats.totalCo2e || 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":318,"LineContent":"          totals.mitigation += item.quantity_tco2e || 0;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":842,"LineContent":"                  {pendingCo2e \u003e 0 \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":843,"LineContent":"                    \u003cspan className=\"pending-co2e-highlight\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":844,"LineContent":"                      {pendingCo2e.toLocaleString()} tCO₂e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":352,"LineContent":"      return `The inventory is dominated by ${scopeName} emissions, accounting for ${pct}% (${maxVal.toFixed(1)} tCO2e) of the total footprint. This highlights the critical need for targeted reduction strategies in this area.`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":367,"LineContent":"      return `Monthly analysis reveals a peak in ${monthName} with ${peakVal.toFixed(1)} tCO2e. Seasonal variations may be attributed to operational fluctuations, heating/cooling demands, or specific maintenance activities during this period.`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":437,"LineContent":"    doc.text(\"TOTAL CO2e\", 30, overlayY);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":533,"LineContent":"      narrative += ` Year-over-year performance shows a ${diff \u003c 0 ? \"decrease\" : \"increase\"} of ${Math.abs(pct)}% (${Math.abs(diff).toFixed(0)} tCO2e).`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":783,"LineContent":"        head: [[\"Category (ISO 14064-1:2018)\", \"Emissions (tCO2e)\"]],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":811,"LineContent":"        head: [[\"Greenhouse Gas\", \"Emissions (tCO2e)\"]],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":842,"LineContent":"            head: [[\"Process Type\", \"Emissions (tCO2e)\"]],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":872,"LineContent":"            head: [[\"Operational Unit / Facility\", \"Total Emissions (tCO2e)\"]],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":892,"LineContent":"            ? `The historical base year is ${baseYearData.year}. Base year emissions: ${baseYearData.emissions} tCO2e.` "}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":899,"LineContent":"            ? `Emission Goal: ${specificGoal.title} (Target: ${specificGoal.target_amount} tCO2e by ${specificGoal.target_year})`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":959,"LineContent":"            head: [[\"Category\", \"Total Emissions (tCO2e)\", \"Uncertainty (±%)\"]],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":988,"LineContent":"      doc.text(`Total Emissions: ${fullData.totalEmissions.toFixed(2)} tCO2e`, margin, curY);"}
+(...93 more results not shown)

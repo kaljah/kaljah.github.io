@@ -1,0 +1,78 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 16 items
+
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_stationary_combustion_tier1 PASSED [  6%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_stationary_combustion_tier3 PASSED [ 12%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_flaring_dual_efficiency PASSED [ 18%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_liquids_unloading PASSED [ 25%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_vessel_blowdown PASSED [ 31%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_storage_tanks_flashing PASSED [ 37%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_pneumatic_devices PASSED [ 43%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_acid_gas_removal FAILED [ 50%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_teg_dehydrator PASSED [ 56%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_grid_electricity PASSED [ 62%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_indirect_steam PASSED [ 68%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_cogen_allocation PASSED [ 75%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope3_spend_and_physical PASSED [ 81%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_uncertainty_product_and_sum PASSED [ 87%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_boe_and_carbon_intensity PASSED [ 93%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_ogmp_survey_reconciliation PASSED [100%]
+
+================================== FAILURES ===================================
+______________ TestDifferentialScope1.test_diff_acid_gas_removal ______________
+
+self = <test_independent_differential.TestDifferentialScope1 object at 0x00000134B2A0D5B0>
+prod_dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x00000134B2A60470>
+
+    def test_diff_acid_gas_removal(self, prod_dispatcher):
+        """Diff Test: Acid gas removal (amine) CO2 balance and methane slip."""
+        payload = {
+            "agr_throughput": 75.0,
+            "agr_unit": "mmscf",
+            "agr_co2_in": 4.5,  # 4.5%
+            "agr_co2_out": 0.05,  # 0.05%
+            "agr_ch4_in": 85.0,
+            "agr_ch4_slip_pct": 0.1,  # 0.1%
+            "agr_control_eff": 0.0,
+            "factor_source": "specific",
+        }
+    
+        res_prod = prod_dispatcher.dispatch("agr", payload, {}, {}, gwp_dict=GWP_AR5)
+        res_ref = IndependentAGRModel.calculate(
+            throughput_mmscf=75.0,
+            co2_in=0.045,
+            co2_out=0.0005,
+            ch4_in=0.85,
+            ch4_slip_fraction=0.001,
+            control_eff=0.0,
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(res_prod["results"]["co2"]["value"], rel=1e-4) == res_ref["co2"]
+E       assert 175.96639510454108 � 0.0175966 == 175.8784119069888
+E         
+E         comparison failed
+E         Obtained: 175.8784119069888
+E         Expected: 175.96639510454108 � 0.0175966
+
+tests\test_independent_differential.py:288: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_independent_differential.py::TestDifferentialScope1::test_diff_acid_gas_removal
+=================== 1 failed, 15 passed, 1 warning in 1.55s ===================
+

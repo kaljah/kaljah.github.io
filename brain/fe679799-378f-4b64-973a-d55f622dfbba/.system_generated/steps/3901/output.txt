@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+240: return {
+272: return {"tonnes_ch4/year": val}
+307: return {
+340: return {"ch4": ch4_em, "co2": co2_em}
+342: return {"ch4": potential_ch4_tonnes, "co2": 0}
+364: return {"ch4": ch4_tonnes}
+441: calc_method = "server_default"
+488: return em, api_res.get("method", "api2021_generic")
+518: return em, "server_completions_calc"
+533: return em, "server_unloading_tier1"
+543: return em, "server_unloading_calc"
+550: calc_method = "server_fugitive"
+557: calc_method = "server_fugitive_pipeline"
+564: calc_method = "server_fugitive_average"
+577: calc_method = "server_fugitive_screening"
+578: return em, calc_method
+609: return em, "server_pneumatic_intermittent"
+620: calc_method = "server_pneumatic_engineering"
+621: return em, calc_method
+634: calc_method = "server_pneumatic_factor"
+635: return em, calc_method
+672: calc_method = "server_dehydrator_engineering"
+673: return em, calc_method
+684: calc_method = "server_dehydrator_factor"
+685: return em, calc_method
+720: calc_method = "server_tank_gor_flash"
+721: return em, calc_method
+735: calc_method = "server_tank_factor"
+736: return em, calc_method
+754: calc_method = "server_fccu_ratio"
+755: return em, calc_method
+832: calc_method = "server_specific"
+833: return em, calc_method
+850: calc_method = "server_custom_factor"
+851: return em, calc_method
+922: return em, calc_method
+

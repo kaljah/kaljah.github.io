@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\server\tests\test_all_process_types_matrix.py:113:    def test_flaring_tier3(self, dispatcher):
+new\server\tests\test_all_process_types_matrix.py:115:            "process_type": "flaring",
+new\server\tests\test_all_process_types_matrix.py:123:        res = dispatcher.dispatch("flaring", payload, {}, {})
+
+
+

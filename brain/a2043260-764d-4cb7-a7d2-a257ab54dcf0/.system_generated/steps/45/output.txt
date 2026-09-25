@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5734,"LineContent":"+        \"name\": \"Pneumatic Controllers \u0026 Pumps\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5741,"LineContent":"+        \"name\": \"Centrifugal \u0026 Reciprocating Compressor Seals\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5748,"LineContent":"+        \"name\": \"Atmospheric Storage Tank Venting \u0026 Flash Gas\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5755,"LineContent":"+        \"name\": \"Well Workovers, Completions \u0026 Blowdowns\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5762,"LineContent":"+        \"name\": \"Flaring Incomplete Combustion (CH4 Slip)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5769,"LineContent":"+        \"name\": \"Fugitive Valve \u0026 Flange Leaks\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5776,"LineContent":"+        \"name\": \"LDAR Detected Component Leaks (Method 21 / OGI)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5783,"LineContent":"+        \"name\": \"Internal Combustion Engine \u0026 Turbine CH4 Slip\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5734,"LineContent":"+        \"name\": \"Pneumatic Controllers \u0026 Pumps\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5741,"LineContent":"+        \"name\": \"Centrifugal \u0026 Reciprocating Compressor Seals\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5748,"LineContent":"+        \"name\": \"Atmospheric Storage Tank Venting \u0026 Flash Gas\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5755,"LineContent":"+        \"name\": \"Well Workovers, Completions \u0026 Blowdowns\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5762,"LineContent":"+        \"name\": \"Flaring Incomplete Combustion (CH4 Slip)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5769,"LineContent":"+        \"name\": \"Fugitive Valve \u0026 Flange Leaks\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5776,"LineContent":"+        \"name\": \"LDAR Detected Component Leaks (Method 21 / OGI)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5783,"LineContent":"+        \"name\": \"Internal Combustion Engine \u0026 Turbine CH4 Slip\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\builtin\\skills\\agy-customizations\\docs\\plugins.md","LineNumber":35,"LineContent":"  \"name\": \"team-developer-kit\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\builtin\\skills\\agy-customizations\\docs\\hooks.md","LineNumber":171,"LineContent":"        \"name\": \"run_command\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\builtin\\skills\\agy-customizations\\docs\\hooks.md","LineNumber":262,"LineContent":"        *   `{\"toolCall\": {\"name\": \"...\", \"args\": {...}}}`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\package.json","LineNumber":2,"LineContent":"  \"name\": \"ghg\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\package-lock.json","LineNumber":2,"LineContent":"  \"name\": \"ghg\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\package-lock.json","LineNumber":8,"LineContent":"      \"name\": \"ghg\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\package-lock.json","LineNumber":6216,"LineContent":"      \"name\": \"string-width\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\package-lock.json","LineNumber":6245,"LineContent":"      \"name\": \"strip-ansi\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\package-lock.json","LineNumber":6767,"LineContent":"      \"name\": \"wrap-ansi\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\calculation\\test_clean_emission_factors.py","LineNumber":77,"LineContent":"            \"name\": \"Custom Flare Gas\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_all_apis_health.py","LineNumber":49,"LineContent":"        return {\"email\": \"dummy_test@ghg.com\", \"password\": \"Password123!\", \"name\": \"Dummy Test\", \"role\": \"viewer\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_generator.py","LineNumber":524,"LineContent":"        {\"id\": \"GOLDEN-STOICH-001\", \"name\": \"Methane\", \"n\": 1, \"m\": 4},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_generator.py","LineNumber":525,"LineContent":"        {\"id\": \"GOLDEN-STOICH-002\", \"name\": \"Ethane\", \"n\": 2, \"m\": 6},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_generator.py","LineNumber":526,"LineContent":"        {\"id\": \"GOLDEN-STOICH-003\", \"name\": \"Propane\", \"n\": 3, \"m\": 8},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_generator.py","LineNumber":527,"LineContent":"        {\"id\": \"GOLDEN-STOICH-004\", \"name\": \"Butane\", \"n\": 4, \"m\": 10},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":20,"LineContent":"+        \"name\": \"Pneumatic Controllers \u0026 Pumps\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":27,"LineContent":"+        \"name\": \"Centrifugal \u0026 Reciprocating Compressor Seals\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":34,"LineContent":"+        \"name\": \"Atmospheric Storage Tank Venting \u0026 Flash Gas\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":41,"LineContent":"+        \"name\": \"Well Workovers, Completions \u0026 Blowdowns\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":48,"LineContent":"+        \"name\": \"Flaring Incomplete Combustion (CH4 Slip)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":55,"LineContent":"+        \"name\": \"Fugitive Valve \u0026 Flange Leaks\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":62,"LineContent":"+        \"name\": \"LDAR Detected Component Leaks (Method 21 / OGI)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_migrate_ogmp.py.txt","LineNumber":69,"LineContent":"+        \"name\": \"Internal Combustion Engine \u0026 Turbine CH4 Slip\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1741,"LineContent":"                \"name\": cf.name,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\seed_demo_data.py","LineNumber":66,"LineContent":"                \"name\": \"Complexe Sidérurgique DRI/EAF (Tosyali)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\seed_demo_data.py","LineNumber":76,"LineContent":"                \"name\": \"Complexe Ammoniac \u0026 Engrais Azotés (Fertial)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\seed_demo_data.py","LineNumber":86,"LineContent":"                \"name\": \"Cimenterie Industrielle de Chlef (GICA)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\seed_demo_data.py","LineNumber":96,"LineContent":"                \"name\": \"Centre de Traitement Gazier Hassi Messaoud (Sonatrach)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1559,"LineContent":"            \"name\": \"Boundaries Test Facility\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":99,"LineContent":"        \"name\": \"name\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":166,"LineContent":"        \"name\": \"name\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":265,"LineContent":"        \"name\": \"name\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":306,"LineContent":"        \"name\": \"name\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":499,"LineContent":"                            \"name\": f.name,"}
+(...37 more results not shown)

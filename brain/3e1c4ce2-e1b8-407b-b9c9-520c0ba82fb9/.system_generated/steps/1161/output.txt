@@ -1,0 +1,80 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -142,4 +142,74 @@
+     co2e_ar6 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR6)
+     expected_ar6 = 100.0 * 1.0 + 10.0 * 27.9 + 1.0 * 273.0  # 100 + 279 + 273 = 652
+     assert co2e_ar6 == pytest.approx(expected_ar6, rel=1e-4)
++
++
++def test_base_year_singleton_fallback(client, admin_headers):
++    """Verify that when only BaseYear singleton exists, batch-all and /base-year return it cleanly."""
++    from extensions import db
++    from models import BaseYear, BaseYearRecalculation
++
++    # Ensure no recalculation exists
++    BaseYearRecalculation.query.delete()
++    by = BaseYear.query.filter_by(id=1).first()
++    if not by:
++        by = BaseYear(id=1, year=2022, locked=1)
++        db.session.add(by)
++    else:
++        by.year = 2022
++    db.session.commit()
++
++    from routes.dashboard import clear_dashboard_cache
++    clear_dashboard_cache()
++
++    # Query /base-year
++    res = client.get("/api/dashboard/base-year", headers=admin_headers)
++    assert res.status_code == 200
++    data = res.get_json()
++    assert data is not None
++    assert data["year"] == 2022
++    assert data["reason"] == "Official Baseline"
++
++    # Query /batch-all
++    res_batch = client.get("/api/dashboard/batch-all?facilityId=all&activity=all&division=all", headers=admin_headers)
++    assert res_batch.status_code == 200
++    batch_data = res_batch.get_json()
++    assert batch_data["base_year"] is not None
++    assert batch_data["base_year"]["year"] == 2022
++
++
++def test_notification_broadcast_handling(client, admin_headers, operator_headers):
++    """Verify broadcast notifications (user_id=None) can be marked as read by users and dismissed by admins."""
++    from extensions import db
++    from models import Notification
++
++    # Create a broadcast notification
++    notif = Notification(
++        user_id=None,
++        type="info",
++        title="Broadcast System Maintenance Notice",
++        message="Scheduled maintenance window at 02:00 UTC",
++        is_read=False,
++    )
++    db.session.add(notif)
++    db.session.commit()
++    notif_id = notif.id
++
++    # Non-admin / operator can mark read without getting 403 Forbidden
++    res_read = client.put(f"/api/notifications/{notif_id}/read", headers=operator_headers)
++    assert res_read.status_code == 200
++    assert res_read.get_json()["success"] is True
++
++    # Admin dismiss-all clears both user and broadcast notifications
++    notif.is_read = False
++    db.session.commit()
++
++    res_dismiss = client.post("/api/notifications/dismiss-all", headers=admin_headers)
++    assert res_dismiss.status_code == 200
++    assert res_dismiss.get_json()["success"] is True
++
++    # Verify notification is marked read
++    updated_notif = db.session.get(Notification, notif_id)
++    assert updated_notif.is_read is True
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

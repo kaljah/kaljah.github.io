@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -400,8 +400,8 @@
+             error_headers = ["Error Reason"] + headers
+ 
+             for raw_row in rows_iterator:
+-                # Stop if empty row (Excel read_only sometimes yields empty trailing rows)
+-                if not any(raw_row):
++                # Stop if empty row (Excel read_only sometimes yields empty trailing rows, or CSV whitespace-only rows)
++                if not any(str(c).strip() for c in raw_row if c is not None):
+                     continue
+ 
+                 processed += 1
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

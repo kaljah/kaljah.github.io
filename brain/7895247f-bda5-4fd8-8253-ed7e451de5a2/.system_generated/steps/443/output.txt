@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\seed_berkine_data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -177,7 +177,7 @@
+         for yr, val in hbns_prod.items():
+             p = ProductionData.query.filter_by(facility_id=hbns.id, year=yr).first()
+             if not p:
+-                p = ProductionData(facility_id=hbns.id, year=yr)
++                p = ProductionData(facility_id=hbns.id, year=yr, month=12)
+                 db.session.add(p)
+             p.gross_gas_mmsm3 = val["gross_gas"]
+             p.gas_without_injected_mmsm3 = val["gas_wo_inj"]
+@@ -193,7 +193,7 @@
+         for yr, val in elm_prod.items():
+             p = ProductionData.query.filter_by(facility_id=elm.id, year=yr).first()
+             if not p:
+-                p = ProductionData(facility_id=elm.id, year=yr)
++                p = ProductionData(facility_id=elm.id, year=yr, month=12)
+                 db.session.add(p)
+             p.gross_gas_mmsm3 = val["gross_gas"]
+             p.gas_without_injected_mmsm3 = val["gas_wo_inj"]
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

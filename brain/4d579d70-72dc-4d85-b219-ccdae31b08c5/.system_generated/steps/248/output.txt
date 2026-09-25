@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2335,"LineContent":"                                        Calculate Combined Uncertainty (SRSS)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":451,"LineContent":"                                Automated data validation, IPCC SRSS uncertainty estimation, and inventory anomaly resolution workflow."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":530,"LineContent":"                    {/* Card 2: IPCC Tier 1 Uncertainty (SRSS) */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":1024,"LineContent":"                    TAB 3: UNCERTAINTY \u0026 RIGOR ANALYSIS (IPCC SRSS)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":356,"LineContent":"            (SRSS) propagation method per IPCC 2006 GL Vol.1 §3.3 Eq. 3.3."}

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['id', 'fullName', 'orgName', 'password_hash', 'sector', 'email', 'jobTitle', 'department', 'phone', 'location', 'bio', 'profilePic', 'consolidationApproach', 'role', 'status', 'password_updated_at', 'last_login', 'preferences', 'created_at']
+

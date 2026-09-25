@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:471:class Notification(db.Model):
+  new\server\models.py:472:    __tablename__ = "notifications"
+  new\server\models.py:473:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:474:    user_id = db.Column(
+  new\server\models.py:475:        db.Integer, db.ForeignKey("users.id"), nullable=True
+  new\server\models.py:476:    )  # Nullable for system-wide
+  new\server\models.py:477:    type = db.Column(
+  new\server\models.py:478:        db.String(50)
+  new\server\models.py:479:    )  # 'goal', 'audit', 'system', 'critical', 'warning', 'info'
+  new\server\models.py:480:    title = db.Column(db.String(120))
+  new\server\models.py:481:    message = db.Column(db.Text)
+  new\server\models.py:482:    is_read = db.Column(db.Boolean, default=False)
+  new\server\models.py:483:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:484:    metadata_json = db.Column("metadata", db.Text)  # JSON string for extra data
+  new\server\models.py:485:
+  new\server\models.py:486:    @staticmethod
+  new\server\models.py:487:    def create(title, message, type="info", user_id=None, metadata=None):
+  new\server\models.py:488:        import json
+  new\server\models.py:489:
+  new\server\models.py:490:        n = Notification(
+  new\server\models.py:491:            title=title,
+  new\server\models.py:492:            message=message,
+  new\server\models.py:493:            type=type,
+  new\server\models.py:494:            user_id=user_id,
+  new\server\models.py:495:            metadata_json=json.dumps(metadata) if metadata else None,
+  new\server\models.py:496:        )
+
+
+

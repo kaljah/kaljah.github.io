@@ -1,0 +1,176 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -368,6 +368,19 @@
+         suggestions = []
+ 
+         if missing_facility_count > 0:
++            sample_recs = []
++            try:
++                for r in missing_fac_q.limit(10).all():
++                    sample_recs.append({
++                        "id": r.id,
++                        "year": r.year,
++                        "process": r.process_type or "Unassigned",
++                        "quantity": r.quantity,
++                        "co2e": r.co2e_total,
++                    })
++            except Exception:
++                pass
++
+             issues.append({
+                 "id": "missing_facility",
+                 "type": "critical",
+@@ -374,11 +374,26 @@
+                 "description": f"{missing_facility_count} emission record(s) lack facility assignment, breaking GHG Protocol organizational boundary requirements.",
+                 "affected_count": missing_facility_count,
+                 "impact": "High",
+-                "action": "Assign Facilities",
+-                "action_tab": "queue",
++                "action": "Manage Facilities",
++                "action_url": "/manage-data?tab=facilities",
++                "sample_records": sample_recs,
+             })
+ 
+         if missing_co2e_count > 0:
++            sample_recs = []
++            try:
++                for r in missing_co2e_q.limit(10).all():
++                    sample_recs.append({
++                        "id": r.id,
++                        "facility_id": r.facility_id,
++                        "facility": fac_map.get(r.facility_id, f"Facility {r.facility_id}"),
++                        "year": r.year,
++                        "process": r.process_type or "Unassigned",
++                        "quantity": r.quantity,
++                    })
++            except Exception:
++                pass
++
+             issues.append({
+                 "id": "missing_co2e",
+                 "type": "critical",
+@@ -385,11 +385,26 @@
+                 "description": f"{missing_co2e_count} record(s) have uncalculated or negative CO₂e totals.",
+                 "affected_count": missing_co2e_count,
+                 "impact": "High",
+-                "action": "Recalculate",
+-                "action_tab": "queue",
++                "action": "Review in Manage Data",
++                "action_url": "/manage-data?tab=pending",
++                "sample_records": sample_recs,
+             })
+ 
+         if missing_fuel_count > 0:
++            sample_recs = []
++            try:
++                for r in missing_fuel_q.limit(10).all():
++                    sample_recs.append({
++                        "id": r.id,
++                        "facility_id": r.facility_id,
++                        "facility": fac_map.get(r.facility_id, f"Facility {r.facility_id}"),
++                        "year": r.year,
++                        "process": r.process_type or "Unassigned",
++                        "quantity": r.quantity,
++                    })
++            except Exception:
++                pass
++
+             warnings.append({
+                 "id": "missing_fuel",
+                 "type": "warning",
+@@ -396,11 +396,26 @@
+                 "description": f"{missing_fuel_count} Scope 1 combustion record(s) are missing explicit fuel or process types, using generic defaults.",
+                 "affected_count": missing_fuel_count,
+                 "impact": "Medium",
+-                "action": "Classify Sources",
+-                "action_tab": "queue",
++                "action": "Classify in Manage Data",
++                "action_url": "/manage-data?tab=sources",
++                "sample_records": sample_recs,
+             })
+ 
+         if missing_amount_count > 0:
++            sample_recs = []
++            try:
++                for r in missing_amount_q.limit(10).all():
++                    sample_recs.append({
++                        "id": r.id,
++                        "facility_id": r.facility_id,
++                        "facility": fac_map.get(r.facility_id, f"Facility {r.facility_id}"),
++                        "year": r.year,
++                        "process": r.process_type or "Unassigned",
++                        "fuel": r.fuel_type or "Unspecified",
++                    })
++            except Exception:
++                pass
++
+             warnings.append({
+                 "id": "missing_amount",
+                 "type": "warning",
+@@ -407,8 +407,9 @@
+                 "description": f"{missing_amount_count} record(s) contain zero or unrecorded activity amounts.",
+                 "affected_count": missing_amount_count,
+                 "impact": "Medium",
+-                "action": "Review Activity",
+-                "action_tab": "queue",
++                "action": "Review in Manage Data",
++                "action_url": "/manage-data?tab=pending",
++                "sample_records": sample_recs,
+             })
+ 
+         if total_records_count > 0 and recent_records_count == 0:
+@@ -418,11 +418,28 @@
+                 "description": "No emissions or activity records ingested during the last 30 days.",
+                 "affected_count": 0,
+                 "impact": "Low",
+-                "action": "Check Ingestion",
+-                "action_tab": "diagnostics",
++                "action": "Review Ingestion",
++                "action_url": "/manage-data?tab=pending",
+             })
+ 
+         if unused_facilities > 0:
++            sample_facs = []
++            try:
++                fac_q = Facility.query
++                if allowed_fids is not None:
++                    fac_q = fac_q.filter(Facility.id.in_(allowed_fids))
++                for f in fac_q.all():
++                    if f.id not in active_fids:
++                        sample_facs.append({
++                            "id": f.id,
++                            "name": f.name,
++                            "location": f.location or f.field or "General",
++                        })
++                        if len(sample_facs) >= 10:
++                            break
++            except Exception:
++                pass
++
+             suggestions.append({
+                 "id": "unused_facilities",
+                 "type": "info",
+@@ -429,8 +429,9 @@
+                 "description": f"{unused_facilities} facility boundary(ies) are registered in master data but have no emissions reported for this period.",
+                 "affected_count": unused_facilities,
+                 "impact": "Low",
+-                "action": "View Facilities",
+-                "action_url": "/reference-data",
++                "action": "Manage Facilities",
++                "action_url": "/manage-data?tab=facilities",
++                "sample_records": sample_facs,
+             })
+ 
+         if total_custom_factors == 0:
+@@ -441,7 +441,7 @@
+                 "affected_count": 0,
+                 "impact": "Low",
+                 "action": "Manage Factors",
+-                "action_url": "/reference-data",
++                "action_url": "/manage-data?tab=factors",
+             })
+ 
+         # Calculate composite health score
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

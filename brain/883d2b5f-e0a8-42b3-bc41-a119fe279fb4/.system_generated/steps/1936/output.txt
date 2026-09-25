@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -132,7 +132,7 @@
+ 
+     record_id = data_draft["id"]
+     with app.app_context():
+-        rec = Emission.query.get(record_id)
++        rec = db.session.get(Emission, record_id)
+         assert rec is not None
+         assert rec.status == "Draft"
+ 
+@@ -155,7 +155,7 @@
+     res_submit = client.post("/api/emissions", json=submit_payload)
+     assert res_submit.status_code in [200, 201]
+     with app.app_context():
+-        rec_pending = Emission.query.get(res_submit.get_json()["id"])
++        rec_pending = db.session.get(Emission, res_submit.get_json()["id"])
+         assert rec_pending.status in ["Pending", "Pending Approval"]
+ 
+     # 3. Admin user submits -> status should be "Verified"
+@@ -162,7 +162,7 @@
+     res_admin = client.post("/api/emissions", json=submit_payload)
+     assert res_admin.status_code in [200, 201]
+     with app.app_context():
+-        rec_admin = Emission.query.get(res_admin.get_json()["id"])
++        rec_admin = db.session.get(Emission, res_admin.get_json()["id"])
+         assert rec_admin.status == "Verified"
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

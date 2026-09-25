@@ -1,0 +1,86 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+STARTING COMPREHENSIVE MANAGE DATA BACKEND TEST SUITE
+================================================================================
+
+--- Domain 1: Pending Reviews & Approvals ---
+[PASS] Pending: IT RBAC block (403) - Status: 403
+[PASS] Pending: Admin fetch (200) - Total pending: 0
+[FAIL] Pending: Create draft emission - Draft ID: None
+
+--- Domain 2: Custom Emission Factors ---
+[FAIL] Factors: IT RBAC block (403) - Status: 404
+[FAIL] Factors: Admin fetch (200) - Found 0 factors
+[FAIL] Factors: Bounds validation negative co2 (400) - Status: 404
+[FAIL] Factors: IT create factor block (403) - Status: 404
+[FAIL] Factors: Admin create factor (200/201) - Factor ID: None
+
+--- Domain 3: Facilities & Regions ---
+[PASS] Facilities: IT RBAC block (403) - Status: 403
+[PASS] Facilities: Admin fetch & region_identifier check (200) - Count: 43
+[PASS] Facilities: Search filter param (200) - Matches: 1
+[FAIL] Facilities: IT create facility block (403) - Status: 400
+[FAIL] Facilities: Admin create facility (200/201) - New Fac ID: None
+
+--- Domain 4: Production Data ---
+[FAIL] Production: IT RBAC block (403) - Status: 404
+[FAIL] Production: Admin fetch filtered (200) - Records: 0
+[FAIL] Production: Validation negative gross (400) - Status: 404
+[FAIL] Production: IT create block (403) - Status: 404
+[FAIL] Production: Admin create (200/201) - Prod ID: None
+
+--- Domain 5: Emission Sources ---
+[PASS] Sources: IT RBAC block (403) - Status: 403
+[PASS] Sources: Admin fetch (200) - Count: 0
+[PASS] Sources: Missing facility ID (400) - Status: 400
+[FAIL] Sources: IT create block (403) - Status: 400
+[FAIL] Sources: Admin create (200/201) - Source ID: None
+
+--- Domain 6: Goals, Base Years & SBTi ---
+[PASS] Goals: IT RBAC block (403) - Status: 403
+[PASS] Goals: Admin fetch (200) - Goals count: 0
+[FAIL] Goals: IT create block (403) - Status: 400
+[FAIL] Goals: Admin create/update (200) - Saved 2045 goal
+[FAIL] Goals: IT delete block (403) - Status: 400
+[FAIL] Goals: Admin delete (200) - Deleted 2045 goal
+[PASS] BaseYears: IT RBAC block (403) - Status: 403
+[FAIL] BaseYears: Admin fetch (200) - Active year: None
+[FAIL] BaseYears: IT recalc block (403) - Status: 400
+[FAIL] BaseYears: Admin recalc add (201) - Recalc ID: None
+[PASS] SBTi: IT RBAC block (403) - Status: 403
+[PASS] SBTi: Admin fetch (200) - Has target: True
+[FAIL] SBTi: IT update target block (403) - Status: 400
+[FAIL] SBTi: Admin update target (200) - Target configured: 2030 @ 4.2%/yr
+
+--- Domain 7: Mitigation Projects ---
+[PASS] Mitigation: IT RBAC block (403) - Status: 403
+[PASS] Mitigation: Admin fetch (200) - Projects count: 0
+[FAIL] Mitigation: IT create block (403) - Status: 400
+[FAIL] Mitigation: Admin create (201) - Mitig ID: None
+
+--- Domain 8: OGMP 2.0 Surveys & Level Logs ---
+[FAIL] OGMP: IT sources block (403) - Status: 404
+[FAIL] OGMP: Admin get methane sources (200) - Taxonomy count: 0
+[FAIL] OGMP: IT surveys block (403) - Status: 404
+[FAIL] OGMP: Admin get surveys (200) - Surveys count: 0
+[FAIL] OGMP: IT survey create block (403) - Status: 404
+[FAIL] OGMP: Admin create survey (201) - Survey ID: None
+[FAIL] OGMP: IT level upgrade block (403) - Status: 404
+[FAIL] OGMP: Admin level upgrade (201) - Response: {"code":404,"error":"Not found","request_id":"68f4567c-172f-4cbd-bf59-4167eb4730
+[FAIL] OGMP: IT level logs block (403) - Status: 404
+[FAIL] OGMP: Admin level logs fetch (200) - Logs count: 0
+
+--- Domain 9: CBAM Products ---
+[FAIL] CBAM: IT RBAC block (403) - Status: 404
+[FAIL] CBAM: Admin fetch (200) - Exports count: 0
+[FAIL] CBAM: Missing CN code validation (400) - Status: 404
+[FAIL] CBAM: IT create export block (403) - Status: 404
+[FAIL] CBAM: Admin create export (200/201) - CBAM ID: None
+
+================================================================================
+BACKEND TEST SUMMARY: Total Tests: 56 | PASSED: 15 | FAILED: 41
+================================================================================
+Results written to C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\manage_data_backend_test_results.json
+

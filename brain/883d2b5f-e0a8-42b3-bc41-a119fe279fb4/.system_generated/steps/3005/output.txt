@@ -1,0 +1,30 @@
+
+The command exited with code 1.
+Output:
+=== Running UI Numerical Formatter Parity Tests (Node.js) ===
+
+1. Testing formatNumber decimals and thousands separators...
+2. Testing trace gas precision (5 decimals for CH4 and N2O)...
+3. Testing formatCompactNumber for Dashboard KPIs...
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(compact45K.toUpperCase().includes('45K'))
+
+    at file:///C:/Users/samsung/Desktop/H2/new/client/test_ui_numerical_parity.mjs:29:8
+    at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.12.0
+

@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.jsx","LineNumber":18,"LineContent":"    factor_source,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.jsx","LineNumber":96,"LineContent":"                \u003cspan className=\"param-value\"\u003e{method || factor_source || \"API Compendium / Tier 1\"}\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":476,"LineContent":"      e.factor_source === \"default\" ? \"Default\" : \"Specific\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":938,"LineContent":"        factor_source: sourceType, // 'default', 'custom', 'specific'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1102,"LineContent":"      entry.factor_source ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1104,"LineContent":"      payload.factor_source ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1123,"LineContent":"      factor_source: fSource,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2473,"LineContent":"                  if (entry.factor_source === \"default\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2476,"LineContent":"                    entry.factor_source === \"custom\" ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2477,"LineContent":"                    entry.factor_source === \"specific\""}

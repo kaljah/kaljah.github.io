@@ -1,0 +1,2 @@
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":6,"LineContent":"from flask_wtf.csrf import CSRFProtect, generate_csrf"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":124,"LineContent":"csrf = CSRFProtect(app)"}

@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Status: 200
+Cookies: {'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyX2lkIjo1fQ.arPolg.SAxFPu4eSNWjHhWX8VrpS-P8IUU'}
+JSON keys: dict_keys(['message', 'user'])
+

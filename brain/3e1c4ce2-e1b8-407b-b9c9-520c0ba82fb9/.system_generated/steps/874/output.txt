@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\seed_demo_data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -138,7 +138,7 @@
+             # Sonatrach Gas
+             {"facility": facilities[3], "year": 2026, "month": 1, "proc": "AGR Acid Gas Removal", "fuel": "Amine Flash", "qty": 350000.0, "unit": "m3", "co2": 31000.0, "ch4": 15.0, "n2o": 0.0, "co2e": 31420.0, "method": "engineering_estimate"},
+             {"facility": facilities[3], "year": 2026, "month": 1, "proc": "Flaring", "fuel": "High Pressure Flare Gas", "qty": 180000.0, "unit": "m3", "co2": 22000.0, "ch4": 85.0, "n2o": 0.5, "co2e": 24512.5, "method": "ef_facility_specific"},
+-            {"facility": facilities[3], "year": 2026, "month": 1, "proc": "Compressor Fugitive", "fuel": "Wet Seal Methane", "qty": 110.0, "unit": "kg", "co2": 0.0, "ch4": 110.0, "n2o": 0.0, "co2e": 3080.0, "method": "direct_measurement"}
++            {"facility": facilities[3], "year": 2026, "month": 1, "proc": "Compressor Fugitive", "fuel": "Wet Seal Methane", "qty": 110.0, "unit": "tonnes", "co2": 0.0, "ch4": 110.0, "n2o": 0.0, "co2e": 3080.0, "method": "direct_measurement"}
+         ]
+ 
+         for i, r in enumerate(records):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

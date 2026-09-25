@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\extensions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -4,7 +4,7 @@
+ from flask_limiter.util import get_remote_address
+ from flask_wtf.csrf import CSRFProtect
+ 
+-db = SQLAlchemy()
++db = SQLAlchemy(session_options={"expire_on_commit": False})
+ csrf = CSRFProtect()
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

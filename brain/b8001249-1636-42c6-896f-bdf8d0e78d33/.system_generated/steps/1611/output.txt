@@ -1,0 +1,97 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+activeTab === 'mitigation') && (
+  new\client\src\pages\ManageData.jsx:1472:                                        <select value={filterYear} 
+onChange={(e) => setFilterYear(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+  new\client\src\pages\ManageData.jsx:1473:                                            <option value="">All 
+Years</option>
+> new\client\src\pages\ManageData.jsx:1479:                                        <button className="btn-ghost" 
+onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }} style={{ 
+color: 'var(--text-secondary)', padding: '6px 12px', fontSize: '0.85rem' }}>
+  new\client\src\pages\ManageData.jsx:1480:                                            Clear Filters
+  new\client\src\pages\ManageData.jsx:1481:                                        </button>
+> new\client\src\pages\ManageData.jsx:1491:                        {activeTab === 'pending' && isPrivileged && (
+  new\client\src\pages\ManageData.jsx:1492:                            <div className="manage-tab-content 
+pending-review-panel">
+  new\client\src\pages\ManageData.jsx:1493:                                {/* Rejection Modal */}
+> new\client\src\pages\ManageData.jsx:2131:                        {activeTab === 'pending' && !isPrivileged && (
+  new\client\src\pages\ManageData.jsx:2132:                            <div className="manage-tab-content" style={{ 
+padding: '56px 24px', textAlign: 'center', background: '#ffffff', borderRadius: '16px', border: '1px solid 
+var(--border-color)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+  new\client\src\pages\ManageData.jsx:2133:                                <div style={{ width: 56, height: 56, 
+borderRadius: '50%', background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', 
+justifyContent: 'center', margin: '0 auto 16px auto', color: '#d97706' }}>
+> new\client\src\pages\ManageData.jsx:2152:                        {activeTab === 'factors' && (
+  new\client\src\pages\ManageData.jsx:2153:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:2154:                                <div style={{ display: 'flex', 
+justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+> new\client\src\pages\ManageData.jsx:2415:                        {activeTab === 'facilities' && ['admin', 
+'superuser'].includes(user?.role) && (
+  new\client\src\pages\ManageData.jsx:2416:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:2417:                                <h2 style={{ marginBottom: '8px', 
+fontWeight: 700 }}>Active Regions</h2>
+> new\client\src\pages\ManageData.jsx:2503:                                            <button className="action-btn" 
+onClick={handleAddFacility}>Add Region</button>
+> new\client\src\pages\ManageData.jsx:2504:                                            <button className="action-btn" 
+onClick={() => setImportModal({ isOpen: true, type: 'facilities' })} style={{ display: 'flex', alignItems: 'center', 
+gap: '8px', padding: '8px 16px', fontSize: '0.9rem', width: 'auto' }}>
+  new\client\src\pages\ManageData.jsx:2505:                                                <Upload size={16} /> Bulk 
+Import (CSV)
+  new\client\src\pages\ManageData.jsx:2506:                                            </button>
+> new\client\src\pages\ManageData.jsx:2565:                        {activeTab === 'production' && (
+  new\client\src\pages\ManageData.jsx:2566:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:2567:                                <div style={{ display: 'flex', 
+justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+> new\client\src\pages\ManageData.jsx:2654:                                        <label>Oil ({prodForm.oil_unit}) 
+<button onClick={openOilConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 
+'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert 
+m�</button></label>
+  new\client\src\pages\ManageData.jsx:2655:                                        <div style={{ display: 'flex', gap: 
+'8px' }}>
+  new\client\src\pages\ManageData.jsx:2656:                                            <input type="number" 
+value={prodForm.oil_amount} onChange={(e) => setProdForm({ ...prodForm, oil_amount: e.target.value })} 
+className="mole-input" placeholder="0.0" style={{ flex: 1 }} />
+> new\client\src\pages\ManageData.jsx:2664:                                        <label>Gas ({prodForm.gas_unit}) 
+<button onClick={openGasConverter} style={{ fontSize: '0.65rem', padding: '2px 4px', marginLeft: '8px', cursor: 
+'pointer', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '3px' }}>Convert 
+m�</button></label>
+  new\client\src\pages\ManageData.jsx:2665:                                        <div style={{ display: 'flex', gap: 
+'8px' }}>
+  new\client\src\pages\ManageData.jsx:2666:                                            <input type="number" 
+value={prodForm.gas_amount} onChange={(e) => setProdForm({ ...prodForm, gas_amount: e.target.value })} 
+className="mole-input" placeholder="0.0" style={{ flex: 1 }} />
+> new\client\src\pages\ManageData.jsx:2738:                        {activeTab === 'sources' && (
+  new\client\src\pages\ManageData.jsx:2739:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:2740:                                <h2 style={{ marginBottom: '8px', 
+fontWeight: 700 }}>Emission Sources Inventory</h2>
+> new\client\src\pages\ManageData.jsx:2822:                                    <button className="action-btn" 
+onClick={handleSaveSource}>Add Source</button>
+  new\client\src\pages\ManageData.jsx:2823:                                    <button className="action-btn" 
+onClick={() => setImportModal({ isOpen: true, type: 'sources' })} style={{ background: '#10b981' }}>
+  new\client\src\pages\ManageData.jsx:2824:                                        <Upload size={16} /> Import Sources 
+CSV
+> new\client\src\pages\ManageData.jsx:2857:                                                        <button 
+className="btn-delete" style={{ padding: '4px 8px', fontSize: '0.75rem' }} onClick={() => 
+handleDeleteSource(s.id)}>Delete</button>
+  new\client\src\pages\ManageData.jsx:2858:                                                    </td>
+  new\client\src\pages\ManageData.jsx:2859:                                                </tr>
+> new\client\src\pages\ManageData.jsx:2876:                        {activeTab === 'goals' && (
+  new\client\src\pages\ManageData.jsx:2877:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:2878:                                {/* Active Baseline Status Banner */}
+> new\client\src\pages\ManageData.jsx:3278:                        {activeTab === 'mitigation' && (
+  new\client\src\pages\ManageData.jsx:3279:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:3280:                                <div style={{ display: 'flex', 
+justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+> new\client\src\pages\ManageData.jsx:3449:                        {activeTab === 'cbam' && (
+  new\client\src\pages\ManageData.jsx:3450:                            <div className="tab-pane active">
+  new\client\src\pages\ManageData.jsx:3451:                                <div className="section-header" style={{ 
+marginBottom: '24px' }}>
+> new\client\src\pages\ManageData.jsx:3759:                        {activeTab === 'ogmp' && (
+  new\client\src\pages\ManageData.jsx:3760:                            <div className="tab-pane active">
+  new\client\src\pages\ManageData.jsx:3761:                                <div className="section-header" style={{ 
+marginBottom: '24px' }}>
+
+
+

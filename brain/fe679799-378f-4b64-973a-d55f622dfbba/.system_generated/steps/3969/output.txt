@@ -1,0 +1,2 @@
+You have 1 active subagent(s):
+[{"role":"Lead QA Investigator","type":"DeepInvestigator","conversationId":"2b8aefd2-89d9-4e43-98d5-a93f5dcb60d8","transcript":"file:///C:/Users/samsung/.gemini/antigravity/brain/2b8aefd2-89d9-4e43-98d5-a93f5dcb60d8/.system_generated/logs/transcript.jsonl","state":"idle"}]

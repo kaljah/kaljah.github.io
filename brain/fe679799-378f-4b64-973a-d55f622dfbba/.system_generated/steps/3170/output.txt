@@ -1,0 +1,86 @@
+
+The command exited with code 0.
+Output:
+================================================================================
+EXHAUSTIVE QA MISSION - MULTI-PROCESS SCENARIO UPLOAD & VERIFICATION
+================================================================================
+Generated 107 scenario rows written to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_all_scenarios_matrix.csv
+Generated 11 scenario rows written to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_scope2_scenarios.csv
+Generated 15 scenario rows written to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_scope3_scenarios.csv
+
+[Step 1] Fetching CSRF Token and Authenticating as admin@ghg.com...
+CSRF token obtained: IjgwMjgwOTA5...
+SUCCESS: Authenticated. Session cookies established.
+Authenticated session CSRF token updated: IjFmMTIzOWQ4...
+
+[Step 2] Uploading Scope 1 Exhaustive Scenario Matrix (107 rows)...
+Upload initiated successfully. Job ID: bb5cffed-c3ab-47f9-aed0-d7c9a9a11851
+[Step 3] Polling background worker progress...
+  Poll 1: status=completed, processed=107/0, skipped=2, anomalies=0
+
+SUCCESS: Scope 1 Upload Finished!
+  Processed Rows: 107
+  Skipped Count:  2
+  Anomaly Count:  0
+  Skipped Preview (Deterministic Rejections):
+    - Row 105: Region 'NonExistentFacility999' not found. Check that the region name matches exactly a region in the system.
+    - Row 106: Calculation error: Quantity/Amount cannot be negative: -500.0
+
+[Step 4] Uploading Scope 2 Grid & Steam Scenarios (11 rows)...
+SUCCESS: Scope 2 Upload Completed (11 rows processed)
+
+[Step 5] Uploading Scope 3 Scenarios (15 rows)...
+SUCCESS: Scope 3 Upload Completed (15 rows processed)
+
+[Step 6] Validating Processed Emissions in Live Application & Database...
+Total live Scope 1 records retrieved: 500
+
+Live Scope 1 Records Count by Process Type:
+  - Category 1: 1 records
+  - Category 10: 1 records
+  - Category 11: 1 records
+  - Category 12: 1 records
+  - Category 13: 1 records
+  - Category 14: 1 records
+  - Category 15: 1 records
+  - Category 2: 1 records
+  - Category 3: 1 records
+  - Category 4: 1 records
+  - Category 5: 1 records
+  - Category 6: 1 records
+  - Category 7: 1 records
+  - Category 8: 1 records
+  - Category 9: 1 records
+  - Fuel Combustion: 104 records
+  - Scope 2: 11 records
+  - acid_gas_removal: 3 records
+  - adipic_acid_production: 1 records
+  - asphalt_blowing: 1 records
+  - blowdown: 3 records
+  - chemical_production: 4 records
+  - cogen_allocation: 4 records
+  - completions: 4 records
+  - compressor_fugitive: 3 records
+  - dehydrator: 3 records
+  - distribution_fugitive: 1 records
+  - drilling: 6 records
+  - flaring: 7 records
+  - fugitive_component: 5 records
+  - gas_processing: 1 records
+  - gathering_boosting: 1 records
+  - indirect_steam: 6 records
+  - liquids_unloading: 3 records
+  - lng_operations: 1 records
+  - mobile_combustion: 6 records
+  - nitric_acid_production: 1 records
+  - pneumatic_devices: 5 records
+  - separator_fugitive: 1 records
+  - stationary_combustion: 294 records
+  - storage_tanks: 4 records
+  - transmission_storage: 1 records
+  - wellhead_fugitive: 1 records
+
+================================================================================
+ALL SCENARIOS GENERATED, UPLOADED, CALCULATED, AND VALIDATED WITH 100% SUCCESS!
+================================================================================
+

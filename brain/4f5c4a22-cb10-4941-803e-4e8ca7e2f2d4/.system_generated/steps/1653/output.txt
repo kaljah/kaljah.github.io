@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":83,"LineContent":"LEGACY_FACTORS = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":330,"LineContent":"API_FACTORS = {**ALL_EMISSION_FACTORS, **LEGACY_FACTORS}"}

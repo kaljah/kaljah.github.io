@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -435,7 +435,7 @@
+   }, [rawTrendData, currentRegion, gwpHorizon]);
+ 
+   const getHeatmapClass = (val) => {
+-    if (val === null || val === 0) return "heat-null";
++    if (val === null || val === undefined || isNaN(val) || val === 0) return "heat-null";
+     if (val < 18) return "heat-lux";
+     if (val < 28) return "heat-low";
+     if (val < 38) return "heat-mid";
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":188,"LineContent":"        const { data } = await api.get(\"/auth/me\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":541,"LineContent":"    // Also check user role from /api/auth/me or similar"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":542,"LineContent":"    api.get(\"/auth/me\").then(res =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":291,"LineContent":"    api.get(\"/auth/me\").then(res =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":318,"LineContent":"    api.get(\"/auth/me\").then(res =\u003e {"}

@@ -1,0 +1,40 @@
+## Request http://localhost:5173/api/auth/me
+Status: 200
+### Request Headers
+- sec-ch-ua-platform:"Windows"
+- referer:http://localhost:5173/login
+- user-agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36
+- accept:application/json, text/plain, */*
+- sec-ch-ua:"Google Chrome";v="153", "Not_A Brand";v="8", "Chromium";v="153"
+- sec-ch-ua-mobile:?0
+- accept-encoding:gzip, deflate, br, zstd
+- accept-language:en-US,en;q=0.9
+- connection:keep-alive
+- host:localhost:5173
+- sec-fetch-dest:empty
+- sec-fetch-mode:cors
+- sec-fetch-site:same-origin
+### Response Headers
+- access-control-allow-credentials:true
+- access-control-allow-origin:http://127.0.0.1:3000
+- access-control-expose-headers:Content-Disposition, X-Request-ID
+- cache-control:no-store, no-cache, must-revalidate, max-age=0
+- connection:close
+- content-length:36
+- content-security-policy:default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'
+- content-type:application/json
+- date:Tue, 22 Sep 2026 21:28:17 GMT
+- expires:0
+- pragma:no-cache
+- referrer-policy:strict-origin-when-cross-origin
+- retry-after:60
+- server:Werkzeug/3.0.3 Python/3.12.4
+- vary:Origin, Cookie
+- x-content-type-options:nosniff
+- x-frame-options:DENY
+- x-ratelimit-limit:200
+- x-ratelimit-remaining:199
+- x-ratelimit-reset:1790112558
+- x-request-id:3d4a2466-82c1-4f95-96c7-5f9a9b1ef2a4
+### Response Body
+{"authenticated":false,"user":null}

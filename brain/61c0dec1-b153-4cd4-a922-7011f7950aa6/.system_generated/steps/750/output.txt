@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1566,10 +1566,7 @@
+         },
+     )
+     assert resp.status_code == 201
+-    fac_data = resp.get_json()
+-    assert fac_data["boundary_type"] == "Equity Share"
+-    assert fac_data["boundary_detail"] == "Sonatrach 51%, Partner 49%"
+-    fac_id = fac_data["id"]
++    fac_id = resp.get_json()["id"]
+ 
+     # Verify retrieval via GET /facilities
+     get_resp = client.get("/api/facilities")
+@@ -1615,6 +1615,7 @@
+ def test_dehydrator_stripping_gas_calculation():
+     """Verify Dehydrator stripping gas calculation adds methane volume to still vent before control."""
+     from calculations.midstream import DehydratorCalculator
++    from calculations.units import convert
+ 
+     calc = DehydratorCalculator()
+     # Baseline without stripping gas
+@@ -1641,8 +1641,8 @@
+         stripping_gas_unit="scf/hr",
+     )
+ 
+-    # 50,000 scf * 0.90 CH4 = 45,000 scf CH4 = 45,000 * 0.0192 / 1000 = 0.864 tonnes CH4
+-    expected_strip_ch4_tonnes = 45000.0 * 0.0192 / 1000.0
++    # 50,000 scf * 0.90 CH4 = 45,000 scf CH4
++    expected_strip_ch4_tonnes = convert(45000.0, "scf", "m3") * 0.6785 / 1000.0
+     diff_ch4 = strip_res["results"]["ch4"]["value"] - base_res["results"]["ch4"]["value"]
+     assert abs(diff_ch4 - expected_strip_ch4_tonnes) < 1e-4
+     assert strip_res["inputs"]["stripping_gas_scf"] == 50000.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":462,"LineContent":"      e.co2e_total || 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1053,"LineContent":"    const co2eVal = Number(entry.co2e_total || 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1102,"LineContent":"        totalCo2e: co2eVal,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1135,"LineContent":"          result: co2eVal,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2438,"LineContent":"                        {formatNumber(entry.co2e_total, 3)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2603,"LineContent":"                      .reduce((sum, e) =\u003e sum + (e.co2e_total || 0), 0),"}

@@ -1,0 +1,72 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:590:        oil_amount: '', oil_unit: 'bbl',
+  new\client\src\pages\ManageData.jsx:591:        gas_amount: '', gas_unit: 'mscf'
+  new\client\src\pages\ManageData.jsx:592:    });
+  new\client\src\pages\ManageData.jsx:593:
+  new\client\src\pages\ManageData.jsx:594:    const [sourceForm, setSourceForm] = useState({
+  new\client\src\pages\ManageData.jsx:595:        activity: '', division: '', facility_id: '',
+> new\client\src\pages\ManageData.jsx:998:                oil_amount: parseFloat(prodForm.oil_amount) || 0,
+  new\client\src\pages\ManageData.jsx:999:                gas_amount: parseFloat(prodForm.gas_amount) || 0
+  new\client\src\pages\ManageData.jsx:1000:            });
+  new\client\src\pages\ManageData.jsx:1001:            toast.success('Production record saved!');
+  new\client\src\pages\ManageData.jsx:1002:            fetchProduction();
+> new\client\src\pages\ManageData.jsx:1003:            setProdForm(prev => ({ ...prev, oil_amount: '', gas_amount: '' 
+}));
+  new\client\src\pages\ManageData.jsx:1004:        } catch (err) { toast.error('Failed to save production'); }
+  new\client\src\pages\ManageData.jsx:1005:    };
+  new\client\src\pages\ManageData.jsx:1006:
+  new\client\src\pages\ManageData.jsx:1007:    const handleSaveSource = async () => {
+  new\client\src\pages\ManageData.jsx:1008:        if (!sourceForm.facility_id || !sourceForm.name) return 
+toast.error('Name and Region required');
+> new\client\src\pages\ManageData.jsx:1222:            setProdForm(prev => ({ ...prev, oil_amount: bbl, oil_unit: 
+'bbl' }));
+  new\client\src\pages\ManageData.jsx:1223:            toast.success(`Converted ${val} m� to ${bbl} bbl`);
+  new\client\src\pages\ManageData.jsx:1224:        }
+  new\client\src\pages\ManageData.jsx:1225:        setConvertModal({ isOpen: false, type: 'gas', value: '' });
+  new\client\src\pages\ManageData.jsx:1226:    };
+  new\client\src\pages\ManageData.jsx:1227:
+> new\client\src\pages\ManageData.jsx:1418:                        <div className={`manage-nav-item ${activeTab === 
+'production' ? 'active' : ''}`} onClick={() => handleTabChange('production')}>
+  new\client\src\pages\ManageData.jsx:1419:                            <span>Production Data</span>
+  new\client\src\pages\ManageData.jsx:1420:                        </div>
+  new\client\src\pages\ManageData.jsx:1421:                        <div className={`manage-nav-item ${activeTab === 
+'sources' ? 'active' : ''}`} onClick={() => handleTabChange('sources')}>
+  new\client\src\pages\ManageData.jsx:1422:                            <span>Emission Sources</span>
+  new\client\src\pages\ManageData.jsx:1423:                        </div>
+> new\client\src\pages\ManageData.jsx:1471:                                    {(activeTab === 'production' || 
+activeTab === 'mitigation') && (
+  new\client\src\pages\ManageData.jsx:1472:                                        <select value={filterYear} 
+onChange={(e) => setFilterYear(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+  new\client\src\pages\ManageData.jsx:1473:                                            <option value="">All 
+Years</option>
+  new\client\src\pages\ManageData.jsx:1474:                                            {availableFilters.years?.map(y 
+=> <option key={y} value={y}>{y}</option>)}
+  new\client\src\pages\ManageData.jsx:1475:                                        </select>
+  new\client\src\pages\ManageData.jsx:1476:                                    )}
+> new\client\src\pages\ManageData.jsx:2565:                        {activeTab === 'production' && (
+  new\client\src\pages\ManageData.jsx:2566:                            <div className="manage-card glass-panel">
+  new\client\src\pages\ManageData.jsx:2567:                                <div style={{ display: 'flex', 
+justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+  new\client\src\pages\ManageData.jsx:2568:                                    <div>
+  new\client\src\pages\ManageData.jsx:2569:                                        <h2 style={{ marginBottom: '8px', 
+fontWeight: 700 }}>Annual Production Records</h2>
+  new\client\src\pages\ManageData.jsx:2570:                                        <p style={{ color: 
+'var(--text-secondary)', margin: 0 }}>Manage annual production data for emission intensity reporting.</p>
+> new\client\src\pages\ManageData.jsx:2656:                                            <input type="number" 
+value={prodForm.oil_amount} onChange={(e) => setProdForm({ ...prodForm, oil_amount: e.target.value })} 
+className="mole-input" placeholder="0.0" style={{ flex: 1 }} />
+  new\client\src\pages\ManageData.jsx:2657:                                            <select 
+value={prodForm.oil_unit} onChange={(e) => setProdForm({ ...prodForm, oil_unit: e.target.value })} 
+className="component-select" style={{ width: '80px' }}>
+  new\client\src\pages\ManageData.jsx:2658:                                                <option 
+value="bbl">bbl</option>
+  new\client\src\pages\ManageData.jsx:2659:                                                <option 
+value="m�">m�</option>
+  new\client\src\pages\ManageData.jsx:2660:                                            </select>
+  new\client\src\pages\ManageData.jsx:2661:                                        </div>
+
+
+

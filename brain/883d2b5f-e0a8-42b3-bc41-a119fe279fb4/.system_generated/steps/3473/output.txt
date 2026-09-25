@@ -1,0 +1,108 @@
+
+The command exited with code 1.
+Output:
+........................................................................ [ 16%]
+........................................................................ [ 33%]
+........................................................................ [ 50%]
+........................................................................ [ 66%]
+........................................................................ [ 83%]
+..............................................................FFFF.....  [100%]
+================================== FAILURES ===================================
+________________________ test_uncertainty_scope_filter ________________________
+
+client = <FlaskClient <Flask 'app'>>, admin_user = <User 4>
+
+    def test_uncertainty_scope_filter(client, admin_user):
+        """scope=1 should only return Scope 1 categories (no Scope 2/3 groups)."""
+        client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+        res = client.get("/api/dashboard/uncertainty?scope=1")
+>       assert res.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+
+new\server\tests\test_uncertainty.py:123: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 60354be1-f6d7-465a-a0ef-677bd31dd535]
+INFO     app:app.py:153 GET /api/dashboard/uncertainty 401 [0.000s] [ReqID: c58f11ce-e4ea-4354-80e8-9745f76311fa]
+_________________________ test_uncertainty_csv_export _________________________
+
+client = <FlaskClient <Flask 'app'>>, admin_user = <User 4>
+
+    def test_uncertainty_csv_export(client, admin_user):
+        """export=csv should return text/csv with correct headers."""
+        client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+        res = client.get("/api/dashboard/uncertainty?export=csv")
+>       assert res.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+
+new\server\tests\test_uncertainty.py:141: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 7baf017a-6362-48fb-bb04-233b8ea68b81]
+INFO     app:app.py:153 GET /api/dashboard/uncertainty 401 [0.000s] [ReqID: 7effbad2-dfab-4765-8c6d-abc22dfa1b45]
+______________________ test_uncertainty_95ci_correctness ______________________
+
+client = <FlaskClient <Flask 'app'>>, admin_user = <User 4>
+
+    def test_uncertainty_95ci_correctness(client, admin_user):
+        """
+        Verify that inventory_uncertainty_decimal \u2248 2 \xd7 inventory_uncertainty_1sigma.
+        This confirms the GUM �6.2 coverage factor k=2 is applied correctly.
+        """
+        client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+        res = client.get("/api/dashboard/uncertainty")
+>       assert res.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+
+new\server\tests\test_uncertainty.py:163: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 739e36ec-ccc3-4e12-a93e-28beac6e73e3]
+INFO     app:app.py:153 GET /api/dashboard/uncertainty 401 [0.000s] [ReqID: a3c016ae-a9ea-46e2-b462-d983b8a31d5c]
+_______________________ test_uncertainty_category_95ci ________________________
+
+client = <FlaskClient <Flask 'app'>>, admin_user = <User 4>
+
+    def test_uncertainty_category_95ci(client, admin_user):
+        """Verify per-category uncertainty_decimal is also 95% CI (2� 1sigma)."""
+        client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
+        res = client.get("/api/dashboard/uncertainty")
+>       assert res.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+
+new\server\tests\test_uncertainty.py:180: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 057c1578-211f-4a06-b738-4597153b0986]
+INFO     app:app.py:153 GET /api/dashboard/uncertainty 401 [0.000s] [ReqID: 30b80051-536f-4e09-8606-8bfc791d935e]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\packaging\core.py:99: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.datetime.utcnow()
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\writer\excel.py:292: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    workbook.properties.modified = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_scope_filter - ...
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_csv_export - as...
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_95ci_correctness
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_category_95ci
+4 failed, 427 passed, 13 warnings in 36.97s
+

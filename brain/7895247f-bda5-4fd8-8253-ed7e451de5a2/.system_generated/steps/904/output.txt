@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 20:39:24,856] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Facility fields: ['Industrial Zone', 'Arzew Port', 'Chlef Plant', 'HMD Field', 'OF', 'GF', 'GNL', 'GPL', 'Raffinerie', 'P�trochimie', 'Hassi Berkine South', 'Block 208']
+Emission fields: ['GF', 'Industrial Zone', 'OF']
+Emission regions: ['RNS', 'West', 'Region-AGT01', 'Region-AGT02', 'Region-AGT03', 'Region-AGT04', 'Region-AGT05', 'Region-AGT06', 'Region-AGT07', 'Region-AGT08', 'Region-AGT09', 'Region-AGT10', 'Testing Basin', 'In-Salah Basin', 'South Algeria', 'North Africa', 'HBNS', 'El Merk']
+

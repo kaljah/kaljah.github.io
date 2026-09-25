@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_sbti.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -48,7 +48,7 @@
+ 
+ 
+ def test_manage_sbti_validation_and_creation(client, admin_user):
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "sbti_admin@example.com", "password": "AdminPass123!"})
+ 
+     # 1. Invalid base_year
+     res = client.post("/api/manage/sbti", json={
+@@ -89,7 +89,7 @@
+ 
+ 
+ def test_sbti_trajectory_math_and_aliases(client, admin_user):
+-    client.post("/api/auth/login", json={"email": "a@a", "password": "a"})
++    client.post("/api/auth/login", json={"email": "sbti_admin@example.com", "password": "AdminPass123!"})
+ 
+     res = client.get("/api/dashboard/sbti-trajectory")
+     assert res.status_code == 200
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2494,6 +2494,22 @@
+                                                     ))}
+                                                 </select>
+                                             </div>
++                                            {facilityForm.boundary_type === 'Equity Share' && (
++                                                <div className="input-group">
++                                                    <label>Equity Share Percentage (%)</label>
++                                                    <input
++                                                        type="number"
++                                                        step="0.01"
++                                                        min="0"
++                                                        max="100"
++                                                        name="equity_share_pct"
++                                                        value={facilityForm.equity_share_pct !== undefined ? facilityForm.equity_share_pct : ''}
++                                                        onChange={(e) => setFacilityForm({ ...facilityForm, equity_share_pct: e.target.value })}
++                                                        className="mole-input"
++                                                        placeholder="e.g. 51.00"
++                                                    />
++                                                </div>
++                                            )}
+                                             <div className="input-group">
+                                                 <label>Supply Chain Segment</label>
+                                                 <select name="segment" value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

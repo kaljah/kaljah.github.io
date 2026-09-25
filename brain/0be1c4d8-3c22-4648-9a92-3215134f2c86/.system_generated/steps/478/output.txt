@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\units.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -193,4 +193,27 @@
+         + (ch4_val * gwp.get("CH4", 28.0))
+         + (n2o_val * gwp.get("N2O", 265.0))
+     )
++
++
++def normalize_efficiency(eff_val, default=0.0):
++    """
++    Defensively normalizes efficiency inputs provided as either fractional ratios (0.0 - 1.0)
++    or percentages (1.0 - 100.0) into a bounded 0.0 - 1.0 float.
++    Traps negative numbers and percentages > 1.0 to prevent negative emission inversions.
++    """
++    if eff_val in [None, "", "-"]:
++        return default
++    try:
++        val = float(str(eff_val).replace("%", "").strip())
++    except (ValueError, TypeError):
++        return default
++    if val < 0.0:
++        return 0.0
++    if val > 1.0:
++        val /= 100.0
++    return max(0.0, min(1.0, val))
++
++
++# Common alias for internal module usage
++_normalize_efficiency = normalize_efficiency
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

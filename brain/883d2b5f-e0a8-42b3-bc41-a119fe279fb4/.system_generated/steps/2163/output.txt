@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":520,"LineContent":"        def _sanitize_csv(val):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":528,"LineContent":"                _sanitize_csv(r.record_id or r.id),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":533,"LineContent":"                _sanitize_csv(r.process_type),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":534,"LineContent":"                _sanitize_csv(r.qa_flag),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":536,"LineContent":"                _sanitize_csv(r.status),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":540,"LineContent":"                _sanitize_csv(f\"S2-{r.id}\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":545,"LineContent":"                _sanitize_csv(r.source_type),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":546,"LineContent":"                _sanitize_csv(r.qa_flag),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":548,"LineContent":"                _sanitize_csv(r.status),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":552,"LineContent":"                _sanitize_csv(f\"S3-{r.id}\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":557,"LineContent":"                _sanitize_csv(r.category),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":558,"LineContent":"                _sanitize_csv(r.qa_flag),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":560,"LineContent":"                _sanitize_csv(r.status),"}

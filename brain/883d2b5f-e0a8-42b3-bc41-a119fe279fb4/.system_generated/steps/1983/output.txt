@@ -1,0 +1,45 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1274,9 +1274,9 @@
+     res = client.get("/api/qaqc/dashboard?year=2024")
+     assert res.status_code == 200
+     data = res.get_json()
+-    metrics = data.get("completeness_metrics", {})
+-    # Since all records in this set are non-combustion, fuel_completeness should be 100.0%
+-    assert metrics.get("fuel_completeness") == 100.0
++    metrics = data.get("diagnostics", {}).get("dimension_completeness", {})
++    # Since all records in this set are non-combustion, fuel_source completeness should be 100.0%
++    assert metrics.get("fuel_source") == 100.0
+ 
+ 
+ def test_scope2_authoritative_calculation_overrides_injected_co2e(client, test_users):
+@@ -1322,10 +1322,10 @@
+         emission_factors={},
+         uncertainties={"_factor_source": "default"},
+     )
+-    assert seal_res["status"] == "success"
+-    assert seal_res["emissions"]["totalCo2e"] > 0
++    assert seal_res is not None
++    assert seal_res["total_co2e"] > 0
+     # Uncertainty should reflect fugitive high variance (>20%)
+-    assert seal_res["emissions"]["uncertainty"] > 0.20
++    assert seal_res["results"]["ch4"]["relative_uncertainty"] > 0.20
+ 
+ 
+ def test_stoichiometry_dispatcher_gwp_propagation():
+@@ -1339,9 +1339,10 @@
+         uncertainties={"_factor_source": "default"},
+         gwp_dict={"CO2": 1, "CH4": 28, "N2O": 265},
+     )
+-    assert res["status"] == "success"
++    assert res is not None
+     # 1000 kg * 0.85 * (44.01/12.011) / 1000 = ~3.114 tonnes CO2
+-    assert pytest.approx(res["emissions"]["co2"], 0.01) == 3.114
++    assert pytest.approx(res["results"]["co2"]["value"], 0.01) == 3.114
++    assert pytest.approx(res["total_co2e"], 0.01) == 3.114
+ 
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

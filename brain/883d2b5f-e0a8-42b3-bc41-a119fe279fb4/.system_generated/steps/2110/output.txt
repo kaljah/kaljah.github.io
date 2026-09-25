@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":18,"LineContent":"def _is_admin_or_superuser(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":25,"LineContent":"def get_qaqc_dashboard():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":52,"LineContent":"        def _fac_filter(q, model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":141,"LineContent":"        def _norm_unc(pct_val, frac_val, default_val=0.05):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":472,"LineContent":"def export_qaqc_report():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":486,"LineContent":"        def _fac_filter(q, model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":520,"LineContent":"        def _sanitize_csv(val):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":575,"LineContent":"def resolve_flagged_record(record_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":649,"LineContent":"def bulk_resolve():"}

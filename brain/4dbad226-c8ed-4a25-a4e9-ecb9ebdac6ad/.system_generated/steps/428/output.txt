@@ -1,0 +1,9 @@
+
+The command exited with code 1.
+Output:
+<string>:7: SyntaxWarning: invalid escape sequence '\]'
+  File "<string>", line 7
+    page.fill('input[type=" text\]',
+             ^
+SyntaxError: '(' was never closed
+

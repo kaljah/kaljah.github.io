@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":548,"LineContent":"      window.location.href = `http://127.0.0.1:5000/api/emissions/template/csv?tier=${selectedTier}\u0026process=${selectedProcess}`;"}

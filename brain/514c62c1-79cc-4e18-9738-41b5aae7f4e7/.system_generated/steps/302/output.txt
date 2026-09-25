@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+196 Verified 2025 14 combustion 100.0 None
+197 Pending 2026 14 combustion 5000000.0 None
+200 Verified 2025 14 combustion 100.0 None
+201 Pending 2026 14 combustion 5000000.0 None
+206 Verified 2025 14 combustion 100.0 None
+207 Pending 2026 14 combustion 5000000.0 None
+217 Verified 2025 14 combustion 100.0 None
+218 Pending 2026 14 combustion 5000000.0 None
+226 Verified 2025 14 combustion 100.0 None
+227 Pending 2026 14 combustion 5000000.0 None
+

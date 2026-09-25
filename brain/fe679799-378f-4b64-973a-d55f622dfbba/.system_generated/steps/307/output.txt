@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+LocalAddress LocalPort OwningProcess       State
+------------ --------- -------------       -----
+127.0.0.1         9222         29096      Listen
+127.0.0.1         9222         29096 Established
+
+
+

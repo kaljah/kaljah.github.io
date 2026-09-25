@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\AUDIT_MEMORY.md","LineNumber":18,"LineContent":"- Emission quantities in DB are in TONNES (co2_emissions, ch4_emissions, n2o_emissions, co2e_total, Scope2Emission.co2e, Scope3Emission.co2e). Uncertainty columns are FRACTIONS (0.05 = 5%)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\AUDIT_MEMORY.md","LineNumber":52,"LineContent":"| H3 | FIXED | routes/data.py, managedata.py, scope2.py, scope3.py, satellite.py | Missing facility-scope checks on write/delete endpoints. | Added canonical `require_facility_access(user, facility_id)` in `utils.py` and enforced across all operational write and delete endpoints. |"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\AUDIT_MEMORY.md","LineNumber":98,"LineContent":"| B14 | FIXED | routes/scope2.py, scope3.py, background_processor.py | Case-sensitive units (MWh vs mwh), inconsistent default status. | Standardized case-insensitive unit handling and default `Pending` status. |"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\AUDIT_MEMORY.md","LineNumber":101,"LineContent":"| L2 | FIXED | background_processor.py `_process_row_scope2` | Steam MMBtu multiplied by electricity kg/kWh factor. | Routed steam/heat through boiler EF path (`_calc_indirect_steam`) with MMBtu conversion. |"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\AUDIT_MEMORY.md","LineNumber":102,"LineContent":"| L3 | FIXED | routes/scope2.py `_calc_indirect_steam`, calculations/indirect.py | Net efficiency \u003c= 0 fell back silently to 0.80. | Implemented multiplicative net efficiency `boiler_eff * (1.0 - trans_loss)` per D-03; rejects net efficiency \u003c= 0 with 422. |"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\AUDIT_MEMORY.md","LineNumber":103,"LineContent":"| L4 | FIXED | routes/scope2.py bulk_import_scope2 | Case-sensitive MWh/GWh comparisons. | Standardized case-insensitive comparisons. |"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\AUDIT_MEMORY.md","LineNumber":108,"LineContent":"| L9 | FIXED | routes/emissions.py, scope2.py, scope3.py | Activity edits without recalculation; client direct write of status and co2e. | Automatically recalculates co2e when activity data changes; strips direct `status` and `co2e` writes from client payloads; resets Verified to Pending for non-admins. |"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\180ff968-ccbc-46fc-95d3-05bcd6d6c4ec\\implementation_plan.md","LineNumber":98,"LineContent":"- `verify_scope2_data.js`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":65,"LineContent":"    from models import Emission, Scope2Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":72,"LineContent":"    total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":73,"LineContent":"        Scope2Emission.facility_id == facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":74,"LineContent":"        Scope2Emission.year == year"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\regression\\test_regression_archive.py","LineNumber":14,"LineContent":"    IndependentScope2Model,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":29,"LineContent":"from .ref_scope2 import ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":30,"LineContent":"    ref_calculate_scope2_electricity,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":31,"LineContent":"    ref_calculate_scope2_steam,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":32,"LineContent":"    ref_calculate_scope2_cooling,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":63,"LineContent":"    \"ref_calculate_scope2_electricity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":64,"LineContent":"    \"ref_calculate_scope2_steam\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":65,"LineContent":"    \"ref_calculate_scope2_cooling\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\scope2.py","LineNumber":9,"LineContent":"class IndependentScope2Model:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_all_apis_health.py","LineNumber":283,"LineContent":"        (\"GET\", \"/api/scope2\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\ref_scope2.py","LineNumber":13,"LineContent":"def ref_calculate_scope2_electricity("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\ref_scope2.py","LineNumber":34,"LineContent":"def ref_calculate_scope2_steam("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\ref_scope2.py","LineNumber":54,"LineContent":"def ref_calculate_scope2_cooling("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\docs\\validation-report.md","LineNumber":66,"LineContent":"│   │   ├── scope2.py                    \u003c- Grid electricity, steam net efficiency, CHP cogen"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\ref_intensity.py","LineNumber":12,"LineContent":"def ref_calculate_carbon_intensity(scope1_tco2e, scope2_tco2e, oil_bbl, gas_mscf):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\ref_intensity.py","LineNumber":17,"LineContent":"    total_tco2e = float(scope1_tco2e or 0.0) + float(scope2_tco2e or 0.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":5880,"LineContent":"     scope2_emissions = db.relationship('Scope2Emission', backref='facility_parent', cascade='all, delete-orphan', lazy=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":6695,"LineContent":"-from models import Emission, Facility, Scope2Emission, Scope3Emission, MitigationProject, MitigationRecord, Goal, BaseYearRecalculation, ProductionData, OgmpSurvey, CbamProductExport"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":6696,"LineContent":"+from models import Emission, Facility, Scope2Emission, Scope3Emission, MitigationProject, MitigationRecord, Goal, BaseYearRecalculation, ProductionData, OgmpSurvey"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":6866,"LineContent":"             co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = flare_int = biogenic_int = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":7040,"LineContent":"-    from models import Emission, Scope2Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":7046,"LineContent":"-    total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":7047,"LineContent":"-        Scope2Emission.facility_id == facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":7048,"LineContent":"-        Scope2Emission.year == year"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":7508,"LineContent":"+from models import Emission, Facility, Scope2Emission, Scope3Emission, OgmpSurvey, ProductionData, LevelUpgradeLog"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":5880,"LineContent":"     scope2_emissions = db.relationship('Scope2Emission', backref='facility_parent', cascade='all, delete-orphan', lazy=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":6695,"LineContent":"-from models import Emission, Facility, Scope2Emission, Scope3Emission, MitigationProject, MitigationRecord, Goal, BaseYearRecalculation, ProductionData, OgmpSurvey, CbamProductExport"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":6696,"LineContent":"+from models import Emission, Facility, Scope2Emission, Scope3Emission, MitigationProject, MitigationRecord, Goal, BaseYearRecalculation, ProductionData, OgmpSurvey"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":6866,"LineContent":"             co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = flare_int = biogenic_int = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":7040,"LineContent":"-    from models import Emission, Scope2Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":7046,"LineContent":"-    total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":7047,"LineContent":"-        Scope2Emission.facility_id == facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":7048,"LineContent":"-        Scope2Emission.year == year"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":7508,"LineContent":"+from models import Emission, Facility, Scope2Emission, Scope3Emission, OgmpSurvey, ProductionData, LevelUpgradeLog"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\docs\\validation\\00-repository-audit.md","LineNumber":43,"LineContent":"│   │   │   ├── scope2.py              ← Scope 2 endpoints"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\docs\\validation\\00-repository-audit.md","LineNumber":252,"LineContent":"| Scope 2 | ✅ **IMPLEMENTED** | `routes/scope2.py`, `calculations/indirect.py` |"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\docs\\validation\\00-repository-audit.md","LineNumber":283,"LineContent":"12. `Scope2Emission` — Scope 2 records"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\property\\test_clean_properties.py","LineNumber":26,"LineContent":"    ref_calculate_scope2_electricity,"}
+(...496 more results not shown)

@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope2Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -283,11 +283,17 @@
+     toast.success("Records imported successfully!");
+   };
+ 
+-  const handleDelete = async (id) => {
+-    if (!window.confirm("Delete this entry?")) return;
+-    try {
+-      await api.delete(`/scope2/${id}`);
++  const handleDelete = (id) => {
++    setDeleteTargetId(id);
++  };
++
++  const handleConfirmDelete = async () => {
++    if (!deleteTargetId) return;
++    setIsDeleting(true);
++    try {
++      await api.delete(`/scope2/${deleteTargetId}`);
+       toast.success("Entry deleted");
++      setDeleteTargetId(null);
+       loadEntries();
+     } catch (error) {
+       console.error("Failed to delete:", error);
+@@ -294,3 +294,5 @@
++    } finally {
++      setIsDeleting(false);
+     }
+   };
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

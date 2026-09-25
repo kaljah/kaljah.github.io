@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -458,6 +458,10 @@
+                     "n2_comp": safe_frac("n2") or safe_frac("n2_mol"),
+                 }
+ 
++                comb_eff = flat_inputs.get("combustion_efficiency") or flat_inputs.get("combustion_eff") or flat_inputs.get("eta_c")
++                dest_eff = flat_inputs.get("destruction_efficiency") or flat_inputs.get("destruction_eff") or flat_inputs.get("eta_d")
++                ef_n2o_val = emission_factors.get("n2o") or emission_factors.get("ef_n2o") or flat_inputs.get("ef_n2o") or 0.0
++
+                 return calculator.calculate(
+                     gas_volume=vol_m3,
+                     ch4_fraction=ch4_content,
+@@ -468,7 +468,9 @@
+                     ),
+                     fuel_unit="m3",
+                     fuel_type=flat_inputs.get("fuel_type"),
+-                    ef_n2o=emission_factors.get("n2o", 0.0),
++                    ef_n2o=float(ef_n2o_val or 0.0),
++                    combustion_efficiency=comb_eff,
++                    destruction_efficiency=dest_eff,
+                     operating_temperature=flat_inputs.get("operating_temperature")
+                     or flat_inputs.get("temperature"),
+                     temp_unit=flat_inputs.get("temp_unit", "C"),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

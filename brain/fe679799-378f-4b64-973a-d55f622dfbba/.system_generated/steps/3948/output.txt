@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -982,12 +982,20 @@
+         fuel_type: formData.fuel || undefined,
+         fuel: formData.fuel || undefined,
+         custom_factor_id:
+-          sourceType === "custom" ? parseInt(formData.fuel) : undefined,
+-
+-        // HHV & Combustion Parameters — only for specific factor mode (API Compendium 2021 §5)
++          sourceType === "custom" && tier2Mode === "custom_factor"
++            ? parseInt(formData.fuel)
++            : undefined,
++
++        // Tier 2 & Tier 3 Fuel Properties (HHV & Density) & Audit References
++        density: fuelDensity ? parseFloat(fuelDensity) : undefined,
++        fuel_density: fuelDensity ? parseFloat(fuelDensity) : undefined,
++        data_source_ref: dataSourceRef || undefined,
++
++        // HHV & Combustion Parameters — for Tier 2 custom fuel properties or Tier 3 specific factor mode
+         // Convert user-entered HHV to BTU/unit matching the fuel quantity unit
+         ...(() => {
+-          if (sourceType !== "specific" || !formData.hhv) return {};
++          const isTier2Override = sourceType === "custom" && tier2Mode === "override";
++          if ((sourceType !== "specific" && !isTier2Override) || !formData.hhv) return {};
+           const rawHHV = parseFloat(formData.hhv);
+           const hhvUnit = formData.hhv_unit || "BTU/scf";
+           const fuelUnit = (formData.unit || finalUnit || "scf").toLowerCase();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

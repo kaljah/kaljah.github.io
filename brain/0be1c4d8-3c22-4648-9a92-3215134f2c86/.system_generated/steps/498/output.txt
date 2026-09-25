@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -38,7 +38,7 @@
+         and flared_mmbtu = flared_scf * (hhv or 1020.0) / 1e6.
+         Catalog ef_n2o is in kg/MMBtu (default 0.0001 kg/MMBtu); convert to tonnes: / 1000.0.
+     """
+-    ctrl = max(0.0, min(1.0, float(ctrl_eff or 0.0)))
++    ctrl = normalize_efficiency(ctrl_eff, default=0.0)
+     vented_frac = 1.0 - ctrl
+ 
+     vented_ch4 = ch4_tonnes * vented_frac
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

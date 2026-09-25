@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -188,7 +188,7 @@
+         factor.version = data["version"]
+ 
+     factor.updated_by = user_id
+-    factor.updated_at = datetime.datetime.utcnow()
++    factor.updated_at = datetime.datetime.now(datetime.timezone.utc)
+ 
+     try:
+         db.session.commit()
+@@ -217,7 +217,7 @@
+ def delete_custom_factor(factor_id):
+     """Delete a custom emission factor (Super User / Admin only)"""
+     user_id = session.get("user_id")
+-    user = User.query.get(user_id)
++    user = db.session.get(User, user_id)
+ 
+     factor = db.session.get(CustomFactor, factor_id)
+     if not factor:
+@@ -265,7 +265,7 @@
+ def import_custom_factors():
+     """Bulk import custom factors from CSV/Excel (Super User / Admin only)"""
+     user_id = session.get("user_id")
+-    user = User.query.get(user_id)
++    user = db.session.get(User, user_id)
+ 
+     data = request.get_json()
+     factors_data = data.get("factors", [])
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

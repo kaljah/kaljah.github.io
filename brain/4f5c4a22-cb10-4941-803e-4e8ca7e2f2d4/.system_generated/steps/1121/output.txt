@@ -1,0 +1,135 @@
+
+The command exited with code 1.
+Output:
+<truncated 81 lines>
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.result-overlay')
+    Expected: visible
+    Timeout: 12000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.result-overlay') with timeout 12000ms
+      - waiting for locator('.result-overlay')
+
+
+      276 |       // Wait for Result Overlay
+      277 |       const resultOverlay = page.locator('.result-overlay');
+    > 278 |       await expect(resultOverlay).toBeVisible({ timeout: 12000 });
+          |                                   ^
+      279 |
+      280 |       // Screenshot
+      281 |       const safeName = sc.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:278:35
+
+    Error Context: test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_scope1_extended_scenarios.spec.js:303:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 2. Tier 3 Extended Engineering Scenarios: Drilling, Fugitives, Controlled Tanks & Advanced Engineering 
+
+    Test timeout of 360000ms exceeded.
+
+    Error: locator.scrollIntoViewIfNeeded: Test timeout of 360000ms exceeded.
+    Call log:
+      - waiting for locator('.input-group:has-text("Emission Factor") .dropdown-selected').first()
+
+
+      125 | async function selectDropdownOption(page, groupSelector, optionText) {
+      126 |   const dd = page.locator(`${groupSelector} .dropdown-selected`).first();
+    > 127 |   await dd.scrollIntoViewIfNeeded();
+          |            ^
+      128 |   await dd.click();
+      129 |   await page.waitForTimeout(300);
+      130 |
+        at selectDropdownOption (C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:127:12)
+        at Object.setup (C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:371:17)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:607:7
+
+    Error Context: test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Test timeout of 360000ms exceeded.
+
+    Error: locator.scrollIntoViewIfNeeded: Test timeout of 360000ms exceeded.
+    Call log:
+      - waiting for locator('.input-group:has-text("Emission Factor") .dropdown-selected').first()
+
+
+      125 | async function selectDropdownOption(page, groupSelector, optionText) {
+      126 |   const dd = page.locator(`${groupSelector} .dropdown-selected`).first();
+    > 127 |   await dd.scrollIntoViewIfNeeded();
+          |            ^
+      128 |   await dd.click();
+      129 |   await page.waitForTimeout(300);
+      130 |
+        at selectDropdownOption (C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:127:12)
+        at Object.setup (C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:371:17)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:607:7
+
+    Error Context: test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_extended_scena-1c158--Tanks-Advanced-Engineering-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_scope1_extended_scenarios.spec.js:649:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 3. Maker-Checker Batch Approval & Post-Calculation KPI Recalculation 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      673 |       });
+      674 |       console.log('[BATCH APPROVE STATUS]', approveResp.status());
+    > 675 |       expect(approveResp.ok()).toBeTruthy();
+          |                                ^
+      676 |     }
+      677 |
+      678 |     // Verify all emissions in DB are now Verified
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:675:32
+
+    Error Context: test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      673 |       });
+      674 |       console.log('[BATCH APPROVE STATUS]', approveResp.status());
+    > 675 |       expect(approveResp.ok()).toBeTruthy();
+          |                                ^
+      676 |     }
+      677 |
+      678 |     // Verify all emissions in DB are now Verified
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:675:32
+
+    Error Context: test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_extended_scena-ddca0-lculation-KPI-Recalculation-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e\test_scope1_extended_scenarios.spec.js:144:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 1. Tier 1 Extended Scenarios: Fuels, Units, Streams, Equipment Factors & Uncertainties 
+    [chromium] › e2e\test_scope1_extended_scenarios.spec.js:303:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 2. Tier 3 Extended Engineering Scenarios: Drilling, Fugitives, Controlled Tanks & Advanced Engineering 
+    [chromium] › e2e\test_scope1_extended_scenarios.spec.js:649:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 3. Maker-Checker Batch Approval & Post-Calculation KPI Recalculation 
+

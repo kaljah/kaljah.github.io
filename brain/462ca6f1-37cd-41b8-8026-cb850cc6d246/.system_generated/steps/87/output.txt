@@ -1,0 +1,83 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 41, in <module>
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2084' in position 88: character maps to <undefined>
+Total client factors: 120
+Total backend factors: 84
+Client factors missing in backend: 58
+  Missing: Acetylene
+  Missing: Propylene
+  Missing: Butane
+  Missing: Isobutane
+  Missing: Naphtha
+  Missing: Compressed Natural Gas (CNG)
+  Missing: Liquefied Natural Gas (LNG)
+  Missing: Propane (Flaring)
+  Missing: Butane (Flaring)
+  Missing: Ethylene (Flaring)
+  Missing: Propylene (Flaring)
+  Missing: Ethanol (100%)
+  Missing: Biodiesel (100%)
+  Missing: Lubricants
+  Missing: Waste Oil
+  Missing: Wood / Wood Waste
+  Missing: Tires
+  Missing: Glycol Dehydrator
+  Missing: Desiccant Dehydrator
+  Missing: Pneumatic Pump - Chemical Injection (Piston)
+  Missing: Pneumatic Pump - Chemical Injection (Diaphragm)
+  Missing: Fugitive - Valve (Light Oil)
+  Missing: Fugitive - Valve (Heavy Oil)
+  Missing: Fugitive - Connector (Light Oil)
+  Missing: Fugitive - Connector (Heavy Oil)
+  Missing: Fugitive - Open-Ended Line (Gas)
+  Missing: Fugitive - Open-Ended Line (Light Oil)
+  Missing: Fugitive - Pressure Relief Valve (Gas)
+  Missing: Fugitive - Pressure Relief Valve (Light Oil)
+  Missing: Fugitive - Compressor Seal (Centrifugal - Wet)
+  Missing: Fugitive - Compressor Seal (Centrifugal - Dry)
+  Missing: Fugitive - Compressor Seal (Reciprocating)
+  Missing: Fugitive - Pump Seal (Gas)
+  Missing: Fugitive - Pump Seal (Light Oil)
+  Missing: Fugitive - Pipeline Leaks (Gas)
+  Missing: Fugitive - Pipeline Leaks (Oil)
+  Missing: Methane Flashing - Crude Oil (Small Tank)
+  Missing: Methane Flashing - Crude Oil (Large Tank)
+  Missing: Methane Flashing - Production Condensate (Small Tank)
+  Missing: Methane Flashing - Production Condensate (Large Tank)
+  Missing: Methane Flashing - Produced Water (Tank)
+  Missing: Dehydrator - Glycol (Controlled)
+  Missing: Amine Unit - Venting (Generic)
+  Missing: Loading - Crude Oil (Rail)
+  Missing: Loading - Condensate (Tank Truck)
+  Missing: Loading - Gasoline (Tank Truck)
+  Missing: Separator Venting - Gas Well
+  Missing: Separator Venting - Oil Well
+  Missing: Wastewater - CH4 (Open System)
+  Missing: Blowdown - Compressor (Reciprocating)
+  Missing: Blowdown - Compressor (Centrifugal)
+  Missing: Blowdown - Pipeline
+  Missing: Dehydrator - TEG (No Controls)
+  Missing: Dehydrator - TEG (Flash Tank)
+  Missing: Dehydrator - TEG (Condenser)
+  Missing: Pneumatic Device - High Bleed
+  Missing: Pneumatic Device - Low Bleed
+  Missing: Pneumatic Device - Intermittent
+Mismatched values between client and backend: 16
+  Pneumatic Controller - High Bleed -> unit: client=tonnes/yr vs backend=tonnes CH4/yr
+  Pneumatic Controller - Low Bleed -> unit: client=tonnes/yr vs backend=tonnes CH4/yr
+  Pneumatic Controller - Intermittent -> unit: client=tonnes/yr vs backend=tonnes CH4/yr
+  Pneumatic Controller - Continuous Vent (T&S) -> unit: client=tonnes/yr vs backend=tonnes CH4/yr
+  Fugitive - Valve (Gas/Vapor) -> ch4: client=0.026 vs backend=0.0045
+  Fugitive - Valve (Gas/Vapor) -> unit: client=tonnes/yr vs backend=kg/hr
+  Fugitive - Connector (Gas/Vapor) -> ch4: client=0.003 vs backend=0.0002
+  Fugitive - Connector (Gas/Vapor) -> unit: client=tonnes/yr vs backend=kg/hr
+  Fugitive - Flange (Gas/Vapor) -> ch4: client=0.003 vs backend=0.00039
+  Fugitive - Flange (Gas/Vapor) -> unit: client=tonnes/yr vs backend=kg/hr
+  Drilling - Mud Degassing (Water Based) -> ch4: client=0.18 vs backend=0.15
+

@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Login.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -82,7 +82,7 @@
+   const [showIntro, setShowIntro] = useState(true);
+   const [introFading, setIntroFading] = useState(false);
+ 
+-  const { login } = useAuth();
++  const { login, sessionExpired, setSessionExpired } = useAuth();
+   const navigate = useNavigate();
+ 
+   const handleIntroEnd = () => {
+@@ -92,6 +92,7 @@
+   const handleLogin = async (e) => {
+     e.preventDefault();
+     setError("");
++    if (sessionExpired) setSessionExpired(false);
+     try {
+       await login(email, password);
+       navigate("/");
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,19 @@
+{"name":".graphify_analysis.json","sizeBytes":"73132"}
+{"name":".graphify_labels.json","sizeBytes":"7563"}
+{"name":".graphify_labels.json.sig","sizeBytes":"5533"}
+{"name":".graphify_root","sizeBytes":"1"}
+{"name":".graphify_semantic_marker","sizeBytes":"22"}
+{"name":"2026-08-11","isDir":true}
+{"name":"2026-09-01","isDir":true}
+{"name":"2026-09-05","isDir":true}
+{"name":"2026-09-08","isDir":true}
+{"name":"2026-09-12","isDir":true}
+{"name":"2026-09-13","isDir":true}
+{"name":"2026-09-14","isDir":true}
+{"name":"GRAPH_REPORT.md","sizeBytes":"35426"}
+{"name":"cache","isDir":true}
+{"name":"graph.html","sizeBytes":"2136855"}
+{"name":"graph.json","sizeBytes":"2655939"}
+{"name":"manifest.json","sizeBytes":"47392"}
+
+Summary: This directory contains 8 subdirectories and 9 files.

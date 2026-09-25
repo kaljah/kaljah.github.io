@@ -1,0 +1,117 @@
+
+The command exited with code 0.
+Output:
+<truncated 101 lines>
+  new\client\src\utils\EmissionFactors.js:937:    code: "DehyUncont",
+  new\client\src\utils\EmissionFactors.js:938:    // API Compendium 5.3: ~0.82 kg CH4 per MMscf throughput  0.00082 
+tonnes/MMscf
+  new\client\src\utils\EmissionFactors.js:942:    unit: "tonnes/MMscf",
+  new\client\src\utils\EmissionFactors.js:943:    baseUnit: "MMscf",
+> new\client\src\utils\EmissionFactors.js:944:    usage: ["dehydrator"],
+> new\client\src\utils\EmissionFactors.js:945:    description: "Glycol Dehydrator Venting (Uncontrolled)",
+  new\client\src\utils\EmissionFactors.js:946:    uncertainty: { ch4: 0.5 },
+  new\client\src\utils\EmissionFactors.js:947:  },
+> new\client\src\utils\EmissionFactors.js:948:  "Dehydrator - Glycol (Controlled)": {
+  new\client\src\utils\EmissionFactors.js:949:    code: "DehyCont",
+  new\client\src\utils\EmissionFactors.js:950:    // Controlled: ~90% reduction from uncontrolled
+  new\client\src\utils\EmissionFactors.js:954:    unit: "tonnes/MMscf",
+  new\client\src\utils\EmissionFactors.js:955:    baseUnit: "MMscf",
+> new\client\src\utils\EmissionFactors.js:956:    usage: ["dehydrator"],
+> new\client\src\utils\EmissionFactors.js:957:    description: "Glycol Dehydrator Venting (w/ Emission Control)",
+  new\client\src\utils\EmissionFactors.js:958:    uncertainty: { ch4: 0.5 },
+  new\client\src\utils\EmissionFactors.js:959:  },
+  new\client\src\utils\EmissionFactors.js:1097:  },
+  new\client\src\utils\EmissionFactors.js:1098:
+> new\client\src\utils\EmissionFactors.js:1099:  // --- DEHYDRATORS (API Section 5.3) ---
+> new\client\src\utils\EmissionFactors.js:1100:  "Dehydrator - TEG (No Controls)": {
+> new\client\src\utils\EmissionFactors.js:1101:    code: "DehydTEGNoCtrl",
+  new\client\src\utils\EmissionFactors.js:1102:    ch4: 37.85,
+  new\client\src\utils\EmissionFactors.js:1103:    co2: 0,
+  new\client\src\utils\EmissionFactors.js:1104:    n2o: 0,
+> new\client\src\utils\EmissionFactors.js:1105:    unit: "scf/gal TEG",
+> new\client\src\utils\EmissionFactors.js:1106:    usage: ["dehydrator"],
+> new\client\src\utils\EmissionFactors.js:1107:    description: "API 5.3 - TEG Dehydrator without emission controls",
+  new\client\src\utils\EmissionFactors.js:1108:    uncertainty: { ch4: 0.5 },
+  new\client\src\utils\EmissionFactors.js:1109:  },
+> new\client\src\utils\EmissionFactors.js:1110:  "Dehydrator - TEG (Flash Tank)": {
+> new\client\src\utils\EmissionFactors.js:1111:    code: "DehydTEGFlash",
+  new\client\src\utils\EmissionFactors.js:1112:    ch4: 15.14,
+  new\client\src\utils\EmissionFactors.js:1113:    co2: 0,
+  new\client\src\utils\EmissionFactors.js:1114:    n2o: 0,
+> new\client\src\utils\EmissionFactors.js:1115:    unit: "scf/gal TEG",
+> new\client\src\utils\EmissionFactors.js:1116:    usage: ["dehydrator"],
+> new\client\src\utils\EmissionFactors.js:1117:    description: "API 5.3 - TEG Dehydrator with flash tank separator",
+  new\client\src\utils\EmissionFactors.js:1118:    uncertainty: { ch4: 0.5 },
+  new\client\src\utils\EmissionFactors.js:1119:  },
+> new\client\src\utils\EmissionFactors.js:1120:  "Dehydrator - TEG (Condenser)": {
+> new\client\src\utils\EmissionFactors.js:1121:    code: "DehydTEGCond",
+  new\client\src\utils\EmissionFactors.js:1122:    ch4: 3.785,
+  new\client\src\utils\EmissionFactors.js:1123:    co2: 0,
+  new\client\src\utils\EmissionFactors.js:1124:    n2o: 0,
+> new\client\src\utils\EmissionFactors.js:1125:    unit: "scf/gal TEG",
+> new\client\src\utils\EmissionFactors.js:1126:    usage: ["dehydrator"],
+> new\client\src\utils\EmissionFactors.js:1127:    description: "API 5.3 - TEG Dehydrator with condenser",
+  new\client\src\utils\EmissionFactors.js:1128:    uncertainty: { ch4: 0.5 },
+  new\client\src\utils\EmissionFactors.js:1129:  },
+  new\client\src\utils\EmissionFactors.js:1130:
+> new\client\src\utils\EmissionFactors.js:1131:  // --- PNEUMATIC DEVICES (API Section 5.2) ---
+> new\client\src\utils\EmissionFactors.js:1132:  "Pneumatic Device - High Bleed": {
+  new\client\src\utils\EmissionFactors.js:1133:    code: "PneumHighBleed",
+  new\client\src\utils\EmissionFactors.js:1134:    ch4: 37.3,
+  new\client\src\utils\EmissionFactors.js:1136:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:1137:    unit: "scf/hr/device",
+> new\client\src\utils\EmissionFactors.js:1138:    usage: ["pneumatic"],
+> new\client\src\utils\EmissionFactors.js:1139:    description: "API 5.2 - High-bleed pneumatic device",
+  new\client\src\utils\EmissionFactors.js:1140:    uncertainty: { ch4: 0.3 },
+  new\client\src\utils\EmissionFactors.js:1141:  },
+> new\client\src\utils\EmissionFactors.js:1142:  "Pneumatic Device - Low Bleed": {
+  new\client\src\utils\EmissionFactors.js:1143:    code: "PneumLowBleed",
+  new\client\src\utils\EmissionFactors.js:1144:    ch4: 1.39,
+  new\client\src\utils\EmissionFactors.js:1146:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:1147:    unit: "scf/hr/device",
+> new\client\src\utils\EmissionFactors.js:1148:    usage: ["pneumatic"],
+> new\client\src\utils\EmissionFactors.js:1149:    description: "API 5.2 - Low-bleed pneumatic device",
+  new\client\src\utils\EmissionFactors.js:1150:    uncertainty: { ch4: 0.3 },
+  new\client\src\utils\EmissionFactors.js:1151:  },
+> new\client\src\utils\EmissionFactors.js:1152:  "Pneumatic Device - Intermittent": {
+  new\client\src\utils\EmissionFactors.js:1153:    code: "PneumIntermit",
+  new\client\src\utils\EmissionFactors.js:1154:    ch4: 13.5,
+  new\client\src\utils\EmissionFactors.js:1156:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:1157:    unit: "scf/year/device",
+> new\client\src\utils\EmissionFactors.js:1158:    usage: ["pneumatic"],
+> new\client\src\utils\EmissionFactors.js:1159:    description: "API 5.2 - Intermittent bleed pneumatic device",
+  new\client\src\utils\EmissionFactors.js:1160:    uncertainty: { ch4: 0.3 },
+  new\client\src\utils\EmissionFactors.js:1161:  },
+  new\client\src\utils\EmissionFactors.js:1328:  safety_flaring: "Safety Flaring",
+  new\client\src\utils\EmissionFactors.js:1329:  venting: "Venting (Blowdown)",
+> new\client\src\utils\EmissionFactors.js:1330:  pneumatic: "Pneumatic Device",
+  new\client\src\utils\EmissionFactors.js:1331:  tank_flashing: "Storage Tank - Flashing/Events",
+  new\client\src\utils\EmissionFactors.js:1332:  tank_working: "Storage Tank - Working Losses",
+  new\client\src\utils\EmissionFactors.js:1336:  unloading: "Liquids Unloading",
+  new\client\src\utils\EmissionFactors.js:1337:  agr: "Acid Gas Removal (AGR)",
+> new\client\src\utils\EmissionFactors.js:1338:  dehydrator: "Dehydrator",
+  new\client\src\utils\EmissionFactors.js:1339:  mobile: "Mobile Combustion",
+  new\client\src\utils\EmissionFactors.js:1340:  fugitive: "Fugitive Emissions",
+  new\client\src\utils\EmissionFactors.js:1363:      "safety_flaring",
+  new\client\src\utils\EmissionFactors.js:1364:      "venting",
+> new\client\src\utils\EmissionFactors.js:1365:      "pneumatic",
+  new\client\src\utils\EmissionFactors.js:1366:      "tank_flashing",
+  new\client\src\utils\EmissionFactors.js:1367:      "tank_working",
+  new\client\src\utils\EmissionFactors.js:1378:    options: [
+  new\client\src\utils\EmissionFactors.js:1379:      "agr",
+> new\client\src\utils\EmissionFactors.js:1380:      "dehydrator",
+  new\client\src\utils\EmissionFactors.js:1381:      "combustion",
+  new\client\src\utils\EmissionFactors.js:1382:      "flaring",
+  new\client\src\utils\EmissionFactors.js:1385:      "safety_flaring",
+  new\client\src\utils\EmissionFactors.js:1386:      "venting",
+> new\client\src\utils\EmissionFactors.js:1387:      "pneumatic",
+  new\client\src\utils\EmissionFactors.js:1388:      "tank_flashing",
+  new\client\src\utils\EmissionFactors.js:1389:      "tank_working",
+  new\client\src\utils\EmissionFactors.js:1404:      "safety_flaring",
+  new\client\src\utils\EmissionFactors.js:1405:      "venting",
+> new\client\src\utils\EmissionFactors.js:1406:      "pneumatic",
+  new\client\src\utils\EmissionFactors.js:1407:      "tank_flashing",
+  new\client\src\utils\EmissionFactors.js:1408:      "tank_working",
+
+
+

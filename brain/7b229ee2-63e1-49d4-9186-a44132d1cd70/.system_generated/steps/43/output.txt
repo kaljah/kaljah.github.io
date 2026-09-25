@@ -1,0 +1,95 @@
+
+The command exited with code 0.
+Output:
+<truncated 192 lines>
+new/server/routes/emissions.py:3502:                    factor_data["uncertainty"] = {
+new/server/routes/emissions.py:3504:                            getattr(cf, "co2_uncertainty", None)
+new/server/routes/emissions.py:3505:                            or getattr(cf, "uncertainty", 0)
+new/server/routes/emissions.py:3510:                            getattr(cf, "ch4_uncertainty", None)
+new/server/routes/emissions.py:3511:                            or getattr(cf, "uncertainty", 0)
+new/server/routes/emissions.py:3516:                            getattr(cf, "n2o_uncertainty", None)
+new/server/routes/emissions.py:3517:                            or getattr(cf, "uncertainty", 0)
+new/server/routes/emissions.py:3522:                elif cf.uncertainty and cf.uncertainty > 0:
+new/server/routes/emissions.py:3523:                    factor_data["uncertainty"] = {
+new/server/routes/emissions.py:3524:                        "co2": float(cf.uncertainty or 0) / 100.0,
+new/server/routes/emissions.py:3525:                        "ch4": float(cf.uncertainty or 0) / 100.0,
+new/server/routes/emissions.py:3526:                        "n2o": float(cf.uncertainty or 0) / 100.0,
+new/server/routes/emissions.py:3530:                    if "uncertainty" in parent_factor:
+new/server/routes/emissions.py:3531:                        factor_data["uncertainty"] = parent_factor["uncertainty"]
+new/server/routes/emissions.py:3571:            # Update record uncertainty
+new/server/routes/emissions.py:3572:            u_dict = factor_data.get("uncertainty", {})
+new/server/routes/emissions.py:3573:            record.uncertainty = (
+new/server/routes/emissions.py:3578:            record.uncertainty_ch4 = (
+new/server/routes/emissions.py:3583:            record.uncertainty_n2o = (
+new/server/routes/emissions.py:3590:            user_unc = data.get("user_uncertainty")
+new/server/routes/emissions.py:3593:                    record.uncertainty = float(user_unc["co2"]) / 100.0
+new/server/routes/emissions.py:3595:                    record.uncertainty_ch4 = float(user_unc["ch4"]) / 100.0
+new/server/routes/emissions.py:3597:                    record.uncertainty_n2o = float(user_unc["n2o"]) / 100.0
+new/server/routes/emissions.py:3865:                    if cf.co2_uncertainty or cf.ch4_uncertainty or cf.n2o_uncertainty:
+new/server/routes/emissions.py:3866:                        factor_data["uncertainty"] = {
+new/server/routes/emissions.py:3868:                                getattr(cf, "co2_uncertainty", None)
+new/server/routes/emissions.py:3869:                                or getattr(cf, "uncertainty", 0)
+new/server/routes/emissions.py:3874:                                getattr(cf, "ch4_uncertainty", None)
+new/server/routes/emissions.py:3875:                                or getattr(cf, "uncertainty", 0)
+new/server/routes/emissions.py:3880:                                getattr(cf, "n2o_uncertainty", None)
+new/server/routes/emissions.py:3881:                                or getattr(cf, "uncertainty", 0)
+new/server/routes/emissions.py:3886:                    elif cf.uncertainty and cf.uncertainty > 0:
+new/server/routes/emissions.py:3887:                        factor_data["uncertainty"] = {
+new/server/routes/emissions.py:3888:                            "co2": float(cf.uncertainty or 0) / 100.0,
+new/server/routes/emissions.py:3889:                            "ch4": float(cf.uncertainty or 0) / 100.0,
+new/server/routes/emissions.py:3890:                            "n2o": float(cf.uncertainty or 0) / 100.0,
+new/server/routes/emissions.py:3894:                        if "uncertainty" in parent_factor:
+new/server/routes/emissions.py:3895:                            factor_data["uncertainty"] = parent_factor["uncertainty"]
+new/server/routes/emissions.py:3949:                uncertainty=(
+new/server/routes/emissions.py:3950:                    factor_data.get("uncertainty", {}).get("co2", 0)
+new/server/routes/emissions.py:3951:                    if isinstance(factor_data.get("uncertainty"), dict)
+new/server/routes/emissions.py:3952:                    else (factor_data.get("uncertainty") or 0)
+new/server/routes/qaqc.py:27:    Returns aggregated uncertainty (IPCC SRSS) and flagged anomaly records.
+new/server/routes/qaqc.py:179:            Emission.uncertainty_pct,
+new/server/routes/qaqc.py:180:            Emission.uncertainty,
+new/server/routes/qaqc.py:191:            Scope2Emission.uncertainty_pct,
+new/server/routes/qaqc.py:192:            Scope2Emission.uncertainty,
+new/server/routes/qaqc.py:203:            Scope3Emission.uncertainty_pct,
+new/server/routes/qaqc.py:204:            Scope3Emission.uncertainty,
+new/server/routes/qaqc.py:214:        overall_uncertainty = (
+new/server/routes/qaqc.py:524:                "description": "No custom or site-specific emission factors registered. Adding facility-calibrated factors reduces Tier 1 uncertainty.",
+new/server/routes/qaqc.py:572:            "tier1_uncertainty": {
+new/server/routes/qaqc.py:573:                "overall": overall_uncertainty,
+new/server/routes/scope2.py:7:from calculations.uncertainty import propagate_uncertainty, Tier
+new/server/routes/scope2.py:218:    # Calculate uncertainty
+new/server/routes/scope2.py:219:    provided_uncertainty = data.get("uncertainty")
+new/server/routes/scope2.py:220:    if provided_uncertainty is not None:
+new/server/routes/scope2.py:221:        final_uncertainty = float(provided_uncertainty)
+new/server/routes/scope2.py:223:        # Default Scope 2 uncertainty (5% EF, 2% AD -> ~5.4% combined)
+new/server/routes/scope2.py:224:        u_res = propagate_uncertainty(
+new/server/routes/scope2.py:226:            ef_uncertainty=0.05,
+new/server/routes/scope2.py:227:            activity_uncertainty=0.02,
+new/server/routes/scope2.py:232:        final_uncertainty = u_res["relative_uncertainty"]
+new/server/routes/scope2.py:267:        uncertainty=final_uncertainty,
+new/server/routes/scope2.py:329:                    "uncertainty": final_uncertainty,
+new/server/routes/scope2.py:343:                    "uncertainty": final_uncertainty,
+new/server/routes/scope2.py:463:    if "uncertainty" in data:
+new/server/routes/scope2.py:464:        emission.uncertainty = float(data["uncertainty"] or 0)
+new/server/routes/scope2.py:626:            # Default Scope 2 uncertainty
+new/server/routes/scope2.py:627:            u_res = propagate_uncertainty(
+new/server/routes/scope2.py:629:                ef_uncertainty=0.05,
+new/server/routes/scope2.py:630:                activity_uncertainty=0.02,
+new/server/routes/scope2.py:635:            final_uncertainty = u_res["relative_uncertainty"]
+new/server/routes/scope2.py:645:                uncertainty=final_uncertainty,
+new/server/routes/scope3.py:6:from calculations.uncertainty import propagate_uncertainty, Tier
+new/server/routes/scope3.py:56:                "uncertainty": float(e.uncertainty) if e.uncertainty is not None else None,
+new/server/routes/scope3.py:125:    # Calculate uncertainty
+new/server/routes/scope3.py:126:    provided_uncertainty = data.get("uncertainty")
+new/server/routes/scope3.py:127:    if provided_uncertainty is not None:
+new/server/routes/scope3.py:128:        final_uncertainty = float(provided_uncertainty)
+new/server/routes/scope3.py:130:        # Default Scope 3 uncertainty (20% EF, 10% AD -> ~22.3% combined)
+new/server/routes/scope3.py:131:        u_res = propagate_uncertainty(
+new/server/routes/scope3.py:133:            ef_uncertainty=0.20,
+new/server/routes/scope3.py:134:            activity_uncertainty=0.10,
+new/server/routes/scope3.py:139:        final_uncertainty = u_res["relative_uncertainty"]
+new/server/routes/scope3.py:141:    emission.uncertainty = final_uncertainty
+new/server/routes/scope3.py:195:            "uncertainty": final_uncertainty,
+new/server/routes/scope3.py:209:            "uncertainty": final_uncertainty,
+new/server/routes/scope3.py:286:    if "uncertainty" in data:
+new/server/routes/scope3.py:287:        emission.uncertainty = float(data["uncertainty"] or 0)
+

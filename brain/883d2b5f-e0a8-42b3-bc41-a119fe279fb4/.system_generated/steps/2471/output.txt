@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -129,7 +129,14 @@
+     "pneumatic_device": "vented",
+     "pneumatic_devices": "vented",
+     "agr": "midstream",
++    "acid_gas_removal": "midstream",
+     "dehydrator": "midstream",
++    "gathering_boosting": "fugitive",
++    "gas_processing": "fugitive",
++    "transmission_storage": "fugitive",
++    "refinery_fugitive": "fugitive",
++    "distribution_fugitive": "fugitive",
++    "lng_operations": "fugitive",
+     "indirect": "indirect",
+     "indirect_steam": "indirect",
+     "steam": "indirect",
+@@ -137,6 +137,10 @@
+     "scope2": "indirect",
+     "stoichiometric": "stoichiometric",
+     "stoichiometry": "stoichiometric",
++    "chemical_production": "stoichiometric",
++    "nitric_acid_production": "stoichiometric",
++    "adipic_acid_production": "stoichiometric",
++    "fccu": "combustion",
+ }
+ 
+ # ---------------------------------------------------------------------------
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

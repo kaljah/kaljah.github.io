@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+AGR co2 tonnes for 10 MMscf at 4% CO2: 2105.2711777330946
+Dehydrator ch4 with condenser: 2.220365763341821
+

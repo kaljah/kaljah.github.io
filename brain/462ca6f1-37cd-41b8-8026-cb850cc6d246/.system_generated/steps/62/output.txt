@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/24/2026  12:56 PM                constants                                                            
+-a----         9/20/2026   3:04 PM           1231 constants.js                                                         
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\utils
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026  12:54 PM            322 constants.js                                                         
+
+
+

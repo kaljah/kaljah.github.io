@@ -1,0 +1,36 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 12:41:50,694] INFO in app: Updated account: a
+[2026-09-21 12:41:50,796] INFO in app: Updated account: a@a
+[2026-09-21 12:41:50,891] INFO in app: Updated account: z
+[2026-09-21 12:41:50,986] INFO in app: Updated account: z@z
+=== ROW COUNTS ===
+Users: 7
+Facilities: 43
+Scope 1 Emissions: 831
+Scope 1 Verified: 11
+Scope 1 Pending: 820
+Scope 2 Emissions: 0
+Scope 2 Verified: 0
+Scope 3 Emissions: 0
+Mitigation Projects: 0
+Mitigation Records: 0
+Goals: 0
+Production Data: 0
+Notifications: 12
+
+=== YEARS IN DATABASE ===
+S1 years: [2022, 2023, 2024, 2025, 2026]
+S2 years: []
+S3 years: []
+Prod years: []
+
+=== S1 EMISSIONS BY YEAR (VERIFIED) ===
+Year 2025: CO2=0.00, CH4=0.00, N2O=0.0000, CO2e=0.00
+Year 2026: CO2=236200.00, CH4=238.70, N2O=51.1000, CO2e=254895.00
+
+=== S2 EMISSIONS BY YEAR (VERIFIED) ===
+
+=== S3 EMISSIONS BY YEAR (VERIFIED) ===
+

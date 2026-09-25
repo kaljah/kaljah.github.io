@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Login: 200
+Tok1 == Tok2: False
+Upload: 200 {"job_id":"014c006a-cb25-4582-942e-7862486e0a2c"}
+
+

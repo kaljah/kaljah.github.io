@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+188: const batchRes = await api.get(`/dashboard/batch-all?${filterParams}`);
+

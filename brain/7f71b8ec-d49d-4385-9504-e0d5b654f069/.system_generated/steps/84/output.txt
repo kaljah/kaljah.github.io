@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\generate_pdf_report.py","LineNumber":351,"LineContent":"        [4, \"Authentication\", \"PASS\", \"32\", \"32\", \"0\", \"0\", \"NIST SP 800-63B complexity, session fixation defense, active status check.\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\src\\translations.py","LineNumber":16,"LineContent":"        \"session_calcs\": \"📝 Session Calculations (Live)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\src\\translations.py","LineNumber":98,"LineContent":"        \"session_calcs\": \"📝 Calculs de la Session (En Direct)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":17,"LineContent":"if \"calculations\" not in st.session_state:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":18,"LineContent":"    st.session_state.calculations = []"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":19,"LineContent":"if \"facility_info\" not in st.session_state:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":20,"LineContent":"    st.session_state.facility_info = {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":77,"LineContent":"        result[\"ID\"] = len(st.session_state.calculations) + 1"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":83,"LineContent":"        st.session_state.calculations.append(result)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":98,"LineContent":"if st.session_state.calculations:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":99,"LineContent":"    with st.expander(get_text(\"session_calcs\", lang), expanded=False):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":102,"LineContent":"            for c in st.session_state.calculations"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":112,"LineContent":"        org_name = c1.text_input(get_text(\"org_name\", lang), value=st.session_state.facility_info.get(\"org_name\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":113,"LineContent":"        fac_name = c2.text_input(get_text(\"facility_name\", lang), value=st.session_state.facility_info.get(\"facility_name\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":116,"LineContent":"        fac_id = c3.text_input(get_text(\"facility_id\", lang), value=st.session_state.facility_info.get(\"facility_id\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":117,"LineContent":"        address = c4.text_input(get_text(\"address\", lang), value=st.session_state.facility_info.get(\"address\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":120,"LineContent":"        city = c5.text_input(get_text(\"city\", lang), value=st.session_state.facility_info.get(\"city\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":121,"LineContent":"        state = c6.text_input(get_text(\"state\", lang), value=st.session_state.facility_info.get(\"state\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":122,"LineContent":"        zip_code = c7.text_input(get_text(\"zip\", lang), value=st.session_state.facility_info.get(\"zip\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":125,"LineContent":"        contact = c8.text_input(get_text(\"contact_name\", lang), value=st.session_state.facility_info.get(\"contact_name\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":126,"LineContent":"        email = c9.text_input(get_text(\"contact_email\", lang), value=st.session_state.facility_info.get(\"contact_email\", \"\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":129,"LineContent":"            st.session_state.facility_info = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":420,"LineContent":"            # Create a dummy result to store in session"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":433,"LineContent":"    if not st.session_state.calculations:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":439,"LineContent":"            for c in st.session_state.calculations"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\e3230fa3-8bd0-4c24-b227-11579e2fb81e\\ghg_tool\\app.py","LineNumber":467,"LineContent":"            excel_data = to_excel(st.session_state.calculations, st.session_state.facility_info)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":47,"LineContent":"    from flask import request, jsonify, session"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":66,"LineContent":"    total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":72,"LineContent":"    total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":107,"LineContent":"            created_by=session.get('user_id') if hasattr(request, 'session') else None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":109,"LineContent":"        db.session.add(record)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":113,"LineContent":"        user_id = session.get('user_id') if session else None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":123,"LineContent":"        db.session.commit()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":125,"LineContent":"        db.session.rollback()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":137,"LineContent":"    db.session.delete(record)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\patch.py","LineNumber":138,"LineContent":"    db.session.commit()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":2,"LineContent":"from flask import request, jsonify, session"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":70,"LineContent":"        db.session.add(prod)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":74,"LineContent":"        user_id = session.get('user_id')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":90,"LineContent":"        db.session.commit()  # commits: data + activity log + notification"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":92,"LineContent":"        db.session.rollback()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":104,"LineContent":"    db.session.delete(prod)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":105,"LineContent":"    db.session.commit()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":186,"LineContent":"            db.session.add(prod)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":190,"LineContent":"    db.session.commit()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":257,"LineContent":"    total_direct_tco2e = db.session.query(func.coalesce(func.sum(Emission.co2e_total), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":262,"LineContent":"    total_indirect_tco2e = db.session.query(func.coalesce(func.sum(Scope2Emission.co2e), 0.0)).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":297,"LineContent":"            created_by=session.get('user_id')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":299,"LineContent":"        db.session.add(record)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":303,"LineContent":"        user_id = session.get('user_id')"}
+(...942 more results not shown)

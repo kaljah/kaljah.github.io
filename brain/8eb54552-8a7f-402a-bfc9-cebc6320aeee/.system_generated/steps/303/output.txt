@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"title":"ISO 14064-1 Report Configuration","controls":[{"tag":"BUTTON","type":"submit","text":"×","id":"","className":"close-btn"},{"tag":"TEXTAREA","type":"textarea","text":"Sources contributing less than 1% of the total footprint are excluded.","id":"","className":""},{"tag":"INPUT","type":"text","text":"Not externally verified","id":"","className":""},{"tag":"SELECT","type":"select-one","text":"IPCC AR5 (100-yr: CH4=28, N2O=265) — Default\nIPCC AR6 (100-yr: CH4=29.8, N2O=273)\nIPCC AR4 (100-yr: CH4=25, N2O=298)\nIPCC AR6 (20-yr: CH4=82.5, N2O=273)","id":"","className":"component-select"},{"tag":"BUTTON","type":"submit","text":"Cancel","id":"","className":"btn-secondary"},{"tag":"BUTTON","type":"submit","text":"Generate PDF","id":"","className":"btn-primary"}]}
+```

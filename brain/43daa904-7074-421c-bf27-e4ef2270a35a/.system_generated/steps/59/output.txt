@@ -1,0 +1,71 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+brain/cb1e2599-6eda-488f-8f5a-372c19ceca8f/api_compendium_exhibits.md:* **EXHIBIT 6-26:** Sample Calculation for Equipment Blowdown Emissions
+new/server/10k_scope2_test.csv:2024-06-26,ADR,West,12205.79,GWh,Upstream,Div B,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,OHT,West,10058.55,kWh,Midstream,Div C,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,REB,South,34409.81,MWh,Upstream,Div A,Eagle Ford
+new/server/10k_scope2_test.csv:2024-06-26,OHT,South,9073.03,kWh,Upstream,Div B,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,TFT,South,10789.16,MWh,Upstream,Div B,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,HBK,West,49318.47,kWh,Upstream,Div C,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,OHT,West,11400.92,kWh,Upstream,Div B,Field Alpha
+new/server/10k_scope2_test.csv:2023-06-26,STAH,Central,37259.76,kWh,Upstream,Div B,Field Alpha
+new/server/10k_scope2_test.csv:2024-06-26,ADR,Central,48154.29,kWh,Upstream,Div B,Field Alpha
+new/server/10k_scope2_test.csv:2024-06-26,ADR,West,17012.86,GWh,Upstream,Div B,Eagle Ford
+new/server/10k_scope2_test.csv:2024-06-26,HBK,South,12122.28,kWh,Upstream,Div C,Field Alpha
+new/server/10k_scope2_test.csv:2023-06-26,GTL,Central,37620.88,kWh,Midstream,Div B,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,STAH,West,4840.64,kWh,Upstream,Div A,Eagle Ford
+new/server/10k_scope2_test.csv:2024-06-26,TFT,Central,4232.29,MWh,Downstream,Div B,Field Alpha
+new/server/10k_scope2_test.csv:2023-06-26,RNS,North,42114.09,kWh,Downstream,Div C,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,OHT,North,593.25,MWh,Upstream,Div A,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,REB,East,25765.05,kWh,Midstream,Div C,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,TFT,North,47503.61,MWh,Downstream,Div A,Field Beta
+new/server/10k_scope2_test.csv:2024-06-26,RNS,Central,26391.4,MWh,Downstream,Div C,Field Alpha
+new/server/10k_scope2_test.csv:2023-06-26,REB,West,32573.29,MWh,Downstream,Div C,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,GTL,East,5110.63,GWh,Upstream,Div A,Field Beta
+new/server/10k_scope2_test.csv:2024-06-26,TFT,East,3219.29,kWh,Midstream,Div A,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,ADR,North,46933.57,MWh,Upstream,Div C,Field Beta
+new/server/10k_scope2_test.csv:2024-06-26,HRM,East,13193.41,kWh,Downstream,Div C,Eagle Ford
+new/server/10k_scope2_test.csv:2024-06-26,HMD,West,20544.62,GWh,Upstream,Div A,Field Beta
+new/server/10k_scope2_test.csv:2024-06-26,TFT,Central,13811.37,GWh,Midstream,Div A,Field Alpha
+new/server/10k_scope2_test.csv:2024-06-26,STAH,North,2940.07,MWh,Upstream,Div B,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,OHT,West,47737.94,GWh,Downstream,Div B,Field Beta
+new/server/10k_scope2_test.csv:2023-06-26,ADR,West,35869.19,MWh,Upstream,Div B,Field Alpha
+new/server/10k_scope2_test.csv:2024-06-26,REB,East,38037.73,MWh,Upstream,Div B,Field Alpha
+new/server/10k_scope2_test.csv:2023-06-26,TFT,West,34726.82,GWh,Downstream,Div C,Field Alpha
+new/server/10k_scope2_test.csv:2023-06-26,REB,South,18830.75,kWh,Downstream,Div A,Field Alpha
+new/server/10k_scope2_test.csv:2023-06-26,HBK,East,48213.7,kWh,Upstream,Div A,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,REB,East,18420.89,MWh,Midstream,Div A,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,RNS,Central,28962.64,MWh,Downstream,Div B,Field Alpha
+new/server/10k_scope2_test.csv:2024-06-26,RNS,East,46047.33,kWh,Midstream,Div A,Eagle Ford
+new/server/10k_scope2_test.csv:2023-06-26,TFT,West,7571.2,kWh,Downstream,Div B,Field Alpha
+new/server/10k_scope3_test.csv:2023-06-26,HRM,12,Subcategory 1,9936.05,4.467,kg
+new/server/10k_scope3_test.csv:2023-06-26,RNS,2,Subcategory 1,1032.34,2.7848,tonne
+new/server/10k_scope3_test.csv:2024-06-26,HBK,15,Subcategory 2,2256.43,2.4274,tonne
+new/server/10k_scope3_test.csv:2024-06-26,RNS,7,Subcategory 3,1771.2,2.1702,gal
+new/server/10k_scope3_test.csv:2023-06-26,ADR,7,Subcategory 1,6584.85,4.5744,kg
+new/server/10k_scope3_test.csv:2024-06-26,HBK,14,Subcategory 1,9906.87,4.98,lbs
+new/server/10k_scope3_test.csv:2024-06-26,GTL,7,Subcategory 2,2744.26,3.8692,gal
+new/server/10k_scope3_test.csv:2024-06-26,OHT,12,Subcategory 3,9531.95,1.1946,kg
+new/server/10k_scope3_test.csv:2024-06-26,GTL,1,Subcategory 4,8324.5,4.9074,tonne
+new/server/10k_scope3_test.csv:2024-06-26,HRM,13,Subcategory 2,1696.56,2.2639,lbs
+new/server/10k_scope3_test.csv:2023-06-26,HMD,6,Subcategory 3,2220.74,3.9281,lbs
+new/server/10k_scope3_test.csv:2024-06-26,RNS,7,Subcategory 5,1290.1,4.7564,lbs
+new/server/10k_scope3_test.csv:2023-06-26,HRM,1,Subcategory 3,8619.64,1.263,lbs
+new/server/10k_scope3_test.csv:2024-06-26,HMD,3,Subcategory 3,4151.87,2.7228,tonne
+new/server/10k_scope3_test.csv:2024-06-26,STAH,8,Subcategory 5,7882.8,4.948,lbs
+new/server/10k_scope3_test.csv:2023-06-26,ADR,2,Subcategory 5,1381.12,0.9454,tonne
+new/server/10k_scope3_test.csv:2023-06-26,HRM,3,Subcategory 4,5596.46,4.4941,tonne
+new/server/10k_scope3_test.csv:2023-06-26,GTL,8,Subcategory 4,3923.06,2.5767,lbs
+new/server/10k_scope3_test.csv:2024-06-26,GTL,11,Subcategory 1,3575.71,3.7888,gal
+new/server/10k_scope3_test.csv:2023-06-26,OHT,4,Subcategory 4,8517.53,2.2593,tonne
+new/server/10k_scope3_test.csv:2024-06-26,REB,11,Subcategory 5,103.35,2.8958,kg
+new/server/10k_scope3_test.csv:2023-06-26,REB,11,Subcategory 3,9424.12,1.3955,lbs
+new/server/10k_scope3_test.csv:2023-06-26,STAH,2,Subcategory 2,209.34,5.7703,tonne
+new/server/10k_scope3_test.csv:2023-06-26,HRM,6,Subcategory 1,3446.13,4.2292,gal
+new/server/10k_scope3_test.csv:2023-06-26,HMD,7,Subcategory 3,3091.17,1.5021,kg
+new/server/10k_scope3_test.csv:2023-06-26,HMD,4,Subcategory 2,7949.27,4.3072,lbs
+new/server/10k_scope3_test.csv:2023-06-26,HRM,6,Subcategory 3,3208.44,2.228,lbs
+new/server/10k_scope3_test.csv:2023-06-26,OHT,1,Subcategory 4,1046.66,2.2515,tonne
+

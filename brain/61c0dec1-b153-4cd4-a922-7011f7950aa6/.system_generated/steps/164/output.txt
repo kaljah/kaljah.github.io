@@ -1,0 +1,96 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\mutation\test_calculation_mutations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -37,11 +37,11 @@
+     def test_mutant_1_flaring_efficiency_inversion(self):
+         """Mutant: Flaring unburnt CH4 calculated with (1 + eff) instead of (1 - eff)."""
+         clean_res = IndependentFlaringModel.calculate(
+-            volume=50_000.0,
+-            unit="m3",
+-            flare_type="elevated",
++            gas_volume=50_000.0,
++            volume_unit="m3",
+             ch4_fraction=0.88,
+-            combustion_efficiency=0.98,
++            flare_type="elevated",
++            combustion_eff=0.98,
+         )
+         # Injected mutation
+         mutant_unburnt_ch4 = 50_000.0 * 0.88 * 0.6785 * (1.0 + 0.98) / 1000.0
+@@ -52,7 +52,7 @@
+     def test_mutant_2_distorted_volume_conversion_factor(self):
+         """Mutant: scf to m3 factor mutated from 0.0283168 to 0.0383168 (+35% error)."""
+         scf_qty = 1_000_000.0
+-        clean_m3 = IndependentUnitConverter.convert_volume(scf_qty, "scf", "m3")
++        clean_m3 = IndependentUnitConverter.convert(scf_qty, "scf", "m3")
+         mutant_m3 = scf_qty * 0.038316846592
+ 
+         with pytest.raises(AssertionError):
+@@ -101,12 +101,12 @@
+     def test_mutant_6_omitted_native_co2_stream(self):
+         """Mutant: Flaring calculation completely drops native CO2 from gas stream."""
+         clean_res = IndependentFlaringModel.calculate(
+-            volume=100_000.0,
+-            unit="m3",
+-            flare_type="elevated",
++            gas_volume=100_000.0,
++            volume_unit="m3",
+             ch4_fraction=0.85,
+-            co2_fraction=0.05,  # 5% native CO2
+-            combustion_efficiency=0.98,
++            composition={"c1": 0.85, "co2_mol": 0.05},
++            flare_type="elevated",
++            combustion_eff=0.98,
+         )
+         mutant_co2 = clean_res["co2"] - (100_000.0 * 0.05 * 1.861 / 1000.0)
+ 
+@@ -123,17 +123,19 @@
+ 
+     def test_mutant_8_omitted_transmission_losses(self):
+         """Mutant: Steam calculation omits transmission loss: eta_net = eta_boiler instead of eta_boiler * (1 - trans_loss)."""
+-        clean_res = IndependentScope2Model.calculate_steam(
+-            steam_tonnes=100.0,
+-            boiler_efficiency=0.80,
+-            transmission_loss=0.10,
+-            fuel_ef=53.06,
+-        )
+-        mutant_res = IndependentScope2Model.calculate_steam(
+-            steam_tonnes=100.0,
+-            boiler_efficiency=0.80,
+-            transmission_loss=0.00,  # Omitted transmission loss
+-            fuel_ef=53.06,
++        clean_res = IndependentScope2Model.calculate_indirect_steam(
++            amount=100.0,
++            unit="tonne",
++            boiler_eff=0.80,
++            trans_loss=0.10,
++            ef_co2=53.06,
++        )
++        mutant_res = IndependentScope2Model.calculate_indirect_steam(
++            amount=100.0,
++            unit="tonne",
++            boiler_eff=0.80,
++            trans_loss=0.00,  # Omitted transmission loss
++            ef_co2=53.06,
+         )
+ 
+         with pytest.raises(AssertionError):
+@@ -141,12 +141,13 @@
+     def test_mutant_9_eeio_spend_scaling_defect(self):
+         """Mutant: EEIO spend factor scaled by 1,000 instead of 1,000,000 (1000x error)."""
+         spend = 500_000.0
+-        factor = 3200.0  # kg CO2e / $1,000
+-        clean_co2e = IndependentScope3Model.calculate_spend_eeio(spend, factor)
++        factor = 3200.0
++        unit = "kg CO2e / $1,000"
++        clean_res = IndependentScope3Model.calculate(spend, factor, factor_unit=unit, calc_method="spend_eeio")
+         mutant_co2e = (spend * factor) / 1000.0  # Missing $1,000 denominator scaling
+ 
+         with pytest.raises(AssertionError):
+-            assert pytest.approx(clean_co2e, rel=1e-4) == mutant_co2e
++            assert pytest.approx(clean_res["co2e"], rel=1e-4) == mutant_co2e
+ 
+     def test_mutant_10_missing_agr_methane_slip(self):
+         """Mutant: AGR regenerator emissions calculated with zero methane slip."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

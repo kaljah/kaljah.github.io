@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -136,6 +136,13 @@
+           setAvailableSegments(filteredSegments.length > 0 ? filteredSegments : ["Downstream", "Midstream", "Upstream"]);
+         }
+         setSelectedYear("all");
++
++        const opDefaults = getUserOperationalDefaults(user, facilitiesData);
++        if (opDefaults.isRestricted || facilitiesData.length === 1) {
++          if (opDefaults.defaultActivity) setCurrentActivity(opDefaults.defaultActivity);
++          if (opDefaults.defaultDivision) setCurrentDivision(opDefaults.defaultDivision);
++          if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);
++        }
+       } catch (error) {
+         console.error("Initialization error:", error);
+       }
+@@ -142,5 +142,5 @@
+     init();
+-  }, []);
++  }, [user]);
+ 
+   // Load data on filter changes
+   useEffect(() => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

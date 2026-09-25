@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":464,"LineContent":"              Comprehensive tamper-evident record of all emissions data, authentication, calculations, and administrative actions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":87,"LineContent":"          api.get(\"/auth/settings\").catch(() =\u003e ({ data: {} })),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\api.js","LineNumber":66,"LineContent":"      if (typeof window.__authLogout === \"function\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\api.js","LineNumber":67,"LineContent":"        window.__authLogout();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.jsx","LineNumber":114,"LineContent":"      const res = await api.post(\"/auth/forgot-password\", { email: forgotEmail.trim() });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":20,"LineContent":"  // BroadcastChannel for cross-tab auth synchronization"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":21,"LineContent":"  const authChannelRef = useRef(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":26,"LineContent":"        authChannelRef.current = new BroadcastChannel(\"ghg_auth_channel\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":27,"LineContent":"        authChannelRef.current.onmessage = (event) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":49,"LineContent":"      if (e.key === \"ghg_auth_logout_event\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":59,"LineContent":"      if (authChannelRef.current) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":60,"LineContent":"        authChannelRef.current.close();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":61,"LineContent":"        authChannelRef.current = null;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":69,"LineContent":"    window.__authLogout = () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":74,"LineContent":"      delete window.__authLogout;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":85,"LineContent":"      await api.post(\"/auth/logout\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":98,"LineContent":"    if (authChannelRef.current) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":100,"LineContent":"        authChannelRef.current.postMessage({ type: \"LOGOUT\", isTimeout });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":104,"LineContent":"      localStorage.setItem(\"ghg_auth_logout_event\", Date.now().toString());"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":130,"LineContent":"      if (authChannelRef.current) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":132,"LineContent":"          authChannelRef.current.postMessage({ type: \"ACTIVITY\", timestamp: Date.now() });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":188,"LineContent":"        const { data } = await api.get(\"/auth/me\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":189,"LineContent":"        if (data \u0026\u0026 data.authenticated !== false \u0026\u0026 data.id) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":194,"LineContent":"            const settingsRes = await api.get(\"/auth/settings\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":200,"LineContent":"            console.error(\"Failed to fetch settings on auth check\", e);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":219,"LineContent":"    const { data } = await api.post(\"/auth/login\", { email, password });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":227,"LineContent":"      const settingsRes = await api.get(\"/auth/settings\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":240,"LineContent":"    const { data } = await api.post(\"/auth/register\", userData);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":249,"LineContent":"      await api.put(\"/auth/settings\", newPrefs);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":96,"LineContent":"          api.get(\"/auth/settings\").catch(() =\u003e ({ data: {} })),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":88,"LineContent":"  const [authMode, setAuthMode] = useState(\"password\"); // 'password' or 'oauth_client'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":104,"LineContent":"        api.get(\"/auth/settings\").catch(() =\u003e ({ data: {} })),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":125,"LineContent":"          setAuthMode(\"oauth_client\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":205,"LineContent":"      await api.post(\"/auth/settings\", payload);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":223,"LineContent":"        authMode === \"password\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":988,"LineContent":"                    \u003cstrong\u003e\"Test Connection\"\u003c/strong\u003e to verify authentication,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1027,"LineContent":"            \u003cdiv className=\"auth-mode-selector\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1029,"LineContent":"                className={`auth-mode-pill ${authMode === \"password\" ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1033,"LineContent":"                  name=\"authMode\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1036,"LineContent":"                  checked={authMode === \"password\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1042,"LineContent":"                className={`auth-mode-pill ${authMode === \"oauth_client\" ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1046,"LineContent":"                  name=\"authMode\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1047,"LineContent":"                  value=\"oauth_client\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1049,"LineContent":"                  checked={authMode === \"oauth_client\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1050,"LineContent":"                  onChange={() =\u003e setAuthMode(\"oauth_client\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1056,"LineContent":"            {authMode === \"password\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1087,"LineContent":"                    Encrypted and authenticated directly against Keycloak"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":444,"LineContent":"      const usersRes = await api.get(\"/auth/users\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":542,"LineContent":"        const res = await api.put(`/auth/users/${editingUser.id}`, payload);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":595,"LineContent":"        const createRes = await api.post(\"/auth/register\", formData);"}
+(...14 more results not shown)

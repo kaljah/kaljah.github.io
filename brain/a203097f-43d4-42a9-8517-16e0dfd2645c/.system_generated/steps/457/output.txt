@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\differential\test_clean_differential.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -25,7 +25,7 @@
+ from calculations.indirect import IndirectSteamCalculator
+ from calculations.units import compute_scope3_co2e, calculate_co2e, convert
+ from calculations.stoichiometry import StoichiometricCalculator
+-from calculations.constants import GWP_AR5_100, GWP_AR4_100
++from calculations.constants import GWP_AR5, GWP_AR4, get_active_gwp
+ 
+ from validation.reference_model import (
+     ref_calculate_combustion,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

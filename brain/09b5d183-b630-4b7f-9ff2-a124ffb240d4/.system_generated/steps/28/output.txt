@@ -1,0 +1,9 @@
+{"name":".system_generated", "isDir":true}
+{"name":".user_uploaded", "isDir":true}
+{"name":"implementation_plan.md", "sizeBytes":"22057"}
+{"name":"implementation_plan.md.metadata.json", "sizeBytes":"450"}
+{"name":"scratch", "isDir":true}
+{"name":"walkthrough.md", "sizeBytes":"56104"}
+{"name":"walkthrough.md.metadata.json", "sizeBytes":"462"}
+
+Summary: This directory contains 3 subdirectories and 4 files.

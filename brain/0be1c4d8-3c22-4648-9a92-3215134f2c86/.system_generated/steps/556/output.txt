@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -230,27 +230,20 @@
+             from electricity_factors import GRID_FACTORS
+             import json
+ 
+-            user_obj = User.query.get(user_id)
+-            gwp_std = "AR5"
+-            if user_obj and user_obj.preferences:
+-                try:
+-                    prefs = (
+-                        json.loads(user_obj.preferences)
+-                        if isinstance(user_obj.preferences, str)
+-                        else user_obj.preferences
+-                    )
+-                    gwp_std = (
+-                        prefs.get("gwp_standard") or prefs.get("gwpModel") or "AR5"
+-                    )
+-                except Exception:
+-                    pass
++            user_obj = db.session.get(User, user_id)
++            # Invariant Zero (Decision D-09): Active GWP is strictly org-wide; user preference is display-only
++            try:
++                from routes.auth import _app_settings, load_settings_from_db
++
++                load_settings_from_db()
++                gwp_std = str(
++                    _app_settings.get("gwp_standard") or "AR5"
++                ).upper().strip()
++            except Exception:
++                gwp_std = "AR5"
++
+             if gwp_std not in ["AR4", "AR5", "AR6"]:
+-                try:
+-                    from routes.auth import _app_settings
+-
+-                    gwp_std = _app_settings.get("gwp_standard", "AR5")
+-                except Exception:
+-                    gwp_std = "AR5"
++                gwp_std = "AR5"
+             gwp_dict = get_active_gwp(standard=gwp_std)
+             from utils import get_allowed_facility_ids
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Top-left pixel: (206, 210, 211)
+Top-center pixel: (231, 235, 236)
+Bottom-center pixel: (225, 229, 230)
+Bottom-left pixel: (205, 209, 212)
+

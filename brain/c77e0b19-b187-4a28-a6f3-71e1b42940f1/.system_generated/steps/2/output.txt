@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+Invoke-WebRequest : Missing an argument for parameter 'SessionVariable'. Specify a parameter of type 'System.String' 
+and try again.
+At line:1 char:6
++ curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/api/auth ...
++      ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : MissingArgument,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+ 
+

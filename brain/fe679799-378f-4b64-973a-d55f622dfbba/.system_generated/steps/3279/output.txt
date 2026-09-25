@@ -1,0 +1,27 @@
+
+The command exited with code 1.
+Output:
+********************************************************************************
+STARTING EXHAUSTIVE WHOLE-SOFTWARE QA CAMPAIGN
+********************************************************************************
+
+================================================================================
+MODULE 1: TESTING ALL 16 BACKEND API BLUEPRINTS
+================================================================================
+Logged in as Admin: admin@ghg.com (role: admin)
+
+API Blueprint Coverage Results:
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 583, in <module>
+    success = run_full_qa_orchestration()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 561, in run_full_qa_orchestration
+    m1_ok = test_all_api_blueprints()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 148, in test_all_api_blueprints
+    print(f"  [{mark}] {endpoint} (HTTP {status})")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2717' in position 3: character maps to <undefined>
+

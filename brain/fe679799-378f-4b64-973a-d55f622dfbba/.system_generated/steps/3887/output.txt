@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\legacy_engine.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -424,6 +424,13 @@
+     if hhv and not inputs.get("hhv"):
+         inputs["hhv"] = hhv
+ 
++    density_val = payload.get("density") or payload.get("fuel_density") or factor_data.get("density")
++    if density_val not in [None, "", "-"]:
++        try:
++            inputs["density"] = float(density_val)
++        except (ValueError, TypeError):
++            pass
++
+     is_specific = payload.get("factor_source") == "specific" or payload.get(
+         "isSpecific"
+     )
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

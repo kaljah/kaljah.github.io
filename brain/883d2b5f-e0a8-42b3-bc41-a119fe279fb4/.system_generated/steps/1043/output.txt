@@ -1,0 +1,87 @@
+
+The command exited with code 1.
+Output:
+<truncated 20 lines>
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[2.1E+6-2100000.0] PASSED [ 22%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[3.5e3-3500.0] PASSED [ 24%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[$45.00-45.0] PASSED [ 26%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[\u20ac1250.75-1250.75] PASSED [ 28%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[\xa399.99-99.99] PASSED [ 30%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[120 kW-120.0] PASSED [ 32%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[50.5 m3-50.5] PASSED [ 33%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[100.25 tCO2e-100.25] PASSED [ 35%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[  75.50 %  -75.5] PASSED [ 37%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[\u200b1234.56-1234.56] PASSED [ 39%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[1234.56\ufeff-1234.56] PASSED [ 41%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_valid_coercion[1\xa0234.56-1234.56] PASSED [ 43%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[] PASSED [ 45%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[   ] PASSED [ 47%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[-] PASSED [ 49%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[--] PASSED [ 50%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[N/A] PASSED [ 52%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[n/a] PASSED [ 54%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[NULL] PASSED [ 56%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[null] PASSED [ 58%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[None0] PASSED [ 60%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[NaN] PASSED [ 62%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[nan] PASSED [ 64%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[nil] PASSED [ 66%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[N/D] PASSED [ 67%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[#N/A] PASSED [ 69%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_null_representations[None1] PASSED [ 71%]
+new\server\tests\test_csv_engine_matrix.py::TestFieldCoercionAndSanitization::test_clean_float_nan_and_infinity_defense PASSED [ 73%]
+new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_delimiters_semicolon PASSED [ 75%]
+new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_delimiters_tab_and_pipe PASSED [ 77%]
+new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_encoding_utf8_bom_and_windows_1252 PASSED [ 79%]
+new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_row_terminator_crlf_and_legacy_cr FAILED [ 81%]
+new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_whitespace_and_empty_rows PASSED [ 83%]
+new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_volumetric_extremes PASSED [ 84%]
+new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_process_type_missing_signature_fallback PASSED [ 86%]
+new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_base_calculator_nan_and_inf_guard PASSED [ 88%]
+new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_dispatcher_nan_and_inf_guard PASSED [ 90%]
+new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_blowdown_compressibility_zero_singularity_defense PASSED [ 92%]
+new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_liquids_unloading_absolute_zero_temperature_defense PASSED [ 94%]
+new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_flaring_dual_efficiency_stoichiometric_mass_balance PASSED [ 96%]
+new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_gwp_standards_cross_consistency PASSED [ 98%]
+new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_high_volume_summation_precision_stability PASSED [100%]
+
+================================== FAILURES ===================================
+___ TestCSVBufferIngestionMatrix.test_csv_row_terminator_crlf_and_legacy_cr ___
+
+self = <test_csv_engine_matrix.TestCSVBufferIngestionMatrix object at 0x00000135F802B650>
+app = <Flask 'app'>, test_user = <User 27>, test_facility = <Facility 17>
+
+    def test_csv_row_terminator_crlf_and_legacy_cr(self, app, test_user, test_facility):
+        """Validates Windows CRLF (\r\n) and legacy Mac CR (\r) line terminators."""
+        crlf_csv = (
+            "Facility,Date,Process,Fuel,Quantity,Unit\r\n"
+            f"{test_facility.name},2024-06,Combustion,Diesel,1400,m3\r\n"
+        ).encode("utf-8")
+        status_crlf = self._execute_sync_thread(app, crlf_csv, "crlf.csv", test_user.id)
+        assert status_crlf["processed"] == 1
+    
+        cr_csv = (
+            "Facility,Date,Process,Fuel,Quantity,Unit\r"
+            f"{test_facility.name},2024-07,Combustion,Diesel,1600,m3\r"
+        ).encode("utf-8")
+        status_cr = self._execute_sync_thread(app, cr_csv, "cr.csv", test_user.id)
+>       assert status_cr["processed"] == 1
+E       assert 0 == 1
+
+new\server\tests\test_csv_engine_matrix.py:308: AssertionError
+---------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\background_processor.py", line 274, in _process_file_thread
+    headers = next(reader, [])
+              ^^^^^^^^^^^^^^^^
+_csv.Error: new-line character seen in unquoted field - do you need to open the file with newline=''?
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_row_terminator_crlf_and_legacy_cr
+=================== 1 failed, 52 passed, 1 warning in 3.10s ===================
+

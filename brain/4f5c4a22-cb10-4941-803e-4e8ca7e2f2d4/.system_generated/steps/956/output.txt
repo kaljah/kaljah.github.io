@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Facilities in Tier 1 CSV: {'Complexe Sid�rurgique DRI/EAF (Tosyali)': 41, 'Cimenterie Industrielle de Chlef (GICA)': 41, 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)': 41}
+

@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:68:  const [fuelOptions, setFuelOptions] = useState([]);
+new\client\src\components\Scope1Form.jsx:215:      setFuelOptions(options);
+new\client\src\components\Scope1Form.jsx:222:      setFuelOptions(options);
+new\client\src\components\Scope1Form.jsx:1574:                    options={fuelOptions}
+new\client\src\components\Scope1Form.jsx:1583:                    options={fuelOptions}
+new\client\src\components\Scope1Form.jsx:1608:                        options={fuelOptions}
+
+
+

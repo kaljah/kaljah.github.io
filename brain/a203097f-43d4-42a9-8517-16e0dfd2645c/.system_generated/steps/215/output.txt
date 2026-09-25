@@ -1,0 +1,19 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-213
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-213.log
+Log output:
+<truncated 8 lines>
+15.1
+collecting ... collected 7 items
+
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_location_based_electricity_standard PASSED [ 14%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_market_based_zero_emission_ppa PASSED [ 28%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_location_based_with_grid_loss PASSED [ 42%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_zero_electricity_boundary PASSED [ 57%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2SteamAndHeat::test_purchased_steam_indirect_calculator PASSED [ 71%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2SteamAndHeat::test_steam_invalid_efficiency_rejected PASSED [ 85%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Cogeneration::test_cogen_wri_efficiency_method PASSED [100%]
+
+============================== 7 passed in 1.84s ==============================
+
+Last progress: 2s ago

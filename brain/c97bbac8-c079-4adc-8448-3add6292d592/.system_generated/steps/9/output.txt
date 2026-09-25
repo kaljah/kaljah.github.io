@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+Login 200: {"message":"Login successful","user":{"default_activity":null,"default_division":null,"default_facility_id":null,"default_facility_name":null,"default_region":null,"department":"Sustainability & IT","email":"a","fullName":"Administrator","id":1,"jobTitle":"Sustainability Lead","location":"Global","o
+Token: None, CSRF cookie: None, CSRF hdr: None
+Cookies: {'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyX2lkIjoxfQ.arTeIQ.5_ixZZbkeEF1mHNE_0VsxZofdJk'}
+[T01] Login: PASS | HTTP 200
+CSRF endpoint: 404 {"code":404,"error":"Not found","request_id":"71814c36-8823-418a-bb0a-5c814850bdf0"}
+
+Session headers: {'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*', 'Connection': 'keep-alive'}
+Session cookies: {'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyX2lkIjoxfQ.arTeIw.cxE_WiUHOIpkiOLe4DrX8W8Sgvs'}
+

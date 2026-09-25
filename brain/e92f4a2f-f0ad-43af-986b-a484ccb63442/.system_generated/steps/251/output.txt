@@ -1,0 +1,20 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":124,"LineContent":"          api.get(\"/facilities\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":83,"LineContent":"          api.get(\"/facilities\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":156,"LineContent":"      // Fetch authentic facilities from /api/facilities, verified intensity stats from /api/dashboard/intensity-stats,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":159,"LineContent":"        api.get(\"/facilities\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":464,"LineContent":"      const regionsRes = await api.get(\"/facilities/all-regions\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":739,"LineContent":"            const res = await api.get('/facilities');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":927,"LineContent":"            await api.post('/facilities', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1134,"LineContent":"                    await api.delete(`/facilities/${id}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":37,"LineContent":"          api.get(\"/facilities\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":105,"LineContent":"        api.get(\"/facilities\").catch(() =\u003e ({ data: [] })),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":288,"LineContent":"      await api.put(`/facilities/${facId}`, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":94,"LineContent":"          api.get(\"/facilities\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":60,"LineContent":"          api.get(\"/facilities\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":286,"LineContent":"    api.get(\"/facilities/\").then(res =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":532,"LineContent":"    api.get(\"/facilities/\").then(res =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":405,"LineContent":"      const res = await api.get(\"/facilities/\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":239,"LineContent":"      const res = await api.get(\"/facilities\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":129,"LineContent":"      api.get(\"/facilities\").catch(() =\u003e ({ data: [] })),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":94,"LineContent":"      const res = await api.get(\"/facilities/\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":313,"LineContent":"    api.get(\"/facilities/\").then(res =\u003e {"}

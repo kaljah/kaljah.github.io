@@ -1,0 +1,82 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 2434 lines>
+127.0.0.1 - - [23/Sep/2026 12:39:42] "POST /auth/login HTTP/1.1" 404 -
+[2026-09-23 12:39:55,560] INFO in app: POST /api/auth/login 200 [0.138s] [ReqID: 9a6be44e-87f4-47aa-badd-9a811c433854]
+127.0.0.1 - - [23/Sep/2026 12:39:55] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-23 12:39:55,570] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: e636a3ec-20da-4c61-a8bb-0d686f29d519]
+127.0.0.1 - - [23/Sep/2026 12:39:55] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 12:39:55,884] INFO in app: POST /api/auth/login 200 [0.305s] [ReqID: bc0c2e43-c4bb-4806-948d-4196068b538f]
+127.0.0.1 - - [23/Sep/2026 12:39:55] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-23 12:39:55,933] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 32133e79-8ec5-4ad3-b03a-b1b44ea9f70f]
+127.0.0.1 - - [23/Sep/2026 12:39:55] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 12:39:56,010] INFO in app: GET /api/dashboard/uncertainty 200 [0.017s] [ReqID: d88d1362-7126-445d-8545-4b96015695c3]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty HTTP/1.1" 200 -
+[2026-09-23 12:39:56,058] INFO in app: GET /api/dashboard/uncertainty 200 [0.011s] [ReqID: 15d0cd92-6e5f-41bc-a944-4bc87ce12209]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?year=2020 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,073] INFO in app: GET /api/dashboard/uncertainty 200 [0.007s] [ReqID: 133ff119-ef56-4b90-a844-8f23f8d4f492]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?year=2021 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,091] INFO in app: GET /api/dashboard/uncertainty 200 [0.008s] [ReqID: 6193b8a5-a10d-489f-9b05-cb701cf31881]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?year=2022 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,107] INFO in app: GET /api/dashboard/uncertainty 200 [0.006s] [ReqID: e838d92a-d4e9-4824-bec9-81552b497a23]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?year=2023 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,128] INFO in app: GET /api/dashboard/uncertainty 200 [0.009s] [ReqID: 40429789-4b02-40da-8209-1999babd51bd]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?year=2024 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,144] INFO in app: GET /api/dashboard/uncertainty 200 [0.007s] [ReqID: cbbc62e6-1c6b-46f6-8602-647d4a901b04]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?year=2025 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,164] INFO in app: GET /api/dashboard/uncertainty 200 [0.011s] [ReqID: 3dd21e9d-2a96-44b1-b67e-a3d6340856e2]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?year=2026 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,177] INFO in app: GET /api/dashboard/uncertainty 200 [0.002s] [ReqID: f7a6d733-ad27-4d89-9145-13e4c9afaab6]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?scope=all HTTP/1.1" 200 -
+[2026-09-23 12:39:56,192] INFO in app: GET /api/dashboard/uncertainty 200 [0.006s] [ReqID: f6fdb9b0-fecf-4a80-bbfd-5818f93a0a11]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?scope=1 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,205] INFO in app: GET /api/dashboard/uncertainty 200 [0.006s] [ReqID: f6175299-859e-4981-8cbb-7f7826370681]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?scope=2 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,218] INFO in app: GET /api/dashboard/uncertainty 200 [0.003s] [ReqID: 6b0e2d55-4e65-4ee1-92cf-ef28fae9773a]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?scope=3 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,239] INFO in app: GET /api/dashboard/uncertainty 200 [0.012s] [ReqID: 67afef8d-a6ed-4a9c-9dc7-7fa1e9b4d294]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?facility_id=1 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,250] INFO in app: GET /api/dashboard/uncertainty 200 [0.003s] [ReqID: 2b70c223-c451-4930-a5a1-ed19c3bd38e4]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/dashboard/uncertainty?export=csv HTTP/1.1" 200 -
+[2026-09-23 12:39:56,270] INFO in app: GET /api/audit 200 [0.010s] [ReqID: c4873581-e78c-478b-8727-073e86dcef6a]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit?limit=25&page=1 HTTP/1.1" 200 -
+[2026-09-23 12:39:56,302] INFO in app: GET /api/audit/stats 200 [0.021s] [ReqID: e9609fb8-d469-428a-8f62-f5ce330d9266]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit/stats HTTP/1.1" 200 -
+[2026-09-23 12:39:56,318] INFO in app: GET /api/audit/filters 200 [0.006s] [ReqID: 2b141335-bb20-4264-9b91-eae5615ac703]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit/filters HTTP/1.1" 200 -
+[2026-09-23 12:39:56,427] INFO in app: GET /api/audit 200 [0.033s] [ReqID: ccfd2229-45ef-4f19-97ac-27738e0dbb88]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit?search=LOGIN HTTP/1.1" 200 -
+[2026-09-23 12:39:56,447] INFO in app: GET /api/audit 200 [0.012s] [ReqID: a793bfef-71fe-4863-a58d-680f5ba5d05c]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit?action=CREATE HTTP/1.1" 200 -
+[2026-09-23 12:39:56,623] INFO in app: GET /api/audit/export 200 [0.164s] [ReqID: fee21a98-01af-40fb-adbf-85bc12515c63]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit/export?format=csv HTTP/1.1" 200 -
+[2026-09-23 12:39:56,742] INFO in app: GET /api/audit/export 200 [0.084s] [ReqID: 7b4ba1c8-1e81-43af-8570-6f1c93661368]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit/export?format=json HTTP/1.1" 200 -
+[2026-09-23 12:39:56,762] INFO in app: GET /api/audit 403 [0.002s] [ReqID: 28905952-b233-4526-a9ee-57ed004594e6]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/audit HTTP/1.1" 403 -
+[2026-09-23 12:39:56,975] INFO in app: GET /api/qaqc/dashboard 200 [0.204s] [ReqID: b7664c6e-498e-4c56-b0b5-2d8b5506d2d8]
+127.0.0.1 - - [23/Sep/2026 12:39:56] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 12:39:57,058] INFO in app: GET /api/qaqc/dashboard 200 [0.071s] [ReqID: 99b8e765-a462-4ff1-93e6-f527222895d9]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?scope=1 HTTP/1.1" 200 -
+[2026-09-23 12:39:57,145] INFO in app: GET /api/qaqc/dashboard 200 [0.076s] [ReqID: 2df7a371-7419-475e-82b9-a89a9a0b33ef]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?scope=2 HTTP/1.1" 200 -
+[2026-09-23 12:39:57,238] INFO in app: GET /api/qaqc/dashboard 200 [0.082s] [ReqID: f2204fe3-c615-4c55-a4d5-85d6b9065cad]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?scope=3 HTTP/1.1" 200 -
+[2026-09-23 12:39:57,325] INFO in app: GET /api/qaqc/dashboard 200 [0.076s] [ReqID: d2db9e3a-965d-4d6b-936e-93d0c076cff8]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?status=all HTTP/1.1" 200 -
+[2026-09-23 12:39:57,409] INFO in app: GET /api/qaqc/dashboard 200 [0.075s] [ReqID: 11a3b028-39a7-4a78-9d51-48785c6eb42c]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?status=pending HTTP/1.1" 200 -
+[2026-09-23 12:39:57,474] INFO in app: GET /api/qaqc/dashboard 200 [0.056s] [ReqID: d44ecdb0-468a-43b0-befd-7f4f9efaecbc]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?status=verified HTTP/1.1" 200 -
+[2026-09-23 12:39:57,541] INFO in app: GET /api/qaqc/dashboard 200 [0.056s] [ReqID: f593f5d5-ee87-4600-9878-c820cc000774]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?status=rejected HTTP/1.1" 200 -
+[2026-09-23 12:39:57,563] INFO in app: GET /api/qaqc/export 200 [0.011s] [ReqID: ca0db85d-7c04-4399-9415-99ab2c3cfe08]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/export HTTP/1.1" 200 -
+[2026-09-23 12:39:57,667] INFO in app: GET /api/qaqc/dashboard 200 [0.093s] [ReqID: fb68ce5b-6ae5-4f04-b3c8-e6200815b54a]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard?status=pending&limit=1 HTTP/1.1" 200 -
+[2026-09-23 12:39:57,691] INFO in app: POST /api/qaqc/bulk-resolve 200 [0.011s] [ReqID: b8083696-a1bf-4594-adeb-c1c2489457aa]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "POST /api/qaqc/bulk-resolve HTTP/1.1" 200 -
+[2026-09-23 12:39:57,703] INFO in app: GET /api/qaqc/dashboard 401 [0.001s] [ReqID: d206993f-cc55-46aa-8b3f-1ac04869097f]
+127.0.0.1 - - [23/Sep/2026 12:39:57] "GET /api/qaqc/dashboard HTTP/1.1" 401 -
+

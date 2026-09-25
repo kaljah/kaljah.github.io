@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+31: if user and user.role == "it_admin":
+68: if user and user.role == "it_admin":
+123: if user and user.role == "it_admin":
+159: if user and user.role == "it_admin":
+245: if user and user.role == "it_admin":
+317: if user and user.role == "it_admin":
+388: if user and user.role == "it_admin":
+438: if user and user.role == "it_admin":
+476: if user and user.role == "it_admin":
+537: if user and user.role == "it_admin":
+553: if user and user.role == "it_admin":
+625: if user and user.role == "it_admin":
+747: if user and user.role == "it_admin":
+772: if user and user.role == "it_admin":
+811: if user and user.role == "it_admin":
+833: if user and user.role == "it_admin":
+892: if user and user.role == "it_admin":
+951: if user and user.role == "it_admin":
+987: if user and user.role == "it_admin":
+

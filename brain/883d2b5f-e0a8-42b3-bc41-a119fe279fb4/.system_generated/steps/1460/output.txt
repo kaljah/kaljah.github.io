@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":116,"LineContent":"class CompressorSealCalculator(BaseCalculator):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":14,"LineContent":"    CompressorSealCalculator,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":51,"LineContent":"            \"compressor_fugitive\": CompressorSealCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":41,"LineContent":"    CompressorSealCalculator,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":176,"LineContent":"        assert CompressorSealCalculator().calculate(0, \"reciprocating\", {})[\"total_co2e\"] == 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":29,"LineContent":"    CompressorSealCalculator,"}

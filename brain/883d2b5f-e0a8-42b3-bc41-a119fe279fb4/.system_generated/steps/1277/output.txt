@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -120,6 +120,7 @@
+     division = request.args.get("division")
+     segment = request.args.get("segment")
+     group_by = request.args.get("groupBy")
++    include_pending = request.args.get("includePending") == "true"
+ 
+     user = get_current_user()
+     if user and user.role == "it_admin":
+@@ -152,6 +152,7 @@
+                 group_by=group_by,
+                 allowed_fids=allowed_fids,
+                 segment=segment,
++                include_pending=include_pending,
+             )
+             f_mitigation = executor.submit(
+                 _run_in_app_ctx,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

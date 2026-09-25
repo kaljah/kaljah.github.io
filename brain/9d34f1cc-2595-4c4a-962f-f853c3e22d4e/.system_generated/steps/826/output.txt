@@ -1,0 +1,23 @@
+Task: 9d34f1cc-2595-4c4a-962f-f853c3e22d4e/task-822
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\.system_generated\tasks\task-822.log
+Log output:
+<truncated 4 lines>
+\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 32 items
+
+tests\test_api_security.py ...............                               [ 46%]
+tests\test_it_role_security.py ...........                               [ 81%]
+tests\test_security_hardening.py ......                                  [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 32 passed, 1 warning in 4.52s ========================
+
+Last progress: 3s ago

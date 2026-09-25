@@ -1,0 +1,192 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_flaring_elevated_default_efficiency(self, auth_client, facility_id):
+        """
+        FLARING T3: Elevated flare, 90% C1, no native CO2.
+    
+        Reference:
+          vol = 500 m3, c1 = 0.90, eta_c = 0.984, eta_d = 0.98
+          total_C_moles = 0.90 * 1 = 0.90
+          co2_combusted_vol = 500 * 0.90 * 0.984 = 442.8 m3
+          co2_combusted_kg = 442.8 * 1.861 = 824.0508 kg
+          co2_tonnes = 0.8240508 t
+    
+          ch4_undestroyed_vol = 500 * 0.90 * (1 - 0.98) = 500 * 0.90 * 0.02 = 9.0 m3
+          ch4_kg = 9.0 * 0.6785 = 6.1065 kg
+          ch4_tonnes = 0.0061065 t
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        volume = 500.0
+        c1 = 0.90
+        eta_c = 0.984
+        eta_d = 0.98
+    
+        # INDEPENDENT REFERENCE CALCULATION
+        total_C_moles = c1 * 1   # only C1 present
+        co2_combusted_vol = volume * total_C_moles * eta_c
+        co2_combusted_kg = co2_combusted_vol * DENSITY_CO2
+        expected_co2 = co2_combusted_kg / 1000.0
+    
+        ch4_undestroyed_vol = volume * c1 * (1 - eta_d)
+        ch4_kg = ch4_undestroyed_vol * DENSITY_CH4
+        expected_ch4 = ch4_kg / 1000.0
+    
+        expected_co2e = ref_co2e(expected_co2, expected_ch4, 0.0)
+    
+        payload = {
+            "process_type": "flaring",
+            "quantity": volume,
+            "unit": "m3",
+            "factor_source": "specific",
+            "c1": c1,
+            "flare_type": "elevated",
+            "hhv": 1020.0,
+        }
+        factor_data = {}
+        em, method = compute_emissions(payload, factor_data)
+    
+>       assert em["co2"] == pytest.approx(expected_co2, rel=1e-3), (
+            f"Flaring CO2: expected {expected_co2:.6f}, got {em['co2']:.6f}\n"
+            f"  vol={volume}, c1={c1}, eta_c={eta_c}\n"
+            f"  co2_vol={co2_combusted_vol}, co2_kg={co2_combusted_kg}"
+        )
+E       AssertionError: Flaring CO2: expected 0.824051, got 0.915612
+E           vol=500.0, c1=0.9, eta_c=0.984
+E           co2_vol=442.8, co2_kg=824.0508
+E       assert 0.915612 == 0.8240508 � 8.2e-04
+E         
+E         comparison failed
+E         Obtained: 0.915612
+E         Expected: 0.8240508 � 8.2e-04
+
+tests\test_qfull_api_pipeline.py:410: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 15:24:33,623] INFO in app: POST /api/auth/login 200 [0.091s] [ReqID: 269a93d5-e430-4c1a-b1df-eeafe2b0c747]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.091s] [ReqID: 269a93d5-e430-4c1a-b1df-eeafe2b0c747]
+____________ TestFlaringTier3Pipeline.test_flaring_with_native_co2 ____________
+
+self = <test_qfull_api_pipeline.TestFlaringTier3Pipeline object at 0x0000020CC02023C0>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_flaring_with_native_co2(self, auth_client, facility_id):
+        """
+        FLARING T3: Gas with native CO2 content.
+    
+        Reference:
+          vol = 1000 m3, c1=0.80, co2_native=0.05, eta_c=0.984, eta_d=0.98
+          co2_combusted_vol = 1000 * 0.80 * 0.984 = 787.2 m3
+          co2_combusted_kg = 787.2 * 1.861 = 1464.9192 kg
+          co2_native_kg = 1000 * 0.05 * 1.861 = 93.05 kg
+          total_co2_tonnes = (1464.9192 + 93.05) / 1000 = 1.5579... t
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        volume = 1000.0
+        c1 = 0.80
+        co2_native = 0.05
+        eta_c = 0.984
+        eta_d = 0.98
+    
+        # INDEPENDENT REFERENCE
+        co2_combusted_vol = volume * (c1 * 1) * eta_c
+        co2_combusted_kg = co2_combusted_vol * DENSITY_CO2
+        co2_native_kg = volume * co2_native * DENSITY_CO2
+        expected_co2 = (co2_combusted_kg + co2_native_kg) / 1000.0
+    
+        ch4_vol = volume * c1 * (1 - eta_d)
+        expected_ch4 = ch4_vol * DENSITY_CH4 / 1000.0
+    
+        expected_co2e = ref_co2e(expected_co2, expected_ch4, 0.0)
+    
+        payload = {
+            "process_type": "flaring",
+            "quantity": volume,
+            "unit": "m3",
+            "factor_source": "specific",
+            "c1": c1,
+            "co2_mol": co2_native,
+            "flare_type": "elevated",
+            "hhv": 1020.0,
+        }
+        factor_data = {}
+        em, method = compute_emissions(payload, factor_data)
+    
+>       assert em["co2"] == pytest.approx(expected_co2, rel=1e-3)
+E       assert 1.8329755294117644 == 1.5580292 � 0.00155803
+E         
+E         comparison failed
+E         Obtained: 1.8329755294117644
+E         Expected: 1.5580292 � 0.00155803
+
+tests\test_qfull_api_pipeline.py:464: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 15:24:34,128] INFO in app: POST /api/auth/login 200 [0.108s] [ReqID: ce7027c8-4ace-4cd0-92ff-45fe0890c822]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.108s] [ReqID: ce7027c8-4ace-4cd0-92ff-45fe0890c822]
+______ TestFlaringTier3Pipeline.test_flaring_enclosed_higher_efficiency _______
+
+self = <test_qfull_api_pipeline.TestFlaringTier3Pipeline object at 0x0000020CC0201C70>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 1
+
+    def test_flaring_enclosed_higher_efficiency(self, auth_client, facility_id):
+        """
+        FLARING T3: Enclosed/ground flare uses higher efficiencies.
+        Default for enclosed: eta_c=0.996, eta_d=0.995
+    
+        Reference: vol=200 m3, c1=0.92, enclosed
+        """
+        from calculations.legacy_engine import compute_emissions
+    
+        volume = 200.0
+        c1 = 0.92
+        eta_c = 0.996
+        eta_d = 0.995
+    
+        # INDEPENDENT REFERENCE
+        co2_combusted_vol = volume * (c1 * 1) * eta_c
+        expected_co2 = co2_combusted_vol * DENSITY_CO2 / 1000.0
+    
+        ch4_vol = volume * c1 * (1 - eta_d)
+        expected_ch4 = ch4_vol * DENSITY_CH4 / 1000.0
+    
+        payload = {
+            "process_type": "flaring",
+            "quantity": volume,
+            "unit": "m3",
+            "factor_source": "specific",
+            "c1": c1,
+            "flare_type": "enclosed",
+            "hhv": 1020.0,
+        }
+        em, method = compute_emissions(payload, {})
+    
+>       assert em["co2"] == pytest.approx(expected_co2, rel=1e-3)
+E       assert 0.37071119999999996 == 0.341054304 � 3.4e-04
+E         
+E         comparison failed
+E         Obtained: 0.37071119999999996
+E         Expected: 0.341054304 � 3.4e-04
+
+tests\test_qfull_api_pipeline.py:499: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-25 15:24:34,255] INFO in app: POST /api/auth/login 200 [0.089s] [ReqID: 16e9325f-3d1a-42dc-8eea-13e5b703c5d9]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.089s] [ReqID: 16e9325f-3d1a-42dc-8eea-13e5b703c5d9]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_qfull_api_pipeline.py::TestFlaringTier3Pipeline::test_flaring_elevated_default_efficiency
+FAILED tests/test_qfull_api_pipeline.py::TestFlaringTier3Pipeline::test_flaring_with_native_co2
+FAILED tests/test_qfull_api_pipeline.py::TestFlaringTier3Pipeline::test_flaring_enclosed_higher_efficiency
+============ 3 failed, 1 passed, 25 deselected, 1 warning in 1.61s ============
+

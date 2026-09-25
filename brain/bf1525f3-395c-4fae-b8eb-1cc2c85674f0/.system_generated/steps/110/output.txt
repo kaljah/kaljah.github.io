@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":79,"LineContent":"// Light-themed basemap options (no dark theme)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":90,"LineContent":"    url: \"https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":761,"LineContent":"        {/* View Mode \u0026 Basemap Selector */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":783,"LineContent":"          {/* Basemap Switcher */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":784,"LineContent":"          \u003cdiv className=\"segmented-control basemap-selector\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":854,"LineContent":"          {/* Dynamic Light Basemap Layer */}"}

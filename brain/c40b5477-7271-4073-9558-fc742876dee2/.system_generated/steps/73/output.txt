@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 8
+    print(f'{endpoint}: {resp.status}, CORS header: {resp.headers.get(" Access-Control-Allow-Origin\)}')
+                                                                      ^
+SyntaxError: unterminated string literal (detected at line 8)
+

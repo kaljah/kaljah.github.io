@@ -1,0 +1,10 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Users\samsung\Desktop\H2\new/server\calculations\legacy_engine.py", line 396, in compute_emissions
+    amount = float(payload.get("quantity") or payload.get("amount") or 0)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: could not convert string to float: '1250,50'
+

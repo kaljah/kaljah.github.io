@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":136,"LineContent":"    gwp_horizon = request.args.get(\"gwp_horizon\", \"100\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":147,"LineContent":"        gwp_horizon,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":177,"LineContent":"                gwp_horizon=gwp_horizon,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":209,"LineContent":"                gwp_horizon=gwp_horizon,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":379,"LineContent":"    gwp_horizon=\"100\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":454,"LineContent":"    is_20 = str(gwp_horizon).lower() in (\"20\", \"gwp20\", \"20yr\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":476,"LineContent":"            \"gwp_horizon\": 20 if is_20 else 100,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":683,"LineContent":"    gwp_horizon=\"100\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":763,"LineContent":"    is_20 = str(gwp_horizon).lower() in (\"20\", \"gwp20\", \"20yr\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":851,"LineContent":"            gwp_horizon=request.args.get(\"gwp_horizon\", \"100\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":991,"LineContent":"            gwp_horizon=request.args.get(\"gwp_horizon\", \"100\"),"}

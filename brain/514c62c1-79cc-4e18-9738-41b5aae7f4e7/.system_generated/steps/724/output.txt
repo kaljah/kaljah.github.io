@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Categorical Breakdown Sum -> GWP100: 5098772.466280386 | GWP20: 5122735.48892857
+

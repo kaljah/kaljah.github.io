@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:333:    function drawFooter(pageNumberOverride = null) {
+new\client\src\utils\ModernReportGenerator.js:377:        drawFooter();
+new\client\src\utils\ModernReportGenerator.js:586:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:691:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:731:      drawFooter();
+new\client\src\utils\ModernReportGenerator.js:804:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:853:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:890:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:998:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1080:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1156:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1215:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1253:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1296:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1334:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1367:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1401:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1502:    drawFooter();
+new\client\src\utils\ModernReportGenerator.js:1558:        drawFooter(hookData.pageNumber);
+
+
+

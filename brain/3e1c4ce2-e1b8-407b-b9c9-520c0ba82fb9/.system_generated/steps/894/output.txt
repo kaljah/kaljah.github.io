@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -109,8 +109,9 @@
+     console.log(`[AUDIT] Year Options: ${yearTexts.join(', ')}`);
+     expect(yearTexts).toContain('All Years');
+     expect(yearTexts).toContain('2026');
+-    expect(yearTexts).toContain('2025');
+     expect(yearTexts).toContain('2024');
++    expect(yearTexts).toContain('2023');
++    expect(yearTexts).toContain('2022');
+ 
+     // Close dropdown
+     await page.keyboard.press('Escape');
+@@ -165,16 +165,16 @@
+     expect(scope3Val2026).toContain('0');
+     console.log(`[AUDIT] Switched to 2026: Gross = ${grossVal}, Scope 3 = ${scope3Val2026} (verified accurate)`);
+ 
+-    // 2. Switch to Year 2025
+-    await yearDropdown.click();
+-    await page.waitForTimeout(400);
+-    await page.locator('.dropdown-portal .dropdown-option:has-text("2025")').click();
+-    await page.waitForTimeout(1500);
+-
+-    // 2025 has 0 verified emissions
++    // 2. Switch to Year 2024
++    await yearDropdown.click();
++    await page.waitForTimeout(400);
++    await page.locator('.dropdown-portal .dropdown-option:has-text("2024")').click();
++    await page.waitForTimeout(1500);
++
++    // 2024 has 0 verified emissions
+     grossVal = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+     expect(grossVal).toBe('0');
+-    console.log(`[AUDIT] Switched to 2025: Gross = ${grossVal} (verified accurate, 0 emissions)`);
++    console.log(`[AUDIT] Switched to 2024: Gross = ${grossVal} (verified accurate, 0 emissions)`);
+ 
+     // 3. Switch back to All Years
+     await yearDropdown.click();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

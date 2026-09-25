@@ -1,0 +1,76 @@
+
+The command exited with code 0.
+Output:
+<truncated 836 lines>
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-mmbtu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-mm_btu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-kwh]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-kilowatt_hour]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-mwh]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-megawatt_hour]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-therm]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[mmbtu-therms]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-mj]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-megajoule]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-megajoules]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-kj]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-kilojoule]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-kilojoules]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-gj]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-gigajoule]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-gigajoules]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-btu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-btus]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-mmbtu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-mm_btu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-kwh]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-kilowatt_hour]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-mwh]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-megawatt_hour]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-therm]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[kwh-therms]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-mj]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-megajoule]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-megajoules]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-kj]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-kilojoule]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-kilojoules]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-gj]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-gigajoule]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-gigajoules]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-btu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-btus]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-mmbtu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-mm_btu]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-kwh]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-kilowatt_hour]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-mwh]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-megawatt_hour]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-therm]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveUnitInvertibility::test_energy_invertibility[therm-therms]
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveTransitivity::test_volume_transitivity
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveTransitivity::test_mass_transitivity
+new/server/tests/test_unit_conversions_exhaustive.py::TestExhaustiveTransitivity::test_energy_transitivity
+new/server/tests/test_unit_conversions_exhaustive.py::TestThermodynamicTemperatureAndPressure::test_temperature_canonical_points
+new/server/tests/test_unit_conversions_exhaustive.py::TestThermodynamicTemperatureAndPressure::test_pressure_gauge_to_absolute
+new/server/tests/test_unit_conversions_exhaustive.py::TestThermodynamicTemperatureAndPressure::test_pressure_round_trip
+new/server/tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_at_standard_conditions_is_identity
+new/server/tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_higher_temp_decreases_standard_volume
+new/server/tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_higher_pressure_increases_standard_volume
+new/server/tests/test_unit_conversions_exhaustive.py::TestGasVolumeThermodynamicNormalization::test_normalization_z_factor_scaling
+new/server/tests/test_user_profile_update.py::test_update_user_profile_information
+new/server/tests/test_user_profile_update.py::test_update_user_email_collision_rejected
+new/server/tests/test_vented.py::test_tanks_calculator
+new/server/tests/test_vented.py::test_pneumatics_calculator
+new/server/tests/test_vented.py::test_pneumatics_intermittent_actuation
+new/server/tests/test_vented.py::test_liquids_unloading_units
+new/server/tests/test_vented.py::test_blowdown_calculator
+
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+899 tests collected in 3.83s
+

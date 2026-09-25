@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Navigating to login...
+Title: Carbon Tech URL: http://127.0.0.1:5173/login
+After login URL: http://127.0.0.1:5173/
+Console errors: []
+Page errors: []
+

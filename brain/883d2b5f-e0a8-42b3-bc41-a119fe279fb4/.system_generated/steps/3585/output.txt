@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+
+============================================================
+PILLAR 3: Massive Client-Side Bulk Ingestion & Parsing Stress
+============================================================
+[GENERATING] Synthesizing a 50,000-row enterprise CSV payload...
+[SYNTHESIZED] 50,000 rows (6.30 MB) in 95.66 ms.
+
+--- Benchmark 1: 50,000-Row Client-Side PapaParse Performance ---
+   Parsed 50,000 rows in 230.67 ms:
+   Throughput: 216756 rows/sec
+   Heap Allocation: 43.68 MB
+   Parse Errors: 0
+
+--- Benchmark 2: Column Inference & Mapping Heuristics (50 Header Variations) ---
+   Inferred 8 columns in 0.231 ms:
+     "Facility Name"  -->  facility_name
+     "Operating Year"  -->  year
+     "Reporting Month"  -->  month
+     "Emission Process Type"  -->  process
+     "Primary Fuel Source"  -->  fuel
+     "Activity Consumption Quantity"  -->  quantity
+     "Activity Physical Unit"  -->  unit
+     "Calculated Total CO2e"  -->  co2e
+
+--- Benchmark 3: Malformed CSV Robustness Stress Test ---
+   Parsed malformed CSV: 7 rows safely recovered without crash.
+>>> [PILLAR 3: PASSED] Massive Client-Side File Ingestion & Parsing 100% Verified.
+

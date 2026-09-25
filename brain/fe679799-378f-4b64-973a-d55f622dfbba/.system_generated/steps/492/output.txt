@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 09:51:19,871] INFO in app: Updated account: a
+[2026-09-23 09:51:19,959] INFO in app: Updated account: a@a
+[2026-09-23 09:51:20,052] INFO in app: Updated account: z
+[2026-09-23 09:51:20,141] INFO in app: Updated account: z@z
+TYPE OF UNCERTAINTY: <class 'NoneType'>
+{'api_reference': 'Section 6.2',
+ 'inputs': {'ef_ch4_used': 0.16,
+            'mud_type': 'water_based',
+            'mud_volume': 71.93},
+ 'metadata': {},
+ 'method': 'Drilling Mud Degassing',
+ 'results': {'ch4': {'absolute_uncertainty': 0.000309883923661748,
+                     'ad_uncertainty_1sigma': 0.01,
+                     'ci_95_abs': 0.000619767847323496,
+                     'ci_95_pct': 5.385164807134505,
+                     'comp_uncertainty_1sigma': 0.0,
+                     'confidence_level_pct': 95,
+                     'coverage_factor': 2.0,
+                     'ef_uncertainty_1sigma': 0.025,
+                     'lower_bound': 0.010889032152676505,
+                     'lower_bound_95': 0.010889032152676505,
+                     'relative_uncertainty': 0.026925824035672525,
+                     'relative_uncertainty_1sigma': 0.026925824035672525,
+                     'relative_uncertainty_95pct': 0.05385164807134504,
+                     'tier': 3,
+                     'uncertainty': 0.026925824035672525,
+                     'upper_bound': 0.012128567847323498,
+                     'upper_bound_95': 0.012128567847323498,
+                     'value': 0.011508800000000001},
+             'co2': 0.0,
+             'n2o': 0.0,
+             'total_co2e': 0.32224640000000004},
+ 'total_co2e': 0.32224640000000004}
+

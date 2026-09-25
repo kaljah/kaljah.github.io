@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                                 
+--------                                                                 
+C:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.css             
+C:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx             
+C:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js
+
+
+

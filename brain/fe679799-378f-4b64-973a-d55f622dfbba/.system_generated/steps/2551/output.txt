@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":287,"LineContent":"        current_app.logger.error(f\"Audit Log Error on register: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":354,"LineContent":"            current_app.logger.error(f\"Audit Log Error on login: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":475,"LineContent":"                current_app.logger.error(f\"Audit Log Error on logout: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":604,"LineContent":"        current_app.logger.error(f\"Audit Log Error on change_password: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":897,"LineContent":"            current_app.logger.error(f\"Audit Log Error on update_settings: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":315,"LineContent":"        current_app.logger.error(f\"Audit Log Error on export: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3206,"LineContent":"        print(f\"Audit Log Error: {e}\")"}

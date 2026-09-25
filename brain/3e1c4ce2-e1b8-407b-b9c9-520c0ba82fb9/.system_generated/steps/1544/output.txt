@@ -1,0 +1,14 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-1536
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-1536.log
+Log output:
+<truncated 24 lines>
+er POST (340ms)
+[QFULL E2E] First emission keys: activity, amount, ch4_emissions, co2_emissions, co2e_total, division, equipment_id, facility_id, facility_name, factor_source, factor_type, field, fuel, group_name, id, month, n2o_emissions, process_type, region, scope, status, timestamp, uncertainty_ch4, uncertainty_co2, uncertainty_n2o, unit, year
+[QFULL E2E] Emission record structure validated ✓
+  ok 12 [chromium] › e2e\test_qfull_e2e_ui.spec.js:244:3 › QFULL API Pipeline (via Browser Request) › Emission list record has correct structure and non-null values (349ms)
+[AUDIT] Cascaded Activity Options for Upstream: All Activities, E&P (Upstream)
+  ok  7 [chromium] › e2e\test_dashboard_deep_audit.spec.js:93:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population (12.9s)
+  ok  9 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:107:3 › Carbon Intensity Page Deep Audit › 2. Dual GWP Horizon Dynamic Toggle (100-Yr vs 20-Yr) (9.9s)
+
+Last progress: 1s ago

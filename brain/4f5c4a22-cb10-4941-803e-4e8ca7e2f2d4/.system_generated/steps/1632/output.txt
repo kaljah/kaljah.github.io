@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\legacy_engine.py:161:    def calculate_energy(self, amount, unit, hhv):
+  new\server\calculations\legacy_engine.py:162:        u = self._normalize_unit(unit)
+  new\server\calculations\legacy_engine.py:163:        if u == "mmbtu":
+  new\server\calculations\legacy_engine.py:164:            return amount
+  new\server\calculations\legacy_engine.py:165:
+  new\server\calculations\legacy_engine.py:166:        adj = amount
+  new\server\calculations\legacy_engine.py:167:        if u == "m3":
+  new\server\calculations\legacy_engine.py:168:            adj *= 35.3147
+  new\server\calculations\legacy_engine.py:169:        elif u == "l":
+  new\server\calculations\legacy_engine.py:170:            adj *= 0.264172
+  new\server\calculations\legacy_engine.py:171:        elif u == "bbl":
+  new\server\calculations\legacy_engine.py:172:            adj *= 42
+  new\server\calculations\legacy_engine.py:173:        elif u == "kg":
+  new\server\calculations\legacy_engine.py:174:            adj *= 2.20462
+  new\server\calculations\legacy_engine.py:175:        elif u == "tonne" or u == "tonnes":
+  new\server\calculations\legacy_engine.py:176:            adj *= 2204.62
+  new\server\calculations\legacy_engine.py:177:        elif u == "mcf" or u == "mscf":
+  new\server\calculations\legacy_engine.py:178:            adj *= 1000
+  new\server\calculations\legacy_engine.py:179:        elif u == "gal":
+  new\server\calculations\legacy_engine.py:180:            adj *= 1  # Assuming gal is base for liquid if not caught
+  new\server\calculations\legacy_engine.py:181:
+  new\server\calculations\legacy_engine.py:182:        # hhv is usually Btu/scf or Btu/gal or Btu/lb
+  new\server\calculations\legacy_engine.py:183:        # Simplification: assuming hhv unit matches source volume/mass 
+unit scale
+  new\server\calculations\legacy_engine.py:184:        # Ideally we need explicit hhv unit. For now relying on 
+standard API factors.
+  new\server\calculations\legacy_engine.py:185:
+  new\server\calculations\legacy_engine.py:186:        return (adj * hhv) / 1000000.0
+  new\server\calculations\legacy_engine.py:187:
+  new\server\calculations\legacy_engine.py:188:    def calculate_default_kg(self, amount, unit, hhv, factor_data, gas):
+  new\server\calculations\legacy_engine.py:189:        if not factor_data:
+  new\server\calculations\legacy_engine.py:190:            return 0
+  new\server\calculations\legacy_engine.py:191:
+
+
+

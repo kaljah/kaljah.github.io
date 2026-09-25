@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+1. Navigating to frontend...
+LOG: [vite] connecting...
+LOG: [vite] connected.
+Current URL: http://127.0.0.1:5173/
+2. Clicking skip intro...
+3. Logging in...
+URL after login: http://127.0.0.1:5173/
+4. Clicking Carbon Intensity sidebar link...
+Final URL: http://127.0.0.1:5173/carbon-intensity
+Grid Title: Carbon Intensity & Product Embodiment
+KPI Cards count: 4
+  Card 0: GHG INTENSITY (AVG) => 0.99
+  Card 1: SCOPE 1 DIRECT INTENSITY => 0.99
+  Card 2: FLARING CARBON INTENSITY => 0.09
+  Card 3: SCOPE 3 VALUE CHAIN => 0.00
+DONE!
+

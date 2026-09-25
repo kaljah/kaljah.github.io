@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 128 items
+
+validation\calculation\test_clean_emission_factors.py ....               [  3%]
+validation\calculation\test_clean_gwp.py .....                           [  7%]
+validation\calculation\test_clean_scope1.py ...........                  [ 15%]
+validation\calculation\test_clean_scope2.py .......                      [ 21%]
+validation\calculation\test_clean_scope3.py ..................           [ 35%]
+validation\calculation\test_clean_stoichiometry.py ........              [ 41%]
+validation\calculation\test_clean_uncertainty.py .....                   [ 45%]
+validation\calculation\test_clean_units.py ...........                   [ 53%]
+validation\differential\test_clean_differential.py ..................... [ 70%]
+...                                                                      [ 72%]
+validation\mutation\test_calculation_mutations.py ..........             [ 80%]
+validation\mutation\test_clean_mutations.py ..........                   [ 88%]
+validation\property\test_clean_properties.py .....                       [ 92%]
+validation\regression\test_regression_archive.py ..........              [100%]
+
+============================= 128 passed in 3.42s =============================
+

@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:168:                _query_summary,
+new\server\routes\dashboard.py:368:@cached(cache=DASHBOARD_CACHE, key=make_cache_key("_query_summary"), 
+lock=CACHE_LOCK)
+new\server\routes\dashboard.py:369:def _query_summary(
+new\server\routes\dashboard.py:813:    Delegates to _query_summary() for thread-safe reuse.
+new\server\routes\dashboard.py:825:        _query_summary(
+
+
+

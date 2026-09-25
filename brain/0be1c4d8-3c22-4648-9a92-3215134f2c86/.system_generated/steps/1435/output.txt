@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -207,12 +207,12 @@
+       });
+ 
+       setStats({
+-        avgCo2Intensity: tBoe > 0 ? wCo2Sum / tBoe : 0,
+-        avgCo2IntensityGwp20: tBoe > 0 ? wCo2Gwp20Sum / tBoe : 0,
+-        avgScope1Intensity: tBoe > 0 ? wS1Sum / tBoe : 0,
+-        avgScope2Intensity: tBoe > 0 ? wS2Sum / tBoe : 0,
+-        avgScope3Intensity: tBoe > 0 ? wS3Sum / tBoe : 0,
+-        avgFlaringIntensity: tBoe > 0 ? wFlaringSum / tBoe : 0,
++        avgCo2Intensity: tBoe > 0 ? wCo2Sum / tBoe : (tCo2e > 0 ? null : 0),
++        avgCo2IntensityGwp20: tBoe > 0 ? wCo2Gwp20Sum / tBoe : (tCo2eGwp20 > 0 ? null : 0),
++        avgScope1Intensity: tBoe > 0 ? wS1Sum / tBoe : (tScope1 > 0 ? null : 0),
++        avgScope2Intensity: tBoe > 0 ? wS2Sum / tBoe : (tScope2 > 0 ? null : 0),
++        avgScope3Intensity: tBoe > 0 ? wS3Sum / tBoe : (tScope3 > 0 ? null : 0),
++        avgFlaringIntensity: tBoe > 0 ? wFlaringSum / tBoe : (tFlaringEm > 0 ? null : 0),
+         totalCo2Emissions: tCo2e,
+         totalCo2EmissionsGwp20: tCo2eGwp20,
+         totalScope1: tScope1,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

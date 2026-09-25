@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":4,"LineContent":"import { DEFAULT_GWP, getActiveGwpFactors, GWP_STANDARDS } from \"../constants\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":166,"LineContent":"      api.get(\"/auth/settings\").catch(() =\u003e ({ data: { gwp_standard: 'IPCC AR5' } })),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":196,"LineContent":"    const settingsData = settingsRes.data || { gwp_standard: 'IPCC AR5' };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":197,"LineContent":"    const activeGwpChoice = requestedGwp || settingsData.gwp_standard || 'AR5';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":26,"LineContent":"export const GWP_STANDARDS = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":36,"LineContent":"  const std = GWP_STANDARDS[standard] || GWP_AR5;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":110,"LineContent":"        if (settings.gwp_standard) setGwpStandard(settings.gwp_standard);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":186,"LineContent":"        gwp_standard: gwpStandard,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":94,"LineContent":"        if (settingsRes?.data?.gwp_standard) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":95,"LineContent":"          setActiveGwpStandard(settingsRes.data.gwp_standard);"}

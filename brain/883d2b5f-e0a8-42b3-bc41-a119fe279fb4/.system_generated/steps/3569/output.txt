@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\tests\test_ui_stress_large_dataset.mjs. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -44,11 +44,11 @@
+ 
+   const dataset = new Array(RECORD_COUNT);
+   for (let i = 0; i < RECORD_COUNT; i++) {
+-    const year = 2020 + ((i * 7) % 6);
+-    const month = ((i * 5) % 12) + 1;
+-    const fac = facilities[(i * 3) % facilities.length];
+-    const proc = processes[(i * 11) % processes.length];
+-    const fuel = fuels[(i * 13) % fuels.length];
++    const year = 2020 + (i % 6);
++    const month = (Math.floor(i / 6) % 12) + 1;
++    const fac = facilities[Math.floor(i / 72) % facilities.length];
++    const proc = processes[Math.floor(i / 360) % processes.length];
++    const fuel = fuels[Math.floor(i / 2160) % fuels.length];
+     const qty = 100.0 + ((i * 17) % 5000);
+     const co2 = qty * 1.95;
+     const ch4 = proc === "combustion" ? 0.0003 * qty : 0.05 * qty;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

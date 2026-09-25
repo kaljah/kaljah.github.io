@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1381,4 +1381,23 @@
+   - Full backend pytest suite passed: **214 passed, 52 warnings** (benchmark: ~308 Kops/s).
+   - Frontend production build passed: **`npm run build` completed in 10.96s** (0 errors).
+ - **Status:** Complete, verified, and in full synchronization with the repository.
++
++### [2026-09-15T01:13:00Z] - FULL-STACK BUG REMEDIATION & UX HARDENING
++- **Action:** Fixed verified defects across Ingestion Pipelines, Template Downloads, Uncertainty Loading, Native Modals, and RBAC Access.
++- **Files Modified:**
++  - `new/client/src/components/Scope2ImportWizard.jsx`: Updated upload endpoint from `/emissions/bulk-upload` to `/emissions/upload/start` with `scope=2`, connecting with `<UploadProgress>` job polling. Replaced `window.alert()` with `toast.error()`.
++  - `new/client/src/components/Scope3ImportWizard.jsx`: Updated upload endpoint from `/emissions/bulk-upload` to `/emissions/upload/start` with `scope=3`. Replaced `window.alert()` with `toast.error()`.
++  - `new/client/src/components/Scope1ImportWizard.jsx`: Replaced blocking `window.alert()` on template download and upload failure with unified `toast.error()`.
++  - `new/client/src/components/ColumnMappingWizard.jsx`: Replaced blocking `window.alert()` on upload errors and template download failures with unified `toast.error()`.
++  - `new/client/src/components/BulkImportModal.jsx`: Eliminated hardcoded `http://127.0.0.1:5000` download URL; converted to authenticated Axios blob stream (`api.get('/emissions/template/csv...', { responseType: 'blob' })`) with object URL lifecycle management.
++  - `new/client/src/pages/UncertaintyAssessment.jsx`: Fixed infinite loading spinner freeze by ensuring `setLoading(false)` is invoked when `years` is empty or when `selectedYear === 'all'`. Preserved top control filter dropdowns so users can switch years even when the active filter yields no records.
++  - `new/client/src/pages/QADashboard.jsx`: Replaced blocking `window.confirm()` in `handleBulkResolve` with a styled in-app `<Modal>` confirmation dialog.
++  - `new/client/src/pages/ManageData.jsx`: Replaced blocking browser `window.prompt()` for gas ($m^3 \rightarrow \text{mscf}$) and oil ($m^3 \rightarrow \text{bbl}$) unit conversions with an interactive in-app `<Modal>` dialog validating positive numerical inputs.
++  - `new/client/src/pages/Settings.jsx`: Added `disabled={!isAdmin}` across GWP card clicks, OGMP base year pills, reconciliation threshold slider, methane intensity targets, facility override inputs, and Copernicus Sentinel-5P satellite credentials.
++  - `new/client/src/App.jsx`: Updated `/settings` route from `<NonITRoute>` to `<PrivateRoute>`, granting IT Administrators access to configure external satellite API credentials and Keycloak endpoints while preserving read-only view for standard users.
++- **Verification:**
++  - Full backend pytest suite passed: **214 passed, 52 warnings** (benchmark: ~372 Kops/s).
++  - Frontend production build passed: **`npm run build` completed in 9.55s** (0 errors, 3,199 modules).
++  - Codebase knowledge graph synchronized: **`graphify update .`** (2,145 nodes, 4,487 edges).
++- **Status:** Complete, verified, and in full synchronization with the repository.
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

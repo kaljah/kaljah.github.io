@@ -1,0 +1,99 @@
+
+The command exited with code 0.
+Output:
+<truncated 53 lines>
+Routine Flaring[2] | MMSm3 | 50.125 | 46.300 | 38.192 | 27.904 | 28.292
+Non-Routine Flaring[2] | MMSm3 | 0.344 | 0.289 | 0.291 | 37.170 | 20.014
+Safety Flaring[2] | MMSm3 | 46.496 | 36.602 | 22.616 | 2.011 | 2.067
+Flare GHG Emissions | MMtCO2e | 0.285 | 0.244 | 0.176 | 0.203 | 0.138
+Production & Intensity by Total Production [3]
+Total Production | MMBOE | 67.111 | 72.183 | 71.148 | 69.853 | 70.160
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0153 | 0.0140 | 0.0133 | 0.0112 | 0.0101
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0013 | 0.0012 | 0.0013 | 0.0011 | 0.0011
+Total GHG Intensity | tCO2e/BOE | 0.0166 | 0.0152 | 0.0146 | 0.0122 | 0.0112
+Methane Intensity | tCH4/BOE | 0.000043 | 0.000038 | 0.000036 | 0.000019 | 0.000011
+Flaring Intensity (Total Flare/Total Gas Produced) | Vol.% | 1.91% | 1.51% | 1.10% | 1.22% | 0.93%
+Production & Intensity by Total Saleable Production [4]
+Total Saleable Production | MMBOE | 28.360 | 30.453 | 28.773 | 24.497 | 25.435
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0362 | 0.0331 | 0.0329 | 0.0318 | 0.0278
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0031 | 0.0028 | 0.0032 | 0.00309 | 0.0031
+Total GHG Intensity | tCO2e/BOE | 0.0393 | 0.0359 | 0.0361 | 0.0349 | 0.0308
+Methane Intensity | tCH4/BOE | 0.000102 | 0.000091 | 0.000090 | 0.000056 | 0.000031
+Flaring Intensity | Sm3/BOE | 3.419 | 2.732 | 2.123 | 2.843 | 2.018
+Methane Intensity per NGSI[5] | wt% | 0.166% | 0.149% | 0.147% | 0.092% | 0.051%
+=== PAGE 34 ===
+ELM 2021 2025 TO TOTAL PRODUCTION, GHG, METHANE, FLARE VOLUMES, & INTENSITIES [1] Flare volume based on data provided for GHG emissions. Flaring volume includes both CPF and field flaring. [2] 2025 data on Routine , Non-routine and Safety flaring volumes are associated with CPF activities; classifications does not include field flaring. [3] Total production includes oil, NGL, LPG and gas used for reinjection, artificial lifts, fuel gas, & flares. [4] Saleable Production includes fuel gas export to PK0, crude oil, NGL, and LPG. [5] Methane intensity based on the Natural Gas Sustainability Initiative (NGSI) Methane Intensity Protocol. 34 | Category Unit 2021 2022 2023 2024 2025 GHG Emissions GHG Direct Emissions (Scope 1) MMtCO2e 0.919 1.011 1.004 0.883 0.886 GHG Indirect Emissions (Scope 2) MMtCO2e 0.172 0.215 0.245 0.250 0.239 GHG Emissions (Total Scope 1+ 2) MMtCO2e 1.091 1.226 1.249 1.133 1.125 Methane Emissions Methane Emissions in CH4 tCH4 4,222.85 4,651.57 4,232.70 1,343.18 874.08 Methane Emissions in CO2e tCO2e 105,571.27 116,289.37 105,817.61 33,579.48 24,474.34 Flare Volume & Emissions Flare Volume[1] MMSm3 101.682 129.575 75.558 63.344 70.148 Routine Flaring[2] MMSm3 50.271 37.066 43.579 49.387 47.246 Non-Routine Flaring[2] MMSm3 3.026 2.393 3.134 9.262 17.269 Safety Flaring[2] MMSm3 48.384 90.116 28.845 4.470 4.458 Flare GHG Emissions MMtCO2e 0.281 0.342 0.196 0.167 0.168 Production & Intensity by Total Production [3] Total Production MMBOE 59.192 60.709 64.742 64.429 60.767 Scope 1 GHG Intensity tCO2e/BOE 0.0155 0.0167 0.0155 0.0137 0.0146 Scope 2 GHG Intensity tCO2e/BOE 0.0029 0.0035 0.0038 0.0039 0.0039 Total GHG Intensity tCO2e/BOE 0.0184 0.0202 0.0193 0.0176 0.0185 Methane Intensity tCH4/BOE 0.000071 0.000077 0.000065 0.000021 0.000014 Flaring Intensity (Total Flare/Total Gas Vol.% 2.78% 3.27% 1.78% 1.45% 1.65% Produced) Production & Intensity by Total Saleable Production [4] Total Saleable Production MMBOE 32.922 32.605 34.993 33.971 31.184 Scope 1 GHG Intensity tCO2e/BOE 0.0279 0.0310 0.0287 0.0260 0.0284 Scope 2 GHG Intensity tCO2e/BOE 0.0052 0.0066 0.0070 0.00737 0.0077 Total GHG Intensity tCO2e/BOE 0.0331 0.0376 0.0357 0.0334 0.0361 Methane Intensity tCH4/BOE 0.000128 0.000143 0.000121 0.000040 0.000028 Flaring Intensity Sm3/BOE 3.089 3.974 2.159 1.865 2.250 Methane Intensity per NGSI[5] wt% 0.164% 0.176% 0.148% 0.047% 0.033% HBNS and El Merk | 2025 GHG & CAP Annual Report
+Category | Unit | 2021 | 2022 | 2023 | 2024 | 2025
+GHG Emissions
+GHG Direct Emissions (Scope 1) | MMtCO2e | 0.919 | 1.011 | 1.004 | 0.883 | 0.886
+GHG Indirect Emissions (Scope 2) | MMtCO2e | 0.172 | 0.215 | 0.245 | 0.250 | 0.239
+GHG Emissions (Total Scope 1+ 2) | MMtCO2e | 1.091 | 1.226 | 1.249 | 1.133 | 1.125
+Methane Emissions
+Methane Emissions in CH4 | tCH4 | 4,222.85 | 4,651.57 | 4,232.70 | 1,343.18 | 874.08
+Methane Emissions in CO2e | tCO2e | 105,571.27 | 116,289.37 | 105,817.61 | 33,579.48 | 24,474.34
+Flare Volume & Emissions
+Flare Volume[1] | MMSm3 | 101.682 | 129.575 | 75.558 | 63.344 | 70.148
+Routine Flaring[2] | MMSm3 | 50.271 | 37.066 | 43.579 | 49.387 | 47.246
+Non-Routine Flaring[2] | MMSm3 | 3.026 | 2.393 | 3.134 | 9.262 | 17.269
+Safety Flaring[2] | MMSm3 | 48.384 | 90.116 | 28.845 | 4.470 | 4.458
+Flare GHG Emissions | MMtCO2e | 0.281 | 0.342 | 0.196 | 0.167 | 0.168
+Production & Intensity by Total Production [3]
+Total Production | MMBOE | 59.192 | 60.709 | 64.742 | 64.429 | 60.767
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0155 | 0.0167 | 0.0155 | 0.0137 | 0.0146
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0029 | 0.0035 | 0.0038 | 0.0039 | 0.0039
+Total GHG Intensity | tCO2e/BOE | 0.0184 | 0.0202 | 0.0193 | 0.0176 | 0.0185
+Methane Intensity | tCH4/BOE | 0.000071 | 0.000077 | 0.000065 | 0.000021 | 0.000014
+Flaring Intensity (Total Flare/Total Gas Produced) | Vol.% | 2.78% | 3.27% | 1.78% | 1.45% | 1.65%
+Production & Intensity by Total Saleable Production [4]
+Total Saleable Production | MMBOE | 32.922 | 32.605 | 34.993 | 33.971 | 31.184
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0279 | 0.0310 | 0.0287 | 0.0260 | 0.0284
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0052 | 0.0066 | 0.0070 | 0.00737 | 0.0077
+Total GHG Intensity | tCO2e/BOE | 0.0331 | 0.0376 | 0.0357 | 0.0334 | 0.0361
+Methane Intensity | tCH4/BOE | 0.000128 | 0.000143 | 0.000121 | 0.000040 | 0.000028
+Flaring Intensity | Sm3/BOE | 3.089 | 3.974 | 2.159 | 1.865 | 2.250
+Methane Intensity per NGSI[5] | wt% | 0.164% | 0.176% | 0.148% | 0.047% | 0.033%
+=== PAGE 38 ===
+Year | Source Module | NO 2 | CO | SO 2 | PM | VOC
+2021 | Stationary Combustion | 1,574.03 | 468.64 | 8.29 | 36.86 | 24.47
+Flare | 141.17 | 581.29 | 0.88 | 249.12 | 528.06
+Equipment Leaks | - | - | - | - | 364.02
+O&G Venting | - | - | - | - | 293.41
+Total | 1,715.19 | 1,049.93 | 9.17 | 285.98 | 1,669.18
+2022 | Stationary Combustion | 1,480.29 | 467.74 | 4.09 | 33.48 | 20.13
+Flare | 121.02 | 498.32 | 0.76 | 213.57 | 455.40
+Equipment Leaks | - | - | - | - | 802.10
+O&G Venting | - | - | - | - | 318.65
+Total | 1,601.31 | 966.06 | 4.84 | 247.05 | 1,596.27
+2023 | Stationary Combustion | 1,550.16 | 484.61 | 8.67 | 39.12 | 26.51
+Flare | 87.44 | 360.03 | 0.56 | 154.30 | 303.44
+Equipment Leaks | - | - | - | - | 717.06
+O&G Venting | - | - | - | - | 285.27
+Total | 1,637.60 | 844.64 | 9.22 | 193.42 | 1,332.28
+2024 | Stationary Combustion | 1319.25 | 371.20 | 5.98 | 27.27 | 17.02
+Flare | 99.66 | 410.35 | 0.63 | 175.86 | 345.85
+Equipment Leaks | - | - | - | - | 39.10
+O&G Venting | - | - | - | - | 294.64
+Total | 1418.91 | 781.55 | 6.61 | 203.14 | 696.62
+=== PAGE 40 ===
+Year | Source Module | NO 2 | CO | SO 2 | PM | VOC
+2021 | Stationary Combustion | 1,306.03 | 396.94 | 10.18 | 34.29 | 24.63
+Flare | 138.7 | 571.12 | 0.93 | 244.76 | 364.07
+Equipment Leaks | - | - | - | - | 373.48
+O&G Venting | - | - | - | - | 53.46
+Total | 1,444.73 | 968.06 | 11.11 | 279.06 | 815.64
+2022 | Stationary Combustion | 1424.84 | 418.04 | 10.69 | 35.35 | 25.02
+Flare | 168.75 | 694.87 | 1.18 | 297.8 | 292.32
+Equipment Leaks | - | - | - | - | 307.23
+O&G Venting | - | - | - | - | 47.71
+Total | 1593.6 | 1112.9 | 11.87 | 333.15 | 672.28
+2023 | Stationary Combustion | 1727.01 | 510.26 | 11.62 | 41.71 | 28.69
+Flare | 96.74 | 398.33 | 0.69 | 170.71 | 134.9
+Equipment Leaks | - | - | - | - | 491.14
+O&G Venting | - | - | - | - | 82.13
+Total | 1823.75 | 908.59 | 12.31 | 212.42 | 736.86
+2024 | Stationary Combustion | 1668.06 | 494.93 | 11.6 | 40.89 | 28.38
+Flare | 81.47 | 335.47 | 0.58 | 143.77 | 119.47
+Equipment Leaks | - | - | - | - | 20.57
+O&G Venting | - | - | - | - | 88.78
+Total | 1749.53 | 830.4 | 12.18 | 184.66 | 257.19
+

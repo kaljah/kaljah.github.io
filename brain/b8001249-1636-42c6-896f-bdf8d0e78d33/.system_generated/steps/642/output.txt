@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+delete emission status: 404 {'error': 'Record not found'}
+

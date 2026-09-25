@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\legacy_engine.py:1:from .dispatcher import dispatcher as api2021_dispatcher
+  new\server\calculations\legacy_engine.py:2:from .constants import DEFAULT_GWP, get_active_gwp
+  new\server\calculations\legacy_engine.py:3:
+  new\server\calculations\legacy_engine.py:4:
+  new\server\calculations\legacy_engine.py:5:# Constants
+  new\server\calculations\legacy_engine.py:6:STD_TEMP_R = 519.67  # 60�F in Rankine
+> new\server\calculations\legacy_engine.py:428:    api_res = api2021_dispatcher.dispatch(
+  new\server\calculations\legacy_engine.py:429:        process, payload, factor_data, uncertainties, gwp_dict=gwp_dict
+  new\server\calculations\legacy_engine.py:430:    )
+  new\server\calculations\legacy_engine.py:431:
+  new\server\calculations\legacy_engine.py:432:    def get_val(r):
+  new\server\calculations\legacy_engine.py:433:        # BUG-15/16 FIX: handle None results from CH4-only calculators 
+(e.g. MudDegassing, Completions)
+
+
+

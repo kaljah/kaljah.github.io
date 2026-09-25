@@ -1,0 +1,30 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-255
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-255.log
+Log output:
+<truncated 21 lines>
+f test_custom_factor_isolation(self):
+        """Verifies custom factors take precedence without polluting global catalog."""
+        custom_data = {
+            "name": "Custom Flare Gas",
+            "type": "custom",
+            "co2": 2.50,
+            "ch4": 0.05,
+            "n2o": 0.001,
+            "unit": "kg/m3",
+        }
+>       em, method = compute_emissions(
+            amount=1000.0,
+            unit="m3",
+            process="combustion",
+            factor_data=custom_data,
+            factor_type="custom",
+        )
+E       TypeError: compute_emissions() got an unexpected keyword argument 'amount'
+
+validation\calculation\test_clean_emission_factors.py:84: TypeError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorSelection::test_custom_factor_isolation
+========================= 1 failed, 3 passed in 2.05s =========================
+
+Last progress: 3s ago

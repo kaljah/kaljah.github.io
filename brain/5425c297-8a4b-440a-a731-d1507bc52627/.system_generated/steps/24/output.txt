@@ -1,0 +1,110 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+seed_admin.py:                    user.role = u_data["role"]
+seed_admin.py:                    role=u_data["role"],
+seed_admin.py:                print(f"  [OK] User '{email}' (role: {u_data['role']}) seeded successfully.")
+static/swagger.json:                        "role": { "type": "string", "example": "it_admin" },
+static/swagger.json:                    "role": { "type": "string", "example": "it_admin" },
+test_csv_uploader.py:                role="admin",
+tests/test_all_bulk_imports.py:            user = User(fullName="Test", orgName="TestOrg", sector="TestSector", email="test@example.com", role="admin")
+tests/test_api_security.py:                role="admin",
+tests/test_api_security.py:                role="user",
+tests/test_audit.py:                role="admin",
+tests/test_audit.py:                role="it_admin",
+tests/test_audit.py:                role="user",
+tests/test_audit_bug_fixes.py:                role="admin",
+tests/test_audit_bug_fixes.py:            admin.role = "admin"
+tests/test_audit_bug_fixes.py:                role="admin",
+tests/test_audit_bug_fixes.py:            user.role = "admin"
+tests/test_audit_remediation.py:                role="admin",
+tests/test_audit_remediation.py:                role="it_admin",
+tests/test_audit_remediation.py:                role="user",
+tests/test_audit_remediation.py:                role="auditor",
+tests/test_audit_remediation.py:                role="user",
+tests/test_audit_remediation.py:    """Defect 8: Verify base year recalculation route enforces role, sets created_by, and updates singleton."""
+tests/test_audit_remediation.py:                role="user",
+tests/test_audit_remediation.py:def test_auth_update_user_role_whitelist(client, test_users):
+tests/test_audit_remediation.py:    """Defect 12: Verify PUT /api/auth/users/<id> rejects invalid roles."""
+tests/test_audit_remediation.py:    res = client.put(f"/api/auth/users/{test_users['user']}", json={"role": "super_root_admin"})
+tests/test_audit_remediation.py:    assert "Invalid role" in res.get_json()["error"]
+tests/test_audit_remediation.py:                role="superuser",
+tests/test_calculations_page.py:                role="admin",
+tests/test_calculations_page.py:                role="user",
+tests/test_calculations_page.py:                role="it_admin",
+tests/test_carbon_intensity_validation.py:                role="admin",
+tests/test_csv_engine_matrix.py:            role="admin",
+tests/test_deep_injection_matrix.py:            role="admin",
+tests/test_it_role_security.py:                role="user",
+tests/test_it_role_security.py:        # IT user (restricted role)
+tests/test_it_role_security.py:                role="it",
+tests/test_it_role_security.py:                role="it_admin",
+tests/test_it_role_security.py:    """IT role can access the user list to view users."""
+tests/test_it_role_security.py:    """IT role can reset user passwords."""
+tests/test_it_role_security.py:    """IT role cannot register / provision new users (403 Forbidden)."""
+tests/test_it_role_security.py:    """IT role cannot modify user profiles, names, roles, or departments (403 Forbidden)."""
+tests/test_it_role_security.py:        "role": "admin",
+tests/test_it_role_security.py:    """IT role cannot delete users (403 Forbidden)."""
+tests/test_it_role_security.py:    """IT role cannot view or export audit trail (403 Forbidden)."""
+tests/test_it_role_security.py:    """IT role has zero access to facilities, emissions, scope 2/3, sources, or reports."""
+tests/test_it_role_security.py:    """IT role can access region identifiers for UI filtering without error."""
+tests/test_it_role_security.py:    """IT role cannot modify application or user settings (403 Forbidden)."""
+tests/test_it_role_security.py:def test_it_admin_can_assign_it_role(client, test_accounts):
+tests/test_it_role_security.py:    """IT Admin can assign the 'it' role to an existing user."""
+tests/test_it_role_security.py:        json={"role": "it"},
+tests/test_it_role_security.py:    assert data["user"]["role"] == "it"
+tests/test_it_role_security.py:        assert u.role == "it"
+tests/test_it_role_security.py:    """IT Manager role has full access to user management without limitation."""
+tests/test_it_role_security.py:                role="it_manager",
+tests/test_it_role_security.py:    # 1. IT Manager can create user with any role
+tests/test_it_role_security.py:            "role": "user",
+tests/test_it_role_security.py:    # 2. IT Manager can modify role, region, and status
+tests/test_it_role_security.py:            "role": "superuser",
+tests/test_it_role_security.py:    assert u_data["role"] == "superuser"
+tests/test_operational_defaults.py:                role="user",
+tests/test_operational_defaults.py:                role="superuser",
+tests/test_operational_defaults.py:                role="admin",
+tests/test_production_smoke.py:            role="admin",
+tests/test_production_smoke.py:    """SMOKE-04: Admin login succeeds and returns user info with role."""
+tests/test_production_smoke.py:    assert data.get("user", {}).get("role") == "admin"
+tests/test_qaqc_diagnostics.py:                role="admin",
+tests/test_qfull_api_pipeline.py:                role="admin",
+tests/test_qfull_unit_conversions.py:        """Standard petroleum: 1 bbl = exactly 42 US gallons."""
+tests/test_reports.py:                role="admin",
+tests/test_reports.py:            admin.role = "admin"
+tests/test_reports.py:                role="it_admin",
+tests/test_reports.py:            it_admin.role = "it_admin"
+tests/test_reports.py:                role="user",
+tests/test_reports.py:            user.role = "user"
+tests/test_sbti.py:            user = User(email="sbti_admin@example.com", fullName="Admin User", orgName="AdminOrg", sector="Energy", role="admin")
+tests/test_sbti.py:            user = User(email="it@test.com", fullName="IT Admin", orgName="TestOrg", sector="Oil & Gas", role="it_admin")
+tests/test_stress_boundary_resilience.py:                role="admin",
+tests/test_stress_bulk_pipeline.py:                role="admin",
+tests/test_stress_concurrency.py:                role="admin",
+tests/test_stress_volume_analytics.py:                role="admin",
+tests/test_ui_calculation_parity.py:                role="admin",
+tests/test_uncertainty.py:                role="admin",
+tests/test_uncertainty.py:                role="it_admin",
+tests/test_user_profile_update.py:                role="it_admin",
+tests/test_user_profile_update.py:                role="user",
+tests/test_user_profile_update.py:                role="user",
+tests/test_user_profile_update.py:        "role": "user",
+tests/test_zero_trust_adversarial.py:        admin = User.query.filter_by(role="admin").first()
+tests/test_zero_trust_adversarial.py:            admin = User(email="admin_by@test.com", fullName="Admin BY", orgName="Sonatrach", role="admin")
+tests/test_zero_trust_adversarial.py:        admin = User.query.filter_by(role="admin").first()
+tests/test_zero_trust_adversarial.py:            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="admin")
+tests/test_zero_trust_adversarial.py:        operator = User.query.filter_by(role="user").first()
+tests/test_zero_trust_adversarial.py:            operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="user")
+upload_test_s2_s3.py:        admin = User.query.filter_by(role='admin').first()
+utils.py:    # IT Admin, IT Manager & IT roles have zero facility/emission data access.
+utils.py:    if user.role in ["it_admin", "it_manager", "it"]:
+utils.py:    if user.role == "admin":
+utils.py:        return []  # No region assigned, no access for restricted role
+utils.py:    if not user or user.role in ["it_admin", "it_manager", "it"]:
+utils.py:    if user.role == "admin":
+utils.py:        if user.role == "superuser":
+utils.py:            admins = User.query.filter_by(role="admin", status="active").all()
+utils.py:        elif user.role == "user":
+utils.py:            superusers = User.query.filter_by(role="superuser", status="active").all()
+

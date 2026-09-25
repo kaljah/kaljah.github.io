@@ -1,0 +1,85 @@
+
+The command exited with code 0.
+Output:
+<truncated 4323 lines>
+production_data.csv:9498:Berkine,Exploration & Production,Logistics,Field A,2025,11,16846.64,bbl,143659.75,mscf
+production_data.csv:9502:Berkine,Exploration & Production,Drilling,Block 1,2022,6,10826.69,bbl,87509.81,mscf
+production_data.csv:9520:Berkine,Exploration & Production,Operations,Block 2,2025,5,30292.0,bbl,112447.81,mscf
+production_data.csv:9521:Berkine,Refining,Drilling,Area X,2025,11,4318.27,bbl,42964.67,mscf
+production_data.csv:9523:Berkine,Marketing,Logistics,Block 1,2024,1,36336.11,bbl,116249.3,mscf
+production_data.csv:9526:Berkine,Exploration & Production,Production,Block 2,2022,10,31814.4,bbl,18604.27,mscf
+production_data.csv:9539:Berkine,Marketing,Logistics,Block 1,2022,6,48136.56,bbl,160169.51,mscf
+production_data.csv:9540:Berkine,Transportation,Operations,Field B,2023,1,4892.49,bbl,26581.18,mscf
+production_data.csv:9541:Berkine,Transportation,Operations,Block 2,2024,12,28711.08,bbl,61584.42,mscf
+production_data.csv:9545:Berkine,Marketing,Drilling,Area X,2025,7,1340.43,bbl,149512.38,mscf
+production_data.csv:9547:Berkine,Refining,Operations,Area Y,2024,5,37948.01,bbl,156373.36,mscf
+production_data.csv:9562:Berkine,Marketing,Drilling,Block 1,2025,1,26731.24,bbl,98378.13,mscf
+production_data.csv:9572:Berkine,Exploration & Production,Drilling,Field B,2024,2,46454.52,bbl,88868.16,mscf
+production_data.csv:9590:Berkine,Transportation,Drilling,Block 2,2022,4,16801.78,bbl,105372.72,mscf
+production_data.csv:9593:Berkine,Refining,Operations,Field B,2024,12,23918.65,bbl,75471.68,mscf
+production_data.csv:9604:Berkine,Refining,Production,Field A,2024,7,6363.77,bbl,153040.34,mscf
+production_data.csv:9607:Berkine,Refining,Operations,Block 2,2025,6,34190.34,bbl,161859.47,mscf
+production_data.csv:9611:Berkine,Transportation,Operations,Area X,2024,5,42922.88,bbl,169192.22,mscf
+production_data.csv:9612:Berkine,Transportation,Drilling,Block 2,2022,5,19457.43,bbl,171851.78,mscf
+production_data.csv:9613:Berkine,Exploration & Production,Production,Block 2,2022,10,3116.58,bbl,54816.36,mscf
+production_data.csv:9623:Berkine,Exploration & Production,Logistics,Block 2,2022,1,23320.49,bbl,158388.41,mscf
+production_data.csv:9633:Berkine,Marketing,Production,Field A,2024,1,35631.23,bbl,192902.13,mscf
+production_data.csv:9654:Berkine,Transportation,Drilling,Block 2,2023,9,40666.89,bbl,183319.93,mscf
+production_data.csv:9667:Berkine,Exploration & Production,Operations,Block 2,2024,4,44075.21,bbl,174527.87,mscf
+production_data.csv:9686:Berkine,Marketing,Logistics,Area Y,2023,9,35003.05,bbl,121468.42,mscf
+production_data.csv:9699:Berkine,Transportation,Logistics,Area X,2023,9,13207.21,bbl,162898.34,mscf
+production_data.csv:9700:Berkine,Exploration & Production,Drilling,Block 2,2023,5,46370.16,bbl,186117.41,mscf
+production_data.csv:9704:Berkine,Refining,Drilling,Area X,2024,12,11892.57,bbl,192423.15,mscf
+production_data.csv:9706:Berkine,Transportation,Drilling,Field B,2025,8,22927.93,bbl,159208.42,mscf
+production_data.csv:9710:Berkine,Exploration & Production,Production,Field B,2024,9,33577.72,bbl,168178.5,mscf
+production_data.csv:9712:Berkine,Refining,Production,Area Y,2023,2,48035.3,bbl,191530.51,mscf
+production_data.csv:9722:Berkine,Marketing,Operations,Area Y,2025,1,25992.6,bbl,59668.06,mscf
+production_data.csv:9723:Berkine,Exploration & Production,Production,Field A,2025,3,18062.79,bbl,29516.85,mscf
+production_data.csv:9734:Berkine,Refining,Logistics,Block 2,2023,8,3049.23,bbl,83496.87,mscf
+production_data.csv:9744:Berkine,Refining,Production,Field B,2022,4,6443.06,bbl,43135.07,mscf
+production_data.csv:9758:Berkine,Refining,Drilling,Area Y,2022,2,2467.84,bbl,160658.48,mscf
+production_data.csv:9759:Berkine,Marketing,Operations,Field B,2022,2,34821.17,bbl,184887.97,mscf
+production_data.csv:9762:Berkine,Exploration & Production,Operations,Area Y,2024,8,44730.79,bbl,145282.16,mscf
+production_data.csv:9769:Berkine,Refining,Drilling,Field B,2023,10,24489.2,bbl,5432.09,mscf
+production_data.csv:9772:Berkine,Exploration & Production,Drilling,Block 1,2022,12,1182.78,bbl,187187.07,mscf
+production_data.csv:9773:Berkine,Exploration & Production,Drilling,Block 1,2023,2,42280.7,bbl,81463.97,mscf
+production_data.csv:9774:Berkine,Transportation,Drilling,Area Y,2022,4,23116.19,bbl,168248.41,mscf
+production_data.csv:9788:Berkine,Exploration & Production,Production,Block 2,2025,8,23715.32,bbl,6898.69,mscf
+production_data.csv:9809:Berkine,Marketing,Logistics,Block 2,2025,11,34846.41,bbl,68261.45,mscf
+production_data.csv:9810:Berkine,Refining,Drilling,Block 1,2025,11,15277.47,bbl,57925.02,mscf
+production_data.csv:9814:Berkine,Transportation,Logistics,Block 2,2025,2,14094.88,bbl,34659.44,mscf
+production_data.csv:9832:Berkine,Transportation,Production,Field B,2025,9,3712.04,bbl,21908.94,mscf
+production_data.csv:9836:Berkine,Marketing,Operations,Field A,2024,11,17108.67,bbl,100862.71,mscf
+production_data.csv:9837:Berkine,Refining,Drilling,Block 1,2025,11,8519.45,bbl,137941.24,mscf
+production_data.csv:9841:Berkine,Marketing,Logistics,Field B,2022,10,36868.91,bbl,74391.56,mscf
+production_data.csv:9846:Berkine,Transportation,Drilling,Block 1,2022,12,18136.45,bbl,113185.54,mscf
+production_data.csv:9848:Berkine,Marketing,Operations,Field A,2024,5,46296.29,bbl,61850.63,mscf
+production_data.csv:9855:Berkine,Transportation,Drilling,Field A,2023,4,37879.44,bbl,73025.88,mscf
+production_data.csv:9856:Berkine,Refining,Operations,Block 1,2024,9,48357.6,bbl,103577.65,mscf
+production_data.csv:9858:Berkine,Refining,Production,Area X,2024,12,49193.12,bbl,158378.96,mscf
+production_data.csv:9868:Berkine,Exploration & Production,Operations,Field A,2024,4,10184.9,bbl,159485.71,mscf
+production_data.csv:9870:Berkine,Marketing,Drilling,Field A,2022,5,28594.24,bbl,54000.44,mscf
+production_data.csv:9879:Berkine,Marketing,Operations,Area X,2022,5,13091.69,bbl,158327.95,mscf
+production_data.csv:9883:Berkine,Transportation,Drilling,Area X,2025,10,15571.13,bbl,28247.88,mscf
+production_data.csv:9884:Berkine,Marketing,Drilling,Area X,2023,11,36103.55,bbl,149743.68,mscf
+production_data.csv:9889:Berkine,Marketing,Drilling,Block 2,2024,9,29492.43,bbl,151781.29,mscf
+production_data.csv:9899:Berkine,Exploration & Production,Drilling,Field B,2022,8,12914.0,bbl,101988.57,mscf
+production_data.csv:9904:Berkine,Exploration & Production,Production,Block 1,2025,6,21438.79,bbl,167565.85,mscf
+production_data.csv:9910:Berkine,Transportation,Production,Block 1,2025,1,17623.06,bbl,21386.67,mscf
+production_data.csv:9911:Berkine,Transportation,Operations,Block 2,2022,6,49730.44,bbl,71684.63,mscf
+production_data.csv:9913:Berkine,Transportation,Production,Area X,2025,4,17219.04,bbl,52911.11,mscf
+production_data.csv:9915:Berkine,Transportation,Logistics,Block 2,2023,12,36284.58,bbl,27577.41,mscf
+production_data.csv:9918:Berkine,Transportation,Production,Field B,2025,6,34899.45,bbl,58633.22,mscf
+production_data.csv:9921:Berkine,Refining,Drilling,Block 2,2025,11,42052.07,bbl,92984.09,mscf
+production_data.csv:9927:Berkine,Refining,Drilling,Block 1,2022,2,30703.93,bbl,81388.77,mscf
+production_data.csv:9930:Berkine,Transportation,Logistics,Block 2,2025,10,40510.11,bbl,9077.06,mscf
+production_data.csv:9931:Berkine,Transportation,Drilling,Field B,2023,12,30611.39,bbl,40392.99,mscf
+production_data.csv:9934:Berkine,Exploration & Production,Production,Area X,2022,1,47013.13,bbl,108171.99,mscf
+production_data.csv:9953:Berkine,Refining,Operations,Field B,2023,5,6281.29,bbl,23419.69,mscf
+production_data.csv:9960:Berkine,Marketing,Logistics,Block 1,2022,7,14488.65,bbl,124450.8,mscf
+production_data.csv:9974:Berkine,Transportation,Logistics,Area X,2022,11,2136.62,bbl,97529.53,mscf
+production_data.csv:9977:Berkine,Refining,Drilling,Block 2,2025,7,10825.19,bbl,101473.31,mscf
+production_data.csv:9989:Berkine,Marketing,Production,Area X,2025,10,41637.74,bbl,122171.21,mscf
+production_data.csv:9999:Berkine,Exploration & Production,Logistics,Field A,2025,1,15078.99,bbl,163773.87,mscf
+production_data.csv:10001:Berkine,Marketing,Drilling,Field B,2025,7,23943.21,bbl,194094.46,mscf
+

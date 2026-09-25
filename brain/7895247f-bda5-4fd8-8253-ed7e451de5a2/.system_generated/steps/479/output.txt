@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\Reports.jsx:299:      const { generateModernPDF } =
+> new\client\src\pages\Reports.jsx:300:        await import("../utils/ModernReportGenerator");
+  new\client\src\pages\Reports.jsx:301:
+  new\client\src\pages\Reports.jsx:302:      const filters = {
+  new\client\src\pages\Reports.jsx:303:        year,
+  new\client\src\pages\Reports.jsx:304:        scope,
+  new\client\src\pages\Reports.jsx:305:        regionId,
+> new\client\src\pages\Reports.jsx:310:      await generateModernPDF(api, filters);
+  new\client\src\pages\Reports.jsx:311:      toast.success("Report generated successfully!");
+  new\client\src\pages\Reports.jsx:312:    } catch (err) {
+  new\client\src\pages\Reports.jsx:313:      console.error("Report Generation Error", err);
+  new\client\src\pages\Reports.jsx:314:      toast.error("Failed to generate report.");
+  new\client\src\pages\Reports.jsx:315:    } finally {
+> new\client\src\pages\Reports.jsx:377:      const { generateModernPDF } = await 
+import("../utils/ModernReportGenerator");
+  new\client\src\pages\Reports.jsx:378:
+  new\client\src\pages\Reports.jsx:379:      const isAllRegions = reportSelectedRegions.length === facilities.length;
+  new\client\src\pages\Reports.jsx:380:
+  new\client\src\pages\Reports.jsx:381:      const filters = {
+  new\client\src\pages\Reports.jsx:382:        year: reportYear,
+> new\client\src\pages\Reports.jsx:393:      await generateModernPDF(api, filters);
+  new\client\src\pages\Reports.jsx:394:      toast.success("Report generated successfully!");
+  new\client\src\pages\Reports.jsx:395:    } catch (err) {
+  new\client\src\pages\Reports.jsx:396:      console.error("Report Generation Error", err);
+  new\client\src\pages\Reports.jsx:397:      toast.error("Failed to generate report.");
+  new\client\src\pages\Reports.jsx:398:    } finally {
+
+
+

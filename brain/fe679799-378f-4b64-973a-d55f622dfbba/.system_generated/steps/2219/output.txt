@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+GOLDEN-S1-COMB-001 stationary_combustion ['fuel_quantity', 'ef_co2', 'ef_ch4', 'ef_n2o'] ['co2', 'ch4', 'n2o'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-COMB-002 stationary_combustion ['fuel_quantity', 'ef_co2', 'ef_ch4', 'ef_n2o', 'temp', 'temp_unit', 'press', 'press_unit', 'z_factor'] ['co2', 'ch4', 'n2o'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-COMB-003 stationary_combustion ['fuel_quantity', 'combustion_efficiency', 'gas_composition'] [] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-COMB-004 stationary_combustion ['fuel_quantity', 'ef_co2', 'ef_ch4', 'ef_n2o', 'fuel_type'] ['co2', 'ch4', 'n2o'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-COMB-005 stationary_combustion ['fuel_quantity', 'ef_co2', 'ef_ch4', 'ef_n2o'] ['co2', 'ch4', 'n2o'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-COMB-006 stationary_combustion ['fuel_quantity', 'ef_co2', 'ef_ch4', 'ef_n2o'] ['co2', 'ch4', 'n2o'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-FLARE-001 flaring ['gas_volume', 'ch4_fraction', 'flare_type', 'gas_composition'] ['eta_c', 'eta_d'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-FLARE-002 flaring ['gas_volume', 'ch4_fraction', 'flare_type'] ['eta_c', 'eta_d'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-FLARE-003 flaring ['gas_volume', 'ch4_fraction', 'flare_type'] ['eta_c', 'eta_d'] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-VENT-001 pneumatic_devices ['device_count', 'hours', 'device_type', 'ch4_fraction'] [] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-VENT-002 blowdown ['vessel_volume_m3', 'initial_press', 'final_press', 'events', 'ch4_fraction'] [] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-MID-001 acid_gas_removal ['feed_gas_volume', 'co2_inlet_fraction', 'co2_outlet_fraction', 'control_eff'] [] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S1-FUG-001 component_fugitive ['component_count', 'hours', 'component_type', 'ch4_fraction'] [] ['co2', 'ch4', 'n2o', 'co2e']
+GOLDEN-S2-ELEC-001 scope2_electricity ['electricity_kwh', 'emission_factor_kg_kwh', 'method'] [] ['co2e', 'method']
+GOLDEN-S2-ELEC-002 scope2_electricity ['electricity_kwh', 'emission_factor_kg_kwh', 'method'] [] ['co2e', 'method']
+GOLDEN-S2-STEAM-001 scope2_steam ['steam_tonnes', 'ef_kg_per_tonne', 'boiler_efficiency', 'loss_factor'] [] ['co2e']
+GOLDEN-S3-CAT1-001 scope3 ['category_id', 'activity_value', 'emission_factor', 'ef_unit'] [] ['category_id', 'category_name', 'co2e', 'method']
+GOLDEN-S3-CAT4-001 scope3 ['category_id', 'activity_value', 'emission_factor', 'ef_unit'] [] ['category_id', 'category_name', 'co2e', 'method']
+GOLDEN-S3-CAT6-001 scope3 ['category_id', 'activity_value', 'emission_factor', 'ef_unit'] [] ['category_id', 'category_name', 'co2e', 'method']
+GOLDEN-S3-CAT11-001 scope3 ['category_id', 'activity_value', 'emission_factor', 'ef_unit'] [] ['category_id', 'category_name', 'co2e', 'method']
+GOLDEN-STOICH-001 stoichiometry ['n_carbons', 'm_hydrogens', 'fuel'] [] ['mw_fuel', 'carbon_fraction', 'kg_co2_per_kg_fuel', 'kg_o2_per_kg_fuel', 'kg_h2o_per_kg_fuel', 'mass_balance_error']
+GOLDEN-STOICH-002 stoichiometry ['n_carbons', 'm_hydrogens', 'fuel'] [] ['mw_fuel', 'carbon_fraction', 'kg_co2_per_kg_fuel', 'kg_o2_per_kg_fuel', 'kg_h2o_per_kg_fuel', 'mass_balance_error']
+GOLDEN-STOICH-003 stoichiometry ['n_carbons', 'm_hydrogens', 'fuel'] [] ['mw_fuel', 'carbon_fraction', 'kg_co2_per_kg_fuel', 'kg_o2_per_kg_fuel', 'kg_h2o_per_kg_fuel', 'mass_balance_error']
+GOLDEN-STOICH-004 stoichiometry ['n_carbons', 'm_hydrogens', 'fuel'] [] ['mw_fuel', 'carbon_fraction', 'kg_co2_per_kg_fuel', 'kg_o2_per_kg_fuel', 'kg_h2o_per_kg_fuel', 'mass_balance_error']
+

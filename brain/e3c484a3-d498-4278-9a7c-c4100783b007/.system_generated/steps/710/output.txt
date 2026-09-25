@@ -1,0 +1,51 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_battery_midstream_process_equipment.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -168,14 +168,14 @@
+             gwp_dict=GWP_AR5,
+         )
+         ref = IndependentLiquidsUnloading.calculate(
+-            depth=depth_ft,
+-            diameter=diam_in,
+-            pressure=press_psig,
+-            events=events,
+-            ch4_content=ch4,
+-            temp_val=temp_f,
+-            depth_unit="ft",
+-            diam_unit="in",
++            well_depth=depth_ft,
++            diameter=diam_in,
++            pressure=press_psig,
++            events=events,
++            ch4_content=ch4,
++            temp=temp_f,
++            depth_unit="ft",
++            diameter_unit="in",
+             press_unit="psig",
+             temp_unit="F",
+             gwp_standard="AR5",
+@@ -206,14 +206,14 @@
+             gwp_dict=GWP_AR5,
+         )
+         ref = IndependentLiquidsUnloading.calculate(
+-            depth=depth_m,
+-            diameter=diam_mm,
+-            pressure=press_bar,
+-            events=events,
+-            ch4_content=0.90,
+-            temp_val=temp_c,
+-            depth_unit="m",
+-            diam_unit="mm",
++            well_depth=depth_m,
++            diameter=diam_mm,
++            pressure=press_bar,
++            events=events,
++            ch4_content=0.90,
++            temp=temp_c,
++            depth_unit="m",
++            diameter_unit="mm",
+             press_unit="bar",
+             temp_unit="C",
+             gwp_standard="AR5",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

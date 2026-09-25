@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\auth.py:137:def login_required(f):
+new\server\routes\auth.py:158:    """Restricts access to IT Manager / IT Admin role only - for user account management 
+routes."""
+new\server\routes\auth.py:252:@auth_bp.route("/register", methods=["POST"])
+new\server\routes\auth.py:325:@auth_bp.route("/login", methods=["POST"])
+new\server\routes\auth.py:327:@limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
+new\server\routes\auth.py:328:def login():
+new\server\routes\auth.py:352:        # Compute operational defaults before setting last_login to prevent premature 
+query autoflush
+new\server\routes\auth.py:354:        user.last_login = datetime.datetime.now(datetime.timezone.utc)
+new\server\routes\auth.py:378:                action="LOGIN",
+new\server\routes\auth.py:386:            current_app.logger.error(f"Audit Log Error on login: {e}")
+new\server\routes\auth.py:392:            current_app.logger.warning(f"Login commit warning under concurrency: {e}")
+new\server\routes\auth.py:396:                "message": "Login successful",
+new\server\routes\auth.py:404:@auth_bp.route("/forgot-password", methods=["POST"])
+new\server\routes\auth.py:470:# Audit Login (Success)
+new\server\routes\auth.py:471:# (Done inside login block above if successful? No, let's add it before return)
+new\server\routes\auth.py:477:@auth_bp.route("/logout", methods=["POST"])
+new\server\routes\auth.py:509:@auth_bp.route("/me", methods=["GET"])
+new\server\routes\auth.py:548:@auth_bp.route("/profile", methods=["PUT"])
+new\server\routes\auth.py:549:@login_required
+new\server\routes\auth.py:580:@auth_bp.route("/change-password", methods=["POST"])
+new\server\routes\auth.py:582:@login_required
+new\server\routes\auth.py:634:@auth_bp.route("/upload-avatar", methods=["POST"])
+new\server\routes\auth.py:635:@login_required
+new\server\routes\auth.py:759:        from routes.dashboard import DASHBOARD_CACHE
+new\server\routes\auth.py:766:@auth_bp.route("/settings", methods=["GET"])
+new\server\routes\auth.py:767:@login_required
+new\server\routes\auth.py:796:@auth_bp.route("/settings", methods=["PUT", "POST"])
+new\server\routes\auth.py:797:@login_required
+new\server\routes\auth.py:920:        from routes.dashboard import clear_dashboard_cache
+new\server\routes\auth.py:936:@auth_bp.route("/users", methods=["GET"])
+
+
+

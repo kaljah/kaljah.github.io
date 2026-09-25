@@ -1,0 +1,60 @@
+
+The command exited with code 0.
+Output:
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   graphify-out/.graphify_labels.json
+	modified:   graphify-out/.graphify_labels.json.sig
+	modified:   graphify-out/GRAPH_REPORT.md
+	modified:   graphify-out/graph.html
+	modified:   graphify-out/graph.json
+	modified:   graphify-out/manifest.json
+	modified:   new/client/src/App.jsx
+	modified:   new/client/src/components/CustomDropdown.css
+	modified:   new/client/src/components/CustomDropdown.jsx
+	modified:   new/client/src/components/MultiSelectDropdown.jsx
+	modified:   new/client/src/components/layout/Layout.css
+	modified:   new/client/src/components/layout/Layout.jsx
+	modified:   new/client/src/components/layout/Sidebar.css
+	modified:   new/client/src/components/layout/Sidebar.jsx
+	modified:   new/client/src/components/layout/TopBar.css
+	modified:   new/client/src/components/layout/TopBar.jsx
+	modified:   new/client/src/context/LayoutContext.jsx
+	modified:   new/client/src/index.css
+	modified:   new/client/src/pages/Dashboard.css
+	modified:   new/client/src/pages/DashboardEnhanced.jsx
+	modified:   new/client/src/pages/Emissions.css
+	modified:   new/client/src/pages/ManageData.css
+	modified:   new/client/src/pages/MethaneExplorer.jsx
+	modified:   new/client/src/pages/QADashboard.css
+	modified:   new/client/src/pages/QADashboard.jsx
+	modified:   new/client/src/pages/UserManagement.jsx
+	modified:   new/client/stats.html
+	modified:   new/server/app.py
+	modified:   new/server/routes/auth.py
+	modified:   new/server/routes/custom_factors.py
+	modified:   new/server/routes/dashboard.py
+	modified:   new/server/routes/emissions.py
+	modified:   new/server/routes/facilities.py
+	modified:   new/server/routes/managedata.py
+	modified:   new/server/routes/qaqc.py
+	modified:   new/server/routes/reports.py
+	modified:   new/server/routes/scope2.py
+	modified:   new/server/routes/scope3.py
+	modified:   new/server/seed_admin.py
+	modified:   new/server/tests/test_qaqc_diagnostics.py
+	modified:   new/server/utils.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	graphify-out/2026-09-19/
+	new/client/src/components/Drawer.css
+	new/client/src/components/Drawer.jsx
+	new/server/tests/test_user_profile_update.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+

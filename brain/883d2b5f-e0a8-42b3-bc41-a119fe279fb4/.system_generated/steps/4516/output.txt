@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":227,"LineContent":"from routes.managedata import managedata_bp"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":243,"LineContent":"app.register_blueprint(managedata_bp, url_prefix=\"/api\")"}

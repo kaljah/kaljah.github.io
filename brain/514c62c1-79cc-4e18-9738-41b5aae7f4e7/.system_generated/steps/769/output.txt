@@ -1,0 +1,100 @@
+
+The command exited with code 0.
+Output:
+<truncated 206 lines>
+new\server\routes\dashboard.py:1595:                "total_co2e_gwp20": total_gwp20,
+new\server\routes\dashboard.py:1621:    Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility.
+new\server\routes\dashboard.py:1976:        # GWP 20-Year Horizon: dynamic resolution per active standard
+new\server\routes\dashboard.py:1977:        gwp20_factors = get_active_gwp(horizon="20")
+new\server\routes\dashboard.py:1978:        ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
+new\server\routes\dashboard.py:1979:        n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
+new\server\routes\dashboard.py:1982:        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * 
+(n2o_gwp20 - 265.0))
+new\server\routes\dashboard.py:1983:        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
+new\server\routes\dashboard.py:1984:        total_co2e_gwp20 = s1_gwp20 + s2_val
+new\server\routes\dashboard.py:1989:            co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe
+new\server\routes\dashboard.py:1997:            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = 
+ch4_int = (
+new\server\routes\dashboard.py:2154:                "co2_intensity_gwp20": co2_int_gwp20,
+new\server\routes\dashboard.py:2194:                "total_co2e_gwp20": total_co2e_gwp20,
+new\server\routes\emissions.py:416:def resolve_gwp_standard(user=None):
+new\server\routes\emissions.py:417:    """Returns the organization-wide GWP standard (AR4, AR5, AR6) per D-09."""
+new\server\routes\emissions.py:421:        return _app_settings.get("gwp_standard", "AR5")
+new\server\routes\emissions.py:426:def resolve_gwp_dict(user=None):
+new\server\routes\emissions.py:427:    """Returns active GWP dictionary using global org-wide standard per D-09."""
+new\server\routes\emissions.py:428:    from calculations.constants import get_active_gwp
+new\server\routes\emissions.py:429:    std = resolve_gwp_standard()
+new\server\routes\emissions.py:430:    return get_active_gwp(standard=std)
+new\server\routes\emissions.py:772:        gwp_dict = resolve_gwp_dict(user)
+new\server\routes\emissions.py:773:        gwp_std = resolve_gwp_standard(user)
+new\server\routes\emissions.py:776:                calc_data, factor_data, gwp_dict=gwp_dict
+new\server\routes\emissions.py:788:        # Fallback GWP CO2e if missing
+new\server\routes\emissions.py:794:                co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
+new\server\routes\emissions.py:843:            gwp_version=gwp_std,
+new\server\routes\emissions.py:3027:    gwp_dict = resolve_gwp_dict(user)
+new\server\routes\emissions.py:3028:    gwp_std = resolve_gwp_standard(user)
+new\server\routes\emissions.py:3030:        em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
+new\server\routes\emissions.py:3045:            co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
+new\server\routes\emissions.py:3094:        gwp_version=gwp_std,
+new\server\routes\emissions.py:3446:        gwp_dict = resolve_gwp_dict(user)
+new\server\routes\emissions.py:3447:        gwp_std = resolve_gwp_standard(user)
+new\server\routes\emissions.py:3473:                calc_payload, factor_data, gwp_dict=gwp_dict
+new\server\routes\emissions.py:3481:            record.gwp_version = gwp_std
+new\server\routes\emissions.py:3811:            gwp_dict = resolve_gwp_dict(user)
+new\server\routes\emissions.py:3812:            gwp_std = resolve_gwp_standard(user)
+new\server\routes\emissions.py:3814:                rec_data, factor_data, gwp_dict=gwp_dict
+new\server\routes\emissions.py:3823:                    co2_val, ch4_val, n2o_val, gwp_dict=gwp_dict
+new\server\routes\emissions.py:3859:                gwp_version=gwp_std,
+new\server\tests\test_audit_remediation.py:1333:def test_stoichiometry_dispatcher_gwp_propagation():
+new\server\tests\test_audit_remediation.py:1334:    """Verify stoichiometry calculator accepts gwp_dict and calculates 
+deterministically."""
+new\server\tests\test_audit_remediation.py:1343:        gwp_dict={"CO2": 1, "CH4": 28, "N2O": 265},
+new\server\tests\test_csv_engine_matrix.py:48:from calculations.constants import GWP_AR4, GWP_AR5, GWP_AR6, 
+get_active_gwp
+new\server\tests\test_csv_engine_matrix.py:481:    def test_gwp_standards_cross_consistency(self):
+new\server\tests\test_csv_engine_matrix.py:483:        Mathematically proves AR4, AR5, and AR6 GWP multipliers match 
+IPCC source tables:
+new\server\tests\test_csv_engine_matrix.py:492:        ar4_calc = calculate_co2e(co2, ch4, n2o, gwp_standard="AR4")
+new\server\tests\test_csv_engine_matrix.py:497:        ar5_calc = calculate_co2e(co2, ch4, n2o, gwp_standard="AR5")
+new\server\tests\test_csv_engine_matrix.py:502:        ar6_calc = calculate_co2e(co2, ch4, n2o, gwp_standard="AR6")
+new\server\tests\test_deep_injection_matrix.py:6:2. All Operational & Thermodynamic Scenarios (P, T, Z, GOR, CH4%, 
+Combustion Efficiency, GWP Standards)
+new\server\tests\test_deep_injection_matrix.py:36:from calculations.constants import GWP_AR4, GWP_AR5, GWP_AR6
+new\server\tests\test_deep_injection_matrix.py:310:# PART 2: ALL OPERATIONAL & THERMODYNAMIC SCENARIOS (P, T, Z, GOR, 
+CH4%, GWP)
+new\server\tests\test_deep_injection_matrix.py:365:    def test_dynamic_gwp_standards_ar4_ar5_ar6(self, dispatcher):
+new\server\tests\test_deep_injection_matrix.py:366:        """Dynamic GWP: AR4 (25), AR5 (28), AR6 (29.8) for methane 
+must scale total CO2e strictly."""
+new\server\tests\test_deep_injection_matrix.py:373:        res_ar4 = dispatcher.dispatch("compressor_fugitive", 
+payload, {}, {}, gwp_standard="AR4")
+new\server\tests\test_deep_injection_matrix.py:374:        res_ar5 = dispatcher.dispatch("compressor_fugitive", 
+payload, {}, {}, gwp_standard="AR5")
+new\server\tests\test_deep_injection_matrix.py:375:        res_ar6 = dispatcher.dispatch("compressor_fugitive", 
+payload, {}, {}, gwp_standard="AR6")
+new\server\tests\test_deep_injection_matrix.py:378:        assert pytest.approx(res_ar4["total_co2e"], 1e-3) == 
+ch4_mass * GWP_AR4["CH4"]
+new\server\tests\test_deep_injection_matrix.py:379:        assert pytest.approx(res_ar5["total_co2e"], 1e-3) == 
+ch4_mass * GWP_AR5["CH4"]
+new\server\tests\test_deep_injection_matrix.py:380:        assert pytest.approx(res_ar6["total_co2e"], 1e-3) == 
+ch4_mass * GWP_AR6["CH4"]
+new\server\tests\test_gwp_dynamic.py:2:from calculations.constants import GWP_AR4, GWP_AR5, GWP_AR6, get_active_gwp
+new\server\tests\test_gwp_dynamic.py:9:    ar4 = get_active_gwp("AR4")
+new\server\tests\test_gwp_dynamic.py:13:    ar5 = get_active_gwp("AR5")
+new\server\tests\test_gwp_dynamic.py:17:    ar6 = get_active_gwp("AR6")
+new\server\tests\test_gwp_dynamic.py:22:    ar5_20 = get_active_gwp("AR5", horizon="20")
+new\server\tests\test_gwp_dynamic.py:31:    co2e_ar4 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR4)
+new\server\tests\test_gwp_dynamic.py:35:    co2e_ar5 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR5)
+new\server\tests\test_gwp_dynamic.py:39:    co2e_ar6 = calculate_co2e(co2, ch4, n2o, gwp_dict=GWP_AR6)
+new\server\tests\test_gwp_dynamic.py:43:def test_legacy_engine_dynamic_gwp():
+new\server\tests\test_gwp_dynamic.py:53:        payload, factor_data=factor_data, gwp_dict=GWP_AR5
+new\server\tests\test_gwp_dynamic.py:56:        payload, factor_data=factor_data, gwp_dict=GWP_AR4
+new\server\tests\test_numerical_invariants.py:21:from calculations.constants import get_active_gwp, DEFAULT_GWP
+new\server\tests\test_numerical_invariants.py:380:            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+new\server\tests\test_numerical_invariants.py:420:            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+new\server\tests\test_numerical_invariants.py:439:            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+new\server\tests\test_numerical_invariants.py:453:            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+new\server\tests\test_ui_calculation_parity.py:31:from calculations.constants import GWP_AR5
+new\server\tests\test_ui_calculation_parity.py:168:        # Verify GWP AR5 weighted sum: CO2 + 28*CH4 + 265*N2O
+
+
+

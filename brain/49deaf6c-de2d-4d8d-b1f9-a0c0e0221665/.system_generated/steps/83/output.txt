@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 21:17:30,339] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Timestamp type: <class 'datetime.datetime'> Value: datetime.datetime(2026, 9, 21, 10, 21, 17, 603531) tzinfo: None
+

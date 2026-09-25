@@ -1,0 +1,100 @@
+
+The command exited with code 0.
+Output:
+<truncated 422 lines>
+> new\client\src\pages\ManageData.jsx:3202:                                                {filteredBaseYears.length 
+=== 0 ? (
+  new\client\src\pages\ManageData.jsx:3203:                                                    <tr>
+  new\client\src\pages\ManageData.jsx:3204:                                                        <td colSpan="7" 
+style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>
+> new\client\src\pages\ManageData.jsx:3205:                                                            No base year 
+recalculations recorded yet. Use the form above to document the baseline.
+  new\client\src\pages\ManageData.jsx:3206:                                                        </td>
+  new\client\src\pages\ManageData.jsx:3207:                                                    </tr>
+  new\client\src\pages\ManageData.jsx:3208:                                                ) : (
+> new\client\src\pages\ManageData.jsx:3209:                                                    
+filteredBaseYears.map((b, idx) => {
+  new\client\src\pages\ManageData.jsx:3210:                                                        const diff = 
+(b.adjusted_emissions !== null && b.previous_emissions !== null && b.adjusted_emissions !== undefined && 
+b.previous_emissions !== undefined)
+  new\client\src\pages\ManageData.jsx:3211:                                                            ? 
+b.adjusted_emissions - b.previous_emissions
+  new\client\src\pages\ManageData.jsx:3212:                                                            : null;
+  new\client\src\pages\ManageData.jsx:3213:                                                        const isLatest = 
+idx === 0;
+  new\client\src\pages\ManageData.jsx:3214:                                                        return (
+  new\client\src\pages\ManageData.jsx:3215:                                                            <tr key={b.id}>
+  new\client\src\pages\ManageData.jsx:3216:                                                                <td 
+style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+  new\client\src\pages\ManageData.jsx:3217:                                                                    
+{b.recalc_date ? new Date(b.recalc_date).toLocaleDateString() : '-'}
+  new\client\src\pages\ManageData.jsx:3218:                                                                </td>
+  new\client\src\pages\ManageData.jsx:3219:                                                                <td 
+style={{ fontWeight: 700 }}>
+  new\client\src\pages\ManageData.jsx:3220:                                                                    <div 
+style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+  new\client\src\pages\ManageData.jsx:3221:                                                                        
+<span>{b.year}</span>
+  new\client\src\pages\ManageData.jsx:3222:                                                                        
+{isLatest && (
+  new\client\src\pages\ManageData.jsx:3223:                                                                            
+<span className="goal-badge goal-badge-active" style={{ fontSize: '0.7rem' }}>
+  new\client\src\pages\ManageData.jsx:3224:                                                                            
+    Active
+> new\client\src\pages\ManageData.jsx:3252:                                                                        
+onClick={() => handleDeleteBaseYearRecalc(b.id)}
+  new\client\src\pages\ManageData.jsx:3253:                                                                        
+style={{ padding: '4px 8px', fontSize: '0.8rem' }}
+  new\client\src\pages\ManageData.jsx:3254:                                                                        
+title="Delete Recalculation Entry"
+  new\client\src\pages\ManageData.jsx:3255:                                                                    >
+  new\client\src\pages\ManageData.jsx:3256:                                                                        
+Delete
+  new\client\src\pages\ManageData.jsx:3257:                                                                    
+</button>
+  new\client\src\pages\ManageData.jsx:3258:                                                                </td>
+  new\client\src\pages\ManageData.jsx:3259:                                                            </tr>
+  new\client\src\pages\ManageData.jsx:3260:                                                        );
+  new\client\src\pages\ManageData.jsx:3261:                                                    })
+  new\client\src\pages\ManageData.jsx:3262:                                                )}
+  new\client\src\pages\ManageData.jsx:3263:                                            </tbody>
+  new\client\src\pages\ManageData.jsx:3264:                                        </table>
+  new\client\src\pages\ManageData.jsx:3265:                                    </div>
+  new\client\src\pages\ManageData.jsx:3266:                                </div>
+  new\client\src\pages\ManageData.jsx:3267:
+> new\client\src\pages\ManageData.jsx:3288:                                            <label>Base Year</label>
+  new\client\src\pages\ManageData.jsx:3289:                                            <input
+  new\client\src\pages\ManageData.jsx:3290:                                                type="number"
+  new\client\src\pages\ManageData.jsx:3291:                                                value={sbtiConfig.base_year}
+  new\client\src\pages\ManageData.jsx:3292:                                                onChange={e => 
+setSbtiConfig({ ...sbtiConfig, base_year: parseInt(e.target.value) || 2024 })}
+  new\client\src\pages\ManageData.jsx:3293:                                                className="mole-input"
+  new\client\src\pages\ManageData.jsx:3294:                                            />
+  new\client\src\pages\ManageData.jsx:3295:                                        </div>
+  new\client\src\pages\ManageData.jsx:3296:                                        <div className="input-group">
+> new\client\src\pages\ManageData.jsx:3297:                                            <label>Base Year Verified 
+Emissions (tCO�e)</label>
+  new\client\src\pages\ManageData.jsx:3298:                                            <input
+  new\client\src\pages\ManageData.jsx:3299:                                                type="number"
+  new\client\src\pages\ManageData.jsx:3300:                                                
+value={sbtiConfig.base_year_emissions}
+  new\client\src\pages\ManageData.jsx:3301:                                                onChange={e => 
+setSbtiConfig({ ...sbtiConfig, base_year_emissions: parseFloat(e.target.value) || 0 })}
+  new\client\src\pages\ManageData.jsx:3302:                                                className="mole-input"
+  new\client\src\pages\ManageData.jsx:3303:                                                
+placeholder="Auto-calculated or manual override"
+  new\client\src\pages\ManageData.jsx:3304:                                            />
+  new\client\src\pages\ManageData.jsx:3305:                                        </div>
+  new\client\src\pages\ManageData.jsx:3306:                                        <div className="input-group">
+  new\client\src\pages\ManageData.jsx:3307:                                            <label>Target Year 
+(Net-Zero)</label>
+  new\client\src\pages\ManageData.jsx:3308:                                            <input
+  new\client\src\pages\ManageData.jsx:3309:                                                type="number"
+  new\client\src\pages\ManageData.jsx:3310:                                                
+value={sbtiConfig.target_year}
+  new\client\src\pages\ManageData.jsx:3311:                                                onChange={e => 
+setSbtiConfig({ ...sbtiConfig, target_year: parseInt(e.target.value) || 2050 })}
+  new\client\src\pages\ManageData.jsx:3312:                                                className="mole-input"
+
+
+

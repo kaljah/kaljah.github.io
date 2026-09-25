@@ -1,0 +1,96 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -100,11 +100,11 @@
+     console.log(`[AUDIT] Top Filters Verified: ${filterCount} dropdowns present`);
+ 
+     // 1. Check Year dropdown options
+-    const yearDropdown = filterWrappers.nth(0);
+-    await yearDropdown.click();
+-    await page.waitForTimeout(400);
+-
+-    const yearOptions = page.locator('.custom-dropdown-options .custom-dropdown-option');
++    const yearDropdown = filterWrappers.nth(0).locator('.dropdown-selected');
++    await yearDropdown.click();
++    await page.waitForTimeout(400);
++
++    const yearOptions = page.locator('.dropdown-portal .dropdown-option');
+     const yearTexts = await yearOptions.allInnerTexts();
+     console.log(`[AUDIT] Year Options: ${yearTexts.join(', ')}`);
+     expect(yearTexts).toContain('All Years');
+@@ -116,10 +116,10 @@
+     await page.waitForTimeout(300);
+ 
+     // 2. Check Supply Chain (Segment) dropdown
+-    const segmentDropdown = filterWrappers.nth(1);
+-    await segmentDropdown.click();
+-    await page.waitForTimeout(400);
+-    const segmentOptions = page.locator('.custom-dropdown-options .custom-dropdown-option');
++    const segmentDropdown = filterWrappers.nth(1).locator('.dropdown-selected');
++    await segmentDropdown.click();
++    await page.waitForTimeout(400);
++    const segmentOptions = page.locator('.dropdown-portal .dropdown-option');
+     const segmentTexts = await segmentOptions.allInnerTexts();
+     console.log(`[AUDIT] Supply Chain Options: ${segmentTexts.join(', ')}`);
+     expect(segmentTexts).toContain('All Supply Chains');
+@@ -126,6 +126,6 @@
+ 
+     // Select Upstream
+-    const upstreamOpt = page.locator('.custom-dropdown-options .custom-dropdown-option:has-text("Upstream")').first();
++    const upstreamOpt = page.locator('.dropdown-portal .dropdown-option:has-text("Upstream")').first();
+     await upstreamOpt.click();
+     await page.waitForTimeout(1000);
+ 
+@@ -132,7 +132,7 @@
+-    const activityDropdown = filterWrappers.nth(2);
++    const activityDropdown = filterWrappers.nth(2).locator('.dropdown-selected');
+     await activityDropdown.click();
+     await page.waitForTimeout(400);
+-    const actOptions = page.locator('.custom-dropdown-options .custom-dropdown-option');
++    const actOptions = page.locator('.dropdown-portal .dropdown-option');
+     const actTexts = await actOptions.allInnerTexts();
+     console.log(`[AUDIT] Cascaded Activity Options for Upstream: ${actTexts.join(', ')}`);
+     expect(actTexts).toContain('All Activities');
+@@ -140,7 +140,7 @@
+     // Reset back to All Supply Chains
+     await page.keyboard.press('Escape');
+     await segmentDropdown.click();
+-    await page.locator('.custom-dropdown-options .custom-dropdown-option:has-text("All Supply Chains")').click();
++    await page.locator('.dropdown-portal .dropdown-option:has-text("All Supply Chains")').click();
+     await page.waitForTimeout(1000);
+   });
+ 
+@@ -147,6 +147,6 @@
+     await setupDashboard(page);
+ 
+-    const yearDropdown = page.locator('.top-bar-injected-left .filter-wrapper').nth(0);
++    const yearDropdown = page.locator('.top-bar-injected-left .filter-wrapper').nth(0).locator('.dropdown-selected');
+ 
+     // 1. Switch to Year 2026
+     await yearDropdown.click();
+@@ -153,4 +153,4 @@
+-    await page.locator('.custom-dropdown-options .custom-dropdown-option:has-text("2026")').click();
++    await page.locator('.dropdown-portal .dropdown-option:has-text("2026")').click();
+     await page.waitForTimeout(1500);
+ 
+     // Assert 2026 metrics
+@@ -160,7 +160,7 @@
+     // 2. Switch to Year 2025
+     await yearDropdown.click();
+     await page.waitForTimeout(400);
+-    await page.locator('.custom-dropdown-options .custom-dropdown-option:has-text("2025")').click();
++    await page.locator('.dropdown-portal .dropdown-option:has-text("2025")').click();
+     await page.waitForTimeout(1500);
+ 
+     // 2025 has 0 verified emissions
+@@ -170,7 +170,7 @@
+     // 3. Switch back to All Years
+     await yearDropdown.click();
+     await page.waitForTimeout(400);
+-    await page.locator('.custom-dropdown-options .custom-dropdown-option:has-text("All Years")').click();
++    await page.locator('.dropdown-portal .dropdown-option:has-text("All Years")').click();
+     await page.waitForTimeout(1500);
+     grossVal = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+     expect(grossVal).toContain('254.9K');
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

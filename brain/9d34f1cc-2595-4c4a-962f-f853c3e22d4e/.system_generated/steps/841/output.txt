@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+new/server/models.py:26:    status = db.Column(db.String(20), default="active")
+new/server/models.py:57:    operator_status = db.Column(
+new/server/models.py:155:    status = db.Column(db.String(20), default="Pending", index=True)
+new/server/models.py:185:        db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
+new/server/models.py:187:        db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
+new/server/models.py:188:        db.Index("ix_emissions_yr_status_proc", "year", "status", "process_type"),
+new/server/models.py:246:    status = db.Column(db.String(20), default="Active")
+new/server/models.py:380:    status = db.Column(db.String(20), default="Pending", index=True)
+new/server/models.py:387:        db.Index("ix_scope2_fac_yr_status", "facility_id", "year", "status"),
+new/server/models.py:388:        db.Index("ix_scope2_status_yr_co2e", "status", "year", "co2e", "electricity_kwh"),
+new/server/models.py:412:    status = db.Column(db.String(20), default="Pending", index=True)
+new/server/models.py:419:        db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
+new/server/models.py:420:        db.Index("ix_scope3_status_yr_co2e", "status", "year", "co2e"),
+new/server/models.py:433:    status = db.Column(db.String(50), default="active")  # active, planned, completed
+new/server/models.py:545:    reconciliation_status = db.Column(
+new/server/models.py:548:    status = db.Column(db.String(50), default="pending")  # pending, reviewed, reported
+new/server/models.py:625:    status = db.Column(db.String(20), default="Verified", index=True)
+new/server/models.py:671:    status = db.Column(db.String(20), default="Verified")
+

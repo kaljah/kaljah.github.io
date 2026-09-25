@@ -1,0 +1,70 @@
+
+The command exited with code 0.
+Output:
+======================================================================
+STAGE 2: ZERO-TRUST DATABASE AUDIT & FORMULA RECOMPUTATION
+======================================================================
+Total emissions records in DB: 831
+Verified: 11 | Pending: 820
+
+--- AUDITING ALL VERIFIED RECORDS ---
+ID 830 (81df664e-3934-4c2c-a6b0-160ba67bfd31) Year 2025 [combustion - natural_gas]:
+   Qty: 1000.0 m3 | CO2: 0.0t, CH4: 0.0t, N2O: 0.0t
+   Stored CO2e: 0.0 | Expected CO2e: 0.0 -> OK
+ID 831 (7de05d4f-0c62-4619-ac51-d7f4b7205730) Year 2025 [combustion - natural_gas]:
+   Qty: 1000.0 m3 | CO2: 0.0t, CH4: 0.0t, N2O: 0.0t
+   Stored CO2e: 0.0 | Expected CO2e: 0.0 -> OK
+ID 1 (REC-2026-0001) Year 2026 [Stationary Combustion - Natural Gas DRI]:
+   Qty: 500000.0 m3 | CO2: 45000.0t, CH4: 12.5t, N2O: 2.1t
+   Stored CO2e: 45906.5 | Expected CO2e: 45906.5 -> OK
+ID 2 (REC-2026-0002) Year 2026 [Stoichiometry - Carbon Electrodes EAF]:
+   Qty: 12000.0 tonnes | CO2: 28000.0t, CH4: 5.0t, N2O: 1.2t
+   Stored CO2e: 28458.0 | Expected CO2e: 28458.0 -> OK
+ID 3 (REC-2026-0003) Year 2026 [Steam Methane Reforming - Feedstock Gas]:
+   Qty: 650000.0 m3 | CO2: 52000.0t, CH4: 8.0t, N2O: 1.5t
+   Stored CO2e: 52621.5 | Expected CO2e: 52621.5 -> OK
+ID 4 (REC-2026-0004) Year 2026 [Vented Tail Gas - N2O Abatement]:
+   Qty: 45.0 tonnes | CO2: 1500.0t, CH4: 0.0t, N2O: 45.0t
+   Stored CO2e: 13425.0 | Expected CO2e: 13425.0 -> OK
+ID 5 (REC-2026-0005) Year 2026 [Calcination Process - Limestone (CaCO3)]:
+   Qty: 75000.0 tonnes | CO2: 38500.0t, CH4: 0.0t, N2O: 0.0t
+   Stored CO2e: 38500.0 | Expected CO2e: 38500.0 -> OK
+ID 6 (REC-2026-0006) Year 2026 [Stationary Combustion - Natural Gas Kiln]:
+   Qty: 210000.0 m3 | CO2: 18200.0t, CH4: 3.2t, N2O: 0.8t
+   Stored CO2e: 18501.6 | Expected CO2e: 18501.6 -> OK
+ID 7 (REC-2026-0007) Year 2026 [AGR Acid Gas Removal - Amine Flash]:
+   Qty: 350000.0 m3 | CO2: 31000.0t, CH4: 15.0t, N2O: 0.0t
+   Stored CO2e: 31420.0 | Expected CO2e: 31420.0 -> OK
+ID 8 (REC-2026-0008) Year 2026 [Flaring - High Pressure Flare Gas]:
+   Qty: 180000.0 m3 | CO2: 22000.0t, CH4: 85.0t, N2O: 0.5t
+   Stored CO2e: 24512.5 | Expected CO2e: 24512.5 -> OK
+ID 9 (REC-2026-0009) Year 2026 [Compressor Fugitive - Wet Seal Methane]:
+   Qty: 110.0 kg | CO2: 0.0t, CH4: 110.0t, N2O: 0.0t
+   Stored CO2e: 3080.0 | Expected CO2e: 3080.0 -> OK
+   [PHYSICAL IMPOSSIBILITY ANOMALY] Qty is 110.0 kg, but CH4 is 110.0 tonnes (= 110000.0 kg)!
+
+Total GWP formula mismatches in Verified records: 0
+
+--- AUDITING 2025 ZERO-EMISSIONS RECORDS ---
+{'id': 830, 'record_id': '81df664e-3934-4c2c-a6b0-160ba67bfd31', 'facility_id': 1, 'year': 2025, 'month': 1, 'process_type': 'combustion', 'fuel_type': 'natural_gas', 'quantity': 1000.0, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default', 'status': 'Verified'}
+{'id': 831, 'record_id': '7de05d4f-0c62-4619-ac51-d7f4b7205730', 'facility_id': 1, 'year': 2025, 'month': 1, 'process_type': 'combustion', 'fuel_type': 'natural_gas', 'quantity': 1000.0, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default', 'status': 'Verified'}
+
+--- AUDITING PENDING RECORDS SUMMARY ---
+Pending with co2e == 0: 797
+Pending with co2e > 0:  23
+Sample non-zero pending record:
+{'id': 58, 'record_id': '1c596199-28de-4e3c-a785-c107ebc7e2a9', 'facility_id': 12, 'year': 2022, 'month': 2, 'process_type': 'completions', 'fuel_type': 'Activit� E&P', 'quantity': 127628.79, 'unit': 'm3', 'co2_emissions': 286994.8963728, 'ch4_emissions': 6073.966060800005, 'n2o_emissions': 0.0, 'co2e_total': 456458.5494691201, 'calc_method': 'server_completions_calc', 'status': 'Pending'}
+
+--- AUDITING OTHER TABLES ---
+Table 'facilities': 43 rows
+Table 'production_data': 0 rows
+Table 'scope2_emissions': 0 rows
+Table 'scope3_emissions': 0 rows
+Table 'mitigation_projects': 0 rows
+Table 'mitigation_records': 0 rows
+Table 'goals': 0 rows
+Table 'sbti_targets': 0 rows
+Table 'base_year_recalculations': 0 rows
+Table 'notifications': 12 rows
+Table 'users': 7 rows
+

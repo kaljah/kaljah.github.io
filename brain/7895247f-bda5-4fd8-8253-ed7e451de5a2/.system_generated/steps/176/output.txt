@@ -1,0 +1,42 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\process_categories.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -48,6 +48,36 @@
+         "equations": ["API_5_3", "API_5_4"],
+         "description": "Gas flaring with dual-efficiency model",
+     },
++    "routine_flaring": {
++        "display_name": "Routine Flaring",
++        "segments": ["upstream", "midstream", "downstream"],
++        "category": "combustion",
++        "calculation_method": "flaring_dual_efficiency",
++        "api_section": "Section 5.2",
++        "required_inputs": ["volume", "gas_composition", "flare_type"],
++        "equations": ["API_5_3", "API_5_4"],
++        "description": "Routine continuous flaring of associated gas during normal operations (Decree 21-330 / ZRF)",
++    },
++    "non_routine_flaring": {
++        "display_name": "Non-Routine Flaring",
++        "segments": ["upstream", "midstream", "downstream"],
++        "category": "combustion",
++        "calculation_method": "flaring_dual_efficiency",
++        "api_section": "Section 5.2",
++        "required_inputs": ["volume", "gas_composition", "flare_type"],
++        "equations": ["API_5_3", "API_5_4"],
++        "description": "Non-routine flaring during process upsets, plant trips, or maintenance",
++    },
++    "safety_flaring": {
++        "display_name": "Safety Flaring",
++        "segments": ["upstream", "midstream", "downstream"],
++        "category": "combustion",
++        "calculation_method": "flaring_dual_efficiency",
++        "api_section": "Section 5.2",
++        "required_inputs": ["volume", "gas_composition", "flare_type"],
++        "equations": ["API_5_3", "API_5_4"],
++        "description": "Purge gas, pilot gas, and emergency safety relief flaring",
++    },
+     "mobile_combustion": {
+         "display_name": "Mobile Combustion",
+         "segments": ["upstream", "midstream", "downstream"],
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

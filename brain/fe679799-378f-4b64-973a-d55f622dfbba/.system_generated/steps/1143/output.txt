@@ -1,0 +1,104 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+STARTING COMPREHENSIVE MANAGE DATA BACKEND TEST SUITE
+================================================================================
+
+--- Domain 1: Pending Reviews & Approvals ---
+[PASS] Pending: IT RBAC block (403) - Status: 403
+[PASS] Pending: Admin fetch (200) - Total pending: 0
+[PASS] Pending: Create draft emission - Draft ID: 425
+[PASS] Pending: IT batch approve block (403) - Status: 403
+[PASS] Pending: Admin batch approve (200) - Response: {"approved_count":0,"approved_ids":[425],"success":true}
+
+[PASS] Pending: IT reject block (403) - Status: 403
+[PASS] Pending: Admin reject (200) - Response: {"deleted_count":0,"success":true}
+
+
+--- Domain 2: Custom Emission Factors ---
+[PASS] Factors: IT RBAC block (403) - Status: 403
+[PASS] Factors: Admin fetch (200) - Found 1 factors
+[PASS] Factors: Bounds validation negative co2 (400) - Status: 400
+[PASS] Factors: IT create factor block (403) - Status: 403
+[PASS] Factors: Admin create factor (200/201) - Factor ID: 2
+[PASS] Factors: IT delete factor block (403) - Status: 403
+[PASS] Factors: Admin delete factor (200) - Status: 200
+
+--- Domain 3: Facilities & Regions ---
+[PASS] Facilities: IT RBAC block (403) - Status: 403
+[PASS] Facilities: Admin fetch & region_identifier check (200) - Count: 43
+[PASS] Facilities: Search filter param (200) - Matches: 1
+[PASS] Facilities: IT create facility block (403) - Status: 403
+[PASS] Facilities: Admin create facility (200/201) - New Fac ID: 44
+
+--- Domain 4: Production Data ---
+[PASS] Production: IT RBAC block (403) - Status: 403
+[PASS] Production: Admin fetch filtered (200) - Records: 6
+[FAIL] Production: Validation negative gross (400) - Status: 200
+[PASS] Production: IT create block (403) - Status: 403
+[PASS] Production: Admin create (200/201) - Prod ID: None
+
+--- Domain 5: Emission Sources ---
+[PASS] Sources: IT RBAC block (403) - Status: 403
+[PASS] Sources: Admin fetch (200) - Count: 0
+[PASS] Sources: Missing facility ID (400) - Status: 400
+[PASS] Sources: IT create block (403) - Status: 403
+[PASS] Sources: Admin create (200/201) - Source ID: 1
+[PASS] Sources: IT delete block (403) - Status: 403
+[PASS] Sources: Admin delete (200) - Status: 200
+
+--- Domain 6: Goals, Base Years & SBTi ---
+[PASS] Goals: IT RBAC block (403) - Status: 403
+[PASS] Goals: Admin fetch (200) - Goals count: 0
+[PASS] Goals: IT create block (403) - Status: 403
+[PASS] Goals: Admin create/update (200) - Saved 2045 goal
+[PASS] Goals: IT delete block (403) - Status: 403
+[PASS] Goals: Admin delete (200) - Deleted 2045 goal
+[PASS] BaseYears: IT RBAC block (403) - Status: 403
+[FAIL] BaseYears: Admin fetch (200) - Response: {"active_record":null,"active_year":null,"history":[]}
+
+[PASS] BaseYears: IT recalc block (403) - Status: 403
+[PASS] BaseYears: Admin recalc add (201) - Recalc ID: 1
+[PASS] BaseYears: IT delete recalc block (403) - Status: 403
+[PASS] BaseYears: Admin delete recalc (200) - Deleted recalc 1
+[PASS] SBTi: IT RBAC block (403) - Status: 403
+[PASS] SBTi: Admin fetch (200) - Has target: True
+[PASS] SBTi: IT update target block (403) - Status: 403
+[FAIL] SBTi: Admin update target (200) - Target configured: 2030 @ 4.2%/yr
+
+--- Domain 7: Mitigation Projects ---
+[PASS] Mitigation: IT RBAC block (403) - Status: 403
+[PASS] Mitigation: Admin fetch (200) - Projects count: 0
+[PASS] Mitigation: IT create block (403) - Status: 403
+[PASS] Mitigation: Admin create (201) - Mitig ID: proj_1
+[PASS] Mitigation: IT delete block (403) - Status: 403
+[PASS] Mitigation: Admin delete (200) - Deleted proj_1
+
+--- Domain 8: OGMP 2.0 Surveys & Level Logs ---
+[PASS] OGMP: IT sources block (403) - Status: 403
+[FAIL] OGMP: Admin get methane sources (200) - Taxonomy count: 0
+[PASS] OGMP: IT surveys block (403) - Status: 403
+[PASS] OGMP: Admin get surveys (200) - Surveys count: 0
+[PASS] OGMP: IT survey create block (403) - Status: 403
+[FAIL] OGMP: Admin create survey (201) - Survey ID: None
+[PASS] OGMP: IT level upgrade block (403) - Status: 403
+[PASS] OGMP: Admin level upgrade (201) - Response: {"id":1,"message":"Level upgrade logged successfully"}
+
+[PASS] OGMP: IT level logs block (403) - Status: 403
+[PASS] OGMP: Admin level logs fetch (200) - Logs count: 1
+
+--- Domain 9: CBAM Products ---
+[PASS] CBAM: IT RBAC block (403) - Status: 403
+[PASS] CBAM: Admin fetch (200) - Exports count: 6
+[PASS] CBAM: Missing CN code validation (400) - Status: 400
+[PASS] CBAM: IT create export block (403) - Status: 403
+[PASS] CBAM: Admin create export (200/201) - CBAM ID: 7
+[PASS] CBAM: IT delete export block (403) - Status: 403
+[PASS] CBAM: Admin delete export (200) - Deleted CBAM record 7
+
+================================================================================
+BACKEND TEST SUMMARY: Total Tests: 70 | PASSED: 65 | FAILED: 5
+================================================================================
+Results written to C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\manage_data_backend_test_results.json
+

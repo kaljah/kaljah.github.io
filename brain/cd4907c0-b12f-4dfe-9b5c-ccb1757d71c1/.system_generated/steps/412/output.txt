@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":10,"LineContent":"        \"CREATE INDEX IF NOT EXISTS ix_emissions_division ON emissions(division);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":12,"LineContent":"        \"CREATE INDEX IF NOT EXISTS ix_production_data_division ON production_data(division);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":16,"LineContent":"        \"CREATE INDEX IF NOT EXISTS ix_scope2_emissions_division ON scope2_emissions(division);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":686,"LineContent":"        (\"division\", \"division\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1056,"LineContent":"        division=row.get(\"division\") or facility.division,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1340,"LineContent":"        division=row.get(\"division\") or facility.division,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1391,"LineContent":"    division = row.get(\"division\") or facility.division"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1416,"LineContent":"        if division:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1417,"LineContent":"            existing.division = division"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1432,"LineContent":"        division=division,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1569,"LineContent":"            \"division\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1608,"LineContent":"            division=row.get(\"division\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1901,"LineContent":"            division=row.get(\"division\", getattr(facility, \"division\", None)),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":333,"LineContent":"            \"CREATE INDEX IF NOT EXISTS ix_emissions_division ON emissions(division);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\10k_scope2_test.csv","LineNumber":1,"LineContent":"date,facility_name,grid_region,consumption,unit,activity,division,field"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_csv.py","LineNumber":11,"LineContent":"        \"Division\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_csv.py","LineNumber":29,"LineContent":"    divisions = [\"Div A\", \"Div B\", \"Div C\", \"Exploration\", \"Refining\", \"Distribution\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_csv.py","LineNumber":116,"LineContent":"                random.choice(divisions),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_scope2.py","LineNumber":13,"LineContent":"        \"division\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_scope2.py","LineNumber":21,"LineContent":"    divisions = [\"Div A\", \"Div B\", \"Div C\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_scope2.py","LineNumber":46,"LineContent":"                random.choice(divisions),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_comprehensive.py","LineNumber":93,"LineContent":"    \"facility_name\", \"activity\", \"division\", \"field\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_comprehensive.py","LineNumber":132,"LineContent":"    r[\"division\"]      = random.choice([\"DP\", \"AST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_comprehensive.py","LineNumber":156,"LineContent":"    r[\"division\"]      = random.choice([\"DP\", \"AST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_csv.py","LineNumber":10,"LineContent":"        \"Division\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_csv.py","LineNumber":28,"LineContent":"    divisions = [\"Div A\", \"Div B\", \"Div C\", \"Exploration\", \"Refining\", \"Distribution\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_csv.py","LineNumber":103,"LineContent":"                random.choice(divisions),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_csv.py","LineNumber":10,"LineContent":"        \"Division\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_csv.py","LineNumber":66,"LineContent":"    divisions = [\"Div A\", \"Div B\", \"Div C\", \"Exploration\", \"Refining\", \"Distribution\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_csv.py","LineNumber":178,"LineContent":"                random.choice(divisions),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_excel.py","LineNumber":15,"LineContent":"        \"Division\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_excel.py","LineNumber":69,"LineContent":"    divisions = [\"Div A\", \"Div B\", \"Div C\", \"Exploration\", \"Refining\", \"Distribution\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_excel.py","LineNumber":143,"LineContent":"            random.choice(divisions),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":32,"LineContent":"                division=\"Exploration \u0026 Production\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":442,"LineContent":"                    division=facility.division,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":51,"LineContent":"    division = db.Column(db.String(100))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":160,"LineContent":"    division = db.Column(db.String(100), index=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":185,"LineContent":"        db.Index(\"ix_emissions_act_div\", \"activity\", \"division\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":206,"LineContent":"    division = db.Column(db.String(100), index=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":236,"LineContent":"    division = db.Column(db.String(100))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":360,"LineContent":"    division = db.Column(db.String(100), index=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":31,"LineContent":"        \"division\": \"Raffinage\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":43,"LineContent":"        \"division\": \"Exploration \u0026 Production\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":55,"LineContent":"        \"division\": \"Exploration \u0026 Production\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":67,"LineContent":"        \"division\": \"Petrochimie\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":79,"LineContent":"        \"division\": \"Transport\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":91,"LineContent":"        \"division\": \"Exploration \u0026 Production\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":103,"LineContent":"        \"division\": \"Exploration \u0026 Production\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":115,"LineContent":"        \"division\": \"Exploration \u0026 Production\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":127,"LineContent":"        \"division\": \"Exploration \u0026 Production\","}
+(...185 more results not shown)

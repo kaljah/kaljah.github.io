@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":51,"LineContent":"export const BOUNDARY_OPTIONS = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":9,"LineContent":"import { GWP_AR5, BOUNDARY_OPTIONS } from '../constants';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2427,"LineContent":"                                                    {Object.keys(BOUNDARY_OPTIONS).map(opt =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2442,"LineContent":"                                                    {facilityForm.boundary_type \u0026\u0026 BOUNDARY_OPTIONS[facilityForm.boundary_type]?.map(detail =\u003e ("}

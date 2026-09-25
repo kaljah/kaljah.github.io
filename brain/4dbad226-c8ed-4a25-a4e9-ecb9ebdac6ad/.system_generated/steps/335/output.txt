@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Cleaned 2026 emissions. Count now: 0
+

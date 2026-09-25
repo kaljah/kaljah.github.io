@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -37,6 +37,7 @@
+ 
+ def _lookup_api_factor(fuel_name: str) -> dict:
+     """Look up an emission factor from API_FACTORS supporting exact, normalized, and alias matches."""
++    print(f"[_lookup_api_factor CALLED] fuel_name={fuel_name!r}, in API_FACTORS: {fuel_name in API_FACTORS}")
+     if not fuel_name:
+         return {}
+     if fuel_name in API_FACTORS:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

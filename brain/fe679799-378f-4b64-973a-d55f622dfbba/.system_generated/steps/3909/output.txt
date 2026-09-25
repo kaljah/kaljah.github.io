@@ -1,0 +1,67 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_tier_scope_kpi_numerical.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -612,4 +612,61 @@
+         assert u["lower_bound"] == 0.0
+         assert u["upper_bound"] > 100.0
+         assert u["coverage_factor"] == 2.0
++
++
++class TestOfficialPresetsTier2:
++    """Verifies numerical exactness of Tier 2 calculations using official legal and technical presets."""
++
++    def test_tier2_algerian_gas_sonatrach_iso6976(self):
++        """Sonatrach ISO 6976 Hassi R'Mel sales gas preset: HHV = 1085 Btu/scf.
++        Fuel: 50,000 scf Natural Gas. Standard API factor: 53.06 kg CO2/MMBtu.
++        Energy = 50,000 scf * (1085 / 1e6) = 54.25 MMBtu.
++        CO2 = 54.25 * 53.06 / 1000 = 2.878505 tCO2.
++        Tier: Tier 2 (activity data uncertainty u_AD = 7% per IPCC Table 3.1).
++        """
++        from calculations.combustion import CombustionCalculator
++        calc = CombustionCalculator()
++        res = calc.calculate(
++            fuel_quantity=50000.0,
++            ef_co2=53.06,
++            ef_ch4=0.001,
++            ef_n2o=0.0001,
++            uncertainties={"_factor_source": "custom"},
++            hhv=1085.0,
++            ef_unit="kg/MMBtu",
++            fuel_unit="scf",
++            fuel_type="gas",
++        )
++        expected_co2 = 50000.0 * (1085.0 / 1e6) * 53.06 / 1000.0
++        assert abs(res["results"]["co2"]["value"] - expected_co2) < 1e-4
++        assert res["results"]["co2"]["tier"] == Tier.T2
++        assert res["results"]["co2"]["ad_uncertainty_1sigma"] == (0.07 / 2.0)
++
++    def test_tier2_algerian_gasoil_ianor_na8110(self):
++        """IANOR NA 8110 Diesel preset: density = 840 kg/m3.
++        Fuel: 10 m3 Diesel. Standard factor: 73.96 kg CO2/MMBtu, default liquid HHV = 138,000 Btu/gal.
++        Activity = 10 m3 * 264.172 gal/m3 = 2641.72 gal.
++        Energy = 2641.72 * 138000 / 1e6 = 364.557 MMBtu.
++        CO2 = 364.557 * 73.96 / 1000 = 26.9626 tCO2.
++        Tier: Tier 2.
++        """
++        from calculations.combustion import CombustionCalculator
++        calc = CombustionCalculator()
++        res = calc.calculate(
++            fuel_quantity=10.0,
++            ef_co2=73.96,
++            ef_ch4=0.003,
++            ef_n2o=0.0006,
++            uncertainties={"_factor_source": "custom"},
++            hhv=138000.0,
++            ef_unit="kg/MMBtu",
++            fuel_unit="m3",
++            fuel_type="liquids",
++            density=840.0,
++        )
++        expected_co2 = 10.0 * 264.172 * (138000.0 / 1e6) * 73.96 / 1000.0
++        assert abs(res["results"]["co2"]["value"] - expected_co2) < 1e-3
++        assert res["results"]["co2"]["tier"] == Tier.T2
++        assert res["results"]["co2"]["ad_uncertainty_1sigma"] == (0.07 / 2.0)
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[2026-09-20 17:23:07,675] INFO in app: GET /api/health/ready 200 [0.002s] [ReqID: 38366af2-f1ae-4a50-aacb-7dacaf7019bc]
+200 {'database': 'connected', 'status': 'ready', 'version': '1.0.0', 'wal_size_mb': 1.13, 'wal_warning': False}
+

@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+[
+  'AlertCircle',
+  'Briefcase',
+  'Building',
+  'CheckCircle2',
+  'Mail',
+  'MapPin'
+]
+

@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":278,"LineContent":"        return ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":288,"LineContent":"        return ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":324,"LineContent":"    return ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":686,"LineContent":"                                                return ("}

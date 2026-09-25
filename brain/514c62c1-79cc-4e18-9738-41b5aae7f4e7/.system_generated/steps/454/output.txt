@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -91,7 +91,6 @@
+   });
+ 
+   const [sbtiData, setSbtiData] = useState(null);
+-  const [sbtiLoading, setSbtiLoading] = useState(false);
+   const [trendData, setTrendData] = useState([]);
+   const [categoricalData, setCategoricalData] = useState([]);
+   const [currentYear, setCurrentYear] = useState("all");
+@@ -98,6 +98,5 @@
+   const [expandedDivisions, setExpandedDivisions] = useState({});
+   const [goal, setGoal] = useState(null);
+-  const [baseYear, setBaseYear] = useState(null);
+   const [intensity, setIntensity] = useState(0);
+   const [hasProductionData, setHasProductionData] = useState(true);
+   const [loading, setLoading] = useState(true);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

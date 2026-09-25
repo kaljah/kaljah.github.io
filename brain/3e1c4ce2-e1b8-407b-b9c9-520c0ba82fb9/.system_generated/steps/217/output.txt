@@ -1,0 +1,59 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+collecting ... collected 44 items
+
+tests/test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_natural_gas PASSED [  2%]
+tests/test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_diesel PASSED [  4%]
+tests/test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_zero_quantity PASSED [  6%]
+tests/test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_large_quantity PASSED [  9%]
+tests/test_qfull_validation.py::TestCombustionTier1::test_combustion_tier1_missing_factors PASSED [ 11%]
+tests/test_qfull_validation.py::TestCombustionTier3::test_combustion_tier3_standard PASSED [ 13%]
+tests/test_qfull_validation.py::TestCombustionTier3::test_combustion_tier3_pure_methane PASSED [ 15%]
+tests/test_qfull_validation.py::TestCombustionTier3::test_combustion_tier3_zero_efficiency PASSED [ 18%]
+tests/test_qfull_validation.py::TestFlaringTier3::test_flaring_tier3_elevated PASSED [ 20%]
+tests/test_qfull_validation.py::TestFlaringTier3::test_flaring_tier3_enclosed PASSED [ 22%]
+tests/test_qfull_validation.py::TestFlaringTier3::test_flaring_tier3_custom_efficiency PASSED [ 25%]
+tests/test_qfull_validation.py::TestMudDegassing::test_mud_water_based PASSED [ 27%]
+tests/test_qfull_validation.py::TestMudDegassing::test_mud_oil_based PASSED [ 29%]
+tests/test_qfull_validation.py::TestMudDegassing::test_mud_synthetic PASSED [ 31%]
+tests/test_qfull_validation.py::TestCompletions::test_completions_metered PASSED [ 34%]
+tests/test_qfull_validation.py::TestCompletions::test_completions_rate_duration PASSED [ 36%]
+tests/test_qfull_validation.py::TestCompletions::test_completions_missing_content PASSED [ 38%]
+tests/test_qfull_validation.py::TestLiquidsUnloading::test_liquids_unloading_standard PASSED [ 40%]
+tests/test_qfull_validation.py::TestLiquidsUnloading::test_liquids_unloading_single_event PASSED [ 43%]
+tests/test_qfull_validation.py::TestTankFlashing::test_tank_flashing_standard PASSED [ 45%]
+tests/test_qfull_validation.py::TestTankFlashing::test_tank_flashing_with_control PASSED [ 47%]
+tests/test_qfull_validation.py::TestPneumatics::test_pneumatics_standard PASSED [ 50%]
+tests/test_qfull_validation.py::TestPneumatics::test_pneumatics_zero_hours PASSED [ 52%]
+tests/test_qfull_validation.py::TestAGR::test_agr_standard PASSED        [ 54%]
+tests/test_qfull_validation.py::TestAGR::test_agr_no_slip PASSED         [ 56%]
+tests/test_qfull_validation.py::TestBlowdown::test_blowdown_standard PASSED [ 59%]
+tests/test_qfull_validation.py::TestBlowdown::test_blowdown_single_event PASSED [ 61%]
+tests/test_qfull_validation.py::TestIndirectSteam::test_indirect_steam_standard PASSED [ 63%]
+tests/test_qfull_validation.py::TestIndirectSteam::test_indirect_steam_zero_loss PASSED [ 65%]
+tests/test_qfull_validation.py::TestCogen::test_cogen_wri_allocation PASSED [ 68%]
+tests/test_qfull_validation.py::TestGWPValues::test_gwp_ar4 PASSED       [ 70%]
+tests/test_qfull_validation.py::TestGWPValues::test_gwp_ar5 PASSED       [ 72%]
+tests/test_qfull_validation.py::TestGWPValues::test_gwp_ar6 PASSED       [ 75%]
+tests/test_qfull_validation.py::TestCO2eCalculation::test_calculate_co2e_ar5 PASSED [ 77%]
+tests/test_qfull_validation.py::TestCO2eCalculation::test_calculate_co2e_ar4 PASSED [ 79%]
+tests/test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_quantity PASSED [ 81%]
+tests/test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_ef PASSED [ 84%]
+tests/test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_ch4_content PASSED [ 86%]
+tests/test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_combustion_efficiency PASSED [ 88%]
+tests/test_qfull_validation.py::TestSensitivityOAT::test_sensitivity_pressure PASSED [ 90%]
+tests/test_qfull_validation.py::TestGasByGasValidation::test_co2_only PASSED [ 93%]
+tests/test_qfull_validation.py::TestGasByGasValidation::test_ch4_only PASSED [ 95%]
+tests/test_qfull_validation.py::TestBoundaryZero::test_zero_emissions PASSED [ 97%]
+tests/test_qfull_validation.py::TestNegativeRejected::test_negative_quantity_raises_value_error PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 44 passed, 1 warning in 1.01s ========================
+

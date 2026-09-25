@@ -1,0 +1,19 @@
+
+The command exited with code 1.
+Output:
+Scenario 01 [completions     | specific] SUCCESS: CO2e=      8.7063 t | CO2=    5.0507 t | CH4=  0.130448 t | N2O=  0.000012 t | 1s_CH4=  2.7%
+Scenario 02 [completions     | specific] SUCCESS: CO2e=    509.8269 t | CO2=  364.1052 t | CH4=  5.196116 t | N2O=  0.000870 t | 1s_CH4=  2.7%
+Scenario 03 [pneumatic       | specific] FAILED: 'float' object has no attribute 'get'
+Scenario 04 [pneumatic       | specific] FAILED: 'float' object has no attribute 'get'
+Scenario 05 [tank_working    | specific] SUCCESS: CO2e=   1266.2850 t | CO2=  598.8612 t | CH4= 23.821022 t | N2O=  0.001642 t | 1s_CH4=  5.1%
+Scenario 06 [tank_breathing  | specific] SUCCESS: CO2e=    615.7233 t | CO2=  350.4206 t | CH4=  9.465467 t | N2O=  0.001017 t | 1s_CH4=  5.1%
+Scenario 07 [agr             | specific] FAILED: 'float' object has no attribute 'get'
+Scenario 08 [dehydrator      | specific] FAILED: 'float' object has no attribute 'get'
+Scenario 09 [blowdown        | specific] SUCCESS: CO2e=    203.8911 t | CO2=  144.3294 t | CH4=  2.124238 t | N2O=  0.000314 t | 1s_CH4=  2.7%
+Scenario 10 [combustion      | default ] SUCCESS: CO2e=    259.9090 t | CO2=  258.9084 t | CH4=  0.012353 t | N2O=  0.002470 t | 1s_CH4=  9.0%
+Scenario 11 [combustion      | default ] SUCCESS: CO2e=    183.3265 t | CO2=  182.7360 t | CH4=  0.007290 t | N2O=  0.001458 t | 1s_CH4=  9.0%
+Scenario 12 [combustion      | default ] SUCCESS: CO2e=    308.5296 t | CO2=  307.5345 t | CH4=  0.012285 t | N2O=  0.002457 t | 1s_CH4=  9.0%
+Scenario 13 [combustion      | default ] SUCCESS: CO2e=      0.3144 t | CO2=    0.3122 t | CH4=  0.000033 t | N2O=  0.000005 t | 1s_CH4=  9.0%
+Scenario 14 [combustion      | default ] SUCCESS: CO2e=     65.4939 t | CO2=   64.9454 t | CH4=  0.004529 t | N2O=  0.001591 t | 1s_CH4=  9.0%
+Scenario 15 [unloading       | default ] SUCCESS: CO2e=     67.2000 t | CO2=    0.0000 t | CH4=  2.400000 t | N2O=  0.000000 t | 1s_CH4= 10.6%
+

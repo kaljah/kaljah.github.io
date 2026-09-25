@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+[2026-09-20 18:52:23,386] INFO in app: Updated account: a
+[2026-09-20 18:52:23,509] INFO in app: Updated account: a@a
+[2026-09-20 18:52:23,656] INFO in app: Updated account: z
+[2026-09-20 18:52:23,870] INFO in app: Updated account: z@z
+Successfully seeded 4 facilities and 9 emission records for Admin User!
+

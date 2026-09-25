@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_deep_injection_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -412,8 +412,6 @@
+         if not cf:
+             cf = CustomFactor(
+                 name="Regional Saharan Sweet Gas",
+-                category="combustion",
+-                fuel_type="Regional Saharan Sweet Gas",
+                 co2_factor=51.25,
+                 ch4_factor=0.0008,
+                 n2o_factor=0.00008,
+@@ -420,4 +420,5 @@
+                 hhv_factor=1050.0,
++                parent_fuel="Natural Gas",
+                 created_by=test_user.id,
+             )
+             db_session.add(cf)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

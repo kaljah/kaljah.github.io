@@ -1,0 +1,25 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":314,"LineContent":"                # Uncombusted methane slip per stoichiometry \u0026 combustion efficiency"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":18,"LineContent":"from .stoichiometry import StoichiometricCalculator"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":75,"LineContent":"            \"stoichiometry\": StoichiometricCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1042,"LineContent":"                \"stoichiometry\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\process_categories.py","LineNumber":355,"LineContent":"    \"indirect_steam\", \"cogen_allocation\", \"stoichiometry\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":56,"LineContent":"    # Combustion sources — well-characterised stoichiometry"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":147,"LineContent":"    \"stoichiometry\": \"stoichiometric\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":5,"LineContent":"from calculations.stoichiometry import StoichiometricCalculator"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":114,"LineContent":"def test_stoichiometry_short_ton():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1333,"LineContent":"def test_stoichiometry_dispatcher_gwp_propagation():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1334,"LineContent":"    \"\"\"Verify stoichiometry calculator accepts gwp_dict and calculates deterministically.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1339,"LineContent":"        process_type=\"stoichiometry\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":58,"LineContent":"        \"\"\"Verify additional process types not in PROCESS_TYPES table (indirect steam, cogen, fccu, stoichiometry).\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":59,"LineContent":"        extras = [\"indirect_steam\", \"cogen_allocation\", \"stoichiometry\", \"fccu\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":65,"LineContent":"                \"unit\": \"mmbtu\" if \"steam\" in p else (\"kg\" if p == \"stoichiometry\" else \"tonnes\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":311,"LineContent":"        \"stoichiometry\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":983,"LineContent":"            \"combustion | flaring | venting | blowdown | pneumatic | tank_flashing | tank_working | tank_breathing | drilling | completions | unloading | agr | dehydrator | fugitive | mobile | indirect_steam | stoichiometry | separation\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1493,"LineContent":"            \"Fuel carbon mass fraction 0–1 (e.g. 0.85 for natural gas). REQUIRED for stoichiometry.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1564,"LineContent":"    p_stoich = [\"all\", \"stoichiometry\", \"combustion\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1945,"LineContent":"            process_type=\"stoichiometry\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":150,"LineContent":"            \"stoichiometry\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":161,"LineContent":"                \"stoichiometry\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":305,"LineContent":"    def test_heavy_hydrocarbon_gas_c2_plus_stoichiometry(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":30,"LineContent":"from calculations.stoichiometry import StoichiometricCalculator"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":33,"LineContent":"from calculations.stoichiometry import StoichiometricCalculator"}

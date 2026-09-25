@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\server\app.py:255:from routes.custom_factors import custom_factors_bp
+new\server\app.py:259:from routes.emission_factors_routes import factors_bp
+new\server\app.py:273:app.register_blueprint(custom_factors_bp, url_prefix="/api/custom-factors")
+new\server\app.py:277:app.register_blueprint(factors_bp)
+
+
+

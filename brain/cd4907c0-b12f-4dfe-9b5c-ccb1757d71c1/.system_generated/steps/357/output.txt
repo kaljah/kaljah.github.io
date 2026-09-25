@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_it_role_security.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -160,7 +160,7 @@
+     assert client.get("/api/emissions").status_code == 403
+     assert client.get("/api/scope2").status_code == 403
+     assert client.get("/api/scope3").status_code == 403
+-    assert client.get("/api/data/sources").status_code == 403
++    assert client.get("/api/sources").status_code == 403
+     assert client.get("/api/reports/export").status_code == 403
+     assert client.get("/api/custom-factors").status_code == 403
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

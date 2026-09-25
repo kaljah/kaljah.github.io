@@ -1,0 +1,109 @@
+
+The command exited with code 0.
+Output:
+<truncated 126 lines>
+new\server\routes\qaqc.py:93:                all_flagged.append({
+new\server\routes\qaqc.py:101:                    "qa_flag": r.qa_flag,
+new\server\routes\qaqc.py:107:            q2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
+new\server\routes\qaqc.py:110:            total_flagged += q2.count()
+new\server\routes\qaqc.py:114:                q2 = 
+q2.order_by(Scope2Emission.created_at.desc()).limit(_MAX_FLAGGED_RECORDS)
+new\server\routes\qaqc.py:116:                all_flagged.append({
+new\server\routes\qaqc.py:124:                    "qa_flag": r.qa_flag,
+new\server\routes\qaqc.py:130:            q3 = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))
+new\server\routes\qaqc.py:133:            total_flagged += q3.count()
+new\server\routes\qaqc.py:137:                q3 = 
+q3.order_by(Scope3Emission.created_at.desc()).limit(_MAX_FLAGGED_RECORDS)
+new\server\routes\qaqc.py:139:                all_flagged.append({
+new\server\routes\qaqc.py:147:                    "qa_flag": r.qa_flag,
+new\server\routes\qaqc.py:154:            all_flagged.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
+new\server\routes\qaqc.py:155:            flagged_records = all_flagged[offset : offset + limit]
+new\server\routes\qaqc.py:157:            all_flagged.sort(key=lambda x: (x["co2e"] or 0), reverse=True)
+new\server\routes\qaqc.py:158:            flagged_records = all_flagged
+new\server\routes\qaqc.py:320:        # Status counts for flagged records
+new\server\routes\qaqc.py:325:        q1_flags = Emission.query.filter(Emission.qa_flag.isnot(None))
+new\server\routes\qaqc.py:333:        q2_flags = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
+new\server\routes\qaqc.py:341:        q3_flags = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))
+new\server\routes\qaqc.py:349:        # Completeness rates per dimension
+new\server\routes\qaqc.py:351:            fac_completeness = round(max(0.0, (s1_count - missing_facility_count) / 
+s1_count * 100), 1)
+new\server\routes\qaqc.py:352:            fuel_completeness = round(max(0.0, (comb_count - missing_fuel_count) / 
+comb_count * 100), 1) if comb_count > 0 else 100.0
+new\server\routes\qaqc.py:353:            amount_completeness = round(max(0.0, (s1_count - missing_amount_count) / 
+s1_count * 100), 1)
+new\server\routes\qaqc.py:354:            calc_completeness = round(max(0.0, (s1_count - missing_co2e_count) / 
+s1_count * 100), 1)
+new\server\routes\qaqc.py:355:            overall_completeness = round(
+new\server\routes\qaqc.py:356:                (fac_completeness + fuel_completeness + amount_completeness + 
+calc_completeness) / 4, 1
+new\server\routes\qaqc.py:359:            fac_completeness = 100.0
+new\server\routes\qaqc.py:360:            fuel_completeness = 100.0
+new\server\routes\qaqc.py:361:            amount_completeness = 100.0
+new\server\routes\qaqc.py:362:            calc_completeness = 100.0
+new\server\routes\qaqc.py:363:            overall_completeness = 100.0
+new\server\routes\qaqc.py:533:        health_score = max(0, min(100, int(round(overall_completeness - penalty))))
+new\server\routes\qaqc.py:537:            "completeness": overall_completeness,
+new\server\routes\qaqc.py:538:            "dimension_completeness": {
+new\server\routes\qaqc.py:539:                "facility": fac_completeness,
+new\server\routes\qaqc.py:540:                "fuel_source": fuel_completeness,
+new\server\routes\qaqc.py:541:                "activity_amount": amount_completeness,
+new\server\routes\qaqc.py:542:                "calculation": calc_completeness,
+new\server\routes\qaqc.py:556:                "total": total_flagged,
+new\server\routes\qaqc.py:568:            "total_flagged_count": total_flagged,
+new\server\routes\qaqc.py:569:            "returned_count": len(flagged_records),
+new\server\routes\qaqc.py:581:            "flagged_records": flagged_records,
+new\server\routes\qaqc.py:596:    Exports QA/QC anomaly data as a CSV file with scope and year filtering.
+new\server\routes\qaqc.py:636:                _fac_filter(Emission.query.filter(Emission.qa_flag.isnot(None)), 
+Emission),
+new\server\routes\qaqc.py:638:            ).limit(_MAX_FLAGGED_RECORDS).all()
+new\server\routes\qaqc.py:641:                
+_fac_filter(Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)), Scope2Emission),
+new\server\routes\qaqc.py:643:            ).limit(_MAX_FLAGGED_RECORDS).all()
+new\server\routes\qaqc.py:646:                
+_fac_filter(Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None)), Scope3Emission),
+new\server\routes\qaqc.py:648:            ).limit(_MAX_FLAGGED_RECORDS).all()
+new\server\routes\qaqc.py:675:                _sanitize_csv(r.qa_flag),
+new\server\routes\qaqc.py:687:                _sanitize_csv(r.qa_flag),
+new\server\routes\qaqc.py:699:                _sanitize_csv(r.qa_flag),
+new\server\routes\qaqc.py:716:def resolve_flagged_record(record_id):
+new\server\routes\qaqc.py:718:    Marks a flagged record as reviewed by updating status to 'Verified' or 'Rejected'.
+new\server\routes\qaqc.py:754:        if record.qa_flag and not record.qa_flag.startswith(f"[{resolution}]"):
+new\server\routes\qaqc.py:755:            record.qa_flag = f"[{resolution}] {record.qa_flag}"[:255]
+new\server\routes\qaqc.py:756:        elif not record.qa_flag:
+new\server\routes\qaqc.py:757:            record.qa_flag = f"[{resolution}] Manually reviewed"
+new\server\routes\qaqc.py:792:    Bulk approve or reject a list of flagged records.
+new\server\routes\qaqc.py:842:            if record.qa_flag and not record.qa_flag.startswith(f"[{resolution}]"):
+new\server\routes\qaqc.py:843:                record.qa_flag = f"[{resolution}] {record.qa_flag}"[:255]
+new\server\routes\qaqc.py:844:            elif not record.qa_flag:
+new\server\routes\qaqc.py:845:                record.qa_flag = f"[{resolution}] Manually reviewed"
+new\server\routes\reports.py:1217:                is_flagged = abs(var_pct) > thresh
+new\server\routes\reports.py:1218:                rec_status = "Reconciled" if not is_flagged else "Discrepancy 
+Flagged"
+new\server\routes\reports.py:1222:                is_flagged = True
+new\server\routes\reports.py:1223:                rec_status = "No Bottom-Up Inventory - Discrepancy Flagged"
+new\server\routes\reports.py:1227:                is_flagged = False
+new\server\routes\reports.py:1232:                is_flagged = False
+new\server\routes\reports.py:1252:                value="FLAGGED (> Threshold)" if is_flagged else "PASS",
+new\server\routes\reports.py:1260:                    if not is_flagged
+new\server\routes\satellite.py:200:    Exports a verified Sentinel-5P observation anomaly into an OGMP Level 4/5 
+Top-Down Survey record.
+new\server\routes\satellite.py:238:    delta_ppb = float(data.get("delta_ch4_ppb") or data.get("anomaly_ppb") or 0.0)
+new\server\routes\satellite.py:244:        or "Top-down Sentinel-5P TROPOMI column anomaly flux estimation"
+new\server\routes\satellite.py:253:        measured_rate_kg_hr = 
+sentinel5p_service.estimate_emission_rate_from_anomaly(
+new\server\routes\satellite.py:304:        reconciliation_status="Discrepancy Flagged" if variance_flag else 
+"Reconciled",
+new\server\routes\satellite.py:437:            # Determine stream type and anomaly severity
+new\server\routes\satellite.py:443:                anomaly = summary.get("max_anomaly_ppb", 0.0)
+new\server\routes\satellite.py:446:                if anomaly >= 30.0:
+new\server\routes\satellite.py:448:                    title = f"? High CH4 Anomaly Detected - {fac.name}"
+new\server\routes\satellite.py:451:                        f"detected a CH4 column anomaly of +{anomaly:.1f} ppb above 
+background at {fac.name}. "
+new\server\routes\satellite.py:454:                elif anomaly >= 10.0:
+new\server\routes\satellite.py:459:                        f"CH4 anomaly +{anomaly:.1f} ppb, estimated 
+{emission_rate:.0f} kg/hr."
+new\server\routes\satellite.py:469:                anomaly = 0.0
+new\server\routes\satellite.py:498:                        "anomaly_ppb": anomaly,
+
+
+

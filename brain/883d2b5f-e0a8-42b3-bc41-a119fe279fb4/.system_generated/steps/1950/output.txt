@@ -1,0 +1,118 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1240,5 +1240,112 @@
+     assert "Invalid role" in res.get_json()["error"]
+ 
+ 
++def test_qaqc_fuel_completeness_non_combustion(client, test_users):
++    """Verify non-combustion records (pneumatics, fugitives) without fuel do not depress QA/QC fuel_completeness."""
++    with app.app_context():
++        # Clear out test emissions
++        Emission.query.filter(Emission.record_id.like("qaqc-test-%")).delete()
++        db.session.commit()
++
++        # Insert 3 non-combustion records without fuel
++        for i in range(3):
++            em = Emission(
++                record_id=f"qaqc-test-nc-{i}",
++                year=2024,
++                month=i + 1,
++                facility_id=1,
++                process_type="pneumatics",
++                fuel_type=None,
++                quantity=100.0,
++                unit="count",
++                co2_emissions=0.0,
++                ch4_emissions=1.0,
++                n2o_emissions=0.0,
++                co2e_total=28.0,
++                status="Verified",
++                created_by=test_users["admin"],
++            )
++            db.session.add(em)
++        db.session.commit()
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    res = client.get("/api/qaqc/dashboard?year=2024")
++    assert res.status_code == 200
++    data = res.get_json()
++    metrics = data.get("completeness_metrics", {})
++    # Since all records in this set are non-combustion, fuel_completeness should be 100.0%
++    assert metrics.get("fuel_completeness") == 100.0
++
++
++def test_scope2_authoritative_calculation_overrides_injected_co2e(client, test_users):
++    """Verify Scope 2 recomputes co2e authoritatively even if client injects an arbitrary co2e."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["admin"]
++
++    payload = {
++        "year": 2024,
++        "month": 5,
++        "facility_id": 1,
++        "source_type": "electricity",
++        "electricity_kwh": 2000.0,
++        "emission_factor": 0.5,  # 2000 kWh * 0.5 kg/kWh / 1000 = 1.0 tCO2e
++        "co2e": 9999.0,  # Client-injected bogus value
++    }
++    res = client.post("/api/scope2", json=payload)
++    assert res.status_code == 201
++    res_data = res.get_json()
++    # The server must have authoritatively calculated 1.0 tCO2e instead of 9999.0
++    assert pytest.approx(res_data["co2e"], 0.001) == 1.0
++    with app.app_context():
++        rec = db.session.get(Scope2Emission, res_data["id"])
++        assert pytest.approx(rec.co2e, 0.001) == 1.0
++
++
++def test_compressor_seal_and_storage_tank_uncertainty_mapping():
++    """Verify compressor_seal and storage_tanks map to proper categories and propagate uncertainty."""
++    from calculations.dispatcher import CalculationDispatcher
++    from calculations.uncertainty import PROCESS_CATEGORY, resolve_ef_uncertainty, Tier
++
++    assert PROCESS_CATEGORY["compressor_seal"] == "fugitive"
++    assert PROCESS_CATEGORY["storage_tanks"] == "vented"
++
++    # Fugitive CH4 Tier 1 uncertainty should be 0.60 (60%), NOT 0.15 (combustion)
++    u_seal = resolve_ef_uncertainty("compressor_seal", "ch4", Tier.T1)
++    assert u_seal == 0.60
++
++    dispatcher = CalculationDispatcher()
++    # Test compressor seal dispatch
++    seal_res = dispatcher.dispatch(
++        process_type="compressor_seal",
++        inputs={"compressor_count": 2, "seal_type": "reciprocating"},
++        emission_factors={},
++        uncertainties={"_factor_source": "default"},
++    )
++    assert seal_res["status"] == "success"
++    assert seal_res["emissions"]["totalCo2e"] > 0
++    # Uncertainty should reflect fugitive high variance (>20%)
++    assert seal_res["emissions"]["uncertainty"] > 0.20
++
++
++def test_stoichiometry_dispatcher_gwp_propagation():
++    """Verify stoichiometry calculator accepts gwp_dict and calculates deterministically."""
++    from calculations.dispatcher import CalculationDispatcher
++
++    dispatcher = CalculationDispatcher()
++    res = dispatcher.dispatch(
++        process_type="stoichiometry",
++        inputs={"quantity": 1000, "carbon_content": 0.85, "unit": "kg"},
++        emission_factors={},
++        uncertainties={"_factor_source": "default"},
++        gwp_dict={"CO2": 1, "CH4": 28, "N2O": 265},
++    )
++    assert res["status"] == "success"
++    # 1000 kg * 0.85 * (44.01/12.011) / 1000 = ~3.114 tonnes CO2
++    assert pytest.approx(res["emissions"]["co2"], 0.01) == 3.114
++
++
++
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

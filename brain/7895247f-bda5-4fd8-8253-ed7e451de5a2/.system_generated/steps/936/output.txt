@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+diff --git a/new/server/routes/reports.py b/new/server/routes/reports.py
+index 502ee12..8909e82 100644
+--- a/new/server/routes/reports.py
++++ b/new/server/routes/reports.py
+@@ -451,6 +451,23 @@ def generate_report():
+         )
+ 
+ 
++@reports_bp.route("/master-annual-report", methods=["GET"])
++@login_required
++def get_master_annual_report():
++    """Download the comprehensive Groupement Berkine master annual GHG & CAP report."""
++    import os
++    pdf_path = os.path.abspath("c:/Users/samsung/Desktop/H2/Groupement_Berkine_2025_Annual_GHG_Report.pdf")
++    if not os.path.exists(pdf_path):
++        from generate_berkine_master_report import build_master_pdf
++        build_master_pdf(pdf_path)
++    return send_file(
++        pdf_path,
++        mimetype="application/pdf",
++        as_attachment=True,
++        download_name="Groupement_Berkine_2025_Annual_GHG_Report.pdf",
++    )
++
++
+ @reports_bp.route("/export", methods=["GET"])
+ @login_required
+ def export_emissions():
+

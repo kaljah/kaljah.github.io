@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":21,"LineContent":"from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":623,"LineContent":"                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":627,"LineContent":"            factor_data = API_FACTORS.get(fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":629,"LineContent":"            factor_data = API_FACTORS.get(fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2971,"LineContent":"    factor_data = API_FACTORS.get(data.get(\"fuel\"), {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2980,"LineContent":"            # API_FACTORS usually has: { 'co2': val, 'ch4': val, 'n2o': val, 'unit': '...', 'hhv': ... }"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3023,"LineContent":"                parent_factor = API_FACTORS.get(cf.parent_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3398,"LineContent":"        factor_data = API_FACTORS.get(data.get(\"fuel\") or data.get(\"fuel_type\") or record.fuel_type, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3443,"LineContent":"                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3738,"LineContent":"            factor_data = API_FACTORS.get(canonical_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3741,"LineContent":"                factor_data = API_FACTORS.get(fuel_key, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3807,"LineContent":"                        parent_factor = API_FACTORS.get(cf.parent_fuel, {})"}

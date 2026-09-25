@@ -1,0 +1,48 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\background_processor.py:1626:def _process_row(
+  new\server\background_processor.py:1627:    row,
+  new\server\background_processor.py:1628:    user_id,
+  new\server\background_processor.py:1629:    fac_name_map,
+  new\server\background_processor.py:1630:    fac_id_map,
+  new\server\background_processor.py:1631:    cf_name_map,
+  new\server\background_processor.py:1632:    compute_emissions_fn,
+  new\server\background_processor.py:1633:    API_FACTORS_dict,
+  new\server\background_processor.py:1634:    global_factor_type,
+  new\server\background_processor.py:1635:    gwp_dict=None,
+  new\server\background_processor.py:1636:    gwp_std="AR5",
+  new\server\background_processor.py:1637:    job_id=None,
+  new\server\background_processor.py:1638:    row_idx=None,
+  new\server\background_processor.py:1639:    batch_keys=None,
+  new\server\background_processor.py:1640:    overwrite_duplicates=False,
+  new\server\background_processor.py:1641:):
+  new\server\background_processor.py:1642:    """
+  new\server\background_processor.py:1643:    Validates a single mapped row and runs calculation via compute_emissions.
+  new\server\background_processor.py:1644:    Returns (Emission_Object, list_of_errors)
+  new\server\background_processor.py:1645:    """
+  new\server\background_processor.py:1646:    from models import Emission
+  new\server\background_processor.py:1647:    from calculations.units import calculate_co2e
+  new\server\background_processor.py:1648:
+  new\server\background_processor.py:1649:
+  new\server\background_processor.py:1650:    # Skip instructional walkthrough rows
+  new\server\background_processor.py:1651:    if str(row.get("date", "")).strip().upper().startswith("[INSTRUCTION]"):
+  new\server\background_processor.py:1652:        return None, []
+  new\server\background_processor.py:1653:
+  new\server\background_processor.py:1654:    # 1. Parse Date
+  new\server\background_processor.py:1655:    date_str = str(row.get("date") or "").strip()
+  new\server\background_processor.py:1656:    year, month = None, None
+  new\server\background_processor.py:1657:    if date_str and date_str != "None":
+  new\server\background_processor.py:1658:        try:
+  new\server\background_processor.py:1659:            parts = date_str.split("-")
+  new\server\background_processor.py:1660:            year = int(parts[0])
+  new\server\background_processor.py:1661:            month = int(parts[1]) if len(parts) > 1 else None
+  new\server\background_processor.py:1662:        except:
+  new\server\background_processor.py:1663:            pass
+  new\server\background_processor.py:1664:
+  new\server\background_processor.py:1665:    if not year:
+  new\server\background_processor.py:1666:        try:
+
+
+

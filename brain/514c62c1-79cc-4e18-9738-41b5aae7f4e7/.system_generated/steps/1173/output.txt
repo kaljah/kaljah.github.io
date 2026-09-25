@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+[2026-09-19 20:52:42,973] INFO in app: POST /api/auth/login 200 [0.083s] [ReqID: edec737d-0b88-4647-a654-0138890c5eb2]
+[2026-09-19 20:52:43,390] INFO in app: GET /api/qaqc/dashboard 200 [0.415s] [ReqID: b8a481c7-de71-4176-b9f9-d27ba827cd1e]
+Issues: []
+Warnings: [
+  {
+    "action": "Classify Sources",
+    "action_tab": "queue",
+    "affected_count": 143,
+    "description": "143 Scope 1 combustion record(s) are missing explicit fuel or process types, using generic defaults.",
+    "id": "missing_fuel",
+    "impact": "Medium",
+    "title": "Missing Fuel or Source Classification",
+    "type": "warning"
+  },
+  {
+    "action": "Review Activity",
+    "action_tab": "queue",
+    "affected_count": 282,
+    "description": "282 record(s) contain zero or unrecorded activity amounts.",
+    "id": "missing_amount",
+    "impact": "Medium",
+    "title": "Zero or Null Activity Quantities",
+    "type": "warning"
+  }
+]
+Suggestions: [
+  {
+    "action": "View Facilities",
+    "action_url": "/reference-data",
+    "affected_count": 2,
+    "description": "2 facility boundary(ies) are registered in master data but have no emissions reported for this period.",
+    "id": "unused_facilities",
+    "impact": "Low",
+    "title": "Inactive Facilities In Scope",
+    "type": "info"
+  }
+]
+

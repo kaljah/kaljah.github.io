@@ -1,0 +1,59 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_10_user_playwright.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -51,7 +51,7 @@
+         # ── Login ─────────────────────────────────────────────────────────────
+         log("## Login")
+         try:
+-            page.goto(f"{BASE_URL}/login", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/login", wait_until="domcontentloaded")
+             try:
+                 skip_btn = page.locator('.skip-intro-btn, button:has-text("Skip Intro")')
+                 if skip_btn.is_visible(timeout=3000):
+@@ -70,7 +70,7 @@
+         # ── Dashboard ─────────────────────────────────────────────────────────
+         log("## Dashboard (user)")
+         try:
+-            page.goto(f"{BASE_URL}/", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/", wait_until="domcontentloaded")
+             body = page.inner_text("body")
+             if len(body.strip()) > 50:
+                 ok("Dashboard loads for user")
+@@ -105,7 +105,7 @@
+         # ── ManageData: Scope 3 form ───────────────────────────────────────────
+         log("## ManageData: Create Scope 3")
+         try:
+-            page.goto(f"{BASE_URL}/manage-data", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/manage-data", wait_until="domcontentloaded")
+             ok("ManageData page loads for user")
+             # Check for pending status indicator
+             body = page.inner_text("body")
+@@ -131,7 +131,7 @@
+         # ── Reports ────────────────────────────────────────────────────────────
+         log("## Reports (user)")
+         try:
+-            page.goto(f"{BASE_URL}/reports", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/reports", wait_until="domcontentloaded")
+             body = page.inner_text("body")
+             if len(body.strip()) > 30:
+                 ok("Reports page loads for user")
+@@ -142,7 +142,7 @@
+         # ── Settings: own profile ─────────────────────────────────────────────
+         log("## Settings: Own Profile")
+         try:
+-            page.goto(f"{BASE_URL}/settings", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/settings", wait_until="domcontentloaded")
+             ok("Settings page loads for user")
+         except Exception as e:
+             bug("🟡 Medium", "Settings", str(e), "Page loads", str(e))
+@@ -149,7 +149,7 @@
+         # ── Check that password change form works ─────────────────────────────
+         log("## Password Change (user)")
+         try:
+-            page.goto(f"{BASE_URL}/settings", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/settings", wait_until="domcontentloaded")
+             # Look for change password section
+             has_pwd_form = page.locator('input[type="password"]').count() > 0
+             if has_pwd_form:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

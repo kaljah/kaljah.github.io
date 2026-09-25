@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope3Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -652,17 +652,28 @@
+         >
+           <button
+             className="action-btn secondary"
++            disabled={submitting}
+             onClick={() => handleAddEntry("Draft")}
+-            style={{ padding: "12px 20px" }}
+-          >
+-            Save as Draft (Maker Mode)
++            style={{
++              padding: "12px 20px",
++              cursor: submitting ? "not-allowed" : "pointer",
++              opacity: submitting ? 0.6 : 1,
++            }}
++          >
++            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
+           </button>
+           <button
+             className="btn-add-activity"
++            disabled={submitting}
+             onClick={() => handleAddEntry("Verified")}
+-            style={{ flex: 1.5, padding: "12px" }}
+-          >
+-            + Calculate & Submit for Review
++            style={{
++              flex: 1.5,
++              padding: "12px",
++              cursor: submitting ? "not-allowed" : "pointer",
++              opacity: submitting ? 0.6 : 1,
++            }}
++          >
++            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
+           </button>
+         </div>
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,49 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -63,9 +63,27 @@
+         all_flagged = []
+         total_flagged = 0
+ 
++        status_arg = (request.args.get("status") or "all").lower().strip()
++
++        def _apply_status_filter(q, model):
++            if status_arg == "rejected":
++                return q.filter(model.status.ilike("%rejected%"))
++            elif status_arg == "verified":
++                return q.filter(model.status.ilike("%verified%"))
++            elif status_arg == "pending":
++                return q.filter(or_(model.status.ilike("%pending%"), model.status.is_(None)))
++            elif status_arg in ["all", "active"]:
++                # In QA/QC, "all statuses" excludes rejected records so users only see actionable/verified records.
++                # Rejected records only appear in the dedicated Rejected tab.
++                return q.filter(or_(model.status.is_(None), ~model.status.ilike("%rejected%")))
++            elif status_arg in ["any", "include_rejected"]:
++                return q
++            return q
++
+         if scope_arg in [None, "all", "1"]:
+             q1 = Emission.query.filter(Emission.qa_flag.isnot(None))
+             q1 = _fac_filter(q1, Emission)
++            q1 = _apply_status_filter(q1, Emission)
+             total_flagged += q1.count()
+             if scope_arg == "1":
+                 q1 = q1.order_by(Emission.timestamp.desc()).offset(offset).limit(limit)
+@@ -87,6 +87,7 @@
+         if scope_arg in [None, "all", "2"]:
+             q2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))
+             q2 = _fac_filter(q2, Scope2Emission)
++            q2 = _apply_status_filter(q2, Scope2Emission)
+             total_flagged += q2.count()
+             if scope_arg == "2":
+                 q2 = q2.order_by(Scope2Emission.created_at.desc()).offset(offset).limit(limit)
+@@ -108,6 +108,7 @@
+         if scope_arg in [None, "all", "3"]:
+             q3 = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))
+             q3 = _fac_filter(q3, Scope3Emission)
++            q3 = _apply_status_filter(q3, Scope3Emission)
+             total_flagged += q3.count()
+             if scope_arg == "3":
+                 q3 = q3.order_by(Scope3Emission.created_at.desc()).offset(offset).limit(limit)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

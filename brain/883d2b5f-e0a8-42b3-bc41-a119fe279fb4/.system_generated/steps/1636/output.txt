@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -539,15 +539,7 @@
+         fuel = row.get("fuel", row.get("fuel_type", ""))
+         unit = row.get("unit", "")
+ 
+-        if not process_type:
+-            row_errors.append("Missing process type.")
+-        if not fuel and process_type not in [
+-            "Well Completions",
+-            "Fugitive",
+-        ]:  # Some processes might not need fuel
+-            row_errors.append("Missing fuel/activity.")
+-
+-        # 4. Resolve Factor (Standard vs Custom vs Sparse Engineering)
++        proc_clean = str(process_type).strip().lower()
+         factor_type_raw = str(row.get("factor_type", "")).lower()
+         if global_factor_type and global_factor_type != "auto":
+             factor_type = global_factor_type
+@@ -554,5 +554,16 @@
+             factor_type = factor_type_raw
+ 
++        is_tier3_factor = factor_type in [
++            "specific", "site_specific", "site-specific", "engineering", "tier3", "tier_3", "t3", "cems"
++        ]
++        is_non_comb = proc_clean in NON_COMBUSTION_PROCESSES or is_tier3_factor
++
++        if not process_type:
++            row_errors.append("Missing process type.")
++        if not fuel and not is_non_comb:
++            row_errors.append("Missing fuel/activity.")
++
++        # 4. Resolve Factor (Standard vs Custom vs Sparse Engineering)
+         factor_data = {}
+ 
+         if process_type == "Flaring":
+@@ -617,6 +617,8 @@
+                     parent_factor = API_FACTORS.get(cf.parent_fuel, {})
+                     if "uncertainty" in parent_factor:
+                         factor_data["uncertainty"] = parent_factor["uncertainty"]
++        elif is_non_comb or is_tier3_factor:
++            factor_data = API_FACTORS.get(fuel, {})
+         else:
+             factor_data = API_FACTORS.get(fuel, {})
+             if (
+@@ -623,5 +623,4 @@
+                 and not row_errors
+-                and process_type not in ["Well Completions"]
+             ):
+                 row_errors.append(f"Standard emission factor not found for: '{fuel}'")
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

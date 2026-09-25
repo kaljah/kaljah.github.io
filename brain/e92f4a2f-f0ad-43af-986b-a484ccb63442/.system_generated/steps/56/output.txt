@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['alembic_version', 'users', 'goals', 'base_year', 'mitigation_records', 'scope3_data', 'reporting_metadata', 'methane_source_types', 'system_settings', 'facilities', 'custom_factors', 'activity_log', 'base_year_recalculations', 'notifications', 'sbti_targets', 'emissions', 'production_data', 'emission_sources', 'scope2_emissions', 'scope3_emissions', 'mitigation_projects', 'cbam_product_exports', 'ogmp_surveys', 'level_upgrade_logs']
+

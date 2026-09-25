@@ -1,0 +1,63 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1093,10 +1093,38 @@
+                 )
+ 
+             elif process_type in [
+-                "stoichiometry",
+-                "chemical_production",
+                 "nitric_acid_production",
+                 "adipic_acid_production",
++            ]:
++                raw_amt = self._require_float(
++                    flat_inputs,
++                    ["production_amount", "amount", "quantity", "fuel_mass"],
++                    "production amount",
++                )
++                ef_n2o = (
++                    emission_factors.get("n2o")
++                    or emission_factors.get("ef_n2o")
++                    or flat_inputs.get("ef_n2o")
++                    or flat_inputs.get("n2o")
++                )
++                abatement_eff = self._optional_fraction(
++                    flat_inputs,
++                    ["abatement_efficiency", "abatement_eff", "control_efficiency", "eta_abatement"],
++                    0.0,
++                )
++                return calculator.calculate(
++                    production_amount=raw_amt,
++                    ef_n2o=ef_n2o,
++                    abatement_efficiency=abatement_eff,
++                    mass_unit=unit,
++                    uncertainties=uncertainties,
++                    gwp_dict=gwp_dict,
++                    process_type=process_type,
++                )
++
++            elif process_type in [
++                "stoichiometry",
++                "chemical_production",
+                 "asphalt_blowing",
+                 "asphalt",
+             ]:
+@@ -1109,6 +1109,11 @@
+                     ["carbon_content", "c_content"],
+                     0.85,
+                 )
++                oxidation_factor = self._optional_fraction(
++                    flat_inputs,
++                    ["oxidation_factor", "ox_factor"],
++                    1.0,
++                )
+ 
+                 return calculator.calculate(
+                     fuel_mass=raw_amt,
+@@ -1115,3 +1115,4 @@
++                    oxidation_factor=oxidation_factor,
+                     uncertainties=uncertainties,
+                     mass_unit=unit,
+                     gwp_dict=gwp_dict,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

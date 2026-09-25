@@ -1,0 +1,85 @@
+
+The command exited with code 0.
+Output:
+Total test failure blocks: 15
+*** [1] test_production_upsert_and_delete_audit ***
+E         
+E         comparison failed
+E         Obtained: 1.5212357566243382
+E         Expected: 36.50965815898411 � 0.00365097
+
+*** [2] TestCSVBufferIngestionMatrix.test_csv_delimiters_semicolon ***
+>       status = self._execute_sync_thread(
+>                   f.close()
+E                   AttributeError: 'Facility' object has no attribute 'close'. Did you mean: 'code'?
+
+*** [3] TestCSVBufferIngestionMatrix.test_csv_delimiters_tab_and_pipe ***
+E                   AttributeError: 'Facility' object has no attribute 'close'. Did you mean: 'code'?
+>       status_crlf = self._execute_sync_thread(app, crlf_csv, "crlf.csv", test_user.id)
+>                   f.close()
+E                   AttributeError: 'Facility' object has no attribute 'close'. Did you mean: 'code'?
+
+*** [4] TestCSVBufferIngestionMatrix.test_csv_whitespace_and_empty_rows ***
+>       status = self._execute_sync_thread(app, messy_csv, "messy.csv", test_user.id)
+>                   f.close()
+E                   AttributeError: 'Facility' object has no attribute 'close'. Did you mean: 'code'?
+
+*** [5] TestCSVBufferIngestionMatrix.test_csv_volumetric_extremes ***
+E                   AttributeError: 'Facility' object has no attribute 'close'. Did you mean: 'code'?
+>       status = self._run_upload(app, csv_data, "scope3_all.csv", test_user.id, scope=3)
+>                   f.close()
+E                   AttributeError: 'Facility' object has no attribute 'close'. Did you mean: 'code'?
+
+*** [6] test_constants_and_helpers ***
+>       assert ar5_20["CH4"] == 82.5
+E       assert 84.0 == 82.5
+
+*** [7] test_login_and_me_operational_defaults_regular_user ***
+>       assert u["default_division"] in ["Production", "Exploration & Production"]
+E       AssertionError: assert None in ['Production', 'Exploration & Production']
+
+*** [8] test_smoke_10_no_dev_accounts_exist ***
+>           assert user is None, f"Security violation: {email} exists"
+E           AssertionError: Security violation: a@a exists
+E           assert <User 2> is None
+
+*** [9] TestCompletionsPipeline.test_rate_duration_method ***
+E         
+E         comparison failed
+E         Obtained: 3.9194480041850883
+E         Expected: 0.16331033350771199 � 1.6e-04
+
+*** [10] TestCompletions.test_completions_rate_duration ***
+E         
+E         comparison failed
+E         Obtained: 3.9194480041850883
+E         Expected: 0.16331033350771199 � 1.6e-05
+
+*** [11] test_login_rate_limit_exceeded ***
+>       assert resp.status_code == 429
+E       assert 401 == 429
+E        +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+
+*** [12] test_dev_account_a_at_a_does_not_exist ***
+>           assert user is None, (
+E           AssertionError: SECURITY FAILURE: Account 'a@a' exists in the database. Hard-coded dev credential 'a@a'/'a' must never be auto-seeded.
+E           assert <User 2> is None
+
+*** [13] test_dev_account_bare_a_does_not_exist ***
+>           assert user is None, (
+E           AssertionError: SECURITY FAILURE: Account 'a' exists in the database. Hard-coded dev credential 'a'/'a' must never be auto-seeded.
+E           assert <User 1> is None
+
+*** [14] test_init_admin_route_removed ***
+E        +  where False = all([True, True, False, True, True, True, ...])
+>       assert calcs_per_sec >= 1000, f"Throughput SLA failed: {calcs_per_sec:.0f} calcs/sec"
+E       AssertionError: Throughput SLA failed: 342 calcs/sec
+E       assert 342.1447115424634 >= 1000
+
+*** [15] test_lookup_api_factor_resilience ***
+E         {'hhv': 125000} != {'hhv': 1020}
+E         {'process_category': 'mobile_combustion'} != {'process_category': 'stationary_combustion'}...
+E         
+E         ...Full output truncated (8 lines hidden), use '-vv' to show
+
+

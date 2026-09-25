@@ -1,0 +1,73 @@
+
+The command exited with code 0.
+Output:
+Total failure sections found: 4
+=== Failure 1 ===
+___________________ test_production_upsert_and_delete_audit ___________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 13, 'it_admin': 14, 'user': 15, 'facility_id': 4}
+
+    def test_production_upsert_and_delete_audit(client, test_users):
+        """Verify ProductionData atomic upsert and audit logging on delete."""
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        res1 = client.post(
+            "/api/data/production",
+            json={
+                "facility_id": test_users["facility_id"],
+                "year": 2026,
+
+=== Failure 2 ===
+__________ TestCSVBufferIngestionMatrix.test_csv_volumetric_extremes __________
+
+self = <test_csv_engine_matrix.TestCSVBufferIngestionMatrix object at 0x000002C3B5641370>
+app = <Flask 'app'>, test_user = <User 24>
+
+    def test_csv_volumetric_extremes(self, app, test_user):
+        """Validates zero-byte and header-only empty files."""
+        # 0-byte file
+>       status_zero = self._execute_sync_thread(app, b"", "zero.csv", test_user.id)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+new\server\tests\test_csv_engine_matrix.py:328: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+new\server\tests\test_csv_engine_matrix.py:215: in _execute_sync_thread
+    _process_file_thread(
+
+=== Failure 3 ===
+______________ TestCompletionsPipeline.test_rate_duration_method ______________
+
+self = <test_qfull_api_pipeline.TestCompletionsPipeline object at 0x000002C3B5A4FB60>
+auth_client = <FlaskClient <Flask 'app'>>, facility_id = 14
+
+    def test_rate_duration_method(self, auth_client, facility_id):
+        """
+        COMPLETIONS - rate_duration:
+        rate = 10 Mscf/day, duration = 24 hours, ch4=0.85
+    
+        rate_scf_hr = (10 * 1000) / 24 = 416.667 scf/hr
+        total_gas_scf = 416.667 * 24 = 10000 scf
+        total_gas_m3 = 10000 * 0.028316846592 = 283.16846592 m3
+        ch4_vol = 283.16846592 * 0.85 = 240.69319... m3
+        ch4_kg = 240.693... * 0.6785 = 163.35... kg
+
+=== Failure 4 ===
+_______________ TestCompletions.test_completions_rate_duration ________________
+
+self = <test_qfull_validation.TestCompletions object at 0x000002C3B5AB3140>
+
+    def test_completions_rate_duration(self):
+        payload = {
+            'process_type': 'completions',
+            'quantity': 0.0,
+            'unit': 'm3',
+            'factor_source': 'specific',
+            'ch4_content': 0.85,
+            'comp_method': 'rate_duration',
+            'comp_rate': 10.0,
+            'comp_duration': 24.0
+        }
+
+

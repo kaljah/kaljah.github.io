@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":599,"LineContent":"            em[\"co2\"] = 0  # Pneumatic devices emit CH4 only"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":4,"LineContent":"    PneumaticDeviceCalculator,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":52,"LineContent":"            \"pneumatic_devices\": PneumaticDeviceCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":53,"LineContent":"            \"pneumatic_device\": PneumaticDeviceCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":54,"LineContent":"            \"pneumatics\": PneumaticDeviceCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":55,"LineContent":"            \"pneumatic\": PneumaticDeviceCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":615,"LineContent":"class PneumaticDeviceCalculator(BaseCalculator):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":617,"LineContent":"        super().__init__(\"Pneumatic Devices\", \"Section 6.10\")"}

@@ -1,0 +1,15 @@
+Task: 4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/task-449
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-449.log
+Log output:
+
+Running 1 test using 1 worker
+
+
+========================================
+[TIER 1 TEST] Testing Region: West (Tosyali)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Steel & Iron (Acier DRI)
+[TIER 1 DB VERIFIED] Row ID=831, Facility=1, CO2=2.7060600000000004, CH4=0.00005100000000000001, Total CO2e=2.7088752000000005 tCO2e
+
+Last progress: 1m15s ago

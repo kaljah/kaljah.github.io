@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Settings.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -561,6 +561,7 @@
+                   <button
+                     key={yr}
+                     type="button"
++                    disabled={!isAdmin}
+                     className={`btn-year-pill ${defaultBaseYear === yr ? "active" : ""}`}
+                     onClick={() => setDefaultBaseYear(yr)}
+                   >
+@@ -600,6 +600,7 @@
+                   min="5"
+                   max="50"
+                   step="1"
++                  disabled={!isAdmin}
+                   value={globalThreshold}
+                   onChange={(e) => setGlobalThreshold(Number(e.target.value))}
+                   className="range-slider"
+@@ -637,6 +637,7 @@
+                     step="0.01"
+                     min="0.01"
+                     max="5.0"
++                    disabled={!isAdmin}
+                     value={upstreamTarget}
+                     onChange={(e) => setUpstreamTarget(Number(e.target.value))}
+                     className="form-input"
+@@ -677,6 +677,7 @@
+                     step="0.01"
+                     min="0.01"
+                     max="5.0"
++                    disabled={!isAdmin}
+                     value={midstreamTarget}
+                     onChange={(e) => setMidstreamTarget(Number(e.target.value))}
+                     className="form-input"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

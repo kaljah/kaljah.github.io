@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors_api2021.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1230,7 +1230,12 @@
+ }
+ 
+ # Merge all emission factors
+-ALL_EMISSION_FACTORS = {**API_FACTORS, **EQUIPMENT_FACTORS}
++ALL_EMISSION_FACTORS = {
++    **API_FACTORS,
++    **EQUIPMENT_FACTORS,
++    **CHEMICAL_PRODUCTION_FACTORS,
++    **N2O_PRODUCTION_FACTORS,
++}
+ 
+ # Correlation equations for screening-based fugitive estimation (Section 7.3.1.6)
+ CORRELATION_EQUATIONS = {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

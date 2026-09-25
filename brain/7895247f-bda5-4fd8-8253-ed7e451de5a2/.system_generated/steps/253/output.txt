@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 17:00:46,027] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+App successfully initialized with blueprints: ['auth', 'emissions', 'facilities', 'data', 'reports', 'dashboard', 'custom_factors', 'scope2', 'scope3', 'managedata', 'factors', 'notifications', 'audit', 'satellite', 'qaqc_bp', 'cap', 'equity', 'swagger_ui']
+

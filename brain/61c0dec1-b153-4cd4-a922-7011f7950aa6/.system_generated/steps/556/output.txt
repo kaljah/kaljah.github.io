@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -242,9 +242,25 @@
+         # Total dissolved methane across annual operating hours
+         total_ch4_scf = rate_gph * solubility_scf_per_gal * op_hours
+ 
++        # Stripping gas calculation (API Compendium §6.6 / GRI-GLYCalc / EPA Subpart W §98.233(e))
++        # Stripping gas (fuel gas or methane) is injected into the regenerator reboiler/stripping column
++        # and exits overhead with the still vent gas stream.
++        stripping_scf = 0.0
++        if stripping_gas_scf is not None and float(stripping_gas_scf or 0) > 0:
++            stripping_scf = float(stripping_gas_scf) * ch4_frac
++        elif stripping_gas_rate is not None and float(stripping_gas_rate or 0) > 0:
++            s_rate = float(stripping_gas_rate)
++            s_unit = str(stripping_gas_unit or "scf/hr").strip().lower()
++            if s_unit in ["m3/hr", "m3h", "m3_hr", "m3"]:
++                s_rate = convert(s_rate, "m3", "scf")
++            elif s_unit in ["scf/gal", "scf/gallon"]:
++                s_rate = s_rate * rate_gph
++            stripping_scf = s_rate * op_hours * ch4_frac
++
+         # Stream Partitioning & Control Systems:
+-        # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent
+-        # If no Flash Tank: 100% goes directly to regenerator still vent
++        # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent.
++        # Injected stripping gas joins the regenerator still vent stream.
++        # If no Flash Tank: 100% of dissolved gas plus stripping gas goes directly to regenerator still vent.
+         still_eff = normalize_efficiency(control_eff, default=0.0)
+         flash_eff = normalize_efficiency(flash_control_eff, default=0.0)
+ 
+@@ -265,7 +265,7 @@
+ 
+         if has_flash_tank:
+             flash_gas_scf = total_ch4_scf * 0.80
+-            still_gas_scf = total_ch4_scf * 0.20
++            still_gas_scf = (total_ch4_scf * 0.20) + stripping_scf
+             ch4_emitted_scf = (flash_gas_scf * (1.0 - flash_eff)) + (
+                 still_gas_scf * (1.0 - still_eff)
+             )
+@@ -273,8 +273,9 @@
+                 + (flash_gas_scf * flash_eff if flash_is_combustion else 0.0)
+             )
+         else:
+-            ch4_emitted_scf = total_ch4_scf * (1.0 - still_eff)
+-            ch4_combusted_scf = (total_ch4_scf * still_eff) if still_is_combustion else 0.0
++            still_gas_scf = total_ch4_scf + stripping_scf
++            ch4_emitted_scf = still_gas_scf * (1.0 - still_eff)
++            ch4_combusted_scf = (still_gas_scf * still_eff) if still_is_combustion else 0.0
+ 
+         # Convert scf to metric tonnes
+         density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

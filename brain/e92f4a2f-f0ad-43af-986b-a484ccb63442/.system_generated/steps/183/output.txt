@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+PASS: user a (pass a) -> role admin
+PASS: user a@a (pass a) -> role admin
+PASS: user z (pass z) -> role it_manager
+PASS: user z@z (pass z) -> role it_manager
+

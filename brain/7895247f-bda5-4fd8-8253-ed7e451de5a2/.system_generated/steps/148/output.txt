@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\models.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -203,6 +203,19 @@
+     oil_unit = db.Column(db.String(20), default="bbl")
+     gas_unit = db.Column(db.String(20), default="mscf")
+ 
++    # Granular Production Metrics (API Compendium / Berkine standard)
++    gross_gas_mmsm3 = db.Column(db.Float, default=0.0)
++    injected_gas_mmsm3 = db.Column(db.Float, default=0.0)
++    gas_without_injected_mmsm3 = db.Column(db.Float, default=0.0)
++    crude_oil_mmboe = db.Column(db.Float, default=0.0)
++    condensate_mmboe = db.Column(db.Float, default=0.0)
++    lpg_mmboe = db.Column(db.Float, default=0.0)
++    ngl_mmboe = db.Column(db.Float, default=0.0)
++    total_production_mmboe = db.Column(db.Float, default=0.0)
++    total_production_no_injected_mmboe = db.Column(db.Float, default=0.0)
++    saleable_production_mmboe = db.Column(db.Float, default=0.0)
++    fuel_gas_export_mmsm3 = db.Column(db.Float, default=0.0)
++
+     activity = db.Column(db.String(100), index=True)
+     division = db.Column(db.String(100), index=True)
+     region = db.Column(db.String(100))
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

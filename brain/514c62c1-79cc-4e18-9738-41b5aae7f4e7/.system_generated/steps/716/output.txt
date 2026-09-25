@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Login: 401 {"error":"Invalid credentials"}
+
+r1 status: 401 {"error":"Not authenticated"}
+
+

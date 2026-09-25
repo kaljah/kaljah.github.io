@@ -1,0 +1,22 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":513,"LineContent":"@auth_bp.route(\"/upload-avatar\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":515,"LineContent":"def upload_avatar():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":431,"LineContent":"@emissions_bp.route(\"/bulk-upload\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":433,"LineContent":"def add_bulk_upload():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":440,"LineContent":"        return jsonify({\"error\": \"IT Admins do not have access to upload emission data\"}), 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":813,"LineContent":"        # Prepare Record — all bulk upload paths queue as Pending per Decision D-04"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":908,"LineContent":"                            title=\"Scope 1 Bulk Upload Pending Review\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":909,"LineContent":"                            message=f\"{len(new_emissions)} new Scope 1 emission records were uploaded by {user.fullName} and are awaiting your approval.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":939,"LineContent":"from background_processor import start_background_upload, get_job_status"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2109,"LineContent":"            \"Save the file and upload it using the 'Upload' button in the GHG Platform application.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2834,"LineContent":"@emissions_bp.route(\"/upload/start\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2836,"LineContent":"def upload_start():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2892,"LineContent":"    job_id = start_background_upload("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2906,"LineContent":"@emissions_bp.route(\"/upload/status/\u003cjob_id\u003e\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2908,"LineContent":"def upload_status(job_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2915,"LineContent":"@emissions_bp.route(\"/upload/errors/\u003cjob_id\u003e\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2917,"LineContent":"def upload_errors(job_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3896,"LineContent":"                        metadata={\"imported_count\": imported_count, \"uploader_id\": user.id},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":525,"LineContent":"        return jsonify({\"error\": \"IT Admins do not have access to upload emission data\"}), 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":366,"LineContent":"        return jsonify({\"error\": \"IT Admins do not have access to upload emission data\"}), 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":480,"LineContent":"                title=\"Scope 3 Bulk Upload Pending Review\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":481,"LineContent":"                message=f\"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.\","}

@@ -1,0 +1,41 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":344,"LineContent":"            anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":605,"LineContent":"            # --- Maker-Checker: Notify reviewers for bulk Scope 1/2/3 uploads ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":616,"LineContent":"                    # Build reviewer list: all active admins (Maker-Checker: only admin approves)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":617,"LineContent":"                    reviewers = User.query.filter_by("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":627,"LineContent":"                    for reviewer in reviewers:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":629,"LineContent":"                            user_id=reviewer.id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1064,"LineContent":"        status=\"Pending\",  # Maker-Checker: awaits reviewer approval"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1295,"LineContent":"        status=\"Pending\",  # Maker-Checker: awaits reviewer approval"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1937,"LineContent":"            status=\"Pending\",  # Maker-Checker: awaits reviewer approval"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":66,"LineContent":"    if user and (user.role in ['viewer', 'auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":176,"LineContent":"    if user and (user.role in ['viewer', 'auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":209,"LineContent":"    if user and (user.role in ['viewer', 'auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":528,"LineContent":"    if user and user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2983,"LineContent":"    if user.role in (\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3311,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3362,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4478,"LineContent":"    reason = req_data.get(\"reason\", \"Rejected by reviewer\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4619,"LineContent":"    reason = data.get(\"reason\", \"Batch rejected by reviewer\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4725,"LineContent":"    \"\"\"Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":212,"LineContent":"    if user.role == \"viewer\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":215,"LineContent":"                {\"error\": \"Forbidden: Read-only viewers cannot create OGMP survey records\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":283,"LineContent":"    \"\"\"Verify viewer/auditor blocked from mutate on Scope 2, and creator ownership enforced.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":285,"LineContent":"        viewer = User.query.filter_by(email=\"audit_viewer@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":286,"LineContent":"        if not viewer:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":287,"LineContent":"            viewer = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":288,"LineContent":"                email=\"audit_viewer@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":289,"LineContent":"                fullName=\"Audit Viewer\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":292,"LineContent":"                role=\"viewer\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":295,"LineContent":"            viewer.set_password(\"AuditViewer123!\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":296,"LineContent":"            db.session.add(viewer)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":312,"LineContent":"        viewer_id = viewer.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":315,"LineContent":"    # 1. Viewer cannot create Scope 2 emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":317,"LineContent":"        sess[\"user_id\"] = viewer_id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":350,"LineContent":"    # 3. Viewer cannot update Scope 2 emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":352,"LineContent":"        sess[\"user_id\"] = viewer_id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":164,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":361,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":493,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":77,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":223,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":318,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}

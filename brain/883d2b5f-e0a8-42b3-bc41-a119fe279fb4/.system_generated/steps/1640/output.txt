@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -760,12 +760,13 @@
+                     if k in specific_keys:
+                         has_specific = True
+ 
+-        if has_specific:
++        if is_tier3_factor or has_specific:
+             calc_data["factor_source"] = "specific"
+-
+-        # Ensure factor source is recorded cleanly if forced globally or provided in column
+-        if factor_type in ["default", "custom", "specific"]:
+-            calc_data["factor_source"] = factor_type
++        elif factor_type in ["custom", "regional", "tier2", "tier_2", "t2"]:
++            calc_data["factor_source"] = "custom"
++        elif factor_type == "default":
++            calc_data["factor_source"] = "default"
++
+ 
+         # 6. Compute
+         gwp_dict = resolve_gwp_dict(user)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

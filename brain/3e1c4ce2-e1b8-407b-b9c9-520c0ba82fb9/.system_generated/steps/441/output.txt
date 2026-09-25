@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+[2026-09-21 12:42:39,652] INFO in app: Updated account: a
+[2026-09-21 12:42:39,752] INFO in app: Updated account: a@a
+[2026-09-21 12:42:39,915] INFO in app: Updated account: z
+[2026-09-21 12:42:40,028] INFO in app: Updated account: z@z
+Traceback (most recent call last):
+  File "<string>", line 14, in <module>
+AttributeError: 'Emission' object has no attribute 'fuel'. Did you mean: 'field'?
+Total verified 2026 records: 9
+

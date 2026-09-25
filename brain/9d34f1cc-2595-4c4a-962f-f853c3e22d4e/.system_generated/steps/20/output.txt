@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/11/2026   1:59 PM                .benchmarks                                                          
+d-----         9/20/2026  10:23 AM                .hypothesis                                                          
+d-----          8/5/2026   4:44 PM                .pytest_cache                                                        
+d-----         9/20/2026   5:35 PM                backups                                                              
+d-----          9/5/2026   4:47 PM                calculations                                                         
+d-----          9/9/2026  12:00 AM                emission_factors                                                     
+d-----          9/5/2026   4:46 PM                migrations                                                           
+d-----         9/24/2026   4:57 PM                routes                                                               
+d-----         9/20/2026   5:30 PM                scripts                                                              
+d-----         9/17/2026   1:04 PM                services                                                             
+d-----         6/26/2026   1:49 PM                static                                                               
+d-----         9/24/2026   8:46 PM                tests                                                                
+d-----         7/25/2026   3:43 AM                utils                                                                
+d-----         9/24/2026   5:00 PM                __pycache__                                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/11/2026   2:16 PM                assets                                                               
+d-----         9/24/2026  12:57 PM                components                                                           
+d-----         9/24/2026  12:56 PM                constants                                                            
+d-----          2/9/2026   6:35 PM                context                                                              
+d-----         9/17/2026  12:43 PM                hooks                                                                
+d-----         9/13/2026  11:45 PM                pages                                                                
+d-----         9/19/2026  10:30 PM                utils                                                                
+d-----         9/20/2026   5:27 PM                __tests__                                                            
+
+
+

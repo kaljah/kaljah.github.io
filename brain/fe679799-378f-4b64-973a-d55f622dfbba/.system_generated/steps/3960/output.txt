@@ -1,0 +1,374 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1570,19 +1570,15 @@
+                     marginBottom: "8px",
+                   }}
+                 >
+-                  <label style={{ margin: 0 }}>Emission Factor</label>
+-                  <div
+-                    className="toggle-container"
+-                    style={{
+-                      background: "#f3f4f6",
+-                      padding: "2px",
+-                      borderRadius: "4px",
+-                      display: "flex",
+-                      gap: "2px",
+-                    }}
+-                  >
+-                    {["default", "custom", "specific"]
+-                      .filter((type) => {
++                  <label style={{ margin: 0, fontWeight: 600 }}>Calculation Methodology</label>
++                  <div className="methodology-toggle">
++                    {[
++                      { key: "default", tier: "Tier 1", label: "Standard API", sub: "Catalog Defaults" },
++                      { key: "custom", tier: "Tier 2", label: "Regional / Lab", sub: "Ticket / Presets / Custom" },
++                      { key: "specific", tier: "Tier 3", label: "Measurement / GC", sub: "CEMS / Analysis" },
++                    ]
++                      .filter((item) => {
++                        const type = item.key;
+                         if (processType === "mobile" && type === "specific")
+                           return false;
+                         if (processType === "fugitive" && type === "specific")
+@@ -1594,52 +1594,40 @@
+                           return false;
+                         return true;
+                       })
+-                      .map((type) => (
+-                        <button
+-                          key={type}
+-                          className={`btn-toggle-sm ${sourceType === type ? "active" : ""}`}
+-                          onClick={() => {
+-                            setSourceType(type);
+-                            if (
+-                              type === "default" &&
+-                              [
+-                                "drilling",
+-                                "completions",
+-                                "unloading",
+-                                "blowdown",
+-                              ].includes(processType)
+-                            ) {
+-                              toast.warning(
+-                                "Tier 1 calculations are not recommended for this process (OGMP 2.0).",
+-                                { duration: 8000 },
+-                              );
+-                            }
+-                          }}
+-                          style={{
+-                            padding: "2px 8px",
+-                            borderRadius: "4px",
+-                            border: "none",
+-                            background:
+-                              sourceType === type ? "#fff" : "transparent",
+-                            color:
+-                              sourceType === type
+-                                ? "var(--accent-color)"
+-                                : "#6b7280",
+-                            fontSize: "0.75rem",
+-                            fontWeight: 600,
+-                            cursor: "pointer",
+-                            boxShadow:
+-                              sourceType === type
+-                                ? "0 1px 2px rgba(0,0,0,0.1)"
+-                                : "none",
+-                            textTransform: "capitalize",
+-                          }}
+-                        >
+-                          {type}
+-                        </button>
+-                      ))}
+-                  </div>
+-                </div>
++                      .map((item) => {
++                        const type = item.key;
++                        const isActive = sourceType === type;
++                        return (
++                          <button
++                            key={type}
++                            type="button"
++                            className={`tier-selector-btn ${isActive ? "active" : ""}`}
++                            onClick={() => {
++                              setSourceType(type);
++                              if (
++                                type === "default" &&
++                                [
++                                  "drilling",
++                                  "completions",
++                                  "unloading",
++                                  "blowdown",
++                                ].includes(processType)
++                              ) {
++                                toast.warning(
++                                  "Tier 1 calculations are not recommended for this process (OGMP 2.0).",
++                                  { duration: 8000 },
++                                );
++                              }
++                            }}
++                          >
++                            <span className="tier-tag">{item.tier}</span>
++                            <span className="tier-label">{item.label}</span>
++                          </button>
++                        );
++                      })}
++                  </div>
++                </div>
++
+                 {["agr", "dehydrator"].includes(processType) && (
+                   <div
+                     style={{
+@@ -1674,6 +1674,8 @@
+                     </span>
+                   </div>
+                 )}
++
++                {/* TIER 1: Standard API Tabulated Factors */}
+                 {sourceType === "default" && (
+                   <CustomDropdown
+                     options={fuelOptions}
+@@ -1680,15 +1680,236 @@
+                     onChange={(val) => handleFormChange("fuel", val)}
+-                    placeholder="Select Emission Factor..."
++                    placeholder="Select Standard Emission Factor..."
+                     renderOption={renderFactorOption}
+                   />
+                 )}
++
++                {/* TIER 2: Regional / Measured / Supplier Factors */}
+                 {sourceType === "custom" && (
+-                  <CustomDropdown
+-                    options={fuelOptions}
+-                    value={formData.fuel || ""}
+-                    onChange={(val) => handleFormChange("fuel", val)}
+-                    placeholder="Select Custom Factor..."
+-                  />
++                  <div className="tier2-mode-container">
++                    {[
++                      "combustion",
++                      "stationary_combustion",
++                      "mobile_combustion",
++                      "mobile",
++                      "flaring",
++                      "flare",
++                    ].includes(processType) ? (
++                      <>
++                        <div className="tier2-mode-tabs">
++                          <button
++                            type="button"
++                            className={`tier2-mode-btn ${tier2Mode === "override" ? "active" : ""}`}
++                            onClick={() => setTier2Mode("override")}
++                          >
++                            <Sliders size={14} />
++                            <span>Adjust Standard Fuel by Ticket / Presets</span>
++                          </button>
++                          <button
++                            type="button"
++                            className={`tier2-mode-btn ${tier2Mode === "custom_factor" ? "active" : ""}`}
++                            onClick={() => setTier2Mode("custom_factor")}
++                          >
++                            <Layers size={14} />
++                            <span>Saved Custom Factors Library</span>
++                          </button>
++                        </div>
++
++                        {tier2Mode === "override" && (
++                          <div className="tier2-override-card">
++                            {/* Base Fuel Dropdown */}
++                            <div>
++                              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
++                                Base Fuel Type
++                              </label>
++                              <CustomDropdown
++                                options={fuelOptions}
++                                value={formData.fuel || ""}
++                                onChange={(val) => {
++                                  handleFormChange("fuel", val);
++                                  setActivePresetId("");
++                                }}
++                                placeholder="Select Base Fuel (e.g. Natural Gas, Diesel)..."
++                                renderOption={renderFactorOption}
++                              />
++                            </div>
++
++                            {/* Official Legal & Standard Presets Section */}
++                            <div className="official-presets-section">
++                              <div className="official-presets-header">
++                                <span className="official-presets-title">
++                                  <BookOpen size={14} style={{ color: "var(--accent-color, #ff6600)" }} />
++                                  Official Legal & Standard Presets (Algerian Law / API Compendium)
++                                </span>
++                              </div>
++                              <div className="official-presets-chips">
++                                {getPresetsForFuel(formData.fuel, streamType).map((preset) => (
++                                  <button
++                                    key={preset.id}
++                                    type="button"
++                                    className={`preset-chip ${activePresetId === preset.id ? "active" : ""}`}
++                                    onClick={() => handleApplyPreset(preset)}
++                                    title={preset.description}
++                                  >
++                                    <span className={`preset-citation-badge ${preset.citationType}`}>
++                                      {preset.citation}
++                                    </span>
++                                    <span className="preset-name">{preset.shortLabel || preset.name}</span>
++                                  </button>
++                                ))}
++                              </div>
++                            </div>
++
++                            {/* Measured Properties Grid */}
++                            <div className="tier2-inputs-grid">
++                              <div>
++                                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
++                                  Measured HHV (Higher Heating Value)
++                                </label>
++                                <div style={{ display: "flex", gap: "6px" }}>
++                                  <input
++                                    type="number"
++                                    step="any"
++                                    className="mole-input"
++                                    style={{ flex: 1, padding: "6px 8px", fontSize: "0.85rem" }}
++                                    placeholder="e.g. 1085"
++                                    value={formData.hhv || ""}
++                                    onChange={(e) => {
++                                      handleFormChange("hhv", e.target.value);
++                                      setActivePresetId("");
++                                    }}
++                                  />
++                                  <select
++                                    className="mole-input"
++                                    style={{ width: "110px", padding: "6px 8px", fontSize: "0.8rem" }}
++                                    value={formData.hhv_unit || "BTU/scf"}
++                                    onChange={(e) => handleFormChange("hhv_unit", e.target.value)}
++                                  >
++                                    <option value="BTU/scf">BTU/scf</option>
++                                    <option value="MJ/m3">MJ/m³</option>
++                                    <option value="kcal/m3">kcal/m³</option>
++                                    <option value="BTU/gal">BTU/gal</option>
++                                    <option value="BTU/lb">BTU/lb</option>
++                                    <option value="MJ/kg">MJ/kg</option>
++                                  </select>
++                                </div>
++                              </div>
++
++                              <div>
++                                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
++                                  Measured Fuel Density (kg/m³)
++                                </label>
++                                <input
++                                  type="number"
++                                  step="any"
++                                  className="mole-input"
++                                  style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
++                                  placeholder="e.g. 840.0 for Gasoil NA 8110"
++                                  value={fuelDensity}
++                                  onChange={(e) => {
++                                    setFuelDensity(e.target.value);
++                                    setActivePresetId("");
++                                  }}
++                                />
++                              </div>
++                            </div>
++
++                            {/* Data Source / Audit Reference Field */}
++                            <div>
++                              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#374151", marginBottom: "4px" }}>
++                                Analysis Bulletin / Delivery Ticket Ref
++                              </label>
++                              <input
++                                type="text"
++                                className="mole-input"
++                                style={{ width: "100%", padding: "6px 8px", fontSize: "0.85rem" }}
++                                placeholder="e.g. Naftal Delivery Ticket #4902-B, Sonatrach GC #2026-03"
++                                value={dataSourceRef}
++                                onChange={(e) => setDataSourceRef(e.target.value)}
++                              />
++                            </div>
++
++                            {/* Live Calculation Preview & Data Quality Badge */}
++                            <div className="tier2-preview-badge">
++                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
++                                <Sparkles size={15} style={{ color: "var(--accent-color, #ff6600)" }} />
++                                <span style={{ fontWeight: 600, fontSize: "0.75rem", color: "#1f2937" }}>
++                                  Tier 2 Data Reliability Rating
++                                </span>
++                              </div>
++                              <div style={{ fontSize: "0.75rem", color: "#065f46" }}>
++                                IPCC Activity Data Uncertainty: <strong>±7.0%</strong> (vs ±10.0% Tier 1 Default) | Method: Measured Fuel Properties
++                              </div>
++                            </div>
++                          </div>
++                        )}
++
++                        {tier2Mode === "custom_factor" && (
++                          <div>
++                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
++                              <div style={{ flex: 1 }}>
++                                <CustomDropdown
++                                  options={fuelOptions}
++                                  value={formData.fuel || ""}
++                                  onChange={(val) => handleFormChange("fuel", val)}
++                                  placeholder="Select Saved Custom Factor..."
++                                />
++                              </div>
++                              <button
++                                type="button"
++                                className="btn btn-secondary"
++                                onClick={() => setIsQuickAddModalOpen(true)}
++                                style={{
++                                  display: "flex",
++                                  alignItems: "center",
++                                  gap: "4px",
++                                  padding: "8px 12px",
++                                  fontSize: "0.8rem",
++                                  whiteSpace: "nowrap",
++                                }}
++                              >
++                                <PlusCircle size={15} />
++                                <span>+ Quick Add</span>
++                              </button>
++                            </div>
++                            {fuelOptions.length === 0 && (
++                              <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "6px" }}>
++                                No saved custom factors registered for this process yet. Click <strong>+ Quick Add</strong> to register one on the spot.
++                              </div>
++                            )}
++                          </div>
++                        )}
++                      </>
++                    ) : (
++                      <div>
++                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
++                          <div style={{ flex: 1 }}>
++                            <CustomDropdown
++                              options={fuelOptions}
++                              value={formData.fuel || ""}
++                              onChange={(val) => handleFormChange("fuel", val)}
++                              placeholder="Select Saved Custom Factor..."
++                            />
++                          </div>
++                          <button
++                            type="button"
++                            className="btn btn-secondary"
++                            onClick={() => setIsQuickAddModalOpen(true)}
++                            style={{
++                              display: "flex",
++                              alignItems: "center",
++                              gap: "4px",
++                              padding: "8px 12px",
++                              fontSize: "0.8rem",
++                              whiteSpace: "nowrap",
++                            }}
++                          >
++                            <PlusCircle size={15} />
++                            <span>+ Quick Add</span>
++                          </button>
++                        </div>
++                      </div>
++                    )}
++                  </div>
+                 )}
+                 {sourceType === "specific" &&
+                   ![
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

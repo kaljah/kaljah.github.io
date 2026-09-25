@@ -1,0 +1,76 @@
+
+The command exited with code 1.
+Output:
+
+Running 3 tests using 1 worker
+
+[DASHBOARD BASELINE] Gross: 256.4K, Net: 256.4K, CH4: 238.7
+[DASHBOARD PILLS] S1: 256.4K tCO₂e, S2: 0 tCO₂e, S3: 0 tCO₂e
+[DASHBOARD API] Total Scope 1 (API): 256425.1
+  x  1 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity (1.0m)
+[DASHBOARD BASELINE] Gross: 256.4K, Net: 256.4K, CH4: 238.7
+[DASHBOARD PILLS] S1: 256.4K tCO₂e, S2: 0 tCO₂e, S3: 0 tCO₂e
+[DASHBOARD API] Total Scope 1 (API): 256425.1
+  x  2 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity (retry #1) (1.0m)
+[CARBON INTENSITY] GHG: 0.99, S1: 0.99, Flare: 0.09, S3: 0.00
+[CARBON INTENSITY GWP20] GHG Intensity 20-Yr: 1.04
+[CBAM TABLE] Product rows: 6
+  ok 3 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:209:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table (10.0s)
+[METHANE INTENSITY] KPI Cards count: 4
+[METHANE INTENSITY] Card 1 Value: 0.0009
+[METHANE INTENSITY] OGMP 2.0 Gold Standard section verified
+  ok 4 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:262:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges (6.8s)
+
+
+  1) [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.filter-wrapper').first().locator('.custom-dropdown-trigger')
+
+
+      91 |     for (const yr of yearsToTest) {
+      92 |       const yearFilter = page.locator('.filter-wrapper').nth(0);
+    > 93 |       await yearFilter.locator('.custom-dropdown-trigger').click();
+         |                                                            ^
+      94 |       await page.waitForTimeout(300);
+      95 |       const yrOpt = page.locator(`.dropdown-item:has-text("${yr}")`).first();
+      96 |       if (await yrOpt.isVisible()) {
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:93:60
+
+    Error Context: test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.filter-wrapper').first().locator('.custom-dropdown-trigger')
+
+
+      91 |     for (const yr of yearsToTest) {
+      92 |       const yearFilter = page.locator('.filter-wrapper').nth(0);
+    > 93 |       await yearFilter.locator('.custom-dropdown-trigger').click();
+         |                                                            ^
+      94 |       await page.waitForTimeout(300);
+      95 |       const yrOpt = page.locator(`.dropdown-item:has-text("${yr}")`).first();
+      96 |       if (await yrOpt.isVisible()) {
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:93:60
+
+    Error Context: test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity 
+  2 passed (2.4m)
+

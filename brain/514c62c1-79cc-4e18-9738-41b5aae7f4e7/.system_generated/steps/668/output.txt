@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -508,6 +508,9 @@
+     act_sel = [
+         Emission.year.label("year"),
+         Emission.process_type,
++        func.sum(Emission.co2_emissions).label("co2_total"),
++        func.sum(Emission.ch4_emissions).label("ch4_total"),
++        func.sum(Emission.n2o_emissions).label("n2o_total"),
+         func.sum(Emission.co2e_total).label("total"),
+     ]
+     if group_by == "facility":
+@@ -543,6 +543,10 @@
+         fid = getattr(row, "facility_id", "total")
+         key = (yr, fid)
+         if key in yearly_data:
++            g100 = float(row.total or 0)
++            ch4_t = float(row.ch4_total or 0)
++            n2o_t = float(row.n2o_total or 0)
++            g_val = round(max(g100, g100 + (56.0 * ch4_t) - (1.0 * n2o_t)), 2) if is_20 else g100
+             source_raw = (row.process_type or "").lower().strip()
+             mapped = False
+             for pattern, category in SOURCE_MAP.items():
+@@ -549,8 +549,8 @@
+-                    yearly_data[key][category] += float(row.total or 0)
++                    yearly_data[key][category] += g_val
+                     mapped = True
+                     break
+             if not mapped:
+-                yearly_data[key]["other"] += float(row.total or 0)
++                yearly_data[key]["other"] += g_val
+ 
+     return list(yearly_data.values())
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

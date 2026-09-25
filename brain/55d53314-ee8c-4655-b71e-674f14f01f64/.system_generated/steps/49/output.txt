@@ -1,0 +1,34 @@
+
+The command exited with code 1.
+Output:
+new/server/emission_factors.py:3:Comprehensive emission factors with automatic uncertainty loading,
+new/server/emission_factors.py-4-segment-based categorization, and process type organization.
+new/server/emission_factors.py-5-
+new/server/emission_factors.py-6-This module imports from emission_factors_api2021.py which contains
+new/server/emission_factors.py-7-120+ emission factors from API Compendium 2021 Sections 5, 6, and 7.
+new/server/emission_factors.py-8-
+new/server/emission_factors.py-9-All factors include:
+new/server/emission_factors.py-10-- Segment classification (Upstream/Midstream/Downstream)
+new/server/emission_factors.py-11-- Process category
+new/server/emission_factors.py-12-- Uncertainty values for CO₂, CH₄, N₂O
+new/server/emission_factors.py-13-- Source references to API Compendium 2021
+--
+new/server/emission_factors.py:51:# - Automatic uncertainty values
+new/server/emission_factors.py-52-# - Segment classification (Upstream/Midstream/Downstream)
+new/server/emission_factors.py-53-# - Process category organization
+new/server/emission_factors.py-54-#
+new/server/emission_factors.py-55-# All existing code referencing API_FACTORS will continue to work.
+new/server/emission_factors.py-56-# =============================================================================
+new/server/emission_factors.py-57-
+new/server/emission_factors.py-58-# For convenience, expose the main dictionaries at module level
+new/server/emission_factors.py-59-__all__ = [
+new/server/emission_factors.py-60-    "API_FACTORS",
+new/server/emission_factors.py-61-    "EQUIPMENT_FACTORS",
+--
+new/server/emission_factors.py:123:        "uncertainty": {"co2": 0.3, "ch4": 0.3, "n2o": 0.3},
+new/server/emission_factors.py-124-    },
+new/server/emission_factors.py-125-    "Fugitive - Connector (Gas/Vapor)": {
+new/server/emission_factors.py-126-        "code": "ConnGas",
+new/server/emission_factors.py-127-        "type": "fugitive",
+new/server/emission_factors.py-128-        "ch4": 0.0002,
+

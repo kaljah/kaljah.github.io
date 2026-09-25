@@ -1,0 +1,70 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1213,7 +1213,7 @@
+   }
+ }
+ 
+-// --- DATA FETCHING (Unchanged logic, just ensure robustness) ---
++// --- DATA FETCHING (Dynamic GWP Recalculation) ---
+ async function fetchAllReportData(
+   api,
+   year,
+@@ -1220,7 +1220,7 @@
+   params,
+   productionData = [],
+-) {
+-  // ... (Keep existing data processing logic from previous step, it was solid)
++  gwpFactors = DEFAULT_GWP,
++) {
+   let co2Total = 0,
+     ch4Total = 0,
+     n2oTotal = 0;
+@@ -1236,8 +1236,22 @@
+   let facilityBreakdown = {};
+   let monthlyData = {};
+ 
++  const co2_factor = (gwpFactors && gwpFactors.CO2 !== undefined) ? Number(gwpFactors.CO2) : 1;
++  const ch4_factor = (gwpFactors && gwpFactors.CH4 !== undefined) ? Number(gwpFactors.CH4) : 28;
++  const n2o_factor = (gwpFactors && gwpFactors.N2O !== undefined) ? Number(gwpFactors.N2O) : 265;
++
+   const scope1Rows = rawReportData.map((r) => {
+-    const tVal = r.co2e_total || 0;
++    const co2Val = Number(r.co2_emissions || 0);
++    const ch4Val = Number(r.ch4_emissions || 0);
++    const n2oVal = Number(r.n2o_emissions || 0);
++
++    let tVal = 0;
++    if (co2Val > 0 || ch4Val > 0 || n2oVal > 0) {
++      tVal = (co2Val * co2_factor) + (ch4Val * ch4_factor) + (n2oVal * n2o_factor);
++    } else {
++      tVal = Number(r.co2e_total || 0);
++    }
++
+     let scope = String(r.scope || "");
+     if (!scope || scope === "null" || scope === "undefined") {
+       const pType = (r.process_type || "").toLowerCase();
+@@ -1251,17 +1251,12 @@
+       else scope = "1";
+     }
+ 
+-    if (
+-      (r.co2_emissions || 0) === 0 &&
+-      (r.ch4_emissions || 0) === 0 &&
+-      (r.n2o_emissions || 0) === 0 &&
+-      tVal > 0
+-    ) {
++    if (co2Val === 0 && ch4Val === 0 && n2oVal === 0 && tVal > 0) {
+       co2Total += tVal;
+     } else {
+-      co2Total += r.co2_emissions || 0;
+-      ch4Total += r.ch4_emissions || 0;
+-      n2oTotal += r.n2o_emissions || 0;
++      co2Total += co2Val;
++      ch4Total += ch4Val;
++      n2oTotal += n2oVal;
+     }
+ 
+     const fName = r.facility_name || "Unknown Facility";
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

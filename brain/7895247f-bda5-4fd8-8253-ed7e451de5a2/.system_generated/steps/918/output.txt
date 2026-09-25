@@ -1,0 +1,51 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 20:40:19,062] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+<string>:4: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+=== FACILITY 4: Centre de Traitement Gazier Hassi Messaoud (Sonatrach) (GAS-HMD-01) ===
+Year 2020: 20 recs, CO2e=48,981.5, CH4=113.6, types={'stationary_combustion'}
+Year 2023: 40 recs, CO2e=68,011.8, CH4=217.3, types={'stationary_combustion'}
+Prod Year 2022: 12 entries, Gas=39,430,650.0, BOE=0.0
+Prod Year 2023: 12 entries, Gas=40,689,075.0, BOE=0.0
+Prod Year 2024: 12 entries, Gas=41,930,000.0, BOE=0.0
+Prod Year 2025: 12 entries, Gas=43,205,925.0, BOE=0.0
+Prod Year 2026: 6 entries, Gas=22,050,000.0, BOE=0.0
+=== FACILITY 13: RNS (None) ===
+Year 2025: 20 recs, CO2e=6,289.1, CH4=19.9, types={'stationary_combustion'}
+Year 2026: 22 recs, CO2e=9,990.5, CH4=338.9, types={'pneumatic', 'tank_working', 'unloading', 'venting', 'flaring', 'tank_breathing', 'mobile', 'agr', 'dehydrator', 'drilling', 'separation', 'tank_flashing', 'combustion', 'loading', 'completions', 'fugitive'}
+Prod Year 2022: 12 entries, Gas=8,449,425.0, BOE=0.0
+Prod Year 2023: 12 entries, Gas=8,719,087.5, BOE=0.0
+Prod Year 2024: 12 entries, Gas=8,988,750.0, BOE=0.0
+Prod Year 2025: 12 entries, Gas=9,258,412.5, BOE=0.0
+Prod Year 2026: 6 entries, Gas=4,758,075.0, BOE=0.0
+=== FACILITY 14: HRM (None) ===
+Year 2025: 20 recs, CO2e=30,405.8, CH4=121.6, types={'stationary_combustion'}
+Prod Year 2022: 12 entries, Gas=31,544,520.0, BOE=0.0
+Prod Year 2023: 12 entries, Gas=32,551,260.0, BOE=0.0
+Prod Year 2024: 12 entries, Gas=33,558,000.0, BOE=0.0
+Prod Year 2025: 12 entries, Gas=34,564,740.0, BOE=0.0
+Prod Year 2026: 6 entries, Gas=17,763,480.0, BOE=0.0
+=== FACILITY 169: HBNS (Hassi Berkine South) (HBNS) ===
+Year 2021: 7 recs, CO2e=1,027,963.7, CH4=2,891.6, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2022: 7 recs, CO2e=1,007,549.2, CH4=2,765.9, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2023: 7 recs, CO2e=946,875.7, CH4=2,568.9, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2024: 7 recs, CO2e=779,631.1, CH4=1,350.0, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2025: 7 recs, CO2e=705,943.7, CH4=772.5, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Prod Year 2021: 1 entries, Gas=5,088.0, BOE=67.1
+Prod Year 2022: 1 entries, Gas=5,497.3, BOE=72.2
+Prod Year 2023: 1 entries, Gas=5,541.7, BOE=71.2
+Prod Year 2024: 1 entries, Gas=5,723.9, BOE=69.8
+Prod Year 2025: 1 entries, Gas=5,517.6, BOE=70.2
+=== FACILITY 170: El Merk (ELM) ===
+Year 2021: 7 recs, CO2e=919,030.7, CH4=4,202.8, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2022: 7 recs, CO2e=1,011,307.8, CH4=4,625.7, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2023: 7 recs, CO2e=1,004,418.7, CH4=4,203.3, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2024: 7 recs, CO2e=882,725.2, CH4=1,313.5, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2025: 7 recs, CO2e=885,628.8, CH4=845.6, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Prod Year 2021: 1 entries, Gas=3,655.7, BOE=59.2
+Prod Year 2022: 1 entries, Gas=3,964.7, BOE=60.7
+Prod Year 2023: 1 entries, Gas=4,244.5, BOE=64.7
+Prod Year 2024: 1 entries, Gas=4,353.7, BOE=64.4
+Prod Year 2025: 1 entries, Gas=4,239.9, BOE=60.8
+

@@ -1,0 +1,319 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=844_0 RootWebArea "Carbon Tech" url="http://localhost:5173/carbon-intensity"
+  uid=845_0 complementary
+    uid=845_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=845_2 StaticText "Carbon tech"
+    uid=845_3 navigation
+      uid=845_4 link "Dashboard" url="http://localhost:5173/"
+        uid=845_5 StaticText "Dashboard"
+      uid=845_6 link "Carbon Intensity" focusable focused url="http://localhost:5173/carbon-intensity"
+        uid=845_7 StaticText "Carbon Intensity"
+      uid=845_8 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=845_9 StaticText "Methane Intensity"
+      uid=845_10 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=845_11 StaticText "SBTi Net-Zero"
+      uid=845_12 link "Calculations" url="http://localhost:5173/emissions"
+        uid=845_13 StaticText "Calculations"
+      uid=845_14 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=845_15 StaticText "Emissions Map"
+      uid=845_16 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=845_17 StaticText "Manage Data"
+      uid=845_18 link "Reports" url="http://localhost:5173/reports"
+        uid=845_19 StaticText "Reports"
+      uid=845_20 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=845_21 StaticText "Reference Data"
+      uid=845_22 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=845_23 StaticText "Uncertainty"
+      uid=845_24 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=845_25 StaticText "Audit Trail"
+      uid=845_26 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=845_27 StaticText "QA/QC & Diagnostics"
+    uid=845_28 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=845_29 StaticText "Settings"
+    uid=845_30 StaticText "A"
+    uid=845_31 StaticText "Administrator"
+    uid=845_32 StaticText "Sustainability Lead"
+  uid=845_33 main
+    uid=845_34 StaticText "Corporate ESG"
+    uid=914_0 StaticText "All Years"
+    uid=914_1 StaticText "All Supply Chains"
+    uid=914_2 StaticText "All Activities"
+    uid=914_3 StaticText "All Divisions"
+    uid=914_4 StaticText "All Regions"
+    uid=845_35 button "Notifications"
+    uid=845_36 button "User Profile" description="User Profile"
+    uid=845_37 StaticText "Administrator"
+    uid=914_5 heading "Carbon Intensity & Product Embodiment" level="2"
+    uid=914_6 StaticText "All-Time"
+    uid=914_7 StaticText " Performance"
+    uid=914_8 StaticText "GWP Horizon:"
+    uid=914_9 button "AR5 100-Yr" description="IPCC AR5 100-Year GWP (CH4: 28, N2O: 265)"
+    uid=914_10 button "AR5 20-Yr" description="IPCC AR5 20-Year GWP (CH4: 82.5, N2O: 268)"
+    uid=914_11 StaticText "GHG INTENSITY (AVG)"
+    uid=914_12 StaticText "0.04"
+    uid=914_13 StaticText "kg CO₂e / BOE"
+    uid=914_14 StaticText "GWP₁₀₀ Standard"
+    uid=914_15 StaticText "Total:"
+    uid=914_16 StaticText " "
+    uid=914_17 StaticText "10,235.932"
+    uid=914_18 StaticText " tCO₂e"
+    uid=914_19 StaticText "SCOPE 1 DIRECT INTENSITY"
+    uid=914_20 StaticText "0.04"
+    uid=914_21 StaticText "kg CO₂e / BOE"
+    uid=914_22 StaticText "Scope 2:"
+    uid=914_23 StaticText " "
+    uid=914_24 StaticText "0.00 kg/BOE"
+    uid=914_25 StaticText "Total S1: "
+    uid=914_26 StaticText "10,183.732"
+    uid=914_27 StaticText " t"
+    uid=914_28 StaticText "FLARING CARBON INTENSITY"
+    uid=914_29 StaticText "0.00"
+    uid=914_30 StaticText "kg CO₂e / BOE"
+    uid=914_31 StaticText "Flared:"
+    uid=914_32 StaticText " "
+    uid=914_33 StaticText "210.225"
+    uid=914_34 StaticText " tCO₂e"
+    uid=914_35 StaticText "SCOPE 3 VALUE CHAIN"
+    uid=914_36 StaticText "0.00"
+    uid=914_37 StaticText "kg CO₂e / BOE"
+    uid=914_38 StaticText "Total S3:"
+    uid=914_39 StaticText " "
+    uid=914_40 StaticText "216.850"
+    uid=914_41 StaticText " tCO₂e"
+    uid=914_42 StaticText "TOTAL OIL PRODUCTION"
+    uid=914_43 StaticText "60,872,374"
+    uid=914_44 StaticText " bbl"
+    uid=914_45 StaticText "TOTAL GAS PRODUCTION"
+    uid=914_46 StaticText "1,117,885,807"
+    uid=914_47 StaticText " mscf"
+    uid=914_48 StaticText "COMBINED PRODUCTION (BOE)"
+    uid=914_49 StaticText "259,856,047"
+    uid=914_50 StaticText " BOE"
+    uid=914_51 StaticText "TOTAL GAS FLARED"
+    uid=914_52 StaticText "100,000"
+    uid=914_53 StaticText " m³"
+    uid=914_54 heading "EU CBAM Product Specific Embedded Emissions" level="3"
+    uid=914_55 StaticText "Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)"
+    uid=914_56 StaticText "EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t"
+    uid=914_57 StaticText "FACILITY"
+    uid=914_58 StaticText "PRODUCT NAME"
+    uid=914_59 StaticText "EU CN CODE"
+    uid=914_60 StaticText "PERIOD"
+    uid=914_61 StaticText "EXPORT QTY (T)"
+    uid=914_62 StaticText "DESTINATION"
+    uid=914_63 StaticText "DIRECT INTENSITY (TCO₂E/T)"
+    uid=914_64 StaticText "INDIRECT INTENSITY (TCO₂E/T)"
+    uid=914_65 StaticText "TOTAL EMBEDDED (TCO₂E)"
+    uid=914_66 StaticText "Centre de Traitement Gazier Hassi Messaoud (Sonatrach)"
+    uid=914_67 StaticText "Liquefied Natural Gas (LNG)"
+    uid=914_68 StaticText "2711 11 00"
+    uid=914_69 StaticText "2024"
+    uid=914_70 StaticText "-"
+    uid=914_71 StaticText "09"
+    uid=914_72 StaticText "55,000"
+    uid=914_73 StaticText "EU - Spain"
+    uid=914_74 StaticText "0.2850"
+    uid=914_75 StaticText "0.0350"
+    uid=914_76 StaticText "17,600.0"
+    uid=914_77 StaticText "Cimenterie Industrielle de Chlef (GICA)"
+    uid=914_78 StaticText "Grey Portland Clinker"
+    uid=914_79 StaticText "2523 10 00"
+    uid=914_80 StaticText "2024"
+    uid=914_81 StaticText "-"
+    uid=914_82 StaticText "11"
+    uid=914_83 StaticText "40,000"
+    uid=914_84 StaticText "EU - Italy"
+    uid=914_85 StaticText "0.7650"
+    uid=914_86 StaticText "0.0620"
+    uid=914_87 StaticText "33,080.0"
+    uid=914_88 StaticText "Complexe Ammoniac & Engrais Azotés (Fertial)"
+    uid=914_89 StaticText "Urea / Ammonium Nitrate Solutions"
+    uid=914_90 StaticText "3102 10 10"
+    uid=914_91 StaticText "2026"
+    uid=914_92 StaticText "-"
+    uid=914_93 StaticText "02"
+    uid=914_94 StaticText "22,000"
+    uid=914_95 StaticText "EU - Belgium"
+    uid=914_96 StaticText "0.9450"
+    uid=914_97 StaticText "0.0880"
+    uid=914_98 StaticText "22,726.0"
+    uid=914_99 StaticText "Complexe Ammoniac & Engrais Azotés (Fertial)"
+    uid=914_100 StaticText "Anhydrous Ammonia"
+    uid=914_101 StaticText "2814 10 00"
+    uid=914_102 StaticText "2024"
+    uid=914_103 StaticText "-"
+    uid=914_104 StaticText "08"
+    uid=914_105 StaticText "15,000"
+    uid=914_106 StaticText "EU - France"
+    uid=914_107 StaticText "1.8200"
+    uid=914_108 StaticText "0.1150"
+    uid=914_109 StaticText "29,025.0"
+    uid=914_110 StaticText "Complexe Sidérurgique DRI/EAF (Tosyali)"
+    uid=914_111 StaticText "Hot Rolled Bars & Wire Rod"
+    uid=914_112 StaticText "7213 10 00"
+    uid=914_113 StaticText "2026"
+    uid=914_114 StaticText "-"
+    uid=914_115 StaticText "03"
+    uid=914_116 StaticText "18,500"
+    uid=914_117 StaticText "EU - Spain"
+    uid=914_118 StaticText "1.3400"
+    uid=914_119 StaticText "0.3120"
+    uid=914_120 StaticText "30,562.0"
+    uid=914_121 StaticText "Complexe Sidérurgique DRI/EAF (Tosyali)"
+    uid=914_122 StaticText "Direct Reduced Iron (DRI)"
+    uid=914_123 StaticText "7203 10 00"
+    uid=914_124 StaticText "2024"
+    uid=914_125 StaticText "-"
+    uid=914_126 StaticText "06"
+    uid=914_127 StaticText "25,000"
+    uid=914_128 StaticText "EU - Italy"
+    uid=914_129 StaticText "1.1250"
+    uid=914_130 StaticText "0.2450"
+    uid=914_131 StaticText "34,250.0"
+    uid=914_132 heading "GHG Intensity by Facility (kg CO₂e / BOE)" level="3"
+    uid=914_133 image "value legend icon"
+    uid=914_134 StaticText "value"
+    uid=914_135 application
+      uid=914_136 group
+      uid=914_137 group
+      uid=914_138 group
+      uid=914_139 group
+      uid=914_140 group
+      uid=914_141 group
+      uid=914_142 group
+      uid=914_143 group
+      uid=914_144 group
+      uid=914_145 group
+      uid=914_146 group
+      uid=914_147 group
+        uid=914_148 StaticText "REB"
+        uid=914_149 StaticText "GTL"
+        uid=914_150 StaticText "STAH"
+        uid=914_151 StaticText "HMD"
+        uid=914_152 StaticText "HRM"
+        uid=914_153 StaticText "BRS"
+        uid=914_154 StaticText "0"
+        uid=914_155 StaticText "0.3"
+        uid=914_156 StaticText "0.6"
+        uid=914_157 StaticText "0.9"
+        uid=914_158 StaticText "1.2"
+    uid=914_159 heading "Scope 1 Direct vs Scope 2 Intensity" level="3"
+    uid=914_160 image "Scope 1 (Direct) legend icon"
+    uid=914_161 StaticText "Scope 1 (Direct)"
+    uid=914_162 image "Scope 2 (Indirect) legend icon"
+    uid=914_163 StaticText "Scope 2 (Indirect)"
+    uid=914_164 application
+      uid=914_165 group
+      uid=914_166 group
+      uid=914_167 group
+      uid=914_168 group
+      uid=914_169 group
+      uid=914_170 group
+      uid=914_171 group
+      uid=914_172 group
+      uid=914_173 group
+      uid=914_174 group
+      uid=914_175 group
+      uid=914_176 group
+        uid=914_177 StaticText "REB"
+        uid=914_178 StaticText "GTL"
+        uid=914_179 StaticText "STAH"
+        uid=914_180 StaticText "HMD"
+        uid=914_181 StaticText "HRM"
+        uid=914_182 StaticText "BRS"
+        uid=914_183 StaticText "0"
+        uid=914_184 StaticText "0.3"
+        uid=914_185 StaticText "0.6"
+        uid=914_186 StaticText "0.9"
+        uid=914_187 StaticText "1.2"
+    uid=914_188 heading "Oil BOE Contribution by Facility" level="3"
+    uid=914_189 image "value legend icon"
+    uid=914_190 StaticText "value"
+    uid=914_191 application
+      uid=914_192 group
+      uid=914_193 group
+      uid=914_194 group
+      uid=914_195 group
+      uid=914_196 group
+      uid=914_197 group
+      uid=914_198 group
+      uid=914_199 group
+      uid=914_200 group
+      uid=914_201 group
+      uid=914_202 group
+      uid=914_203 group
+        uid=914_204 StaticText "REB"
+        uid=914_205 StaticText "GTL"
+        uid=914_206 StaticText "STAH"
+        uid=914_207 StaticText "HMD"
+        uid=914_208 StaticText "HRM"
+        uid=914_209 StaticText "BRS"
+        uid=914_210 StaticText "0"
+        uid=914_211 StaticText "2.0M"
+        uid=914_212 StaticText "4.0M"
+        uid=914_213 StaticText "6.0M"
+        uid=914_214 StaticText "8.0M"
+    uid=914_215 heading "Gas BOE Contribution by Facility" level="3"
+    uid=914_216 image "value legend icon"
+    uid=914_217 StaticText "value"
+    uid=914_218 application
+      uid=914_219 group
+      uid=914_220 group
+      uid=914_221 group
+      uid=914_222 group
+      uid=914_223 group
+      uid=914_224 group
+      uid=914_225 group
+      uid=914_226 group
+      uid=914_227 group
+      uid=914_228 group
+      uid=914_229 group
+      uid=914_230 group
+        uid=914_231 StaticText "REB"
+        uid=914_232 StaticText "GTL"
+        uid=914_233 StaticText "STAH"
+        uid=914_234 StaticText "HMD"
+        uid=914_235 StaticText "HRM"
+        uid=914_236 StaticText "BRS"
+        uid=914_237 StaticText "0"
+        uid=914_238 StaticText "8.5M"
+        uid=914_239 StaticText "17.0M"
+        uid=914_240 StaticText "25.5M"
+        uid=914_241 StaticText "34.0M"
+    uid=914_242 heading "Historical Carbon Intensity Trends" level="3"
+    uid=914_243 StaticText "5-Year Performance Track (kg CO₂e / BOE)"
+    uid=914_244 button "Chart"
+    uid=914_245 button "Heatmap"
+    uid=914_246 image "GHG Intensity (AR5 100-Yr GWP) legend icon"
+    uid=914_247 StaticText "GHG Intensity (AR5 100-Yr GWP)"
+    uid=914_248 image "GHG Intensity (AR5 20-Yr GWP) legend icon"
+    uid=914_249 StaticText "GHG Intensity (AR5 20-Yr GWP)"
+    uid=914_250 application
+      uid=914_251 group
+      uid=914_252 group
+      uid=914_253 group
+      uid=914_254 group
+      uid=914_255 group
+      uid=914_256 group
+      uid=914_257 group
+      uid=914_258 group
+      uid=914_259 group
+      uid=914_260 group
+      uid=914_261 group
+      uid=914_262 group
+        uid=914_263 StaticText "2022"
+        uid=914_264 StaticText "2023"
+        uid=914_265 StaticText "2024"
+        uid=914_266 StaticText "2025"
+        uid=914_267 StaticText "2026"
+        uid=914_268 StaticText "0"
+        uid=914_269 StaticText "0.25"
+        uid=914_270 StaticText "0.5"
+        uid=914_271 StaticText "0.75"
+        uid=914_272 StaticText "1"
+
+</current_snapshot>

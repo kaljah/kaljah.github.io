@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+
+=== ANONYMOUS ACCESS TESTS ===
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_runner.py", line 107, in <module>
+    record(tid, name, method, url, r.status_code, 401, passed, sev, detail,
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_runner.py", line 43, in record
+    print(f"[{flag}] T{test_id:02d} {name} \u2192 HTTP {status_code} (expected {expected}) | {'PASS' if passed else 'BUG'}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 1: character maps to <undefined>
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+{'cogen_allocation', 'pneumatics', 'tank', 'blowdown', 'fugitive_component', 'completion_flowback', 'equipment_fugitive', 'adipic_acid_production', 'acid_gas_removal', 'wellhead_fugitive', 'vented', 'distribution_fugitive', 'tank_breathing', 'gas_processing', 'stoichiometry', 'compressor_fugitive', 'dehydrator', 'refinery_fugitive', 'pneumatic_device', 'gathering_boosting', 'separator_fugitive', 'indirect_steam', 'tank_flashing', 'compressor_seal', 'fugitives', 'mud_degassing', 'chemical_production', 'transmission_storage', 'well_completions', 'unloading', 'nitric_acid_production', 'pneumatic', 'agr', 'pneumatic_devices', 'tank_working', 'drilling', 'completions', 'lng_operations', 'dehydrators', 'blowdowns', 'liquids_unloading', 'component_fugitive', 'fugitive', 'storage_tanks', 'venting', 'tanks'}
+

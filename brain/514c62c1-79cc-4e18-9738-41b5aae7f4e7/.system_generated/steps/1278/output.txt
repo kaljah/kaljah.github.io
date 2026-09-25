@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Total flaring records: 55
+  ID: 645, fuel_type: Associated Gas (Flaring), quantity: 5000.0
+  ID: 646, fuel_type: Custom, quantity: 1000.0
+  ID: 692, fuel_type: Natural Gas, quantity: 1000.0
+  ID: 874, fuel_type: Natural Gas, quantity: 5000.0
+  ID: 879, fuel_type: Natural Gas, quantity: 8000.0
+

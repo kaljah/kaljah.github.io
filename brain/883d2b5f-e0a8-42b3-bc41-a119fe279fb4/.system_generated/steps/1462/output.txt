@@ -1,0 +1,16 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":173,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":379,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":15,"LineContent":"    def calculate(self, component_counts, ch4_content, uncertainties):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":61,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":120,"LineContent":"    def calculate(self, compressor_count, seal_type, uncertainties):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\indirect.py","LineNumber":15,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\indirect.py","LineNumber":105,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":24,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":136,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\stoichiometry.py","LineNumber":15,"LineContent":"    def calculate(self, fuel_mass, carbon_content, uncertainties, mass_unit=\"kg\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":127,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":168,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":284,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":420,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":519,"LineContent":"    def calculate("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":619,"LineContent":"    def calculate("}

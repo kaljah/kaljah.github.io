@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+admin@ghg.com password set to admin123, role=admin
+

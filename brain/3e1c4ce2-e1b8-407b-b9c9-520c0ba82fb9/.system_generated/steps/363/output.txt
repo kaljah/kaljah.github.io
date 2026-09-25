@@ -1,0 +1,49 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\QFULL_VALIDATION_REPORT.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2,7 +2,7 @@
+ 
+ **Report ID:** QFULL-2026-09-21  
+ **Date:** 2026-09-21  
+-**Status:** ✅ ALL TESTS PASS — 131/131  
++**Status:** ✅ ALL TESTS PASS — 156/156 (131 Backend Pytest + 25 Playwright E2E)  
+ 
+ ---
+ 
+@@ -9,7 +9,7 @@
+ 
+-A complete end-to-end calculation pipeline validation was performed on the GHG Emissions Platform (API Compendium 2021). Four comprehensive test files were created and executed, covering every process type, every calculation tier, all unit conversions, and all boundary/sensitivity conditions.
+-
+-**Final result: 131 tests executed, 131 passed, 0 failures, 0 errors.**
++A complete end-to-end calculation pipeline validation was performed on the GHG Emissions Platform (API Compendium 2021). Five comprehensive test suites were created and executed, covering every process type, every calculation tier, all unit conversions, boundary/sensitivity conditions, and full UI browser automation.
++
++**Final result: 156 tests executed, 156 passed, 0 failures, 0 errors.**
+ 
+ ---
+ 
+@@ -16,7 +16,7 @@
+ 
+-### Test Files Created
+-
+-| File | Tests | Status | Coverage |
++### Test Suites Executed
++
++| Test Suite | Tests | Status | Coverage |
+ |------|-------|--------|----------|
+ | `test_qfull_validation.py` | 44 | ✅ 44/44 PASSED | Core formula validation, all process types, GWP standards |
+ | `test_qfull_api_pipeline.py` | 29 | ✅ 29/29 PASSED | Full HTTP pipeline, calculation engine, intermediate values |
+@@ -23,10 +23,6 @@
+ | `test_qfull_boundary_sensitivity.py` | 26 | ✅ 26/26 PASSED | Boundary conditions, OAT sensitivity, GWP sensitivity |
+-| **TOTAL** | **131** | **✅ 131/131** | |
+-
+-### Playwright E2E Test
+-| File | Status |
+-|------|--------|
+-| `test_qfull_e2e_ui.spec.js` | Written — runs against live frontend (port 5173) |
++| `test_qfull_e2e_ui.spec.js` | 25 | ✅ 25/25 PASSED | Playwright E2E UI automation, session handling, CSRF, DOM tables |
++| **TOTAL** | **156** | **✅ 156/156** | |
+ 
+ ---
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

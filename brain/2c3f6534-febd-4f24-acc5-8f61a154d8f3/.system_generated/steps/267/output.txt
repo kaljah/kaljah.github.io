@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+.Id : The term '.Id' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:37
++ Get-Process python | Where-Object { .Id -eq 14236 } | Select-Object I ...
++                                     ~~~
+    + CategoryInfo          : ObjectNotFound: (.Id:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.Id : The term '.Id' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:37
++ Get-Process python | Where-Object { .Id -eq 14236 } | Select-Object I ...
++                                     ~~~
+    + CategoryInfo          : ObjectNotFound: (.Id:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+

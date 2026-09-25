@@ -1,0 +1,212 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
++          <div className="dossier-bottomup-card">
++            <div className="card-section-title">
++              <BarChart3 size={15} color="#ff6600" />
++              <span>Bottom-Up Reported Inventory</span>
+             </div>
+ 
+-            {/* Carbon / Methane Intensity */}
+-            <div className="stat-box">
+-              <div className="stat-label">
+-                {viewMode === "total"
+-                  ? "Carbon Intensity"
+-                  : "Methane Intensity"}
++            <div className="bottomup-metrics-grid">
++              {/* Main Emission Highlight */}
++              <div className="stat-card span-2 main-accent">
++                <span className="stat-card-title">
++                  {viewMode === "methane"
++                    ? "Reported Methane (CH₄)"
++                    : "Reported Total GHG"}
++                </span>
++                <span className="stat-card-number">
++                  {viewMode === "methane"
++                    ? `${formatCompact(selectedStats.total_ch4)} tCH₄`
++                    : `${formatCompact(selectedStats.total_co2e)} tCO₂e`}
++                </span>
++                <span className="stat-card-sub">
++                  Verified Bottom-Up Engineering Ledger
++                </span>
+               </div>
+-              <div
+-                className="stat-value"
+-                style={{ color: viewMode === "total" ? "#0284c7" : "#d97706" }}
+-              >
+-                {viewMode === "total"
+-                  ? (selectedStats.co2_intensity ?? 0).toFixed(2)
+-                  : (selectedStats.ch4_intensity ?? 0).toFixed(3)}
++
++              {/* Hydrocarbon Production */}
++              <div className="stat-card">
++                <span className="stat-card-title">Production</span>
++                <span className="stat-card-number emerald">
++                  {formatCompact(selectedStats.total_boe)}
++                </span>
++                <span className="stat-card-sub">BOE / Year</span>
+               </div>
+-              <div className="stat-unit">
+-                {viewMode === "total" ? "kgCO₂e/boe" : "kgCH₄/boe"}
++
++              {/* Carbon / Methane Intensity */}
++              <div className="stat-card">
++                <span className="stat-card-title">
++                  {viewMode === "methane"
++                    ? "Methane Intensity"
++                    : "Carbon Intensity"}
++                </span>
++                <span className="stat-card-number amber">
++                  {viewMode === "methane"
++                    ? Number(selectedStats.ch4_intensity || 0).toFixed(3)
++                    : Number(selectedStats.co2_intensity || 0).toFixed(2)}
++                </span>
++                <span className="stat-card-sub">
++                  {viewMode === "methane" ? "kgCH₄/boe" : "kgCO₂e/boe"}
++                </span>
+               </div>
+-            </div>
+ 
+-            {/* Flaring Intensity */}
+-            <div className="stat-box">
+-              <div className="stat-label">Flaring Int.</div>
+-              <div className="stat-value" style={{ color: "#dc2626" }}>
+-                {(selectedStats.api_flaring_intensity ?? 0).toFixed(2)}
++              {/* Flaring Intensity */}
++              <div className="stat-card">
++                <span className="stat-card-title">Flaring Intensity</span>
++                <span className="stat-card-number danger">
++                  {Number(selectedStats.api_flaring_intensity || 0).toFixed(2)}
++                </span>
++                <span className="stat-card-sub">kgCO₂e/boe</span>
+               </div>
+-              <div className="stat-unit">kgCO₂e/boe</div>
+-            </div>
+ 
+-            {/* Field ID */}
+-            <div className="stat-box">
+-              <div className="stat-label">Field ID</div>
+-              <div
+-                className="stat-value"
+-                style={{ fontSize: "1rem", color: "#475569" }}
+-              >
+-                {selectedFacility.code || "N/A"}
++              {/* Asset Division Identifier */}
++              <div className="stat-card">
++                <span className="stat-card-title">Asset Code</span>
++                <span className="stat-card-number mono">
++                  {selectedFacility.code || "N/A"}
++                </span>
++                <span className="stat-card-sub">Database Ref</span>
+               </div>
+-              <div className="stat-unit">Reference</div>
+             </div>
+           </div>
+ 
+-          <button
+-            className="zoom-button"
+-            onClick={() => {
+-              setMapZoom(11);
+-              setMapCenter([
+-                selectedFacility.latitude,
+-                selectedFacility.longitude,
+-              ]);
+-            }}
+-          >
+-            <Activity size={18} />
+-            Focus Facility Top-Down
+-          </button>
+-        </div>
++          {/* QUICK FOCUS ACTION BUTTONS */}
++          <div className="dossier-actions">
++            <button
++              className="btn-action-focus"
++              onClick={() => {
++                const lat = Number(selectedFacility.latitude);
++                const lon = Number(selectedFacility.longitude);
++                if (!isNaN(lat) && !isNaN(lon)) {
++                  setMapZoom(11);
++                  setMapCenter([lat, lon]);
++                }
++              }}
++            >
++              <Target size={16} />
++              <span>Center Aerial Camera (Zoom 11x)</span>
++            </button>
++          </div>
++        </section>
+       )}
+     </div>
+   );
+
+commit cf4594e3cf3fa9e99f6653383a61cf25ef0b9112
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sat Sep 5 17:09:28 2026 +0200
+
+    Optimize frontend performance, eliminate layout flashing, and fix test suite data isolation
+    
+    - Implement route-level lazy loading (70% bundle reduction)
+    - Move Suspense inside Layout to keep application shell persistent
+    - Implement in-place dashboard filter updates across all views
+    - Fix console 401 unauthenticated errors on /api/auth/me and facilities
+    - Replace db.drop_all() with targeted cleanup in test_csv_uploader.py to protect database accounts
+    - Re-seed all administrator and demo user accounts
+    - Update pytest.ini configuration (103/103 tests passing)
+
+diff --git a/new/client/src/pages/MethaneExplorer.jsx b/new/client/src/pages/MethaneExplorer.jsx
+index 02c2944..aabb4e8 100644
+--- a/new/client/src/pages/MethaneExplorer.jsx
++++ b/new/client/src/pages/MethaneExplorer.jsx
+@@ -79,6 +79,8 @@ const EmissionsMap = () => {
+   const [viewMode, setViewMode] = useState("total"); // 'total' (GHG) or 'methane'
+   const [availableYears, setAvailableYears] = useState([]);
+   const [loading, setLoading] = useState(true);
++  const [isUpdating, setIsUpdating] = useState(false);
++  const isFirstLoadRef = useRef(true);
+   const [availableActivities, setAvailableActivities] = useState([]);
+ 
+   // Copernicus Sentinel-5P Satellite States
+@@ -96,7 +98,11 @@ const EmissionsMap = () => {
+ 
+   const fetchData = async () => {
+     try {
+-      setLoading(true);
++      if (isFirstLoadRef.current) {
++        setLoading(true);
++      } else {
++        setIsUpdating(true);
++      }
+       const params = new URLSearchParams({
+         year: filters.year,
+       });
+@@ -122,10 +128,12 @@ const EmissionsMap = () => {
+         ...new Set((facRes.data || []).map((f) => f.activity).filter(Boolean)),
+       ].sort();
+       setAvailableActivities(acts);
+-      setLoading(false);
+     } catch (error) {
+       console.error("Failed to load explorer data:", error);
++    } finally {
+       setLoading(false);
++      setIsUpdating(false);
++      isFirstLoadRef.current = false;
+     }
+   };
+ 
+@@ -346,7 +354,13 @@ const EmissionsMap = () => {
+   const isSatelliteConnected = satelliteConfig && satelliteConfig.connected;
+ 
+   return (
+-    <div className="methane-explorer">
++    <div
++      className="methane-explorer"
++      style={{
++        opacity: isUpdating ? 0.88 : 1,
++        transition: "opacity 0.2s ease",
++      }}
++    >
+       {/* Satellite new-pass floating alert toast */}
+       {satelliteAlert && (
+         <div
+

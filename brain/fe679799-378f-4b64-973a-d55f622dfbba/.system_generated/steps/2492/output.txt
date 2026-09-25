@@ -1,0 +1,55 @@
+
+The command exited with code 0.
+Output:
+        # 1. Test Login
+        res = client.post(
+            "/api/auth/login",
+            json={"email": "reg_user_test@defaults.com", "password": "SecurePass123!"},
+        )
+        assert res.status_code == 200
+        data = res.get_json()
+        u = data["user"]
+        assert u["location"] == "Hassi Messaoud"
+        assert u["default_region"] in ["Hassi Messaoud", "Ouargla"]
+>       assert u["default_division"] in ["Production", "Exploration & Production"]
+E       AssertionError: assert None in ['Production', 'Exploration & Production']
+
+new\server\tests\test_operational_defaults.py:56: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[2026-09-23 15:56:49,672] INFO in app: POST /api/auth/login 200 [0.124s] [ReqID: 001a95ff-849d-407e-a58f-63234f668f1a]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:177 POST /api/auth/login 200 [0.124s] [ReqID: 001a95ff-849d-407e-a58f-63234f668f1a]
+___________________ test_dev_account_a_at_a_does_not_exist ____________________
+
+client = <FlaskClient <Flask 'app'>>
+
+    def test_dev_account_a_at_a_does_not_exist(client):
+        """
+        SECURITY REGRESSION (CRIT-02): The 'a@a' dev shortcut account must not be
+        auto-created. A 1-character password bypasses all complexity requirements.
+        """
+        from models import User
+        with flask_app.app_context():
+            user = User.query.filter_by(email="a@a").first()
+>           assert user is None, (
+                "SECURITY FAILURE: Account 'a@a' exists in the database. "
+                "Hard-coded dev credential 'a@a'/'a' must never be auto-seeded."
+            )
+E           AssertionError: SECURITY FAILURE: Account 'a@a' exists in the database. Hard-coded dev credential 'a@a'/'a' must never be auto-seeded.
+E           assert <User 36> is None
+
+new\server\tests\test_security_hardening.py:40: AssertionError
+_ TestConcurrentBulkIngestionPipeline.test_eight_concurrent_bulk_upload_jobs __
+
+self = <test_stress_bulk_pipeline.TestConcurrentBulkIngestionPipeline object at 0x00000259667B2D80>
+bulk_stress_env = {'facility_id': 17, 'user_id': 38}
+
+    def test_eight_concurrent_bulk_upload_jobs(self, bulk_stress_env):
+        """Submit and process 8 distinct CSV upload jobs concurrently in parallel background threads."""
+        facility_id = bulk_stress_env["facility_id"]
+        user_id = bulk_stress_env["user_id"]
+        num_jobs = 8
+        rows_per_job = 25
+    
+
+

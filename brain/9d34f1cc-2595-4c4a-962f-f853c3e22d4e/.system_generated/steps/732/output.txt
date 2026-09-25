@@ -1,0 +1,93 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\anomaly.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -36,8 +36,17 @@
+     def _z_score_check(self, value: float, historical: list[float]) -> dict:
+         """
+         Compute Z-score of a value against a list of historical values.
+-        Returns flagged=True if |z| > 3 (99.7% confidence outlier).
+-        """
++        Returns flagged=True if |z| > 3 (99.7% confidence outlier) or outside IQR fence.
++        """
++        if value is None or math.isnan(value) or math.isinf(value):
++            return {
++                "flagged": True,
++                "z_score": None,
++                "reason": "invalid_value",
++                "message": f"Value {value} is not a valid finite number.",
++                "expected_range": None,
++            }
++
+         if not historical or len(historical) < 3:
+             return {"flagged": False, "reason": "insufficient_history", "z_score": None, "expected_range": None}
+ 
+@@ -48,7 +48,7 @@
+ 
+         if std == 0:
+             # All historical values identical — flag only if new value differs significantly
+-            if (mean > 0 and abs(value - mean) / mean > 0.5) or (mean == 0 and value > 0):
++            if (abs(mean) > 0 and abs(value - mean) / abs(mean) > 0.5) or (mean == 0 and abs(value) > 0):
+                 return {
+                     "flagged": True,
+                     "z_score": None,
+@@ -55,5 +55,5 @@
+                     "std": 0,
+-                    "expected_range": [mean * 0.5, mean * 1.5] if mean > 0 else [0.0, 0.0],
++                    "expected_range": [mean * 0.5, mean * 1.5] if abs(mean) > 0 else [0.0, 0.0],
+                     "reason": "constant_history_deviation",
+                     "message": f"Historical values are constant ({mean:.1f}) but new value is {value:.1f}."
+                 }
+@@ -63,6 +63,8 @@
+         # IQR fence as secondary check (requires at least 4 observations for quartiles)
+         sorted_h = sorted(historical)
+         flagged_iqr = False
++        lower_fence = 0.0
++        upper_fence = 0.0
+         if len(sorted_h) >= 4:
+             def _quantile(sorted_vals, p):
+                 n = len(sorted_vals)
+@@ -82,8 +82,25 @@
+         flagged_z = abs(z) > 3
+ 
+         flagged = flagged_z or flagged_iqr
+-        expected_low = max(0, mean - 3 * std)
+-        expected_high = mean + 3 * std
++        if flagged_z:
++            expected_low = max(0.0, mean - 3 * std)
++            expected_high = mean + 3 * std
++            msg = (
++                f"Value {value:.2f} is {abs(z):.1f} standard deviations from the 12-month average "
++                f"({mean:.2f} ± {std:.2f}). Expected range: [{expected_low:.2f} – {expected_high:.2f}]."
++            )
++            exp_range = [round(expected_low, 2), round(expected_high, 2)]
++        elif flagged_iqr:
++            msg = (
++                f"Value {value:.2f} is an IQR outlier outside the interquartile range fence "
++                f"[{lower_fence:.2f} – {upper_fence:.2f}]."
++            )
++            exp_range = [round(lower_fence, 2), round(upper_fence, 2)]
++        else:
++            expected_low = max(0.0, mean - 3 * std)
++            expected_high = mean + 3 * std
++            msg = None
++            exp_range = [round(expected_low, 2), round(expected_high, 2)]
+ 
+         return {
+             "flagged": flagged,
+@@ -90,12 +90,9 @@
+             "mean": round(mean, 2),
+             "std": round(std, 2),
+-            "expected_range": [round(expected_low, 2), round(expected_high, 2)],
++            "expected_range": exp_range,
+             "iqr_flagged": flagged_iqr,
+             "reason": "z_score" if flagged_z else ("iqr" if flagged_iqr else None),
+-            "message": (
+-                f"Value {value:.2f} is {abs(z):.1f} standard deviations from the 12-month average "
+-                f"({mean:.2f} ± {std:.2f}). Expected range: [{expected_low:.2f} – {expected_high:.2f}]."
+-            ) if flagged else None
++            "message": msg
+         }
+ 
+     # ─── Scope 1 ─────────────────────────────────────────────────────────────
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 20:40:39,198] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+<string>:3: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+Centre de Traitement Gazier Hassi Messaoud (Sonatrach) GAS-HMD-01 HMD Field
+2020 1 stationary_combustion Natural Gas 50.0 m3 3.0774367584418005
+2020 3 stationary_combustion Kerosene 415.5 liter 31.133414999999996
+2020 5 stationary_combustion Refinery Fuel Gas 781.0 m3 651.4290650830847
+2020 7 stationary_combustion Natural Gas 1146.5 liter 1438.5211662238282
+2020 9 stationary_combustion Kerosene 1512.0 m3 2724.1093613000567
+2020 11 stationary_combustion Refinery Fuel Gas 1877.5 liter 126.1586125
+2020 1 stationary_combustion Natural Gas 2243.0 m3 4560.877172857474
+2020 3 stationary_combustion Kerosene 2608.5 liter 195.45490500000002
+2020 5 stationary_combustion Refinery Fuel Gas 2974.0 m3 1181.8599732554235
+2020 7 stationary_combustion Natural Gas 3339.5 liter 3230.0394266521917
+

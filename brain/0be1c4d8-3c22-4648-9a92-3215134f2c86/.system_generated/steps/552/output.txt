@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -24,6 +24,34 @@
+             upload_jobs[job_id].setdefault(list_key, []).append(item)
+ 
+ 
++def _clean_float(val, default=0.0):
++    """
++    Robustly parses numbers with currency signs, thousands separators,
++    European comma decimals, scientific notation, or whitespace.
++    """
++    if val is None:
++        return default
++    if isinstance(val, (int, float)):
++        return float(val)
++    s = str(val).strip()
++    if not s or s in ["-", "N/A", "null", "None"]:
++        return default
++    import re
++
++    # Remove currency symbols and whitespace
++    s = re.sub(r"[\$\€\£\¥\s]", "", s)
++    # Handle comma thousands vs decimal
++    if "," in s and "." in s:
++        s = s.replace(",", "")
++    elif "," in s and "." not in s:
++        # European decimal format: 1234,56 -> 1234.56
++        s = s.replace(",", ".")
++    try:
++        return float(s)
++    except (ValueError, TypeError):
++        return default
++
++
+ def _prune_old_jobs(max_age_seconds=86400):
+     """Prunes job entries older than max_age_seconds (default 24h) and removes orphan error CSV files."""
+     now = time.time()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+Synthesizing 1,000,000 emission rows...
+Generated 1,000,000 rows in 4.10s
+1. Full-table aggregation (1,000,000 rows): 191.99 ms
+   Year 2020: Count=100,000, Total CO2e=6,234,500.00
+   Year 2021: Count=200,000, Total CO2e=12,169,000.00
+   Year 2022: Count=200,000, Total CO2e=12,369,000.00
+   Year 2023: Count=200,000, Total CO2e=12,569,000.00
+   Year 2024: Count=200,000, Total CO2e=12,769,000.00
+2. Scoped query (year=2024, facility=3): 183.39 ms (Result: 0.00)
+3. Fetching 180,000 rows into Python memory: 132.70 ms
+4. Python in-memory summation: 10.86 ms
+

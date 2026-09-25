@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\deck_assets
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/7/2026   3:09 PM         244444 chart_cbam_savings.png                                               
+-a----          8/7/2026   3:09 PM         275442 chart_competitive_matrix.png                                         
+-a----          8/7/2026   3:09 PM         273194 chart_industry_emissions.png                                         
+-a----          8/7/2026   3:09 PM         209705 chart_market_sizing.png                                              
+-a----          8/7/2026   3:09 PM         232619 chart_reporting_risks.png                                            
+-a----          8/7/2026   3:21 PM          56273 ui_dashboard.png                                                     
+-a----          8/7/2026   3:21 PM          66797 ui_methane.png                                                       
+-a----          8/7/2026   3:21 PM          66887 ui_reports.png                                                       
+
+
+

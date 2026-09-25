@@ -1,0 +1,16 @@
+Task: 9d34f1cc-2595-4c4a-962f-f853c3e22d4e/task-1136
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\.system_generated\tasks\task-1136.log
+Log output:
+<truncated 65 lines>
+e.py::test_benchmark_uncertainty_propagation PASSED       [  4%]
+tests/test_aggregation_reconciliation.py::TestRollupAndGasReconciliation::test_gas_aggregation_commutativity PASSED [  4%]
+tests/test_aggregation_reconciliation.py::TestRollupAndGasReconciliation::test_scope_inventory_aggregation PASSED [  4%]
+tests/test_aggregation_reconciliation.py::TestOGMPSurveyReconciliation::test_ogmp_reconciled_within_threshold PASSED [  5%]
+tests/test_aggregation_reconciliation.py::TestOGMPSurveyReconciliation::test_ogmp_unreconciled_exceeds_threshold PASSED [  5%]
+tests/test_aggregation_reconciliation.py::TestIntensityMetrics::test_boe_calculation PASSED [  5%]
+tests/test_aggregation_reconciliation.py::TestIntensityMetrics::test_carbon_intensity_calculation PASSED [  5%]
+tests/test_all_bulk_imports.py::test_bulk_import_facilities PASSED       [  5%]
+tests/test_all_bulk_imports.py::test_bulk_import_custom_factors PASSED   [  5%]
+tests/test_all_bulk_imports.py::test_bulk_import_production 
+Last progress: 0s ago

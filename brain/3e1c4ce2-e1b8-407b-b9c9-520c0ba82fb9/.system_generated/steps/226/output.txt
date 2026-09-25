@@ -1,0 +1,19 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-224
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-224.log
+Log output:
+<truncated 131 lines>
+full_boundary_sensitivity.py::TestOATSensitivity::test_tank_gor_linear_scaling PASSED [ 97%]
+tests/test_qfull_boundary_sensitivity.py::TestCO2eSensitivity::test_co2e_increases_with_ch4_gwp PASSED [ 98%]
+tests/test_qfull_boundary_sensitivity.py::TestCO2eSensitivity::test_co2e_ar4_less_than_ar5_for_high_ch4 PASSED [ 99%]
+tests/test_qfull_boundary_sensitivity.py::TestCO2eSensitivity::test_co2_process_unaffected_by_gwp_ch4 PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 131 passed, 1 warning in 3.95s ========================
+
+Last progress: 4s ago

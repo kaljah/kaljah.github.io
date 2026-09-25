@@ -1,0 +1,57 @@
+
+The command exited with code 1.
+Output:
+********************************************************************************
+STARTING EXHAUSTIVE WHOLE-SOFTWARE QA CAMPAIGN
+********************************************************************************
+
+================================================================================
+MODULE 1: TESTING ALL 16 BACKEND API BLUEPRINTS
+================================================================================
+Logged in as Admin: admin@ghg.com (role: admin)
+
+API Blueprint Coverage Results:
+  [FAIL] GET /api/auth/profile (HTTP 405)
+  [FAIL] GET /api/auth/session (HTTP 404)
+  [FAIL] GET /api/auth/operational-defaults (HTTP 404)
+  [PASS] GET /api/facilities (HTTP 200)
+  [FAIL] GET /api/facilities/1 (HTTP 405)
+  [PASS] GET /api/emissions (list) (HTTP 200)
+  [FAIL] GET /api/emissions/summary (HTTP 405)
+  [PASS] GET /api/scope2 (list) (HTTP 200)
+  [FAIL] GET /api/scope2/grid-factors (HTTP 404)
+  [PASS] GET /api/scope3 (list) (HTTP 200)
+  [FAIL] GET /api/scope3/eeio-factors (HTTP 404)
+  [FAIL] GET /api/production (list) (HTTP 404)
+  [PASS] GET /api/sources (list) (HTTP 200)
+  [PASS] GET /api/custom-factors (list) (HTTP 200)
+  [PASS] GET /api/mitigation (list) (HTTP 200)
+  [PASS] GET /api/audit (list) (HTTP 200)
+  [FAIL] GET /api/qaqc/anomalies (HTTP 404)
+  [PASS] GET /api/sbti/targets (HTTP 404)
+  [PASS] GET /api/uncertainty/assessment (HTTP 404)
+  [PASS] GET /api/satellite/plumes (HTTP 404)
+  [PASS] GET /api/reports/list (HTTP 404)
+  [FAIL] GET /api/settings (HTTP 404)
+  FAILED ENDPOINT: GET /api/auth/profile returned HTTP 405
+  FAILED ENDPOINT: GET /api/auth/session returned HTTP 404
+  FAILED ENDPOINT: GET /api/auth/operational-defaults returned HTTP 404
+  FAILED ENDPOINT: GET /api/facilities/1 returned HTTP 405
+  FAILED ENDPOINT: GET /api/emissions/summary returned HTTP 405
+  FAILED ENDPOINT: GET /api/scope2/grid-factors returned HTTP 404
+  FAILED ENDPOINT: GET /api/scope3/eeio-factors returned HTTP 404
+  FAILED ENDPOINT: GET /api/production (list) returned HTTP 404
+  FAILED ENDPOINT: GET /api/qaqc/anomalies returned HTTP 404
+  FAILED ENDPOINT: GET /api/settings returned HTTP 404
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 587, in <module>
+    success = run_full_qa_orchestration()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 565, in run_full_qa_orchestration
+    m1_ok = test_all_api_blueprints()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 154, in test_all_api_blueprints
+    assert passed_count == len(results), f"Some blueprints failed: {results}"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Some blueprints failed: [('GET /api/auth/profile', False, 405), ('GET /api/auth/session', False, 404), ('GET /api/auth/operational-defaults', False, 404), ('GET /api/facilities', True, 200), ('GET /api/facilities/1', False, 405), ('GET /api/emissions (list)', True, 200), ('GET /api/emissions/summary', False, 405), ('GET /api/scope2 (list)', True, 200), ('GET /api/scope2/grid-factors', False, 404), ('GET /api/scope3 (list)', True, 200), ('GET /api/scope3/eeio-factors', False, 404), ('GET /api/production (list)', False, 404), ('GET /api/sources (list)', True, 200), ('GET /api/custom-factors (list)', True, 200), ('GET /api/mitigation (list)', True, 200), ('GET /api/audit (list)', True, 200), ('GET /api/qaqc/anomalies', False, 404), ('GET /api/sbti/targets', True, 404), ('GET /api/uncertainty/assessment', True, 404), ('GET /api/satellite/plumes', True, 404), ('GET /api/reports/list', True, 404), ('GET /api/settings', False, 404)]
+

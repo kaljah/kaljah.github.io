@@ -1,0 +1,77 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+STARTING EXHAUSTIVE PHYSICAL BROWSER AUDIT:
+UNCERTAINTY ASSESSMENT, AUDIT TRAIL, AND QA/QC DASHBOARD
+================================================================================
+[CDP] Connecting to Chrome on port 9222...
+(node:5584) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  Logging in as admin...
+
+============================================================
+STAGE 1: AUDITING UNCERTAINTY ASSESSMENT (/uncertainty)
+============================================================
+  Inventory Uncertainty Metric: ±33.66%
+  Confidence Interval Badge: 95% CI (k=2)
+  Tier Breakdown Cards (3): {'Tier 1 (Data Quality)': '66.1%', 'Tier 2 (Data Quality)': '28.6%', 'Tier 3 (Data Quality)': '5.2%'}
+  Legend Bar Rendered: True
+  Category Sections Rendered: 17
+    - Category: agr [±5.4%]
+    - Category: combustion [±22.1%]
+    - Category: completions [±10.2%]
+    - Category: dehydrator [±5.4%]
+  [ERROR] Uncertainty Assessment audit error: Locator.click: Timeout 1500ms exceeded.
+Call log:
+  - waiting for locator(".ua-controls .ua-filter-group").nth(1).locator("button, .custom-dropdown-button, .dropdown-trigger").first
+
+
+============================================================
+STAGE 2: AUDITING AUDIT TRAIL (/audit-trail)
+============================================================
+  Audit Badge Tag: IMMUTABLE COMPLIANCE LOG
+  Audit Trail KPIs (4): {'TOTAL EVENTS LOGGED': '973', 'USER LOGINS': '0', 'DATA CHANGES': '46', 'SECURITY & ALERTS': '0'}
+  Search for 'AGT01' verified: 0 records displayed.
+  Search clear button responsive.
+  Filter Dropdowns available: 4
+    Filter #1: 2 options available.
+    Filter #2: 5 options available.
+    Filter #3: 12 options available.
+    Filter #4: 5 options available.
+  Audit Trail pagination Next -> Prev verified responsive.
+  Audit Trail refresh button verified responsive.
+  Export dropdown menu opened: options (CSV Spreadsheet, JSON Structured Data) available.
+
+============================================================
+STAGE 3: AUDITING QA/QC DASHBOARD (/qa-dashboard)
+============================================================
+  Assurance Badge: ISO 14064-1 & GHG PROTOCOL ASSURANCE
+  QA/QC KPI Cards (4): {'DATA HEALTH SCORE': '80', 'IPCC TIER 1 UNCERTAINTY': '±4.37', 'FLAGGED ANOMALIES': '0', 'INVENTORY COVERAGE': '530'}
+  'Run Diagnostics' triggered and scanned inventory successfully.
+  Export QA Report downloaded: 'qa_qc_report_2026-09-23.csv'
+  --- Checking Tab 1: Anomaly Resolution Queue ---
+  Status Filter buttons (4):
+    - Status Filter: All Statuses
+    - Status Filter: Pending Review
+    - Status Filter: Verified
+    - Status Filter: Rejected
+  Queue search input verified responsive.
+  --- Checking Tab 2: Health & Completeness Diagnostics ---
+  Completeness Dimension Bars rendered: 4
+    - Organizational Facility Assignment: 100%
+    - Source & Fuel Type Specifications: 79.5%
+    - Activity Quantities & Physical Units: 80.3%
+    - Calculated CO₂e Emissions Integrity: 100%
+  Diagnostic Findings items rendered: 3
+  Sample Records preview table mounted: True
+  --- Checking Tab 3: Uncertainty & Rigor Analysis ---
+  SRSS Formula Card Rendered: 'U_total = √[ (U₁ · E₁)² + (U₂ · E₂)² + (U₃ · E₃)² ] / ( E₁ + E₂ + E₃ )'
+  Scope Breakdown Cards active: 4
+
+================================================================================
+AUDIT COMPLETE: Passed Modules: 2 | Failed: 1
+Total Uncaught Console Errors: 0
+================================================================================
+Frontend report saved to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\uncertainty_audit_qaqc_frontend_report.json
+

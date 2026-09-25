@@ -1,0 +1,39 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\charts\PieChart.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -81,6 +81,33 @@
+     );
+   }
+ 
++  const sanitizedData = data.map((item) => ({
++    ...item,
++    [dataKey]: Math.max(0, Number(item[dataKey]) || 0),
++  }));
++  const totalValue = sanitizedData.reduce(
++    (acc, curr) => acc + (Number(curr[dataKey]) || 0),
++    0
++  );
++
++  if (totalValue <= 0) {
++    return (
++      <div className="chart-wrapper empty">
++        <div
++          style={{
++            height,
++            display: "flex",
++            alignItems: "center",
++            justifyContent: "center",
++            color: "var(--text-muted, #94a3b8)",
++          }}
++        >
++          No data available
++        </div>
++      </div>
++    );
++  }
++
+   return (
+     <div
+       className="chart-wrapper"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

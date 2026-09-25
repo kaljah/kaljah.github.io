@@ -1,0 +1,21 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":7,"LineContent":"} from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":34,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":23,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":12,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":19,"LineContent":"import { ChevronDown, ChevronUp } from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.jsx","LineNumber":2,"LineContent":"import { Calculator, X, Info, ShieldCheck, CheckCircle2, Clock, AlertCircle } from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":5,"LineContent":"import { Database, RefreshCw, CheckCircle, AlertCircle, HardDrive } from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":22,"LineContent":"} from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":29,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":49,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":19,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":9,"LineContent":"} from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":7,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":23,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":20,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":5,"LineContent":"import { X } from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.jsx","LineNumber":2,"LineContent":"import { User, Building, Menu } from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\NotificationCenter.jsx","LineNumber":14,"LineContent":"} from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":12,"LineContent":"import { Upload, Trash2, Eye } from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":8,"LineContent":"import { Upload, Copy, Trash2, Eye } from \"lucide-react\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":8,"LineContent":"import { Upload, Trash2, Eye } from \"lucide-react\";"}

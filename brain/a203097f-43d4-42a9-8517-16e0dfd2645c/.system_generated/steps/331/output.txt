@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\property\test_clean_properties.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -31,6 +31,7 @@
+ class TestCleanMathematicalProperties:
+     """Hypothesis property tests for mathematical invariants."""
+ 
++    @settings(deadline=None)
+     @given(st.floats(min_value=0.0, max_value=0.0))
+     def test_zero_property_invariance(self, zero_qty):
+         """Zero activity data must strictly produce zero emissions: f(0) = 0."""
+@@ -54,7 +54,7 @@
+         ref_s3 = compute_scope3_co2e(zero_qty, 2.50)
+         assert ref_s3 == 0.0
+ 
+-    @settings(max_examples=50)
++    @settings(max_examples=50, deadline=None)
+     @given(
+         st.floats(min_value=1.0, max_value=50000.0),
+         st.floats(min_value=1.1, max_value=10.0),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

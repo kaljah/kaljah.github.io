@@ -1,0 +1,56 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -68,6 +68,7 @@
+     totalFlaringVolume: 0,
+   });
+ 
++  const [isReady, setIsReady] = useState(false);
+   const [regionalData, setRegionalData] = useState([]);
+   const [rawTrendData, setRawTrendData] = useState([]);
+   const [cbamProducts, setCbamProducts] = useState([]);
+@@ -110,8 +110,10 @@
+           if (opDefaults.defaultDivision) setCurrentDivision(opDefaults.defaultDivision);
+           if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);
+         }
++        setIsReady(true);
+       } catch (error) {
+         console.error("Initialization error:", error);
++        setIsReady(true);
+       }
+     };
+     init();
+@@ -118,8 +118,10 @@
+ 
+   // Load data on filter changes
+   useEffect(() => {
++    if (!isReady) return;
+     loadIntensityData();
+   }, [
++    isReady,
+     currentActivity,
+     currentDivision,
+     currentRegion,
+@@ -128,14 +128,16 @@
+ 
+   // Load trend data
+   useEffect(() => {
++    if (!isReady) return;
+     if (selectedYear) {
+       loadTrendData(selectedYear);
+     }
+-  }, [selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);
+-
+-  useEffect(() => {
++  }, [isReady, selectedYear, currentActivity, currentDivision, currentSegment, currentRegion]);
++
++  useEffect(() => {
++    if (!isReady) return;
+     loadCbamData();
+-  }, [selectedYear, currentRegion, currentActivity, currentDivision, currentSegment]);
++  }, [isReady, selectedYear, currentRegion, currentActivity, currentDivision, currentSegment]);
+ 
+   const loadCbamData = async () => {
+     try {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

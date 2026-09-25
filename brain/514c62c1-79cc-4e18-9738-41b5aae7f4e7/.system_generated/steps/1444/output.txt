@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":353,"LineContent":"  const [debugInfo, setDebugInfo] = useState({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":826,"LineContent":"                  {debugInfo.lastFetch || \"not yet\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":846,"LineContent":"                status: debugInfo.usersStatus,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":847,"LineContent":"                ok: debugInfo.usersStatus === 200,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":848,"LineContent":"                detail: debugInfo.usersError"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":849,"LineContent":"                  ? `Error: ${debugInfo.usersError}`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":850,"LineContent":"                  : `Returned ${debugInfo.usersCount} user(s)`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":854,"LineContent":"                status: debugInfo.regionsStatus,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":855,"LineContent":"                ok: debugInfo.regionsStatus === 200,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":856,"LineContent":"                detail: debugInfo.regionsError"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":857,"LineContent":"                  ? `Error: ${debugInfo.regionsError}`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":858,"LineContent":"                  : `Returned ${Array.isArray(debugInfo.regionsData) ? debugInfo.regionsData.length : 0} region(s): ${Array.isArray(debugInfo.regionsData) ? debugInfo.regionsData.slice(0, 8).join(\", \") + (debugInfo.regionsData.length \u003e 8 ? \"…\" : \"\") : debugInfo.regionsData}`,"}

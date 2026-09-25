@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+new\test_results\bug_swarm\agent_08_admin_playwright.py:65:            page.goto(f"{BASE_URL}/login", 
+wait_until="networkidle")
+new\test_results\bug_swarm\agent_08_admin_playwright.py:90:                page.goto(f"{BASE_URL}/login", 
+wait_until="networkidle")
+new\test_results\bug_swarm\agent_08_admin_playwright.py:158:            page.goto(f"{BASE_URL}/manage-data", 
+wait_until="networkidle")
+new\test_results\bug_swarm\agent_08_admin_playwright.py:170:            page.goto(f"{BASE_URL}/reports", 
+wait_until="networkidle")
+new\test_results\bug_swarm\agent_08_admin_playwright.py:184:            page.goto(f"{BASE_URL}/user-management", 
+wait_until="networkidle")
+new\test_results\bug_swarm\agent_08_admin_playwright.py:196:            page.goto(f"{BASE_URL}/settings", 
+wait_until="networkidle")
+
+
+

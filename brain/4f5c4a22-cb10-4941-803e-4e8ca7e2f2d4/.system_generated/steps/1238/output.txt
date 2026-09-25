@@ -1,0 +1,7 @@
+
+The command exited with code 1.
+Output:
+CSRF token: IjllNjZkYmM5MjdmZTU5...
+Login failed: 400 {"error":"Email and password required"}
+
+

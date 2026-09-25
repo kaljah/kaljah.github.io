@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":783,"LineContent":"            API Debugger — click to{\" \"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1517,"LineContent":"                    ⚠️ No regions loaded — use the 🔧 API Debugger above to"}

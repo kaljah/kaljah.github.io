@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+3163: db.session.add(record)
+

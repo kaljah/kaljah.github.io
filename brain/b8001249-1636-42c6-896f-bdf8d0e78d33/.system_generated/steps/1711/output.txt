@@ -1,0 +1,58 @@
+
+The command exited with code 0.
+Output:
+
+=== ANONYMOUS ACCESS TESTS ===
+[✅] T01 GET /api/auth/me anon → HTTP 401 (expected 401) | PASS
+[✅] T02 GET /api/emissions anon → HTTP 401 (expected 401) | PASS
+[✅] T03 GET /api/facilities anon → HTTP 401 (expected 401) | PASS
+[✅] T04 GET /api/dashboard/summary anon → HTTP 401 (expected 401) | PASS
+[✅] T05 GET /api/auth/users anon → HTTP 401 (expected 401) | PASS
+[✅] T06 GET /api/audit/ anon → HTTP 401 (expected 401) | PASS
+[✅] T07 GET /api/qaqc/dashboard anon → HTTP 401 (expected 401) | PASS
+
+=== PATH TRAVERSAL / INJECTION TESTS ===
+[✅] T08 Path traversal /emissions/../../../etc/passwd → HTTP 404 (expected 404/400/401) | PASS
+[✅] T09 URL-encoded traversal /facilities/%2e%2e%2f → HTTP 404 (expected 404/400/401) | PASS
+[✅] T10 SQL injection in URL /emissions/; DROP TABLE → HTTP 405 (expected 404/400) | PASS
+[✅] T11 Integer overflow ID /emissions/9999999999999999999999 → HTTP 405 (expected 404/400/401) | PASS
+[✅] T12 Integer overflow ID /facilities/9999999999999999999999 → HTTP 405 (expected 404/400/401) | PASS
+
+=== RATE LIMITING TEST ===
+[🟡] T13 Rate limiting: 25 wrong-password login attempts → HTTP ERR (expected 429) | BUG
+
+=== LARGE PAYLOAD TESTS ===
+[✅] T14 100KB JSON login payload → HTTP CLOSED (expected 400/413/Closed) | PASS
+[✅] T15 1MB notes field in emissions POST → HTTP CLOSED (expected 401/413/Closed) | PASS
+
+=== CORS TESTS ===
+[✅] T16 CORS OPTIONS /auth/me with evil origin → HTTP 200 (expected no wildcard) | PASS
+[✅] T17 CORS: Wildcard ACAO + Allow-Credentials check → HTTP 200 (expected not both) | PASS
+
+=== AUTHENTICATED TESTS ===
+[✅] T18 Admin login POST /api/auth/login → HTTP 200 (expected 200) | PASS
+[✅] T24 Session cookie security flags → HTTP 200 (expected HttpOnly+Secure+SameSite) | PASS
+[✅] T19 GET /api/auth/me as admin → HTTP 200 (expected 200) | PASS
+[✅] T20 PUT /api/auth/profile change email → HTTP 200 (expected any) | PASS
+[✅] T21 DELETE /api/emissions/1 as admin → HTTP 404 (expected 200/204/404) | PASS
+[✅] T22 SQL injection in emissions source_type → HTTP 201 (expected 200/400/422) | PASS
+[✅] T23 Stored XSS in facility name → HTTP 409 (expected 200/400/422) | PASS
+[✅] T25 Session fixation: reuse cookie after logout → HTTP 401 (expected 401) | PASS
+
+=== WRITING RESULTS ===
+JSON written: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_bugs.json
+Markdown written: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_report.md
+
+============================================================
+  AGENT 07 SUMMARY
+============================================================
+  Total tests : 25
+  Total bugs  : 1
+  Critical    : 0
+  High        : 0
+  Medium      : 1
+
+  Top 3 critical bugs:
+    1. T13 [MEDIUM] Rate limiting: 25 wrong-password login attempts: No rate limiting after 25 attempts. Statuses: set()
+============================================================
+

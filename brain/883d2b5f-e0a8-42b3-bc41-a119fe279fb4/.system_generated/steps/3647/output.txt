@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":6,"LineContent":"import { BarChart, LineChart } from \"../components/charts\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":869,"LineContent":"              \u003cLineChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":10,"LineContent":"  LineChart as LineChartWrapper,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1138,"LineContent":"              \u003cLineChartWrapper"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1260,"LineContent":"              \u003cLineChartWrapper"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\index.js","LineNumber":2,"LineContent":"export { LineChart } from \"./LineChart\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\LineChart.jsx","LineNumber":14,"LineContent":"export const LineChart = ({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\LineChart.jsx","LineNumber":199,"LineContent":"export default LineChart;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":6,"LineContent":"import { BarChart, LineChart } from \"../components/charts\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1566,"LineContent":"              \u003cLineChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":6,"LineContent":"import { LineChart, BarChart } from \"../components/charts\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":545,"LineContent":"              \u003cLineChart"}

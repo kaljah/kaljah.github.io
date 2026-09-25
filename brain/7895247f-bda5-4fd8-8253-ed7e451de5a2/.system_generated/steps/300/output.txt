@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\DashboardEnhanced.jsx:89:    flaring: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:90:    venting: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:91:    other: 0,
+> new\client\src\pages\DashboardEnhanced.jsx:256:        flaring: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:257:        venting: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:258:        other: 0,
+> new\client\src\pages\DashboardEnhanced.jsx:285:          totals.flaring += row.flaring || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:286:          totals.venting += row.venting || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:287:          totals.other += row.other || 0;
+> new\client\src\pages\DashboardEnhanced.jsx:576:          name: "Flaring",
+> new\client\src\pages\DashboardEnhanced.jsx:577:          value: Number((stats.flaring ?? 0).toFixed(2)),
+  new\client\src\pages\DashboardEnhanced.jsx:578:          color: "#ff6600",
+  new\client\src\pages\DashboardEnhanced.jsx:579:        },
+> new\client\src\pages\DashboardEnhanced.jsx:1563:                        <td className="indent">Flaring</td>
+  new\client\src\pages\DashboardEnhanced.jsx:1564:                        <td className="text-right">
+> new\client\src\pages\DashboardEnhanced.jsx:1565:                          {formatCompactNumber(stats.flaring)}
+  new\client\src\pages\DashboardEnhanced.jsx:1566:                        </td>
+  new\client\src\pages\DashboardEnhanced.jsx:1567:                      </tr>
+
+
+

@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\midstream.py:1:"""
+  new\server\calculations\midstream.py:2:API Compendium 2021 - Section 6: Midstream & Process Emissions
+  new\server\calculations\midstream.py:3:Implementation of Acid Gas Removal (AGR / Amine Units) with Table 6-5 Methane 
+Slip,
+> new\server\calculations\midstream.py:4:and Glycol Dehydrators using API �6.6 / GRI-GLYCalc Parametric Solubility 
+Models.
+  new\server\calculations\midstream.py:5:"""
+  new\server\calculations\midstream.py:6:
+  new\server\calculations\midstream.py:7:import math
+  new\server\calculations\midstream.py:8:from .base import BaseCalculator
+  new\server\calculations\midstream.py:9:from .units import (
+  new\server\calculations\midstream.py:10:    CONVERSIONS,
+  new\server\calculations\midstream.py:11:    calculate_co2e,
+  new\server\calculations\midstream.py:12:    convert,
+  new\server\calculations\midstream.py:13:    to_psia,
+  new\server\calculations\midstream.py:14:    to_fahrenheit,
+  new\server\calculations\midstream.py:139:        )
+  new\server\calculations\midstream.py:140:
+  new\server\calculations\midstream.py:141:
+> new\server\calculations\midstream.py:142:class DehydratorCalculator(BaseCalculator):
+  new\server\calculations\midstream.py:143:    def __init__(self):
+> new\server\calculations\midstream.py:144:        super().__init__("Glycol Dehydrator", "Section 6.6")
+  new\server\calculations\midstream.py:145:
+  new\server\calculations\midstream.py:146:    def calculate(
+  new\server\calculations\midstream.py:147:        self,
+  new\server\calculations\midstream.py:148:        throughput=None,
+  new\server\calculations\midstream.py:149:        pump_rate=None,
+  new\server\calculations\midstream.py:150:        pump_unit="gph",
+  new\server\calculations\midstream.py:151:        hours=8760,
+  new\server\calculations\midstream.py:152:        ch4_content=0.85,
+  new\server\calculations\midstream.py:153:        control_eff=0.0,
+  new\server\calculations\midstream.py:154:        uncertainties=None,
+
+
+

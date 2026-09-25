@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+989: @emissions_bp.route("/template/csv", methods=["GET"])
+990: def get_csv_template():
+1656: def _row(**kw):
+2046: @emissions_bp.route("/template/excel", methods=["GET"])
+2047: def get_excel_template():
+2069: def hdr_style(cell, bg=GREEN_DARK, fg=WHITE, sz=11, bold=True, wrap=True):
+2076: def sub_hdr(cell, bg=GREEN_MID):
+2079: def info_cell(cell, bg=BLUE_HINT, fg="1A237E"):
+2084: def req_cell(cell, bg=YELLOW_HINT):
+2094: def add_comment(cell, text, author="GHG Platform"):
+2881: @emissions_bp.route("/upload/start", methods=["POST"])
+

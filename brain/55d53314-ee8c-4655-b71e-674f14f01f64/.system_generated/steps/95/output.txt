@@ -1,0 +1,5 @@
+
+The command exited with code 1.
+Output:
+fatal: option '-A' must come before non-option arguments
+

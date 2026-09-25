@@ -1,0 +1,17 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":32,"LineContent":"        \"activity\": \"Downstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":44,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":56,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":68,"LineContent":"        \"activity\": \"Downstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":80,"LineContent":"        \"activity\": \"Midstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":92,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":104,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":116,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":128,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":140,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":152,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":164,"LineContent":"        \"activity\": \"Upstream\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":228,"LineContent":"                    activity=spec[\"activity\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":278,"LineContent":"                        activity=fac.activity,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":311,"LineContent":"                            activity=fac.activity,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":333,"LineContent":"                        activity=fac.activity,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":363,"LineContent":"                            activity_data=amount,"}

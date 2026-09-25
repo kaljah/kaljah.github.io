@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneExplorer.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -174,8 +174,12 @@
+ 
+       // Derive distinct regions and activities directly from the database facilities
+       const regions = [
+-        ...new Set(fetchedFacilities.map((f) => f.region).filter(Boolean)),
+-      ].sort();
++        ...new Set(fetchedFacilities.flatMap((f) => [f.region, f.location]).filter(Boolean)),
++      ].sort();
++      const userLoc = (user?.location || '').trim();
++      if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {
++        regions.unshift(userLoc);
++      }
+       setAvailableRegions(regions);
+ 
+       const acts = [
+@@ -182,5 +182,14 @@
+       ].sort();
+       setAvailableActivities(acts);
++
++      const opDefaults = getUserOperationalDefaults(user, fetchedFacilities);
++      if (opDefaults.isRestricted || fetchedFacilities.length === 1) {
++        setFilters((prev) => ({
++          ...prev,
++          region: prev.region === 'all' && opDefaults.defaultRegion ? opDefaults.defaultRegion : prev.region,
++          activity: prev.activity === 'all' && opDefaults.defaultActivity ? opDefaults.defaultActivity : prev.activity,
++        }));
++      }
+     } catch (error) {
+       console.error("Failed to load explorer data:", error);
+       toast.error("Failed to initialize facility data from server");
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

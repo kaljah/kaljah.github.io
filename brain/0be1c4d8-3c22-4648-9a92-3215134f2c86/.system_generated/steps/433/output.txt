@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+Total float calls: 35
+  float(row.get("consumption")
+  float(row.get("boiler_eff")
+  float(row.get("trans_loss")
+  float(row.get("emission_factor")
+  float(row.get("co2e")
+  float(row.get("spend_usd")
+  float(row.get("amount")
+  float(row.get("emission_factor")
+  float(row.get("co2e")
+  float(row.get("production_volume")
+

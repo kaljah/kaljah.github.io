@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_03_admin_api.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -99,7 +99,7 @@
+     # Extreme values
+     t.post("/emissions", json_body={**scope1_payload, "quantity": 9999999999999}, label="Emission with extreme quantity")
+     t.post("/emissions", json_body={**scope1_payload, "quantity": -999}, label="Emission with negative quantity")
+-    t.post("/emissions", json_body={**scope1_payload, "quantity": float("inf")}, label="Emission with Infinity quantity")
++    t.post("/emissions", json_body={**scope1_payload, "quantity": "invalid_number"}, label="Emission with non-numeric quantity")
+     t.post("/emissions", json_body={**scope1_payload, "quantity": None}, label="Emission with null quantity")
+     t.post("/emissions", json_body={**scope1_payload, "year": 1800}, label="Emission with invalid year 1800")
+     t.post("/emissions", json_body={**scope1_payload, "year": 2099}, label="Emission with future year 2099")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

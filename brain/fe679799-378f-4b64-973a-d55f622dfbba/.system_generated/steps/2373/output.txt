@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 24 items
+
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-001] PASSED [  4%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-002] PASSED [  8%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-003] PASSED [ 12%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-004] PASSED [ 16%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-005] PASSED [ 20%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-006] PASSED [ 25%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FLARE-001] PASSED [ 29%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FLARE-002] PASSED [ 33%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FLARE-003] PASSED [ 37%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-VENT-001] PASSED [ 41%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-VENT-002] PASSED [ 45%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-MID-001] PASSED [ 50%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FUG-001] PASSED [ 54%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S2-ELEC-001] PASSED [ 58%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S2-ELEC-002] PASSED [ 62%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S2-STEAM-001] PASSED [ 66%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT1-001] PASSED [ 70%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT4-001] PASSED [ 75%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT6-001] PASSED [ 79%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT11-001] PASSED [ 83%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-001] PASSED [ 87%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-002] PASSED [ 91%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-003] PASSED [ 95%]
+validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-004] PASSED [100%]
+
+============================= 24 passed in 2.30s ==============================
+

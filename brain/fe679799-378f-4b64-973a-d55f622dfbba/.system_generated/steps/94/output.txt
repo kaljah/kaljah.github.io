@@ -1,0 +1,47 @@
+The search for ""chrome://inspect/#remote-debugging" 404 /json/version OR /json/list" returned the following summary:
+A **404 error** when accessing `/json/version` or `/json/list` while using `chrome://inspect/#remote-debugging` generally indicates that the Chrome DevTools Protocol (CDP) HTTP discovery endpoints are either not exposed in your specific Chrome configuration, or you are running an environment where these endpoints are restricted[1][2][3].
+
+Here is how to troubleshoot and resolve this issue:
+
+### 1. Ensure a Clean, Isolated Instance
+If you attempt to launch Chrome with the `--remote-debugging-port=9222` flag while another instance of Chrome is already running (e.g., your default browser), the new instance will likely fail to start with remote debugging enabled because it shares the same user profile[4][5].
+
+*   **The Fix:** Use a dedicated user data directory for your debugging session to avoid conflicts[6][4].
+    ```bash
+    # Replace the path with a folder on your system
+    google-chrome --remote-debugging-port=9222 --user-data-dir=/tmp/chrome-debug-profile
+    ```
+*   **Verify:** After launching with this command, visit `http://localhost:9222/json/version` in your browser. If successful, you will see a JSON response containing browser information[3].
+
+### 2. Understand "WebSocket-Only" Remote Debugging
+In newer versions of Chrome, the `chrome://inspect/#remote-debugging` UI toggle may enable a "WebSocket-only" mode that does not expose the traditional `/json` HTTP discovery endpoints[7][2].
+
+*   **The Problem:** If you are using an automation tool (like an MCP server or `agent-browser`) that expects these endpoints to be available, it will fail with a 404[7][3].
+*   **The Workaround:** 
+    *   Check if your tool supports connecting directly via a WebSocket URL[7]. 
+    *   Look for a file named `DevToolsActivePort` in your Chrome profile directory[7][8]. This file contains the port and the specific WebSocket path (e.g., `/devtools/browser/<uuid>`) needed to connect manually[7][9].
+
+### 3. Check for Version Mismatches
+If you are debugging a remote device (like an Android phone), a 404 error often occurs when the version of Chrome on the host machine is incompatible with the version on the remote device[10][11].
+
+*   **The Fix:** Look for an **"Inspect fallback"** option on the `chrome://inspect/#devices` page[10][12]. This option is often available when there is a version mismatch and can bypass the 404 error by using a different inspection bridge[13][12].
+
+### 4. Summary Checklist
+*   **Close all running Chrome instances** before starting your debug session[3][5].
+*   **Always use a custom `--user-data-dir`** to prevent the "singleton" behavior of Chrome from blocking your debug flag[6][4].
+*   **Verify connectivity:** If `curl http://127.0.0.1:9222/json/version` returns 404 but the port is open, your Chrome instance is likely in "WebSocket-only" mode[3]. You may need to update your client software to a version that supports direct WebSocket connection or supports falling back to the `DevToolsActivePort` file[7][9].
+
+Sources:
+[1] [productivitytech.io](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEWZ1QR_esOjeHtdHntTd7ORjxMSKPTfTJi6uytNKs45Q8psSJPScEH-cBeE9JO02ps9rXAlarhgJb1dJCIqhSrs2_4rcZM4pt2Vf8SbyxKEURSK1HTrqlYre10XpsCMrxQGSye45a-3QSzEOUpcrWyCc5CYRg5)
+[2] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEz4YQMPOKjABfjbKAK7C9laXOHtZ4bVvDIoOWRu6BBkVPW7lfRtadYYD0spuIRHvrB75-oFcnDvaVbvblkAwkUO23UI8b-gItLsinDPVkyGnjslaBS-DInFq7XCV8PPk1Xo9_ojOqqcNfreii2)
+[3] [productivitytech.io](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEWZ1QR_esOjeHtdHntTd7ORjxMSKPTfTJi6uytNKs45Q8psSJPScEH-cBeE9JO02ps9rXAlarhgJb1dJCIqhSrs2_4rcZM4pt2Vf8SbyxKEURSK1HTrqlYre10XpsCMrxQGSye45a-3QSzEOUpcrWyCc5CYRg5)
+[4] [github.io](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGdvi0Gy3DcGrOQ4x-McLEGfg9C9ZE7w02EJRegB6zxlsSLjNOactTVHXKX6KVoUq2x-8cdhMdr8jWdg66_W5TFs_JMiZDUnKjU1OCzJ7jnnh5tWHO75pSpMn0IB32fP4a5SjaPStqGV25Uxi6EPeAQWclWFQ==)
+[5] [stackoverflow.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHr0dxMaxIdkaFgKnLmbYQogpJ9WG49mMW5BTUHDkufH1q7OMb8s3NvGJ-PhamY2pZ1w0j7mxET6Npv98iI4ZjPDR_KQ8PQSP7HcLzrynSCtpe225KnD-iS1nv7YkhNfx_PrgIxn2b2iPz0gbdRiuxT6u73ggzzefYWJYDoadRAUZIr-KE6Fmv7j6TYjg==)
+[6] [heyuan110.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGvK2AY9PjUdBqCsT-SNwunr8YQKuRpvk-M9MBgrLvASnc5vG4iYqm8whElLyizMtA5dKFY2yzG-6X4KyacbaCqu1MIgF2YH59yVw6yoPIhnD2-Sig5uzCfo4X1Sod8OT-4EAC_vQyeu-CpYpOMicZ5VMpuwvrC2kUdYq6tu3M=)
+[7] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGqXATreeqqDHcYeAAKI-dJlB85kX757WYhxf8NnPv2AB38qE2Qf0FTJRW1ffw5G9ImPZwv8-nW7KXTLDp20_AvVVBzAcIfayThfqeT9sYScQ-QDV2UKaFDl48R_92GsLRgSVIPkqamdQWLLBbO)
+[8] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGqXATreeqqDHcYeAAKI-dJlB85kX757WYhxf8NnPv2AB38qE2Qf0FTJRW1ffw5G9ImPZwv8-nW7KXTLDp20_AvVVBzAcIfayThfqeT9sYScQ-QDV2UKaFDl48R_92GsLRgSVIPkqamdQWLLBbO)
+[9] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGqXATreeqqDHcYeAAKI-dJlB85kX757WYhxf8NnPv2AB38qE2Qf0FTJRW1ffw5G9ImPZwv8-nW7KXTLDp20_AvVVBzAcIfayThfqeT9sYScQ-QDV2UKaFDl48R_92GsLRgSVIPkqamdQWLLBbO)
+[10] [stackoverflow.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGzQXOzhwj2PDn17WYnyBaic07T9JUVNYsHJMo65LeKw5Se0aZO2ASOGDNF0bCw6UbEJkPdy7AMeOkdsoeRWcM1QEuW9ZPX1jrW8aGcLNNhJH1042w2n-R1wjQEu4UN8SWuRaZkFpr-ROuhzFBeYUpf0DdpEgV2QJg8X2AfaXbY3pieB9TUjptNavlG5kb4ftsHHygDvvCwFGQdgiuNcr6S5hBNTX4DWeXVOTv9Vlzf9LA=)
+[11] [stackoverflow.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF_CXm9C7WuWexVfNw2E2zbjmg62BPlf-w8Loxa5CDQhDQVAxJlPgrYr31E_nsljbNRYALsLSkXqrW4LHAW_kUCgqLYRGSpgTm9XzwQ5dezizNl_HOn3fm2-t2G08OPUGP1j1p_k6oTrolHQE4nvOKKrE29TWkt8eR7BNK9G8nJl1wxhPF1YVXpWhqvXfNwDTFOfaDQe94mJiK2sS5j)
+[12] [stackoverflow.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGzQXOzhwj2PDn17WYnyBaic07T9JUVNYsHJMo65LeKw5Se0aZO2ASOGDNF0bCw6UbEJkPdy7AMeOkdsoeRWcM1QEuW9ZPX1jrW8aGcLNNhJH1042w2n-R1wjQEu4UN8SWuRaZkFpr-ROuhzFBeYUpf0DdpEgV2QJg8X2AfaXbY3pieB9TUjptNavlG5kb4ftsHHygDvvCwFGQdgiuNcr6S5hBNTX4DWeXVOTv9Vlzf9LA=)
+[13] [stackoverflow.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHOe-rLZD5gcYLTI69f6nKUpoCVvbiijtxVN3R1zz1VUYXVmJ0yRoZO0yFekNPWttgqwYXawLvPsjI4WWuz7zQgPspme6le32dx_JzhDDKAqgHJvfZPIlmYyJb_Waccz3XWFNciOai-z4oHYNTrH6l5dl7iNw6ZBrRK97q3mWR4j29mTcgYDzECs6368kYjJ5StrGwa2FLgHH8=)

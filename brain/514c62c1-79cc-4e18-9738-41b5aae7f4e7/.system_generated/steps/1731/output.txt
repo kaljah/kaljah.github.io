@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":88,"LineContent":"  const [authMode, setAuthMode] = useState(\"password\"); // 'password' or 'oauth_client'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":121,"LineContent":"        if (settings.copernicus_password)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":122,"LineContent":"          setCopernicusPassword(settings.copernicus_password);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":200,"LineContent":"        payload.copernicus_password = copernicusPassword;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":223,"LineContent":"        authMode === \"password\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":227,"LineContent":"                ? { copernicus_password: copernicusPassword }"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":954,"LineContent":"                    organization, email, and choose a password. Confirm the"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1029,"LineContent":"                className={`auth-mode-pill ${authMode === \"password\" ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1034,"LineContent":"                  value=\"password\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1036,"LineContent":"                  checked={authMode === \"password\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1037,"LineContent":"                  onChange={() =\u003e setAuthMode(\"password\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1056,"LineContent":"            {authMode === \"password\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1078,"LineContent":"                    type=\"password\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1084,"LineContent":"                    id=\"copernicus-password-input\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1108,"LineContent":"                    type=\"password\""}

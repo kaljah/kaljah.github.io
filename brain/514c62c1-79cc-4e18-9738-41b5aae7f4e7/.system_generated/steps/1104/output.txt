@@ -1,0 +1,57 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -515,27 +515,39 @@
+                                 <div className="qa-status-filters">
+                                     <button
+                                         className={`qa-status-filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
+-                                        onClick={() => setStatusFilter('all')}
+-                                    >
+-                                        All Statuses
++                                        onClick={() => { setStatusFilter('all'); setOffset(0); }}
++                                    >
++                                        <span>All Statuses</span>
++                                        {anomaliesSummary.all > 0 && (
++                                            <span className="qa-status-pill-count">{anomaliesSummary.all}</span>
++                                        )}
+                                     </button>
+                                     <button
+                                         className={`qa-status-filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
+-                                        onClick={() => setStatusFilter('pending')}
+-                                    >
+-                                        Pending Review
++                                        onClick={() => { setStatusFilter('pending'); setOffset(0); }}
++                                    >
++                                        <span>Pending Review</span>
++                                        {anomaliesSummary.pending > 0 && (
++                                            <span className="qa-status-pill-count">{anomaliesSummary.pending}</span>
++                                        )}
+                                     </button>
+                                     <button
+                                         className={`qa-status-filter-btn ${statusFilter === 'verified' ? 'active' : ''}`}
+-                                        onClick={() => setStatusFilter('verified')}
+-                                    >
+-                                        Verified
++                                        onClick={() => { setStatusFilter('verified'); setOffset(0); }}
++                                    >
++                                        <span>Verified</span>
++                                        {anomaliesSummary.verified > 0 && (
++                                            <span className="qa-status-pill-count">{anomaliesSummary.verified}</span>
++                                        )}
+                                     </button>
+                                     <button
+                                         className={`qa-status-filter-btn ${statusFilter === 'rejected' ? 'active' : ''}`}
+-                                        onClick={() => setStatusFilter('rejected')}
+-                                    >
+-                                        Rejected
++                                        onClick={() => { setStatusFilter('rejected'); setOffset(0); }}
++                                    >
++                                        <span>Rejected</span>
++                                        {anomaliesSummary.rejected > 0 && (
++                                            <span className="qa-status-pill-count">{anomaliesSummary.rejected}</span>
++                                        )}
+                                     </button>
+                                 </div>
+                             </div>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

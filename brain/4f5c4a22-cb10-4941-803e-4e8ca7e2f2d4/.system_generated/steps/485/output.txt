@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -66,6 +66,19 @@
+ }
+ 
+ async function closeAnyOverlay(page) {
++  // If gas composition modal backdrop is open, dismiss it
++  const backdrop = page.locator('.modal-backdrop');
++  if (await backdrop.isVisible({ timeout: 500 }).catch(() => false)) {
++    const closeBackdrop = page.locator('.modal-backdrop button.close-btn, .modal-backdrop button:has-text("Cancel")').first();
++    if (await closeBackdrop.isVisible({ timeout: 400 }).catch(() => false)) {
++      await closeBackdrop.click();
++    } else {
++      await page.keyboard.press('Escape');
++    }
++    await page.waitForTimeout(400);
++  }
++
++  // If result overlay is open, close it
+   const closeBtn = page.locator('.result-overlay button.close-btn, .result-overlay button:has-text("Close")').first();
+   if (await closeBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+     await closeBtn.click();
+@@ -72,5 +72,4 @@
+   } else {
+-    // If still open, try pressing Escape
+     const overlay = page.locator('.result-overlay');
+     if (await overlay.isVisible({ timeout: 500 }).catch(() => false)) {
+       await page.keyboard.press('Escape');
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

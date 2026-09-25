@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+       "calc_inputs": {
+                            "combustion": {
+                                "fuel_gas_volume": 1000 + task_id * 10,
+                                "fuel_type": "Natural Gas",
+                            }
+                        },
+                    }
+                    res = client.post("/api/emissions", json=payload)
+                    op_type = "scope1_write"
+                elif task_type == 1:
+                    # Scope 2 Write
+                    payload = {
+                        "year": 2025,
+                        "month": (task_id % 12) + 1,
+                        "facility_id": facility_id,
+                        "source_type": "electricity",
+                        "electricity_kwh": 5000 + task_id * 50,
+                        "grid_region": "US Average",
+                        "status": "Verified",
+                    }
+                    res = client.post("/api/scope2", json=payload)
+                    op_type = "scope2_write"
+                elif task_type == 2:
+                    # Scope 3 Write
+                    payload = {
+                        "year": 2025,
+                        "month": (task_id % 12) + 1,
+                        "facility_id": facility_id,
+                        "category": "1",
+                        "sub_category": "Purchased Materials",
+                        "activity_data": 2000 + task_id * 20,
+                        "unit": "USD",
+                        "emission_factor": 0.35,
+     
+

@@ -1,0 +1,118 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -283,29 +283,71 @@
+ 
+ 
+ def ensure_admin_seeded():
++    """
++    Seeds admin accounts ONLY when SEED_ADMIN=true environment variable is set.
++    In production, requires ADMIN_EMAIL and ADMIN_PASSWORD to be explicitly set.
++
++    SECURITY: Hard-coded dev shortcuts (a@a / a) have been removed.
++    Never auto-seeds accounts with known-weak passwords.
++    """
++    if os.environ.get("SEED_ADMIN", "false").lower() != "true":
++        return
++
++    admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
++    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
++    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
++    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip()
++
++    _env_name = (
++        os.environ.get("FLASK_ENV")
++        or os.environ.get("APP_ENV")
++        or os.environ.get("ENVIRONMENT")
++        or "development"
++    ).lower()
++    is_production = _env_name in ["production", "prod", "staging"]
++
++    KNOWN_WEAK = {
++        "Admin12345!", "admin", "password", "changeme", "secret",
++        "a", "123456", "letmein", "qwerty", "admin123",
++    }
++
++    if is_production:
++        if not admin_email or not admin_password:
++            raise RuntimeError(
++                "FATAL: ADMIN_EMAIL and ADMIN_PASSWORD must be set in production "
++                "when SEED_ADMIN=true. Refusing to start without explicit credentials."
++            )
++        if admin_password in KNOWN_WEAK:
++            raise RuntimeError(
++                f"FATAL: ADMIN_PASSWORD is a known weak value. "
++                "Set a strong, unique password before deploying."
++            )
++
++    accounts = []
++    if admin_email and admin_password:
++        accounts.append({
++            "email": admin_email,
++            "password": admin_password,
++            "role": "admin",
++            "fullName": os.environ.get("ADMIN_FULL_NAME", "System Administrator"),
++        })
++    if it_admin_email and it_admin_password:
++        accounts.append({
++            "email": it_admin_email,
++            "password": it_admin_password,
++            "role": "it_admin",
++            "fullName": os.environ.get("IT_ADMIN_FULL_NAME", "IT Administrator"),
++        })
++
++    if not accounts:
++        app.logger.warning(
++            "SEED_ADMIN=true but no ADMIN_EMAIL/ADMIN_PASSWORD set — nothing seeded."
++        )
++        return
++
+     try:
+         from models import User
+-        users_to_seed = [
+-            {
+-                "email": "admin@ghg.com",
+-                "password": "Admin12345!",
+-                "role": "admin",
+-                "fullName": "System Administrator",
+-            },
+-            {
+-                "email": "a@a",
+-                "password": "a",
+-                "role": "admin",
+-                "fullName": "Admin User",
+-            },
+-            {
+-                "email": "a",
+-                "password": "a",
+-                "role": "admin",
+-                "fullName": "Admin User",
+-            },
+-        ]
+-        for u in users_to_seed:
++        for u in accounts:
+             user = User.query.filter_by(email=u["email"]).first()
+             if not user:
+                 user = User(
+@@ -320,15 +320,13 @@
+                 )
+                 user.set_password(u["password"])
+                 db.session.add(user)
++                app.logger.info(f"Seeded {u['role']} account: {u['email']}")
+             else:
+-                user.set_password(u["password"])
+-                user.status = "active"
+-                user.role = u["role"]
+-                if not user.jobTitle:
+-                    user.jobTitle = "Sustainability Manager"
++                app.logger.info(f"Account already exists (not overwritten): {u['email']}")
+         db.session.commit()
+     except Exception as e:
+-        app.logger.error(f"Failed to auto-seed admin: {e}")
++        app.logger.error(f"Failed to seed admin: {e}")
++        db.session.rollback()
+ 
+ 
+ def ensure_database_indexes():
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Scope2Form.jsx:179: const factorObj = gridFactors.find((f) => f.region === gridRegion);
+Scope2Form.jsx:348: ...gridFactors.map((f) => ({ value: f.region, label: f.region })),
+MethaneExplorer.jsx:236: // Region Filter - use region_identifier (= f.region ?? f.name) so facilities
+

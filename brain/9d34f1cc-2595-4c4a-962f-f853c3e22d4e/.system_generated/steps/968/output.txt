@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\notifications.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -111,7 +111,7 @@
+                                 "type": n.type,
+                                 "title": n.title,
+                                 "message": n.message,
+-                                "is_read": n.is_read,
++                                "is_read": _is_read_for_user(n, uid),
+                                 "time": n.created_at.isoformat() + "Z",
+                             }
+                         )
+@@ -131,6 +131,10 @@
+                         current_app.logger.error(f"SSE stream error for user {uid}: {exc}")
+                     except Exception:
+                         pass
++                    try:
++                        db.session.rollback()
++                    except Exception:
++                        pass
+                     time.sleep(POLL_INTERVAL)
+ 
+             # Instruct browser EventSource to reconnect cleanly without treating end-of-stream as an error
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":64,"LineContent":"@facilities_bp.route(\"/all-regions\", methods=[\"GET\"])"}

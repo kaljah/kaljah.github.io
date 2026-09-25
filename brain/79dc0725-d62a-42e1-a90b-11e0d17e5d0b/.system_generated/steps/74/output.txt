@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+<truncated 15 lines>
+        72   const [availableFilters, setAvailableFilters] = useState({                                                
+       131         setAvailableFilters({                                                                               
+       147           if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);                 
+       181         facilityId: currentRegion,                                                                          
+       267           facilityNames[f.id] = f.name;                                                                     
+       461     const segments = availableFilters.segments || [];                                                       
+       469     const filtered = availableFilters.regions.filter(                                                       
+       483     const filtered = availableFilters.regions.filter(                                                       
+       498     const filtered = availableFilters.regions.filter(                                                       
+       508         label: f.name,                                                                                      
+       517       ...availableFilters.years                                                                             
+        17 import { getUserOperationalDefaults, matchesActivity, matchesFacilityRegion, isUnrestrictedLocation } fro...
+       136     const [availableFilters, setAvailableFilters] = useState({ years: [], regions: [] });                   
+       696         if (autoFill.activity || autoFill.division || autoFill.facility_id || opDefaults.defaultRegion) {   
+       742             const regions = [...new Set(data.flatMap(f => [f.region, f.location]).filter(Boolean))].sort(); 
+       747             setAvailableFilters(prev => ({ ...prev, regions }));                                            
+       765             setAvailableFilters(prev => ({ ...prev, years }));                                              
+      1008         if (!sourceForm.facility_id || !sourceForm.name) return toast.error('Name and Region required');    
+      1129             message: 'Are you sure you want to delete this region/facility? Associated records may be aff...
+      1283         return matchesFacilityRegion(fac, region);                                                          
+      1290         const matchesSearch = f.name.toLowerCase().includes(searchTerm.toLowerCase()) || (f.location?.toL...
+      1468                                         {availableFilters.regions?.map(r => <option key={r} value={r}>{r}...
+      1474                                             {availableFilters.years?.map(y => <option key={y} value={y}>{...
+      2381                                                     <td><strong>{f.factor_name || f.name}</strong></td>     
+      2503                                             <button className="action-btn" onClick={handleAddFacility}>Ad...
+      2530                                                     <td><strong>{f.name}</strong></td>                      
+      2629                                                     .map(f => ({ value: f.id.toString(), label: f.name, s...
+      2791                                                     .map(f => ({ value: f.id.toString(), label: f.name, s...
+      3342                                                     .map(f => ({ value: f.id.toString(), label: f.name, s...
+      3501                                         <label>Facility / Region *</label>                                  
+      3511                                                     <option key={f.id} value={f.id}>{f.name} ({f.location...
+      3830                                         <label>Facility / Region *</label>                                  
+      3844                                                     <option key={f.id} value={f.id}>{f.name} ({f.location...
+       177         ...new Set(fetchedFacilities.flatMap((f) => [f.region, f.location]).filter(Boolean)),               
+       229   // Multi-criteria facility filtering (Search, Region, Activity, Coordinates, Severity)                    
+       239         (f.region && f.region === filters.region);                                                          
+       247       const name = (f.name || "").toLowerCase();                                                            
+       248       const region = (f.region || "").toLowerCase();                                                        
+      1314                   {selectedFacility.region ? `${selectedFacility.region} Region` : "Algeria"} {" "}        
+       144           if (opDefaults.defaultFacilityId) setCurrentRegion(opDefaults.defaultFacilityId);                 
+       182         facilityId: currentRegion,                                                                          
+       308         params.append("facilityId", currentRegion);                                                         
+       331         params.append("facilityId", currentRegion);                                                         
+       391         params.append("facilityId", currentRegion);                                                         
+       412         params.append("facility_id", currentRegion);                                                        
+       510         label: f.name,                                                                                      
+       602           (d) => d.facility_id.toString() === currentRegion,                                                
+      1615                   FACILITY / REGION                                                                         
+        72         .filter((f) => f.name?.toLowerCase().includes(searchTerm.toLowerCase()))                            
+        74           name: f.name,                                                                                     
+       514                                 {f.name}                                                                    
+        15   const [availableFilters, setAvailableFilters] = useState({                                                
+        67         setAvailableFilters({                                                                               
+        89           if (opDefaults.defaultFacilityId) setRegionId(opDefaults.defaultFacilityId);                      
+       161         ...(regionId !== "all" && { facility_id: regionId }),                                               
+       201         ...(regionId !== "all" && { facility_id: regionId }),                                               
+       237         params.append("facility_id", regionId);                                                             
+       356     label: f.name,                                                                                          
+       366       toast.error("Please select at least one region/facility.");                                           
+       580                   {availableFilters.years.length > 0 ? (                                                    
+       581                     availableFilters.years.map((y) => (                                                     
+       602                   {availableFilters.years                                                                   
+       761                   {availableFilters.years.map((y) => (                                                      
+       794                   {availableFilters.regions.map((f) => (                                                    
+       796                       {f.name} {f.field ? ` - ${f.field}` : ""}                                             
+       173       label: f.name || f.facility_name || `Facility ${f.id}`,                                               
+       469       if (!silent) toast.error("Failed to load facility regions");                                          
+
+
+

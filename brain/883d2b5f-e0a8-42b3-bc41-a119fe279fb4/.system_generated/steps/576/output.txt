@@ -1,0 +1,185 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1002,15 +1002,22 @@
+     }
+   };
+ 
+-  const handleDeleteCbamExport = async (id) => {
+-    if (!window.confirm('Delete this CBAM export record?')) return;
+-    try {
+-      await api.delete('/data/cbam-exports/' + id);
+-      toast.success('CBAM export record deleted');
+-      fetchCbamExports();
+-    } catch (err) {
+-      toast.error('Failed to delete CBAM record');
+-    }
++  const handleDeleteCbamExport = (id) => {
++    requestConfirm({
++      title: "Delete CBAM Export",
++      message: 'Delete this CBAM export record?',
++      confirmLabel: "Delete Record",
++      confirmVariant: "danger",
++      onConfirm: async () => {
++        try {
++          await api.delete('/data/cbam-exports/' + id);
++          toast.success('CBAM export record deleted');
++          fetchCbamExports();
++        } catch (err) {
++          toast.error('Failed to delete CBAM record');
++        }
++      }
++    });
+   };
+ 
+     const handleSaveOgmpSurvey = async () => {
+@@ -1042,59 +1042,94 @@
+         }
+     };
+ 
+-    const handleDeleteOgmpSurvey = async (id) => {
+-        if (!confirm('Delete this OGMP survey record?')) return;
+-        try {
+-            await api.delete(`/data/ogmp-surveys/${id}`);
+-            toast.success('OGMP survey record deleted');
+-            fetchOgmpSurveys();
+-        } catch (err) {
+-            toast.error('Failed to delete OGMP survey');
+-        }
+-    };
+-
+-    const handleDeleteFacility = async (id) => {
+-        if (!window.confirm('Delete this region?')) return;
+-        try {
+-            await api.delete(`/facilities/${id}`);
+-            toast.success('Region deleted');
+-            fetchFacilities();
+-        } catch (err) {
+-            toast.error(err?.response?.data?.error || 'Failed to delete region');
+-        }
+-    };
+-
+-    const handleDeleteProduction = async (id) => {
+-        if (!window.confirm('Delete this production record?')) return;
+-        try {
+-            await api.delete(`/data/production/${id}`);
+-            toast.success('Production record deleted');
+-            fetchProduction();
+-        } catch (err) {
+-            toast.error(err?.response?.data?.error || 'Failed to delete production record');
+-        }
+-    };
+-
+-    const handleDeleteSource = async (id) => {
+-        if (!window.confirm('Delete this emission source?')) return;
+-        try {
+-            await api.delete(`/sources/${id}`);
+-            toast.success('Emission source deleted');
+-            fetchSources();
+-        } catch (err) {
+-            toast.error(err?.response?.data?.error || 'Failed to delete emission source');
+-        }
+-    };
+-
+-    const handleDeleteMitigation = async (id) => {
+-        if (!window.confirm('Delete this mitigation project?')) return;
+-        try {
+-            await api.delete(`/mitigation/${id}`);
+-            toast.success('Mitigation project deleted');
+-            fetchMitigations();
+-        } catch (err) {
+-            toast.error(err?.response?.data?.error || 'Failed to delete mitigation project');
+-        }
++    const handleDeleteOgmpSurvey = (id) => {
++        requestConfirm({
++            title: "Delete OGMP Survey",
++            message: 'Delete this OGMP survey record?',
++            confirmLabel: "Delete Survey",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/data/ogmp-surveys/${id}`);
++                    toast.success('OGMP survey record deleted');
++                    fetchOgmpSurveys();
++                } catch (err) {
++                    toast.error('Failed to delete OGMP survey');
++                }
++            }
++        });
++    };
++
++    const handleDeleteFacility = (id) => {
++        requestConfirm({
++            title: "Delete Region",
++            message: 'Are you sure you want to delete this region/facility? Associated records may be affected.',
++            confirmLabel: "Delete Region",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/facilities/${id}`);
++                    toast.success('Region deleted');
++                    fetchFacilities();
++                } catch (err) {
++                    toast.error(err?.response?.data?.error || 'Failed to delete region');
++                }
++            }
++        });
++    };
++
++    const handleDeleteProduction = (id) => {
++        requestConfirm({
++            title: "Delete Production Record",
++            message: 'Delete this production record?',
++            confirmLabel: "Delete Record",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/data/production/${id}`);
++                    toast.success('Production record deleted');
++                    fetchProduction();
++                } catch (err) {
++                    toast.error(err?.response?.data?.error || 'Failed to delete production record');
++                }
++            }
++        });
++    };
++
++    const handleDeleteSource = (id) => {
++        requestConfirm({
++            title: "Delete Emission Source",
++            message: 'Delete this emission source?',
++            confirmLabel: "Delete Source",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/sources/${id}`);
++                    toast.success('Emission source deleted');
++                    fetchSources();
++                } catch (err) {
++                    toast.error(err?.response?.data?.error || 'Failed to delete emission source');
++                }
++            }
++        });
++    };
++
++    const handleDeleteMitigation = (id) => {
++        requestConfirm({
++            title: "Delete Mitigation Project",
++            message: 'Delete this mitigation project?',
++            confirmLabel: "Delete Project",
++            confirmVariant: "danger",
++            onConfirm: async () => {
++                try {
++                    await api.delete(`/mitigation/${id}`);
++                    toast.success('Mitigation project deleted');
++                    fetchMitigations();
++                } catch (err) {
++                    toast.error(err?.response?.data?.error || 'Failed to delete mitigation project');
++                }
++            }
++        });
+     };
+ 
+     const handleFactorChange = (e) => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

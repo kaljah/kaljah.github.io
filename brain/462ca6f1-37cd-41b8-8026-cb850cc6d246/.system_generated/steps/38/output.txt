@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\components
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026  12:54 PM           1946 EmissionFactorOption.jsx                                             
+-a----         9/22/2026   9:58 PM           5987 EmissionResult.css                                                   
+-a----         8/11/2026  12:54 PM           8994 EmissionResult.jsx                                                   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\pages
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   5:22 PM          14752 Emissions.css                                                        
+-a----          9/8/2026  11:48 PM          11191 Emissions.jsx                                                        
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\utils
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/24/2026   5:02 PM          35356 EmissionFactors.js                                                   
+-a----         8/11/2026  12:54 PM           7912 emissionFactorsAPI.js                                                
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\__tests__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:27 PM           1403 EmissionResult.test.jsx                                              
+
+
+

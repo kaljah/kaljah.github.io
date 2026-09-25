@@ -1,0 +1,55 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 4 items
+
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorAudit::test_combustion_factors_integrity PASSED [ 25%]
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorAudit::test_gas_specificity_co2_vs_ch4_vs_n2o PASSED [ 50%]
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorSelection::test_prevent_cross_fuel_selection PASSED [ 75%]
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorSelection::test_custom_factor_isolation FAILED [100%]
+
+================================== FAILURES ===================================
+________ TestCleanEmissionFactorSelection.test_custom_factor_isolation ________
+
+self = <test_clean_emission_factors.TestCleanEmissionFactorSelection object at 0x000001E89EFF2C30>
+
+    def test_custom_factor_isolation(self):
+        """Verifies custom factors take precedence without polluting global catalog."""
+        custom_data = {
+            "name": "Custom Flare Gas",
+            "type": "custom",
+            "co2": 2.50,
+            "ch4": 0.05,
+            "n2o": 0.001,
+            "unit": "kg/m3",
+        }
+        payload = {
+            "amount": 1000.0,
+            "unit": "m3",
+            "process": "combustion",
+            "factor_source": "custom",
+        }
+        em, method = compute_emissions(
+            payload=payload,
+            factor_data=custom_data,
+        )
+    
+>       assert method == "server_custom_factor"
+E       AssertionError: assert 'api2021_generic' == 'server_custom_factor'
+E         
+E         - server_custom_factor
+E         + api2021_generic
+
+validation\calculation\test_clean_emission_factors.py:95: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorSelection::test_custom_factor_isolation
+========================= 1 failed, 3 passed in 2.19s =========================
+

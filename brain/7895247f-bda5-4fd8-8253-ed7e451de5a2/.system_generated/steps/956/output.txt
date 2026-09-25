@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+P31: GB TOTAL CH4 EMISSIONS BY MODULE � 2021 TO 2025 Total CH4 Emissions (Tonnes/Year) SANGEA Module 2021 2022 2023 2024 2025 Stationary Combustion 69.30 7
+P32: 2025 YEARLY CPF FLARING BREAKDOWN Flaring in KNm3 HBNS CPF Flaring ELM CPF Flaring Year Routine Flaring Non-Routine Flaring Safety Flaring Total Flari
+P33: HBNS Category Unit 2021 2022 2023 2024 2025 2021 2025 GHG Emissions TO GHG Direct Emissions (Scope 1) MMtCO2e 1.028 1.008 0.947 0.780 0.706 GHG Indire
+P34: ELM Category Unit 2021 2022 2023 2024 2025 2021 2025 GHG Emissions TO GHG Direct Emissions (Scope 1) MMtCO2e 0.919 1.011 1.004 0.883 0.886 GHG Indirec
+P35: GB Category Unit 2021 2022 2023 2024 2025 2021 2025 GHG Emissions TO GHG Direct Emissions (Scope 1) MMtCO2e 1.947 2.019 1.951 1.662 1.592 GHG Indirect
+P36: TOTAL GHG EMISSIONS BY JV PARTNER EQUITY SHARE Total CO2e Emissions (Tonnes/Year) JV Partners HBNS 2021 ELM2021 Total 2021 HBNS2022 ELM2022 Total2022 
+P37: TOTAL CH4 EMISSIONS BY JV PARTNER EQUITY SHARE Total CH4 Emissions (Tonnes/Year) JV Partners HBNS 2021 ELM2021 Total 2021 HBNS2022 ELM2022 Total2022 H
+

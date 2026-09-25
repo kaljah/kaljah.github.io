@@ -1,0 +1,2 @@
+Created file file:///C:/Users/samsung/Desktop/H2/new/client/e2e/ghg-workflow.spec.js with requested content.
+If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.

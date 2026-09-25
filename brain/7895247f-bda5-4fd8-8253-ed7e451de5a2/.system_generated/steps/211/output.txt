@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -261,6 +261,8 @@
+ from routes.audit import audit_bp
+ from routes.satellite import satellite_bp
+ from routes.qaqc import qaqc_bp
++from routes.cap_routes import cap_bp
++from routes.equity_routes import equity_bp
+ 
+ app.register_blueprint(auth_bp, url_prefix="/api/auth")
+ app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
+@@ -276,6 +276,8 @@
+ app.register_blueprint(audit_bp, url_prefix="/api/audit")
+ app.register_blueprint(satellite_bp, url_prefix="/api/satellite")
+ app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
++app.register_blueprint(cap_bp, url_prefix="/api/cap")
++app.register_blueprint(equity_bp, url_prefix="/api/equity")
+ 
+ # Swagger UI Configuration (SEC-05 & INFO-01: Disabled in production unless explicitly enabled)
+ if (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

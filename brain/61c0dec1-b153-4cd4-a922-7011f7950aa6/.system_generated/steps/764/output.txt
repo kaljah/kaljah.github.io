@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -245,9 +245,9 @@
+         # Stripping gas calculation (API Compendium §6.6 / GRI-GLYCalc / EPA Subpart W §98.233(e))
+         # Stripping gas (fuel gas or methane) is injected into the regenerator reboiler/stripping column
+         # and exits overhead with the still vent gas stream.
+-        stripping_scf = 0.0
++        total_stripping_scf = 0.0
+         if stripping_gas_scf is not None and float(stripping_gas_scf or 0) > 0:
+-            stripping_scf = float(stripping_gas_scf) * ch4_frac
++            total_stripping_scf = float(stripping_gas_scf)
+         elif stripping_gas_rate is not None and float(stripping_gas_rate or 0) > 0:
+             s_rate = float(stripping_gas_rate)
+             s_unit = str(stripping_gas_unit or "scf/hr").strip().lower()
+@@ -254,7 +254,8 @@
+                 s_rate = convert(s_rate, "m3", "scf")
+             elif s_unit in ["scf/gal", "scf/gallon"]:
+                 s_rate = s_rate * rate_gph
+-            stripping_scf = s_rate * op_hours * ch4_frac
++            total_stripping_scf = s_rate * op_hours
++        stripping_scf = total_stripping_scf * ch4_frac
+ 
+         # Stream Partitioning & Control Systems:
+         # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent.
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

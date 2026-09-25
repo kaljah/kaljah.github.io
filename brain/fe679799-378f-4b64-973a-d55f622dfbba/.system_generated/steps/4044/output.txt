@@ -1,0 +1,100 @@
+
+The command exited with code 0.
+Output:
+<truncated 231 lines>
+new\server\routes\emissions.py:3591:                    record.uncertainty = float(user_unc["co2"]) / 100.0
+new\server\routes\emissions.py:3593:                    record.uncertainty_ch4 = float(user_unc["ch4"]) / 100.0
+new\server\routes\emissions.py:3595:                    record.uncertainty_n2o = float(user_unc["n2o"]) / 100.0
+new\server\routes\emissions.py:3862:                    # Uncertainty Handling (Import)
+new\server\routes\emissions.py:3863:                    if cf.co2_uncertainty or cf.ch4_uncertainty or 
+cf.n2o_uncertainty:
+new\server\routes\emissions.py:3864:                        factor_data["uncertainty"] = {
+new\server\routes\emissions.py:3866:                                getattr(cf, "co2_uncertainty", None)
+new\server\routes\emissions.py:3867:                                or getattr(cf, "uncertainty", 0)
+new\server\routes\emissions.py:3872:                                getattr(cf, "ch4_uncertainty", None)
+new\server\routes\emissions.py:3873:                                or getattr(cf, "uncertainty", 0)
+new\server\routes\emissions.py:3878:                                getattr(cf, "n2o_uncertainty", None)
+new\server\routes\emissions.py:3879:                                or getattr(cf, "uncertainty", 0)
+new\server\routes\emissions.py:3884:                    elif cf.uncertainty and cf.uncertainty > 0:
+new\server\routes\emissions.py:3885:                        factor_data["uncertainty"] = {
+new\server\routes\emissions.py:3886:                            "co2": float(cf.uncertainty or 0) / 100.0,
+new\server\routes\emissions.py:3887:                            "ch4": float(cf.uncertainty or 0) / 100.0,
+new\server\routes\emissions.py:3888:                            "n2o": float(cf.uncertainty or 0) / 100.0,
+new\server\routes\emissions.py:3892:                        if "uncertainty" in parent_factor:
+new\server\routes\emissions.py:3893:                            factor_data["uncertainty"] = 
+parent_factor["uncertainty"]
+new\server\routes\emissions.py:3947:                uncertainty=(
+new\server\routes\emissions.py:3948:                    factor_data.get("uncertainty", {}).get("co2", 0)
+new\server\routes\emissions.py:3949:                    if isinstance(factor_data.get("uncertainty"), dict)
+new\server\routes\emissions.py:3950:                    else (factor_data.get("uncertainty") or 0)
+new\server\routes\emission_factors_routes.py:4:process category filtering, and automatic uncertainty loading.
+new\server\routes\emission_factors_routes.py:294:    Get all emission factors that have uncertainty values defined.
+new\server\routes\emission_factors_routes.py:297:        min_uncertainty: Optional minimum uncertainty threshold (0-1)
+new\server\routes\emission_factors_routes.py:298:        max_uncertainty: Optional maximum uncertainty threshold (0-1)
+new\server\routes\emission_factors_routes.py:301:        JSON: Emission factors with uncertainty information
+new\server\routes\emission_factors_routes.py:303:    min_unc = request.args.get("min_uncertainty", type=float)
+new\server\routes\emission_factors_routes.py:304:    max_unc = request.args.get("max_uncertainty", type=float)
+new\server\routes\emission_factors_routes.py:308:        if "uncertainty" in factor_data:
+new\server\routes\emission_factors_routes.py:309:            # Get max uncertainty across all gases
+new\server\routes\emission_factors_routes.py:311:                factor_data["uncertainty"].get("co2", 0),
+new\server\routes\emission_factors_routes.py:312:                factor_data["uncertainty"].get("ch4", 0),
+new\server\routes\emission_factors_routes.py:313:                factor_data["uncertainty"].get("n2o", 0),
+new\server\routes\emission_factors_routes.py:322:            results[factor_name] = {**factor_data, "max_uncertainty": 
+max_factor_unc}
+new\server\routes\emission_factors_routes.py:369:        [f for f in ALL_EMISSION_FACTORS.values() if "uncertainty" in 
+f]
+new\server\routes\emission_factors_routes.py:395:                "Automatic uncertainty loading",
+new\server\routes\qaqc.py:27:    Returns aggregated uncertainty (IPCC SRSS) and flagged anomaly records.
+new\server\routes\qaqc.py:160:        # � Uncertainty aggregation (IPCC SRSS - scoped to allowed facilities) �
+new\server\routes\qaqc.py:179:            Emission.uncertainty_pct,
+new\server\routes\qaqc.py:180:            Emission.uncertainty,
+new\server\routes\qaqc.py:191:            Scope2Emission.uncertainty_pct,
+new\server\routes\qaqc.py:192:            Scope2Emission.uncertainty,
+new\server\routes\qaqc.py:203:            Scope3Emission.uncertainty_pct,
+new\server\routes\qaqc.py:204:            Scope3Emission.uncertainty,
+new\server\routes\qaqc.py:214:        overall_uncertainty = (
+new\server\routes\qaqc.py:524:                "description": "No custom or site-specific emission factors registered. 
+Adding facility-calibrated factors reduces Tier 1 uncertainty.",
+new\server\routes\qaqc.py:572:            "tier1_uncertainty": {
+new\server\routes\qaqc.py:573:                "overall": overall_uncertainty,
+new\server\routes\scope2.py:7:from calculations.uncertainty import propagate_uncertainty, Tier
+new\server\routes\scope2.py:218:    # Calculate uncertainty
+new\server\routes\scope2.py:219:    provided_uncertainty = data.get("uncertainty")
+new\server\routes\scope2.py:220:    if provided_uncertainty is not None:
+new\server\routes\scope2.py:221:        final_uncertainty = float(provided_uncertainty)
+new\server\routes\scope2.py:223:        # Default Scope 2 uncertainty (5% EF, 2% AD -> ~5.4% combined)
+new\server\routes\scope2.py:224:        u_res = propagate_uncertainty(
+new\server\routes\scope2.py:226:            ef_uncertainty=0.05,
+new\server\routes\scope2.py:227:            activity_uncertainty=0.02,
+new\server\routes\scope2.py:232:        final_uncertainty = u_res["relative_uncertainty"]
+new\server\routes\scope2.py:267:        uncertainty=final_uncertainty,
+new\server\routes\scope2.py:329:                    "uncertainty": final_uncertainty,
+new\server\routes\scope2.py:343:                    "uncertainty": final_uncertainty,
+new\server\routes\scope2.py:463:    if "uncertainty" in data:
+new\server\routes\scope2.py:464:        emission.uncertainty = float(data["uncertainty"] or 0)
+new\server\routes\scope2.py:626:            # Default Scope 2 uncertainty
+new\server\routes\scope2.py:627:            u_res = propagate_uncertainty(
+new\server\routes\scope2.py:629:                ef_uncertainty=0.05,
+new\server\routes\scope2.py:630:                activity_uncertainty=0.02,
+new\server\routes\scope2.py:635:            final_uncertainty = u_res["relative_uncertainty"]
+new\server\routes\scope2.py:645:                uncertainty=final_uncertainty,
+new\server\routes\scope3.py:6:from calculations.uncertainty import propagate_uncertainty, Tier
+new\server\routes\scope3.py:56:                "uncertainty": float(e.uncertainty) if e.uncertainty is not None else 
+None,
+new\server\routes\scope3.py:125:    # Calculate uncertainty
+new\server\routes\scope3.py:126:    provided_uncertainty = data.get("uncertainty")
+new\server\routes\scope3.py:127:    if provided_uncertainty is not None:
+new\server\routes\scope3.py:128:        final_uncertainty = float(provided_uncertainty)
+new\server\routes\scope3.py:130:        # Default Scope 3 uncertainty (20% EF, 10% AD -> ~22.3% combined)
+new\server\routes\scope3.py:131:        u_res = propagate_uncertainty(
+new\server\routes\scope3.py:133:            ef_uncertainty=0.20,
+new\server\routes\scope3.py:134:            activity_uncertainty=0.10,
+new\server\routes\scope3.py:139:        final_uncertainty = u_res["relative_uncertainty"]
+new\server\routes\scope3.py:141:    emission.uncertainty = final_uncertainty
+new\server\routes\scope3.py:195:            "uncertainty": final_uncertainty,
+new\server\routes\scope3.py:209:            "uncertainty": final_uncertainty,
+new\server\routes\scope3.py:286:    if "uncertainty" in data:
+new\server\routes\scope3.py:287:        emission.uncertainty = float(data["uncertainty"] or 0)
+
+
+

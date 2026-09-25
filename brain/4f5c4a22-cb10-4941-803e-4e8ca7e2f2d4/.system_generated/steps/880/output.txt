@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+  TCP    0.0.0.0:5173           0.0.0.0:0              LISTENING       13172
+  TCP    127.0.0.1:5173         127.0.0.1:56055        ESTABLISHED     13172
+  TCP    127.0.0.1:5173         127.0.0.1:63204        ESTABLISHED     13172
+  TCP    127.0.0.1:56055        127.0.0.1:5173         ESTABLISHED     27336
+  TCP    127.0.0.1:63204        127.0.0.1:5173         ESTABLISHED     13860
+

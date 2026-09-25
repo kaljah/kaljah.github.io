@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":236,"LineContent":"@limiter.limit(\"10 per hour\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":310,"LineContent":"@limiter.limit(\"20 per 15 minutes\")  # SEC-01 FIX: rely cleanly on Flask-Limiter"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":382,"LineContent":"@limiter.limit(\"5 per 15 minutes\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":454,"LineContent":"@limiter.limit(\"60 per minute\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":557,"LineContent":"@limiter.limit(\"5 per hour\")"}

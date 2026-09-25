@@ -1,0 +1,63 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -329,14 +329,11 @@
+   }, [processType]);
+ 
+   useEffect(() => {
+-    // If switching to Custom, clear fuel (IDs don't match default keys)
+-    // If switching from Custom to Default/Specific, clear fuel
+-    // If switching between Default and Specific, KEEP fuel (shared options)
+     setFormData((prev) => {
+-      const isCustomId = !isNaN(parseInt(prev.fuel)); // Rough check, assuming default keys are strings
+-      if (sourceType === "custom" && !isCustomId) return { ...prev, fuel: "" };
+-      if (
+-        (sourceType === "default" || sourceType === "specific") &&
++      const isCustomId = !isNaN(parseInt(prev.fuel)) && String(parseInt(prev.fuel)) === String(prev.fuel);
++      if (sourceType === "custom" && tier2Mode === "custom_factor" && !isCustomId) return { ...prev, fuel: "" };
++      if (
++        (sourceType === "default" || sourceType === "specific" || (sourceType === "custom" && tier2Mode === "override")) &&
+         isCustomId &&
+         prev.fuel
+       )
+@@ -343,6 +343,37 @@
+       return prev;
+     });
+-  }, [sourceType]);
++  }, [sourceType, tier2Mode]);
++
++  const handleApplyPreset = (preset) => {
++    setActivePresetId(preset.id);
++    const matched = fuelOptions.find(
++      (opt) => opt.value.toLowerCase() === preset.defaultMatchingFuel.toLowerCase()
++    );
++    const fuelVal = matched ? matched.value : preset.defaultMatchingFuel;
++
++    setFormData((prev) => ({
++      ...prev,
++      fuel: fuelVal,
++      hhv: preset.hhv ? preset.hhv.toString() : prev.hhv,
++      hhv_unit: preset.hhvUnit || prev.hhv_unit || "BTU/scf",
++    }));
++
++    if (preset.densityKgM3) {
++      setFuelDensity(preset.densityKgM3.toString());
++    }
++    if (preset.citation) {
++      setDataSourceRef(preset.citation);
++    }
++    toast.success(`Preset applied: ${preset.shortLabel || preset.name}`);
++  };
++
++  const handleFactorCreated = (newFactor) => {
++    loadCustomFactors();
++    if (newFactor?.id) {
++      setTier2Mode("custom_factor");
++      setFormData((prev) => ({ ...prev, fuel: newFactor.id.toString() }));
++    }
++  };
+ 
+   // Auto-populate Specific Factors
+   useEffect(() => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

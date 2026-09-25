@@ -1,0 +1,79 @@
+
+The command exited with code 0.
+Output:
+commit 9a69efc85c965c20a4a168330299c82bb54c26b7
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sun Sep 20 15:49:52 2026 +0200
+
+    y
+
+diff --git a/new/server/routes/facilities.py b/new/server/routes/facilities.py
+index 87d1c7f..98f683a 100644
+--- a/new/server/routes/facilities.py
++++ b/new/server/routes/facilities.py
+@@ -18,7 +18,7 @@ def get_facilities():
+     )  # API-02 FIX: replaced deprecated query.get
+     if not user:
+         return jsonify({"error": "Unauthorized"}), 401
+-    if user.role in ["it_admin", "it"]:
++    if user.role in ["it_admin", "it_manager", "it"]:
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT personnel cannot access operational facility data"}
+@@ -47,6 +47,8 @@ def get_facilities():
+                 "activity": f.activity,
+                 "region": f.region,
+                 "boundary_notes": f.boundary_notes,
++                "boundary_type": f.boundary_type or "Operational Control",
++                "boundary_detail": f.boundary_detail or "",
+                 "segment": f.segment,
+                 "operator_status": f.operator_status or "operated",
+                 "country": f.country or "Algeria",
+@@ -75,7 +77,7 @@ def get_all_regions():
+     """
+     user_id = session.get("user_id")
+     caller = db.session.get(User, user_id) if user_id else None  # API-02 FIX
+-    if not caller or caller.role not in ["it_admin", "it"]:
++    if not caller or caller.role not in ["it_admin", "it_manager", "it"]:
+         return jsonify({"error": "IT privileges required"}), 403
+ 
+     identifiers = set()
+@@ -148,6 +150,8 @@ def add_facility():
+         field=data.get("field"),
+         code=data.get("code"),
+         boundary_notes=data.get("boundary_notes"),
++        boundary_type=data.get("boundary_type", "Operational Control"),
++        boundary_detail=data.get("boundary_detail"),
+         segment=data.get("segment"),
+         operator_status=data.get("operator_status", "operated"),
+         country=data.get("country", "Algeria"),
+@@ -230,6 +234,10 @@ def update_facility(facility_id):
+         facility.description = data["description"]
+     if "boundary_notes" in data:
+         facility.boundary_notes = data["boundary_notes"]
++    if "boundary_type" in data:
++        facility.boundary_type = data["boundary_type"]
++    if "boundary_detail" in data:
++        facility.boundary_detail = data["boundary_detail"]
+     if "activity" in data:
+         facility.activity = data["activity"]
+     if "region" in data:
+@@ -278,6 +286,8 @@ def update_facility(facility_id):
+                 "location",
+                 "description",
+                 "boundary_notes",
++                "boundary_type",
++                "boundary_detail",
+                 "activity",
+                 "division",
+                 "field",
+@@ -415,6 +425,8 @@ def import_facilities():
+             location=fac_data.get("location"),
+             description=fac_data.get("description"),
+             boundary_notes=fac_data.get("boundary_notes"),
++            boundary_type=fac_data.get("boundary_type", "Operational Control"),
++            boundary_detail=fac_data.get("boundary_detail"),
+             activity=fac_data.get("activity"),
+             division=fac_data.get("division"),
+             region=fac_data.get("region"),
+

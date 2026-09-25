@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+Collecting hypothesis
+  Downloading hypothesis-6.168.0-cp312-cp312-win_amd64.whl.metadata (5.7 kB)
+Requirement already satisfied: sortedcontainers<3.0.0,>=2.1.0 in c:\users\samsung\anaconda3\lib\site-packages (from hypothesis) (2.4.0)
+Downloading hypothesis-6.168.0-cp312-cp312-win_amd64.whl (682 kB)
+   ---------------------------------------- 682.0/682.0 kB 1.5 MB/s eta 0:00:00
+Installing collected packages: hypothesis
+Successfully installed hypothesis-6.168.0
+

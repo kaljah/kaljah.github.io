@@ -1,0 +1,69 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/auth.py:433:        it_admins = User.query.filter(User.role.in_(["it_admin", "it_manager"]), User.status == "active").all()
+new/server/routes/dashboard.py:295:        ).filter(Emission.status == "Pending")
+new/server/routes/dashboard.py:307:        ).filter(Scope2Emission.status == "Pending")
+new/server/routes/dashboard.py:429:        else (Emission.status == "Verified")
+new/server/routes/dashboard.py:464:        else (Scope2Emission.status == "Verified")
+new/server/routes/dashboard.py:678:    by_year_query = by_year_query.filter(Scope3Emission.status == "Verified")
+new/server/routes/dashboard.py:731:    query = query.filter(Emission.status == "Verified")
+new/server/routes/dashboard.py:755:    scope2_q = scope2_q.filter(Scope2Emission.status == "Verified")
+new/server/routes/dashboard.py:779:    scope3_q = scope3_q.filter(Scope3Emission.status == "Verified")
+new/server/routes/dashboard.py:827:        .filter(Emission.status == "Verified")
+new/server/routes/dashboard.py:833:        .filter(Scope2Emission.status == "Verified")
+new/server/routes/dashboard.py:839:        .filter(Scope3Emission.status == "Verified")
+new/server/routes/dashboard.py:1165:    ).filter(Emission.status == "Verified")
+new/server/routes/dashboard.py:1183:        target_yr = membership_yr + (3 if op_status == "operated" else 5)
+new/server/routes/dashboard.py:1186:        if op_status == "operated":
+new/server/routes/dashboard.py:1399:    ).filter(Emission.year.in_(year_list), Emission.status == "Verified")
+new/server/routes/dashboard.py:1436:        Emission.status == "Verified",
+new/server/routes/dashboard.py:1487:    ).filter(Scope2Emission.year.in_(year_list), Scope2Emission.status == "Verified")
+new/server/routes/dashboard.py:1522:    ).filter(Scope3Emission.year.in_(year_list), Scope3Emission.status == "Verified")
+new/server/routes/dashboard.py:1773:    em_query = em_query.filter(Emission.status == "Verified")
+new/server/routes/dashboard.py:1840:        Emission.status == "Verified",
+new/server/routes/dashboard.py:1917:    s2_query = s2_query.filter(Scope2Emission.status == "Verified")
+new/server/routes/dashboard.py:1956:    s3_query = s3_query.filter(Scope3Emission.status == "Verified")
+new/server/routes/dashboard.py:2119:        deadline_years = 3 if op_status == "operated" else 5
+new/server/routes/dashboard.py:2382:        ).filter(Emission.year == year, Emission.status == "Verified")
+new/server/routes/dashboard.py:2404:            Scope2Emission.year == year, Scope2Emission.status == "Verified"
+new/server/routes/dashboard.py:2423:            Scope3Emission.year == year, Scope3Emission.status == "Verified"
+new/server/routes/dashboard.py:2908:        Emission.status == "Verified",
+new/server/routes/dashboard.py:3015:            Emission.status == "Verified",
+new/server/routes/dashboard.py:3104:    ).filter(Emission.year == yr, Emission.status == "Verified")
+new/server/routes/dashboard.py:3115:        Scope2Emission.year == yr, Scope2Emission.status == "Verified"
+new/server/routes/data.py:485:        Emission.status == 'Verified'
+new/server/routes/data.py:773:            Emission.status == 'Verified'
+new/server/routes/data.py:780:            Scope2Emission.status == 'Verified'
+new/server/routes/emissions.py:902:            approved_by=user.id if bulk_status == "Verified" else None,
+new/server/routes/emissions.py:903:            approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+new/server/routes/emissions.py:3424:    if user.role not in ["admin", "superuser"] and record.status == "Verified":
+new/server/routes/emissions.py:3479:        if record.status == "Verified" and user.role != "admin":
+new/server/routes/emissions.py:4085:        q1 = Emission.query.filter(Emission.status == "Verified")
+new/server/routes/emissions.py:4139:        q2 = Scope2Emission.query.filter(Scope2Emission.status == "Verified")
+new/server/routes/emissions.py:4187:        q3 = Scope3Emission.query.filter(Scope3Emission.status == "Verified")
+new/server/routes/reports.py:334:            q = q.filter(Emission.status == "Verified")
+new/server/routes/reports.py:365:            q2 = q2.filter(Scope2Emission.status == "Verified")
+new/server/routes/reports.py:408:            q3 = q3.filter(Scope3Emission.status == "Verified")
+new/server/routes/reports.py:588:            q1 = q1.filter(Emission.status == "Verified")
+new/server/routes/reports.py:630:            q2 = q2.filter(Scope2Emission.status == "Verified")
+new/server/routes/reports.py:681:            q3 = q3.filter(Scope3Emission.status == "Verified")
+new/server/routes/reports.py:898:                Emission.facility_id == f.id, Emission.status == "Verified"
+new/server/routes/reports.py:1018:        em_list_q = Emission.query.filter(Emission.status == "Verified")
+new/server/routes/reports.py:1200:                Emission.facility_id == f.id, Emission.status == "Verified"
+new/server/routes/reports.py:1309:                and latest_survey.reconciliation_status == "Reconciled"
+new/server/routes/satellite.py:266:            Emission.status == "Verified",
+new/server/routes/scope2.py:236:    if req_status == "Draft":
+new/server/routes/scope2.py:275:        approved_by=user.id if initial_status == "Verified" and user else None,
+new/server/routes/scope2.py:276:        approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
+new/server/routes/scope2.py:376:    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
+new/server/routes/scope2.py:653:                approved_by=user.id if bulk_status == "Verified" else None,
+new/server/routes/scope2.py:654:                approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+new/server/routes/scope3.py:90:    if req_status == "Draft":
+new/server/routes/scope3.py:121:        approved_by=user.id if initial_status == "Verified" else None,
+new/server/routes/scope3.py:122:        approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
+new/server/routes/scope3.py:238:    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
+new/server/routes/scope3.py:281:        if emission.status == "Verified" and user.role != "admin":
+new/server/routes/scope3.py:461:                approved_by=user.id if bulk_status == "Verified" else None,
+new/server/routes/scope3.py:462:                approved_at=datetime.datetime.now(datetime.timezone.utc) if bulk_status == "Verified" else None,
+

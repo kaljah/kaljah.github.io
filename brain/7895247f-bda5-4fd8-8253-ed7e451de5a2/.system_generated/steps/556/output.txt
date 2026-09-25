@@ -1,0 +1,95 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 5 items
+
+new\server\tests\test_berkine_cap_equity.py ..FFF                        [100%]
+
+================================== FAILURES ===================================
+___________________ test_dashboard_flaring_summary_endpoint ___________________
+
+client = <FlaskClient <Flask 'app'>>
+auth_header = {'Authorization': 'Bearer None'}
+
+    def test_dashboard_flaring_summary_endpoint(client, auth_header):
+        resp = client.get("/api/dashboard/flaring-summary?year=2025", headers=auth_header)
+        assert resp.status_code == 200
+        data = resp.get_json()
+>       assert "total_flared_volume_knm3" in data
+E       AssertionError: assert 'total_flared_volume_knm3' in {'compliance_status': 'COMPLIANT (Under 1.00% Target)', 'dre_method': 'Standard 98% Default', 'facility_id': None, 'flaring_intensity_pct': 0.0, ...}
+
+new\server\tests\test_berkine_cap_equity.py:54: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-24 17:18:33,937] INFO in app: POST /api/auth/login 200 [0.122s] [ReqID: 7540169d-9625-4c06-a64f-ebf09b9ba0cb]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.122s] [ReqID: 7540169d-9625-4c06-a64f-ebf09b9ba0cb]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-24 17:18:33,954] INFO in app: GET /api/dashboard/flaring-summary 200 [0.016s] [ReqID: b77adcb7-0ca9-4c3d-8b43-4631d3de453b]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 GET /api/dashboard/flaring-summary 200 [0.016s] [ReqID: b77adcb7-0ca9-4c3d-8b43-4631d3de453b]
+________________ test_dashboard_granular_intensities_endpoint _________________
+
+client = <FlaskClient <Flask 'app'>>
+auth_header = {'Authorization': 'Bearer None'}
+
+    def test_dashboard_granular_intensities_endpoint(client, auth_header):
+        resp = client.get("/api/dashboard/granular-intensities?year=2025", headers=auth_header)
+        assert resp.status_code == 200
+        data = resp.get_json()
+>       assert "total_boe" in data
+E       AssertionError: assert 'total_boe' in {'ci_by_saleable_production_kg_boe': 0.0, 'ci_by_total_production_kg_boe': 0.0, 'facility_id': None, 'gross_gas_sm3': 0, ...}
+
+new\server\tests\test_berkine_cap_equity.py:65: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-24 17:18:34,443] INFO in app: POST /api/auth/login 200 [0.102s] [ReqID: 7f1056e4-d330-4ce2-89bd-d09969751dc3]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.102s] [ReqID: 7f1056e4-d330-4ce2-89bd-d09969751dc3]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-24 17:18:34,454] INFO in app: GET /api/dashboard/granular-intensities 200 [0.009s] [ReqID: c2d8a87d-f197-4a7f-b0ed-d1bb093a161d]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 GET /api/dashboard/granular-intensities 200 [0.009s] [ReqID: c2d8a87d-f197-4a7f-b0ed-d1bb093a161d]
+_________________________ test_equity_routes_endpoint _________________________
+
+client = <FlaskClient <Flask 'app'>>
+auth_header = {'Authorization': 'Bearer None'}
+
+    def test_equity_routes_endpoint(client, auth_header):
+        resp = client.get("/api/equity/partners", headers=auth_header)
+        assert resp.status_code == 200
+        partners = resp.get_json()
+        assert isinstance(partners, list)
+    
+        resp_alloc = client.get("/api/equity/allocations?year=2025", headers=auth_header)
+>       assert resp_alloc.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+new\server\tests\test_berkine_cap_equity.py:77: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-24 17:18:34,577] INFO in app: POST /api/auth/login 200 [0.110s] [ReqID: fb980280-f71f-4fbe-be24-4c2073af31d0]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.110s] [ReqID: fb980280-f71f-4fbe-be24-4c2073af31d0]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-24 17:18:34,604] INFO in app: GET /api/equity/partners 200 [0.025s] [ReqID: a9b3ea31-a8a4-4c69-aaa3-11ef5af5ac78]
+[2026-09-24 17:18:34,606] INFO in app: GET /api/equity/allocations 404 [0.001s] [ReqID: 7c319297-339f-40d3-b71c-bbca46548f6b]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 GET /api/equity/partners 200 [0.025s] [ReqID: a9b3ea31-a8a4-4c69-aaa3-11ef5af5ac78]
+INFO     app:app.py:184 GET /api/equity/allocations 404 [0.001s] [ReqID: 7c319297-339f-40d3-b71c-bbca46548f6b]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_berkine_cap_equity.py::test_dashboard_flaring_summary_endpoint
+FAILED new\server\tests\test_berkine_cap_equity.py::test_dashboard_granular_intensities_endpoint
+FAILED new\server\tests\test_berkine_cap_equity.py::test_equity_routes_endpoint
+=================== 3 failed, 2 passed, 1 warning in 1.90s ====================
+

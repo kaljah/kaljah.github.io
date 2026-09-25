@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":264,"LineContent":"app.register_blueprint(custom_factors_bp, url_prefix=\"/api/custom-factors\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1588,"LineContent":"        \"/api/custom-factors\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1604,"LineContent":"    get_resp = client.get(\"/api/custom-factors\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":165,"LineContent":"    assert client.get(\"/api/custom-factors\").status_code == 403"}

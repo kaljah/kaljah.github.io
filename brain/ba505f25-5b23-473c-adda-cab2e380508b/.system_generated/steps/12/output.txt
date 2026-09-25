@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":618,"LineContent":"                        role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":324,"LineContent":"                \"role\": \"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":331,"LineContent":"                \"role\": \"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":338,"LineContent":"                \"role\": \"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":345,"LineContent":"                \"role\": \"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":360,"LineContent":"            \"role\": \"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":368,"LineContent":"            \"role\": \"it_admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":382,"LineContent":"                    role=u[\"role\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":391,"LineContent":"                app.logger.info(f\"Seeded {u['role']} account: {u['email']}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":395,"LineContent":"                user.role = u[\"role\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors_api2021.py","LineNumber":291,"LineContent":"    \"Petroleum Coke\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":30,"LineContent":"    \"324\": {\"name\": \"Petroleum and Coal Products Manufacturing\", \"kg_co2e_per_1000_usd\": 4100.2},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":144,"LineContent":"    elif any(k in fuel_lower for k in [\"oil\", \"diesel\", \"crude\", \"petroleum\", \"gasoline\", \"fuel_oil\", \"liquid\"]):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":25,"LineContent":"    role = db.Column(db.String(20), default=\"user\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":733,"LineContent":"        # FCCU method uses CO2 amount to calculate CH4 and N2O based on petroleum coke"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":193,"LineContent":"                role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":204,"LineContent":"            user.role = \"admin\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":215,"LineContent":"                role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":232,"LineContent":"                role=\"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":243,"LineContent":"            mgmt_z.role = \"it_manager\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":254,"LineContent":"                role=\"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":44,"LineContent":"                role=\"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":30,"LineContent":"    # IT Admin, IT Manager \u0026 IT roles have zero facility/emission data access."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":31,"LineContent":"    if user.role in [\"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":36,"LineContent":"    if user.role == \"admin\" or ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":37,"LineContent":"        user.role == \"superuser\" and is_unrestricted_location(user.location)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":44,"LineContent":"        return []  # No region assigned, no access for restricted role"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":63,"LineContent":"    if not user or user.role in [\"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":65,"LineContent":"    if user.role == \"admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":120,"LineContent":"        if user.role == \"superuser\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":121,"LineContent":"            admins = User.query.filter_by(role=\"admin\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":129,"LineContent":"        elif user.role == \"user\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":130,"LineContent":"            superusers = User.query.filter_by(role=\"superuser\", status=\"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":45,"LineContent":"                \"role\": \"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":52,"LineContent":"                \"role\": \"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":59,"LineContent":"                \"role\": \"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":66,"LineContent":"                \"role\": \"it_manager\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":73,"LineContent":"                \"role\": \"admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":80,"LineContent":"                \"role\": \"it_admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":87,"LineContent":"                \"role\": \"it\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":99,"LineContent":"                    user.role = u_data[\"role\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":112,"LineContent":"                    role=u_data[\"role\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":122,"LineContent":"                print(f\"  [OK] User '{email}' (role: {u_data['role']}) seeded successfully.\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":92,"LineContent":"                        \"role\": { \"type\": \"string\", \"example\": \"it_admin\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":125,"LineContent":"                    \"role\": { \"type\": \"string\", \"example\": \"it_admin\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\upload_test_s2_s3.py","LineNumber":16,"LineContent":"        admin = User.query.filter_by(role='admin').first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":20,"LineContent":"def is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":21,"LineContent":"    return bool(user and getattr(user, 'role', None) in ['it_admin', 'it_manager', 'it'])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":28,"LineContent":"    if is_it_role(user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":66,"LineContent":"    if user and (user.role in ['viewer', 'auditor'] or is_it_role(user)):"}
+(...277 more results not shown)

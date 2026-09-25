@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\layout\TopBar.jsx:64:            <div className="top-profile-dropdown">
+
+
+

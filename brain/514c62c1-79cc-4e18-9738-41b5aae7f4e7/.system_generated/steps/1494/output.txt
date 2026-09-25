@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -576,7 +576,7 @@
+     if (!/[A-Z]/.test(resetPwd)) { toast.error("Password needs an uppercase letter."); return; }
+     if (!/[a-z]/.test(resetPwd)) { toast.error("Password needs a lowercase letter."); return; }
+     if (!/[0-9]/.test(resetPwd)) { toast.error("Password needs a digit."); return; }
+-    if (!/[!@#$%^&*(),.?":{}<>\-_+=\[\]\\/~`]/.test(resetPwd)) {
++    if (!/[!@#$%^&*(),.?":{}<>\-_+=[\]\\/~`]/.test(resetPwd)) {
+       toast.error("Password needs a special character."); return;
+     }
+     if (resetPwd !== resetPwdConfirm) {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,123 @@
+
+The command exited with code 0.
+Output:
+<truncated 330 lines>
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+.LineNumber : The term '.LineNumber' is not recognized as the name of a cmdlet, function, script file, or operable 
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:105
++ ... Pattern '^\s*def |@emissions_bp' | Where-Object { .LineNumber -gt 989 ...
++                                                       ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.LineNumber:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+

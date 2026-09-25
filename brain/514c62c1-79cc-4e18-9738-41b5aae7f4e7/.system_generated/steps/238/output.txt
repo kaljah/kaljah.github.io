@@ -1,0 +1,13 @@
+
+The command exited with code 1.
+Output:
+
+C:\Users\samsung\Desktop\H2\new\client\src\components\layout\Layout.jsx
+  3:27  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\samsung\Desktop\H2\new\client\src\context\LayoutContext.jsx
+  33:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+✖ 2 problems (2 errors, 0 warnings)
+
+

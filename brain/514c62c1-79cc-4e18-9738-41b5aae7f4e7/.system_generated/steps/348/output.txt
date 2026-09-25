@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+GWP-100 sum: 5025685.437351815
+GWP-20 sum: 5049648.46
+Difference (GWP20 - GWP100): 23963.02264818456
+

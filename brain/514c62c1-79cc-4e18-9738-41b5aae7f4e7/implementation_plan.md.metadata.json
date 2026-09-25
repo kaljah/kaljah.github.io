@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan for modernizing User Management dialogs into right-docked Slide-Over Drawers, locking Role & Region in edit mode, and enabling editing of user profile info (Full Name, Email, Department, Job Title).",
+  "updatedAt":  "2026-09-19T19:46:58.442757400Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

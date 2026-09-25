@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -170,7 +170,7 @@
+             # API Compendium 2021 Table 6-6 & EPA Subpart W Table W-1A: Tier 1 default = 0.266 tonnes CH4 / MMscf (uncontrolled)
+             # or 0.0532 tonnes CH4 / MMscf (controlled)
+             tp_mmscf = float(throughput)
+-            eff = float(control_eff or 0.0)
++            eff = normalize_efficiency(control_eff, default=0.0)
+             default_ef = 0.266 * (1.0 - eff)
+             ch4_tonnes = tp_mmscf * default_ef
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

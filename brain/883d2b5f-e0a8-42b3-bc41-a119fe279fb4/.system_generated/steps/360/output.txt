@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":517,"LineContent":"@scope2_bp.route(\"/bulk-import\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":358,"LineContent":"@scope3_bp.route(\"/bulk-import\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":189,"LineContent":"@data_bp.route('/production/bulk-import', methods=['POST'])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":145,"LineContent":"@managedata_bp.route(\"/sources/bulk-import\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":581,"LineContent":"@managedata_bp.route(\"/mitigation/bulk-import\", methods=[\"POST\"])"}

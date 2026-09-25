@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\combustion.py:53:    value, factor_unit, activity_unit, hhv=None, fuel_type=None, density=None
+new\server\calculations\combustion.py:95:            if fuel_type == "liquids":
+new\server\calculations\combustion.py:147:        fuel_lower = str(fuel_type or "").lower()
+new\server\calculations\combustion.py:189:        fuel_type,
+new\server\calculations\combustion.py:207:        is_gas_fuel = fuel_type in [
+new\server\calculations\combustion.py:233:            ef_co2, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, 
+density=density
+new\server\calculations\combustion.py:236:            ef_ch4, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, 
+density=density
+new\server\calculations\combustion.py:239:            ef_n2o, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, 
+density=density
+new\server\calculations\combustion.py:290:            # Apply to gas streams (by fuel_type or volumetric units)
+new\server\calculations\combustion.py:395:        fuel_type=None,
+new\server\calculations\combustion.py:534:                n2o_kg = vol_std * convert_factor_to_kg_per_unit(_ef_n2o, 
+ef_unit, "m3", hhv=hhv, fuel_type="gases")
+new\server\calculations\combustion.py:565:                "fuel_type": fuel_type,
+
+
+

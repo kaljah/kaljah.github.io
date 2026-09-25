@@ -1,0 +1,48 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=76_0 RootWebArea "Carbon Tech" url="http://localhost:5173/methane-intensity"
+  uid=76_1 complementary
+    uid=76_2 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=76_3 StaticText "Carbon tech"
+    uid=76_4 button "Close navigation"
+    uid=76_5 navigation
+      uid=76_6 link "Dashboard" url="http://localhost:5173/"
+        uid=76_7 StaticText "Dashboard"
+      uid=76_8 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=76_9 StaticText "Carbon Intensity"
+      uid=76_10 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=76_11 StaticText "Methane Intensity"
+      uid=76_12 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=76_13 StaticText "SBTi Net-Zero"
+      uid=76_14 link "Calculations" url="http://localhost:5173/emissions"
+        uid=76_15 StaticText "Calculations"
+      uid=76_16 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=76_17 StaticText "Emissions Map"
+      uid=76_18 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=76_19 StaticText "Manage Data"
+      uid=76_20 link "Reports" url="http://localhost:5173/reports"
+        uid=76_21 StaticText "Reports"
+      uid=76_22 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=76_23 StaticText "Reference Data"
+      uid=76_24 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=76_25 StaticText "Uncertainty"
+      uid=76_26 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=76_27 StaticText "Audit Trail"
+      uid=76_28 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=76_29 StaticText "QA/QC & Diagnostics"
+    uid=76_30 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=76_31 StaticText "Settings"
+    uid=76_32 StaticText "A"
+    uid=76_33 StaticText "Administrator"
+    uid=76_34 StaticText "Sustainability Lead"
+  uid=76_35 main
+    uid=76_36 button "Open navigation menu"
+    uid=76_37 StaticText "Corporate ESG"
+    uid=76_38 button "Notifications"
+    uid=76_39 button "User Profile" description="User Profile"
+    uid=76_40 StaticText "Loading view..."
+
+</current_snapshot>

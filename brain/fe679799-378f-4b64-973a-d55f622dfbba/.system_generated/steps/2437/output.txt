@@ -1,0 +1,22 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-2435
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-2435.log
+Log output:
+<truncated 16 lines>
+(co2e_diff, rel=1e-4) == expected_diff
+E   assert 157.1875625000001 � 0.0157188 == 157.15756250000013
+E     
+E     comparison failed
+E     Obtained: 157.15756250000013
+E     Expected: 157.1875625000001 � 0.0157188
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_battery_gwp_horizons_regulatory.py::TestGWPHorizonsAndProfilesBattery::test_flaring_methane_slip_20yr_sensitivity
+================= 1 failed, 9 deselected, 1 warning in 1.25s ==================
+
+Last progress: 1s ago

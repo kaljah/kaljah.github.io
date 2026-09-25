@@ -1,0 +1,15 @@
+## Latest page snapshot
+uid=919_0 RootWebArea "Carbon Tech" url="http://localhost:5173/login"
+  uid=921_1 heading "Welcome Back" level="2"
+  uid=921_2 StaticText "Sign in to your GHG Reporting Platform"
+  uid=921_3 form
+    uid=921_4 textbox "Email Address" required
+    uid=921_5 textbox "Password" required
+    uid=921_6 button "Forgot password?"
+    uid=921_7 button "Sign In"
+  uid=921_8 StaticText "API Compliant"
+  uid=921_9 StaticText "ISO 14064 Ready"
+  uid=921_10 StaticText "SOC2 Secured"
+  uid=921_11 StaticText "© "
+  uid=921_12 StaticText "2026"
+  uid=921_13 StaticText " Carbon Tech. All rights reserved."

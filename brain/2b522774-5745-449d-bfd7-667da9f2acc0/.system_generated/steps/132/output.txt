@@ -1,0 +1,50 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\facilities.py:58:                "equity_share_pct": f.equity_share_pct if f.equity_share_pct is 
+not None else 100.0,
+  new\server\routes\facilities.py:59:                "segment": f.segment,
+  new\server\routes\facilities.py:60:                "operator_status": f.operator_status or "operated",
+  new\server\routes\facilities.py:61:                "country": f.country or "Algeria",
+  new\server\routes\facilities.py:62:                "ogmp_membership_year": f.ogmp_membership_year or 2023,
+  new\server\routes\facilities.py:63:                "reconciliation_threshold": f.reconciliation_threshold or 20.0,
+> new\server\routes\facilities.py:65:                "latitude": f.latitude,
+> new\server\routes\facilities.py:66:                "longitude": f.longitude,
+  new\server\routes\facilities.py:67:            }
+  new\server\routes\facilities.py:68:            for f in facilities
+  new\server\routes\facilities.py:69:        ]
+  new\server\routes\facilities.py:70:    )
+  new\server\routes\facilities.py:71:
+> new\server\routes\facilities.py:168:        equity_share_pct=float(data.get("equity_share_pct", 100.0) or 100.0),
+  new\server\routes\facilities.py:169:        segment=data.get("segment"),
+  new\server\routes\facilities.py:170:        operator_status=data.get("operator_status", "operated"),
+  new\server\routes\facilities.py:171:        country=data.get("country", "Algeria"),
+  new\server\routes\facilities.py:172:        ogmp_membership_year=int(data.get("ogmp_membership_year", 2023) or 2023),
+  new\server\routes\facilities.py:173:        reconciliation_threshold=float(
+> new\server\routes\facilities.py:176:        latitude=data.get("latitude"),
+> new\server\routes\facilities.py:177:        longitude=data.get("longitude"),
+  new\server\routes\facilities.py:178:    )
+  new\server\routes\facilities.py:179:
+  new\server\routes\facilities.py:180:    try:
+  new\server\routes\facilities.py:181:        db.session.add(fac)
+  new\server\routes\facilities.py:182:        db.session.flush()  # Flush to get fac.id for audit log
+> new\server\routes\facilities.py:259:    if "equity_share_pct" in data and data["equity_share_pct"] is not None:
+> new\server\routes\facilities.py:260:        facility.equity_share_pct = float(data["equity_share_pct"])
+  new\server\routes\facilities.py:261:    if "activity" in data:
+  new\server\routes\facilities.py:262:        facility.activity = data["activity"]
+  new\server\routes\facilities.py:263:    if "region" in data:
+  new\server\routes\facilities.py:264:        facility.region = data["region"]
+  new\server\routes\facilities.py:265:    if "division" in data:
+> new\server\routes\facilities.py:286:    if "latitude" in data:
+> new\server\routes\facilities.py:287:        facility.latitude = data["latitude"]
+> new\server\routes\facilities.py:288:    if "longitude" in data:
+> new\server\routes\facilities.py:289:        facility.longitude = data["longitude"]
+  new\server\routes\facilities.py:290:
+  new\server\routes\facilities.py:291:    import datetime
+  new\server\routes\facilities.py:292:
+  new\server\routes\facilities.py:293:    facility.updated_at = datetime.datetime.now(datetime.timezone.utc)
+  new\server\routes\facilities.py:294:    db.session.flush()
+
+
+

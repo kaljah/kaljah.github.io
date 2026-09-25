@@ -1,0 +1,56 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -706,7 +706,7 @@
+     }
+   };
+ 
+-  if (!["it_admin", "it"].includes(user?.role)) {
++  if (!["it_admin", "it_manager", "it"].includes(user?.role)) {
+     return (
+       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
+         <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
+@@ -726,7 +726,7 @@
+   /* derived stats */
+   const totalUsers = users.length;
+   const adminCount = users.filter((u) => u.role === "admin").length;
+-  const itAdminCount = users.filter((u) => u.role === "it_admin").length;
++  const itAdminCount = users.filter((u) => ["it_admin", "it_manager"].includes(u.role)).length;
+   const itCount = users.filter((u) => u.role === "it").length;
+   const standardCount = users.filter((u) => u.role === "user").length;
+ 
+@@ -735,8 +735,13 @@
+       u.location === filterRegion ||
+       u.role === "admin" ||
+       u.role === "it_admin" ||
++      u.role === "it_manager" ||
+       u.role === "it";
+-    const byRole = !filterRole || u.role === filterRole;
++    const byRole =
++      !filterRole ||
++      u.role === filterRole ||
++      (filterRole === "it_manager" && ["it_admin", "it_manager"].includes(u.role)) ||
++      (filterRole === "it_admin" && ["it_admin", "it_manager"].includes(u.role));
+     return byRegion && byRole;
+   });
+ 
+@@ -758,7 +758,7 @@
+         <div style={S.heroLeft}>
+           <span style={S.badge}>
+             <span style={S.pulseDot} />
+-            {isITOnly ? "IT CREDENTIALS CONSOLE" : "IT ADMIN CONSOLE"}
++            {isITOnly ? "IT CREDENTIALS CONSOLE" : "IT MANAGER CONSOLE"}
+           </span>
+           <h1 style={S.pageTitle}>User Management</h1>
+           <p style={S.pageSubtitle}>
+@@ -777,7 +777,7 @@
+             <option value="user">Standard User</option>
+             <option value="superuser">Super User</option>
+             <option value="admin">Admin</option>
+-            <option value="it_admin">IT Admin</option>
++            <option value="it_manager">IT Manager</option>
+             <option value="it">IT</option>
+           </select>
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,10 @@
+## Console messages
+Showing 1-8 of 8 (Page 1 of 1).
+msgid=31 [log] [Reports] Fetching with params: [object Object] (2 args)
+msgid=32 [log] [Reports] Received records: 26 Total reported by API: 26 (4 args)
+msgid=33 [log] [Reports] Fetching with params: [object Object] (2 args)
+msgid=34 [issue] No label associated with a form field (count: 16)
+msgid=35 [issue] A form field element should have an id or name attribute (count: 15)
+msgid=36 [log] [Reports] Received records: 26 Total reported by API: 26 (4 args)
+msgid=37 [log] [Report] Fetching emissions with params: [object Object] | regionId: all (4 args)
+msgid=38 [log] [Report] Raw emissions fetched: 26 records for year 2026 (1 args)

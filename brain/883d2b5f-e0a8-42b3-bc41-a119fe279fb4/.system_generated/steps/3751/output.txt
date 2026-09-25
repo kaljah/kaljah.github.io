@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+1197: def _query_intensity_trend_bulk(
+
+

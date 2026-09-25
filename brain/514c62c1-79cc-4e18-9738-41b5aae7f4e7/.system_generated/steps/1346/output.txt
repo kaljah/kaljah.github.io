@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -41,8 +41,20 @@
+     // Selection for bulk actions
+     const [selectedIds, setSelectedIds] = useState(new Set());
+     const [resolving, setResolving] = useState(false);
+-    const [exporting, setExporting] = useState(false);
+     const [resolveModal, setResolveModal] = useState({ isOpen: false, resolution: null });
++    const [expandedFindingId, setExpandedFindingId] = useState(null);
++
++    const handleFindingAction = useCallback((item) => {
++        if (item.action_url) {
++            const [, query] = item.action_url.split('?');
++            const tab = query ? new URLSearchParams(query).get('tab') : null;
++            navigate(item.action_url, { state: { tab } });
++        } else if (item.action_tab === 'queue') {
++            setActiveTab('queue');
++            setStatusFilter('all');
++            setOffset(0);
++        }
++    }, [navigate]);
+ 
+     // ── Fetch unified QA/QC & Diagnostics data ─────────────────────────────
+     const fetchDashboard = useCallback(async (isManualRefresh = false) => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,88 @@
+
+The command exited with code 0.
+Output:
+
+Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName                                                  
+-------  ------    -----      -----     ------     --  -- -----------                                                  
+    174      12     9016      18752       0.33  16760   1 chrome                                                       
+    328      21    37504      77352       1.09  18776   1 chrome                                                       
+    652      26    82572     105924       4.22  22072   1 chrome                                                       
+    220      18    15760      30376       0.16  24124   1 chrome                                                       
+    368      22    19444      49144       6.67  25084   1 chrome                                                       
+    280      22    30668      71816       2.95  26060   1 chrome                                                       
+   1610      60   115060     209600      43.33  26848   1 chrome                                                       
+    166      11     2464       9784       0.03  31180   1 chrome                                                       
+True
+
+Caption                  : 
+Description              : 
+ElementName              : 
+InstanceID               : 127.0.0.1++9222++0.0.0.0++0
+CommunicationStatus      : 
+DetailedStatus           : 
+HealthState              : 
+InstallDate              : 
+Name                     : 
+OperatingStatus          : 
+OperationalStatus        : 
+PrimaryStatus            : 
+Status                   : 
+StatusDescriptions       : 
+AvailableRequestedStates : 
+EnabledDefault           : 2
+EnabledState             : 
+OtherEnabledState        : 
+RequestedState           : 5
+TimeOfLastStateChange    : 
+TransitioningToState     : 12
+AggregationBehavior      : 
+Directionality           : 
+CreationTime             : 9/22/2026 8:41:40 PM
+LocalAddress             : 127.0.0.1
+LocalPort                : 9222
+OwningProcess            : 26848
+AppliedSetting           : 
+OffloadState             : InHost
+RemoteAddress            : 0.0.0.0
+RemotePort               : 0
+State                    : Listen
+PSComputerName           : 
+
+
+Caption                  : 
+Description              : 
+ElementName              : 
+InstanceID               : 127.0.0.1++9222++127.0.0.1++60152
+CommunicationStatus      : 
+DetailedStatus           : 
+HealthState              : 
+InstallDate              : 
+Name                     : 
+OperatingStatus          : 
+OperationalStatus        : 
+PrimaryStatus            : 
+Status                   : 
+StatusDescriptions       : 
+AvailableRequestedStates : 
+EnabledDefault           : 2
+EnabledState             : 
+OtherEnabledState        : 
+RequestedState           : 5
+TimeOfLastStateChange    : 
+TransitioningToState     : 12
+AggregationBehavior      : 
+Directionality           : 
+CreationTime             : 9/22/2026 10:22:05 PM
+LocalAddress             : 127.0.0.1
+LocalPort                : 9222
+OwningProcess            : 26848
+AppliedSetting           : Internet
+OffloadState             : InHost
+RemoteAddress            : 127.0.0.1
+RemotePort               : 60152
+State                    : Established
+PSComputerName           : 
+
+
+
+

@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+[2026-09-22 22:03:25,345] INFO in app: Updated account: a
+[2026-09-22 22:03:25,456] INFO in app: Updated account: a@a
+[2026-09-22 22:03:25,648] INFO in app: Updated account: z
+[2026-09-22 22:03:25,765] INFO in app: Updated account: z@z
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: cannot import name 'create_app' from 'app' (C:\Users\samsung\Desktop\H2\new\server\app.py)
+

@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+build_pitch_deck.py:        "Analyse d'incertitude Monte Carlo"
+build_pitch_deck.py:    ("Propagation d'Incertitude", "Intègre un module statistique (Monte Carlo) attestant la rigueur des données déclarées aux auditeurs."),
+build_pitch_deck.py:        "Analyse d'incertitude Monte Carlo",
+new/server/generate_1k_comprehensive.py:random.seed(42)
+new/server/restore_full_data.py:        random.seed(42)
+new/test_deep_button_audit.py:            ("/uncertainty", "Uncertainty Monte Carlo"),
+

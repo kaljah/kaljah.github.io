@@ -1,0 +1,32 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1600,"LineContent":"        facility = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":28,"LineContent":"            facility = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":41,"LineContent":"class Facility(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_runner.py","LineNumber":39,"LineContent":"    f = DummyFacility(fid, fname)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1028,"LineContent":"        f = MockFacility()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":223,"LineContent":"                fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":52,"LineContent":"            cls.fac_alpha = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":59,"LineContent":"            cls.fac_beta = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":205,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":251,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":295,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":339,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":382,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":427,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":471,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":558,"LineContent":"            fac = Facility(name=\"Test Facility A\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":152,"LineContent":"                f = Facility(id=1, name=\"Test Facility\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":188,"LineContent":"                f = Facility(id=1, name=\"Test Facility\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":62,"LineContent":"            fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":142,"LineContent":"    fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":413,"LineContent":"        facility = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_bug_fixes.py","LineNumber":100,"LineContent":"            fac = Facility(name=\"Test Field Fac\", code=\"TFF-01\", segment=\"Upstream\", activity=\"Upstream Oil \u0026 Gas\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":79,"LineContent":"            fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":84,"LineContent":"            fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":83,"LineContent":"        f = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":48,"LineContent":"            fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":98,"LineContent":"        f = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":46,"LineContent":"            fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_bulk_pipeline.py","LineNumber":53,"LineContent":"            fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":475,"LineContent":"        fac = DummyFacility()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":117,"LineContent":"            fac = Facility("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":51,"LineContent":"                fac = Facility("}

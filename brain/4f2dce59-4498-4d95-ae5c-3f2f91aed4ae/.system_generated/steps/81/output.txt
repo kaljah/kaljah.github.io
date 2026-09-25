@@ -1,0 +1,10 @@
+## Pages
+2: http://localhost:5173/emissions?scope=scope3
+3: http://localhost:5173/emissions?scope=scope1 isolatedContext=tester2
+4: http://localhost:5173/login isolatedContext=tester7
+5: http://localhost:5173/login [selected] isolatedContext=tester10
+6: http://localhost:5173/login isolatedContext=tester6
+7: http://localhost:5173/login isolatedContext=tester4
+8: http://localhost:5173/login isolatedContext=tester3
+9: http://localhost:5173/login isolatedContext=tester5
+10: http://localhost:5173/login isolatedContext=tester9

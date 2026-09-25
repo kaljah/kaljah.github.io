@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\config.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -65,11 +65,19 @@
+         ) or "sqlite:///" + os.path.join(BASE_DIR, "ghg_app.db")
+ 
+     SQLALCHEMY_TRACK_MODIFICATIONS = False
+-    SQLALCHEMY_ENGINE_OPTIONS = {
+-        "pool_size": 25,
+-        "max_overflow": 25,
+-        "pool_timeout": 60,
+-    }
++    if str(SQLALCHEMY_DATABASE_URI).startswith("sqlite:///:memory:"):
++        from sqlalchemy.pool import StaticPool
++        SQLALCHEMY_ENGINE_OPTIONS = {
++            "connect_args": {"check_same_thread": False},
++            "poolclass": StaticPool,
++        }
++    else:
++        SQLALCHEMY_ENGINE_OPTIONS = {
++            "pool_size": 25,
++            "max_overflow": 25,
++            "pool_timeout": 60,
++        }
++
+ 
+     # Session Configuration (8-hour session lifetime)
+     SESSION_COOKIE_HTTPONLY = True
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

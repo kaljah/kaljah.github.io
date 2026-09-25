@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_stress_concurrency.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -177,7 +177,7 @@
+                     "/api/auth/login",
+                     json={"email": "concurrency_admin@test.com", "password": "StressPass2026!"},
+                 )
+-                res = client.get("/api/auth/profile")
++                res = client.get("/api/auth/me")
+                 if res.status_code != 200:
+                     return False
+                 data = res.get_json()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

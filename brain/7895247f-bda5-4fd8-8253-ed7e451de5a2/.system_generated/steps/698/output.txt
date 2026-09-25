@@ -1,0 +1,1 @@
+A1: No it should be vertical pdf normal A4 portrait but identical to it not in number of pages but in the data its fetches from the software 

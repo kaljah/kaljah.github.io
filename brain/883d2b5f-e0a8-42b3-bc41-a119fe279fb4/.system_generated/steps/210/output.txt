@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":60,"LineContent":"    avgMethaneLossRatePct: 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":259,"LineContent":"        avgMethaneLossRatePct: avgLossRatePct,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":782,"LineContent":"                      stats.avgMethaneLossRatePct \u003c= upstreamTargetPct"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":784,"LineContent":"                        : stats.avgMethaneLossRatePct \u003c="}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":790,"LineContent":"                  {(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%"}

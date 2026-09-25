@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+=== 1. Checking Tank Flash Factor ===
+Tank - Flash Emissions (Oil): {'code': 'TankFlashOil', 'type': 'equipment', 'ch4': 0.193, 'co2': 0.012, 'n2o': 0, 'uncertainty': {'co2': 0.15, 'ch4': 0.4, 'n2o': 0}, 'unit': 'kg/bbl', 'segment': 'Upstream', 'process_category': 'storage_tanks', 'description': 'API Table 5-16 / 6-4 — Default crude oil flash emission factor', 'source': 'API Compendium 2021 Section 6, Table 6-4'}
+
+=== 2. Checking Chemical Factors ===
+Acrylonitrile: co2=1.0, ch4=0, unit=tonne CO₂/tonne product
+Carbon Black: co2=2.63, ch4=0, unit=tonne CO₂/tonne product
+Ethylene: co2=0.77, ch4=0, unit=tonne CO₂/tonne product
+Ethylene Dichloride: co2=0.041, ch4=0, unit=tonne CO₂/tonne product
+Ethylene Oxide: co2=0.46, ch4=0, unit=tonne CO₂/tonne product
+Methanol: co2=0.67, ch4=0.0023, unit=tonne CO₂/tonne product
+
+=== 3. Checking N2O Acid Factors ===
+Nitric Acid - With NSCR: n2o=2.0, unit=kg N₂O/tonne product
+Nitric Acid - Without NSCR: n2o=9.0, unit=kg N₂O/tonne product
+Adipic Acid - Thermal Abatement: n2o=13.0, unit=kg N₂O/tonne product
+Adipic Acid - Uncontrolled: n2o=300.0, unit=kg N₂O/tonne product
+
+=== 4. Checking Asphalt Factor ===
+Asphalt: {'code': 'Asphalt', 'type': 'equipment', 'ch4': 0.0226796, 'co2': 10.432616, 'n2o': 0, 'uncertainty': {'co2': 0.3, 'ch4': 0.3, 'n2o': 0}, 'unit': 'kg/ton', 'segment': 'Downstream', 'process_category': 'asphalt_blowing', 'source': 'API Compendium 2021 Section 6, Table 6-52'}
+
+=== 5. Testing Dispatcher for Asphalt Blowing ===
+Asphalt blowing result (1000 tonnes): 11.499987323423557 tCO2, 0.024999972442225127 tCH4, totalCo2e = 12.19998655180586
+
+=== 6. Testing Dispatcher for Tank Flash Tier 1 ===
+Tank flash Tier 1 result (10,000 bbl): 1.93 tCH4, totalCo2e = 54.16
+
+=== ALL SERVER TESTS PASSED! ===
+

@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+app.py:265:app.register_blueprint(auth_bp, url_prefix="/api/auth")
+app.py:266:app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
+app.py:267:app.register_blueprint(facilities_bp, url_prefix="/api/facilities")
+app.py:268:app.register_blueprint(data_bp, url_prefix="/api/data")
+app.py:269:app.register_blueprint(reports_bp, url_prefix="/api/reports")
+app.py:270:app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
+app.py:271:app.register_blueprint(custom_factors_bp, url_prefix="/api/custom-factors")
+app.py:272:app.register_blueprint(scope2_bp, url_prefix="/api/scope2")
+app.py:273:app.register_blueprint(scope3_bp, url_prefix="/api/scope3")
+app.py:274:app.register_blueprint(managedata_bp, url_prefix="/api")
+app.py:275:app.register_blueprint(factors_bp)
+app.py:276:app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
+app.py:277:app.register_blueprint(audit_bp, url_prefix="/api/audit")
+app.py:278:app.register_blueprint(satellite_bp, url_prefix="/api/satellite")
+app.py:279:app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
+app.py:295:        app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+
+

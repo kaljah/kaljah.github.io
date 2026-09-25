@@ -1,0 +1,48 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=80_0 RootWebArea "Carbon Tech" url="http://localhost:5173/sbti"
+  uid=80_1 complementary
+    uid=80_2 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=80_3 StaticText "Carbon tech"
+    uid=80_4 button "Close navigation"
+    uid=80_5 navigation
+      uid=80_6 link "Dashboard" url="http://localhost:5173/"
+        uid=80_7 StaticText "Dashboard"
+      uid=80_8 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=80_9 StaticText "Carbon Intensity"
+      uid=80_10 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=80_11 StaticText "Methane Intensity"
+      uid=80_12 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=80_13 StaticText "SBTi Net-Zero"
+      uid=80_14 link "Calculations" url="http://localhost:5173/emissions"
+        uid=80_15 StaticText "Calculations"
+      uid=80_16 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=80_17 StaticText "Emissions Map"
+      uid=80_18 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=80_19 StaticText "Manage Data"
+      uid=80_20 link "Reports" url="http://localhost:5173/reports"
+        uid=80_21 StaticText "Reports"
+      uid=80_22 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=80_23 StaticText "Reference Data"
+      uid=80_24 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=80_25 StaticText "Uncertainty"
+      uid=80_26 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=80_27 StaticText "Audit Trail"
+      uid=80_28 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=80_29 StaticText "QA/QC & Diagnostics"
+    uid=80_30 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=80_31 StaticText "Settings"
+    uid=80_32 StaticText "A"
+    uid=80_33 StaticText "Administrator"
+    uid=80_34 StaticText "Sustainability Lead"
+  uid=80_35 main
+    uid=80_36 button "Open navigation menu"
+    uid=80_37 StaticText "Corporate ESG"
+    uid=80_38 button "Notifications"
+    uid=80_39 button "User Profile" description="User Profile"
+    uid=80_40 StaticText "Loading SBTi Net-Zero Trajectory..."
+
+</current_snapshot>

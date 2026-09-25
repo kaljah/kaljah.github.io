@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":207,"LineContent":"  grid-template-columns: repeat(4, 1fr);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":1002,"LineContent":"    grid-template-columns: repeat(2, 1fr);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":1021,"LineContent":"    grid-template-columns: 1fr;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":78,"LineContent":"  // Templates for different import types"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":79,"LineContent":"  const TEMPLATES = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":388,"LineContent":"  const currentTemplate = React.useMemo(() =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":389,"LineContent":"    let base = TEMPLATES[type] || [];"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":545,"LineContent":"  const downloadTemplate = async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":549,"LineContent":"          `/emissions/template/csv?tier=${selectedTier}\u0026process=${selectedProcess}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":555,"LineContent":"        a.download = `scope1_template_${selectedProcess || \"all\"}.csv`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":561,"LineContent":"        console.error(\"Template download failed:\", err);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":562,"LineContent":"        toast.error(\"Failed to download emissions template.\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":564,"LineContent":"      // Use the backend's comprehensive template generator for emissions data"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":566,"LineContent":"      window.location.href = `${baseUrl}/emissions/template/csv?tier=${selectedTier}\u0026process=${selectedProcess}`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":570,"LineContent":"    const headers = currentTemplate.map((t) =\u003e t.id).join(\",\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":575,"LineContent":"        return currentTemplate"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":642,"LineContent":"    link.download = `${type}_import_template.csv`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":684,"LineContent":"        currentTemplate.forEach((t) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":709,"LineContent":"      currentTemplate.forEach((t) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":761,"LineContent":"      currentTemplate.forEach((t) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":768,"LineContent":"        currentTemplate.forEach((t) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":892,"LineContent":"    return currentTemplate"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":919,"LineContent":"                gridTemplateColumns: \"1fr 1fr\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1021,"LineContent":"                gridTemplateColumns: \"1fr 1fr\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1091,"LineContent":"                  Download a targeted template for one specific process (e.g."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1223,"LineContent":"                className=\"template-download\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1226,"LineContent":"                  downloadTemplate();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1231,"LineContent":"                \u003cspan\u003eDownload targeted CSV template\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1333,"LineContent":"                {currentTemplate.map((t) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1631,"LineContent":"                        {currentTemplate.map((t) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1639,"LineContent":"                          {currentTemplate.map((t) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":133,"LineContent":"  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":201,"LineContent":"  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":345,"LineContent":"  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":377,"LineContent":"  grid-template-columns: repeat(4, 1fr);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":383,"LineContent":"    grid-template-columns: repeat(2, 1fr);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.css","LineNumber":17,"LineContent":".template-download {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.css","LineNumber":33,"LineContent":".template-download:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.css","LineNumber":149,"LineContent":"  grid-template-columns: 1fr 1fr;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":150,"LineContent":"    gridTemplateColumns: \"repeat(auto-fit, minmax(160px, 1fr))\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":351,"LineContent":"  formRow: { display: \"grid\", gridTemplateColumns: \"1fr 1fr\", gap: \"14px\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.css","LineNumber":131,"LineContent":"  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.css","LineNumber":317,"LineContent":"  grid-template-columns: 80px 80px 100px 120px 120px 150px 120px 120px 150px 120px 120px 100px 120px 100px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.css","LineNumber":329,"LineContent":"  grid-template-columns: 80px 80px 100px 120px 120px 150px 120px 120px 150px 120px 120px 100px 120px 100px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.css","LineNumber":330,"LineContent":"  grid-template-columns: 80px 80px 100px 120px 120px 150px 120px 120px 150px 120px 120px 100px 120px 100px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.css","LineNumber":7,"LineContent":"  grid-template-columns: 1fr 340px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.css","LineNumber":100,"LineContent":"  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.css","LineNumber":119,"LineContent":"  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.css","LineNumber":240,"LineContent":"    grid-template-columns: 1fr;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":552,"LineContent":"  grid-template-columns: repeat(2, 1fr);"}
+(...170 more results not shown)

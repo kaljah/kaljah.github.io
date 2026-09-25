@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+Logged in, current URL: http://localhost:5173/
+Navigating to /user-management...
+T+1s: URL=http://localhost:5173/user-management, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+2s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+3s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+4s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+5s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+Navigating to /audit-trail...
+T+1s: URL=http://localhost:5173/audit-trail, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+2s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+3s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+4s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+T+5s: URL=http://localhost:5173/, body_start='Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculati'
+

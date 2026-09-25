@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Propane (Liquid) -> co2e: 259.90895249999994
+Kerosene -> co2e: 183.32649
+Residual Fuel Oil (No. 6) -> co2e: 308.5295849999999
+Anthracite Coal -> co2e: 0.3143937576
+Natural Gas - Turbine -> co2e: 65.49391440000001
+Liquids Unloading - Plunger Lift -> co2e: 67.20000000000002
+

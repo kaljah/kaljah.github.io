@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+=== HBNS Production (p24) ===
+['Products', 'Unit', '2021', '2022', '2023', '2024', '2025']
+['Gross Gas Production', 'MMSm3', '5,088.03', '5,497.26', '5,541.74', '5,723.88', '5,517.62']
+[None, 'MMBOE', '42.26', '45.62', '46.16', '47.68', '45.96']
+['Gas Production without Injected Gas', 'MMSm3', '765.51', '808.06', '772.85', '544.06', '392.69']
+[None, 'MMBOE', '6.36', '6.71', '6.44', '4.53', '3.27']
+['LiquidProduction �Crude,\nCondensates, LPG', 'MMBOE', '24.85', '26.56', '24.98', '22.17', '24.20']
+['Total Production [1]', 'MMBOE', '67.11', '72.18', '71.15', '69.85', '70.16']
+['Total Production without Injected Gas\n[2]', 'MMBOE', '31.21', '33.27', '31.42', '26.70', '27.47']
+['Total Saleable Production [3]', 'MMBOE', '28.36', '30.45', '28.77', '24.50', '25.44']
+
+=== ELM Production (p25) ===
+['Products', 'Unit', '2021', '2022', '2023', '2024', '2025']
+['Gross Gas Production', 'MMSm3', '3,655.66', '3,964.74', '4,244.53', '4,353.68', '4,239.89']
+[None, 'MMBOE', '26.27', '28.10', '29.75', '30.46', '29.58']
+['Gas Production without Injected Gas', 'MMSm3', '338.35', '380.95', '369.26', '369.25', '374.81']
+[None, 'MMBOE', '2.43', '2.71', '2.59', '2.58', '2.62']
+['LiquidProduction �Crude,\nCondensates, LPG', 'MMBOE', '32.92', '32.60', '34.99', '33.97', '31.18']
+['Total Production [1]', 'MMBOE', '59.19', '60.71', '64.74', '64.43', '60.77']
+['Total Production without Injected Gas\n[2]', 'MMBOE', '35.35', '35.32', '37.58', '36.56', '33.80']
+['Total Saleable Production [3]', 'MMBOE', '32.92', '32.60', '34.99', '33.97', '31.18']
+

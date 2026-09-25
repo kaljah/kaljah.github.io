@@ -1,0 +1,34 @@
+The search for ""spécifications du gaz" Algerie "pouvoir calorifique" OR "PCS" CREG OR ARH OR Sonatrach OR Sonelgaz" returned the following summary:
+Les spécifications du gaz naturel en Algérie, incluant les exigences en matière de **Pouvoir Calorifique Supérieur (PCS)**, sont encadrées par la réglementation nationale sous la supervision du ministère de l'Énergie, avec l'implication d'organismes tels que l'**ARH** (Autorité de Régulation des Hydrocarbures) et la **CREG** (Commission de Régulation de l'Électricité et du Gaz)[1][2].
+
+### Points clés sur les spécifications et le PCS
+*   **Cadre réglementaire :** Les activités de transport et de distribution sont régies par la Loi n°02-01 (relative à l'électricité et à la distribution du gaz) et la Loi n°19-13 (régissant les activités d'hydrocarbures)[3][4]. L'ARH est notamment chargée d'approuver les codes de réseau qui définissent les normes techniques de transport[5][2].
+*   **Pouvoir Calorifique (PCS) :** 
+    *   Le PCS est une grandeur fondamentale pour la facturation et la gestion énergétique[6]. Il représente la quantité de chaleur dégagée par la combustion complète d'une unité de volume (généralement le mètre cube normal, $m^3(n)$)[7][6].
+    *   À titre indicatif, les valeurs du PCS du gaz naturel algérien sont souvent citées dans des études techniques ou des rapports d'exploitation dans une fourchette typique, bien que ces valeurs puissent varier selon le traitement et l'origine (ex: certaines données académiques ou techniques mentionnent des valeurs autour de **11,78 à 12,22 kWh/$m^3(n)$** pour le gaz exporté)[8][9].
+    *   Pour le marché national, des spécifications précises figurent dans les contrats de transport et les arrêtés ministériels relatifs aux ouvrages de transport[1][2].
+*   **Normes de qualité :** La qualité du gaz est généralement alignée sur des standards internationaux (tels que les normes **ISO 6976** pour le calcul du pouvoir calorifique, de la densité et de l'indice de Wobbe) afin de garantir la sécurité des équipements et l'efficacité de la combustion[10][11].
+
+### Où trouver les informations officielles ?
+Pour obtenir les spécifications techniques exactes et en vigueur (notamment le code réseau de transport par canalisation le plus récent), vous pouvez consulter :
+1.  **L'Autorité de Régulation des Hydrocarbures (ARH) :** Elle publie les codes de réseau et les contrats-types de transport de gaz naturel qui détaillent les caractéristiques techniques exigées[5][2].
+2.  **La CREG :** Elle régule le marché et fournit des informations sur les tarifs et les conditions d'accès aux réseaux[1][3].
+3.  **Le Journal Officiel de la République Algérienne (JORA) :** Les arrêtés ministériels fixant les spécifications techniques des ouvrages de transport y sont publiés[12][13].
+
+*Note : Les valeurs de PCS peuvent varier légèrement en fonction de la composition chimique précise (teneurs en méthane, éthane, azote, etc.) du gaz issu des différents champs de production comme Hassi R'mel[7][14].*
+
+Sources:
+[1] [creg.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHXV6SQv2DeeU5i5l-6ZF8vNrvm6DzqSLIoeJsf9cW-Kudtilq6yHz8CWXhCzr221cN-rRStGdDX_tjXxS7xclZ6VkAicnlDkVKeyOGl9atNpSLxgIMUOPT6oMIuypnVg==)
+[2] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFalsIKTz-v5b3n7Coal633nzMlo613SMF0Vguh7zUitTZgz_1CzBuWsJjZ9nJ-glghsR8oRz75AAzHfr1Q1PnAxRp6Y89hfBBWUGAwCCiQIeET5nGJy1Im7uZxp8BbxhbGiMaeOhRUFvXdwjqghZWypluJnY-3klvyx5d1ySY=)
+[3] [creg.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEpXvbaFEvdz0FgKYl5bDKmXlBoivH070yKe4OdEFPGAZZAH10oTaMvQnYPRtyUdL97V0-ibLwQ1tOEXnLwFLqmpoFzHuG2gpvgXpLfDnWFLByI2X23pxedHDM7iQc=)
+[4] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE-uJAwerbTXnZxm3Rz0tysmN6mzux2B5G5wjcFtZ0XHd-IvTkpGyZCz472dyAUjy7tPoikDIx-B96pcNVju_CSTsu2MWz1kpRty9zZZA6GY5Bh9l5UoG_629LGgN5FLTo-lkN0zfpvV4tOC010uhZlkuWld4_sG__R_g5rbw==)
+[5] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHPMejpc-ysiUKbBQmCucgZkhJCY9ibd7C9Lst8UL8vu0BI3iN-Jx3FKEIVWa1Jn6MK6O_PpHLhC_Y5L5DLw74U3Cc2a0u1zoF7GnOkA1PMS1twCO3UVQtHu-5VGTDXdB5QQruwiGXon520gvAEswIeuZdPgiflowV6E1u4BrCZ6HD5UD571CZwfUROcWDSKl-Z1CXPLcm_DNPWV__LfxAscXuHBBTXUg91GRiD3w==)
+[6] [thermexcel.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEgUnCWb2EBzR9zSof5C_uhssdEtxKL348e36CWDeQCjZGdj0E6hrSXrrLFsSSU1ynP53ELXJU_q-Hl3QXd0YRbQcufRSbsnlOhB-MeFR8Rxktgnyb4nYDPH4ssBRh9cfVGcr4zGjhPn10il-Nz-m67JYem8XawF94CEUcqaxz3CAM3KHJlXw==)
+[7] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGFeaINQp5hLtPQ5Q6KQg8Pp6bqa4-uNUaHbs5RoDo_x8XxZGaPzfrXUp4IBjcouJEpv8zDUPj8fqKQLt-XVuU1DtVYZgNEtBGgCkvGTPlP91tY45Vwiu41IJJQHSahFBZ-vNwRhpZSB6zqDoCzjhAjcQ==)
+[8] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF-5vEJuXf9ng0MljVJisE8xM7C80MYCfm24gZWx0oApY2cEDd_p7Zluh5vxDje0nH2MDb5hiu5rSxS6QJso5aN-1RZmdmBnmJGv-_V2VkqlaIx7ZK52OYEdNDtilpz7Ajt1H9GL6JjzeeLakgZLevx6J4cDZEGrLl8x2DLkXylPuOzZ3NHDTYN5e1vwVk=)
+[9] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF-5vEJuXf9ng0MljVJisE8xM7C80MYCfm24gZWx0oApY2cEDd_p7Zluh5vxDje0nH2MDb5hiu5rSxS6QJso5aN-1RZmdmBnmJGv-_V2VkqlaIx7ZK52OYEdNDtilpz7Ajt1H9GL6JjzeeLakgZLevx6J4cDZEGrLl8x2DLkXylPuOzZ3NHDTYN5e1vwVk=)
+[10] [univ-ghardaia.edu.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFix3WAmPc3C-FgUKY7jGv6y_0WqIrHG9UJlYcTqI_c7kjaqfM2dV0LHEkhNvtmQz-9d5CJ6URN_5bRFNVfVRoypmbWr6ug13VhuVEm7e1bcB5QSMi9lgkBPnB4brzcCEYNNYtbwSrG1OtcTrt3xMp3YMS1RlljjvuXpYSoMNeeFHgLpWNMvgHnEmhpWBxEq-Dx)
+[11] [emerson.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH_pVDd2M-Mm-sTm_TrZu7Feuy2uPbGVCT4Ye842sIJHqiTRYZOZ7bjfQKCT2wbhfnIReuEDsztZHaGIX20BNdWDuPnKKjoRYu9Uy-AfX0yUoWL4fgdWAfjqT7xNuYUP5STanOibWuso-AwTpPJtIAAC-8cE5ie6_7u3wtvR0j7y1P-p49uIYIWKxQqS2p2Kw7AAuEflBQtgfrio-SKEVASka4zXogDqc5_PyvAIvur09Cl6V8MXdwQMWtF93iFitTt2kcTBgorhlxXzPiTvjvZFliim-F2Srk8zijqbxyluNaTTUKBZgYmHIp-)
+[12] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFriPZkvpsrIJBfluiajQyiJ_xJVwNb3gXejlzfBJiKz1JXOsjAcWJV88hfgq8nMfhN14F65vCmoVJSYWXW9LFpzTcxNVFByzA87MGVxgzBZgy9iLMtCkUC4Kb5R8P0wL4ndJs7YvW5Q08tFjdnY7R3QasFlCrKc8IiufaZ-DLRj40zlg==)
+[13] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG576fpG1l8bXexbeY5zKryi-SC4p0C_JFWnoRongcpBT5xz7NoJKNBtmwyXS8kHGjjI25pg-84AQhzwgUwNCXZZii1gdS_gJrtK3q00lWSZWchnNE-xrNAJz3XtCk4IcBFFJcbGDvA6gh6BOyr5R0niGS-8ghfa9IXujTjyg==)
+[14] [enp.edu.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEiBKpZj7e6bTlSD1Unh0I5vd2PmGgRPbnpbeS31iCLS0TV8E_37BmosAwudHFdWDHVlTNxJlIDDEbqbkOArtx5k6zv-GhXOUJRaSBTMTKWPJFOdkIMuo40XPXfQIqZPN94mbvCQtN31ZpQxtxYi0zctwnPZv_4BhXQrLix7jlEZM7Myh1fhVjfNYXcasIWQgTdNB_7kI3GGAE=)

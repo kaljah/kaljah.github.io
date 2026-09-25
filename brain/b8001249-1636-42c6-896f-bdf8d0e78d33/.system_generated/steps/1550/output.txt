@@ -1,0 +1,102 @@
+
+The command exited with code 0.
+Output:
+<truncated 64 lines>
+new\server\generate_1k_csv.py:124:    count = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
+new\server\generate_1m_csv.py:6:def generate_1m_csv(filepath, num_rows=1000000):
+new\server\generate_1m_csv.py:126:            if i % 100000 == 0:
+new\server\generate_1m_csv.py:129:            dt = start_date + timedelta(days=random.randint(0, 1000))
+new\server\generate_1m_csv.py:162:            well_depth = round(random.uniform(1000, 15000), 1)
+new\server\generate_1m_csv.py:166:            blowdown_vol = round(random.uniform(1, 1000), 2)
+new\server\generate_1m_csv.py:168:            ppm = round(random.uniform(100, 10000), 1)
+new\server\generate_1m_csv.py:191:                1000,  # HHV
+new\server\generate_1m_csv.py:239:    generate_1m_csv("C:\\Users\\samsung\\Desktop\\h\\1m_exhaustive_test.csv", 
+1000000)
+new\server\generate_1m_excel.py:6:def generate_1m_excel(filepath, num_rows=1000000):
+new\server\generate_1m_excel.py:125:        if i % 100000 == 0:
+new\server\generate_1m_excel.py:128:        dt = start_date + timedelta(days=random.randint(0, 1000))
+new\server\generate_1m_excel.py:193:            round(random.uniform(1000, 15000), 1),  # Depth
+new\server\generate_1m_excel.py:197:            round(random.uniform(1, 1000), 2),  # Blowdown Vol
+new\server\generate_1m_excel.py:199:            round(random.uniform(100, 10000), 1),  # PPM
+new\server\generate_1m_excel.py:215:        "C:\\Users\\samsung\\Desktop\\h\\1m_exhaustive_test.xlsx", 1000000
+new\server\generate_bulk_test_csvs.py:122:            qty = 10000 + i * 5000
+new\server\generate_bulk_test_csvs.py:154:            throughput = 1000 + i * 1200
+new\server\generate_scenarios.py:83:                "quantity": 10000,
+new\server\generate_scenarios.py:129:                "quantity": 100000,
+new\server\generate_scenarios.py:135:                        "gas_volume": 100000,
+new\server\generate_scenarios.py:154:                "quantity": 1000,
+new\server\generate_scenarios.py:176:                "quantity": 10000,
+new\server\generate_scenarios.py:281:                "quantity": 100000,
+new\server\generate_scenarios.py:287:                        "amount": 100000,
+new\server\generate_scenarios.py:310:                "quantity": 10000000,
+new\server\generate_scenarios.py:316:                        "agr_feed_rate": 10000000,
+new\server\generate_test_csvs.py:15:    ["ADR", 2024, 5, "electricity", "NON_EXISTENT_GRID", 1000, "kWh"],
+new\server\generate_test_csvs.py:16:    ["NON_EXISTENT_FACILITY", 2024, 6, "electricity", "Algerian National Grid", 
+1000, "kWh"],
+new\server\generate_test_csvs.py:32:    ["REB", 2024, 2, "6", "Air Travel", "Algiers to Paris", 1000, "miles", 0.15, 
+"kgCO2e/mile", ""],
+new\server\generate_test_csvs.py:34:    ["HBK", 2024, 3, "11", "Crude Oil", "Burned by customer", 100000, "bbl", "", 
+"", 45000],
+new\server\patch_bg.py:46:    spend_k = spend_usd / 1000.0
+new\server\patch_bg.py:47:    kg_co2e = spend_k * factor_data["kg_co2e_per_1000_usd"]
+new\server\patch_bg.py:48:    tonnes_co2e = kg_co2e / 1000.0
+new\server\patch_bg.py:58:        emission_factor=factor_data["kg_co2e_per_1000_usd"],
+new\server\restore_full_data.py:145:        "longitude": 6.1000,
+new\server\restore_full_data.py:314:            ("combustion", "Natural Gas", "scf", 0.054, 0.0001, 0.00001, 1000000),
+new\server\restore_full_data.py:410:                        ("2", "Capital Goods", "Heavy machinery & compressors", 
+random.randint(10000, 50000), "USD", 0.45),
+new\server\restore_full_data.py:416:                        s3_co2e = amount * ef / 1000.0 if unit != "bbl" else 
+amount * ef
+new\server\test_csv_uploader.py:108:            "2024-01,Test Plant Alpha,Combustion,Natural 
+Gas,Default,10000,scf,,,,,,,,\n"
+new\server\test_csv_uploader.py:112:            "2024-03,Test Plant 
+Alpha,Flaring,Custom,Specific,1000,m3,98.4,elevated,,,,,85\n"
+new\server\test_csv_uploader.py:183:        self.assertEqual(row1.quantity, 10000)
+new\server\test_emission_calculations.py:97:            "amount": 10000,
+new\server\test_emission_calculations.py:98:            "quantity": 10000,
+new\server\test_emission_calculations.py:114:        expected = (10000 * 1020 / 1_000_000) * 53.06 / 1000.0
+new\server\test_emission_calculations.py:124:        expected = (10000 * 1020 / 1_000_000) * 0.001 / 1000.0
+new\server\test_emission_calculations.py:134:        expected = (10000 * 1020 / 1_000_000) * 0.0001 / 1000.0
+new\server\test_emission_calculations.py:147:        qty_m3 = 10000 * CONVERSIONS["scf_to_m3"]
+new\server\test_emission_calculations.py:170:      CO2 = 69.35 � 73.96 / 1000 = 5.12898 tonne
+new\server\test_emission_calculations.py:171:      CH4 = 69.35 � 0.003  / 1000 = 0.00020805 tonne
+new\server\test_emission_calculations.py:172:      N2O = 69.35 � 0.0006 / 1000 = 0.0000416  tonne
+new\server\test_emission_calculations.py:179:        self.expected_co2 = mmbtu * 73.96 / 1000.0
+new\server\test_emission_calculations.py:180:        self.expected_ch4 = mmbtu * 0.003 / 1000.0
+new\server\test_emission_calculations.py:181:        self.expected_n2o = mmbtu * 0.0006 / 1000.0
+new\server\test_emission_calculations.py:225:    CO2 = 5000*1.8/1000 = 9 t, CH4 = 5000*0.05/1000 = 0.25 t
+new\server\test_emission_calculations.py:250:        expected = self.qty * 1.8 / 1000.0
+new\server\test_emission_calculations.py:255:        expected = self.qty * 0.05 / 1000.0
+new\server\test_emission_calculations.py:265:      gas_volume = 1000 m3 (already at standard conditions)
+new\server\test_emission_calculations.py:272:                      = 1000 * 0.85 * (1-0.98) = 1000 * 0.85 * 0.02 = 17 
+m3
+new\server\test_emission_calculations.py:276:                          = 1000 * 1.04 * 0.984 * 1.861
+new\server\test_emission_calculations.py:277:                          = 1000 * 1.02336 * 1.861 = 1904.47 kg = 1.9045 
+tonne
+new\server\test_emission_calculations.py:279:      CO2_native = vol * co2_comp * density_co2 = 1000 * 0.03 * 1.861 = 
+55.83 kg = 0.05583 tonne
+new\server\test_emission_calculations.py:285:        self.vol_m3 = 1000.0
+new\server\test_emission_calculations.py:297:        self.expected_ch4 = ch4_undestroyed_m3 * self.density_ch4 / 1000.0
+new\server\test_emission_calculations.py:303:        self.expected_co2 = (co2_comb_kg + co2_native_kg) / 1000.0
+new\server\test_emission_calculations.py:380:        self.expected_ch4 = ch4_vol * CONVERSIONS["density_ch4"] / 1000.0
+new\server\test_emission_calculations.py:442:        self.expected_ch4 = ch4_m3 * CONVERSIONS["density_ch4"] / 1000.0
+new\server\test_emission_calculations.py:502:        self.expected_ch4 = ch4_m3 * CONVERSIONS["density_ch4"] / 1000.0
+new\server\test_emission_calculations.py:582:        self.expected_ch4 = ch4_vol * CONVERSIONS["density_ch4"] / 1000.0
+new\server\test_emission_calculations.py:637:        self.expected_ch4 = self.mud_vol * 0.15 / 1000.0
+new\server\test_emission_calculations.py:679:        expected = 200 * 0.35 / 1000.0
+new\server\test_emission_calculations.py:701:            self.vol_m3 * self.ch4_frac * CONVERSIONS["density_ch4"] / 
+1000.0
+new\server\test_emission_calculations.py:742:    count=50  CH4 = 50 * 0.1 / 1000 = 0.005 tonne
+new\server\test_emission_calculations.py:758:        self.expected_ch4 = self.count * 0.1 / 1000.0
+new\server\test_emission_calculations.py:903:            "amount": 1000,
+new\server\test_emission_calculations.py:904:            "quantity": 1000,
+new\server\test_emission_calculations.py:919:        """1 Mscf = 1000 scf."""
+new\server\test_emission_calculations.py:955:      volume = 1000 scf  1000 * 0.0283168 = 28.3168 m3
+new\server\test_emission_calculations.py:968:      CO2_total = (60.299 + 2.634) / 1000 = 0.062933 tonne
+new\server\test_emission_calculations.py:972:        self.vol_scf = 1000.0
+new\server\test_emission_calculations.py:982:        self.expected_co2 = (co2_comb + co2_nat) / 1000.0
+new\server\test_emission_calculations.py:1046:            "quantity": 10000,
+new\server\test_emission_calculations.py:1073:        self.assertEqual(emission.quantity, 10000)
+
+
+

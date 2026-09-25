@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1699,6 +1699,28 @@
+                           {formatCompactNumber(stats.flaring)}
+                         </td>
+                       </tr>
++                      {flaringData && (flaringData.routine_flaring?.volume_knm3 > 0 || flaringData.non_routine_flaring?.volume_knm3 > 0 || flaringData.safety_flaring?.volume_knm3 > 0) && (
++                        <>
++                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
++                            <td style={{ paddingLeft: "36px" }}>↳ Routine ({flaringData.routine_flaring?.percentage ?? 0}%)</td>
++                            <td className="text-right font-normal">
++                              {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)}
++                            </td>
++                          </tr>
++                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
++                            <td style={{ paddingLeft: "36px" }}>↳ Non-Routine ({flaringData.non_routine_flaring?.percentage ?? 0}%)</td>
++                            <td className="text-right font-normal">
++                              {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)}
++                            </td>
++                          </tr>
++                          <tr className="detail-row" style={{ fontSize: "0.82rem", color: "#64748b", background: "rgba(248, 250, 252, 0.5)" }}>
++                            <td style={{ paddingLeft: "36px" }}>↳ Safety &amp; Purge ({flaringData.safety_flaring?.percentage ?? 0}%)</td>
++                            <td className="text-right font-normal">
++                              {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)}
++                            </td>
++                          </tr>
++                        </>
++                      )}
+                       <tr className="detail-row">
+                         <td className="indent">Venting</td>
+                         <td className="text-right">
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,122 @@
+
+The command exited with code 1.
+Output:
+<truncated 25 lines>
+
+--- Executing Scenario: Storage Tank - Breathing Losses with 95% Control ---
+BROWSER LOG: Failed to load resource: the server responded with a status of 422 (UNPROCESSABLE ENTITY)
+BROWSER LOG: Failed to add entry: AxiosError: Request failed with status code 422
+    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=e3a0f523:1281:12)
+    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=e3a0f523:1638:7)
+    at Axios.request (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=e3a0f523:2255:41)
+    at async handleAddEntry (http://127.0.0.1:5173/src/components/Scope1Form.jsx?t=1790092389737:826:19)
+HTTP 422 http://127.0.0.1:5173/api/emissions: {"detail":"Calculation error for 'tank_breathing': Missing required parameter for Tier 3 specific calculation: 'tank_gor' (Gas-Oil Ratio (GOR scf/bbl))","error":"Calculation error for 'tank_breathing'
+[DB PASS] Record ID 2549: Total CO2e = 509.82690128050245 t, CH4 = 5.196115969242401 t
+
+--- Executing Scenario: Acid Gas Removal (AGR) - Sulfinol Solvent (Mcf/day) ---
+[DB PASS] Record ID 2552: Total CO2e = 93367.40663599882 t, CH4 = 183.98350043174707 t
+
+--- Executing Scenario: Glycol Dehydrator - Metric L/hr Pump & Stripping Gas ---
+[DB PASS] Record ID 2551: Total CO2e = 47218.596732876686 t, CH4 = 1686.378454745596 t
+
+--- Executing Scenario: Pipeline Blowdown - ft3 Units & Elevated Temperature ---
+[DB PASS] Record ID 2553: Total CO2e = 1409.9979500104773 t, CH4 = 50.25750116269654 t
+  ok 1 [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:177:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 1. Tier 3 Advanced Engineering Scenarios: Completions, Pneumatics, Tanks, AGR, Dehydrator, Blowdown (51.2s)
+
+--- Executing Tier 1 Scenario: Propane (Liquid) - Mobile/Stationary Combustion (West) ---
+[DB PASS] Record ID 2554: Fuel = Propane (Liquid), Total CO2e = 259.90895249999994 t
+
+--- Executing Tier 1 Scenario: Kerosene - Industrial Direct Heating (South) ---
+[DB PASS] Record ID 2555: Fuel = Kerosene, Total CO2e = 183.32649 t
+
+--- Executing Tier 1 Scenario: Residual Fuel Oil No. 6 - Heavy Boiler (Center) ---
+BROWSER LOG: Converting 650 bbl to 27300 gal
+[DB PASS] Record ID 2556: Fuel = Residual Fuel Oil (No. 6), Total CO2e = 308.5295849999999 t
+
+--- Executing Tier 1 Scenario: Anthracite Coal - Solid Fuel Combustion (Center) ---
+[DB PASS] Record ID 2557: Fuel = Anthracite Coal, Total CO2e = 0.3143937576 t
+
+--- Executing Tier 1 Scenario: Natural Gas - High-Efficiency Turbine (West) ---
+[DB PASS] Record ID 2558: Fuel = Natural Gas - Turbine, Total CO2e = 65.49391440000001 t
+
+--- Executing Tier 1 Scenario: Liquids Unloading - Plunger Lift Default Factor (South) ---
+[DB PASS] Record ID 2559: Fuel = Liquids Unloading - Plunger Lift, Total CO2e = 67.20000000000002 t
+  ok 2 [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:525:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 2. Tier 1 Advanced Catalog Scenarios: Fuels, Units, Equipment Factors & Default Uncertainties (41.4s)
+[TABLE PASS] All 22 header columns present and correctly labeled.
+[TABLE PASS] Total rows currently rendered in Scope 1 table: 10
+[MODAL PASS] CalculationDetails modal opened cleanly with zero NaNs.
+  ok 3 [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:647:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 3. Scope 1 Table Audit: Column Validation, Uncertainty Percentages & Inspect Modal Details (6.9s)
+APPROVED: 0 records. Facility distribution: {1: 566, 3: 549, 4: 622}
+Facility ID 1: 566 verified records (Requirement: >= 360)
+Facility ID 3: 549 verified records (Requirement: >= 360)
+Facility ID 4: 622 verified records (Requirement: >= 360)
+  x  4 [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:708:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit (18.7s)
+APPROVED: 0 records. Facility distribution: {1: 566, 3: 549, 4: 622}
+Facility ID 1: 566 verified records (Requirement: >= 360)
+Facility ID 3: 549 verified records (Requirement: >= 360)
+Facility ID 4: 622 verified records (Requirement: >= 360)
+  x  5 [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:708:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit (retry #1) (19.4s)
+
+
+  1) [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:708:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first() with timeout 15000ms
+      - waiting for locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+
+
+      739 |     // Hero Gross Emissions Card
+      740 |     const heroCard = page.locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first();
+    > 741 |     await expect(heroCard).toBeVisible({ timeout: 15000 });
+          |                            ^
+      742 |     const heroText = await heroCard.innerText();
+      743 |     expect(heroText).not.toContain('NaN');
+      744 |     expect(heroText).not.toContain('undefined');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:741:28
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first() with timeout 15000ms
+      - waiting for locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+
+
+      739 |     // Hero Gross Emissions Card
+      740 |     const heroCard = page.locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first();
+    > 741 |     await expect(heroCard).toBeVisible({ timeout: 15000 });
+          |                            ^
+      742 |     const heroText = await heroCard.innerText();
+      743 |     expect(heroText).not.toContain('NaN');
+      744 |     expect(heroText).not.toContain('undefined');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:741:28
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:708:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+  3 passed (2.3m)
+

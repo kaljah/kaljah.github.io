@@ -1,0 +1,5 @@
+Script ran on page and returned:
+```json
+"Clicked link successfully"
+```
+Page navigated to http://localhost:5173/carbon-intensity.

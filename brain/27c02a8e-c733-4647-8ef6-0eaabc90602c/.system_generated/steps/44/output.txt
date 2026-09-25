@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\utils.py:73:def log_activity_and_notify(
+  new\server\utils.py:74:    action,
+  new\server\utils.py:75:    record_id,
+  new\server\utils.py:76:    details,
+  new\server\utils.py:77:    user=None,
+  new\server\utils.py:78:    request=None,
+  new\server\utils.py:79:    entity=None,
+  new\server\utils.py:80:    entity_id=None,
+  new\server\utils.py:81:    metadata_json=None,
+  new\server\utils.py:82:    old_values=None,
+  new\server\utils.py:83:    new_values=None,
+  new\server\utils.py:84:):
+  new\server\utils.py:85:    import json
+  new\server\utils.py:86:    from models import ActivityLog, Notification, User
+  new\server\utils.py:87:    from extensions import db
+  new\server\utils.py:88:    from flask import current_app
+  new\server\utils.py:89:
+  new\server\utils.py:90:    ip_address = request.remote_addr if request else None
+  new\server\utils.py:91:    user_name = user.fullName if user else "System"
+  new\server\utils.py:92:    user_id = user.id if user else None
+  new\server\utils.py:93:
+
+
+

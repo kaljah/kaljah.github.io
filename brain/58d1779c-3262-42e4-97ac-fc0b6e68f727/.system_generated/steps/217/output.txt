@@ -1,0 +1,14 @@
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":235,"LineContent":"@auth_bp.route(\"/register\", methods=[\"POST\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":307,"LineContent":"@auth_bp.route(\"/login\", methods=[\"POST\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":373,"LineContent":"@auth_bp.route(\"/forgot-password\", methods=[\"POST\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":445,"LineContent":"@auth_bp.route(\"/logout\", methods=[\"POST\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":476,"LineContent":"@auth_bp.route(\"/me\", methods=[\"GET\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":515,"LineContent":"@auth_bp.route(\"/profile\", methods=[\"PUT\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":547,"LineContent":"@auth_bp.route(\"/change-password\", methods=[\"POST\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":600,"LineContent":"@auth_bp.route(\"/upload-avatar\", methods=[\"POST\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":732,"LineContent":"@auth_bp.route(\"/settings\", methods=[\"GET\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":762,"LineContent":"@auth_bp.route(\"/settings\", methods=[\"PUT\", \"POST\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":902,"LineContent":"@auth_bp.route(\"/users\", methods=[\"GET\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":930,"LineContent":"@auth_bp.route(\"/users/\u003cint:id\u003e\", methods=[\"PUT\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1009,"LineContent":"@auth_bp.route(\"/users/\u003cint:id\u003e\", methods=[\"DELETE\"])"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1071,"LineContent":"@auth_bp.route(\"/users/\u003cint:id\u003e/reset-password\", methods=[\"POST\"])"}

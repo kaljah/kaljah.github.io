@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[(1, 'Sonatrach', 'SH', 'Algeria', 1, '2026-09-24 15:10:15.290510'), (2, 'Occidental', 'OXY', 'United States', 0, '2026-09-24 15:10:15.291511'), (3, 'Eni', 'ENI', 'Italy', 0, '2026-09-24 15:10:15.291511'), (4, 'TotalEnergies', 'TTE', 'France', 0, '2026-09-24 15:10:15.292511'), (5, 'Pertamina', 'PER', 'Indonesia', 0, '2026-09-24 15:10:15.293511'), (6, 'Repsol', 'REP', 'Spain', 0, '2026-09-24 15:10:15.293511')]
+

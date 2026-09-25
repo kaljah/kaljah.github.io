@@ -1,0 +1,27 @@
+
+The command exited with code 1.
+Output:
+At line:6 char:27
++ routes = re.findall(r'\"([a-z_]+)\":\s*([A-Za-z0-9_]+Calculator)', te ...
++                           ~
+Missing ] at end of attribute or type literal.
+At line:6 char:28
++ routes = re.findall(r'\"([a-z_]+)\":\s*([A-Za-z0-9_]+Calculator)', te ...
++                            ~~
+Unexpected token '-z' in expression or statement.
+At line:6 char:30
++ routes = re.findall(r'\"([a-z_]+)\":\s*([A-Za-z0-9_]+Calculator)', te ...
++                              ~~~
+Unexpected token '_]+' in expression or statement.
+At line:6 char:30
++ routes = re.findall(r'\"([a-z_]+)\":\s*([A-Za-z0-9_]+Calculator)', te ...
++                              ~
+Missing closing ')' in expression.
+At line:6 char:33
++ routes = re.findall(r'\"([a-z_]+)\":\s*([A-Za-z0-9_]+Calculator)', te ...
++                                 ~
+Unexpected token ')' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : EndSquareBracketExpectedAtEndOfAttribute
+ 
+

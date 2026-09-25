@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\79dc0725-d62a-42e1-a90b-11e0d17e5d0b\task.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,9 +1,9 @@
+ # Region Dropdown Bug Fix — Tasks
+ 
+ - [x] Read implementation plan
+-- [ ] **Server**: Add `region_identifier` computed field to `/facilities` API response (`facilities.py`)
+-- [ ] **Frontend**: Update `ManageData.jsx` — filter bar dropdown (`f.region_identifier`)
+-- [ ] **Frontend**: Update `MethaneExplorer.jsx` — dropdown building (line 177) + filter matching (line 239)
+-- [ ] **Frontend**: Update `userDefaults.js` — auto-fill logic (line 126)
+-- [ ] Verify the server still starts cleanly
++- [x] **Server**: Add `region_identifier` computed field to `/facilities` API response (`facilities.py`)
++- [x] **Frontend**: Update `ManageData.jsx` — filter bar dropdown (`f.region_identifier`)
++- [x] **Frontend**: Update `MethaneExplorer.jsx` — dropdown building (line 177) + filter matching (line 239)
++- [x] **Frontend**: Update `userDefaults.js` — auto-fill logic (line 126)
++- [x] Verify the server still starts cleanly
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

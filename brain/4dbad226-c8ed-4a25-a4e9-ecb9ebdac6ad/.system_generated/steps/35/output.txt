@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+Select-String : The string def calculate|process_category|calc_type|" combustion\|\flaring\|\venting\|\fugitive\|\tank\
+|\pneumatic\|\dehydrator\|\agr\|\stoichiometry\|\blowdown\|\liquids_unload\|\mud\|\completion\|\compressor\|\scope2\|\s
+cope3\ is not a valid regular expression: parsing "def calculate|process_category|calc_type|" combustion\|\flaring\|\ve
+nting\|\fugitive\|\tank\|\pneumatic\|\dehydrator\|\agr\|\stoichiometry\|\blowdown\|\liquids_unload\|\mud\|\completion\|
+\compressor\|\scope2\|\scope3\" - Malformed \p{X} character escape.
+At line:1 char:1
++ Select-String -Path 'c:\Users\samsung\Desktop\H2\new\server\calculati ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Select-String], ArgumentException
+    + FullyQualifiedErrorId : InvalidRegex,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

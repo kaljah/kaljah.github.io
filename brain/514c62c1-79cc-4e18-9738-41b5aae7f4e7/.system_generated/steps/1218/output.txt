@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\check_anomalies.py","LineNumber":6,"LineContent":"    e1 = Emission.query.filter(Emission.qa_flag.isnot(None)).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\check_anomalies.py","LineNumber":7,"LineContent":"    e2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\check_anomalies.py","LineNumber":8,"LineContent":"    e3 = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None)).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\create_anomalies.py","LineNumber":15,"LineContent":"            e1.qa_flag = \"Anomaly: Quantity exceeds threshold (10,000,000)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\create_anomalies.py","LineNumber":21,"LineContent":"            e2.qa_flag = \"Anomaly: Quantity exceeds threshold (10,000,000)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\create_anomalies.py","LineNumber":27,"LineContent":"            e3.qa_flag = \"Anomaly: Quantity exceeds threshold (10,000,000)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_columns.py","LineNumber":10,"LineContent":"            ('qa_flag', 'VARCHAR(255)')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":149,"LineContent":"                    Emission.qa_flag.is_(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":217,"LineContent":"                    Scope2Emission.qa_flag.is_(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":285,"LineContent":"                    Scope3Emission.qa_flag.is_(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":559,"LineContent":"                                emission_obj.qa_flag = flag_msg"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1065,"LineContent":"        emission.qa_flag = f\"Outlier detected: usage {amount} exceeds 10,000,000 threshold\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1068,"LineContent":"            \"reason\": emission.qa_flag,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1167,"LineContent":"        emission.qa_flag = f\"Outlier detected: activity data {spend_usd} exceeds 10,000,000 threshold\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1170,"LineContent":"            \"reason\": emission.qa_flag,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1295,"LineContent":"        emission.qa_flag = f\"Outlier detected: activity data {amt} exceeds 10,000,000 threshold\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1298,"LineContent":"            \"reason\": emission.qa_flag,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":153,"LineContent":"    qa_flag = db.Column(db.String(255), nullable=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":354,"LineContent":"    qa_flag = db.Column(db.String(255), nullable=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":392,"LineContent":"    qa_flag = db.Column(db.String(255), nullable=True)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":1,"LineContent":"\"\"\"Add uncertainty_pct and qa_flag"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":26,"LineContent":"        batch_op.add_column(sa.Column('qa_flag', sa.String(length=255), nullable=True))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":30,"LineContent":"        batch_op.add_column(sa.Column('qa_flag', sa.String(length=255), nullable=True))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":34,"LineContent":"        batch_op.add_column(sa.Column('qa_flag', sa.String(length=255), nullable=True))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":42,"LineContent":"        batch_op.drop_column('qa_flag')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":46,"LineContent":"        batch_op.drop_column('qa_flag')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\52c620a620d2_add_uncertainty_pct_and_qa_flag.py","LineNumber":50,"LineContent":"        batch_op.drop_column('qa_flag')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4455,"LineContent":"    if hasattr(emission, \"qa_flag\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4456,"LineContent":"        emission.qa_flag = f\"Rejected: {reason}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4599,"LineContent":"        if hasattr(model, \"qa_flag\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4600,"LineContent":"            update_vals[\"qa_flag\"] = f\"Rejected: {reason}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4707,"LineContent":"                \"qa_flag\": getattr(e, \"qa_flag\", None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4729,"LineContent":"                \"qa_flag\": getattr(e, \"qa_flag\", None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4753,"LineContent":"                \"qa_flag\": getattr(e, \"qa_flag\", None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":84,"LineContent":"            q1 = Emission.query.filter(Emission.qa_flag.isnot(None))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":101,"LineContent":"                    \"qa_flag\": r.qa_flag,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":107,"LineContent":"            q2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":124,"LineContent":"                    \"qa_flag\": r.qa_flag,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":130,"LineContent":"            q3 = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":147,"LineContent":"                    \"qa_flag\": r.qa_flag,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":311,"LineContent":"        q1_flags = Emission.query.filter(Emission.qa_flag.isnot(None))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":319,"LineContent":"        q2_flags = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":327,"LineContent":"        q3_flags = Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":545,"LineContent":"                _fac_filter(Emission.query.filter(Emission.qa_flag.isnot(None)), Emission),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":550,"LineContent":"                _fac_filter(Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)), Scope2Emission),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":555,"LineContent":"                _fac_filter(Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None)), Scope3Emission),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":584,"LineContent":"                _sanitize_csv(r.qa_flag),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":596,"LineContent":"                _sanitize_csv(r.qa_flag),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":608,"LineContent":"                _sanitize_csv(r.qa_flag),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":663,"LineContent":"        if record.qa_flag and not record.qa_flag.startswith(f\"[{resolution}]\"):"}
+(...13 more results not shown)

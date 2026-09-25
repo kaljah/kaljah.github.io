@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\property\test_clean_properties.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -90,7 +90,7 @@
+         expected_total = res1["total_co2e"] * multiplier
+         assert abs(res_scaled["total_co2e"] - expected_total) < (expected_total * 1e-4)
+ 
+-    @settings(max_examples=50)
++    @settings(max_examples=50, deadline=None)
+     @given(
+         st.floats(min_value=1.0, max_value=25000.0),
+         st.floats(min_value=1.0, max_value=25000.0),
+@@ -113,7 +113,7 @@
+         expected_sum = res1["total_co2e"] + res2["total_co2e"]
+         assert abs(res_sum["total_co2e"] - expected_sum) < 1e-5
+ 
+-    @settings(max_examples=50)
++    @settings(max_examples=50, deadline=None)
+     @given(
+         st.floats(min_value=1.0, max_value=10000.0),
+         st.floats(min_value=10000.1, max_value=50000.0),
+@@ -130,7 +130,7 @@
+         )
+         assert res_small["total_co2e"] < res_large["total_co2e"]
+ 
+-    @settings(max_examples=30)
++    @settings(max_examples=30, deadline=None)
+     @given(st.floats(min_value=1.0, max_value=10000.0))
+     def test_unit_invariance_property(self, qty_scf):
+         """Physical unit invariance: Equivalent physical volumes must yield identical emissions."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

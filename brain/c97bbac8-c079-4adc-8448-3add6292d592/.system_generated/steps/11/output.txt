@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+/auth/csrf: 404 {"code":404,"error":"Not found","request_id":"22ea25e7-40c3-4a6e-afe4-7531d277f84e"}
+
+/csrf: 404 {"code":404,"error":"Not found","request_id":"e9f64467-5288-4dc8-90d2-b812153f390f"}
+
+/auth/token: 404 {"code":404,"error":"Not found","request_id":"7a792264-99f3-4f8e-b7ac-871491438396"}
+
+/csrf-token: 200 {"csrf_token":"ImQ2MzQ4MjJmNTI5NmE3OTYzMmI1ZmUyOWY0ODdhNDY0ZTc3NTc0NDci.arTeNQ.3kiloomCN-mBJdWYUEWNF
+--- Testing POST without CSRF ---
+POST emissions (no CSRF): 400 {"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+Cookies: {'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJjc3JmX3Rva2VuIjoiZDYzNDgyMmY1Mjk2YTc5NjMyYjVmZTI5ZjQ4N2E0NjRlNzc1NzQ0NyIsInVzZXJfaWQiOjF9.arTeOA.LOGV43p0eF47LA6rAWDtPcIYZLo', 'csrf_token': 'ImQ2MzQ4MjJmNTI5NmE3OTYzMmI1ZmUyOWY0ODdhNDY0ZTc3NTc0NDci.arTeNQ.3kiloomCN-mBJdWYUEWNF_B9dnY'}
+

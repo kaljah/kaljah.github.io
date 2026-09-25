@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+CSRF token: IjM5YzgwNWZiZmE3MmIz...
+Login status: 200
+POST failed with code: 400
+Error body: {"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+

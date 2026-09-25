@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1346,4 +1346,13 @@
+   - Verified enforcement of Invariant Zero protocol, RBAC boundaries, maker-checker lifecycle, and thermodynamic calculation standards.
+   - Mapped all client API consumption patterns to backend route controllers.
+ - **Status:** Complete, verified, and in full synchronization with the repository.
++
++### [2026-09-15T00:01:00Z] - SCOPE 1 EMISSION DETAIL VIEWER REMEDIATION & THEME ALIGNMENT
++- **Action:** Remediated Scope 1 table calculation detail viewer (`CalculationDetails.jsx`, `CalculationDetails.css`, `Scope1Form.jsx`).
++- **Files Modified:**
++  - `new/client/src/components/CalculationDetails.css`: Converted from dark translucent glassmorphism (`rgba(255,255,255,0.05)`) to the platform's environmental light theme (`#ffffff` card background, `#e2e8f0` borders, `#0f172a` text, `#10b981` emerald accents, `#f8fafc` sections).
++  - `new/client/src/components/CalculationDetails.jsx`: Resolved calculation step rendering bug by supporting `step.name` and `step.desc`. Added operational context grid (Facility, Period, Equipment ID, Status badge), gas-coded emission factor badges, active GWP factors (AR5: CH4 28.0, N2O 265.0), uncertainty analysis section (1σ and 95% CI), and highlighted total CO2e summary card.
++  - `new/client/src/components/Scope1Form.jsx`: Updated `handleInspect` to parse `source_payload`, resolve effective emission factors (`ef_co2`, `ef_ch4`, `ef_n2o`), inject active GWP standards, pass facility and reporting period metadata, and provide four detailed, descriptive calculation steps.
++- **Verification:** Verified compilation via `npm run build` in `new/client` (0 errors, 3,199 modules transformed).
++- **Status:** Complete, verified, and in full synchronization with the repository.
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

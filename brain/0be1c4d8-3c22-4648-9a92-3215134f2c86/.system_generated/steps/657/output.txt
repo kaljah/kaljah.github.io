@@ -1,0 +1,195 @@
+
+The command exited with code 1.
+Output:
+<truncated 128 lines>
+    
+            # Regular user
+            user = User.query.filter_by(email="user_rep@test.com").first()
+            if not user:
+                user = User(
+                    email="user_rep@test.com",
+                    fullName="Regular Reporter",
+                    orgName="Sonatrach Test",
+                    sector="Energy",
+                    role="user",
+                    location="Hassi Messaoud",
+                )
+                user.set_password("password123")
+                db.session.add(user)
+                db.session.commit()
+            else:
+                user.role = "user"
+                user.set_password("password123")
+                db.session.commit()
+    
+            # Facility
+            fac = Facility.query.filter_by(name="Report Test Facility").first()
+            if not fac:
+                fac = Facility(
+                    name="Report Test Facility",
+                    location="Hassi Messaoud",
+                    activity="Extraction",
+                    division="Production",
+                    region="Hassi Messaoud",
+                    field="Hassi",
+                    segment="Upstream",
+                )
+                db.session.add(fac)
+                db.session.commit()
+    
+            # Clean existing test records for this facility
+            Emission.query.filter_by(facility_id=fac.id).delete()
+            Scope2Emission.query.filter_by(facility_id=fac.id).delete()
+            Scope3Emission.query.filter_by(facility_id=fac.id).delete()
+            db.session.commit()
+    
+            # Add verified Scope 1 record
+            e1 = Emission(
+                record_id="rep-test-s1-001",
+                facility_id=fac.id,
+                year=2024,
+                month=5,
+                process_type="combustion",
+                fuel_type="Natural Gas",
+                quantity=1500.0,
+                unit="m3",
+                co2_emissions=300.0,
+                ch4_emissions=1.5,
+                n2o_emissions=0.05,
+                co2e_total=340.0,
+                status="Verified",
+                activity="Flaring",
+            )
+            db.session.add(e1)
+    
+            # Add verified Scope 2 record
+            e2 = Scope2Emission(
+                facility_id=fac.id,
+                created_by=admin.id,
+                year=2024,
+                month=5,
+                source_type="electricity",
+                electricity_kwh=8000.0,
+                emission_factor=0.04,
+                co2e=320.0,
+                status="Verified",
+                grid_region="Algiers",
+            )
+            db.session.add(e2)
+    
+            # Add verified Scope 3 record
+            e3 = Scope3Emission(
+                facility_id=fac.id,
+                created_by=admin.id,
+                year=2024,
+                month=5,
+                category="Purchased Goods and Services",
+                sub_category="Chemicals",
+                activity_data=4000.0,
+                unit="kg",
+                emission_factor=0.045,
+                co2e=180.0,
+                status="Verified",
+            )
+            db.session.add(e3)
+    
+            # Add injection test Scope 1 record
+            e_inj = Emission(
+                record_id="rep-test-s1-inj",
+                facility_id=fac.id,
+                year=2024,
+                month=6,
+                process_type="=cmd|'/C calc'!A0",
+                fuel_type="+SUM(1,1)",
+                quantity=100.0,
+                unit="m3",
+                co2_emissions=20.0,
+                ch4_emissions=0.1,
+                n2o_emissions=0.01,
+                co2e_total=22.8,
+                status="Verified",
+                activity="@malicious",
+            )
+            db.session.add(e_inj)
+    
+>           db.session.commit()
+
+tests\test_reports.py:171: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\scoping.py:597: in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:2017: in commit
+    trans.commit(_to_root=True)
+<string>:2: in commit
+    ???
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:139: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1312: in commit
+    self.session.dispatch.after_commit(self.session)
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\event\attr.py:378: in __call__
+    fn(*args, **kw)
+app.py:95: in receive_after_commit
+    clear_dashboard_cache()
+routes\dashboard.py:77: in clear_dashboard_cache
+    db.session.rollback()
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\scoping.py:1796: in rollback
+    return self._proxied.rollback()
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1979: in rollback
+    self._transaction.rollback(_to_root=True)
+<string>:2: in rollback
+    ???
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:103: in _go
+    self._raise_for_prerequisite_state(fn.__name__, current_state)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.orm.session.SessionTransaction object at 0x0000020C0889DED0>
+operation_name = 'rollback', state = <SessionTransactionState.COMMITTED: 3>
+
+    def _raise_for_prerequisite_state(
+        self, operation_name: str, state: _StateChangeState
+    ) -> NoReturn:
+        if state is SessionTransactionState.DEACTIVE:
+            if self._rollback_exception:
+                raise sa_exc.PendingRollbackError(
+                    "This Session's transaction has been rolled back "
+                    "due to a previous exception during flush."
+                    " To begin a new transaction with this Session, "
+                    "first issue Session.rollback()."
+                    f" Original exception was: {self._rollback_exception}",
+                    code="7s2a",
+                )
+            else:
+                raise sa_exc.InvalidRequestError(
+                    "This session is in 'inactive' state, due to the "
+                    "SQL transaction being rolled back; no further SQL "
+                    "can be emitted within this transaction."
+                )
+        elif state is SessionTransactionState.CLOSED:
+            raise sa_exc.ResourceClosedError("This transaction is closed")
+        elif state is SessionTransactionState.PROVISIONING_CONNECTION:
+            raise sa_exc.InvalidRequestError(
+                "This session is provisioning a new connection; concurrent "
+                "operations are not permitted",
+                code="isce",
+            )
+        else:
+>           raise sa_exc.InvalidRequestError(
+                f"This session is in '{state.name.lower()}' state; no "
+                "further SQL can be emitted within this transaction."
+            )
+E           sqlalchemy.exc.InvalidRequestError: This session is in 'committed' state; no further SQL can be emitted within this transaction.
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:996: InvalidRequestError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_reports.py::test_reports_it_admin_forbidden - sqlalchemy.exc...
+========================= 1 warning, 1 error in 3.26s =========================
+

@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -219,6 +219,19 @@
+                 allowed_fids=allowed_fids,
+                 segment=segment,
+             )
++            f_intensity_py = None
++            if year and year != "all" and str(year).isdigit():
++                f_intensity_py = executor.submit(
++                    _run_in_app_ctx,
++                    app,
++                    _query_intensity_stats,
++                    facility_id=facility_id,
++                    year=int(year) - 1,
++                    activity=activity,
++                    division=division,
++                    allowed_fids=allowed_fids,
++                    segment=segment,
++                )
+             f_uncertainty = executor.submit(
+                 _run_in_app_ctx,
+                 app,
+@@ -292,6 +292,7 @@
+             "scope3_summary": f_scope3.result(),
+             "categorical_breakdown": f_categorical.result(),
+             "intensity_stats": f_intensity.result(),
++            "intensity_stats_py": f_intensity_py.result() if f_intensity_py else None,
+             "uncertainty": f_uncertainty.result(),
+             "years": f_years.result(),
+             "goal": goal_obj,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

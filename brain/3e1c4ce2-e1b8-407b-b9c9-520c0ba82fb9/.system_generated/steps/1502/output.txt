@@ -1,0 +1,66 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 11 items
+
+new\server\tests\test_carbon_intensity_validation.py ......F..F.         [100%]
+
+================================== FAILURES ===================================
+_______________________ test_zero_production_resilience _______________________
+
+ci_setup = {'admin': <User 5>, 'fac1': <Facility 1>, 'fac2': <Facility 2>, 'fac3': <Facility 3>}
+
+    def test_zero_production_resilience(ci_setup):
+        """Verify facilities with 0 production safely return 0.0 intensities without crashing."""
+        with flask_app.app_context():
+            # Query fac1 for a year with no production
+            stats = _query_intensity_stats(year="2015", facility_id=str(ci_setup["fac1"].id))
+>           assert len(stats) >= 1
+E           assert 0 >= 1
+E            +  where 0 = len([])
+
+new\server\tests\test_carbon_intensity_validation.py:317: AssertionError
+_________________________ test_cbam_exports_endpoint __________________________
+
+auth_client = <FlaskClient <Flask 'app'>>
+ci_setup = {'admin': <User 5>, 'fac1': <Facility 1>, 'fac2': <Facility 2>, 'fac3': <Facility 3>}
+
+    def test_cbam_exports_endpoint(auth_client, ci_setup):
+        """Verify GET /api/data/cbam-exports returns valid EU CBAM product records."""
+        resp = auth_client.get(f"/api/data/cbam-exports?year=2026&facilityId={ci_setup['fac1'].id}")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert len(data) >= 1
+        sample = data[0]
+        assert sample["cn_code"] == "7203 10 00"
+        assert sample["specific_embedded_direct"] == 1.125
+        assert sample["specific_embedded_indirect"] == 0.245
+>       assert sample["total_embedded_emissions"] == 5000.0 * (1.125 + 0.245)
+E       assert 6850.0 == (5000.0 * (1.125 + 0.245))
+
+new\server\tests\test_carbon_intensity_validation.py:366: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[2026-09-21 20:12:29,081] INFO in app: POST /api/auth/login 200 [0.091s] [ReqID: 8d630ca2-4380-43d5-900e-7704b0de2787]
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:177 POST /api/auth/login 200 [0.091s] [ReqID: 8d630ca2-4380-43d5-900e-7704b0de2787]
+---------------------------- Captured stderr call -----------------------------
+[2026-09-21 20:12:29,088] INFO in app: GET /api/data/cbam-exports 200 [0.002s] [ReqID: 89ec1dff-fec0-4193-a59c-c040497ae08e]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:177 GET /api/data/cbam-exports 200 [0.002s] [ReqID: 89ec1dff-fec0-4193-a59c-c040497ae08e]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_carbon_intensity_validation.py::test_zero_production_resilience
+FAILED new\server\tests\test_carbon_intensity_validation.py::test_cbam_exports_endpoint
+=================== 2 failed, 9 passed, 1 warning in 1.44s ====================
+

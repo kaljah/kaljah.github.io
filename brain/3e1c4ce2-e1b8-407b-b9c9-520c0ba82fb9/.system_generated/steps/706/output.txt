@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -75,8 +75,8 @@
+ 
+     console.log(`[AUDIT] UI Hero Card: Gross = ${grossEmissionsText}, Net = ${netEmissionsText}, CH4 = ${methaneText}`);
+ 
+-    expect(grossEmissionsText).toContain('254.9K');
+-    expect(netEmissionsText).toContain('254.9K');
++    expect(grossEmissionsText).toContain('256.4K');
++    expect(netEmissionsText).toContain('256.4K');
+     expect(methaneText).toContain('238.7');
+ 
+     // Verify Scope Pills
+@@ -84,7 +84,7 @@
+     const scope3Pill = await page.locator('.scope-pill.scope-3 .pill-value').innerText();
+ 
+     console.log(`[AUDIT] Scope Pills: S1 = ${scope1Pill}, S2 = ${scope2Pill}, S3 = ${scope3Pill}`);
+-    expect(scope1Pill).toContain('254.9K');
++    expect(scope1Pill).toContain('256.4K');
+     expect(scope2Pill).toContain('0');
+     expect(scope3Pill).toContain('0');
+   });
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

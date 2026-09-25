@@ -1,0 +1,68 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_stress_boundary_resilience.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -17,7 +17,7 @@
+ import pytest
+ from app import app
+ from models import db, User, Facility, Emission
+-from calculations import compute_emissions, calculate_co2e
++from emission_factors import API_FACTORS
+ 
+ 
+ @pytest.fixture(scope="module")
+@@ -76,6 +76,7 @@
+ 
+     def test_astronomical_quantities_resilience(self):
+         """Quantities of 10^18 and 10^24 must compute without float overflow or crash."""
++        factor = API_FACTORS.get("Natural Gas", {})
+         magnitudes = [1e18, 1e20, 1e24]
+         for mag in magnitudes:
+             payload = {
+@@ -83,7 +83,7 @@
+                 "quantity": mag,
+                 "unit": "m3",
+             }
+-            res, method = compute_emissions(payload)
++            res, method = compute_emissions(payload, factor_data=factor)
+             assert math.isfinite(res["totalCo2e"]), f"Non-finite result for mag {mag}"
+             assert res["totalCo2e"] > 0
+             assert math.isfinite(res["co2"])
+@@ -96,6 +96,7 @@
+ 
+     def test_microscopic_quantities_resilience(self):
+         """Quantities of 10^-15 and 10^-20 must compute without underflow errors or ZeroDivision."""
++        factor = API_FACTORS.get("Diesel", {})
+         micros = [1e-12, 1e-15, 1e-20]
+         for micro in micros:
+             payload = {
+@@ -103,7 +103,7 @@
+                 "quantity": micro,
+                 "unit": "gal",
+             }
+-            res, method = compute_emissions(payload)
++            res, method = compute_emissions(payload, factor_data=factor)
+             assert math.isfinite(res["totalCo2e"]), f"Non-finite result for micro {micro}"
+             assert res["totalCo2e"] >= 0
+             assert math.isfinite(res["co2"])
+@@ -110,10 +110,13 @@
+         # Zero quantity edge case
+-        res_zero, _ = compute_emissions({
+-            "process_type": "combustion",
+-            "fuel": "Natural Gas",
+-            "quantity": 0.0,
+-            "unit": "m3",
+-        })
++        res_zero, _ = compute_emissions(
++            {
++                "process_type": "combustion",
++                "fuel": "Natural Gas",
++                "quantity": 0.0,
++                "unit": "m3",
++            },
++            factor_data=API_FACTORS.get("Natural Gas", {}),
++        )
+         assert res_zero["totalCo2e"] == 0.0
+ 
+     def test_nan_infinity_rejection_or_handling(self):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

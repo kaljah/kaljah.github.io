@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -11,7 +11,9 @@
+ // Sub-components
+ import Scope1ImportWizard from "./Scope1ImportWizard";
+ import ConfirmModal from "./ConfirmModal";
+-import { Upload, Trash2, Eye } from "lucide-react";
++import { Upload, Trash2, Eye, Sliders, Sparkles, BookOpen, Layers, PlusCircle, CheckCircle, Info } from "lucide-react";
++import { OFFICIAL_FUEL_PRESETS, getPresetsForFuel } from "../constants/officialFuelPresets";
++import QuickAddCustomFactorModal from "./QuickAddCustomFactorModal";
+ import EmissionResult from "./EmissionResult";
+ import CalculationDetails from "./CalculationDetails";
+ import CombustionForm from "./scope1/CombustionForm";
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -426,16 +426,7 @@
+     ensure_admin_seeded()
+ 
+ 
+-@app.route("/api/auth/init-admin")
+-def init_admin_route():
+-    ensure_admin_seeded()
+-    from models import User
+-    users = User.query.all()
+-    return jsonify({
+-        "status": "ok",
+-        "message": "Admin and IT Manager accounts seeded successfully",
+-        "users": [{"email": u.email, "role": u.role, "status": u.status} for u in users]
+-    })
++
+ 
+ 
+ @app.route("/api/csrf-token")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

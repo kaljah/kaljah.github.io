@@ -1,0 +1,57 @@
+
+The command exited with code 0.
+Output:
+
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:46:| 
+**23** | [dispatcher.py](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/dispatcher.py#L1095) | 
+**Critical** | Nitric & Adipic acid routed to carbon stoichiometry | **Chemical inversion: emits CO2, 0.0 N2O** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:47:| 
+**24** | [dispatcher.py](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/dispatcher.py#L1306) | 
+**Critical** | Solid fuels in mass multiplied by 1020 Btu/scf gas factor | **20,000x undercount of solid fuel 
+emissions** |
+> C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:48:| 
+**25** | [uncertainty.py](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/uncertainty.py#L112) | **High** 
+| Log-normal parameter derivation uses arithmetic mean | Skews Monte Carlo 95% confidence intervals |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:49:| 
+**26** | [emissions.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/emissions.py#L1412) | **High** | Batch 
+ingestion commits partially before failure | Leaves orphaned emission records |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:50:| 
+**27** | [data.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/data.py#L595) | **Critical** | `current_app` 
+missing import in exception handler | **NameError crash on delete error** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:51:| 
+**28** | [dashboard.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/dashboard.py#L3020) | **Critical** | 
+Flaring prior year volume conversion undercounts by 28.3x to 28,316x | Corrupts YoY change percentages |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:52:| 
+**29** | [equity_routes.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/equity_routes.py#L102) | 
+**Critical** | `require_facility_access` return value unchecked | **Unauthorized users can alter equity shares** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:53:| 
+**30** | [cap_routes.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/cap_routes.py#L126) | **Critical** | 
+`require_facility_access` return value unchecked | **Unauthorized users can alter CAP decarbonization plans** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:56:| 
+**33** | [auth.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/auth.py#L995) | **Critical** | IT Admin can 
+promote users to business compliance `admin` | **Separation of Duties (SoD) violation** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:57:| 
+**34** | [qaqc.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/qaqc.py#L349) | **Critical** | Completeness 
+score divides solely by `s1_count` | Ignores missing Scope 2 & Scope 3 data |
+> C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:58:| 
+**35** | [qaqc.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/qaqc.py#L176) | **High** | Completeness and 
+uncertainty calculations count rejected records | Skews inventory and permanently deflates health score |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:59:| 
+**36** | [audit.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/audit.py#L384) | **Critical** | Dynamic hash 
+chain recomputed on remaining rows without diffs | **Falsified cryptographic tamper-evidence** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:60:| 
+**37** | [notifications.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/notifications.py#L148) | 
+**Critical** | Broadcast notifications update single shared `is_read` column | Marking read marks read for all 
+enterprise users |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:61:| 
+**38** | [notifications.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/notifications.py#L83) | **High** | 
+SSE stream generator omits `db.session.rollback()` on exception | Hangs in `PendingRollbackError` for 45s |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:62:| 
+**39** | [utils.py](file:///c:/Users/samsung/Desktop/H2/new/server/utils.py#L35) | **Critical** | Unrestricted 
+location superusers return `[]` facilities | **Locks unrestricted superusers out of all data** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:63:| 
+**40** | [reports.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/reports.py#L814) | **Critical** | Natural 
+gas `bbl` converted using liquid barrel volume | **Methane loss rate skewed to > 1,000%** |
+
+
+

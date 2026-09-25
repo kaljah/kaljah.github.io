@@ -1,0 +1,286 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=874_0 RootWebArea "Carbon Tech" url="http://localhost:5173/"
+  uid=884_0 complementary
+    uid=884_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=884_2 StaticText "Carbon tech"
+    uid=884_3 navigation
+      uid=884_4 link "Dashboard" url="http://localhost:5173/"
+        uid=884_5 StaticText "Dashboard"
+      uid=884_6 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=884_7 StaticText "Carbon Intensity"
+      uid=884_8 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=884_9 StaticText "Methane Intensity"
+      uid=884_10 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=884_11 StaticText "SBTi Net-Zero"
+      uid=884_12 link "Calculations" url="http://localhost:5173/emissions"
+        uid=884_13 StaticText "Calculations"
+      uid=884_14 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=884_15 StaticText "Emissions Map"
+      uid=884_16 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=884_17 StaticText "Manage Data"
+      uid=884_18 link "Reports" url="http://localhost:5173/reports"
+        uid=884_19 StaticText "Reports"
+      uid=884_20 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=884_21 StaticText "Reference Data"
+      uid=884_22 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=884_23 StaticText "Uncertainty"
+      uid=884_24 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=884_25 StaticText "Audit Trail"
+      uid=884_26 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=884_27 StaticText "QA/QC & Diagnostics"
+    uid=884_28 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=884_29 StaticText "Settings"
+    uid=884_30 StaticText "A"
+    uid=884_31 StaticText "Administrator"
+    uid=884_32 StaticText "Sustainability Lead"
+  uid=884_33 main
+    uid=884_34 StaticText "Corporate ESG"
+    uid=889_0 StaticText "All Years"
+    uid=889_1 StaticText "All Supply Chains"
+    uid=889_2 StaticText "All Activities"
+    uid=889_3 StaticText "All Divisions"
+    uid=889_4 StaticText "All Regions"
+    uid=889_5 button "GWP-100"
+    uid=889_6 button "GWP-20"
+    uid=889_7 button "+ Set Target" description="Set emission targets in Manage Data"
+    uid=884_35 button "Notifications"
+    uid=884_36 button "User Profile" description="User Profile"
+    uid=884_37 StaticText "Administrator"
+    uid=889_8 heading "GHG Emissions Dashboard" level="1"
+    uid=889_9 StaticText "Live Content • Updated 11:37 PM"
+    uid=889_10 heading "EMISSIONS OVERVIEW" level="2"
+    uid=889_11 StaticText "All Regions"
+    uid=889_12 button "Export Executive Brief (PDF)" description="Export multi-page executive summary PDF"
+    uid=889_13 StaticText "GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)"
+    uid=889_14 StaticText "10.2K"
+    uid=889_15 StaticText "tCO₂e"
+    uid=889_16 StaticText "NET EMISSIONS"
+    uid=889_17 StaticText "10.2K"
+    uid=889_18 StaticText "tCO₂e"
+    uid=889_19 StaticText "Less"
+    uid=889_20 StaticText "0"
+    uid=889_21 StaticText "Mitigation"
+    uid=889_22 StaticText "TOTAL CH4 (METHANE)"
+    uid=889_23 StaticText "338.9"
+    uid=889_24 StaticText "tCH₄"
+    uid=889_25 StaticText "PERFORMANCE INTENSITY"
+    uid=889_26 StaticText "0.04"
+    uid=889_27 StaticText "kg/BOE"
+    uid=889_28 StaticText "CO₂e Intensity (Scope 1+2)"
+    uid=889_29 StaticText "Scope 1 (Direct)"
+    uid=889_30 StaticText "10.2K"
+    uid=889_31 StaticText " tCO₂e"
+    uid=889_32 StaticText "Scope 2 (Indirect)"
+    uid=889_33 StaticText "52.2"
+    uid=889_34 StaticText " tCO₂e"
+    uid=889_35 StaticText "Scope 3 (Supply Chain)"
+    uid=889_36 StaticText "216.9"
+    uid=889_37 StaticText " tCO₂e"
+    uid=889_38 heading "Emissions Trend & Projection" level="3"
+    uid=889_39 StaticText "Historical inventory trajectory with 5-year predictive forecast"
+    uid=889_40 button "Compare Regions"
+    uid=889_41 image "Forecast legend icon"
+    uid=889_42 StaticText "Forecast"
+    uid=889_43 image "Scope 1 legend icon"
+    uid=889_44 StaticText "Scope 1"
+    uid=889_45 image "Target Path legend icon"
+    uid=889_46 StaticText "Target Path"
+    uid=889_47 image "Total Emissions legend icon"
+    uid=889_48 StaticText "Total Emissions"
+    uid=889_49 application
+      uid=889_50 group
+      uid=889_51 group
+      uid=889_52 group
+      uid=889_53 group
+      uid=889_54 group
+      uid=889_55 group
+      uid=889_56 group
+      uid=889_57 group
+      uid=889_58 group
+      uid=889_59 group
+      uid=889_60 group
+      uid=889_61 group
+        uid=889_62 StaticText "2026"
+        uid=889_63 StaticText "0"
+        uid=889_64 StaticText "3.0k"
+        uid=889_65 StaticText "6.0k"
+        uid=889_66 StaticText "9.0k"
+        uid=889_67 StaticText "12.0k"
+    uid=889_68 heading "Emissions by Activity" level="3"
+    uid=889_69 image "E&P (Upstream) legend icon"
+    uid=889_70 StaticText "E&P (Upstream)"
+    uid=889_71 image "Steel & Iron (Acier DRI) legend icon"
+    uid=889_72 StaticText "Steel & Iron (Acier DRI)"
+    uid=889_73 application
+      uid=889_74 group
+      uid=889_75 group
+      uid=889_76 group
+        uid=889_77 group
+          uid=889_78 group
+            uid=889_79 graphics-symbol
+          uid=889_80 group
+            uid=889_81 graphics-symbol
+      uid=889_82 group
+      uid=889_83 group
+      uid=889_84 group
+      uid=889_85 group
+      uid=889_86 group
+      uid=889_87 group
+      uid=889_88 group
+      uid=889_89 group
+      uid=889_90 group
+    uid=889_91 heading "Emissions by Source" level="3"
+    uid=889_92 image "Combustion legend icon"
+    uid=889_93 StaticText "Combustion"
+    uid=889_94 image "Flaring legend icon"
+    uid=889_95 StaticText "Flaring"
+    uid=889_96 image "Other legend icon"
+    uid=889_97 StaticText "Other"
+    uid=889_98 image "Venting legend icon"
+    uid=889_99 StaticText "Venting"
+    uid=889_100 application
+      uid=889_101 group
+      uid=889_102 group
+      uid=889_103 group
+        uid=889_104 group
+          uid=889_105 group
+            uid=889_106 graphics-symbol
+          uid=889_107 group
+            uid=889_108 graphics-symbol
+          uid=889_109 group
+            uid=889_110 graphics-symbol
+          uid=889_111 group
+            uid=889_112 graphics-symbol
+      uid=889_113 group
+      uid=889_114 group
+      uid=889_115 group
+      uid=889_116 group
+      uid=889_117 group
+      uid=889_118 group
+      uid=889_119 group
+      uid=889_120 group
+      uid=889_121 group
+    uid=889_122 heading "SBTi Decarbonization Trajectory (1.5C)" level="3"
+    uid=889_123 StaticText "Progress monitoring against corporate Net-Zero targets from Base Year "
+    uid=889_124 StaticText "2026"
+    uid=889_125 StaticText " to Target Year "
+    uid=889_126 StaticText "2050"
+    uid=889_127 button "View Full SBTi Dashboard →"
+    uid=889_128 image "Actual Verified Emissions legend icon"
+    uid=889_129 StaticText "Actual Verified Emissions"
+    uid=889_130 image "Business as Usual (+1.5%/yr) legend icon"
+    uid=889_131 StaticText "Business as Usual (+1.5%/yr)"
+    uid=889_132 image "SBTi 1.5°C Linear Target legend icon"
+    uid=889_133 StaticText "SBTi 1.5°C Linear Target"
+    uid=889_134 application
+      uid=889_135 group
+      uid=889_136 group
+      uid=889_137 group
+      uid=889_138 group
+      uid=889_139 group
+      uid=889_140 group
+      uid=889_141 group
+      uid=889_142 group
+      uid=889_143 group
+      uid=889_144 group
+      uid=889_145 group
+      uid=889_146 group
+        uid=889_147 StaticText "2026"
+        uid=889_148 StaticText "2027"
+        uid=889_149 StaticText "2028"
+        uid=889_150 StaticText "2029"
+        uid=889_151 StaticText "2030"
+        uid=889_152 StaticText "2031"
+        uid=889_153 StaticText "2032"
+        uid=889_154 StaticText "2033"
+        uid=889_155 StaticText "2034"
+        uid=889_156 StaticText "2035"
+        uid=889_157 StaticText "2036"
+        uid=889_158 StaticText "2037"
+        uid=889_159 StaticText "2038"
+        uid=889_160 StaticText "2039"
+        uid=889_161 StaticText "2040"
+        uid=889_162 StaticText "2041"
+        uid=889_163 StaticText "2042"
+        uid=889_164 StaticText "2043"
+        uid=889_165 StaticText "2044"
+        uid=889_166 StaticText "2045"
+        uid=889_167 StaticText "2046"
+        uid=889_168 StaticText "2047"
+        uid=889_169 StaticText "2048"
+        uid=889_170 StaticText "2049"
+        uid=889_171 StaticText "2050"
+        uid=889_172 StaticText "0"
+        uid=889_173 StaticText "4.0k"
+        uid=889_174 StaticText "8.0k"
+        uid=889_175 StaticText "12.0k"
+        uid=889_176 StaticText "16.0k"
+    uid=889_177 heading "Categorical Emissions Overview" level="3"
+    uid=889_178 StaticText "Activity → Division → Region"
+    uid=889_179 StaticText "E&P (Upstream)"
+    uid=889_180 StaticText "DP"
+    uid=889_181 StaticText "RNS"
+    uid=889_182 StaticText " "
+    uid=889_183 StaticText "- "
+    uid=889_184 StaticText "GF"
+    uid=889_185 StaticText "10.2K"
+    uid=889_186 StaticText " "
+    uid=889_187 StaticText "tCO₂e"
+    uid=889_188 StaticText "LQS (Liquefaction)"
+    uid=889_189 StaticText "No emissions data for this activity"
+    uid=889_190 StaticText "RPC (Refining)"
+    uid=889_191 StaticText "No emissions data for this activity"
+    uid=889_192 StaticText "Cement & Clinker"
+    uid=889_193 StaticText "No emissions data for this activity"
+    uid=889_194 StaticText "Chemicals & Fertilizers"
+    uid=889_195 StaticText "No emissions data for this activity"
+    uid=889_196 StaticText "Steel & Iron (Acier DRI)"
+    uid=889_197 StaticText "METALLURGY"
+    uid=889_198 StaticText "Complexe Sidérurgique DRI/EAF (Tosyali)"
+    uid=889_199 StaticText " "
+    uid=889_200 StaticText "- "
+    uid=889_201 StaticText "Industrial Zone"
+    uid=889_202 StaticText "54.1"
+    uid=889_203 StaticText " "
+    uid=889_204 StaticText "tCO₂e"
+    uid=889_205 StaticText "Upstream & Midstream Gas"
+    uid=889_206 StaticText "No emissions data for this activity"
+    uid=889_207 heading "Detailed Breakdown" level="3"
+    uid=889_208 StaticText "CATEGORY / SOURCE"
+    uid=889_209 StaticText "RESULTS (TCO₂E)"
+    uid=889_210 StaticText "Scope 1 (Direct)"
+    uid=889_211 StaticText "10.2K"
+    uid=889_212 StaticText "Stationary Combustion"
+    uid=889_213 StaticText "193.4"
+    uid=889_214 StaticText "Flaring"
+    uid=889_215 StaticText "210.2"
+    uid=889_216 StaticText "Venting"
+    uid=889_217 StaticText "6.7K"
+    uid=889_218 StaticText "Other Sources"
+    uid=889_219 StaticText "3K"
+    uid=889_220 StaticText "Scope 2 (Indirect - Energy)"
+    uid=889_221 StaticText "52.2"
+    uid=889_222 StaticText "Scope 3 (Supply Chain)"
+    uid=889_223 StaticText "216.9"
+    uid=889_224 StaticText "Total Footprint (Scopes 1+2+3)"
+    uid=889_225 StaticText "10.5K"
+    uid=889_226 StaticText "Net Footprint"
+    uid=889_227 StaticText "10.5K"
+    uid=889_228 StaticText "ORGANIZATIONAL BREAKDOWN"
+    uid=889_229 StaticText "▶"
+    uid=889_230 StaticText "Steel & Iron (Acier DRI)"
+    uid=889_231 StaticText "54.1"
+    uid=889_232 StaticText "▶"
+    uid=889_233 StaticText "E&P (Upstream)"
+    uid=889_234 StaticText "10.2K"
+    uid=889_235 heading "Reference Libraries" level="3"
+    uid=889_236 StaticText "API Compendium: 2021"
+    uid=889_237 StaticText "ISO 14064-1:2018"
+    uid=889_238 StaticText "GRI 305 Standards"
+    uid=889_239 button "Manage Custom Factors"
+
+</current_snapshot>

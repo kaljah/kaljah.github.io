@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\CarbonIntensity.jsx:42:  const [gwpHorizon, setGwpHorizon] = useState("100");
+new\client\src\pages\CarbonIntensity.jsx:432:          tBoe > 0 ? (gwpHorizon === "20" ? wCo2Gwp20 / tBoe : wCo2 / 
+tBoe) : 0,
+new\client\src\pages\CarbonIntensity.jsx:435:  }, [rawTrendData, currentRegion, gwpHorizon]);
+new\client\src\pages\CarbonIntensity.jsx:447:    gwpHorizon === "20" ? stats.avgCo2IntensityGwp20 : 
+stats.avgCo2Intensity;
+new\client\src\pages\CarbonIntensity.jsx:449:    gwpHorizon === "20"
+new\client\src\pages\CarbonIntensity.jsx:490:                        className={`gwp-pill ${gwpHorizon === "100" ? 
+"active" : ""}`}
+new\client\src\pages\CarbonIntensity.jsx:491:                        onClick={() => setGwpHorizon("100")}
+new\client\src\pages\CarbonIntensity.jsx:497:                        className={`gwp-pill ${gwpHorizon === "20" ? 
+"active" : ""}`}
+new\client\src\pages\CarbonIntensity.jsx:498:                        onClick={() => setGwpHorizon("20")}
+new\client\src\pages\CarbonIntensity.jsx:538:                  {gwpHorizon === "20" ? "GWP�0 Active" : "GWP�00 
+Standard"}
+new\client\src\pages\CarbonIntensity.jsx:748:                    gwpHorizon === "20"
+new\client\src\pages\CarbonIntensity.jsx:914:                          ? gwpHorizon === "20"
+
+
+

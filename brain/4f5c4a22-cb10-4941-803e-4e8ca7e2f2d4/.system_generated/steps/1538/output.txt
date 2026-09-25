@@ -1,0 +1,119 @@
+
+The command exited with code 1.
+Output:
+<truncated 103 lines>
+
+
+      621 |       // Calculate
+      622 |       const calcBtn = page.locator('button:has-text("Calculate Emissions")').first();
+    > 623 |       await calcBtn.scrollIntoViewIfNeeded();
+          |                     ^
+      624 |       await calcBtn.click();
+      625 |       await page.waitForTimeout(800);
+      626 |
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:623:21
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-03bbb-ctors-Default-Uncertainties-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-03bbb-ctors-Default-Uncertainties-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-03bbb-ctors-Default-Uncertainties-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:655:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 3. Scope 1 Table Audit: Column Validation, Uncertainty Percentages & Inspect Modal Details 
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Year"
+    Received string:    "YEAR	ACTIVITY	REGION	DIVISION	FIELD	EMISSION SOURCE	EQUIPMENT ID	PROCESS	ACTIVITY/FUEL	FACTOR TYPE	QUANTITY	CO₂ (T)	CH₄ (T)	N₂O (T)	TOTAL (TCO₂E)	CO₂ 1Σ (±%)	CH₄ 1Σ (±%)	N₂O 1Σ (±%)	CO₂ 95%CI (±%)	CH₄ 95%CI (±%)	N₂O 95%CI (±%)	ACTIONS"
+
+      673 |     const headerRowText = await page.locator('table.excel-table thead tr').first().innerText();
+      674 |     for (const h of expectedHeaders) {
+    > 675 |       expect(headerRowText).toContain(h.replace(/₂/g, '2').replace(/₄/g, '4').slice(0, 5));
+          |                             ^
+      676 |     }
+      677 |     console.log('[TABLE PASS] All 22 header columns present and correctly labeled.');
+      678 |
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:675:29
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Year"
+    Received string:    "YEAR	ACTIVITY	REGION	DIVISION	FIELD	EMISSION SOURCE	EQUIPMENT ID	PROCESS	ACTIVITY/FUEL	FACTOR TYPE	QUANTITY	CO₂ (T)	CH₄ (T)	N₂O (T)	TOTAL (TCO₂E)	CO₂ 1Σ (±%)	CH₄ 1Σ (±%)	N₂O 1Σ (±%)	CO₂ 95%CI (±%)	CH₄ 95%CI (±%)	N₂O 95%CI (±%)	ACTIONS"
+
+      673 |     const headerRowText = await page.locator('table.excel-table thead tr').first().innerText();
+      674 |     for (const h of expectedHeaders) {
+    > 675 |       expect(headerRowText).toContain(h.replace(/₂/g, '2').replace(/₄/g, '4').slice(0, 5));
+          |                             ^
+      676 |     }
+      677 |     console.log('[TABLE PASS] All 22 header columns present and correctly labeled.');
+      678 |
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:675:29
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:717:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 360
+    Received:    2
+
+      739 |     for (const f of facCheck) {
+      740 |       console.log(`Facility ID ${f.facility_id}: ${f.cnt} verified records (Requirement: >= 360)`);
+    > 741 |       expect(f.cnt).toBeGreaterThanOrEqual(360);
+          |                     ^
+      742 |     }
+      743 |
+      744 |     // 2. Audit Dashboard KPIs
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:741:21
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 360
+    Received:    2
+
+      739 |     for (const f of facCheck) {
+      740 |       console.log(`Facility ID ${f.facility_id}: ${f.cnt} verified records (Requirement: >= 360)`);
+    > 741 |       expect(f.cnt).toBeGreaterThanOrEqual(360);
+          |                     ^
+      742 |     }
+      743 |
+      744 |     // 2. Audit Dashboard KPIs
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:741:21
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:159:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 1. Tier 3 Advanced Engineering Scenarios: Completions, Pneumatics, Tanks, AGR, Dehydrator, Blowdown 
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:520:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 2. Tier 1 Advanced Catalog Scenarios: Fuels, Units, Equipment Factors & Default Uncertainties 
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:655:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 3. Scope 1 Table Audit: Column Validation, Uncertainty Percentages & Inspect Modal Details 
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:717:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+

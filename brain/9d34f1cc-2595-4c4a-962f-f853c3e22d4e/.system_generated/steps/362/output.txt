@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -204,10 +204,11 @@
+ 
+         if method == "rate_duration" and flowback_rate and flowback_duration_hours:
+             rate_unit_norm = str(rate_unit or "mscf/day").lower().strip()
++            multiplier = 1000.0 if ("mscf" in rate_unit_norm or "mcf" in rate_unit_norm) else (1_000_000.0 if "mmscf" in rate_unit_norm else 1.0)
+             if "hr" in rate_unit_norm or "hour" in rate_unit_norm:
+-                rate_scf_hr = float(flowback_rate) * 1000.0
++                rate_scf_hr = float(flowback_rate) * multiplier
+             else:
+-                rate_scf_hr = (float(flowback_rate) * 1000.0) / 24.0
++                rate_scf_hr = (float(flowback_rate) * multiplier) / 24.0
+             total_gas_scf = rate_scf_hr * float(flowback_duration_hours) * num_events
+             total_gas_m3 = convert(total_gas_scf, "scf", "m3")
+         elif method in ["gor", "gor_liquid"] and liquid_flowback_bbl and gas_oil_ratio:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

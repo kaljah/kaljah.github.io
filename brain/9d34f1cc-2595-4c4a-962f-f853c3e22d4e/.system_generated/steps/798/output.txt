@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -995,6 +995,9 @@
+         new_role = str(data["role"]).strip().lower()
+         if new_role not in VALID_ROLES:
+             return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
++        # Separation of Duties: IT Admin cannot assign business compliance Admin or Superuser role
++        if new_role in ["admin", "superuser"] and it_admin.role not in ["admin", "it_manager"]:
++            return jsonify({"error": "Forbidden: IT Administrators cannot assign business compliance roles (admin, superuser)"}), 403
+         target_new_rank = ROLE_RANK.get(new_role, 0)
+         if target_new_rank > requester_rank:
+             return jsonify({"error": "Cannot assign a role higher than your own"}), 403
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,176 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+  2 � retrying click action
+      - waiting 500ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div>�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+
+
+-------------------------------------------------------------
+Testing Tab: [Mitigation Projects] (key: mitigation)
+-------------------------------------------------------------
+  [ERROR] Exception on tab Mitigation Projects: Locator.click: Timeout 3000ms exceeded.
+Call log:
+  - waiting for locator(".manage-nav-item").nth(6)
+    - locator resolved to <div class="manage-nav-item ">�</div>
+  - attempting click action
+    2 � waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 100ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-header">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 500ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 500ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-header">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+
+
+-------------------------------------------------------------
+Testing Tab: [OGMP 2.0 Surveys] (key: ogmp)
+-------------------------------------------------------------
+  [ERROR] Exception on tab OGMP 2.0 Surveys: Locator.click: Timeout 3000ms exceeded.
+Call log:
+  - waiting for locator(".manage-nav-item").nth(7)
+    - locator resolved to <div class="manage-nav-item ">�</div>
+  - attempting click action
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="cmw-header">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 20ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 100ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-header">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 500ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 500ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-header">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+
+
+-------------------------------------------------------------
+Testing Tab: [CBAM Products] (key: cbam)
+-------------------------------------------------------------
+  [ERROR] Exception on tab CBAM Products: Locator.click: Timeout 3000ms exceeded.
+Call log:
+  - waiting for locator(".manage-nav-item").nth(8)
+    - locator resolved to <div class="manage-nav-item ">�</div>
+  - attempting click action
+    2 � waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 100ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-header">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 500ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-step-indicator">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 500ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="cmw-header">�</div> from <div class="cmw-overlay">�</div> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+
+
+================================================================================
+FRONTEND AUDIT COMPLETE: Tabs: 0 | PASSED: 0 | FAILED: 9
+Console Errors: 0
+================================================================================
+Report saved to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\manage_data_frontend_test_results.json
+

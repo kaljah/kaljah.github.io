@@ -1,0 +1,44 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\index.css","LineNumber":305,"LineContent":"  .btn-primary,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":958,"LineContent":"                className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1282,"LineContent":"            \u003cbutton className=\"cmw-btn-primary\" onClick={() =\u003e setStep(2)}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1553,"LineContent":"                className=\"cmw-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.css","LineNumber":631,"LineContent":".cmw-btn-primary {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.css","LineNumber":646,"LineContent":".cmw-btn-primary svg {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.css","LineNumber":650,"LineContent":".cmw-btn-primary:hover:not(:disabled) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.css","LineNumber":655,"LineContent":".cmw-btn-primary:disabled {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":846,"LineContent":"                  className=\"btn-primary\" "}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.css","LineNumber":284,"LineContent":".csv-modal-footer .btn-primary {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.css","LineNumber":295,"LineContent":".csv-modal-footer .btn-primary:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.css","LineNumber":302,"LineContent":".csv-modal-footer .btn-primary:disabled {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.jsx","LineNumber":457,"LineContent":"                      className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.jsx","LineNumber":332,"LineContent":"            className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.jsx","LineNumber":420,"LineContent":"                    className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.css","LineNumber":238,"LineContent":".btn-primary {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Login.css","LineNumber":253,"LineContent":".btn-primary:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":139,"LineContent":".qa-btn-primary {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":145,"LineContent":".qa-btn-primary:hover:not(:disabled) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.css","LineNumber":443,"LineContent":".btn-primary {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1593,"LineContent":"                                            className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1762,"LineContent":"                                                className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1849,"LineContent":"                                                className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2068,"LineContent":"                                    className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3998,"LineContent":"                            className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":317,"LineContent":"                                className=\"qa-btn-action qa-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":724,"LineContent":"              className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":1245,"LineContent":"              className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":513,"LineContent":"                  className=\"s1w-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":522,"LineContent":"                  className=\"s1w-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":540,"LineContent":"                  className=\"s1w-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":549,"LineContent":"                  className=\"s1w-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":442,"LineContent":"                  className=\"btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":822,"LineContent":".s1w-btn-primary {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":838,"LineContent":".s1w-btn-primary:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":843,"LineContent":".s1w-btn-primary:disabled {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":850,"LineContent":".s1w-btn-primary svg { width: 15px; height: 15px; }"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":447,"LineContent":"                  className=\"up-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":459,"LineContent":"                className=\"up-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":935,"LineContent":"                  className=\"s1w-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":944,"LineContent":"                  className=\"s1w-btn-primary\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":417,"LineContent":".up-btn-primary {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.css","LineNumber":430,"LineContent":".up-btn-primary:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":1047,"LineContent":"              \u003cbutton className=\"btn-primary\" onClick={handleISOReportWrapper} disabled={loading}\u003e"}

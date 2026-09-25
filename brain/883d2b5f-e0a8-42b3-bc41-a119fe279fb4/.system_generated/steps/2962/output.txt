@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope2Form.jsx:226:  const handleInspect = (entry) => {
+new\client\src\components\Scope2Form.jsx:795:                            onClick={() => handleInspect(entry)}
+
+
+

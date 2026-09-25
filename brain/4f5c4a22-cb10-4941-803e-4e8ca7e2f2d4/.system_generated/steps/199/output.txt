@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\playwright.config.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -18,6 +18,7 @@
+     baseURL: 'http://127.0.0.1:5173',
+     trace: 'on-first-retry',
+     headless: true,
++    storageState: 'storageState.json',
+     // Use the locally installed Chromium-1208 (avoids needing headless-shell-1243)
+     launchOptions: {
+       executablePath: CHROMIUM_1208,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

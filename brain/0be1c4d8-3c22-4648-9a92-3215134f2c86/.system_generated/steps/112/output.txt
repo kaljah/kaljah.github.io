@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+=== __init__.py ===
+=== erp_integration.py ===
+  def sync_erp_data
+=== ogmp.py ===
+  def ogmp_level_for
+  def compute_facility_ogmp_level
+  def ogmp_level_label
+=== sentinel5p.py ===
+  class Sentinel5PService: ['__init__', 'test_connection', 'get_token', 'get_layer_config', 'query_satellite_observations', 'estimate_emission_rate_from_anomaly']
+

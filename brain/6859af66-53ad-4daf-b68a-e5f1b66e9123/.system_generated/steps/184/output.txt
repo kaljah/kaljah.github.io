@@ -1,0 +1,64 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\neocarbon_flyer.html. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -85,7 +85,8 @@
+       padding: 0 !important;
+       justify-content: center;
+       align-items: center;
+-      background: #eef2f5;
++      background: #08111b;
++      position: relative;
+     }
+ 
+     .hero-full-img {
+@@ -94,6 +94,48 @@
+       display: block;
+     }
+ 
++    .hero-footer-bar {
++      position: absolute;
++      bottom: 0;
++      left: 0;
++      right: 0;
++      background: rgba(8, 17, 27, 0.92);
++      backdrop-filter: blur(8px);
++      -webkit-backdrop-filter: blur(8px);
++      border-top: 1.2px solid rgba(56, 189, 248, 0.25);
++      display: flex;
++      justify-content: space-between;
++      align-items: center;
++      padding: 3.5mm 9mm;
++      color: #cbd5e1;
++      font-family: var(--font-mono);
++      font-size: 7.2px;
++      z-index: 10;
++    }
++    .hfb-left {
++      display: flex;
++      align-items: center;
++      gap: 6px;
++    }
++    .hfb-left strong {
++      color: #38bdf8;
++      font-family: var(--font-display);
++      font-size: 8.8px;
++      letter-spacing: 0.5px;
++    }
++    .hfb-mid {
++      color: #94a3b8;
++      font-size: 6.8px;
++    }
++    .hfb-right {
++      color: #10b981;
++      font-weight: 700;
++      font-size: 7.8px;
++      display: flex;
++      align-items: center;
++      gap: 4px;
++    }
++
+     .page-sheet-content {
+       padding: 10mm 13mm 9mm 13mm;
+       justify-content: space-between;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

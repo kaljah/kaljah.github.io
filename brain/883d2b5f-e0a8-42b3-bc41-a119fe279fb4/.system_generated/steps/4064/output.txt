@@ -1,0 +1,17 @@
+
+The command exited with code 1.
+Output:
+Synthesizing 1,000,000 emission rows...
+Generated 1,000,000 rows in 4.05s
+1. Full-table aggregation (1,000,000 rows): 196.21 ms
+   Year 2020: Count=100,000, Total CO2e=6,234,500.00
+   Year 2021: Count=200,000, Total CO2e=12,169,000.00
+   Year 2022: Count=200,000, Total CO2e=12,369,000.00
+   Year 2023: Count=200,000, Total CO2e=12,569,000.00
+   Year 2024: Count=200,000, Total CO2e=12,769,000.00
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\bench_1m.py", line 39, in <module>
+    print(f"2. Scoped query (year=2024, facility=3): {t_filt*1000:.2f} ms (Result: {res_filt[0][0]:,.2f})")
+                                                                                   ^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported format string passed to NoneType.__format__
+

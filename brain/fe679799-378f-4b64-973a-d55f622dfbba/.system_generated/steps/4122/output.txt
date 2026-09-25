@@ -1,0 +1,89 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -190,4 +190,83 @@
+ > - **Security**: Role segregation (IT vs ESG), CSRF protection, and formula injection defenses fully operational.
+ > - **Data Integrity**: Relational cascades, foreign key constraints, and WAL concurrency lock-free.
+ > - **Regressions**: Zero test failures across all 1,182 automated tests.
++
++---
++
++## 6. Tier 2 Methodology Upgrade: UI/UX, Backend Engine, Presets & Verification
++
++### 6.1 Architecture & Objectives
++Per user requirements, the Tier 2 accounting methodology has been upgraded from ambiguous "default / custom / specific" terminology into an explicit, standard-aligned, auditable workflow compliant with **API Compendium (2021)**, **IPCC Guidelines (2006/2019)**, and **ISO 14064-1**:
++1. **Clear Methodology Badge Hierarchy**:
++   - `Tier 1 (Standard API)`: Default national/international emission factors and standard nominal fuel properties.
++   - `Tier 2 (Regional / Lab)`: Regional, supplier, or measured fuel properties (HHV, density) from delivery tickets or laboratory analyses.
++   - `Tier 3 (Measurement / GC)`: Continuous emissions monitoring (CEMS), full gas chromatography (C1–C10), or detailed engineering mass balance.
++2. **Dual-Mode Tier 2 Operational Design**:
++   - **Mode A (Ticket / Lab Override)**: User enters measured fuel properties (HHV, density, delivery slip/bulletin number) for standard catalog fuels, or clicks official presets.
++   - **Mode B (Saved Custom Factor)**: User picks from registered organization factors or uses an inline `+ Quick Add` modal without leaving the entry form.
++3. **Strict Preset Citation Standards**:
++   - In adherence to user instructions (*"get fuel properties form the algerian law or other available refremces only"*), presets are strictly bound to official legal decrees (*Décrets exécutifs*), national standards (*Normes Algériennes IANOR*), network codes (*CREG/ARH*), and published technical standards (*Sonatrach Spécifications ISO 6976*, *API Compendium 2021*).
++
++```mermaid
++flowchart TD
++    A["User Selects Emission Category"] --> B{"Choose Methodology Tier"}
++    B -->|"Tier 1 (Standard API)"| C["Standard API Catalog Factors<br/>Default HHV & Density"]
++    B -->|"Tier 2 (Regional / Lab)"| D{"Select Mode"}
++    D -->|"Mode A: Ticket / Lab Override"| E["Official Standards Presets<br/>(Sonatrach, IANOR, CREG)<br/>+ Delivery Slip / Bulletin #"]
++    D -->|"Mode B: Saved Custom Factor"| F["Custom Factors Library<br/>OR Inline '+ Quick Add' Modal"]
++    B -->|"Tier 3 (Measurement / GC)"| G["Engineering Calculator<br/>C1-C10 Gas Chromatography<br/>Equipment Parameters"]
++    
++    E --> H["Energy-Normalized Engine<br/>CombustionCalculator.calculate()"]
++    F --> H
++    C --> H
++    G --> H
++    H --> I["Database Persistence<br/>factor_source='custom'<br/>data_source_ref, density"]
++    I --> J["Uncertainty Quantification<br/>u_AD = 7%, u_EF = 5-10%<br/>SRSS Inventory Breakdown"]
++```
++
++---
++
++### 6.2 Official Presets Implemented
++All presets are registered in [`new/client/src/constants/officialFuelPresets.js`](file:///c:/Users/samsung/Desktop/H2/new/client/src/constants/officialFuelPresets.js):
++
++| Fuel | Preset Label | Legal / Technical Citation | Key Parameters |
++|---|---|---|---|
++| **Gasoil (Diesel)** | Gasoil (Diesel) — Algérie | *IANOR NA 8110 / Décret 04-415* | Density: 840 kg/m³, HHV: 19,300 Btu/lb (138,000 Btu/gal) |
++| **Essence Sans Plomb** | Essence Sans Plomb — Algérie | *IANOR NA 11042 / Arrêté interministériel 2020* | Density: 750 kg/m³, HHV: 125,000 Btu/gal |
++| **Gaz Naturel** | Gaz Naturel Réseau National (Algérie) | *CREG Décret exécutif n° 21-64 / Code Réseau Transport* | HHV: 1,050 Btu/scf (39.1 MJ/m³), Density: 0.78 kg/m³ |
++| **Gaz Naturel** | Gaz de Vente Hassi R'Mel (Sonatrach) | *Sonatrach Spécifications Techniques Vente / ISO 6976* | HHV: 1,085 Btu/scf (40.4 MJ/m³), Density: 0.81 kg/m³ |
++| **GPL-C (Autogaz)** | GPL-C Autogaz (50/50 Propane/Butane) | *Naftal Spécifications Techniques / APRUE* | Density: 540 kg/m³, HHV: 46.1 MJ/kg (92,000 Btu/gal) |
++| **Natural Gas (API)** | Natural Gas — API Benchmark | *API Compendium 2021 Table 4-14* | HHV: 1,020 Btu/scf (37.99 MJ/m³), Density: 0.80 kg/m³ |
++| **Diesel (API)** | Diesel No. 2 — API Benchmark | *API Compendium 2021 Table 5-1* | HHV: 138,700 Btu/gal (38.65 MJ/L), Density: 850 kg/m³ |
++| **Fuel Oil (API)** | Residual Fuel Oil No. 6 — API Benchmark | *API Compendium 2021 Table 5-1* | HHV: 149,700 Btu/gal (41.72 MJ/L), Density: 960 kg/m³ |
++
++---
++
++### 6.3 Code Enhancements Summary
++1. **Frontend UI Components**:
++   - [`new/client/src/components/Scope1Form.jsx`](file:///c:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.jsx): Upgraded with segmented Tier buttons, Dual-Mode tabs, Preset Chips with legal citation badges, measured properties grid (`HHV`, `Density`, `Audit Reference`), and inline quick-factor integration.
++   - [`new/client/src/components/Scope1Form.css`](file:///c:/Users/samsung/Desktop/H2/new/client/src/components/Scope1Form.css): Added styled badges, tabs, chip hover states, and live preview panels.
++   - [`new/client/src/components/QuickAddCustomFactorModal.jsx`](file:///c:/Users/samsung/Desktop/H2/new/client/src/components/QuickAddCustomFactorModal.jsx): New modal allowing inline registration of custom factors without context loss.
++2. **Backend Engine & Calculations**:
++   - [`new/server/calculations/combustion.py`](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/combustion.py): Enhanced `convert_factor_to_kg_per_unit()` to handle liquid fuels (`Diesel`, `Gasoil`, `Gasoline`, `Oil`) across volumetric (`m³`, `gal`, `bbl`, `L`) and mass conversions using measured density and HHV.
++   - [`new/server/calculations/dispatcher.py`](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/dispatcher.py): Propagates `density`, `fuel_density`, and `data_source_ref` to combustion calculators.
++   - [`new/server/calculations/legacy_engine.py`](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/legacy_engine.py): Extracts and passes density parameters seamlessly.
++   - [`new/server/routes/emissions.py`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/emissions.py): Persists `data_source_ref` (delivery slip / lab bulletin #) directly into `Emission.data_source_ref`.
++   - [`new/server/routes/dashboard.py`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/dashboard.py): Accurately groups Tier 2 records into `tier_breakdown["Tier 2"]` with $u_{\text{AD}} = 7\%$ ($1\sigma = 3.5\%$) and $u_{\text{EF}} = 7\%$.
++
++---
++
++### 6.4 Verification & Test Results
++- **Frontend Production Build**:
++  - `npm run build` in `new/client` $\rightarrow$ **Vite v7.3.1**: 3,209 modules compiled in 30.35s with **zero syntax/JSX errors**.
++- **Pytest Numerical Invariants (`test_tier_scope_kpi_numerical.py`)**:
++  - **25 / 25 PASSED (100%)**:
++    * `test_tier2_algerian_gas_sonatrach_iso6976`: 50,000 scf @ 1,085 Btu/scf $\rightarrow 2.8785 \text{ tCO}_2$, Tier 2 $u_{\text{AD}} = 7\%$.
++    * `test_tier2_algerian_gasoil_ianor_na8110`: 10 m³ @ 840 kg/m³ $\rightarrow 26.9626 \text{ tCO}_2$, Tier 2.
++- **Pytest End-to-End API Integration (`test_tier2_api_e2e.py`)**:
++  - **3 / 3 PASSED (100%)**:
++    * `test_tier2_sonatrach_preset_e2e`: Authenticates $\rightarrow$ POST `/api/emissions/` with Hassi R'Mel preset $\rightarrow$ verified 201 Created $\rightarrow$ DB verification (`factor_source="custom"`, `data_source_ref="Sonatrach Spécifications / ISO 6976"`) $\rightarrow$ GET `/api/dashboard/uncertainty` confirms Tier 2 aggregation.
++    * `test_tier2_ianor_diesel_preset_e2e`: POST `/api/emissions/` with IANOR NA 8110 $\rightarrow$ verified 201 Created $\rightarrow$ DB verification (`data_source_ref="IANOR NA 8110 (Gasoil)"`, exact mass-to-volume CO2 calculation).
++    * `test_tier2_quick_add_custom_factor_and_submit`: POST `/api/custom-factors/` (Mode B) $\rightarrow$ POST emission using created factor ID $\rightarrow$ DB and uncertainty aggregation verified.
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

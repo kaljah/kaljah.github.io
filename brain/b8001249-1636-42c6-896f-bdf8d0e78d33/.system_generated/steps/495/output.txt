@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":122,"LineContent":"@dashboard_bp.route(\"/batch-all\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":352,"LineContent":"@dashboard_bp.route(\"/intensity-trend\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":849,"LineContent":"@dashboard_bp.route(\"/summary\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":881,"LineContent":"@dashboard_bp.route(\"/years\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":896,"LineContent":"@dashboard_bp.route(\"/mitigation\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":921,"LineContent":"@dashboard_bp.route(\"/scope3/summary\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":948,"LineContent":"@dashboard_bp.route(\"/goals/\u003cint:year\u003e\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":969,"LineContent":"@dashboard_bp.route(\"/base-year\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1000,"LineContent":"@dashboard_bp.route(\"/categorical-breakdown\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1029,"LineContent":"@dashboard_bp.route(\"/base-year-recalculation\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1100,"LineContent":"@dashboard_bp.route(\"/ogmp-metrics\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1266,"LineContent":"@dashboard_bp.route(\"/intensity-stats\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2258,"LineContent":"@dashboard_bp.route(\"/uncertainty\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2634,"LineContent":"@dashboard_bp.route(\"/exclusions\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2666,"LineContent":"@dashboard_bp.route(\"/sbti-trajectory\", methods=[\"GET\"])"}

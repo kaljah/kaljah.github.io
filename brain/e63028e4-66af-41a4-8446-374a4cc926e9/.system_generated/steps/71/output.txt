@@ -1,0 +1,21 @@
+Task: e63028e4-66af-41a4-8446-374a4cc926e9/task-67
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\e63028e4-66af-41a4-8446-374a4cc926e9\.system_generated\tasks\task-67.log
+Log output:
+<truncated 21 lines>
+eeded admin account: a
+[2026-09-23 15:25:32,512] INFO in app: Seeded admin account: a@a
+[2026-09-23 15:25:32,676] INFO in app: Seeded it_manager account: z
+[2026-09-23 15:25:32,829] INFO in app: Seeded it_manager account: z@z
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR new\server\tests\test_independent_differential.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 1 warning, 1 error in 1.79s =========================
+
+Last progress: 9s ago

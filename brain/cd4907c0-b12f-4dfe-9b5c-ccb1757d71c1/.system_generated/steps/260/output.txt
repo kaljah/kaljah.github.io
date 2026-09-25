@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\reports.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -257,10 +257,10 @@
+     user = get_current_user()
+     if not user:
+         return jsonify({"error": "Unauthorized"}), 401
+-    if user.role == "it_admin":
+-        return (
+-            jsonify(
+-                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
++    if user.role in ["it_admin", "it"]:
++        return (
++            jsonify(
++                {"error": "Forbidden: IT personnel cannot access operational emission reports"}
+             ),
+             403,
+         )
+@@ -457,10 +457,10 @@
+     user = get_current_user()
+     if not user:
+         return jsonify({"error": "Unauthorized"}), 401
+-    if user.role == "it_admin":
+-        return (
+-            jsonify(
+-                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
++    if user.role in ["it_admin", "it"]:
++        return (
++            jsonify(
++                {"error": "Forbidden: IT personnel cannot access operational emission reports"}
+             ),
+             403,
+         )
+@@ -705,10 +705,10 @@
+     user = get_current_user()
+     if not user:
+         return jsonify({"error": "Unauthorized"}), 401
+-    if user.role == "it_admin":
+-        return (
+-            jsonify(
+-                {"error": "Forbidden: IT Administrators cannot access operational emission reports"}
++    if user.role in ["it_admin", "it"]:
++        return (
++            jsonify(
++                {"error": "Forbidden: IT personnel cannot access operational emission reports"}
+             ),
+             403,
+         )
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

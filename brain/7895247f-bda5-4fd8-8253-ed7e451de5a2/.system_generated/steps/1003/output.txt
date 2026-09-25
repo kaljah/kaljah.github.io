@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId CommandLine                                    ExecutablePath                       
+--------- -----------                                    --------------                       
+    30444 "C:\Users\samsung\anaconda3\python.exe" app.py C:\Users\samsung\anaconda3\python.exe
+
+
+

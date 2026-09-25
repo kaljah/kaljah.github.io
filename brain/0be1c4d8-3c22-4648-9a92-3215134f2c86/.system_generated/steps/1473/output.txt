@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1400,4 +1400,23 @@
+   - Frontend production build passed: **`npm run build` completed in 9.55s** (0 errors, 3,199 modules).
+   - Codebase knowledge graph synchronized: **`graphify update .`** (2,145 nodes, 4,487 edges).
+ - **Status:** Complete, verified, and in full synchronization with the repository.
++
++### [2026-09-15T01:36:00Z] - E2E PRODUCT EXPERIENCE & FEATURE POLISH REMEDIATION (DEF-09 TO DEF-12)
++- **Action:** Remediated concurrency submission locks, session timeout UX, zero-production ambiguity, and Maker-Checker navigation guards.
++- **Files Modified:**
++  - `new/client/src/context/AuthContext.jsx`: Added 9-minute pre-expiry timer (`IDLE_WARNING_MS = 9 * 60 * 1000`), `idleWarningRef`, and exposed `sessionWarning` and `setSessionWarning` to warn users before the 10-minute idle termination.
++  - `new/client/src/pages/Login.jsx`: Consumed `sessionExpired` from `useAuth()`. Rendered a clear amber inactivity alert banner explaining that the session timed out due to 10 minutes of inactivity.
++  - `new/client/src/components/layout/Layout.jsx`: Added a floating alert at the top of the viewport when `sessionWarning` is true (*"Session timeout imminent: Your session will expire in 60 seconds due to inactivity. Move your mouse or click to stay logged in."*).
++  - `new/client/src/components/Scope1Form.jsx`: Introduced `submitting` state. Wrapped `handleAddEntry` in `setSubmitting(true)` and `finally { setSubmitting(false); }`. Disabled both `Save as Draft` and `+ Calculate & Submit for Review` buttons during transit to prevent double-click duplicate logs.
++  - `new/client/src/components/Scope2Form.jsx`: Introduced `submitting` state and disabled submission buttons during in-flight `POST /scope2` requests.
++  - `new/client/src/components/Scope3Form.jsx`: Introduced `submitting` state and disabled submission buttons during in-flight `POST /scope3` requests.
++  - `new/client/src/pages/DashboardEnhanced.jsx`: Tracked `hasProductionData`. When emissions $> 0$ and total production $BOE = 0$, displayed `Pending Production` with an explicit alert label (*"Production figures required"*) instead of misleading `0.00 kg/BOE`.
++  - `new/client/src/pages/CarbonIntensity.jsx`: When emissions exist but $BOE = 0$, set intensities to `null` and displayed `Pending Production` badge instead of `0.00 kg/BOE`.
++  - `new/client/src/pages/ManageData.jsx`: Rendered an informative permission restriction card when a non-privileged user accesses `/manage-data?tab=pending`, explaining Maker-Checker governance rules and providing a return navigation button instead of rendering a blank view.
++  - `new/client/src/pages/Reports.jsx`: Cleaned up stray `console.log` statements in the JSX render body (line 401) and in `openConfigModal` (line 356).
++- **Verification:**
++  - Full backend pytest suite passed: **160 passed, 52 warnings** in 18.69s.
++  - Frontend production build passed: **`npm run build` completed in 9.69s** (0 errors, 3,199 modules).
++  - Codebase knowledge graph synchronized: **`graphify update .`** (2,146 nodes, 4,491 edges).
++- **Status:** Complete, verified, and in full synchronization with the repository.
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

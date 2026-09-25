@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Layout.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -29,8 +29,21 @@
+     };
+   }, []);
+ 
++  React.useEffect(() => {
++    if (closeMobileNav) {
++      closeMobileNav();
++    }
++  }, [location.pathname]);
++
+   return (
+     <div className="app-container">
++      {isMobileNavOpen && (
++        <div
++          className="sidebar-backdrop"
++          onClick={closeMobileNav}
++          aria-label="Close navigation"
++        />
++      )}
+       {!isOnline && (
+         <div
+           id="offline-banner"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.

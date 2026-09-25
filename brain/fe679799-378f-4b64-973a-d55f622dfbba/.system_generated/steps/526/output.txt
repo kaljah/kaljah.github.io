@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+Login status: 400
+Emissions list status: 401
+Total in DB pagination: None
+Items count on page 1: 0
+Dashboard overview status: 404
+Carbon intensity summary status: 404
+Methane intensity summary status: 404
+

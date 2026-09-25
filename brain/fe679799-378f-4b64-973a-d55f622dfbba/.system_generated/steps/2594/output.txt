@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+db_path: new/server/ghg_app.db
+facilities columns in SQLite: 23
+(0, 'id', 'INTEGER', 1, None, 1)
+(1, 'name', 'VARCHAR(120)', 0, None, 0)
+(2, 'location', 'VARCHAR(120)', 0, None, 0)
+(3, 'description', 'TEXT', 0, None, 0)
+(4, 'boundary_notes', 'TEXT', 0, None, 0)
+(5, 'boundary_type', 'VARCHAR(100)', 0, None, 0)
+(6, 'boundary_detail', 'TEXT', 0, None, 0)
+(7, 'activity', 'VARCHAR(100)', 0, None, 0)
+(8, 'division', 'VARCHAR(100)', 0, None, 0)
+(9, 'region', 'VARCHAR(100)', 0, None, 0)
+(10, 'field', 'VARCHAR(100)', 0, None, 0)
+(11, 'code', 'VARCHAR(50)', 0, None, 0)
+(12, 'external_id', 'VARCHAR(50)', 0, None, 0)
+(13, 'segment', 'VARCHAR(20)', 0, None, 0)
+(14, 'operator_status', 'VARCHAR(20)', 0, None, 0)
+(15, 'country', 'VARCHAR(100)', 0, None, 0)
+(16, 'ogmp_membership_year', 'INTEGER', 0, None, 0)
+(17, 'reconciliation_threshold', 'FLOAT', 0, None, 0)
+(18, 'latitude', 'FLOAT', 0, None, 0)
+(19, 'longitude', 'FLOAT', 0, None, 0)
+(20, 'created_by', 'INTEGER', 0, None, 0)
+(21, 'updated_at', 'DATETIME', 0, None, 0)
+(22, 'created_at', 'DATETIME', 0, None, 0)
+

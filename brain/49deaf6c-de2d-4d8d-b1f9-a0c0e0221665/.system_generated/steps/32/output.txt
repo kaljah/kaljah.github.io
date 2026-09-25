@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+new\server\background_processor.py:628:                        Notification.create(
+new\server\models.py:471:class Notification(db.Model):
+new\server\models.py:490:        n = Notification(
+new\server\utils.py:120:                Notification.create(
+new\server\utils.py:134:                    Notification.create(
+new\server\routes\auth.py:443:            Notification.create(
+new\server\routes\auth.py:1150:    Notification.create(
+new\server\routes\emissions.py:952:                        Notification.create(
+new\server\routes\emissions.py:3244:                Notification.create(
+new\server\routes\emissions.py:3301:                            Notification.created_at >= cutoff,
+new\server\routes\emissions.py:3304:                            Notification.create(
+new\server\routes\emissions.py:3990:                    Notification.create(
+new\server\routes\managedata.py:520:        Notification.create(
+new\server\routes\notifications.py:30:        .order_by(Notification.created_at.desc())
+new\server\routes\notifications.py:197:def delete_notification(id):
+new\server\routes\satellite.py:486:                Notification.created_at >= cutoff,
+new\server\routes\satellite.py:489:                Notification.create(
+new\server\routes\scope2.py:304:                    Notification.create(
+new\server\routes\scope3.py:172:                Notification.create(
+new\server\routes\scope3.py:483:                Notification.create(
+
+
+

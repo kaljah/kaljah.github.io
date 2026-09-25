@@ -1,0 +1,19 @@
+Task: 883d2b5f-e0a8-42b3-bc41-a119fe279fb4/task-2255
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\.system_generated\tasks\task-2255.log
+Log output:
+<truncated 15 lines>
+\test_combustion.py ...                                  [ 38%]
+new\server\tests\test_csv_engine_matrix.py ............................. [ 51%]
+.........................                                                [ 62%]
+new\server\tests\test_dispatcher.py ............                         [ 68%]
+new\server\tests\test_gwp_dynamic.py ...                                 [ 69%]
+new\server\tests\test_numerical_invariants.py ................           [ 76%]
+new\server\tests\test_qaqc_diagnostics.py ...                            [ 77%]
+new\server\tests\test_reports.py ......                                  [ 80%]
+new\server\tests\test_satellite.py .....                                 [ 82%]
+new\server\tests\test_sbti.py ...                                        [ 84%]
+new\server\tests\test_tier_scope_kpi_numerical.py ...................... [ 93%]
+.                                                                        [ 94%]
+new\server\tests\test_uncertainty.py .......
+Last progress: 0s ago

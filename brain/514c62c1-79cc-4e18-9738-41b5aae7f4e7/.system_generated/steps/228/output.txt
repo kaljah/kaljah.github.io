@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Sidebar.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -406,9 +406,9 @@
+ }
+ 
+ /* ============================================================
+-   MOBILE RESPONSIVE DRAWER (<= 768px)
+-   ============================================================ */
+-@media (max-width: 768px) {
++   MOBILE RESPONSIVE DRAWER (<= 900px)
++   ============================================================ */
++@media (max-width: 900px) {
+   .sidebar {
+     position: fixed;
+     top: 0;
+@@ -426,7 +426,7 @@
+   }
+ 
+   .sidebar.mobile-open {
+-    transform: translateX(0);
++    transform: translateX(0) !important;
+     box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+   }
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

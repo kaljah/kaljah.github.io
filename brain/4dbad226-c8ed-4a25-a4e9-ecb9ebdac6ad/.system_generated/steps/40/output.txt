@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+IgnoreCase LineNumber Line                                                                                           Fi
+                                                                                                                     le
+                                                                                                                     na
+                                                                                                                     me
+---------- ---------- ----                                                                                           --
+      True         24     PROCESS_CATEGORY,                                                                          In
+      True        195         process_type,                                                                          In
+      True        216         calculator = self.calculators.get(process_type)                                        In
+      True        219         calc_inputs = inputs.get("calc_inputs", {}).get(process_type, {})                      In
+      True        229                 process_type,                                                                  In
+      True        264         if process_type in [                                                                   In
+      True        304             if process_type in [                                                               In
+      True        342                 process_type,                                                                  In
+      True        351             if process_type in [                                                               In
+      True        426             elif process_type == "flaring":                                                    In
+      True        504             elif process_type in ["drilling", "mud_degassing"]:                                In
+      True        530             elif process_type == "completions":                                                In
+      True        592             elif process_type in ["liquids_unloading", "unloading"]:                           In
+      True        662             elif process_type in ["venting", "blowdown"]:                                      In
+      True        718             elif process_type in [                                                             In
+      True        779                     process_type=process_type,                                                 In
+      True        786             elif process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic"]:       In
+      True        824             elif process_type == "fugitive":                                                   In
+      True        882                             process_category="fugitive",                                       In
+      True        903                         process_type,                                                          In
+      True        907             elif process_type in ["compressor_seal", "compressor_fugitive"]:                   In
+      True        933             elif process_type in ["fugitive_component", "component_fugitive"]:                 In
+      True        973             elif process_type in [                                                             In
+      True       1008             elif process_type in ["agr", "acid_gas_removal"]:                                  In
+      True       1062             elif process_type in ["cogen_allocation", "cogen"]:                                In
+      True       1085             elif process_type in [                                                             In
+      True       1110             elif process_type == "dehydrator":                                                 In
+      True       1197             elif process_type == "indirect_steam":                                             In
+      True       1224                     process_type,                                                              In
+      True       1233                     f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}", In
+      True       1240                     f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}", In
+      True       1243             raise ValueError(f"Calculation error for '{process_type}': {str(e)}") from e       In
+      True       1250         process_type="combustion",                                                             In
+      True       1372         _cat = PROCESS_CATEGORY.get(str(process_type).lower(), "combustion")                   In
+      True       1381                 process_category=_cat,                                                         In
+
+
+

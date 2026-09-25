@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+                   "status": "Verified",
+                    }
+                    res = client.post("/api/scope3", json=payload)
+                    op_type = "scope3_write"
+                else:
+                    # Dashboard Read
+                    res = client.get("/api/dashboard/summary?year=2025")
+                    op_type = "dashboard_read"
+    
+                elapsed = (time.perf_counter() - start) * 1000.0
+                return {"task_id": task_id, "type": op_type, "status": res.status_code, "latency": elapsed}
+    
+        # Run parallel execution using ThreadPoolExecutor
+        t_start = time.perf_counter()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+            futures = [executor.submit(worker_task, i) for i in range(num_threads)]
+            results = [f.result() for f in concurrent.futures.as_completed(futures)]
+        total_duration = time.perf_counter() - t_start
+    
+        # Assertions
+        statuses = [r["status"] for r in results]
+        latencies = [r["latency"] for r in results if r["latency"] > 0]
+        failures = [r for r in results if r["status"] not in [200, 201]]
+    
+        # Zero DB lock errors (500s)
+>       assert len(failures) == 0, f"Encountered {len(failures)} failures under concurrency: {failures}"
+E       AssertionError: Encountered 11 failures under concurrency: [{'task_id': 24, 'type': 'login', 'status': 500, 'latency': 0}, {'task_id': 11, 'type': 'login', 'status': 500, 'latenc
+

@@ -1,0 +1,86 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\index.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -290,4 +290,80 @@
+   background-color: #f8fafc;
+ }
+ 
++/* ==========================================================================
++   Global Print Stylesheet (Ctrl + P / Physical & PDF Report Printing)
++   ========================================================================== */
++@media print {
++  /* Hide navigation, toolbars, buttons, modals, and toasts */
++  .sidebar,
++  .app-sidebar,
++  .topbar,
++  header,
++  nav,
++  button,
++  .btn,
++  .btn-primary,
++  .btn-secondary,
++  .btn-outline,
++  .modal,
++  .modal-overlay,
++  .modal-backdrop,
++  .toast,
++  .toast-container,
++  #offline-banner,
++  .action-buttons,
++  .pagination,
++  .filter-bar,
++  .search-box {
++    display: none !important;
++  }
++
++  /* Reset layout constraints for clean page printing */
++  html,
++  body,
++  #root,
++  .app-container,
++  .main-content {
++    width: 100% !important;
++    max-width: 100% !important;
++    margin: 0 !important;
++    padding: 0 !important;
++    background: #ffffff !important;
++    color: #0f172a !important;
++    box-shadow: none !important;
++  }
++
++  /* Prevent awkward page splits inside charts, metric cards, and table rows */
++  .glass-card,
++  .glass-panel,
++  .kpi-card,
++  .chart-container,
++  table,
++  tr,
++  figure {
++    break-inside: avoid !important;
++    page-break-inside: avoid !important;
++    box-shadow: none !important;
++    border: 1px solid #cbd5e1 !important;
++  }
++
++  /* Table styling for crisp print readability */
++  table {
++    width: 100% !important;
++    border-collapse: collapse !important;
++  }
++
++  th,
++  td {
++    border: 1px solid #cbd5e1 !important;
++    padding: 6px 8px !important;
++    color: #000000 !important;
++  }
++
++  th {
++    background-color: #f1f5f9 !important;
++    font-weight: 700 !important;
++  }
++}
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

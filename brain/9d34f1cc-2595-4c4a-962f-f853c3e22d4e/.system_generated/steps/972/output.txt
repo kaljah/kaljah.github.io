@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\notifications.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -171,12 +171,22 @@
+ 
+     n = Notification.query.get_or_404(id)
+     if n.user_id is None:
+-        # Broadcast/system notification: allowed to mark read by any authenticated user
+-        pass
+-    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+-        return jsonify({"error": "Unauthorized"}), 403
+-
+-    n.is_read = True
++        try:
++            meta = json.loads(n.metadata_json) if n.metadata_json else {}
++        except Exception:
++            meta = {}
++        read_by = meta.get("read_by", [])
++        if user.id not in read_by:
++            read_by.append(user.id)
++            meta["read_by"] = read_by
++            n.metadata_json = json.dumps(meta)
++        if user.role in ["admin", "superuser"]:
++            n.is_read = True
++    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
++        return jsonify({"error": "Unauthorized"}), 403
++    else:
++        n.is_read = True
++
+     try:
+         db.session.commit()
+     except Exception as e:
+@@ -200,6 +200,19 @@
+         Notification.query.filter_by(user_id=user.id, is_read=False).update(
+             {"is_read": True}
+         )
++        broadcasts = Notification.query.filter(
++            Notification.user_id.is_(None), Notification.is_read == False
++        ).all()
++        for b in broadcasts:
++            try:
++                meta = json.loads(b.metadata_json) if b.metadata_json else {}
++            except Exception:
++                meta = {}
++            read_by = meta.get("read_by", [])
++            if user.id not in read_by:
++                read_by.append(user.id)
++                meta["read_by"] = read_by
++                b.metadata_json = json.dumps(meta)
+     try:
+         db.session.commit()
+     except Exception as e:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

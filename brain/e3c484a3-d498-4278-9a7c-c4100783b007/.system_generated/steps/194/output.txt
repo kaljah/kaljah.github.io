@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\unit_conversions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -93,6 +93,15 @@
+     "yd": 0.9144,
+     "yard": 0.9144,
+     "nmi": 1852.0,
++    "in": 0.0254,
++    "inch": 0.0254,
++    "inches": 0.0254,
++    "cm": 0.01,
++    "centimeter": 0.01,
++    "centimeters": 0.01,
++    "mm": 0.001,
++    "millimeter": 0.001,
++    "millimeters": 0.001,
+ }
+ 
+ FREIGHT_TO_TONNE_KM = {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

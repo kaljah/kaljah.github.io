@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\Reports.jsx:329:  const formatNumber = (num) => {
+new\client\src\pages\Reports.jsx:331:    return parseFloat(num).toLocaleString("en-US", {
+new\client\src\pages\Reports.jsx:755:                      {new Date(0, i).toLocaleString("default", {
+new\client\src\pages\Reports.jsx:945:                    {row.amount ? formatNumber(row.amount) : "-"}
+new\client\src\pages\Reports.jsx:962:                      ? formatNumber(row.co2e_total)
+
+
+

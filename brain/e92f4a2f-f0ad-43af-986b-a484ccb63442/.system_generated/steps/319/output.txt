@@ -1,0 +1,14 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":74,"LineContent":"    regions: [],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":135,"LineContent":"          regions: Array.isArray(filterRes.data?.regions)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":136,"LineContent":"            ? filterRes.data.regions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":279,"LineContent":"        // BUG FIX: Unconditionally aggregate totals so that Compare Mode correctly sums the selected regions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":469,"LineContent":"    const filtered = availableFilters.regions.filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":483,"LineContent":"    const filtered = availableFilters.regions.filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":498,"LineContent":"    const filtered = availableFilters.regions.filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":505,"LineContent":"      { value: \"all\", label: \"All Regions\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":774,"LineContent":"        hierarchy[act].divisions[div] = { total: 0, regions: [] };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":777,"LineContent":"      hierarchy[act].divisions[div].regions.push(item);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1044,"LineContent":"                      : \"All Regions\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1213,"LineContent":"                  {isCompareMode ? \"Standard View\" : \"Compare Regions\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1440,"LineContent":"                            {divData.regions.map((reg, ridx) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1627,"LineContent":"                                      divData.regions.map((reg, ridx) =\u003e ("}

@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+DOM Verification Result:
+{
+  "url": "http://localhost:5173/login",
+  "title": "Carbon Tech",
+  "bodySnippet": "Welcome Back\n\nSign in to your GHG Reporting Platform\n\nForgot password?\nSign In\nAPI Compliant\nISO 14064 Ready\nSOC2 Secured\n\n\u00a9 2026 Carbon Tech. All rights reserved.",
+  "cards": 0,
+  "charts": 2
+}
+

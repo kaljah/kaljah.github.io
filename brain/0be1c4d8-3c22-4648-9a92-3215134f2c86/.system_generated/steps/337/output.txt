@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":173,"LineContent":"        id: \"control_efficiency\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":447,"LineContent":"            \"control_efficiency\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":491,"LineContent":"            \"control_efficiency\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":80,"LineContent":"    { id: \"control_efficiency\", label: \"Control Eff\", required: false },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":767,"LineContent":"            \"control_efficiency\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":811,"LineContent":"            \"control_efficiency\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\BlowdownForm.jsx","LineNumber":117,"LineContent":"            value={data.control_efficiency || \"\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\BlowdownForm.jsx","LineNumber":118,"LineContent":"            onChange={(e) =\u003e onChange(\"control_efficiency\", e.target.value)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":154,"LineContent":"  { key: \"flaring\",                label: \"Flaring\",                  IconComp: Icon.Flame,     tier1Fields: [\"fuel\",\"quantity\",\"unit\"], tier3Extra: [\"flare_type\",\"ch4_content\",\"co2_content\",\"control_efficiency\",\"c1\",\"c2\",\"c3\",\"c4\",\"c5\",\"c6\",\"c7\",\"c8\",\"c9\",\"c10\"] },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":228,"LineContent":"      { key: \"control_efficiency\",   label: \"Control Efficiency %\",   required: false, hint: \"% of emissions captured/destroyed\" },"}

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+GOLDEN-S1-FUG-001 {'co2': 0.059129999999999995, 'ch4': 5.321699999999999, 'n2o': 0.0, 'co2e': 149.06672999999998}
+

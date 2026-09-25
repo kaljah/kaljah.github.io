@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+   Id ProcessName Path                                 
+   -- ----------- ----                                 
+    0 Idle                                             
+13172 node        C:\Program Files\nodejs\node.exe     
+16392 node        C:\Program Files\nodejs\node.exe     
+31192 python      C:\Users\samsung\anaconda3\python.exe
+ 9524 svchost                                          
+
+
+

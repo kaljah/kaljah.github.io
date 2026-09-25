@@ -1,0 +1,11 @@
+{"name":"__init__.py", "sizeBytes":"67"}
+{"name":"__pycache__", "isDir":true}
+{"name":"expected_results", "isDir":true}
+{"name":"golden_dataset", "isDir":true}
+{"name":"mutation", "isDir":true}
+{"name":"reference_model", "isDir":true}
+{"name":"regression", "isDir":true}
+{"name":"scripts", "isDir":true}
+{"name":"test_cases", "isDir":true}
+
+Summary: This directory contains 8 subdirectories and 1 files.

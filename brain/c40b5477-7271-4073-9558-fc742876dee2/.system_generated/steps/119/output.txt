@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+/api/filters/available -> HTTP 401, CORS: https://kaljah.github.io
+/api/emissions/pending -> HTTP 401, CORS: https://kaljah.github.io
+/api/dashboard/batch-all?facilityId=all&activity=all&division=all -> HTTP 401, CORS: https://kaljah.github.io
+/api/facilities -> HTTP 401, CORS: https://kaljah.github.io
+

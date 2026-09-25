@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+Sample zero-co2e pending records:
+{'id': 10, 'facility_id': 13, 'year': 2022, 'process_type': 'pneumatic_pump', 'fuel_type': 'Activit� E&P', 'quantity': 830582.86, 'unit': 'scf/hr', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 13, 'facility_id': 16, 'year': 2022, 'process_type': 'combustion', 'fuel_type': 'Activit� E&P', 'quantity': 147291.67, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 17, 'facility_id': 13, 'year': 2022, 'process_type': 'venting', 'fuel_type': 'Activit� E&P', 'quantity': 765552.3, 'unit': 'scf', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 20, 'facility_id': 9, 'year': 2022, 'process_type': 'combustion', 'fuel_type': 'Activit� E&P', 'quantity': 114026.35, 'unit': 'MMBtu', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 30, 'facility_id': 11, 'year': 2022, 'process_type': 'flaring', 'fuel_type': 'Activit� E&P', 'quantity': 149348.07, 'unit': 'MMBtu', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 32, 'facility_id': 13, 'year': 2022, 'process_type': 'venting', 'fuel_type': 'Activit� E&P', 'quantity': 694623.47, 'unit': 'scf', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 35, 'facility_id': 10, 'year': 2022, 'process_type': 'combustion', 'fuel_type': 'Activit� E&P', 'quantity': 13054.08, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 36, 'facility_id': 6, 'year': 2022, 'process_type': 'flaring', 'fuel_type': 'Activit� E&P', 'quantity': 277100.8, 'unit': 'MMBtu', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 37, 'facility_id': 16, 'year': 2022, 'process_type': 'flaring', 'fuel_type': 'Activit� E&P', 'quantity': 226770.81, 'unit': 'MMBtu', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 38, 'facility_id': 16, 'year': 2022, 'process_type': 'flaring', 'fuel_type': 'Activit� E&P', 'quantity': 202575.65, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 39, 'facility_id': 5, 'year': 2022, 'process_type': 'venting', 'fuel_type': 'Activit� E&P', 'quantity': 219632.81, 'unit': 'scf', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 41, 'facility_id': 17, 'year': 2022, 'process_type': 'tank_working_standing', 'fuel_type': 'Activit� E&P', 'quantity': 761312.68, 'unit': 'bbl', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 43, 'facility_id': 5, 'year': 2022, 'process_type': 'fugitives_equipment', 'fuel_type': 'Activit� E&P', 'quantity': 548771.0, 'unit': 'scf/hr', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 44, 'facility_id': 12, 'year': 2022, 'process_type': 'venting', 'fuel_type': 'Activit� E&P', 'quantity': 482185.02, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+{'id': 47, 'facility_id': 6, 'year': 2022, 'process_type': 'venting', 'fuel_type': 'Activit� E&P', 'quantity': 51736.13, 'unit': 'm3', 'co2_emissions': 0.0, 'ch4_emissions': 0.0, 'n2o_emissions': 0.0, 'co2e_total': 0.0, 'calc_method': 'server_default'}
+
+Zero-co2e pending records by process_type:
+{'process_type': 'agr', 'cnt': 24}
+{'process_type': 'blowdown', 'cnt': 27}
+{'process_type': 'combustion', 'cnt': 281}
+{'process_type': 'dehydrator', 'cnt': 22}
+{'process_type': 'flaring', 'cnt': 155}
+{'process_type': 'fugitives_equipment', 'cnt': 27}
+{'process_type': 'fugitives_leaks', 'cnt': 33}
+{'process_type': 'pneumatic_device', 'cnt': 26}
+{'process_type': 'pneumatic_pump', 'cnt': 22}
+{'process_type': 'tank_flashing', 'cnt': 16}
+{'process_type': 'tank_working_standing', 'cnt': 20}
+{'process_type': 'venting', 'cnt': 144}
+
+Zero-co2e pending records by fuel_type:
+{'fuel_type': '', 'cnt': 120}
+{'fuel_type': 'Activit� E&P', 'cnt': 677}
+

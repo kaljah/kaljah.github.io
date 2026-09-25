@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\golden_dataset\dataset_generator.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -301,9 +301,9 @@
+         category_name="Boundary Value",
+         calc_type="flaring",
+         methodology="API Compendium 2021 §5.2",
+-        activity_data={"volume": 10_000.0, "combustion_efficiency": 1.0, "destruction_efficiency": 1.0},
+-        units="m3",
+-        emission_factor={"ch4_content": 0.85},
++        activity_data={"volume": 10_000.0, "amount": 10_000.0, "c1": 0.85, "ch4_fraction": 0.85, "flare_type": "elevated", "combustion_efficiency": 1.0, "destruction_efficiency": 1.0},
++        units="m3",
++        emission_factor={"ch4_content": 0.85, "c1": 0.85},
+         expected_final_result=res_f1,
+         assumptions="100% destruction efficiency must yield exactly 0.0 unburnt CH4",
+     ))
+@@ -320,9 +320,9 @@
+         category_name="Boundary Value",
+         calc_type="flaring",
+         methodology="API Compendium 2021 §5.2",
+-        activity_data={"volume": 10_000.0, "combustion_efficiency": 0.0, "destruction_efficiency": 0.0},
+-        units="m3",
+-        emission_factor={"ch4_content": 0.85},
++        activity_data={"volume": 10_000.0, "amount": 10_000.0, "c1": 0.85, "ch4_fraction": 0.85, "flare_type": "elevated", "combustion_efficiency": 0.0, "destruction_efficiency": 0.0},
++        units="m3",
++        emission_factor={"ch4_content": 0.85, "c1": 0.85},
+         expected_final_result=res_f2,
+         assumptions="0% combustion efficiency yields 0.0 combusted CO2 and 100% unburnt CH4",
+     ))
+@@ -336,7 +336,7 @@
+         category_name="Missing Optional Value",
+         calc_type="pneumatic_device",
+         methodology="API Compendium 2021 §6.10",
+-        activity_data={"count": 10, "bleed_rate": 15.0},
++        activity_data={"count": 10, "bleed_rate": 15.0, "pneu_ch4_content": 0.85, "ch4_content": 0.85},
+         units="count",
+         emission_factor={"bleed_rate": 15.0},
+         expected_final_result=res_g1,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

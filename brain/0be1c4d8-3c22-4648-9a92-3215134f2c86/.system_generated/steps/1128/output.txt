@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3839,6 +3839,48 @@
+                     }}
+                 />
+             )}
++
++            <Modal
++                isOpen={convertModal.isOpen}
++                onClose={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
++                title={`Convert Volume (${convertModal.type === 'gas' ? 'Gas: m³ → mscf' : 'Oil: m³ → bbl'})`}
++            >
++                <form onSubmit={handleApplyConversion} style={{ padding: '8px 0' }}>
++                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
++                        Enter volume in cubic meters (m³):
++                    </label>
++                    <input
++                        type="number"
++                        step="any"
++                        autoFocus
++                        placeholder="e.g. 1000"
++                        value={convertModal.value}
++                        onChange={(e) => setConvertModal(prev => ({ ...prev, value: e.target.value }))}
++                        className="mole-input"
++                        style={{ width: '100%', marginBottom: '12px', padding: '10px' }}
++                    />
++                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
++                        {convertModal.type === 'gas' 
++                            ? 'Conversion Factor: m³ × 0.0353147 = mcf (mscf)'
++                            : 'Conversion Factor: m³ × 6.28981 = barrels (bbl)'}
++                    </div>
++                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
++                        <button
++                            type="button"
++                            className="btn-ghost"
++                            onClick={() => setConvertModal(prev => ({ ...prev, isOpen: false }))}
++                        >
++                            Cancel
++                        </button>
++                        <button
++                            type="submit"
++                            className="btn-primary"
++                        >
++                            Convert & Apply
++                        </button>
++                    </div>
++                </form>
++            </Modal>
+         </div >
+     );
+ };
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

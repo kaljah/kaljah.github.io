@@ -1,0 +1,48 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -209,21 +209,30 @@
+     }
+ 
+     // Test Detailed Breakdown Accordion and Table
+-    const breakdownAccordion = page.locator('.card:has-text("Detailed Emission Breakdown"), .detailed-breakdown-section').first();
+-    await expect(breakdownAccordion).toBeVisible();
+-    await breakdownAccordion.scrollIntoViewIfNeeded();
+-
+-    // Verify Breakdown Rows
+-    const breakdownRows = page.locator('.breakdown-table tbody tr, .facility-tree-row');
+-    const rowCount = await breakdownRows.count();
++    const tableCard = page.locator('.detailed-table-card');
++    await tableCard.scrollIntoViewIfNeeded();
++    await expect(tableCard).toBeVisible();
++
++    const dataRows = page.locator('.data-table tr');
++    const rowCount = await dataRows.count();
+     console.log(`[DETAILED BREAKDOWN] Rows found: ${rowCount}`);
+     expect(rowCount).toBeGreaterThan(0);
+ 
+-    // Expand the first collapsible row if present
+-    const expandBtn = breakdownRows.first().locator('.expand-btn, button').first();
+-    if (await expandBtn.isVisible()) {
+-      await expandBtn.click();
+-      await page.waitForTimeout(500);
++    // Verify Breakdown Source Values
++    const combustionRow = await page.locator('.data-table tr:has-text("Stationary Combustion") td.text-right').innerText().catch(() => '');
++    const totalRow = await page.locator('.data-table tr:has-text("Total Footprint") td.text-right').innerText().catch(() => '');
++    console.log(`[DETAILED BREAKDOWN] Combustion: ${combustionRow}, Total: ${totalRow}`);
++
++    // Expand Organizational Tree (Click Activity row e.g. Steel & Iron)
++    const actRow = page.locator('.data-table tr.act-row:has-text("Steel & Iron")').first();
++    if (await actRow.isVisible().catch(() => false)) {
++      await actRow.click();
++      await page.waitForTimeout(500);
++      const divRow = page.locator('.data-table tr.div-row:has-text("Metallurgy")').first();
++      if (await divRow.isVisible().catch(() => false)) {
++        await divRow.click();
++        await page.waitForTimeout(500);
++      }
+     }
+     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06_dashboard_detailed_breakdown_expanded.png'), fullPage: true });
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

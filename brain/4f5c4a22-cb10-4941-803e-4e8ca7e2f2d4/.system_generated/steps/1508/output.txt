@@ -1,0 +1,19 @@
+
+The command exited with code 1.
+Output:
+Scenario 01 [completions - specific] FAILED: 'co2'
+Scenario 02 [completions - specific] FAILED: 'co2'
+Scenario 03 [pneumatic - specific] FAILED: 'co2'
+Scenario 04 [pneumatic - specific] FAILED: 'co2'
+Scenario 05 [tank_working - specific] FAILED: 'co2'
+Scenario 06 [tank_breathing - specific] FAILED: 'co2'
+Scenario 07 [agr - specific] FAILED: 'co2'
+Scenario 08 [dehydrator - specific] FAILED: 'co2'
+Scenario 09 [blowdown - specific] FAILED: 'co2'
+Scenario 10 [combustion - default] FAILED: 'co2'
+Scenario 11 [combustion - default] FAILED: 'co2'
+Scenario 12 [combustion - default] FAILED: 'co2'
+Scenario 13 [combustion - default] FAILED: 'co2'
+Scenario 14 [combustion - default] FAILED: 'co2'
+Scenario 15 [unloading - default] FAILED: 'co2'
+

@@ -1,0 +1,77 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 12:03:25,826] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+============================================================
+Agent 02 - DB Account Seeder
+Started: 2026-09-24T10:03:25.830045+00:00
+============================================================
+
+[STEP 1] Existing users in DB:
+  id=1  email='a'  role='admin'  status='active'
+  id=2  email='a@a'  role='admin'  status='active'
+  id=3  email='z'  role='it_manager'  status='active'
+  id=4  email='z@z'  role='it_manager'  status='active'
+  id=5  email='admin@ghg.com'  role='admin'  status='active'
+  id=6  email='itadmin@ghg.com'  role='it_admin'  status='active'
+  id=7  email='it@ghg.com'  role='it'  status='active'
+  id=8  email='test_admin@ghg-test.com'  role='admin'  status='active'
+  id=9  email='test_superuser@ghg-test.com'  role='superuser'  status='active'
+  id=10  email='test_user@ghg-test.com'  role='user'  status='active'
+  id=11  email='test_itadmin@ghg-test.com'  role='it_admin'  status='active'
+  id=12  email='test_viewer@ghg-test.com'  role='user'  status='active'
+  id=13  email='it_created_user_865957@ghg-test.com'  role='user'  status='active'
+  id=14  email='it_su_865957@ghg-test.com'  role='superuser'  status='active'
+
+[STEP 2] Seeding test accounts...
+
+  -- Test Admin (test_admin@ghg-test.com) role=admin --
+  Already exists: id=8  role=admin
+
+  -- Test Superuser (test_superuser@ghg-test.com) role=superuser --
+  Already exists: id=9  role=superuser
+
+  -- Test User (test_user@ghg-test.com) role=user --
+  Already exists: id=10  role=user
+
+  -- Test IT Admin (test_itadmin@ghg-test.com) role=it_admin --
+  Already exists: id=11  role=it_admin
+
+  -- Test IT Manager (test_itmanager@ghg-test.com) role=it_manager --
+  CREATED: id=15  role=it_manager
+
+[STEP 3] Verifying logins via HTTP...
+
+  Verifying test_admin@ghg-test.com...
+  Login OK: admin
+
+  Verifying test_superuser@ghg-test.com...
+  Login OK: superuser
+
+  Verifying test_user@ghg-test.com...
+  Login OK: user
+
+  Verifying test_itadmin@ghg-test.com...
+  Login OK: it_admin
+
+  Verifying test_itmanager@ghg-test.com...
+  Login OK: it_manager
+
+[STEP 4] Writing output files...
+  Credentials: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_credentials.json
+  Bugs: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_bugs.json
+  Report: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_report.md
+
+============================================================
+SUMMARY
+============================================================
+  LOGIN-OK  test_admin@ghg-test.com                     req_role=admin         actual_role=admin         status=already_exists
+  LOGIN-OK  test_superuser@ghg-test.com                 req_role=superuser     actual_role=superuser     status=already_exists
+  LOGIN-OK  test_user@ghg-test.com                      req_role=user          actual_role=user          status=already_exists
+  LOGIN-OK  test_itadmin@ghg-test.com                   req_role=it_admin      actual_role=it_admin      status=already_exists
+  LOGIN-OK  test_itmanager@ghg-test.com                 req_role=it_manager    actual_role=it_manager    status=created
+
+All ready: True
+Bugs found: 0
+============================================================
+

@@ -1,0 +1,62 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -618,6 +618,10 @@
+   };
+ 
+   const handleDelete = (target) => {
++    if (user?.role === "it") {
++      toast.error("IT role cannot delete users.");
++      return;
++    }
+     // Accepts either user object or user id
+     if (typeof target === "object" && target !== null) {
+       setDeleteTargetUser(target);
+@@ -627,6 +627,10 @@
+   };
+ 
+   const handleConfirmDelete = async () => {
++    if (user?.role === "it") {
++      toast.error("IT role cannot delete users.");
++      return;
++    }
+     if (!deleteTargetUser?.id) return;
+     setDeleteLoading(true);
+     const targetId = deleteTargetUser.id;
+@@ -686,7 +686,7 @@
+     }
+   };
+ 
+-  if (user?.role !== "it_admin") {
++  if (!["it_admin", "it"].includes(user?.role)) {
+     return (
+       <div style={{ ...S.page, textAlign: "center", paddingTop: "80px" }}>
+         <div style={{ marginBottom: "20px", color: "#94a3b8" }}>
+@@ -701,6 +701,8 @@
+     );
+   }
+ 
++  const isITOnly = user?.role === "it";
++
+   /* derived stats */
+   const totalUsers = users.length;
+   const adminCount = users.filter((u) => u.role === "admin").length;
+@@ -707,3 +707,4 @@
++  const itCount = users.filter((u) => u.role === "it").length;
+   const standardCount = users.filter((u) => u.role === "user").length;
+ 
+   const filteredUsers = users.filter((u) => {
+@@ -710,7 +710,8 @@
+       !filterRegion ||
+       u.location === filterRegion ||
+       u.role === "admin" ||
+-      u.role === "it_admin";
++      u.role === "it_admin" ||
++      u.role === "it";
+     const byRole = !filterRole || u.role === filterRole;
+     return byRegion && byRole;
+   });
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.

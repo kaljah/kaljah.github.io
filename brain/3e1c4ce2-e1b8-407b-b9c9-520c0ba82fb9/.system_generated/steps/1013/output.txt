@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[(1, 1, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (2, 2, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (3, 5, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (4, 1, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (5, 2, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (6, 5, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (7, 1, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (8, 2, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (9, 5, 'audit', 'Scope 1 Bulk Upload Pending Review', 0), (10, 1, 'info', 'New Sentinel-5P Overpass � ADR', 0), (11, 1, 'info', 'New Sentinel-5P Overpass � TFT', 0), (12, 1, 'info', 'New Sentinel-5P Overpass � ADR', 0)]
+

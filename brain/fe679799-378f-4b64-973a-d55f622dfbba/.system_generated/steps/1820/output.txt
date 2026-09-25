@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Reports URL: http://localhost:5173/reports
+Reports title: Emission Database
+Total rows: 0
+

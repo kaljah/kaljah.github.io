@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":292,"LineContent":"      const { generateModernPDF } ="}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":302,"LineContent":"      await generateModernPDF(api, filters);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":368,"LineContent":"      const { generateModernPDF } = await import(\"../utils/ModernReportGenerator\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":383,"LineContent":"      await generateModernPDF(api, filters);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":59,"LineContent":"export async function generateModernPDF(api, filters) {"}

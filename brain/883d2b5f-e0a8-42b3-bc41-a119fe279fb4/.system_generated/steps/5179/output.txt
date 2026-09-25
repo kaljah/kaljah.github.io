@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+433: @emissions_bp.route("/bulk-upload", methods=["POST"])
+2841: @emissions_bp.route("/upload/start", methods=["POST"])
+2937: @emissions_bp.route("/", methods=["POST"])
+3572: @emissions_bp.route("/bulk-delete", methods=["POST"])
+3614: @emissions_bp.route("/import", methods=["POST"])
+4369: @emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
+4424: @emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
+4475: @emissions_bp.route("/approve/batch", methods=["POST"])
+4561: @emissions_bp.route("/reject/batch", methods=["POST"])
+4649: @emissions_bp.route("/erp/sync", methods=["POST"])
+

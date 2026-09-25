@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\ManageData.jsx:3056:                                        <strong>GHG Protocol Recalculation 
+Rule:</strong> Base year emissions must be recalculated to reflect significant structural changes (e.g. acquisitions, 
+divestments, boundary changes), methodology updates (e.g. new emission factors or GWP standards), or cumulative data 
+errors exceeding significance thresholds. Every adjustment must include a documented reason.
+  new\client\src\pages\ManageData.jsx:3057:                                    </div>
+  new\client\src\pages\ManageData.jsx:3058:
+
+
+

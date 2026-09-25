@@ -1,0 +1,76 @@
+
+The command exited with code 0.
+Output:
+15: def get_user_operational_defaults(user):
+52: def validate_password_complexity(password: str):
+69:     if not re.search(r'[!@#$%^&*(),.?":{}|<>\-_+=\[\]\\\/~`]', password):
+72:             "Password must contain at least one special character (!@#$%^&*...)",
+77: def is_safe_image_url(url_str: str) -> tuple[bool, str]:
+121: def login_required(f):
+122:     @wraps(f)
+123:     def decorated_function(*args, **kwargs):
+141: def it_admin_required(f):
+143:     @wraps(f)
+144:     def decorated_function(*args, **kwargs):
+164: def it_access_required(f):
+166:     @wraps(f)
+167:     def decorated_function(*args, **kwargs):
+187: def admin_required(f):
+189:     @wraps(f)
+190:     def decorated_function(*args, **kwargs):
+210: def superuser_required(f):
+215:     @wraps(f)
+216:     def decorated_function(*args, **kwargs):
+236: @auth_bp.route("/register", methods=["POST"])
+237: @limiter.limit("10 per hour")
+238: @it_admin_required
+239: def register():
+309: @auth_bp.route("/login", methods=["POST"])
+310: @csrf.exempt
+311: @limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "300 per 15 minutes"))
+312: def login():
+322:         if email_input.lower() in ["a", "a@a"]:
+323:             user = User.query.filter(User.email.in_(["a", "a@a"])).first()
+324:         elif email_input.lower() in ["z", "z@z"]:
+325:             user = User.query.filter(User.email.in_(["z", "z@z"])).first()
+381: @auth_bp.route("/forgot-password", methods=["POST"])
+382: @csrf.exempt
+383: @limiter.limit("5 per 15 minutes")
+384: def forgot_password():
+454: @auth_bp.route("/logout", methods=["POST"])
+455: @limiter.limit("60 per minute")
+456: def logout():
+486: @auth_bp.route("/me", methods=["GET"])
+487: def me():
+525: @auth_bp.route("/profile", methods=["PUT"])
+526: @login_required
+527: def update_profile():
+557: @auth_bp.route("/change-password", methods=["POST"])
+558: @limiter.limit("5 per hour")
+559: @login_required
+560: def change_password():
+611: @auth_bp.route("/upload-avatar", methods=["POST"])
+612: @login_required
+613: def upload_avatar():
+668: def load_settings_from_db():
+685: def save_setting_to_db(key: str, val):
+703: def recalculate_all_emissions_gwp(standard):
+743: @auth_bp.route("/settings", methods=["GET"])
+744: @login_required
+745: def get_settings():
+773: @auth_bp.route("/settings", methods=["PUT", "POST"])
+774: @login_required
+775: def update_settings():
+913: @auth_bp.route("/users", methods=["GET"])
+914: @it_access_required
+915: def get_users():
+941: @auth_bp.route("/users/<int:id>", methods=["PUT"])
+942: @it_admin_required
+943: def update_user(id):
+1020: @auth_bp.route("/users/<int:id>", methods=["DELETE"])
+1021: @it_admin_required
+1022: def delete_user(id):
+1082: @auth_bp.route("/users/<int:id>/reset-password", methods=["POST"])
+1083: @it_access_required
+1084: def admin_reset_password(id):
+

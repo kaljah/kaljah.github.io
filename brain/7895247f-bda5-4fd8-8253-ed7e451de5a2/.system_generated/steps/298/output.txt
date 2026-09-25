@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\DashboardEnhanced.jsx:89:    flaring: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:90:    venting: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:91:    other: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:92:  });
+  new\client\src\pages\DashboardEnhanced.jsx:93:
+  new\client\src\pages\DashboardEnhanced.jsx:94:  const [sbtiData, setSbtiData] = useState(null);
+> new\client\src\pages\DashboardEnhanced.jsx:256:        flaring: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:257:        venting: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:258:        other: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:259:        totalProductionBoe: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:260:      };
+  new\client\src\pages\DashboardEnhanced.jsx:261:
+> new\client\src\pages\DashboardEnhanced.jsx:285:          totals.flaring += row.flaring || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:286:          totals.venting += row.venting || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:287:          totals.other += row.other || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:288:          totals.methaneEmissions += row.ch4_total || 0;
+  new\client\src\pages\DashboardEnhanced.jsx:289:          totals.purchasedEnergy += (row.scope2_energy || 0) / 1000;
+  new\client\src\pages\DashboardEnhanced.jsx:290:        }
+> new\client\src\pages\DashboardEnhanced.jsx:576:          name: "Flaring",
+> new\client\src\pages\DashboardEnhanced.jsx:577:          value: Number((stats.flaring ?? 0).toFixed(2)),
+  new\client\src\pages\DashboardEnhanced.jsx:578:          color: "#ff6600",
+  new\client\src\pages\DashboardEnhanced.jsx:579:        },
+  new\client\src\pages\DashboardEnhanced.jsx:580:        {
+  new\client\src\pages\DashboardEnhanced.jsx:581:          name: "Venting",
+  new\client\src\pages\DashboardEnhanced.jsx:582:          value: Number((stats.venting ?? 0).toFixed(2)),
+> new\client\src\pages\DashboardEnhanced.jsx:1563:                        <td className="indent">Flaring</td>
+  new\client\src\pages\DashboardEnhanced.jsx:1564:                        <td className="text-right">
+> new\client\src\pages\DashboardEnhanced.jsx:1565:                          {formatCompactNumber(stats.flaring)}
+  new\client\src\pages\DashboardEnhanced.jsx:1566:                        </td>
+  new\client\src\pages\DashboardEnhanced.jsx:1567:                      </tr>
+  new\client\src\pages\DashboardEnhanced.jsx:1568:                      <tr className="detail-row">
+  new\client\src\pages\DashboardEnhanced.jsx:1569:                        <td className="indent">Venting</td>
+  new\client\src\pages\DashboardEnhanced.jsx:1570:                        <td className="text-right">
+
+
+

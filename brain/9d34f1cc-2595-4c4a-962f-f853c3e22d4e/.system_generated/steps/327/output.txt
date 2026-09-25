@@ -1,0 +1,7 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: FlaringCalculator.calculate() missing 1 required positional argument: 'flare_type'
+

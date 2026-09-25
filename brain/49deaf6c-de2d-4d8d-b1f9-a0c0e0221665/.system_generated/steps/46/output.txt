@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+
+new\server\models.py:32:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:70:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:117:class Emission(db.Model):
+new\server\models.py:179:    timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+new\server\models.py:226:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:258:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:283:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:302:    timestamp = db.Column(db.DateTime, default=utc_now, index=True)
+new\server\models.py:310:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:320:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:350:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:381:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:413:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:443:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:456:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:483:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:519:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:551:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:564:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:591:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:627:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:672:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:689:    created_at = db.Column(db.DateTime, default=utc_now)
+new\server\models.py:707:    created_at = db.Column(db.DateTime, default=utc_now)
+
+
+

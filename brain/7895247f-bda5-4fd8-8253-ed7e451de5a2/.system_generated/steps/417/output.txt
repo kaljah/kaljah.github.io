@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+Page 11: ELM YEARLY TOTAL GHG EMISSIONS BY MODULE | Total CO2e Emissions (Tonnes/Year)
+Page 12: GB TOTAL YEARLY GHG EMISSIONS BY MODULE | Total CO2e Emissions (Tonnes/Year)
+Page 13: GB TOTAL GHG EMISSIONS PROGRESS TOWARDS TARGET | Total CO2e Emissions (Tonnes/Year)
+Page 14: YEARLY TOTAL CH4 EMISSIONS | Total CH4 Emissions (Thousand Tonnes/Year)
+Page 15: HBNS CPF FLARING BREAKDOWN | Flaring in KNm3
+Page 16: ELM CPF FLARING BREAKDOWN | Flaring in KNm3
+Page 17: TOTAL CPF FLARING YEARLY TREND | ELM Year-to-Year Percentage Change in HBNS Year-to-Year Percentage Change in
+Page 18: YEARLY CPF FLARING INTENSITY | Intensity (%)
+Page 19: CARBON INTENSITIES | Summary of HBNS Intensities Summary of ELM Intensities
+Page 20: TOTAL GHG EMISSIONS BY JV PARTNER EQUITY SHARE | Total CO2e Emissions (Tonnes/Year)
+Page 21: TOTAL CH4 EMISSIONS BY JV PARTNER EQUITY SHARE | Total CH4 Emissions (Tonnes/Year)
+Page 22: CAP EMISSIONS BY SOURCE MODULE | CAP Emissions (Tonnes/Year)
+Page 23: APPENDICES | DATA TABLES
+Page 24: HBNS PRODUCTION � 2021 TO 2025 | Products Unit 2021 2022 2023 2024 2025
+Page 25: ELM PRODUCTION � 2021 TO 2025 | Products Unit 2021 2022 2023 2024 2025
+

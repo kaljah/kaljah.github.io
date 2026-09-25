@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Connecting to: ws://127.0.0.1:9222/devtools/page/E5D1D6FF6E79B05404A37734159DD1EA
+Eval result: {'id': 1, 'result': {'result': {'type': 'string', 'value': 'http://localhost:5173/login'}}}
+

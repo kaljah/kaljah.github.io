@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+11: import { Upload, Trash2, Eye } from "lucide-react";
+13: import CalculationDetails from "./CalculationDetails";
+1360: {/* 2. PROCESS & SOURCE DETAILS */}
+1362: <h4 className="section-title">2. PROCESS & SOURCE DETAILS</h4>
+2256: <tbody>
+2304: <tr key={entry.id}>
+2458: title="Inspect Calculation Details"
+2460: <Eye size={16} />
+2468: <Trash2 size={16} />
+2475: </tbody>
+2477: <tr style={{ backgroundColor: "#f9fafb", fontWeight: "bold" }}>
+2558: <CalculationDetails
+

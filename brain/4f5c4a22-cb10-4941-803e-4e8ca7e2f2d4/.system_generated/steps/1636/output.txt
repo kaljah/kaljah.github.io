@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+   Id ProcessName StartTime            Path                                 
+   -- ----------- ---------            ----                                 
+25724 python      9/22/2026 4:42:47 PM C:\Users\samsung\anaconda3\python.exe
+29420 python      9/22/2026 3:29:29 PM C:\Users\samsung\anaconda3\python.exe
+31344 python      9/22/2026 4:43:27 PM C:\Users\samsung\anaconda3\python.exe
+
+
+

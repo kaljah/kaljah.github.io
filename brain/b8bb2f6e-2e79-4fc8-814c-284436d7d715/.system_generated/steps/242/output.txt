@@ -1,0 +1,19 @@
+Task: b8bb2f6e-2e79-4fc8-814c-284436d7d715/task-238
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8bb2f6e-2e79-4fc8-814c-284436d7d715\.system_generated\tasks\task-238.log
+Log output:
+<truncated 15 lines>
+_high_volume_latency PASSED [ 62%]
+tests/test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_dashboard_batch_all_parallel_threads_under_volume PASSED [ 75%]
+tests/test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_excel_export_streaming_under_volume PASSED [ 87%]
+tests/test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_mathematical_aggregation_grand_total_fidelity PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 8 passed, 1 warning in 11.13s ========================
+
+Last progress: 3s ago

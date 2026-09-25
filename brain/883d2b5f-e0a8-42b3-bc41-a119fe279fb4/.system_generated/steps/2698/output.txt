@@ -1,0 +1,49 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":122,"LineContent":"    scope=1,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":151,"LineContent":"            scope,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":190,"LineContent":"    scope=1,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":291,"LineContent":"                mapping = _build_mapping(headers, scope=scope)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":343,"LineContent":"            batch_scope1_map = {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":344,"LineContent":"            batch_scope2_map = {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":345,"LineContent":"            batch_scope3_map = {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":349,"LineContent":"            if str(scope) == \"1\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":369,"LineContent":"                    batch_scope1_map[k] = e.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":371,"LineContent":"            elif str(scope) == \"2\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":385,"LineContent":"                    batch_scope2_map[k] = e.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":387,"LineContent":"            elif str(scope) in [\"3\", \"3_eeio\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":401,"LineContent":"                    batch_scope3_map[k] = e.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":437,"LineContent":"                # Process Row based on scope"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":438,"LineContent":"                if str(scope) == \"2\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":439,"LineContent":"                    emission_obj, row_errors = _process_row_scope2("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":447,"LineContent":"                        batch_keys=batch_scope2_map,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":450,"LineContent":"                elif str(scope) == \"3_eeio\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":451,"LineContent":"                    emission_obj, row_errors = _process_row_scope3_eeio("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":458,"LineContent":"                        batch_keys=batch_scope3_map,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":461,"LineContent":"                elif str(scope) == \"3\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":462,"LineContent":"                    emission_obj, row_errors = _process_row_scope3("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":469,"LineContent":"                        batch_keys=batch_scope3_map,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":472,"LineContent":"                elif str(scope) == \"sources\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":476,"LineContent":"                elif str(scope) == \"production\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":480,"LineContent":"                elif str(scope) == \"mitigation\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":484,"LineContent":"                elif str(scope) == \"custom_factors\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":488,"LineContent":"                elif str(scope) == \"facilities\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":492,"LineContent":"                elif str(scope) == \"1\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":506,"LineContent":"                        batch_keys=batch_scope1_map,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":512,"LineContent":"                        f\"Unknown scope identifier: '{scope}'. Cannot process row.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":535,"LineContent":"                    if str(scope) in [\"1\", \"2\", \"3\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":540,"LineContent":"                            if scope == \"1\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":542,"LineContent":"                                anomaly = anomaly_detector.check_scope1(fac_id, getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":543,"LineContent":"                            elif scope == \"2\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":545,"LineContent":"                                anomaly = anomaly_detector.check_scope2(fac_id, getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":546,"LineContent":"                            else:  # scope 3"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":548,"LineContent":"                                anomaly = anomaly_detector.check_scope3(fac_id, getattr(emission_obj, 'category', ''), co2e_val, yr, mo)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":596,"LineContent":"            if str(scope) in [\"1\", \"2\", \"3\"] and processed \u003e 0:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":615,"LineContent":"                    scope_label = f\"Scope {scope}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":621,"LineContent":"                            title=f\"{scope_label} Bulk Upload Pending Review\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":623,"LineContent":"                                f\"{success_count} new {scope_label} emission records were imported \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":669,"LineContent":"def _build_mapping(headers, scope=1):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":683,"LineContent":"        (\"facility_name\", \"region\") if str(scope) != \"2\" else (\"grid_region\", \"region\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":829,"LineContent":"def _process_row_scope2("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1004,"LineContent":"def _process_row_scope3_eeio("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1105,"LineContent":"def _process_row_scope3("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1155,"LineContent":"    from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1158,"LineContent":"        co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)"}

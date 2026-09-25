@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\CarbonIntensity.jsx","LineNumber":323,"LineContent":"                                Carbon Intensity \u0026 Product Embodiment"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":493,"LineContent":"                Carbon Intensity \u0026 Product Embodiment"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_carbon_intensity_deep_audit.spec.js","LineNumber":4,"LineContent":" * End-to-End Audit of Carbon Intensity \u0026 Product Embodiment Page:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_carbon_intensity_deep_audit.spec.js","LineNumber":60,"LineContent":"    await expect(title).toContainText('Carbon Intensity \u0026 Product Embodiment');"}

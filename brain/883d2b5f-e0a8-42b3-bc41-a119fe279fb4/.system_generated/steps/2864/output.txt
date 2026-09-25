@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_deep_injection_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -263,6 +263,48 @@
+             rel_diff = abs(val - base_val) / base_val
+             assert rel_diff < 0.01, f"Pressure invariance failed for unit '{u}': val={val}, base={base_val}"
+ 
++    def test_all_dimensional_combinatorial_roundtrips(self):
++        """Exhaustively verifies roundtrip convert(val, u1, u2) -> convert(converted, u2, u1) == val for ALL pairs."""
++        volume_units = ["m3", "scf", "cf", "ft3", "mscf", "mcf", "mmscf", "bbl", "barrel", "gal", "gallon", "liter", "l"]
++        mass_units = ["tonne", "metric_ton", "mt", "t", "kg", "lb", "pound", "short_ton", "ton", "long_ton", "g"]
++        energy_units = ["mmbtu", "btu", "gj", "mj", "kwh", "mwh", "therm"]
++        distance_units = ["km", "m", "mile", "ft", "yd", "nmi"]
++        freight_units = ["tonne-km", "ton-mile"]
++        passenger_units = ["passenger-km", "passenger-mile"]
++        time_units = ["hr", "day", "min", "sec", "yr"]
++        flow_units = ["m3/hr", "gph", "lph", "bph", "bpd"]
++        temp_units = ["C", "F", "K", "R"]
++        press_units = ["psia", "bar", "kpa", "mpa", "atm", "pa", "mbar"]
++
++        all_groups = [
++            volume_units,
++            mass_units,
++            energy_units,
++            distance_units,
++            freight_units,
++            passenger_units,
++            time_units,
++            flow_units,
++            press_units,
++        ]
++
++        test_val = 1500.25
++        for group in all_groups:
++            for u1 in group:
++                for u2 in group:
++                    c = convert(test_val, u1, u2)
++                    back = convert(c, u2, u1)
++                    rel_err = abs(back - test_val) / test_val
++                    assert rel_err < 1e-4, f"Roundtrip failed between '{u1}' and '{u2}': val={test_val}, back={back}"
++
++        # Temperature roundtrips (non-zero absolute scale)
++        temp_val = 25.0  # 25°C
++        for t1 in temp_units:
++            for t2 in temp_units:
++                c = convert(temp_val, t1, t2)
++                back = convert(c, t2, t1)
++                assert abs(back - temp_val) < 1e-3, f"Temp roundtrip failed between '{t1}' and '{t2}': back={back}"
++
+ 
+ # ==============================================================================
+ # PART 2: ALL OPERATIONAL & THERMODYNAMIC SCENARIOS (P, T, Z, GOR, CH4%, GWP)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

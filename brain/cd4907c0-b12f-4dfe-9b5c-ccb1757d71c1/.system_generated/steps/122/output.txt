@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":79,"LineContent":"def test_bulk_import_facilities(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":155,"LineContent":"def test_bulk_import_custom_factors(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":200,"LineContent":"def test_bulk_import_production(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":246,"LineContent":"def test_bulk_import_sources(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":290,"LineContent":"def test_bulk_import_mitigation(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":334,"LineContent":"def test_bulk_import_scope2(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":377,"LineContent":"def test_bulk_import_scope3(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":422,"LineContent":"def test_bulk_import_scope1(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":465,"LineContent":"def test_bulk_import_duplicate_prevention_and_overwrite(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":551,"LineContent":"def test_vented_fuel_key_deduplication_normalization(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":19,"LineContent":"def test_users():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":79,"LineContent":"def test_dispatcher_kg_per_tonne_factor():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":101,"LineContent":"def test_dispatcher_fraction_boundary():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":114,"LineContent":"def test_stoichiometry_short_ton():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":126,"LineContent":"def test_base_calculator_uncertainty_k_factor():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":141,"LineContent":"def test_profile_location_immutability(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":163,"LineContent":"def test_audit_sod_for_it_admin(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":203,"LineContent":"def test_scope3_server_side_calculation(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":230,"LineContent":"def test_production_upsert_and_delete_audit(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":282,"LineContent":"def test_scope2_rbac_and_creator_ownership(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":369,"LineContent":"def test_scope2_case_insensitive_recalc_and_steam_amount(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":423,"LineContent":"def test_bulk_anomaly_flag_persistence(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":473,"LineContent":"def test_fugitive_screening_count_and_fraction():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":496,"LineContent":"def test_agr_zero_removal_boundary():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":516,"LineContent":"def test_dispatcher_generic_volume_and_mass_conversions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":535,"LineContent":"def test_dispatcher_mmbtu_liquid_fuel_hhv():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":554,"LineContent":"def test_dispatcher_gram_factor_numerator():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":571,"LineContent":"def test_combustion_factor_prefix_tco2_and_gram():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":582,"LineContent":"def test_sentinel5p_column_mass_flux():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":597,"LineContent":"def test_uncertainty_combine_sum_negative_sinks():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":608,"LineContent":"def test_anomaly_iqr_quantile_interpolation():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":622,"LineContent":"def test_scope3_tonne_factor_handling(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":650,"LineContent":"def test_dashboard_sbti_zero_actuals(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":699,"LineContent":"def test_unit_conversions_mscf_mcf_bidirectional():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":723,"LineContent":"def test_dehydrator_stoichiometric_co2_combustion():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":747,"LineContent":"def test_dashboard_intensity_mmscf_scaling(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":799,"LineContent":"def test_dashboard_ogmp_target_status_segment_specific(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":867,"LineContent":"def test_ogmp_survey_zero_top_down_no_false_discrepancy(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":897,"LineContent":"def test_notifications_stream_heartbeat_init(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":909,"LineContent":"def test_scope2_steam_recalculation_enthalpy(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":946,"LineContent":"def test_scope3_eeio_per_thousand_scaling_defect(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":970,"LineContent":"def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1013,"LineContent":"def test_update_emission_preserves_calc_payload(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1040,"LineContent":"def test_bulk_import_scope2_and_3_rbac(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1062,"LineContent":"def test_qaqc_maker_checker_and_it_admin_blocked(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1092,"LineContent":"def test_base_year_recalculation_rbac_and_singleton(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1123,"LineContent":"def test_cbam_export_existing_record_facility_check(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1168,"LineContent":"def test_background_processor_upload_jobs_lock():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1206,"LineContent":"def test_delete_mitigation_record_admin_required(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1233,"LineContent":"def test_auth_update_user_role_whitelist(client, test_users):"}
+(...246 more results not shown)

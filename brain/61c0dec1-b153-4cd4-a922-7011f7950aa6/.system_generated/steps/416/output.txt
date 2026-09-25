@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -715,7 +715,12 @@
+      */
+     curY = addSectionHeader(2, "ORGANIZATIONAL BOUNDARIES", null, true);
+     
+-    const uniqueBoundaries = [...new Set(reportFacilities.map(f => f.boundary_type || "Operational Control"))].join(" and ");
++    const uniqueBoundaries = [...new Set(reportFacilities.map(f => {
++      if (f.boundary_type && f.boundary_detail) {
++        return `${f.boundary_type} (${f.boundary_detail})`;
++      }
++      return f.boundary_type || "Operational Control";
++    }))].join(" and ");
+     
+     curY = addTextBlock(`The consolidation approach used for organizational boundaries is: ${uniqueBoundaries}.`, curY);
+     curY += 5;
+@@ -722,6 +722,6 @@
+     
+-    // Explicitly list the facilities
+-    const facilityList = reportFacilities.map(f => `- ${f.name}`).join("\n");
++    // Explicitly list the facilities with their respective consolidation boundaries
++    const facilityList = reportFacilities.map(f => `- ${f.name} [${f.boundary_type || "Operational Control"}${f.boundary_detail ? ': ' + f.boundary_detail : ''}]`).join("\n");
+     curY = addTextBlock(facilityList, curY);
+     
+     drawFooter();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

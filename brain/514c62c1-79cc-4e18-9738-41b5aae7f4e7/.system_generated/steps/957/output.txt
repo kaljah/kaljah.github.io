@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":115,"LineContent":"          path=\"qa-dashboard\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":181,"LineContent":"          element={\u003cNavigate to=\"/qa-dashboard\" replace /\u003e}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":991,"LineContent":"                  onClick={() =\u003e navigate(\"/qa-dashboard\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":5,"LineContent":".qa-dashboard-page {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":212,"LineContent":"            \u003cdiv className=\"qa-dashboard-page\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":222,"LineContent":"            \u003cdiv className=\"qa-dashboard-page\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":260,"LineContent":"                className=\"qa-dashboard-page\" "}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":354,"LineContent":"                to=\"/qa-dashboard\""}

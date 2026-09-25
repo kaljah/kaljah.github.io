@@ -1,0 +1,151 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -144,20 +144,31 @@
+     assert co2e_ar6 == pytest.approx(expected_ar6, rel=1e-4)
+ 
+ 
+-def test_base_year_singleton_fallback(client, admin_headers):
++def test_base_year_singleton_fallback(client):
+     """Verify that when only BaseYear singleton exists, batch-all and /base-year return it cleanly."""
+     from extensions import db
+-    from models import BaseYear, BaseYearRecalculation
+-
+-    # Ensure no recalculation exists
+-    BaseYearRecalculation.query.delete()
+-    by = BaseYear.query.filter_by(id=1).first()
+-    if not by:
+-        by = BaseYear(id=1, year=2022, locked=1)
+-        db.session.add(by)
+-    else:
+-        by.year = 2022
+-    db.session.commit()
++    from models import BaseYear, BaseYearRecalculation, User
++
++    with client.application.app_context():
++        admin = User.query.filter_by(role="admin").first()
++        if not admin:
++            admin = User(email="admin_by@test.com", fullName="Admin BY", role="admin")
++            admin.set_password("pass")
++            db.session.add(admin)
++            db.session.commit()
++        admin_id = admin.id
++
++        BaseYearRecalculation.query.delete()
++        by = BaseYear.query.filter_by(id=1).first()
++        if not by:
++            by = BaseYear(id=1, year=2022, locked=1)
++            db.session.add(by)
++        else:
++            by.year = 2022
++        db.session.commit()
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = admin_id
+ 
+     from routes.dashboard import clear_dashboard_cache
+     clear_dashboard_cache()
+@@ -164,5 +164,5 @@
+     # Query /base-year
+-    res = client.get("/api/dashboard/base-year", headers=admin_headers)
++    res = client.get("/api/dashboard/base-year")
+     assert res.status_code == 200
+     data = res.get_json()
+     assert data is not None
+@@ -169,7 +169,7 @@
+     assert data["reason"] == "Official Baseline"
+ 
+     # Query /batch-all
+-    res_batch = client.get("/api/dashboard/batch-all?facilityId=all&activity=all&division=all", headers=admin_headers)
++    res_batch = client.get("/api/dashboard/batch-all?facilityId=all&activity=all&division=all")
+     assert res_batch.status_code == 200
+     batch_data = res_batch.get_json()
+     assert batch_data["base_year"] is not None
+@@ -176,32 +176,57 @@
+ 
+ 
+-def test_notification_broadcast_handling(client, admin_headers, operator_headers):
++def test_notification_broadcast_handling(client):
+     """Verify broadcast notifications (user_id=None) can be marked as read by users and dismissed by admins."""
+     from extensions import db
+-    from models import Notification
+-
+-    # Create a broadcast notification
+-    notif = Notification(
+-        user_id=None,
+-        type="info",
+-        title="Broadcast System Maintenance Notice",
+-        message="Scheduled maintenance window at 02:00 UTC",
+-        is_read=False,
+-    )
+-    db.session.add(notif)
+-    db.session.commit()
+-    notif_id = notif.id
++    from models import Notification, User
++
++    with client.application.app_context():
++        admin = User.query.filter_by(role="admin").first()
++        if not admin:
++            admin = User(email="admin_notif@test.com", fullName="Admin Notif", role="admin")
++            admin.set_password("pass")
++            db.session.add(admin)
++            db.session.commit()
++        admin_id = admin.id
++
++        operator = User.query.filter_by(role="user").first()
++        if not operator:
++            operator = User(email="user_notif@test.com", fullName="User Notif", role="user")
++            operator.set_password("pass")
++            db.session.add(operator)
++            db.session.commit()
++        operator_id = operator.id
++
++        # Create a broadcast notification
++        notif = Notification(
++            user_id=None,
++            type="info",
++            title="Broadcast System Maintenance Notice",
++            message="Scheduled maintenance window at 02:00 UTC",
++            is_read=False,
++        )
++        db.session.add(notif)
++        db.session.commit()
++        notif_id = notif.id
+ 
+     # Non-admin / operator can mark read without getting 403 Forbidden
+-    res_read = client.put(f"/api/notifications/{notif_id}/read", headers=operator_headers)
++    with client.session_transaction() as sess:
++        sess["user_id"] = operator_id
++
++    res_read = client.put(f"/api/notifications/{notif_id}/read")
+     assert res_read.status_code == 200
+     assert res_read.get_json()["success"] is True
+ 
+-    # Admin dismiss-all clears both user and broadcast notifications
+-    notif.is_read = False
+-    db.session.commit()
+-
+-    res_dismiss = client.post("/api/notifications/dismiss-all", headers=admin_headers)
++    # Reset to unread for admin dismiss-all test
++    with client.application.app_context():
++        n = db.session.get(Notification, notif_id)
++        n.is_read = False
++        db.session.commit()
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = admin_id
++
++    res_dismiss = client.post("/api/notifications/dismiss-all")
+     assert res_dismiss.status_code == 200
+     assert res_dismiss.get_json()["success"] is True
+ 
+@@ -208,4 +208,5 @@
+-    updated_notif = db.session.get(Notification, notif_id)
+-    assert updated_notif.is_read is True
++    with client.application.app_context():
++        updated_notif = db.session.get(Notification, notif_id)
++        assert updated_notif.is_read is True
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

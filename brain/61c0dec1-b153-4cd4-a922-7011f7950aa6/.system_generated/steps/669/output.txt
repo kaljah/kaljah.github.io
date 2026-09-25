@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1065,6 +1065,23 @@
+                   style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+                 />
+               </div>
++              <div className="input-group">
++                <label>GWP Metric Standard</label>
++                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
++                  Select the IPCC Assessment Report Global Warming Potentials applied to calculate CO2-equivalent totals.
++                </p>
++                <select
++                  className="component-select"
++                  value={reportGwpStandard}
++                  onChange={(e) => setReportGwpStandard(e.target.value)}
++                  style={{ width: '100%', padding: '8px', border: '1px solid #e2e8f0', borderRadius: '4px' }}
++                >
++                  <option value="AR5">IPCC AR5 (100-yr: CH4=28, N2O=265) — Default</option>
++                  <option value="AR6">IPCC AR6 (100-yr: CH4=29.8, N2O=273)</option>
++                  <option value="AR4">IPCC AR4 (100-yr: CH4=25, N2O=298)</option>
++                  <option value="20yr">IPCC AR6 (20-yr: CH4=82.5, N2O=273)</option>
++                </select>
++              </div>
+             </div>
+             <div className="modal-footer" style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+               <button className="btn-secondary" onClick={() => setShowConfigModal(false)}>Cancel</button>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

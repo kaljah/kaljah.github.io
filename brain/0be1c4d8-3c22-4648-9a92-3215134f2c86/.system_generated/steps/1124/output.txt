@@ -1,0 +1,52 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1048,23 +1048,34 @@
+         setFacilityForm({ ...facilityForm, [e.target.name]: e.target.value });
+     };
+ 
+-    // Conversion Helpers
++    // Conversion Helpers (in-app modal dialog replacing blocking browser prompt)
++    const [convertModal, setConvertModal] = useState({ isOpen: false, type: 'gas', value: '' });
++
+     const openGasConverter = () => {
+-        const value = prompt("Enter Gas amount in m³ to convert to mcf (x 0.0353147):");
+-        if (value && !isNaN(value)) {
+-            const mcf = (parseFloat(value) * 0.0353147).toFixed(2);
+-            setProdForm(prev => ({ ...prev, gas_amount: mcf, gas_unit: 'mscf' }));
+-            toast.success(`Converted ${value} m³ to ${mcf} mcf`);
+-        }
++        setConvertModal({ isOpen: true, type: 'gas', value: '' });
+     };
+ 
+     const openOilConverter = () => {
+-        const value = prompt("Enter Oil amount in m³ to convert to bbl (x 6.28981):");
+-        if (value && !isNaN(value)) {
+-            const bbl = (parseFloat(value) * 6.28981).toFixed(2);
++        setConvertModal({ isOpen: true, type: 'oil', value: '' });
++    };
++
++    const handleApplyConversion = (e) => {
++        if (e) e.preventDefault();
++        const val = parseFloat(convertModal.value);
++        if (isNaN(val) || val <= 0) {
++            toast.error("Please enter a valid positive number");
++            return;
++        }
++        if (convertModal.type === 'gas') {
++            const mcf = (val * 0.0353147).toFixed(2);
++            setProdForm(prev => ({ ...prev, gas_amount: mcf, gas_unit: 'mscf' }));
++            toast.success(`Converted ${val} m³ to ${mcf} mcf`);
++        } else {
++            const bbl = (val * 6.28981).toFixed(2);
+             setProdForm(prev => ({ ...prev, oil_amount: bbl, oil_unit: 'bbl' }));
+-            toast.success(`Converted ${value} m³ to ${bbl} bbl`);
+-        }
++            toast.success(`Converted ${val} m³ to ${bbl} bbl`);
++        }
++        setConvertModal({ isOpen: false, type: 'gas', value: '' });
+     };
+ 
+     // CSV Logic with RFC 4180 Escaping and Blob Download
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

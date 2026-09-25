@@ -1,0 +1,100 @@
+
+The command exited with code 0.
+Output:
+=== PAGE 9 ===
+YEARLY TOTAL GHG EMISSIONS BY SCOPE
+Total CO2e Emissions (Tonnes/Year)
+HBNS YEARLY TREND GB TOTAL YEARLY TREND
+1.20 2.50
+s
+n
+o 1.00
+illiM 2.00
+0.80 s
+n 1.50
+o
+0.60 illiM
+1.00
+0.40
+0.50
+=== PAGE 10 ===
+HBNS YEARLY TOTAL GHG EMISSIONS BY MODULE
+Total CO2e Emissions (Tonnes/Year)
+HBNS YEARLY GHG TREND BY MODULE HBNS YEARLY GHG TREND BY MODULE
+0.80 0.04
+0.70
+0.03
+0.60
+s
+s n 0.50 n o
+o
+illiM 0.40
+illiM 0.02
+0.30
+0.01
+0.20
+=== PAGE 11 ===
+ELM YEARLY TOTAL GHG EMISSIONS BY MODULE
+Total CO2e Emissions (Tonnes/Year)
+ELM YEARLY GHG TREND BY MODULE ELM YEARLY GHG TREND BY MODULE
+0.80 0.08
+0.70 0.07
+0.06
+0.60
+s 0.05
+s 0.50 n
+n o
+illiM 0.40
+o illiM
+0
+0.
+.0
+=== PAGE 12 ===
+GB TOTAL YEARLY GHG EMISSIONS BY MODULE
+Total CO2e Emissions (Tonnes/Year)
+GB TOTAL YEARLY GHG TREND BY MODULE GB TOTAL YEARLY GHG TREND BY MODULE
+1.60 0.12
+1.40 0.10
+1.20
+s 0.08
+s n 1.00 n o
+o
+illiM 0.80
+illiM
+0
+0
+.
+.
+=== PAGE 16 ===
+ELM CPF FLARING BREAKDOWN
+Flaring in KNm3
+ELM Routine Flaring
+ELM Total Flaring
+46.81 46.81
+140 122.02 50 43.82 44.79
+120
+s 96.39 40
+d
+n 100 s 29.08
+a d
+s u 80 69.66 59.83 65.38 n a 30
+o s
+h T 60 u o 20
+h
+=== PAGE 17 ===
+TOTAL CPF FLARING YEARLY TREND
+ELM Year-to-Year Percentage Change in HBNS Year-to-Year Percentage Change in
+Total Flaring volume Total Flaring volume
+40.00% 30.00% +25.52%
+) +26.60% )
+% 30.00% %
+20.00%
+( (
+e 20.00% e
+g 9.28% g 10.00%
+n n
+10.00%
+a a
+h h
+C 0.00% C 0.00%
+

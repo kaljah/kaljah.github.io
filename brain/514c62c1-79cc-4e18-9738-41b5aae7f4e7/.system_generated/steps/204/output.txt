@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\LayoutContext.jsx","LineNumber":5,"LineContent":"export const LayoutProvider = ({ children }) =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\LayoutContext.jsx","LineNumber":34,"LineContent":"    throw new Error(\"useLayout must be used within a LayoutProvider\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":5,"LineContent":"import { LayoutProvider } from \"./context/LayoutContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":222,"LineContent":"          \u003cLayoutProvider\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":226,"LineContent":"          \u003c/LayoutProvider\u003e"}

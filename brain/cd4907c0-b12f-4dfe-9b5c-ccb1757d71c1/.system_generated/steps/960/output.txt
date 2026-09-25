@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":62,"LineContent":"          {![\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":324,"LineContent":"          {[\"admin\", \"superuser\", \"it_admin\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":378,"LineContent":"          {[\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":411,"LineContent":"      {![\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":489,"LineContent":"          {![\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":511,"LineContent":"          {[\"admin\", \"superuser\", \"it_admin\"].includes(user?.role) \u0026\u0026 ("}

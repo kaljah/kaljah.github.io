@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+ M graphify-out/.graphify_labels.json
+ M graphify-out/.graphify_labels.json.sig
+ M graphify-out/GRAPH_REPORT.md
+ M graphify-out/graph.html
+ M graphify-out/graph.json
+ M graphify-out/manifest.json
+?? graphify-out/2026-09-19/
+

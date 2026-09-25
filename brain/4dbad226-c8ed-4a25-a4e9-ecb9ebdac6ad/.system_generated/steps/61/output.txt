@@ -1,0 +1,20 @@
+
+The command exited with code 1.
+Output:
+Invoke-WebRequest : Cannot bind parameter 'WebSession'. Cannot convert the "\nStatus: %{http_code}\n" value of type 
+"System.String" to type "Microsoft.PowerShell.Commands.WebRequestSession".
+At line:1 char:45
++ ... ttp://localhost:5000/api/health -w "\nStatus: %{http_code}\n"; curl - ...
++                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+ 
+Invoke-WebRequest : Missing an argument for parameter 'SessionVariable'. Specify a parameter of type 'System.String' 
+and try again.
+At line:1 char:78
++ ... alhost:5000/api/health -w "\nStatus: %{http_code}\n"; curl -s -I http ...
++                                                                ~~
+    + CategoryInfo          : InvalidArgument: (:) [Invoke-WebRequest], ParameterBindingException
+    + FullyQualifiedErrorId : MissingArgument,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+ 
+

@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+[Compiler] Starting master report compilation...
+[Compiler] Loaded 1 bugs from agent_02_bugs.json
+[Compiler] Loaded 11 bugs from agent_03_bugs.json
+[Compiler] Loaded 6 bugs from agent_04_bugs.json
+[Compiler] Loaded 2 bugs from agent_05_bugs.json
+[Compiler] Loaded 8 bugs from agent_06_bugs.json
+[Compiler] Loaded 8 bugs from agent_07_bugs.json
+[Compiler] Loaded 8 bugs from agent_08_bugs.json
+[Compiler] Loaded 4 bugs from agent_09_bugs.json
+[Compiler] Loaded 5 bugs from agent_10_bugs.json
+[Compiler] Loaded 3 bugs from agent_11_bugs.json
+[Compiler] Deduplicated: 56 → 47 bugs
+[Compiler] ✅ Saved to: C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\MASTER_BUG_REPORT.md
+[Compiler] ✅ Saved to Desktop: C:\Users\samsung\Desktop\MASTER_BUG_REPORT.md
+
+[Compiler] DONE — 47 unique bugs documented.
+  🔴 Critical: 11
+  🟠 High:     21
+  🟡 Medium:   14
+

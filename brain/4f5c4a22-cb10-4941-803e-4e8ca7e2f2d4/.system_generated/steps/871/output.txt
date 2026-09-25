@@ -1,0 +1,84 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 1 lines>
+127.0.0.1 - - [22/Sep/2026 14:36:45] "POST /api/emissions HTTP/1.1" 201 -
+[2026-09-22 14:36:45,718] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 14:36:45,724] INFO in emissions: [Emissions] Scope 1 count: 2451
+[2026-09-22 14:36:45,734] INFO in app: GET /api/emissions 200 [0.018s] [ReqID: f5da439c-1a15-46de-bedb-502d6ba00bcb]
+127.0.0.1 - - [22/Sep/2026 14:36:45] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 14:36:45,914] INFO in app: GET /api/notifications 200 [0.007s] [ReqID: b31b11c9-be4c-40d3-ba71-67cb9caea4dc]
+127.0.0.1 - - [22/Sep/2026 14:36:45] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:36:45,953] INFO in app: GET /api/notifications/stream 200 [0.005s] [ReqID: 53b454c0-4ca4-4eb1-b0fa-623e266f22ef]
+127.0.0.1 - - [22/Sep/2026 14:36:45] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:36:48,758] INFO in app: GET /api/notifications 200 [0.003s] [ReqID: 85c2cabf-cbcf-4016-8ead-d8af6012f764]
+127.0.0.1 - - [22/Sep/2026 14:36:48] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:36:48,775] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 72abf63a-a620-46d5-b7f9-90438b02440d]
+127.0.0.1 - - [22/Sep/2026 14:36:48] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:36:51,614] INFO in app: POST /api/emissions 201 [0.014s] [ReqID: 8bd34414-4d51-48e9-b776-c554a86ffee9]
+127.0.0.1 - - [22/Sep/2026 14:36:51] "POST /api/emissions HTTP/1.1" 201 -
+[2026-09-22 14:36:51,628] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 14:36:51,632] INFO in emissions: [Emissions] Scope 1 count: 2452
+[2026-09-22 14:36:51,645] INFO in app: GET /api/emissions 200 [0.019s] [ReqID: 0d4684f4-0b7d-46a7-b264-dfe3c77c9e3b]
+127.0.0.1 - - [22/Sep/2026 14:36:51] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 14:36:51,775] INFO in app: GET /api/notifications 200 [0.003s] [ReqID: d465a8c5-9601-4402-8b91-054f5ca32bfb]
+127.0.0.1 - - [22/Sep/2026 14:36:51] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:36:51,810] INFO in app: GET /api/notifications/stream 200 [0.003s] [ReqID: 7e814310-7978-49b7-8bf4-60088f0e2c82]
+127.0.0.1 - - [22/Sep/2026 14:36:51] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:36:54,705] INFO in app: GET /api/notifications 200 [0.003s] [ReqID: 0cca38a6-00d3-4c75-9b58-5b34766fcf9d]
+127.0.0.1 - - [22/Sep/2026 14:36:54] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:36:54,724] INFO in app: GET /api/notifications/stream 200 [0.003s] [ReqID: 53c05bfd-bb0b-45e7-b08b-09ee3f5efb64]
+127.0.0.1 - - [22/Sep/2026 14:36:54] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:36:56,323] INFO in app: GET /api/notifications 200 [0.003s] [ReqID: 00b8315a-5ed7-4a15-abba-3715ea82e9e4]
+127.0.0.1 - - [22/Sep/2026 14:36:56] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:36:56,343] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: ec4ddf01-94d2-4e71-a2b3-644545160e08]
+127.0.0.1 - - [22/Sep/2026 14:36:56] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:36:59,333] INFO in app: GET /api/notifications 200 [0.004s] [ReqID: 5d66fa3f-75fe-49bd-bc9c-a5217bc5217b]
+127.0.0.1 - - [22/Sep/2026 14:36:59] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:36:59,347] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 2d3d3a2b-c02e-4bf1-9511-356beb7b4823]
+127.0.0.1 - - [22/Sep/2026 14:36:59] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:37:17,053] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 8edafc56-1a4a-4f6c-86b6-9283c4d93cfc]
+127.0.0.1 - - [22/Sep/2026 14:37:17] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-22 14:37:17,100] INFO in app: POST /api/emissions/approve/batch 200 [0.023s] [ReqID: ee36bc64-1d18-4188-93f0-934777794797]
+127.0.0.1 - - [22/Sep/2026 14:37:17] "POST /api/emissions/approve/batch HTTP/1.1" 200 -
+[2026-09-22 14:37:17,965] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 25717ef8-43d4-44a1-a31c-5327f0fe5f00]
+[2026-09-22 14:37:17,966] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: a1e4db17-9221-4ffe-8220-ee5a5089e813]
+127.0.0.1 - - [22/Sep/2026 14:37:17] "GET /api/auth/me HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:37:17] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-22 14:37:17,980] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: b4ab8b4b-1998-4efa-9624-70d39ec14615]
+127.0.0.1 - - [22/Sep/2026 14:37:17] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-22 14:37:18,117] INFO in app: GET /api/notifications 200 [0.002s] [ReqID: 9b21f2ef-b5e9-4c1d-ad19-8bb7e22f3a31]
+127.0.0.1 - - [22/Sep/2026 14:37:18] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:37:18,142] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 06bf7624-212e-4d66-9bc4-69e246963aff]
+127.0.0.1 - - [22/Sep/2026 14:37:18] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:37:18,408] INFO in app: GET /api/facilities 200 [0.044s] [ReqID: 1d9df338-1929-41b7-9e79-befd9aadca9f]
+[2026-09-22 14:37:18,409] INFO in app: GET /api/filters/available 200 [0.043s] [ReqID: 30208d4d-a299-462e-b9fb-943961f3609a]
+127.0.0.1 - - [22/Sep/2026 14:37:18] "GET /api/facilities HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 14:37:18] "GET /api/filters/available HTTP/1.1" 200 -
+[2026-09-22 14:37:18,525] INFO in app: GET /api/dashboard/batch-all 200 [0.154s] [ReqID: f546908c-5a7e-49f6-b824-58c7c4994ba4]
+127.0.0.1 - - [22/Sep/2026 14:37:18] "GET /api/dashboard/batch-all?facilityId=all&activity=all&division=all HTTP/1.1" 200 -
+[2026-09-22 14:37:18,553] INFO in app: GET /api/dashboard/sbti-trajectory 200 [0.004s] [ReqID: 0717e47d-c9f3-449b-a43a-cd16ba41bc98]
+127.0.0.1 - - [22/Sep/2026 14:37:18] "GET /api/dashboard/sbti-trajectory HTTP/1.1" 200 -
+[2026-09-22 14:37:31,757] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 5214d9ef-74ea-4f6e-8b19-3fa2e6c98ce9]
+127.0.0.1 - - [22/Sep/2026 14:37:31] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-22 14:37:31,818] INFO in app: POST /api/emissions/approve/batch 200 [0.013s] [ReqID: 8c12d31f-8437-422a-9ca8-4d8ce842a622]
+127.0.0.1 - - [22/Sep/2026 14:37:31] "POST /api/emissions/approve/batch HTTP/1.1" 200 -
+[2026-09-22 14:37:32,534] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 88ce46c1-6d4d-4d6c-845c-422110ecb7e1]
+127.0.0.1 - - [22/Sep/2026 14:37:32] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-22 14:37:32,536] INFO in app: GET /api/csrf-token 200 [0.002s] [ReqID: 1621d9b0-2bf3-4021-a491-ecf2edc506b5]
+127.0.0.1 - - [22/Sep/2026 14:37:32] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-22 14:37:32,551] INFO in app: GET /api/auth/settings 200 [0.002s] [ReqID: 66173ce3-2817-4a5b-a175-fe58d6cb9408]
+127.0.0.1 - - [22/Sep/2026 14:37:32] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-22 14:37:32,612] INFO in app: GET /api/notifications 200 [0.005s] [ReqID: 2176b5c5-232d-4faa-b26b-ca6e71f82921]
+127.0.0.1 - - [22/Sep/2026 14:37:32] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 14:37:32,641] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: 98500917-8a59-4e74-bdf7-679dfb4a82b9]
+127.0.0.1 - - [22/Sep/2026 14:37:32] "GET /api/notifications/stream?last_id=37 HTTP/1.1" 200 -
+[2026-09-22 14:37:32,947] INFO in app: GET /api/facilities 200 [0.024s] [ReqID: 851e748a-013d-44d9-b159-b46e747b375f]
+127.0.0.1 - - [22/Sep/2026 14:37:32] "GET /api/facilities HTTP/1.1" 200 -
+[2026-09-22 14:37:32,980] INFO in app: GET /api/filters/available 200 [0.053s] [ReqID: 367ca624-ddd9-40ab-ae43-33d51f0ee996]
+127.0.0.1 - - [22/Sep/2026 14:37:32] "GET /api/filters/available HTTP/1.1" 200 -
+[2026-09-22 14:37:33,107] INFO in app: GET /api/dashboard/batch-all 200 [0.175s] [ReqID: c3928d88-61d5-403e-9543-8a8cc152272d]
+127.0.0.1 - - [22/Sep/2026 14:37:33] "GET /api/dashboard/batch-all?facilityId=all&activity=all&division=all HTTP/1.1" 200 -
+[2026-09-22 14:37:33,131] INFO in app: GET /api/dashboard/sbti-trajectory 200 [0.004s] [ReqID: fd3dcf5b-3a19-4516-bd52-d01264a87f36]
+127.0.0.1 - - [22/Sep/2026 14:37:33] "GET /api/dashboard/sbti-trajectory HTTP/1.1" 200 -
+

@@ -1,0 +1,23 @@
+Created the following subagents:
+{
+  "conversationId":  "cb28655a-ac03-43b1-88b1-4d58ef17df46",
+  "logAbsoluteUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/cb28655a-ac03-43b1-88b1-4d58ef17df46/.system_generated/logs/transcript.jsonl",
+  "workspaceUris":  [
+    "file:///c%3A/Users/samsung/Desktop/H2"
+  ]
+}
+{
+  "conversationId":  "37c7a908-67c9-4425-98b9-eeb9b1e09f48",
+  "logAbsoluteUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/37c7a908-67c9-4425-98b9-eeb9b1e09f48/.system_generated/logs/transcript.jsonl",
+  "workspaceUris":  [
+    "file:///c%3A/Users/samsung/Desktop/H2"
+  ]
+}
+{
+  "conversationId":  "f48ed009-d246-42a3-9304-f45f175f50a0",
+  "logAbsoluteUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/f48ed009-d246-42a3-9304-f45f175f50a0/.system_generated/logs/transcript.jsonl",
+  "workspaceUris":  [
+    "file:///c%3A/Users/samsung/Desktop/H2"
+  ]
+}
+The subagents will send you a message when they have completed their task or require guidance. There is no need to poll for their responses.

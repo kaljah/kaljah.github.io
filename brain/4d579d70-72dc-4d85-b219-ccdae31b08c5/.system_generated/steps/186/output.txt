@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":6,"LineContent":"import \"./ColumnMappingWizard.css\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":520,"LineContent":"export default function ColumnMappingWizard({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":8,"LineContent":"import ColumnMappingWizard from \"./ColumnMappingWizard\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":708,"LineContent":"          \u003cColumnMappingWizard"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.jsx","LineNumber":3,"LineContent":"import ColumnMappingWizard from \"./ColumnMappingWizard\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.jsx","LineNumber":8,"LineContent":" *   1. Upload File  → opens the ColumnMappingWizard modal"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.jsx","LineNumber":11,"LineContent":" * All mapping + progress logic lives inside ColumnMappingWizard."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CsvUploader.jsx","LineNumber":19,"LineContent":"        \u003cColumnMappingWizard"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":9,"LineContent":"import ColumnMappingWizard from \"./ColumnMappingWizard\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":611,"LineContent":"        \u003cColumnMappingWizard"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":6,"LineContent":"import ColumnMappingWizard from '../components/ColumnMappingWizard';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":4052,"LineContent":"                \u003cColumnMappingWizard"}

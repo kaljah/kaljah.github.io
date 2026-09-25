@@ -1,0 +1,52 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -524,6 +524,19 @@
+                     pass
+             return q
+ 
++        status_arg = (request.args.get("status") or "").lower().strip()
++
++        def _apply_export_status_filter(q, model):
++            if status_arg == "rejected":
++                return q.filter(model.status.ilike("%rejected%"))
++            elif status_arg == "verified":
++                return q.filter(model.status.ilike("%verified%"))
++            elif status_arg == "pending":
++                return q.filter(or_(model.status.ilike("%pending%"), model.status.is_(None)))
++            elif status_arg in ["all", "active"]:
++                return q.filter(or_(model.status.is_(None), ~model.status.ilike("%rejected%")))
++            return q
++
+         q1 = []
+         q2 = []
+         q3 = []
+@@ -530,13 +530,16 @@
+-            q1 = _fac_filter(
+-                Emission.query.filter(Emission.qa_flag.isnot(None)), Emission
+-            ).limit(_MAX_FLAGGED_RECORDS).all()
+-        if scope_arg in [None, "all", "2"]:
+-            q2 = _fac_filter(
+-                Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)), Scope2Emission
+-            ).limit(_MAX_FLAGGED_RECORDS).all()
+-        if scope_arg in [None, "all", "3"]:
+-            q3 = _fac_filter(
+-                Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None)), Scope3Emission
++            q1 = _apply_export_status_filter(
++                _fac_filter(Emission.query.filter(Emission.qa_flag.isnot(None)), Emission),
++                Emission
++            ).limit(_MAX_FLAGGED_RECORDS).all()
++        if scope_arg in [None, "all", "2"]:
++            q2 = _apply_export_status_filter(
++                _fac_filter(Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)), Scope2Emission),
++                Scope2Emission
++            ).limit(_MAX_FLAGGED_RECORDS).all()
++        if scope_arg in [None, "all", "3"]:
++            q3 = _apply_export_status_filter(
++                _fac_filter(Scope3Emission.query.filter(Scope3Emission.qa_flag.isnot(None)), Scope3Emission),
++                Scope3Emission
+             ).limit(_MAX_FLAGGED_RECORDS).all()
+ 
+         si = io.StringIO()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

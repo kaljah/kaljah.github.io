@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"tagName":"DIV","className":"custom-dropdown open","parentTag":"DIV","parentClass":"input-group","outerHTML":"<div class=\"input-group\"><label>Region</label><div class=\"custom-dropdown open\"><div class=\"dropdown-selected\"><span class=\"display-text\">Select Region...</span><svg width=\"10\" height=\"10\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg></div></div></div>"}
+```

@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 10
+    check_js = '''
+               ^
+SyntaxError: unterminated triple-quoted string literal (detected at line 17)
+

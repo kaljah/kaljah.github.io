@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/24/2026  12:03 PM            128 agent_02_bugs.json                                                   
+-a----         9/24/2026  11:57 AM              2 agent_03_bugs.json                                                   
+-a----         9/24/2026  11:58 AM              2 agent_04_bugs.json                                                   
+-a----         9/24/2026  12:00 PM              2 agent_05_bugs.json                                                   
+-a----         9/24/2026  12:01 PM              2 agent_06_bugs.json                                                   
+-a----         9/24/2026  12:09 PM           9962 agent_07_bugs.json                                                   
+-a----         9/24/2026  12:14 PM              2 agent_08_bugs.json                                                   
+-a----         9/24/2026  12:39 AM              2 agent_09_bugs.json                                                   
+-a----         9/24/2026  12:18 PM              2 agent_10_bugs.json                                                   
+-a----         9/24/2026  12:40 AM              2 agent_11_bugs.json                                                   
+
+
+

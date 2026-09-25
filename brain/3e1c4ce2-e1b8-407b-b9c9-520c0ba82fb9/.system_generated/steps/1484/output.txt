@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_carbon_intensity_validation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -15,7 +15,7 @@
+ from app import app as flask_app
+ from extensions import db
+ from models import Facility, Emission, ProductionData, Scope2Emission, Scope3Emission, CbamProductExport, User
+-from routes.dashboard import _query_intensity_stats, _query_intensity_trend, clear_dashboard_cache
++from routes.dashboard import _query_intensity_stats, _query_intensity_trend_bulk, clear_dashboard_cache
+ from calculations.constants import get_active_gwp
+ 
+ GAS_TO_BOE = 0.178
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

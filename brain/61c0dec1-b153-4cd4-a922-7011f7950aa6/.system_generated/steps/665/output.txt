@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -610,6 +610,20 @@
+                 </select>
+               </div>
+ 
++              <div className="control-group">
++                <label className="input-label">GWP Metric Standard</label>
++                <select
++                  className="component-select"
++                  value={reportGwpStandard}
++                  onChange={(e) => setReportGwpStandard(e.target.value)}
++                >
++                  <option value="AR5">IPCC AR5 (100-yr: CH4=28, N2O=265)</option>
++                  <option value="AR6">IPCC AR6 (100-yr: CH4=29.8, N2O=273)</option>
++                  <option value="AR4">IPCC AR4 (100-yr: CH4=25, N2O=298)</option>
++                  <option value="20yr">IPCC AR6 (20-yr: CH4=82.5, N2O=273)</option>
++                </select>
++              </div>
++
+               <div className="control-group" style={{ flex: 2 }}>
+                 <label className="input-label">
+                   Regions / Facilities{" "}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

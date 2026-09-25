@@ -1,0 +1,129 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+    assert any(s.lower() in name.lower() for name in wb.sheetnames), f"Missing sheet: {s}"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Missing sheet: Source Inventory (L1-L4)
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 740, in main
+    ok = runner()
+         ^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 625, in test_subagent_9_performance_concurrency
+    assert avg_latency < 2.5, f"Average latency too high: {avg_latency:.3f}s"
+           ^^^^^^^^^^^^^^^^^
+AssertionError: Average latency too high: 2.976s
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 740, in main
+    ok = runner()
+         ^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 698, in test_subagent_10_industrial_lifecycle
+    assert r_prod.status_code in [200, 201]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+################################################################################
+STARTING FULL-SOFTWARE 10-SUBAGENT QA CAMPAIGN
+################################################################################
+
+================================================================================
+SUBAGENT 1 � FUNCTIONAL BETA TESTER (End-User Workflows & Navigation)
+================================================================================
+  [1.1] Facility search filter 'Compl' matched 2 facilities -> PASS
+  [1.2] Emissions filtered query (year=2025) retrieved 10 records -> PASS
+  [1.3] Scope 2 records queried (12 entries) -> PASS
+  [1.4] Scope 3 records queried (16 entries) -> PASS
+
+================================================================================
+SUBAGENT 2 � CALCULATION ENGINE AUDITOR (Governing Equations & Tiers)
+================================================================================
+
+================================================================================
+SUBAGENT 3 � DATA INTEGRITY & DATABASE TESTER (Cascades, FKs, Rollback)
+================================================================================
+  [3.1] Created facility ID 146
+
+================================================================================
+SUBAGENT 4 � API & BACKEND TESTER (All 16 Blueprints & Status Codes)
+================================================================================
+
+================================================================================
+SUBAGENT 5 � SECURITY & RBAC TESTER (Least Privilege, CSRF, Formula Injection, SQLi)
+================================================================================
+
+================================================================================
+SUBAGENT 6 � EDGE CASE / ADVERSARIAL USER (Boundary, Unicode, Malformed Data)
+================================================================================
+  [6.1] Submitting Unicode & Arabic strings...
+    Created Unicode facility ID 147 -> PASS
+    Retrieved Arabic facility with 100% UTF-8 fidelity -> PASS
+  [6.2] Submitting Zero and Large Quantity Edge Cases...
+    Zero quantity handled gracefully (HTTP 201) -> PASS
+    Negative quantity rejected gracefully (HTTP 422) -> PASS
+    Non-numeric amount string rejected gracefully (HTTP 422) -> PASS
+SUBAGENT 6 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 7 � UI/UX & FRONTEND TESTER (Chrome CDP Automation & 0 Console Errors)
+================================================================================
+  [7.1] Navigating to /login and authenticating...
+    Viewport Desktop Full HD (1920x1080): rendered 61 chart SVGs cleanly -> PASS
+    Viewport Standard Laptop (1366x768): rendered 61 chart SVGs cleanly -> PASS
+    Viewport Tablet Viewport (768x1024): rendered 61 chart SVGs cleanly -> PASS
+    Visited /emissions (Emissions Tracking) -> Rendered 908 chars PASS
+    Visited /manage-data (Manage Data Hub) -> Rendered 4176 chars PASS
+    Visited /qa-dashboard (QA/QC Anomaly Dashboard) -> Rendered 1189 chars PASS
+    Visited /reports (Reporting & OGMP Export) -> Rendered 14443 chars PASS
+    Visited /carbon-intensity (Carbon Intensity) -> Rendered 17227 chars PASS
+    Visited /methane-intensity (Methane Intensity) -> Rendered 61179 chars PASS
+    Visited /sbti (SBTi Targets) -> Rendered 2108 chars PASS
+    Visited /uncertainty (Uncertainty Assessment) -> Rendered 2932 chars PASS
+    Visited /reference-data (Reference Data Catalog) -> Rendered 18103 chars PASS
+    Visited /audit-trail (Audit Trail) -> Rendered 9817 chars PASS
+    Visited /settings (System Settings) -> Rendered 1909 chars PASS
+    [Browser Console Error] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED)
+
+================================================================================
+SUBAGENT 8 � REPORTING / EXPORT / AUDIT TESTER (Excel, PDF, CSV, Audit Trail)
+================================================================================
+  [8.1] Requesting UNEP / OGMP 2.0 Standard 5-Tab Excel Export...
+
+================================================================================
+SUBAGENT 9 � PERFORMANCE & CONCURRENCY TESTER (Concurrent Threads & WAL Resilience)
+================================================================================
+  [9.1] Spawning 15 concurrent worker threads hammering API endpoints...
+    Concurrency Run: 15/15 threads completed with HTTP 200
+    Average roundtrip latency under load: 2.976s
+
+================================================================================
+SUBAGENT 10 � FULL END-TO-END INDUSTRIAL AUDITOR (Full Upstream Asset Lifecycle)
+================================================================================
+  [Step 1] Commissioned industrial asset: Industrial Complex In-Salah Gas Central (ID: 147)
+  [Step 2] Logged Scope 1 compressor combustion -> 0.00 tCO2e
+  [Step 3] Logged Scope 2 grid electricity -> 0.00 tCO2e
+
+################################################################################
+QA CAMPAIGN SUMMARY (56.92s elapsed)
+################################################################################
+  [FAIL: ] Subagent 1: Functional Beta Tester
+  [FAIL: CO2e 0.0 below expected 5.0 for stationary_combustion] Subagent 2: Calculation Engine Auditor
+  [FAIL: ] Subagent 3: Database & Integrity Tester
+  [FAIL: Failed to login as itadmin@ghg.com: 401 {"error":"Invalid credentials"}
+] Subagent 4: API & Backend Tester
+  [FAIL: Failed to login as itadmin@ghg.com: 401 {"error":"Invalid credentials"}
+] Subagent 5: Security & RBAC Tester
+  [PASS] Subagent 6: Edge Case & Adversarial User
+  [FAIL: IT role was not redirected away from /dashboard!] Subagent 7: UI/UX & Frontend CDP Tester
+  [FAIL: Missing sheet: Source Inventory (L1-L4)] Subagent 8: Reporting & Export Tester
+  [FAIL: Average latency too high: 2.976s] Subagent 9: Performance & Concurrency Tester
+  [FAIL: ] Subagent 10: Industrial Lifecycle Auditor
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 764, in <module>
+    success = main()
+              ^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 759, in main
+    print("\n\u274c SOME SUBAGENTS ENCOUNTERED DEFECTS!")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u274c' in position 2: character maps to <undefined>
+

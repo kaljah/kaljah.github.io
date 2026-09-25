@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['id', 'record_id', 'year', 'month', 'company_name', 'group_name', 'equipment_id', 'process_type', 'fuel_type', 'quantity', 'unit', 'factor_source', 'ef_used_co2', 'ef_used_ch4', 'ef_used_n2o', 'ef_used_co', 'co2_emissions', 'ch4_emissions', 'n2o_emissions', 'co_emissions', 'co2e_total', 'co2_biogenic', 'combustion_efficiency', 'uncertainty', 'uncertainty_ch4', 'uncertainty_n2o', 'uncertainty_pct', 'qa_flag', 'status', 'facility_id', 'activity', 'division', 'region', 'field', 'calc_method', 'calc_version', 'factor_version', 'ogmp_level', 'source_type_code', 'data_source_ref', 'gwp_version', 'source_payload', 'created_by', 'updated_by', 'updated_at', 'timestamp', 'approved_by', 'approved_at']
+

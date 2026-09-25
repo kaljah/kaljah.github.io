@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":311,"LineContent":"                    jobTitle=\"Administrator\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":18,"LineContent":"    jobTitle = db.Column(db.String(100))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":200,"LineContent":"        jobTitle=data.get(\"jobTitle\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":235,"LineContent":"                    \"jobTitle\": user.jobTitle,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":423,"LineContent":"            \"jobTitle\": user.jobTitle,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":450,"LineContent":"    if \"jobTitle\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":451,"LineContent":"        user.jobTitle = data[\"jobTitle\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":837,"LineContent":"                \"jobTitle\": u.jobTitle,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":196,"LineContent":"                jobTitle=\"Sustainability Director\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":51,"LineContent":"                \"jobTitle\": \"Sustainability Lead\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":58,"LineContent":"                \"jobTitle\": \"Systems Administrator\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":70,"LineContent":"                    user.jobTitle = u_data[\"jobTitle\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":84,"LineContent":"                    jobTitle=u_data[\"jobTitle\"],"}

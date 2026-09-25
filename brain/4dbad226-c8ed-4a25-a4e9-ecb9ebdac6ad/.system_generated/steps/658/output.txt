@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":20,"LineContent":"    EQUIPMENT_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":61,"LineContent":"    \"EQUIPMENT_FACTORS\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":81,"LineContent":"# This combines Section 5/6 (API_FACTORS) and Section 7 (EQUIPMENT_FACTORS)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":332,"LineContent":"# Update EQUIPMENT_FACTORS for internal module compatibility"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":333,"LineContent":"EQUIPMENT_FACTORS = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors_api2021.py","LineNumber":601,"LineContent":"EQUIPMENT_FACTORS = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors_api2021.py","LineNumber":1219,"LineContent":"ALL_EMISSION_FACTORS = {**API_FACTORS, **EQUIPMENT_FACTORS}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":13,"LineContent":"from emission_factors import API_FACTORS, EQUIPMENT_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":411,"LineContent":"                    API_FACTORS.get(fuel_name) or EQUIPMENT_FACTORS.get(fuel_name) or {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":1,"LineContent":"from emission_factors_api2021 import API_FACTORS, EQUIPMENT_FACTORS, VENTED_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":10,"LineContent":"print(\"\\n=== EQUIPMENT_FACTORS keys ===\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":11,"LineContent":"for k in sorted(EQUIPMENT_FACTORS.keys()):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":12,"LineContent":"    f = EQUIPMENT_FACTORS[k]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":9,"LineContent":"    EQUIPMENT_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":360,"LineContent":"        \"equipment_factors\": len(EQUIPMENT_FACTORS),"}

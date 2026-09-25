@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 23
+    c.execute('SELECT year, SUM(co2e_total), COUNT(*) FROM emissions WHERE status = " Verified\
+              ^
+SyntaxError: unterminated string literal (detected at line 23)
+

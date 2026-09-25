@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\EmissionFactors.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1110,7 +1110,7 @@
+   // --- DEHYDRATORS (API Section 5.3) ---
+   "Dehydrator - TEG (No Controls)": {
+     code: "DehydTEGNoCtrl",
+-    ch4: 37.85,
++    ch4: 3.0,
+     co2: 0,
+     n2o: 0,
+     unit: "scf/gal TEG",
+@@ -1119,7 +1119,7 @@
+   },
+   "Dehydrator - TEG (Flash Tank)": {
+     code: "DehydTEGFlash",
+-    ch4: 15.14,
++    ch4: 1.2,
+     co2: 0,
+     n2o: 0,
+     unit: "scf/gal TEG",
+@@ -1128,7 +1128,7 @@
+   },
+   "Dehydrator - TEG (Condenser)": {
+     code: "DehydTEGCond",
+-    ch4: 3.785,
++    ch4: 0.3,
+     co2: 0,
+     n2o: 0,
+     unit: "scf/gal TEG",
+@@ -1162,7 +1162,7 @@
+     ch4: 13.5,
+     co2: 0,
+     n2o: 0,
+-    unit: "scf/year/device",
++    unit: "scf/event",
+     usage: ["pneumatic"],
+     description: "API 5.2 - Intermittent bleed pneumatic device",
+     uncertainty: { ch4: 0.3 },
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

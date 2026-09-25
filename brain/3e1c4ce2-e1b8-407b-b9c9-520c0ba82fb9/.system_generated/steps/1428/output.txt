@@ -1,0 +1,49 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -184,6 +184,7 @@
+       let wCo2Sum = 0,
+         wCo2Gwp20Sum = 0,
+         wS1Sum = 0,
++        wS1Gwp20Sum = 0,
+         wS2Sum = 0,
+         wS3Sum = 0,
+         wFlaringSum = 0;
+@@ -190,3 +190,4 @@
++        tScope1Gwp20 = 0,
+         tScope2 = 0,
+         tScope3 = 0,
+         tCo2e = 0,
+@@ -198,6 +198,7 @@
+         tFlaringVol += d.flaring_volume || 0;
+         tFlaringEm += d.flaring_emissions || 0;
+         tScope1 += d.total_scope1 || 0;
++        tScope1Gwp20 += d.total_scope1_gwp20 ?? d.total_scope1 ?? 0;
+         tScope2 += d.total_scope2 || 0;
+         tScope3 += d.total_scope3 || 0;
+         tCo2e += d.total_co2e || 0;
+@@ -206,6 +206,7 @@
+           wCo2Sum += (d.co2_intensity || 0) * boe;
+           wCo2Gwp20Sum += (d.co2_intensity_gwp20 || d.co2_intensity || 0) * boe;
+           wS1Sum += (d.scope1_intensity || 0) * boe;
++          wS1Gwp20Sum += (d.scope1_intensity_gwp20 ?? d.scope1_intensity ?? 0) * boe;
+           wS2Sum += (d.scope2_intensity || 0) * boe;
+           wS3Sum += (d.scope3_intensity || 0) * boe;
+           wFlaringSum += (d.api_flaring_intensity || 0) * boe;
+@@ -216,6 +216,7 @@
+         avgCo2Intensity: tBoe > 0 ? wCo2Sum / tBoe : (tCo2e > 0 ? null : 0),
+         avgCo2IntensityGwp20: tBoe > 0 ? wCo2Gwp20Sum / tBoe : (tCo2eGwp20 > 0 ? null : 0),
+         avgScope1Intensity: tBoe > 0 ? wS1Sum / tBoe : (tScope1 > 0 ? null : 0),
++        avgScope1IntensityGwp20: tBoe > 0 ? wS1Gwp20Sum / tBoe : (tScope1Gwp20 > 0 ? null : 0),
+         avgScope2Intensity: tBoe > 0 ? wS2Sum / tBoe : (tScope2 > 0 ? null : 0),
+         avgScope3Intensity: tBoe > 0 ? wS3Sum / tBoe : (tScope3 > 0 ? null : 0),
+         avgFlaringIntensity: tBoe > 0 ? wFlaringSum / tBoe : (tFlaringEm > 0 ? null : 0),
+@@ -222,5 +222,6 @@
+         totalCo2EmissionsGwp20: tCo2eGwp20,
+         totalScope1: tScope1,
++        totalScope1Gwp20: tScope1Gwp20,
+         totalScope2: tScope2,
+         totalScope3: tScope3,
+         totalFlaringEmissions: tFlaringEm,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

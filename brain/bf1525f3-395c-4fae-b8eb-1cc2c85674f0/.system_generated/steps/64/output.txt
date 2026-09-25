@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":673,"LineContent":"      \u003cdiv className=\"methane-explorer-loading\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":674,"LineContent":"        \u003cdiv className=\"telemetry-loader\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":675,"LineContent":"          \u003cdiv className=\"scanner-line\"\u003e\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":676,"LineContent":"          \u003cSatellite size={34} className=\"spin-slow\" color=\"#ff6600\" /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":678,"LineContent":"        \u003cdiv className=\"loading-title\"\u003eLOADING METHANE EXPLORER\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":679,"LineContent":"        \u003cdiv className=\"loading-subtitle\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":688,"LineContent":"      className=\"methane-explorer\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":695,"LineContent":"      \u003cheader className=\"mission-hud\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":696,"LineContent":"        \u003cdiv className=\"hud-left\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":697,"LineContent":"          \u003cdiv className=\"hud-brand\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":698,"LineContent":"            \u003cdiv className=\"radar-ping\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":699,"LineContent":"              \u003cspan className=\"ping-core\"\u003e\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":700,"LineContent":"              \u003cspan className=\"ping-wave\"\u003e\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":703,"LineContent":"              \u003cdiv className=\"brand-title\"\u003eMETHANE RECON COCKPIT\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":704,"LineContent":"              \u003cdiv className=\"brand-sub\"\u003eCOPERNICUS SENTINEL-5P TROPOMI\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":708,"LineContent":"          \u003cdiv className=\"hud-status-badge\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":710,"LineContent":"              \u003cspan className=\"status-pill live\" title=\"Connected to Copernicus Data Space\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":711,"LineContent":"                \u003cRadio size={12} className=\"pulse-icon\" /\u003e S5P STREAM LIVE"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":715,"LineContent":"                className=\"status-pill offline\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":726,"LineContent":"        \u003cdiv className=\"hud-kpis\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":727,"LineContent":"          \u003cdiv className=\"kpi-item\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":728,"LineContent":"            \u003cspan className=\"kpi-label\"\u003eMonitored Assets\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":729,"LineContent":"            \u003cspan className=\"kpi-value\"\u003e{telemetryMetrics.activeAssets}\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":731,"LineContent":"          \u003cdiv className=\"kpi-divider\"\u003e\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":732,"LineContent":"          \u003cdiv className=\"kpi-item\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":733,"LineContent":"            \u003cspan className=\"kpi-label\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":736,"LineContent":"            \u003cspan className=\"kpi-value highlight-accent\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":742,"LineContent":"          \u003cdiv className=\"kpi-divider\"\u003e\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":743,"LineContent":"          \u003cdiv className=\"kpi-item\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":744,"LineContent":"            \u003cspan className=\"kpi-label\"\u003eMean Loss Intensity\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":745,"LineContent":"            \u003cspan className=\"kpi-value\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":747,"LineContent":"              \u003cspan className=\"kpi-unit\"\u003ekg/boe\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":750,"LineContent":"          \u003cdiv className=\"kpi-divider\"\u003e\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":751,"LineContent":"          \u003cdiv className=\"kpi-item\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":752,"LineContent":"            \u003cspan className=\"kpi-label\"\u003eSuper-Emitters\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":762,"LineContent":"        \u003cdiv className=\"hud-actions\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":764,"LineContent":"          \u003cdiv className=\"segmented-control mode-selector\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":784,"LineContent":"          \u003cdiv className=\"segmented-control basemap-selector\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":805,"LineContent":"        \u003caside className=\"satellite-alert-toast\" role=\"alert\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":806,"LineContent":"          \u003cdiv className=\"toast-header\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":807,"LineContent":"            \u003cdiv className=\"toast-title\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":809,"LineContent":"                \u003cspan className=\"badge-danger\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":813,"LineContent":"                \u003cspan className=\"badge-info\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":819,"LineContent":"              className=\"toast-close-btn\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":826,"LineContent":"          \u003cdiv className=\"toast-body\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":830,"LineContent":"          \u003cdiv className=\"toast-meta\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":831,"LineContent":"            \u003cspan className=\"stat-pill\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":834,"LineContent":"            \u003cspan className=\"stat-pill stream\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":838,"LineContent":"              \u003cspan className=\"stat-pill count\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":847,"LineContent":"      \u003cdiv className=\"explorer-map-container\"\u003e"}
+(...151 more results not shown)

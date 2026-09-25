@@ -1,0 +1,19 @@
+
+The command exited with code 1.
+Output:
+At line:8 char:22
++     page.evaluate(\"() => { const b = document.querySelector('.result ...
++                      ~
+An expression was expected after '('.
+At line:8 char:98
++ ...  document.querySelector('.result-overlay .close-btn'); if (b) b.click ...
++                                                                 ~
+Missing statement block after if ( condition ).
+At line:8 char:108
++ ... t.querySelector('.result-overlay .close-btn'); if (b) b.click(); }\")
++                                                                   ~
+An expression was expected after '('.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : ExpectedExpression
+ 
+

@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\context\LayoutContext.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -5,6 +5,10 @@
+ export const LayoutProvider = ({ children }) => {
+   const [topBarLeft, setTopBarLeft] = useState(null);
+   const [topBarRight, setTopBarRight] = useState(null);
++  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
++
++  const toggleMobileNav = () => setIsMobileNavOpen((prev) => !prev);
++  const closeMobileNav = () => setIsMobileNavOpen(false);
+ 
+   return (
+     <LayoutContext.Provider
+@@ -12,6 +12,10 @@
+         setTopBarLeft,
+         topBarRight,
+         setTopBarRight,
++        isMobileNavOpen,
++        setIsMobileNavOpen,
++        toggleMobileNav,
++        closeMobileNav,
+       }}
+     >
+       {children}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

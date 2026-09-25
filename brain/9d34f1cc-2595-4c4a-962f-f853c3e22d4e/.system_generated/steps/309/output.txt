@@ -1,0 +1,53 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -463,21 +463,26 @@
+             )
+ 
+         # Parse C1-C10 from kwargs, falling back to ch4_fraction for C1 if not provided
+-        c_fractions = {
+-            "c1": float(comps.get("c1") or ch4_fraction or 0),
+-            "c2": float(comps.get("c2") or 0),
+-            "c3": float(comps.get("c3") or 0),
+-            "c4": float(comps.get("c4") or 0),
+-            "c5": float(comps.get("c5") or 0),
+-            "c6": float(comps.get("c6") or 0),
+-            "c7": float(comps.get("c7") or 0),
+-            "c8": float(comps.get("c8") or 0),
+-            "c9": float(comps.get("c9") or 0),
+-            "c10": float(comps.get("c10") or 0),
+-        }
++        raw_c = {f"c{i}": float(comps.get(f"c{i}") if comps.get(f"c{i}") is not None else (ch4_fraction if i == 1 else 0.0)) for i in range(1, 11)}
++        raw_co2 = float(comps.get("co2_comp") or comps.get("co2_mol") or 0.0)
++        total_raw = sum(raw_c.values()) + raw_co2
++
++        if total_raw > 1.5:  # Percentage format (> 1.0)
++            c_fractions = {k: v / 100.0 for k, v in raw_c.items()}
++            co2_native_fraction = raw_co2 / 100.0
++            total_sum = total_raw / 100.0
++        else:
++            c_fractions = dict(raw_c)
++            co2_native_fraction = raw_co2
++            total_sum = total_raw
++
++        # Normalize sum to 1.0 per API Compendium Section 4.2
++        if total_sum > 0 and abs(total_sum - 1.0) > 1e-4:
++            for k in c_fractions:
++                c_fractions[k] /= total_sum
++            co2_native_fraction /= total_sum
+ 
+         actual_ch4_fraction = c_fractions["c1"]
+-        co2_native_fraction = float(comps.get("co2_comp") or comps.get("co2_mol") or 0)
+ 
+         # CH4 Emissions (Undestroyed native methane)
+         density_ch4 = CONVERSIONS.get("density_ch4", 0.6785)
+@@ -510,6 +510,7 @@
+         co2_tonnes = (co2_combusted_kg + co2_native_kg) / 1000.0
+ 
+         # Resolve tier — flaring with full gas composition is Tier 3
++        uncertainties = uncertainties or {}
+         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+         _cat = "flaring"
+         co2_res = propagate_uncertainty(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

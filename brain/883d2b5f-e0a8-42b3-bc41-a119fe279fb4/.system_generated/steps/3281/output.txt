@@ -1,0 +1,165 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 2 items
+
+new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_eight_concurrent_bulk_upload_jobs FAILED
+new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_background_job_polling_contention FAILED
+
+================================== FAILURES ===================================
+_ TestConcurrentBulkIngestionPipeline.test_eight_concurrent_bulk_upload_jobs __
+
+self = <test_stress_bulk_pipeline.TestConcurrentBulkIngestionPipeline object at 0x0000018485028BC0>
+bulk_stress_env = {'facility_id': 32, 'user_id': 33}
+
+    def test_eight_concurrent_bulk_upload_jobs(self, bulk_stress_env):
+        """Submit and process 8 distinct CSV upload jobs concurrently in parallel background threads."""
+        facility_id = bulk_stress_env["facility_id"]
+        user_id = bulk_stress_env["user_id"]
+        num_jobs = 8
+        rows_per_job = 25
+    
+        temp_files = []
+        job_ids = []
+    
+        # Prepare 8 CSV files with distinct payloads
+        for job_idx in range(num_jobs):
+            csv_lines = [
+                "year,month,process_type,fuel_type,quantity,unit,facility_id,factor_source",
+            ]
+            for row_idx in range(rows_per_job):
+                p_type = "combustion" if row_idx % 2 == 0 else "flaring"
+                fuel = "Natural Gas" if p_type == "combustion" else "Field Gas"
+                qty = 100.0 + (job_idx * 50) + row_idx
+                csv_lines.append(f"2024,{(row_idx % 12) + 1},{p_type},{fuel},{qty},m3,{facility_id},default")
+    
+            csv_content = "\n".join(csv_lines)
+            tf = tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=f"_job_{job_idx}.csv", encoding="utf-8")
+            tf.write(csv_content)
+            tf.flush()
+            tf.close()
+            temp_files.append(tf.name)
+            job_ids.append(f"stress_job_{job_idx}_{int(time.time()*1000)}")
+    
+        # Initialize job state entries under lock
+        with upload_jobs_lock:
+            for jid, filepath in zip(job_ids, temp_files):
+                upload_jobs[jid] = {
+                    "id": jid,
+                    "filename": filepath,
+                    "status": "processing",
+                    "progress": 0,
+                    "total_rows": rows_per_job,
+                    "processed_rows": 0,
+                    "errors": [],
+                    "scope": "1",
+                }
+    
+        # Launch background processing threads concurrently
+        t_start = time.perf_counter()
+        threads = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_jobs) as executor:
+            futures = []
+            for jid, filepath in zip(job_ids, temp_files):
+                f = executor.submit(
+                    _process_file_thread,
+                    filepath,
+                    jid,
+                    user_id,
+                    facility_id,
+                    "1",  # Scope 1
+                    "auto",  # Factor type
+                    {},  # Mapping overrides
+>                   app._get_current_object(),
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+                )
+E               AttributeError: 'Flask' object has no attribute '_get_current_object'
+
+new\server\tests\test_stress_bulk_pipeline.py:130: AttributeError
+_ TestConcurrentBulkIngestionPipeline.test_background_job_polling_contention __
+
+self = <test_stress_bulk_pipeline.TestConcurrentBulkIngestionPipeline object at 0x0000018481EE9490>
+bulk_stress_env = {'facility_id': 32, 'user_id': 33}
+
+    def test_background_job_polling_contention(self, bulk_stress_env):
+        """Stress test concurrent polling via get_job_status across 30 parallel threads."""
+        facility_id = bulk_stress_env["facility_id"]
+        jid = f"poll_test_{int(time.time()*1000)}"
+    
+        with upload_jobs_lock:
+            upload_jobs[jid] = {
+                "id": jid,
+                "status": "processing",
+                "progress": 50,
+                "total_rows": 100,
+                "processed_rows": 50,
+            }
+    
+        num_pollers = 30
+        def poller_task(idx):
+            status = get_job_status(jid)
+            return status is not None and status.get("status") == "processing"
+    
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_pollers) as executor:
+            futures = [executor.submit(poller_task, i) for i in range(num_pollers)]
+>           results = [f.result() for f in concurrent.futures.as_completed(futures)]
+                       ^^^^^^^^^^
+
+new\server\tests\test_stress_bulk_pipeline.py:181: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\anaconda3\Lib\concurrent\futures\_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\anaconda3\Lib\concurrent\futures\thread.py:58: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+new\server\tests\test_stress_bulk_pipeline.py:176: in poller_task
+    status = get_job_status(jid)
+             ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+job_id = 'poll_test_1789568699121'
+
+    def get_job_status(job_id):
+        with upload_jobs_lock:
+            job = upload_jobs.get(job_id)
+            if not job:
+                return None
+            skipped_all = list(job.get("skipped", []))
+            anomalies = list(job.get("anomalies", []))
+            return {
+                "status": job["status"],
+                "progress": job["progress"],
+>               "processed": job["processed"],
+                             ^^^^^^^^^^^^^^^^
+                "total": job["total"],
+                "errors": list(job.get("errors", [])),
+                "skipped_count": len(skipped_all),
+                "skipped_preview": skipped_all[:100],  # first 100 for inline display
+                "error_csv_path": job.get("error_csv_path"),
+                "anomaly_count": len(anomalies),
+                "anomalies": anomalies[:50],  # first 50 anomalies for review
+            }
+E           KeyError: 'processed'
+
+new\server\background_processor.py:171: KeyError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_eight_concurrent_bulk_upload_jobs
+FAILED new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_background_job_polling_contention
+======================== 2 failed, 1 warning in 2.81s =========================
+

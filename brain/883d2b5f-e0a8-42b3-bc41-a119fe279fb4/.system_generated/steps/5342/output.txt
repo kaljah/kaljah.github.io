@@ -1,0 +1,51 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -342,8 +342,9 @@
+     allowed_fids=None,
+     segment=None,
+     include_pending=False,
+-):
+-    """Pure query logic for /summary — returns a plain Python list."""
++    gwp_horizon="100",
++):
++    """Pure query logic for /summary — returns a plain Python list with dual GWP-100 and GWP-20 support."""
+     sel = [
+         Emission.year.label("year"),
+         func.sum(Emission.co2_emissions).label("co2_total"),
+@@ -415,6 +415,8 @@
+     scope2_data = scope2_query.group_by(*groups2).all()
+ 
+     yearly_data = {}
++    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
++
+     for row in scope1_data:
+         yr = int(row.year)
+         fid = getattr(row, "facility_id", "total")
+@@ -421,10 +421,20 @@
++        co2_val = float(row.co2_total or 0)
++        ch4_val = float(row.ch4_total or 0)
++        n2o_val = float(row.n2o_total or 0)
++        gwp100_val = float(row.scope1_total or 0)
++        # IPCC AR5/AR6 GWP-20: CO2=1, CH4=84, N2O=264
++        gwp20_val = round(co2_val + (84.0 * ch4_val) + (264.0 * n2o_val), 2)
++
+         yearly_data[key] = {
+             "year": yr,
+             "facility_id": fid,
+-            "scope1_total": float(row.scope1_total or 0),
+-            "co2_total": float(row.co2_total or 0),
+-            "ch4_total": float(row.ch4_total or 0),
+-            "n2o_total": float(row.n2o_total or 0),
++            "scope1_total": gwp20_val if is_20 else gwp100_val,
++            "scope1_total_gwp100": gwp100_val,
++            "scope1_total_gwp20": gwp20_val,
++            "gwp_horizon": 20 if is_20 else 100,
++            "co2_total": co2_val,
++            "ch4_total": ch4_val,
++            "n2o_total": n2o_val,
+             "scope2_total": 0,
+             "scope2_energy": 0,
+             "combustion": 0,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,72 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -287,4 +287,66 @@
+ - **Annual Pathway Milestone Table**:
+   - **25 yearly milestone rows** verified from Base Year 2024 to Target Year 2050 without missing records.
+ - **Uncaught Browser Console Errors**: **0 (Zero across all 3 pages)**.
++
++---
++
++## 10. Manage Data Deep Exhaustive Audit (Backend & Physical Browser)
++
++An exhaustive, end-to-end verification of the **Manage Data** platform (`/manage-data`) was conducted across both the Flask backend API / database layer and the live React browser application running in headless Chrome via the Chrome DevTools Protocol (CDP).
++
++### 1. Dual-Suite Architecture & Methodology
++
++1. **Backend Test Suite (`test_manage_data_backend.py`)**:
++   - Tested all 9 functional domains using real authenticated HTTP sessions for both Sustainability Administrators (`a`, `a@a`) and IT Administrators (`z`, `z@z`, `it_admin`, `it`).
++   - Covered full CRUD operations, data validation boundaries, transaction rollback integrity, and strict IT-role RBAC enforcement.
++   - **Result**: **74 / 74 Backend Tests Passed (100.00%)**.
++
++2. **Physical Browser Test Suite (`exhaustive_verify_manage_data_frontend.py`)**:
++   - Attached directly to running Chrome instance via Playwright CDP on port `9222`.
++   - Systematically navigated through all 9 tabs in `.manage-nav-panel` with **zero sampling**:
++     1. `pending`: Pending Review Queue & Batch Wizard
++     2. `factors`: Custom Emission Factors
++     3. `facilities`: Regions / Facilities Registry
++     4. `production`: Operational Production Records
++     5. `sources`: Emission Sources Catalog
++     6. `goals`: Emission Goals, Base Years & SBTi Target Configuration
++     7. `mitigation`: Mitigation Projects & Records
++     8. `ogmp`: OGMP 2.0 Top-Down Surveys & Level Upgrade Logs
++     9. `cbam`: EU CBAM Products & Embedded Emissions
++   - In each tab: verified table mounting, header schema, row counts, cell data integrity (no `NaN` or `undefined`), search filtering responsiveness, dropdown controls, interactive action buttons, and pagination.
++   - **Result**: **9 / 9 Tabs Passed (100.00%) | 0 Console Errors**.
++
++---
++
++### 2. Tab-by-Tab Verification Breakdown
++
++| Tab Key | Tab Label | Table Mounted | Schema Columns | Rendered Rows | Search Tested | Dropdowns Tested | Action Controls | Status |
++|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
++| `pending` | **Pending Review** | Queue View | Action Buttons & Scope Filters | 0 (Clean Queue) | PASS | 2 Filter Selects (13 & 56 opts) | 9 Interactive Controls | **PASS** |
++| `factors` | **Emission Factors** | Yes | 10 Columns (`FACTOR NAME`, `UNIT`, `CO2`, `CH4`, `N2O`, `CERTIFICATION`, `UNCERTAINTY`) | 1 | PASS | 3 Dropdowns (7, 6, 3 opts) | 7 Controls (`Bulk Import`, `SRSS Calc`, `Save`, `Edit`, `Delete`) | **PASS** |
++| `facilities` | **Regions** | Yes | 8 Columns (`REGION NAME`, `ACTIVITY`, `DIVISION`, `LOCATION`, `BOUNDARY`, `SEGMENT`, `COORDINATES`, `ACTIONS`) | 15 / 44 | PASS | 5 Dropdowns (13, 56, 5, 4, 7 opts) | 6 Controls (`Add Region`, `Bulk Import`, `Export CSV`, `Delete`, `Pager`) | **PASS** |
++| `production` | **Production Data** | Yes | 8 Columns (`ACTIVITY`, `DIVISION`, `REGION`, `YEAR`, `MONTH`, `OIL (BBL)`, `GAS (MCF)`, `ACTIONS`) | 15 / 15 | PASS | 7 Dropdowns (13, 56, 6, 9, 12, 2, 2 opts) | 7 Controls (`Bulk Import`, `Unit Converter`, `Save`, `Export CSV`, `Delete`) | **PASS** |
++| `sources` | **Emission Sources** | Yes | 6 Columns (`NAME`, `EQUIPMENT ID`, `TYPE`, `REGION`, `STATUS`, `ACTIONS`) | 1 | PASS | 4 Dropdowns (13, 56, 9, 23 opts) | 5 Controls (`Add Source`, `Import CSV`, `Export CSV`, `Pager`) | **PASS** |
++| `goals` | **Emission Goals & Base Years** | Yes | 5 Columns (`TARGET YEAR`, `TARGET LIMIT (TCO₂E)`, `SCOPE COVERAGE`, `RECORDED ON`, `ACTIONS`) | 1 | PASS | 1 Pathway Dropdown (2 opts) | 3 Save Controls (`Save Goal`, `Save Recalculation`, `Save SBTi Target`) | **PASS** |
++| `mitigation` | **Mitigation Projects** | Yes | 8 Columns (`PROJECT NAME`, `ACTIVITY`, `REGION`, `YEAR`, `TYPE`, `STATUS`, `ACTIONS`) | 1 | PASS | 6 Dropdowns | 5 Controls (`Bulk Import`, `Save Record`, `Import CSV`, `Pager`) | **PASS** |
++| `ogmp` | **OGMP 2.0 Surveys** | Yes | 11 Columns (`FACILITY`, `YEAR`, `DATE`, `TYPE`, `MEASURED RATE`, `OPERATING HOURS`, `THRESHOLD`, `VENDOR`, `STATUS`) | 0 (Ready) | PASS | 6 Dropdowns | 3 Controls (`Save OGMP Survey`, `Pager`) | **PASS** |
++| `cbam` | **CBAM Products** | Yes | 10 Columns (`FACILITY`, `PRODUCT`, `EU CN CODE`, `PERIOD`, `DESTINATION`, `QUANTITY (T)`, `SPECIFIC DIR`, `SPECIFIC INDIR`, `TOTAL EMBEDDED`) | 6 | PASS | 7 Dropdowns | 5 Controls (`Save CBAM Record`, `Edit`, `Delete`, `Pager`) | **PASS** |
++
++---
++
++### 3. Backend API & RBAC Security Summary
++
++- **IT Role Segregation (`it_admin`, `it_manager`, `it`)**:
++  - Hardened endpoints in `new/server/routes/data.py` to use unified `is_it_role(user)` check.
++  - Verified that all 9 operational domains reject IT role requests with HTTP `403 Forbidden` (`{"error": "IT administrators are not authorized..."}`).
++- **Data Validation & Boundary Protection**:
++  - Verified that negative production quantities (`oil_amount < 0`, `gas_amount < 0`, `gross_production < 0`) reject with HTTP `400 Bad Request`.
++  - Verified custom factor plausibility bounds (negative emission factors rejected with HTTP `400`).
++  - Verified CBAM mandatory fields (`cn_code`, `product_name`, `quantity_tonnes > 0`) reject invalid payloads with HTTP `400`.
++  - Verified OGMP Oil & Gas scope enforcement: surveys can only be registered for valid O&G facilities (non-O&G facilities reject with HTTP `400`).
++- **Segregation of Duties (Maker-Checker Workflow)**:
++  - Verified that emission records submitted as `Pending` cannot be approved by the same user who created them (`created_by != user.id`).
++  - Verified multi-admin batch review and approval pipeline.
++- **Uncaught Browser Console Errors**: **0 (Zero)**.
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":936,"LineContent":"@managedata_bp.route(\"/manage/sbti\", methods=[\"GET\", \"POST\"])"}

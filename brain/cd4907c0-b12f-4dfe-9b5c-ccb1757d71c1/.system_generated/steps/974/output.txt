@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Sidebar.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -408,7 +408,7 @@
+       </nav>
+ 
+       {/* Settings & Standards Link Right Above User Profile */}
+-      {!["it_admin", "it"].includes(user?.role) && (
++      {!["it_admin", "it_manager", "it"].includes(user?.role) && (
+         <div className="sidebar-settings-pin">
+           <NavLink
+             to="/settings"
+@@ -485,7 +485,7 @@
+             </div>
+           </div>
+           <div className="dropdown-divider"></div>
+-          {!["it_admin", "it"].includes(user?.role) && (
++          {!["it_admin", "it_manager", "it"].includes(user?.role) && (
+             <Link
+               to="/settings"
+               className="dropdown-item"
+@@ -506,7 +506,7 @@
+               Settings &amp; Standards
+             </Link>
+           )}
+-          {["admin", "superuser", "it_admin"].includes(user?.role) && (
++          {["admin", "superuser", "it_admin", "it_manager"].includes(user?.role) && (
+             <Link
+               to="/audit-trail"
+               className="dropdown-item"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\userDefaults.js","LineNumber":126,"LineContent":"      const uniqueRegions = [...new Set(facilities.map(f =\u003e f.region || f.location).filter(Boolean))];"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":742,"LineContent":"            const regions = [...new Set(data.flatMap(f =\u003e [f.region, f.location]).filter(Boolean))].sort();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":177,"LineContent":"        ...new Set(fetchedFacilities.flatMap((f) =\u003e [f.region, f.location]).filter(Boolean)),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":239,"LineContent":"        (f.region \u0026\u0026 f.region === filters.region);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":248,"LineContent":"      const region = (f.region || \"\").toLowerCase();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":179,"LineContent":"        const factorObj = gridFactors.find((f) =\u003e f.region === gridRegion);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":348,"LineContent":"    ...gridFactors.map((f) =\u003e ({ value: f.region, label: f.region })),"}

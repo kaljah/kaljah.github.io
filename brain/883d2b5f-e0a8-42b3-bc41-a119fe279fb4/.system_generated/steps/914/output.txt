@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -240,8 +240,37 @@
+ 
+                 total_rows = ws.max_row - 1 if ws.max_row else 0
+             else:
+-                f = open(file_path, "r", encoding="utf-8-sig")
+-                reader = csv.reader(f)
++                # Read file bytes with multi-encoding fallback (UTF-8-BOM, UTF-8, Windows-1252, ISO-8859-1)
++                with open(file_path, "rb") as raw_f:
++                    raw_bytes = raw_f.read()
++                decoded_text = None
++                for enc in ["utf-8-sig", "utf-8", "windows-1252", "iso-8859-1"]:
++                    try:
++                        decoded_text = raw_bytes.decode(enc)
++                        break
++                    except (UnicodeDecodeError, LookupError):
++                        continue
++                if decoded_text is None:
++                    decoded_text = raw_bytes.decode("utf-8", errors="replace")
++
++                import io
++                # Automatic delimiter sniffing (comma, semicolon, tab, pipe)
++                sample = decoded_text[:4096]
++                delimiter = ","
++                try:
++                    dialect = csv.Sniffer().sniff(sample, delimiters=";,|\t,")
++                    delimiter = dialect.delimiter
++                except Exception:
++                    first_line = sample.splitlines()[0] if sample.splitlines() else ""
++                    if ";" in first_line and "," not in first_line:
++                        delimiter = ";"
++                    elif "\t" in first_line and "," not in first_line:
++                        delimiter = "\t"
++                    elif "|" in first_line and "," not in first_line:
++                        delimiter = "|"
++
++                f = io.StringIO(decoded_text)
++                reader = csv.reader(f, delimiter=delimiter)
+                 headers = next(reader, [])
+                 headers = [h.strip() for h in headers]
+                 rows_iterator = reader
+@@ -252,7 +252,7 @@
+             if provided_mapping:
+                 mapping = provided_mapping
+             else:
+-                mapping = _build_mapping(headers)
++                mapping = _build_mapping(headers, scope=scope)
+ 
+             # 3. Setup context variables for calculation
+             from models import (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1439,"LineContent":"              className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? \"collapsed-card\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1444,"LineContent":"                  setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1465,"LineContent":"                  {detailedBreakdownCollapsed ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1473,"LineContent":"                className={`collapsible-body-wrapper ${detailedBreakdownCollapsed ? \"collapsed\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.38","LineNumber":35,"LineContent":"    - [x] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.37","LineNumber":35,"LineContent":"    - [x] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.36","LineNumber":35,"LineContent":"    - [x] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.35","LineNumber":35,"LineContent":"    - [x] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.34","LineNumber":35,"LineContent":"    - [ ] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.33","LineNumber":35,"LineContent":"    - [ ] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.32","LineNumber":35,"LineContent":"    - [ ] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\0f30d407-23dc-43d5-887f-01bb0dd3312f\\task.md.resolved.31","LineNumber":35,"LineContent":"    - [ ] Verify `DetailedBreakdown` behavior \u003c!-- id: 38 --\u003e"}

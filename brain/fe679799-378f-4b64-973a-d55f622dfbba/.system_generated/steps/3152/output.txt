@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 17:06:17,991] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+[2026-09-23 17:06:48,305] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 0d36250d-edb2-44fc-874c-f775d3b3e388]
+127.0.0.1 - - [23/Sep/2026 17:06:48] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:06:48,444] INFO in app: POST /api/auth/login 200 [0.132s] [ReqID: 34a5248e-1190-4d68-8224-1894b62ad735]
+127.0.0.1 - - [23/Sep/2026 17:06:48] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-23 17:06:48,453] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 3a936496-74d1-4afa-9c94-6f8fc3659100]
+127.0.0.1 - - [23/Sep/2026 17:06:48] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:06:48,497] INFO in app: POST /api/emissions/upload/start 200 [0.018s] [ReqID: 3c843712-fb0d-4809-85a7-844710b73ca0]
+127.0.0.1 - - [23/Sep/2026 17:06:48] "POST /api/emissions/upload/start HTTP/1.1" 200 -
+[2026-09-23 17:06:49,013] INFO in app: GET /api/emissions/upload/status/01a45b24-6bb3-4d80-840a-c9a42175c59f 200 [0.005s] [ReqID: aa020d14-605e-4a57-bbd1-6c466cdf1140]
+127.0.0.1 - - [23/Sep/2026 17:06:49] "GET /api/emissions/upload/status/01a45b24-6bb3-4d80-840a-c9a42175c59f HTTP/1.1" 200 -
+[2026-09-23 17:06:49,034] INFO in app: POST /api/emissions/upload/start 200 [0.007s] [ReqID: 3c2fe825-44f9-4146-90bf-b540debe680f]
+127.0.0.1 - - [23/Sep/2026 17:06:49] "POST /api/emissions/upload/start HTTP/1.1" 200 -
+[2026-09-23 17:06:49,549] INFO in app: GET /api/emissions/upload/status/c37a3d7c-32dc-4995-9a8b-e11616ee2087 200 [0.005s] [ReqID: e82e6bbf-8a33-427f-bb72-9d68dbe7a0e7]
+127.0.0.1 - - [23/Sep/2026 17:06:49] "GET /api/emissions/upload/status/c37a3d7c-32dc-4995-9a8b-e11616ee2087 HTTP/1.1" 200 -
+[2026-09-23 17:06:49,571] INFO in app: POST /api/emissions/upload/start 200 [0.008s] [ReqID: 9f0f8a3f-3b97-4619-9ab9-055aebf79108]
+127.0.0.1 - - [23/Sep/2026 17:06:49] "POST /api/emissions/upload/start HTTP/1.1" 200 -
+[2026-09-23 17:06:50,086] INFO in app: GET /api/emissions/upload/status/65ddf4b8-1c0c-411f-be10-67503ab0d577 200 [0.004s] [ReqID: d01308a0-c716-4929-bfd2-0601a26dfa39]
+127.0.0.1 - - [23/Sep/2026 17:06:50] "GET /api/emissions/upload/status/65ddf4b8-1c0c-411f-be10-67503ab0d577 HTTP/1.1" 200 -
+[2026-09-23 17:06:50,100] INFO in emissions: [Emissions] Fetch requested by user_id: 5
+[2026-09-23 17:06:50,114] INFO in emissions: [Emissions] Scope 1 count: 628
+[2026-09-23 17:06:50,123] INFO in emissions: [Emissions] Scope 2 count: 12
+[2026-09-23 17:06:50,221] INFO in app: GET /api/emissions 200 [0.126s] [ReqID: 4b749f9d-f721-4b5d-8294-fb16e89f559e]
+127.0.0.1 - - [23/Sep/2026 17:06:50] "GET /api/emissions?limit=500 HTTP/1.1" 200 -
+

@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Layout.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -37,4 +37,30 @@
+   background-color: rgba(156, 163, 175, 0.5);
+   border-radius: 20px;
+ }
++
++/* Mobile Sidebar Backdrop */
++.sidebar-backdrop {
++  display: none;
++}
++
++@media (max-width: 768px) {
++  .sidebar-backdrop {
++    display: block;
++    position: fixed;
++    top: 0;
++    left: 0;
++    right: 0;
++    bottom: 0;
++    background: rgba(15, 23, 42, 0.45);
++    backdrop-filter: blur(4px);
++    -webkit-backdrop-filter: blur(4px);
++    z-index: 1040;
++    animation: fadeIn 0.2s ease-out;
++  }
++
++  .app-container {
++    height: 100dvh; /* Dynamic viewport height for iOS/Android */
++  }
++}
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

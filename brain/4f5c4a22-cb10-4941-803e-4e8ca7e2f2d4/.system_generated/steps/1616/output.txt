@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+In API_FACTORS: True
+Lookup result: {'code': 'LPG_Liq', 'hhv': 91500, 'co2': 62.88, 'ch4': 0.003, 'n2o': 0.0006, 'uncertainty': {'co2': 0.02, 'ch4': 0.25, 'n2o': 0.3}, 'unit': 'kg/MMBtu', 'usage': ['combustion', 'mobile'], 'baseUnit': 'gal'}
+

@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\constants.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -42,8 +42,14 @@
+     :param horizon: '100' (default) or '20' for 20-year horizon
+     :return: dict with 'CO2', 'CH4', 'N2O'
+     """
+-    if gwp_dict is not None and isinstance(gwp_dict, dict) and "CH4" in gwp_dict:
+-        return gwp_dict
++    if gwp_dict is not None and isinstance(gwp_dict, dict):
++        norm_dict = {str(k).upper(): float(v) for k, v in gwp_dict.items() if v is not None}
++        if "CH4" in norm_dict:
++            return {
++                "CO2": norm_dict.get("CO2", 1.0),
++                "CH4": norm_dict["CH4"],
++                "N2O": norm_dict.get("N2O", 265.0),
++            }
+ 
+     std_key = str(standard or "").upper().strip()
+     if not std_key:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

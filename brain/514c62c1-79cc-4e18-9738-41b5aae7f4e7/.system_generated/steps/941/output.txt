@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":8,"LineContent":"import CustomDropdown from \"../components/CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":343,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":357,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":365,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":373,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":381,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":12,"LineContent":"import CustomDropdown from \"../components/CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":616,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":624,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":632,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":640,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":648,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CustomDropdown.jsx","LineNumber":3,"LineContent":"import \"./CustomDropdown.css\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CustomDropdown.jsx","LineNumber":5,"LineContent":"const CustomDropdown = ({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CustomDropdown.jsx","LineNumber":192,"LineContent":"export default CustomDropdown;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":4,"LineContent":"import CustomDropdown from '../components/CustomDropdown';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2519,"LineContent":"                                        \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2681,"LineContent":"                                        \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3232,"LineContent":"                                        \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":8,"LineContent":"import CustomDropdown from \"../components/CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":513,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":527,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":535,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":543,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":551,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\MultiSelectDropdown.jsx","LineNumber":3,"LineContent":"import \"./CustomDropdown.css\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":13,"LineContent":"import CustomDropdown from \"../components/CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":211,"LineContent":"            \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":219,"LineContent":"            \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":227,"LineContent":"            \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":3,"LineContent":"import CustomDropdown from \"./CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1357,"LineContent":"              \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1424,"LineContent":"              \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1450,"LineContent":"              \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1540,"LineContent":"                  \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1549,"LineContent":"                  \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1574,"LineContent":"                      \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\AGRForm.jsx","LineNumber":2,"LineContent":"import CustomDropdown from \"../CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\AGRForm.jsx","LineNumber":31,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\AGRForm.jsx","LineNumber":48,"LineContent":"            \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CombustionForm.jsx","LineNumber":2,"LineContent":"import CustomDropdown from \"../CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CombustionForm.jsx","LineNumber":42,"LineContent":"          \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\DehydratorForm.jsx","LineNumber":2,"LineContent":"import CustomDropdown from \"../CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\DehydratorForm.jsx","LineNumber":66,"LineContent":"                \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\DehydratorForm.jsx","LineNumber":146,"LineContent":"            \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CompletionsForm.jsx","LineNumber":2,"LineContent":"import CustomDropdown from \"../CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CompletionsForm.jsx","LineNumber":18,"LineContent":"        \u003cCustomDropdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\FugitivesForm.jsx","LineNumber":2,"LineContent":"import CustomDropdown from \"../CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\TankForm.jsx","LineNumber":2,"LineContent":"import CustomDropdown from \"../CustomDropdown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\TankForm.jsx","LineNumber":43,"LineContent":"          \u003cCustomDropdown"}
+(...16 more results not shown)

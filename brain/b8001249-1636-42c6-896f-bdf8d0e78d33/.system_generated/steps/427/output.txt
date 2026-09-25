@@ -1,0 +1,25 @@
+
+The command exited with code 1.
+Output:
+[Compiler] Starting master report compilation...
+[Compiler] Loaded 4 bugs from agent_02_bugs.json
+[Compiler] Loaded 11 bugs from agent_03_bugs.json
+[Compiler] Loaded 6 bugs from agent_04_bugs.json
+[Compiler] Loaded 2 bugs from agent_05_bugs.json
+[Compiler] Loaded 8 bugs from agent_06_bugs.json
+[Compiler] Loaded 8 bugs from agent_07_bugs.json
+[Compiler] Loaded 8 bugs from agent_08_bugs.json
+[Compiler] Loaded 4 bugs from agent_09_bugs.json
+[Compiler] Loaded 5 bugs from agent_10_bugs.json
+[Compiler] Loaded 3 bugs from agent_11_bugs.json
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_12_compiler.py", line 232, in <module>
+    main()
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_12_compiler.py", line 209, in main
+    bugs = deduplicate(bugs)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_12_compiler.py", line 47, in deduplicate
+    key = (b.get("area", ""), b.get("description", "")[:80])
+           ^^^^^
+AttributeError: 'str' object has no attribute 'get'
+

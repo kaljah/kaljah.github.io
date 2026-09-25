@@ -1,0 +1,26 @@
+{"name":"__init__.py", "sizeBytes":"3555"}
+{"name":"__pycache__", "isDir":true}
+{"name":"aggregation_intensity.py", "sizeBytes":"2683"}
+{"name":"combustion_flaring.py", "sizeBytes":"9255"}
+{"name":"fugitives.py", "sizeBytes":"3721"}
+{"name":"gwp.py", "sizeBytes":"1780"}
+{"name":"midstream.py", "sizeBytes":"7075"}
+{"name":"ogmp.py", "sizeBytes":"2746"}
+{"name":"ref_combustion.py", "sizeBytes":"6198"}
+{"name":"ref_constants.py", "sizeBytes":"3818"}
+{"name":"ref_flaring.py", "sizeBytes":"5196"}
+{"name":"ref_fugitives.py", "sizeBytes":"2506"}
+{"name":"ref_intensity.py", "sizeBytes":"2002"}
+{"name":"ref_midstream.py", "sizeBytes":"3211"}
+{"name":"ref_scope2.py", "sizeBytes":"2220"}
+{"name":"ref_scope3.py", "sizeBytes":"2103"}
+{"name":"ref_stoichiometry.py", "sizeBytes":"1599"}
+{"name":"ref_uncertainty.py", "sizeBytes":"2358"}
+{"name":"ref_venting.py", "sizeBytes":"4732"}
+{"name":"scope2.py", "sizeBytes":"3443"}
+{"name":"scope3.py", "sizeBytes":"1651"}
+{"name":"uncertainty.py", "sizeBytes":"2782"}
+{"name":"unit_conversions.py", "sizeBytes":"8812"}
+{"name":"vented_processes.py", "sizeBytes":"11854"}
+
+Summary: This directory contains 1 subdirectories and 23 files.

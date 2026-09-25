@@ -1,0 +1,18 @@
+Task: 6ddbdc70-5409-40e0-a778-67afad877c26/task-12
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\6ddbdc70-5409-40e0-a778-67afad877c26\.system_generated\tasks\task-12.log
+Log output:
+<truncated 6 lines>
+efault_region":"North Afric
+[10:26:31]   [PASS] S1-T1: User login | 
+[10:26:35]   Create emission: 201 - {"calculation_method": "Stationary Combustion", "emissions": {"ch4": 0.00075, "co2": 39.795, "n2o": 7.5e-05, "totalCo2e": 39.835875, "uncertainty": {"ch4": 0.1118033988749895, "co2": 0.05590169943749475, "n2o": 0.1118033988749895}}, "id": 661, "message": "Record added", "record": {"amount": null, "f
+[10:26:35]   MAKER_EMISSION_ID=661, status=
+[10:26:35]   [FAIL] S1-T2: Create emission (201 + Pending) | ID=661, status_pending=False
+[10:26:35]   BUG [HIGH] New user emission not Pending
+[10:26:39]   Logout: 200
+[10:26:39] 
+--- SECTION 2: Self-Approval Attempt ---
+[10:26:43]   Login test_user@ghg-test.com: 200 - {"message":"Login successful","user":{"default_activity":"Production","default_division":"Upstream","default_facility_id":"160","default_facility_name":"Updated Facility","default_region":"North Afric
+[10:26:43]   [PASS] S2-T1: User re-login for self-approval test | 
+
+Last progress: 2s ago

@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+<truncated 251 lines>
+
+--- PENDING STATS ---
+Pending 100: {'count': 503, 'totalCo2e': 320030664.08}
+Pending 20: {'count': 503, 'totalCo2e': 320030664.08}
+

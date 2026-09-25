@@ -1,0 +1,7 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: CombustionCalculator.calculate() missing 6 required positional arguments: 'ef_n2o', 'uncertainties', 'hhv', 'ef_unit', 'fuel_unit', and 'fuel_type'
+

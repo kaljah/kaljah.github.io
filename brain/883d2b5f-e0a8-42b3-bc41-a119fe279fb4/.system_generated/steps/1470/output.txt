@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":97,"LineContent":"    \"fugitives\", \"compressor_seal\", \"equipment_fugitive\", \"component_fugitive\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":20,"LineContent":"        \"code\": \"COMPRESSOR_SEAL\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":175,"LineContent":"    {\"code\": \"COMPRESSOR_SEAL\", \"name\": \"Compressor Seals \u0026 Packings\", \"category\": \"vented\", \"default_ef_reference\": \"API Compendium Table 5-9\", \"default_level\": 3},"}

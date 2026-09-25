@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":336,"LineContent":"            cf_name_map = {cf.name.lower(): cf for cf in custom_factors}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":498,"LineContent":"                        cf_name_map,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1537,"LineContent":"    cf_name_map,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1632,"LineContent":"        cf = cf_name_map.get(fuel.lower())"}

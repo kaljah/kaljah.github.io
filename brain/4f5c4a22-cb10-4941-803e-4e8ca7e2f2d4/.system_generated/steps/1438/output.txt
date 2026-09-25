@@ -1,0 +1,201 @@
+
+The command exited with code 0.
+Output:
+{
+  "Liquids Unloading - Plunger Lift": {
+    "code": "UnloadPlunger",
+    "ch4": 0.1,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "tonnes/event",
+    "usage": [
+      "unloading"
+    ],
+    "description": "Average per event",
+    "uncertainty": {
+      "ch4": 0.25
+    }
+  },
+  "Liquids Unloading - Non-Plunger": {
+    "code": "UnloadNonPlunger",
+    "ch4": 0.2,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "tonnes/event",
+    "usage": [
+      "unloading"
+    ],
+    "description": "Average per event",
+    "uncertainty": {
+      "ch4": 0.25
+    }
+  },
+  "Propane (Liquid)": {
+    "code": "LPG_Liq",
+    "hhv": 91500,
+    "co2": 62.88,
+    "ch4": 0.003,
+    "n2o": 0.0006,
+    "uncertainty": {
+      "co2": 0.02,
+      "ch4": 0.25,
+      "n2o": 0.3
+    },
+    "unit": "kg/MMBtu",
+    "usage": [
+      "combustion",
+      "mobile"
+    ],
+    "baseUnit": "gal"
+  },
+  "Natural Gas - Turbine": {
+    "code": "NG_Turbine",
+    "hhv": 1020,
+    "co2": 53.06,
+    "ch4": 0.0037,
+    "n2o": 0.0013,
+    "unit": "kg/MMBtu",
+    "usage": [
+      "combustion"
+    ],
+    "uncertainty": {
+      "co2": 0.05,
+      "ch4": 0.2,
+      "n2o": 0.2
+    },
+    "baseUnit": "scf"
+  },
+  "Natural Gas - 2-Stroke Lean Burn Engine": {
+    "code": "NG_2SLB",
+    "hhv": 1020,
+    "co2": 53.06,
+    "ch4": 0.6,
+    "n2o": 0.0001,
+    "unit": "kg/MMBtu",
+    "usage": [
+      "combustion"
+    ],
+    "uncertainty": {
+      "co2": 0.05,
+      "ch4": 0.3,
+      "n2o": 0.2
+    },
+    "baseUnit": "scf"
+  },
+  "Natural Gas - Heater/Boiler": {
+    "code": "NG_Heater",
+    "hhv": 1020,
+    "co2": 53.06,
+    "ch4": 0.001,
+    "n2o": 0.0001,
+    "unit": "kg/MMBtu",
+    "usage": [
+      "combustion"
+    ],
+    "uncertainty": {
+      "co2": 0.05,
+      "ch4": 0.2,
+      "n2o": 0.2
+    },
+    "baseUnit": "scf"
+  },
+  "Completion - Gas Well (No Flaring)": {
+    "code": "CompGasNoFlare",
+    "ch4": 0.7,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "tonnes/event",
+    "usage": [
+      "completions"
+    ],
+    "description": "Average per event (Uncontrolled)",
+    "uncertainty": {
+      "ch4": 0.3
+    }
+  },
+  "Workover - Gas Well (No Flaring)": {
+    "code": "WorkoverGasNoFlare",
+    "ch4": 0.05,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "tonnes/event",
+    "usage": [
+      "completions"
+    ],
+    "description": "Average per event (Uncontrolled)",
+    "uncertainty": {
+      "ch4": 0.3
+    }
+  },
+  "Tank - Working Losses (Oil)": {
+    "code": "TankWorkOil",
+    "ch4": 0.05,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "kg/bbl",
+    "usage": [
+      "tank_working"
+    ],
+    "description": "API 4.4 - Working losses",
+    "uncertainty": {
+      "ch4": 0.4
+    }
+  },
+  "Tank - Breathing Losses (Oil)": {
+    "code": "TankBreathOil",
+    "ch4": 0.001,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "kg/bbl-year",
+    "usage": [
+      "tank_breathing"
+    ],
+    "description": "API 4.4 - Standing storage breathing losses",
+    "uncertainty": {
+      "ch4": 0.4
+    }
+  },
+  "Loading - Crude Oil (Tank Truck)": {
+    "code": "LoadCrudeTruck",
+    "ch4": 0.00016,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "kg/bbl",
+    "usage": [
+      "loading"
+    ],
+    "description": "Truck Loading (Submerged)",
+    "uncertainty": {
+      "ch4": 0.3
+    }
+  },
+  "Loading - Crude Oil (Marine Vessel)": {
+    "code": "LoadCrudeMarine",
+    "ch4": 0.00008,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "kg/bbl",
+    "usage": [
+      "loading"
+    ],
+    "uncertainty": {
+      "ch4": 0.3
+    }
+  },
+  "Wastewater - Oil/Water Separator": {
+    "code": "WaterSep",
+    "ch4": 0.0005,
+    "co2": 0,
+    "n2o": 0,
+    "unit": "kg/bbl water",
+    "baseUnit": "bbl",
+    "usage": [
+      "separation"
+    ],
+    "description": "API Section 5.4 Separator",
+    "uncertainty": {
+      "ch4": 0.5
+    }
+  }
+}
+

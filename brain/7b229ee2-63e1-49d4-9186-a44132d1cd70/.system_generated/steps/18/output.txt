@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+generate_pdf_report.py:536:        ["HRG-001", "Inventory Boundary", "Scope 1 / Scope 2", "Operational Control vs Equity Share for joint ventures.", "Corporate Sustainability Officer (CSO)"],
+new/server/app.py:265:from routes.equity_routes import equity_bp
+new/server/app.py:283:app.register_blueprint(equity_bp, url_prefix="/api/equity")
+new/server/models.py:61:    equity_share_pct = db.Column(db.Float, default=100.0)
+new/server/models.py:681:    Joint Venture Partner metadata for equity share carbon & methane accounting.
+new/server/models.py:692:class FacilityEquityShare(db.Model):
+new/server/models.py:694:    Time-sliced equity ownership percentages per facility.
+new/server/models.py:697:    __tablename__ = "facility_equity_shares"
+new/server/models.py:701:    facility = db.relationship("Facility", backref=db.backref("equity_shares", cascade="all, delete-orphan"))
+new/server/models.py:703:    equity_share_pct = db.Column(db.Float, nullable=False)  # e.g. 51.0, 24.5
+new/server/routes/facilities.py:58:                "equity_share_pct": f.equity_share_pct if f.equity_share_pct is not None else 100.0,
+new/server/routes/facilities.py:168:        equity_share_pct=float(data.get("equity_share_pct", 100.0) or 100.0),
+new/server/routes/facilities.py:259:    if "equity_share_pct" in data and data["equity_share_pct"] is not None:
+new/server/routes/facilities.py:260:        facility.equity_share_pct = float(data["equity_share_pct"])
+new/server/tests/test_audit_remediation.py:1564:            "boundary_type": "Equity Share",
+new/server/tests/test_audit_remediation.py:1577:    assert target["boundary_type"] == "Equity Share"
+

@@ -1,0 +1,56 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=255_0 RootWebArea "Carbon Tech" url="http://localhost:5173/"
+  uid=255_1 complementary
+    uid=255_2 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=255_3 StaticText "Carbon tech"
+    uid=255_4 button "Close navigation"
+    uid=255_5 navigation
+      uid=255_6 link "Dashboard" url="http://localhost:5173/"
+        uid=255_7 StaticText "Dashboard"
+      uid=255_8 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=255_9 StaticText "Carbon Intensity"
+      uid=255_10 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=255_11 StaticText "Methane Intensity"
+      uid=255_12 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=255_13 StaticText "SBTi Net-Zero"
+      uid=255_14 link "Calculations" url="http://localhost:5173/emissions"
+        uid=255_15 StaticText "Calculations"
+      uid=255_16 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=255_17 StaticText "Emissions Map"
+      uid=255_18 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=255_19 StaticText "Manage Data"
+      uid=255_20 link "Reports" url="http://localhost:5173/reports"
+        uid=255_21 StaticText "Reports"
+      uid=255_22 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=255_23 StaticText "Reference Data"
+      uid=255_24 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=255_25 StaticText "Uncertainty"
+      uid=255_26 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=255_27 StaticText "Audit Trail"
+      uid=255_28 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=255_29 StaticText "QA/QC & Diagnostics"
+    uid=255_30 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=255_31 StaticText "Settings"
+    uid=255_32 StaticText "A"
+    uid=255_33 StaticText "Administrator"
+    uid=255_34 StaticText "Sustainability Lead"
+  uid=255_35 main
+    uid=255_36 button "Open navigation menu"
+    uid=255_37 StaticText "Corporate ESG"
+    uid=256_0 StaticText "All Years"
+    uid=256_1 StaticText "All Supply Chains"
+    uid=256_2 StaticText "All Activities"
+    uid=256_3 StaticText "All Divisions"
+    uid=256_4 StaticText "All Regions"
+    uid=256_5 button "GWP-100"
+    uid=256_6 button "GWP-20"
+    uid=256_7 button "+ Set Target" description="Set emission targets in Manage Data"
+    uid=255_38 button "Notifications"
+    uid=255_39 button "User Profile" description="User Profile"
+    uid=257_0 StaticText "Loading Dashboard Data..."
+
+</current_snapshot>

@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+Node: Layout()
+  ID:        new_client_src_components_layout_layout_layout
+  Source:    new/client/src/components/layout/Layout.jsx L10
+  Type:      code
+  Community: App.jsx
+  Degree:    3
+
+Connections (3):
+  <-- App.jsx [imports] [EXTRACTED] new/client/src/App.jsx:L8
+  --> useAuth() [calls] [EXTRACTED] new/client/src/components/layout/Layout.jsx:L12
+  <-- Layout.jsx [contains] [EXTRACTED] new/client/src/components/layout/Layout.jsx:L10
+

@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":18,"LineContent":"    compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":806,"LineContent":"            em_result, method = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3057,"LineContent":"    # Call compute_emissions to calculate the actual emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3061,"LineContent":"        em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3503,"LineContent":"            calculated_em, method = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3844,"LineContent":"            em_result, method = compute_emissions("}

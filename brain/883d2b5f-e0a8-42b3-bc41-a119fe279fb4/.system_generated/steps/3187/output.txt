@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_ui_calculation_parity.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -410,6 +410,25 @@
+         assert "allocated" in consumption_display
+         assert float(rec["co2e"]) > 0
+ 
++    def test_market_based_contractual_instruments_ui_parity(self, client, auth_admin, test_facility):
++        """Market-based electricity with certified supplier emission factor."""
++        payload = {
++            "year": 2025,
++            "month": 7,
++            "facility_id": test_facility,
++            "source_type": "electricity",
++            "electricity_kwh": 75000,
++            "emission_factor": 0.085,  # kg CO2e/kWh
++            "status": "Verified",
++        }
++        res = client.post("/api/scope2", json=payload)
++        assert res.status_code == 201
++        rec = res.get_json()["record"]
++        # 75,000 * 0.085 / 1000 = 6.375 tCO2e
++        assert pytest.approx(rec["co2e"], 1e-3) == 6.375
++        assert ui_format_number(rec["co2e"], 3) == "6.375"
++        assert ui_format_number(rec["emission_factor"], 4) == "0.0850"
++
+ 
+ # ==============================================================================
+ # 3. SCOPE 3 FORM & CALCULATION DETAILS PARITY
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

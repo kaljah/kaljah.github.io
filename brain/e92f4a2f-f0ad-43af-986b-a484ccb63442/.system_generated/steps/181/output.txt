@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+users 7
+facilities 4
+emissions 9
+User: (1, 'Administrator', 'a', 'admin', 'active')
+User: (2, 'Administrator', 'a@a', 'admin', 'active')
+User: (3, 'IT Manager', 'z', 'it_manager', 'active')
+User: (4, 'IT Manager', 'z@z', 'it_manager', 'active')
+User: (5, 'Administrator', 'admin@ghg.com', 'admin', 'active')
+User: (6, 'IT Administrator', 'itadmin@ghg.com', 'it_admin', 'active')
+User: (7, 'IT Support', 'it@ghg.com', 'it', 'active')
+

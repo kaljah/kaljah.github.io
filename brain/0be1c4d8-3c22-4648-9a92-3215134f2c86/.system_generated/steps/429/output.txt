@@ -1,0 +1,56 @@
+
+The command exited with code 0.
+Output:
+414: def resolve_gwp_standard(user=None):
+  def resolve_gwp_standard(user=None):
+  """Returns the organization-wide GWP standard (AR4, AR5, AR6) per D-09."""
+  try:
+  from routes.auth import _app_settings, load_settings_from_db
+  load_settings_from_db()
+  return _app_settings.get("gwp_standard", "AR5")
+  except Exception:
+  return "AR5"
+  
+  
+  def resolve_gwp_dict(user=None):
+  """Returns active GWP dictionary using global org-wide standard per D-09."""
+  from calculations.constants import get_active_gwp
+  std = resolve_gwp_standard()
+  return get_active_gwp(standard=std)
+  
+  
+  @emissions_bp.route("/bulk-upload", methods=["POST"])
+  @login_required
+  def add_bulk_upload():
+  from datetime import datetime
+  
+  user = get_current_user()
+  if not user:
+  return jsonify({"error": "Unauthorized"}), 401
+424: def resolve_gwp_dict(user=None):
+  def resolve_gwp_dict(user=None):
+  """Returns active GWP dictionary using global org-wide standard per D-09."""
+  from calculations.constants import get_active_gwp
+  std = resolve_gwp_standard()
+  return get_active_gwp(standard=std)
+  
+  
+  @emissions_bp.route("/bulk-upload", methods=["POST"])
+  @login_required
+  def add_bulk_upload():
+  from datetime import datetime
+  
+  user = get_current_user()
+  if not user:
+  return jsonify({"error": "Unauthorized"}), 401
+  if user.role == "it_admin":
+  return jsonify({"error": "IT Admins do not have access to upload emission data"}), 403
+  
+  data = request.get_json()
+  records = data.get("records", [])
+  date_format = data.get("date_format", "YYYY-MM-DD")
+  global_factor_type = data.get("global_factor_type", "auto")
+  confirm = data.get("confirm", False)
+  
+  allowed_facilities = get_allowed_facility_ids(user)
+

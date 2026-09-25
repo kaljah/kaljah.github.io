@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+370: def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):
+

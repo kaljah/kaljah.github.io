@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope3Form.jsx:185:      { value: "Equity Investments", unit: "USD", factor: 0.001 },
+new\client\src\constants.js:63:  "Equity Share": [
+new\client\src\constants.js:65:    "Equity Method Investment",
+
+
+

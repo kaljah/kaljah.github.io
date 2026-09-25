@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Legacy test files found: 47
+Tests importing production logic: 30
+Tests using mocks: 1
+Sample test files: ['test_aggregation_reconciliation.py', 'test_all_bulk_imports.py', 'test_all_process_types_matrix.py', 'test_api_security.py', 'test_audit.py', 'test_audit_bug_fixes.py', 'test_audit_remediation.py', 'test_battery_compressor_fugitives_equipment.py', 'test_battery_concurrency_stress_invariants.py', 'test_battery_gwp_horizons_regulatory.py']
+

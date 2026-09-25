@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -278,6 +278,8 @@
+ 
+     try:
+         db.session.add(emission)
++        db.session.flush()
++        emission_id_val = emission.id
+         db.session.commit()
+     except Exception as e:
+         db.session.rollback()
+@@ -284,6 +284,4 @@
+ 
+-    emission_id_val = emission.id
+-
+     if user:
+         try:
+             from utils import log_activity_and_notify
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

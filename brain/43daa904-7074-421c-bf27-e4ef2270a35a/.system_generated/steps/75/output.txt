@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+co2: 194.427975 ch4: 0.28836250000000024
+

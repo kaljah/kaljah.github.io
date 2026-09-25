@@ -1,0 +1,14 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":561,"LineContent":"    const [filterRegion, setFilterRegion] = useState('');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":566,"LineContent":"    }, [activeTab, searchTerm, filterActivity, filterDivision, filterRegion, filterYear]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1219,"LineContent":"        const matchesRegion = filterRegion ? f.location === filterRegion : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1229,"LineContent":"        const matchesRegion = filterRegion ? (fac \u0026\u0026 fac.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1239,"LineContent":"        const matchesRegion = filterRegion ? (fac \u0026\u0026 fac.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1251,"LineContent":"        const matchesRegion = filterRegion ? (m.region === filterRegion || fac?.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1273,"LineContent":"        const matchesRegion = filterRegion ? (fac \u0026\u0026 fac.location === filterRegion) : true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1294,"LineContent":"        if (filterRegion \u0026\u0026 filterRegion !== 'all' \u0026\u0026 (!fac || fac.location !== filterRegion)) return false;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1391,"LineContent":"                                    \u003cselect value={filterRegion} onChange={(e) =\u003e setFilterRegion(e.target.value)} className=\"component-select\" style={{ width: 'auto' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1403,"LineContent":"                                    {(filterActivity || filterDivision || filterRegion || filterYear) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":403,"LineContent":"  const [filterRegion, setFilterRegion] = useState(\"\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":726,"LineContent":"      !filterRegion ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":727,"LineContent":"      u.location === filterRegion ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":780,"LineContent":"            value={filterRegion}"}

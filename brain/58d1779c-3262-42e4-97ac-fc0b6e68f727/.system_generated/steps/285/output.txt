@@ -1,0 +1,2 @@
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":65,"LineContent":"_WAL_CHECKPOINT_INTERVAL = 500"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":113,"LineContent":"    if _wal_commit_counter % _WAL_CHECKPOINT_INTERVAL == 0:"}

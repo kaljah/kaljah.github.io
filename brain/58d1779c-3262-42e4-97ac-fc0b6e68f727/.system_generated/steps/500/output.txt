@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -153,7 +153,12 @@
+     except Exception as e:
+         current_app.logger.error(f"Audit log error on custom factor create: {e}")
+ 
+-    return jsonify({"message": "Custom factor created", "id": factor.id}), 201
++    warnings = _check_plausibility(data)
++    resp_data = {"message": "Custom factor created", "id": factor.id}
++    if warnings:
++        resp_data["warnings"] = warnings
++    return jsonify(resp_data), 201
++
+ 
+ 
+ @custom_factors_bp.route("/<int:factor_id>", methods=["PUT"])
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

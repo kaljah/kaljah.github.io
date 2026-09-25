@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Login status: 200
+Master report download status: 200 1912094 bytes
+El Merk report download status: 200 1901139 bytes
+Flaring summary status: 200 None
+

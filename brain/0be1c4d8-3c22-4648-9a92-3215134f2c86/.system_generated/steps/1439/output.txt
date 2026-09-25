@@ -1,0 +1,66 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -517,10 +517,21 @@
+                 <span className="kpi-label">GHG Intensity (Avg)</span>
+               </div>
+               <div className="kpi-value-container">
+-                <span className="total-value co2">
+-                  {(currentDisplayCo2Intensity ?? 0).toFixed(2)}
+-                </span>
+-                <span className="kpi-unit">kg CO₂e / BOE</span>
++                <span
++                  className="total-value co2"
++                  style={
++                    currentDisplayCo2Intensity === null
++                      ? { fontSize: "1.25rem", color: "#f59e0b" }
++                      : undefined
++                  }
++                >
++                  {currentDisplayCo2Intensity === null
++                    ? "Pending Production"
++                    : (currentDisplayCo2Intensity ?? 0).toFixed(2)}
++                </span>
++                <span className="kpi-unit">
++                  {currentDisplayCo2Intensity === null ? "" : "kg CO₂e / BOE"}
++                </span>
+               </div>
+               <div className="kpi-footer">
+                 <span className="gwp-subtag">
+@@ -540,10 +540,21 @@
+                 <span className="kpi-label">Scope 1 Direct Intensity</span>
+               </div>
+               <div className="kpi-value-container">
+-                <span className="total-value scope1">
+-                  {(stats.avgScope1Intensity ?? 0).toFixed(2)}
+-                </span>
+-                <span className="kpi-unit">kg CO₂e / BOE</span>
++                <span
++                  className="total-value scope1"
++                  style={
++                    stats.avgScope1Intensity === null
++                      ? { fontSize: "1.25rem", color: "#f59e0b" }
++                      : undefined
++                  }
++                >
++                  {stats.avgScope1Intensity === null
++                    ? "Pending Production"
++                    : (stats.avgScope1Intensity ?? 0).toFixed(2)}
++                </span>
++                <span className="kpi-unit">
++                  {stats.avgScope1Intensity === null ? "" : "kg CO₂e / BOE"}
++                </span>
+               </div>
+               <div className="kpi-footer">
+                 <span>
+@@ -550,5 +550,7 @@
+                   <strong>
+-                    {(stats.avgScope2Intensity ?? 0).toFixed(2)} kg/BOE
++                    {stats.avgScope2Intensity === null
++                      ? "Pending"
++                      : `${(stats.avgScope2Intensity ?? 0).toFixed(2)} kg/BOE`}
+                   </strong>
+                 </span>
+                 <span>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

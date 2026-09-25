@@ -1,0 +1,238 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\CalculationDetails.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,4 +1,5 @@
+ import React from "react";
++import { Calculator, X, Info, ShieldCheck, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+ import "./CalculationDetails.css";
+ 
+ const CalculationDetails = ({ calculation, onClose }) => {
+@@ -8,9 +8,16 @@
+     fuel,
+     amount,
+     unit,
++    facility,
++    year,
++    month,
++    equipment_id,
++    status,
++    factor_source,
++    method,
+     emissions,
+     factors,
+-    method,
++    uncertainty,
+     steps,
+   } = calculation;
+ 
+@@ -17,4 +17,4 @@
+-    if (num === null || num === undefined) return "0";
++    if (num === null || num === undefined || isNaN(num)) return "0";
+     return parseFloat(num).toLocaleString("en-US", {
+       minimumFractionDigits: decimals,
+       maximumFractionDigits: decimals,
+@@ -21,12 +21,24 @@
+   };
+ 
++  const normStatus = (status || "Verified").toLowerCase();
++
+   return (
+-    <div className="calc-overlay" onClick={onClose}>
++    <div className="calc-overlay" onClick={onClose} role="dialog" aria-modal="true">
+       <div className="calc-modal" onClick={(e) => e.stopPropagation()}>
+         <div className="calc-header">
+-          <h3>Calculation Details</h3>
+-          <button className="close-btn" onClick={onClose}>
+-            ×
++          <div className="calc-header-info">
++            <div className="calc-header-icon">
++              <Calculator size={22} />
++            </div>
++            <div>
++              <h3>Calculation Details & Provenance</h3>
++              <p className="calc-header-subtitle">
++                {process_type || "Scope 1 Emission Record"}
++              </p>
++            </div>
++          </div>
++          <button className="calc-close-btn" onClick={onClose} title="Close (Esc)">
++            <X size={18} />
+           </button>
+         </div>
+ 
+@@ -33,14 +33,31 @@
+           {/* Input Summary */}
+           <div className="calc-section">
+-            <h4>Input Parameters</h4>
++            <h4 className="calc-section-title">
++              <Info size={16} /> Operational Context & Input Parameters
++            </h4>
+             <div className="param-grid">
+-              <div className="param-item">
+-                <span className="param-label">Process Type:</span>
+-                <span className="param-value">{process_type}</span>
++              {facility && (
++                <div className="param-item">
++                  <span className="param-label">Facility / Asset</span>
++                  <span className="param-value">{facility}</span>
++                </div>
++              )}
++              {year && (
++                <div className="param-item">
++                  <span className="param-label">Reporting Period</span>
++                  <span className="param-value">
++                    {year}
++                    {month ? ` - M${String(month).padStart(2, "0")}` : ""}
++                  </span>
++                </div>
++              )}
++              <div className="param-item">
++                <span className="param-label">Process Type</span>
++                <span className="param-value">{process_type || "Direct Combustion"}</span>
+               </div>
+               {fuel && (
+                 <div className="param-item">
+-                  <span className="param-label">Fuel/Source:</span>
++                  <span className="param-label">Fuel / Source Stream</span>
+                   <span className="param-value">{fuel}</span>
+                 </div>
+               )}
+@@ -47,11 +47,40 @@
+-                <span className="param-label">Quantity:</span>
++                <span className="param-label">Activity Quantity</span>
+                 <span className="param-value">
+-                  {formatNumber(amount, 2)} {unit}
++                  {formatNumber(amount, 2)} {unit || "units"}
+                 </span>
+               </div>
+               <div className="param-item">
+-                <span className="param-label">Calculation Method:</span>
+-                <span className="param-value">{method || "Default"}</span>
++                <span className="param-label">Calculation Method</span>
++                <span className="param-value">{method || factor_source || "API Compendium / Tier 1"}</span>
++              </div>
++              {equipment_id && equipment_id !== "-" && (
++                <div className="param-item">
++                  <span className="param-label">Equipment Tag</span>
++                  <span className="param-value">{equipment_id}</span>
++                </div>
++              )}
++              <div className="param-item">
++                <span className="param-label">Inventory Status</span>
++                <div className="param-value">
++                  <span
++                    className={`status-pill ${
++                      normStatus.includes("verif") || normStatus.includes("appr")
++                        ? "verified"
++                        : normStatus.includes("draft")
++                        ? "draft"
++                        : "pending"
++                    }`}
++                  >
++                    {normStatus.includes("verif") || normStatus.includes("appr") ? (
++                      <CheckCircle2 size={12} />
++                    ) : normStatus.includes("draft") ? (
++                      <AlertCircle size={12} />
++                    ) : (
++                      <Clock size={12} />
++                    )}
++                    {status || "Verified"}
++                  </span>
++                </div>
+               </div>
+             </div>
+           </div>
+@@ -58,9 +58,11 @@
+           {/* Emission Factors Used */}
+           {factors && (
+             <div className="calc-section">
+-              <h4>Emission Factors Applied</h4>
++              <h4 className="calc-section-title">
++                <ShieldCheck size={16} /> Emission Factors & GWP Metrics Applied
++              </h4>
+               <div className="factors-grid">
+-                {factors.co2 && (
++                {factors.co2 != null && (
+                   <div className="factor-item">
+                     <div className="factor-label">
+                       <span className="gas-badge co2">CO₂</span>
+@@ -67,10 +67,10 @@
+                     </div>
+                     <div className="factor-value">
+-                      {formatNumber(factors.co2, 6)} kg/{unit}
+-                    </div>
+-                  </div>
+-                )}
+-                {factors.ch4 && (
++                      {formatNumber(factors.co2, 6)} kg/{unit || "unit"}
++                    </div>
++                  </div>
++                )}
++                {factors.ch4 != null && (
+                   <div className="factor-item">
+                     <div className="factor-label">
+                       <span className="gas-badge ch4">CH₄</span>
+@@ -77,10 +77,10 @@
+                     </div>
+                     <div className="factor-value">
+-                      {formatNumber(factors.ch4, 6)} kg/{unit}
+-                    </div>
+-                  </div>
+-                )}
+-                {factors.n2o && (
++                      {formatNumber(factors.ch4, 6)} kg/{unit || "unit"}
++                    </div>
++                  </div>
++                )}
++                {factors.n2o != null && (
+                   <div className="factor-item">
+                     <div className="factor-label">
+                       <span className="gas-badge n2o">N₂O</span>
+@@ -87,27 +87,23 @@
+                     </div>
+                     <div className="factor-value">
+-                      {formatNumber(factors.n2o, 6)} kg/{unit}
+-                    </div>
+-                  </div>
+-                )}
+-                {factors.gwp_ch4 && (
+-                  <div className="factor-item">
+-                    <div className="factor-label">
+-                      <span className="gas-badge gwp">GWP</span>
+-                      <span>CH₄ Global Warming Potential</span>
+-                    </div>
+-                    <div className="factor-value">{factors.gwp_ch4}</div>
+-                  </div>
+-                )}
+-                {factors.gwp_n2o && (
+-                  <div className="factor-item">
+-                    <div className="factor-label">
+-                      <span className="gas-badge gwp">GWP</span>
+-                      <span>N₂O Global Warming Potential</span>
+-                    </div>
+-                    <div className="factor-value">{factors.gwp_n2o}</div>
+-                  </div>
+-                )}
++                      {formatNumber(factors.n2o, 6)} kg/{unit || "unit"}
++                    </div>
++                  </div>
++                )}
++                <div className="factor-item">
++                  <div className="factor-label">
++                    <span className="gas-badge gwp">GWP</span>
++                    <span>CH₄ Global Warming Potential</span>
++                  </div>
++                  <div className="factor-value">{factors.gwp_ch4 || 28.0} (AR5)</div>
++                </div>
++                <div className="factor-item">
++                  <div className="factor-label">
++                    <span className="gas-badge gwp">GWP</span>
++                    <span>N₂O Global Warming Potential</span>
++                  </div>
++                  <div className="factor-value">{factors.gwp_n2o || 265.0} (AR5)</div>
++                </div>
+               </div>
+             </div>
+           )}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

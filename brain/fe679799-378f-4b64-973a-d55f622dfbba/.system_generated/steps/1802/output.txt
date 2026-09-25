@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 11
+    print('Inputs:', eval_js('Array.from(document.querySelectorAll(" input\)).map(i
+                             ^
+SyntaxError: unterminated string literal (detected at line 11)
+

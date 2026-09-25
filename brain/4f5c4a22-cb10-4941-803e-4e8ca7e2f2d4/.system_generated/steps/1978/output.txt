@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 27
+    c.execute(" SELECT name FROM sqlite_master WHERE type=table AND name NOT LIKE sqlite_% \)
+              ^
+SyntaxError: unterminated string literal (detected at line 27)
+

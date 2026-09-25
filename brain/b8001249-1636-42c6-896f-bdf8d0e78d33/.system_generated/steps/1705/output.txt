@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/24/2026  12:09 PM           9962 agent_07_bugs.json                                                   
+-a----         9/24/2026  12:09 PM           4153 agent_07_report.md                                                   
+-a----         9/24/2026  12:04 PM          23543 agent_07_runner.py                                                   
+-a----         9/24/2026  12:09 PM            222 agent_07_summary.txt                                                 
+-a----         9/23/2026  11:01 PM           4209 agent_07_viewer_api.py                                               
+
+
+

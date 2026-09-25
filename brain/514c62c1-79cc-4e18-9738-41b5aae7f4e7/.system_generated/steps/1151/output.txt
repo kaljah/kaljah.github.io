@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+All status records returned: 100 Total count: 110
+Any rejected in all?: True
+Rejected status records returned: 100 Total count: 110
+All rejected in rejected?: True
+

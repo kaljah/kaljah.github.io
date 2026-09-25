@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+None: 2.6121950156962597 Condenser: 2.220365763341821 Ratio: 0.8500000000000001
+

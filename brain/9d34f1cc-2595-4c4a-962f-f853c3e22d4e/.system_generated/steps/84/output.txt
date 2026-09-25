@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+
+[32888:16032:0924/210412.370:VERBOSE1:components\component_updater\component_installer.cc:514] StartRegistration for 
+Certificate Error Assistant
+[32888:33372:0924/210413.105:VERBOSE1:components\component_updater\component_installer.cc:585] FinishRegistration for 
+Certificate Error Assistant
+[32888:33372:0924/210413.106:VERBOSE1:components\component_updater\component_installer.cc:623] Component ready, 
+version 7 in C:\Users\samsung\AppData\Local\Google\Chrome\User Data\SSLErrorAssistant\7
+[32888:33372:0924/210413.338:VERBOSE1:components\sync_preferences\pref_model_associator.cc:140] Associating preference 
+accessibility.captions.live_caption_media_foundation_renderer_error_silenced
+[32888:33372:0924/210414.719:VERBOSE1:components\component_updater\component_updater_service.cc:507] Update completed 
+with error 0
+[32888:33372:0924/210415.107:VERBOSE1:components\signin\core\browser\account_reconcilor.cc:550] 
+AccountReconcilor::OnAccountsInCookieUpdated: CookieJar 2 accounts, Reconcilor's state is 1, Error was 
+[32888:33372:0924/210415.108:VERBOSE1:components\signin\core\browser\account_reconcilor.cc:786] 
+AccountReconcilor::CalculateIfMultiloginReconcileIsDone: Error was 
+[32888:33372:0924/210415.110:VERBOSE1:components\signin\core\browser\account_reconcilor.cc:550] 
+AccountReconcilor::OnAccountsInCookieUpdated: CookieJar 2 accounts, Reconcilor's state is 1, Error was 
+[32888:33372:0924/210415.111:VERBOSE1:components\signin\core\browser\account_reconcilor.cc:786] 
+AccountReconcilor::CalculateIfMultiloginReconcileIsDone: Error was 
+
+
+

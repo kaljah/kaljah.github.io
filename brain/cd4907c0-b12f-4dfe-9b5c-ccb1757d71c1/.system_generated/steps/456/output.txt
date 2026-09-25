@@ -1,0 +1,46 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":304,"LineContent":"                user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\locustfile.py","LineNumber":4,"LineContent":"class GHGUser(HttpUser):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":10,"LineContent":"class User(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":189,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":217,"LineContent":"    user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":90,"LineContent":"                new_user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":39,"LineContent":"            cls.user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":58,"LineContent":"            user = User(fullName=\"Test\", orgName=\"TestOrg\", sector=\"TestSector\", email=\"test@example.com\", role=\"admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":59,"LineContent":"            u = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":77,"LineContent":"            u = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":23,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":41,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":59,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_bug_fixes.py","LineNumber":21,"LineContent":"            admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_bug_fixes.py","LineNumber":37,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":23,"LineContent":"            admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":36,"LineContent":"            it_admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":49,"LineContent":"            regular = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":287,"LineContent":"            viewer = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":300,"LineContent":"            other_user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1142,"LineContent":"            other_user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1509,"LineContent":"            reg_super = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":20,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":39,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":61,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":65,"LineContent":"        u = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":80,"LineContent":"        u = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":22,"LineContent":"            target = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":38,"LineContent":"            it_user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":52,"LineContent":"            it_admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":28,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_sbti.py","LineNumber":20,"LineContent":"            user = User(email=\"a@a\", fullName=\"Admin User\", orgName=\"AdminOrg\", sector=\"Energy\", role=\"admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_sbti.py","LineNumber":32,"LineContent":"            user = User(email=\"it@test.com\", fullName=\"IT Admin\", orgName=\"TestOrg\", sector=\"Oil \u0026 Gas\", role=\"it_admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_bulk_pipeline.py","LineNumber":39,"LineContent":"            admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":34,"LineContent":"            admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":27,"LineContent":"            admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":46,"LineContent":"            it_admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":65,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":33,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":31,"LineContent":"            admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":26,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":44,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_user_profile_update.py","LineNumber":20,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_user_profile_update.py","LineNumber":46,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_user_profile_update.py","LineNumber":67,"LineContent":"            user = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":95,"LineContent":"            user = User("}

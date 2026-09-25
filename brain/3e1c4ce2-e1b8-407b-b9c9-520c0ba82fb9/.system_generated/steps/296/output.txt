@@ -1,0 +1,15 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-282
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-282.log
+Log output:
+<truncated 14 lines>
+
+[QFULL E2E] GET /api/emissions/ returned 50 records ✓
+  ok  7 [chromium] › e2e\test_qfull_e2e_ui.spec.js:232:3 › QFULL API Pipeline (via Browser Request) › GET /api/emissions/ returns list with at least 1 emission after POST (342ms)
+[QFULL E2E] First emission keys: activity, amount, ch4_emissions, co2_emissions, co2e_total, division, equipment_id, facility_id, facility_name, factor_source, factor_type, field, fuel, group_name, id, month, n2o_emissions, process_type, region, scope, status, timestamp, uncertainty_ch4, uncertainty_co2, uncertainty_n2o, unit, year
+[QFULL E2E] Emission record structure validated ✓
+  ok  8 [chromium] › e2e\test_qfull_e2e_ui.spec.js:242:3 › QFULL API Pipeline (via Browser Request) › Emission list record has correct structure and non-null values (268ms)
+[QFULL E2E] Navigated to: http://127.0.0.1:5173/manage-data
+  ok  9 [chromium] › e2e\test_qfull_e2e_ui.spec.js:271:3 › QFULL Full UI Pipeline › Navigate to Manage Data after login (6.6s)
+
+Last progress: 1s ago

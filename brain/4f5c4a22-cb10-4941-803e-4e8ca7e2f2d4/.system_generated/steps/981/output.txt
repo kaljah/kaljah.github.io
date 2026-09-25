@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+Running 3 tests using 1 worker
+
+[API UPLOAD] Starting upload for bulk_tier1_all_fuels.csv...
+[API UPLOAD RESULT] status=200 body={"job_id":"0d7d5af7-ba98-40df-8819-7022f5caca68"}
+
+[API UPLOAD] Job ID received: 0d7d5af7-ba98-40df-8819-7022f5caca68
+[JOB PROGRESS] completed - 123 rows processed (100%)
+[TIER 1 BULK] Completed: 123 rows processed, skipped: 123
+[DB TOTAL EMISSIONS] Current records count: 2405
+  ok 1 [chromium] › e2e\test_bulk_csv_uploader.spec.js:137:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 1. Tier 1 Bulk CSV Upload (All Fuels, Default Factors & Units) (5.9s)
+
+======================================================
+[TIER 3 BULK] Uploading 1,080 scenarios (360 per region)...
+======================================================
+[API UPLOAD] Starting upload for bulk_tier3_360_per_region.csv...
+[API UPLOAD RESULT] status=200 body={"job_id":"2721d619-45c9-4516-8bb0-9120ad22d276"}
+
+[API UPLOAD] Job ID received: 2721d619-45c9-4516-8bb0-9120ad22d276
+[JOB PROGRESS] completed - 1080 rows processed (100%)
+[TIER 3 BULK] Completed: 1080 rows processed!
+[DB VERIFICATION] West (Tosyali): 530 rows
+[DB VERIFICATION] Center (GICA): 523 rows
+[DB VERIFICATION] South (Sonatrach): 530 rows
+[MAKER-CHECKER] Batch Approve response: 200
+[PAGINATION CHECK] Previous Page 1 of 241 Next
+  ok 2 [chromium] › e2e\test_bulk_csv_uploader.spec.js:159:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 2. Tier 3 Bulk CSV Upload: 360 Scenarios per Region (1,080 Total Rows) (5.9s)
+
+======================================================
+[KPI RE-AUDIT] Validating updated metrics on Dashboard...
+======================================================
+[POST-BULK DASHBOARD KPI] Gross: 259.1K, Net: 259.1K, CH4: 312.2
+[POST-BULK SCOPE 1 PILL] 259.1K tCO₂e
+[POST-BULK GWP-20 VALUE] Gross: 276.6K
+
+[KPI RE-AUDIT] Validating Carbon Intensity...
+[POST-BULK CARBON INTENSITY] GHG: 1.00, S1: 1.00
+
+[KPI RE-AUDIT] Validating Methane Intensity...
+[POST-BULK METHANE INTENSITY] Card 1: 0.0012
+  ok 3 [chromium] › e2e\test_bulk_csv_uploader.spec.js:218:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 3. Post-Calculation KPI Recalculation & Re-Audit (Dashboard, Carbon & Methane) (13.8s)
+
+  3 passed (27.0s)
+

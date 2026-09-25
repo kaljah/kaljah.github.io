@@ -1,0 +1,189 @@
+
+The command exited with code 1.
+Output:
+<truncated 14 lines>
+validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_elevated_dual_efficiency FAILED [ 45%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_enclosed_high_efficiency FAILED [ 54%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_pneumatic_devices_intermittent FAILED [ 63%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_blowdown_depressuring FAILED [ 72%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_acid_gas_removal_sweetening FAILED [ 81%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_component_fugitives_valve_leaks PASSED [ 90%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1DispatcherRouting::test_dispatcher_combustion_routing PASSED [100%]
+
+================================== FAILURES ===================================
+_ TestCleanScope1Combustion.test_combustion_tier3_gas_composition_carbon_balance _
+
+self = <test_clean_scope1.TestCleanScope1Combustion object at 0x000001FA63D894C0>
+
+    def test_combustion_tier3_gas_composition_carbon_balance(self):
+        calc = CombustionCalculator()
+        qty = 20000.0
+        comps = {"c1": 0.88, "c2": 0.06, "c3": 0.03, "ic4": 0.01, "nc4": 0.01, "co2": 0.01}
+        eff = 0.995
+    
+        ref = ref_calculate_combustion(
+            qty, fuel_unit="m3", combustion_efficiency=eff, gas_composition=comps
+        )
+    
+        res = calc.calculate(
+            fuel_quantity=qty,
+            ef_co2=0.0,
+            ef_ch4=0.0,
+            ef_n2o=0.0,
+            uncertainties={},
+            hhv=None,
+            ef_unit="kg/m3",
+            fuel_unit="m3",
+            fuel_type="gases",
+            combustion_efficiency=eff,
+            **comps,
+        )
+    
+>       assert abs(res["results"]["co2"]["value"] - ref["co2"]) < 1e-2
+E       assert 3.33491200000001 < 0.01
+E        +  where 3.33491200000001 = abs((40.366951 - 43.70186300000001))
+
+validation\calculation\test_clean_scope1.py:117: AssertionError
+________ TestCleanScope1Flaring.test_flaring_elevated_dual_efficiency _________
+
+self = <test_clean_scope1.TestCleanScope1Flaring object at 0x000001FA63D88920>
+
+    def test_flaring_elevated_dual_efficiency(self):
+        calc = FlaringCalculator()
+        vol = 50000.0  # m3
+        ch4_frac = 0.88
+        comps = {"co2": 0.02}
+    
+        ref = ref_calculate_flaring(vol, ch4_fraction=ch4_frac, flare_type="elevated", gas_composition=comps)
+    
+        res = calc.calculate(
+            gas_volume=vol,
+            ch4_fraction=ch4_frac,
+            flare_type="elevated",
+            uncertainties={},
+            fuel_unit="m3",
+            **comps,
+        )
+    
+>       assert abs(res["results"]["co2"]["value"] - ref["co2"]) < 1e-2
+E       assert 1.8610000000000042 < 0.01
+E        +  where 1.8610000000000042 = abs((80.573856 - 82.43485600000001))
+
+validation\calculation\test_clean_scope1.py:152: AssertionError
+________ TestCleanScope1Flaring.test_flaring_enclosed_high_efficiency _________
+
+self = <test_clean_scope1.TestCleanScope1Flaring object at 0x000001FA63D88D40>
+
+    def test_flaring_enclosed_high_efficiency(self):
+        calc = FlaringCalculator()
+        vol = 25000.0
+        ch4_frac = 0.92
+    
+        ref = ref_calculate_flaring(vol, ch4_fraction=ch4_frac, flare_type="enclosed")
+    
+        res = calc.calculate(
+            gas_volume=vol,
+            ch4_fraction=ch4_frac,
+            flare_type="enclosed",
+            uncertainties={},
+            fuel_unit="m3",
+        )
+    
+        assert abs(res["results"]["co2"]["value"] - ref["co2"]) < 1e-2
+>       assert abs(res["results"]["ch4"]["value"] - ref["ch4"]) < 1e-2
+E       assert 0.015605500000000001 < 0.01
+E        +  where 0.015605500000000001 = abs((0.07802750000000006 - 0.062422000000000054))
+
+validation\calculation\test_clean_scope1.py:172: AssertionError
+___ TestCleanScope1VentingAndMidstream.test_pneumatic_devices_intermittent ____
+
+self = <test_clean_scope1.TestCleanScope1VentingAndMidstream object at 0x000001FA63D88FE0>
+
+    def test_pneumatic_devices_intermittent(self):
+        calc = PneumaticDeviceCalculator()
+        count = 10
+        hrs = 8760
+        ch4_f = 0.90
+        bleed_rate = 13.5
+    
+        ref = ref_calculate_pneumatic_devices(count, hours=hrs, device_type="intermittent", vent_rate_scf_hr=bleed_rate, ch4_fraction=ch4_f)
+    
+        res = calc.calculate(
+            count=count,
+            hours=hrs,
+            bleed_rate=bleed_rate,
+            ch4_content=ch4_f,
+            uncertainties={},
+        )
+    
+        assert abs(res["results"]["ch4"]["value"] - ref["ch4"]) < 1e-2
+>       assert abs(res["total_co2e"] - ref["co2e"]) < 1e-1
+E       assert 0.623202426730245 < 0.1
+E        +  where 0.623202426730245 = abs((572.5760200278529 - 573.1992224545832))
+
+validation\calculation\test_clean_scope1.py:197: AssertionError
+________ TestCleanScope1VentingAndMidstream.test_blowdown_depressuring ________
+
+self = <test_clean_scope1.TestCleanScope1VentingAndMidstream object at 0x000001FA63D88F50>
+
+    def test_blowdown_depressuring(self):
+        calc = BlowdownCalculator()
+        vol_m3 = 50.0
+        p_init = 600.0
+        events = 2
+        ch4_f = 0.88
+    
+        ref = ref_calculate_blowdown(vol_m3, initial_press=p_init, final_press=0.0, events=events, ch4_fraction=ch4_f)
+    
+        res = calc.calculate(
+            blowdown_volume=vol_m3,
+            pressure=p_init,
+            events=events,
+            ch4_content=ch4_f,
+            press_unit="psig",
+            uncertainties={},
+        )
+    
+>       assert abs(res["results"]["ch4"]["value"] - ref["ch4"]) < 1e-2
+E       assert 0.05973712586593649 < 0.01
+E        +  where 0.05973712586593649 = abs((2.497436395541999 - 2.4376992696760627))
+
+validation\calculation\test_clean_scope1.py:217: AssertionError
+_____ TestCleanScope1VentingAndMidstream.test_acid_gas_removal_sweetening _____
+
+self = <test_clean_scope1.TestCleanScope1VentingAndMidstream object at 0x000001FA63D88AA0>
+
+    def test_acid_gas_removal_sweetening(self):
+        calc = AGRCalculator()
+        # Throughput in MMscf/yr for AGRCalculator
+        feed_vol_mmscf = 100.0
+        inlet = 0.04
+        outlet = 0.0001
+    
+        res = calc.calculate(
+            throughput=feed_vol_mmscf,
+            co2_in=inlet,
+            co2_out=outlet,
+            acid_gas_control_eff=0.0,
+            uncertainties={},
+        )
+    
+        # 100 MMscf = 100 * 28316.846592 m3 = 2,831,684.66 m3
+        feed_vol_m3 = feed_vol_mmscf * 28316.846592
+        ref = ref_calculate_agr(feed_vol_m3, co2_inlet_fraction=inlet, co2_outlet_fraction=outlet)
+    
+        assert abs(res["results"]["co2"]["value"] - ref["co2"]) < 1e-1
+>       assert abs(res["total_co2e"] - ref["co2e"]) < 1e-1
+E       assert 45.7268933821594 < 0.1
+E        +  where 45.7268933821594 = abs((255.99052289793028 - 210.26362951577087))
+
+validation\calculation\test_clean_scope1.py:240: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_tier3_gas_composition_carbon_balance
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_elevated_dual_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_enclosed_high_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_pneumatic_devices_intermittent
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_blowdown_depressuring
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_acid_gas_removal_sweetening
+========================= 6 failed, 5 passed in 2.16s =========================
+

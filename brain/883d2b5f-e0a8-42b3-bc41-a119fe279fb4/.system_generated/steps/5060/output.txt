@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_all_apis_health.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -126,10 +126,9 @@
+         rule_str = rule.rule
+         methods = [m for m in rule.methods if m not in ("HEAD", "OPTIONS")]
+ 
+-        resolved_path = substitute_url_params(rule_str)
+-        full_url = f"{BASE_URL}{resolved_path}"
+-
+         for method in methods:
++            resolved_path = resolve_rule(rule_str, is_delete=(method == "DELETE"))
++            full_url = f"{BASE_URL}{resolved_path}"
+             test_id = f"{method:6s} {resolved_path}"
+             
+             # Special case for SSE stream
+@@ -175,18 +175,17 @@
+                     })
+                 continue
+ 
+-            # Skip destructive delete of valid entity 1, use 999999 instead for DELETE testing
++            # Safe delete using non-existent ID 999999
+             if method == "DELETE":
+-                url_for_delete = full_url.replace("/1", "/999999")
+-                t0 = time.time()
+-                try:
+-                    resp = session.delete(url_for_delete, timeout=5)
+-                    lat = (time.time() - t0) * 1000
+-                    healthy = resp.status_code < 500
+-                    results.append({
+-                        "test_id": f"DELETE {url_for_delete.replace(BASE_URL, '')}",
+-                        "method": method,
+-                        "path": url_for_delete.replace(BASE_URL, ''),
++                t0 = time.time()
++                try:
++                    resp = session.delete(full_url, timeout=5)
++                    lat = (time.time() - t0) * 1000
++                    healthy = resp.status_code < 500
++                    results.append({
++                        "test_id": test_id,
++                        "method": method,
++                        "path": resolved_path,
+                         "endpoint": endpoint,
+                         "status": resp.status_code,
+                         "latency_ms": lat,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

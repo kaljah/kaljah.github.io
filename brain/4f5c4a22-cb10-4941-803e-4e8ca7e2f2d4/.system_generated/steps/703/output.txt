@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\__tests__\\EmissionResult.test.jsx","LineNumber":18,"LineContent":"      ch4: 0.0018,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\__tests__\\EmissionResult.test.jsx","LineNumber":19,"LineContent":"      n2o: 0.00018,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":630,"LineContent":"      csvContent = `${headers}\\nSpecialized Generator Gas,Natural Gas,scf,53.06,0.001,0.0001,0,5,50,150,combustion`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":668,"LineContent":"      csvContent = `${headers}\\nSpecialized Generator Gas,Natural Gas,scf,53.06,0.001,0.0001,0,5,50,150,combustion`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":982,"LineContent":"            cat.total_emissions ? cat.total_emissions.toFixed(2) : \"0.00\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":1055,"LineContent":"            p.estimated_reduction ? p.estimated_reduction.toFixed(2) : \"0.00\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\emissionFactorsAPI.js","LineNumber":244,"LineContent":"    gal_m3: 0.00378541,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\emissionFactorsAPI.js","LineNumber":250,"LineContent":"    scf_mcf: 0.001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\emissionFactorsAPI.js","LineNumber":258,"LineContent":"    kg_tonne: 0.001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\emissionFactorsAPI.js","LineNumber":261,"LineContent":"    lb_ton: 0.0005,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":13,"LineContent":"    ch4: 0.001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":14,"LineContent":"    n2o: 0.0001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":38,"LineContent":"    ch4: 0.0032,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":39,"LineContent":"    n2o: 0.00063,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":51,"LineContent":"    ch4: 0.00048,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":52,"LineContent":"    n2o: 0.0001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":64,"LineContent":"    ch4: 0.000022,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":65,"LineContent":"    n2o: 0.0001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":76,"LineContent":"    ch4: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":77,"LineContent":"    n2o: 0.0006,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":89,"LineContent":"    ch4: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":90,"LineContent":"    n2o: 0.0006,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":100,"LineContent":"    ch4: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":101,"LineContent":"    n2o: 0.0006,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":111,"LineContent":"    ch4: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":112,"LineContent":"    n2o: 0.0006,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":122,"LineContent":"    ch4: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":123,"LineContent":"    n2o: 0.0006,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":134,"LineContent":"    ch4: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":135,"LineContent":"    n2o: 0.0006,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":145,"LineContent":"    ch4: 0.001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":146,"LineContent":"    n2o: 0.0001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":156,"LineContent":"    ch4: 0.001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":157,"LineContent":"    n2o: 0.0001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":169,"LineContent":"    n2o: 0.00001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":170,"LineContent":"    co: 0.0035,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":182,"LineContent":"    n2o: 0.00001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":183,"LineContent":"    co: 0.004,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":195,"LineContent":"    ch4: 0.006,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":196,"LineContent":"    n2o: 0.00001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":197,"LineContent":"    co: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":209,"LineContent":"    n2o: 0.00001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":210,"LineContent":"    co: 0.0035,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":222,"LineContent":"    n2o: 0.00001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":223,"LineContent":"    co: 0.004,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":234,"LineContent":"    n2o: 0.00001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":235,"LineContent":"    co: 0.0038,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":245,"LineContent":"    ch4: 0.003,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":246,"LineContent":"    n2o: 0.0001,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":255,"LineContent":"    ch4: 0.003,"}
+(...112 more results not shown)

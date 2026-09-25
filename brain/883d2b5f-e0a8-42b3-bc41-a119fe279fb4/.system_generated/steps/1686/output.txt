@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":11,"LineContent":"    calculate_co2e,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":111,"LineContent":"        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":187,"LineContent":"            total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":311,"LineContent":"        total_co2e = calculate_co2e("}

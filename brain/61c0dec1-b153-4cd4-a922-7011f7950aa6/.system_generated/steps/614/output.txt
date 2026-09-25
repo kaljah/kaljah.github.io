@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -194,7 +194,9 @@
+     const baseYearData = baseYearRes.data;
+     const exclusionsData = exclusionsRes.data || [];
+     const settingsData = settingsRes.data || { gwp_standard: 'IPCC AR5' };
+-    const gwpStandard = settingsData.gwp_standard || 'IPCC AR5';
++    const activeGwpChoice = requestedGwp || settingsData.gwp_standard || 'AR5';
++    const resolvedGwp = resolveGwpFactors(activeGwpChoice);
++    const gwpStandard = resolvedGwp.standard;
+ 
+     // Client-side filtering by selected region array
+     if (Array.isArray(regionId) && regionId.length > 0) {
+@@ -225,6 +225,7 @@
+       reportData,
+       params,
+       productionData,
++      resolvedGwp.factors,
+     );
+ 
+     // Comparison Data
+@@ -247,6 +247,7 @@
+           cReportData,
+           compParams,
+           cProdRes.data || [],
++          resolvedGwp.factors,
+         );
+       } catch (e) {
+         console.warn("Comparison Fetch Failed", e);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

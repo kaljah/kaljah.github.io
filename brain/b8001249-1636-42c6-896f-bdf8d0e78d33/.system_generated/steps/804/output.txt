@@ -1,0 +1,9 @@
+Task: b8001249-1636-42c6-896f-bdf8d0e78d33/task-801
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8001249-1636-42c6-896f-bdf8d0e78d33\.system_generated\tasks\task-801.log
+Log output:
+[2026-09-24 00:27:24,314] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+<string>:3: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+Emission 1 not found
+
+Last progress: 2s ago

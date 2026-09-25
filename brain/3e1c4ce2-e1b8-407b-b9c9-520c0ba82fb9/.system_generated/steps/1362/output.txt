@@ -1,0 +1,56 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 19:56:24,496] INFO in app: Updated account: a
+[2026-09-21 19:56:24,592] INFO in app: Updated account: a@a
+[2026-09-21 19:56:24,684] INFO in app: Updated account: z
+[2026-09-21 19:56:24,779] INFO in app: Updated account: z@z
+Facilities: 43
+  Fac: 1 Complexe Sid�rurgique DRI/EAF (Tosyali) Activity: Steel & Iron (Acier DRI) Division: Metallurgy Segment: Heavy Industry
+  Fac: 2 Complexe Ammoniac & Engrais Azot�s (Fertial) Activity: Chemicals & Fertilizers Division: Petrochemicals Segment: Heavy Industry
+  Fac: 3 Cimenterie Industrielle de Chlef (GICA) Activity: Cement & Clinker Division: Building Materials Segment: Heavy Industry
+  Fac: 4 Centre de Traitement Gazier Hassi Messaoud (Sonatrach) Activity: Upstream & Midstream Gas Division: Exploration & Production Segment: Oil & Gas
+  Fac: 5 ADR Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 6 REB Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 7 HBK Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 8 GTL Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 9 OHT Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 10 STAH Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 11 TFT Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 12 HMD Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 13 RNS Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 14 HRM Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 15 INAS Activity: Activit� E&P Division: DP Segment: Upstream
+  Fac: 16 BRS Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 17 MLN Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 18 BMS Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 19 GSS Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 20 OURHOUD Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 21 RKF Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 22 G SH-ENI Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 23 HBR Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 24 GB Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 25 REGGANE Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 26 INA Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 27 ISG Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 28 GTIM Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 29 SH-FCP MLE Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 30 GTG Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 31 GTFT Activity: Activit� E&P Division: AST Segment: Upstream
+  Fac: 32 GL1Z Activity: Activit� LQS Division: LSH Segment: Midstream
+  Fac: 33 GL2Z Activity: Activit� LQS Division: LSH Segment: Midstream
+  Fac: 34 GL3Z Activity: Activit� LQS Division: LSH Segment: Midstream
+  Fac: 35 GL1K Activity: Activit� LQS Division: LSH Segment: Midstream
+  Fac: 36 GP1Z Activity: Activit� LQS Division: LSH Segment: Midstream
+  Fac: 37 GP2Z Activity: Activit� LQS Division: LSH Segment: Midstream
+  Fac: 38 RA1K Activity: Activit� RPC Division: RAF Segment: Downstream
+  Fac: 39 RA1Z Activity: Activit� RPC Division: RAF Segment: Downstream
+  Fac: 40 RA1G Activity: Activit� RPC Division: RAF Segment: Downstream
+  Fac: 41 RA1A Activity: Activit� RPC Division: RAF Segment: Downstream
+  Fac: 42 CP1Z Activity: Activit� RPC Division: PEC Segment: Downstream
+  Fac: 43 CPEK Activity: Activit� RPC Division: PEC Segment: Downstream
+Emissions: 829
+Scope2: 0
+Scope3: 0
+ProductionData: 0
+

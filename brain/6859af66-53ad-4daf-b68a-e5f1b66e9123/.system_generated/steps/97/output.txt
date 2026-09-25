@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\6859af66-53ad-4daf-b68a-e5f1b66e9123\neocarbon_flyer_briefing.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -16,16 +16,16 @@
+ ┌────────────────────────────────────────────────────────────────────────┐
+ │                   THE 60-SECOND EXECUTIVE PRIMER                       │
+ ├────────────────────────────────────────────────────────────────────────┤
+-│ 1. THE NEW GLOBAL RULE: Europe now taxes carbon on all imported energy, │
+-│    steel, cement, and fertilizers at the border (CBAM & Methane Reg).  │
+-│                                                                        │
+-│ 2. THE "GUILTY BY DEFAULT" TRAP: If you submit an Excel spreadsheet or │
+-│    rough estimates, EU customs reject it on the spot and hit you with  │
+-│    punitive "Default Penalty Surtaxes" (+35% to +60% markup).          │
+-│                                                                        │
+-│ 3. THE PROFIT OPPORTUNITY: Your plants actually run cleaner than EU    │
+-│    defaults assume. But without certified software, you can't claim    │
+-│    your multi-million discount.                                        │
++│ 1. THE NEW METHANE IMPORT LAW: Europe enforces strict methane caps     │
++│    and MRV on all imported crude, pipeline gas, and LNG (EU 2024/1787).│
++│                                                                        │
++│ 2. THE "FIELD EXCEL" TRAP: If upstream flares, vents, and tanks are    │
++│    calculated on spreadsheets, EU customs reject them immediately      │
++│    and apply punitive "Default Penalty Surtaxes" (+35% to +60% markup).│
++│                                                                        │
++│ 3. THE PROFIT OPPORTUNITY: Your fields run far cleaner than EU default │
++│    penalties assume. Certified Tier 3 physics unlocks €38.5M+ saved   │
++│    per 1 Billion m³ of exported gas.                                   │
+ └────────────────────────────────────────────────────────────────────────┘
+ ```
+ 
+@@ -35,12 +35,12 @@
+ Instead of selling abstract software features, the flyer sells **concrete business outcomes**:
+ 
+ - **Hard Cash Savings (Show, Not Tell)**:
+-  - Visual Bar Chart: Without NeoCarbon (€91.4M EU Default Tax) vs With NeoCarbon (€57.2M Real Plant Tax).
+-  - Net Delta: **€34.2 Million cash saved per 500,000 tonnes of exports**.
++  - Visual Bar Chart: Without NeoCarbon (€104.5M EU Default Penalty Tax) vs With NeoCarbon (€66.0M Real Field Emissions Tax).
++  - Net Delta: **€38.5 Million cash saved per 1 Billion m³ of exported gas**.
+ - **How It Works (Dead Simple 3-Step Flow)**:
+-  - Step 1: Upload your routine meter and lab logs (no carbon PhD needed).
+-  - Step 2: NeoCarbon's automated engine does all the physical math.
+-  - Step 3: Download official, customs-certified CBAM XML dossiers in 1 click.
++  - Step 1: Upload your routine field telemetry (separator P/T, gas chromatographs, flare meters).
++  - Step 2: NeoCarbon's automated engine executes API Compendium 2021 & thermodynamic equations.
++  - Step 3: Download official, customs-certified EU Methane & CBAM dossiers in 1 click.
+ - **The 3 Executive Guarantees**:
+   1. *Zero Technical Hassle*: No new hiring or complex training required.
+   2. *Instant Positive ROI*: Pays for itself on cargo #1.
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

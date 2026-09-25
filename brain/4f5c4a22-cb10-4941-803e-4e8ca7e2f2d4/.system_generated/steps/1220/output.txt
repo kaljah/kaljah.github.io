@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+LocalAddress LocalPort  State OwningProcess
+------------ ---------  ----- -------------
+127.0.0.1         5000 Listen         24992
+
+
+

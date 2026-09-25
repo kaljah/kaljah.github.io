@@ -1,0 +1,64 @@
+
+The command exited with code 0.
+Output:
+
+Running 1 test using 1 worker
+
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Combustion (Tier 3) -> ID: 844, CO2: 0, CH4: 0.00015749999999999998, Total: 0.00858375 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Flaring (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Flaring (Tier 3) -> ID: 845, CO2: 40.515831, CH4: 0.30023625000000026, Total: 48.988696000000004 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Storage Tanks (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Storage Tanks (Tier 3) -> ID: 846, CO2: 0, CH4: 25.9375235571072, Total: 726.2506595990016 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Steel & Iron (Acier DRI)	Complexe Sidérurgique DRI/EAF (Tosyali)	Metallurgy	Industria...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Acid Gas Removal - AGR (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Acid Gas Removal - AGR (Tier 3) -> ID: 847, CO2: 80.15312794322995, CH4: 0.2835835908910387, Total: 88.09346848817903 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Glycol Dehydrator (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Glycol Dehydrator (Tier 3) -> ID: 848, CO2: 0, CH4: 1.0971219065924291, Total: 30.719413384588016 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Pneumatic Devices (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Pneumatic Devices (Tier 3) -> ID: 849, CO2: 0, CH4: 11.996830895821681, Total: 335.91126508300704 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Liquids Unloading (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Liquids Unloading (Tier 3) -> ID: 850, CO2: 0, CH4: 1.0158690021490293, Total: 28.44433206017282 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Well Completions Flowback (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Well Completions Flowback (Tier 3) -> ID: 851, CO2: 0, CH4: 0.9959992657919999, Total: 27.887979442175997 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Blowdowns & Venting (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Blowdowns & Venting (Tier 3) -> ID: 852, CO2: 0, CH4: 31.84231404316049, Total: 891.5847932084937 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+  ok 1 [chromium] › e2e\test_scope1_form_engine.spec.js:210:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (57.0s)
+
+  1 passed (59.0s)
+

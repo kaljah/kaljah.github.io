@@ -1,0 +1,8 @@
+{"name":"FINAL_VALIDATION_REPORT.md", "sizeBytes":"13362"}
+{"name":"HUMAN_REVIEW_REQUIRED.md", "sizeBytes":"4481"}
+{"name":"calculation-inventory.md", "sizeBytes":"36909"}
+{"name":"methodology-matrix.md", "sizeBytes":"9524"}
+{"name":"repository-audit.md", "sizeBytes":"16830"}
+{"name":"unit-and-dimensional-analysis.md", "sizeBytes":"8332"}
+
+Summary: This directory contains 0 subdirectories and 6 files.

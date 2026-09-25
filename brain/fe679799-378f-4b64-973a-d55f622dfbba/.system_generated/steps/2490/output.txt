@@ -1,0 +1,55 @@
+
+The command exited with code 0.
+Output:
+        # Unburnt methane is (100000 * 0.85 * 0.05 * 0.6785) / 1000 = 2.8836 tonnes CH4
+        unburnt_ch4 = res_100["results"]["ch4"]["value"]
+        assert unburnt_ch4 == pytest.approx(res_20["results"]["ch4"]["value"], rel=1e-5)
+    
+        # Difference in total CO2e must equal unburnt CH4 * (GWP_20 - GWP_100) = 2.8836 * (82.5 - 28.0) = 157.158 tonnes CO2e
+        co2e_diff = res_20["total_co2e"] - res_100["total_co2e"]
+        expected_diff = unburnt_ch4 * (82.5 - 28.0)
+>       assert pytest.approx(co2e_diff, rel=1e-4) == expected_diff
+E       assert 157.1875625000001 ? 0.0157188 == 157.15756250000013
+E         
+E         comparison failed
+E         Obtained: 157.15756250000013
+E         Expected: 157.1875625000001 ? 0.0157188
+
+new\server\tests\test_battery_gwp_horizons_regulatory.py:142: AssertionError
+_____________ test_login_and_me_operational_defaults_regular_user _____________
+
+client = <FlaskClient <Flask 'app'>>
+
+    def test_login_and_me_operational_defaults_regular_user(client):
+        """Verify regular user login and /me return assigned region, division, activity defaults."""
+        with app.app_context():
+            fac = Facility.query.filter_by(code="FAC-TEST-REGIONAL").first()
+            if not fac:
+                fac = Facility(
+                    name="Hassi Messaoud Central Plant",
+                    code="FAC-TEST-REGIONAL",
+                    region="Hassi Messaoud",
+                    location="Ouargla",
+                    division="Exploration & Production",
+                    activity="Upstream",
+                    segment="Upstream",
+                )
+                db.session.add(fac)
+                db.session.commit()
+    
+            user = User.query.filter_by(email="reg_user_test@defaults.com").first()
+            if not user:
+                user = User(
+                    email="reg_user_test@defaults.com",
+                    fullName="Regional User Defaults Tester",
+                    orgName="Sonatrach",
+                    sector="Energy",
+                    role="user",
+                    location="Hassi Messaoud",
+                )
+                user.set_password("SecurePass123!")
+                db.session.add(user)
+                db.session.commit()
+    
+
+

@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+At line:1 char:149
++ ... .read(); routes = re.findall(r'@dashboard_bp\.route\([\'\"]([^\'\"]+) ...
++                                                                  ~
+Missing type name after '['.
+At line:1 char:195
++ ... ard_bp\.route\([\'\"]([^\'\"]+)[\'\"]', f); print('\n'.join(routes))"
++                                                                          ~
+Missing closing ')' in expression.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingTypename
+ 
+

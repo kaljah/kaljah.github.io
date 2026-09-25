@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":158,"LineContent":"def get_job_status(job_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":939,"LineContent":"from background_processor import start_background_upload, get_job_status"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2909,"LineContent":"    status = get_job_status(job_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2918,"LineContent":"    status = get_job_status(job_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1170,"LineContent":"    from background_processor import upload_jobs, upload_jobs_lock, _update_job, _append_job_list, get_job_status"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1199,"LineContent":"    status = get_job_status(test_jid)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":28,"LineContent":"    get_job_status,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":226,"LineContent":"            return get_job_status(job_id)"}

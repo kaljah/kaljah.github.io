@@ -1,0 +1,5 @@
+Script ran on page and returned:
+```json
+"Redirecting to /emissions?scope=scope1"
+```
+Page navigated to http://localhost:5173/emissions?scope=scope1.

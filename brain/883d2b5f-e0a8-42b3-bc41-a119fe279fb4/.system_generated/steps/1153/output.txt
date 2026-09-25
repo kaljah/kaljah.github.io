@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":41,"LineContent":"  const [selectedTier, setSelectedTier] = useState(\"3\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":53,"LineContent":"      setSelectedTier(\"3\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":144,"LineContent":"      // Core Tier 1/3 physical parameters"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":154,"LineContent":"      // Gas Composition (Tier 3)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":168,"LineContent":"      // Process-specific Tier 3 parameters"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":414,"LineContent":"        if (selectedTier === \"1\") return false;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":543,"LineContent":"  }, [type, selectedTier, selectedProcess]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":549,"LineContent":"          `/emissions/template/csv?tier=${selectedTier}\u0026process=${selectedProcess}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":826,"LineContent":"        selectedTier === \"1\" ? \"default\" : \"custom\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":911,"LineContent":"              1. Select Calculation Tier"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":923,"LineContent":"                  setSelectedTier(\"1\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":930,"LineContent":"                    selectedTier === \"1\" ? \"#10b981\" : \"var(--border-color)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":935,"LineContent":"                    selectedTier === \"1\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":947,"LineContent":"                  Tier 1"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":963,"LineContent":"                  setSelectedTier(\"3\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":970,"LineContent":"                    selectedTier === \"3\" ? \"#10b981\" : \"var(--border-color)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":975,"LineContent":"                    selectedTier === \"3\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":987,"LineContent":"                  Tier 3"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1184,"LineContent":"                  {selectedTier === \"1\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1185,"LineContent":"                    ? \"Tier 1 (Default Factors)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1187,"LineContent":"                      ? \"Tier 3 (All Processes)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1188,"LineContent":"                      : `Tier 3 (${PROCESS_TYPES[selectedProcess]})`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.jsx","LineNumber":96,"LineContent":"                \u003cspan className=\"param-value\"\u003e{method || factor_source || \"API Compendium / Tier 1\"}\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":872,"LineContent":"  // --- COMPLETIONS / UNLOADING (Tier 1 Defaults) ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":537,"LineContent":"  const [selectedTier, setSelectedTier] = useState(\"3\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":642,"LineContent":"          `/emissions/template/${fmt}?tier=${selectedTier}\u0026process=${selectedProcessScope === \"specific\" ? selectedProcess : \"all\"}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":737,"LineContent":"      if (selectedTier === \"3\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":926,"LineContent":"              hint: \"Tier 3 specific\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":935,"LineContent":"  }, [type, selectedTier, selectedProcessScope, selectedProcess]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":997,"LineContent":"                  Calculation Tier"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1007,"LineContent":"                    className={`cmw-mode-card ${selectedTier === \"1\" ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1008,"LineContent":"                    onClick={() =\u003e setSelectedTier(\"1\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1015,"LineContent":"                        selectedTier === \"1\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1036,"LineContent":"                            selectedTier === \"1\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1042,"LineContent":"                        Tier 1 (Default Factors)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1056,"LineContent":"                    className={`cmw-mode-card ${selectedTier === \"3\" ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1057,"LineContent":"                    onClick={() =\u003e setSelectedTier(\"3\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1064,"LineContent":"                        selectedTier === \"3\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1085,"LineContent":"                            selectedTier === \"3\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":1091,"LineContent":"                        Tier 3 (Engineering)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":916,"LineContent":"    let usedTier1 = false;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":917,"LineContent":"    let usedTier3 = false;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":920,"LineContent":"        if (fType.includes(\"tier 3\") || fType.includes(\"measurement\") || fType.includes(\"engineering\")) usedTier3 = true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":921,"LineContent":"        if (fType.includes(\"tier 1\") || fType.includes(\"default\")) usedTier1 = true;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":925,"LineContent":"    if (usedTier3) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":926,"LineContent":"        approachText += \"\\n- Tier 3 Approaches (site-specific data or direct measurement) were used for some high-impact or accessible emission sources, providing greater precision.\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":928,"LineContent":"    if (usedTier1) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":929,"LineContent":"        approachText += \"\\n- Tier 1 Approaches (default industry emission factors) were applied where site-specific data was unavailable or for minor emission sources.\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":232,"LineContent":"    const { tier1_uncertainty = {}, flagged_records = [], total_flagged_count = 0, returned_count = 0 } = data;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":351,"LineContent":"                    {/* Card 2: IPCC Tier 1 Uncertainty (SRSS) */}"}
+(...122 more results not shown)

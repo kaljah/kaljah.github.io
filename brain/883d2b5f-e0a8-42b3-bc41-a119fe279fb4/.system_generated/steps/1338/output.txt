@@ -1,0 +1,20 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":186,"LineContent":"    assert client.get(\"/api/reports/ogmp-export\").status_code == 401"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":200,"LineContent":"    assert client.get(\"/api/reports/ogmp-export\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":308,"LineContent":"def test_reports_ogmp_excel_export(client, test_setup):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":309,"LineContent":"    \"\"\"Ensure GET /api/reports/ogmp-export produces a multi-sheet OGMP 2.0 workbook.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":314,"LineContent":"    res = client.get(f\"/api/reports/ogmp-export?year=2024\u0026facility_id={test_setup['facility_id']}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":799,"LineContent":"def test_dashboard_ogmp_target_status_segment_specific(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":842,"LineContent":"        assert stats_mid[0][\"ogmp_gold_standard_target\"] == 0.05"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":844,"LineContent":"        assert stats_mid[0][\"ogmp_target_status\"] == \"Non-Compliant\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":848,"LineContent":"        assert trend_mid[0][\"data\"][0][\"ogmp_gold_standard_target\"] == 0.05"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":849,"LineContent":"        assert trend_mid[0][\"data\"][0][\"ogmp_target_status\"] == \"Non-Compliant\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":857,"LineContent":"        assert stats_up[0][\"ogmp_gold_standard_target\"] == 0.20"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":859,"LineContent":"        assert stats_up[0][\"ogmp_target_status\"] == \"Compliant\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":863,"LineContent":"        assert trend_up[0][\"data\"][0][\"ogmp_gold_standard_target\"] == 0.20"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":864,"LineContent":"        assert trend_up[0][\"data\"][0][\"ogmp_target_status\"] == \"Compliant\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":867,"LineContent":"def test_ogmp_survey_zero_top_down_no_false_discrepancy(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":880,"LineContent":"    resp = client.post(\"/api/data/ogmp-surveys\", json=payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":884,"LineContent":"    from models import OgmpSurvey"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":886,"LineContent":"        survey = db.session.get(OgmpSurvey, data[\"id\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":438,"LineContent":"    def test_methane_loss_rate_ogmp_equation(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":439,"LineContent":"        \"\"\"OGMP 2.0 Methane Loss Rate (%):"}

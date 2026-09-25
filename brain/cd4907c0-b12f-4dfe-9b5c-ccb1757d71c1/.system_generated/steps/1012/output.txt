@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1231,52 +1231,6 @@
+         iconColor={editingUser ? "#6366f1" : "#ff6600"}
+         iconBg={editingUser ? "rgba(99, 102, 241, 0.12)" : "rgba(255, 102, 0, 0.12)"}
+         width="560px"
+-        footer={
+-          <>
+-            <button
+-              id="um-modal-cancel"
+-              type="button"
+-              style={S.btnSecondary}
+-              onClick={() => setIsModalOpen(false)}
+-              onMouseEnter={(e) =>
+-                (e.currentTarget.style.background = "var(--bg-hover)")
+-              }
+-              onMouseLeave={(e) =>
+-                (e.currentTarget.style.background = "transparent")
+-              }
+-            >
+-              Cancel
+-            </button>
+-            <button
+-              id="um-modal-submit"
+-              type="submit"
+-              form="um-user-form"
+-              style={S.btnPrimary}
+-              onMouseEnter={(e) => {
+-                e.currentTarget.style.transform = "translateY(-1px)";
+-                e.currentTarget.style.boxShadow =
+-                  "0 8px 20px rgba(255,102,0,.35)";
+-              }}
+-              onMouseLeave={(e) => {
+-                e.currentTarget.style.transform = "none";
+-                e.currentTarget.style.boxShadow =
+-                  "0 4px 12px rgba(255,102,0,.25)";
+-              }}
+-            >
+-              {editingUser ? (
+-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+-                  <UserCheck size={16} />
+-                  Save Changes
+-                </span>
+-              ) : (
+-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+-                  <UserPlus size={16} />
+-                  Create User
+-                </span>
+-              )}
+-            </button>
+-          </>
+-        }
+       >
+         <form id="um-user-form" onSubmit={handleSubmit}>
+           {/* Section 1: Profile & Identity */}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

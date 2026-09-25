@@ -1,0 +1,17 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 1
+    import sqlite3; conn = sqlite3.connect('new/server/ghg_app.db'); cursor = conn.cursor(); cursor.execute(" SELECT name FROM sqlite_master WHERE type=table
+                                                                                                            ^
+SyntaxError: unterminated string literal (detected at line 1)
+\); print([r[0] for r in cursor.fetchall()]); conn.close() : The term '\); print([r[0] for r in cursor.fetchall()]); 
+conn.close()' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:168
++ ... ype='table';\"); print([r[0] for r in cursor.fetchall()]); conn.close ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (\); print([r[0]...); conn.close():String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+

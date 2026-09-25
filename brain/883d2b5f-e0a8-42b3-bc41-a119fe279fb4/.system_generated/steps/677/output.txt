@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope3Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -8,6 +8,7 @@
+ import { Upload, Trash2, Eye } from "lucide-react";
+ import EmissionResult from "./EmissionResult";
+ import CalculationDetails from "./CalculationDetails";
++import ConfirmModal from "./ConfirmModal";
+ import "./ScopeTables.css";
+ 
+ const Scope3Form = () => {
+@@ -14,6 +14,8 @@
+   const [loading, setLoading] = useState(false);
+   const [submitting, setSubmitting] = useState(false);
+   const [showWizard, setShowWizard] = useState(false);
++  const [deleteTargetId, setDeleteTargetId] = useState(null);
++  const [isDeleting, setIsDeleting] = useState(false);
+   const [year, setYear] = useState(new Date().getFullYear());
+   const [month, setMonth] = useState(new Date().getMonth() + 1);
+   const [facilityId, setFacilityId] = useState("");
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

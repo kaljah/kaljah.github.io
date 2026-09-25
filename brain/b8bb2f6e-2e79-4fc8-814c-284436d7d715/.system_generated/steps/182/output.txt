@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 16 items
+
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_stationary_combustion_tier1 PASSED [  6%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_stationary_combustion_tier3 PASSED [ 12%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_flaring_dual_efficiency PASSED [ 18%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_liquids_unloading PASSED [ 25%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_vessel_blowdown PASSED [ 31%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_storage_tanks_flashing PASSED [ 37%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_pneumatic_devices PASSED [ 43%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_acid_gas_removal PASSED [ 50%]
+tests/test_independent_differential.py::TestDifferentialScope1::test_diff_teg_dehydrator PASSED [ 56%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_grid_electricity PASSED [ 62%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_indirect_steam PASSED [ 68%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_cogen_allocation PASSED [ 75%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope3_spend_and_physical PASSED [ 81%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_uncertainty_product_and_sum PASSED [ 87%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_boe_and_carbon_intensity PASSED [ 93%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_ogmp_survey_reconciliation PASSED [100%]
+
+============================= 16 passed in 1.87s ==============================
+

@@ -1,0 +1,10 @@
+Task: 7895247f-bda5-4fd8-8253-ed7e451de5a2/task-877
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\7895247f-bda5-4fd8-8253-ed7e451de5a2\.system_generated\tasks\task-877.log
+Log output:
+[2026-09-24 20:38:01,616] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: cannot import name 'create_app' from 'app' (C:\Users\samsung\Desktop\H2\new\server\app.py)
+
+Last progress: 3s ago

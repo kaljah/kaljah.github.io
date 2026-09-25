@@ -1,0 +1,67 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -276,31 +276,38 @@
+         approved_at=datetime.datetime.now(datetime.timezone.utc) if initial_status == "Verified" else None,
+     )
+ 
+-    db.session.add(emission)
+-    db.session.commit()
++    try:
++        db.session.add(emission)
++        db.session.commit()
++    except Exception as e:
++        db.session.rollback()
++        return jsonify({"error": f"Failed to create Scope 2 emission: {str(e)}"}), 500
+ 
+     if user:
+-        from utils import log_activity_and_notify
+-        log_activity_and_notify(
+-            action="CREATE",
+-            record_id=str(emission.id),
+-            user=user,
+-            request=request,
+-            entity="Scope2Emission",
+-            details=f"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})",
+-        )
+-        from status import PENDING_STATUS_SET
+-        if initial_status in PENDING_STATUS_SET:
+-            from models import Notification, User
+-            admins = User.query.filter_by(role="admin", status="active").all()
+-            for admin in admins:
+-                Notification.create(
+-                    user_id=admin.id,
+-                    type="audit",
+-                    title="New Scope 2 Emission Pending Review",
+-                    message=f"A new Scope 2 emission record ({source_type}) was submitted by {user.fullName} and is awaiting your approval.",
+-                )
+-            db.session.commit()
++        try:
++            from utils import log_activity_and_notify
++            log_activity_and_notify(
++                action="CREATE",
++                record_id=str(emission.id),
++                user=user,
++                request=request,
++                entity="Scope2Emission",
++                details=f"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})",
++            )
++            from status import PENDING_STATUS_SET
++            if initial_status in PENDING_STATUS_SET:
++                from models import Notification, User
++                admins = User.query.filter_by(role="admin", status="active").all()
++                for admin in admins:
++                    Notification.create(
++                        user_id=admin.id,
++                        type="audit",
++                        title="New Scope 2 Emission Pending Review",
++                        message=f"A new Scope 2 emission record ({source_type}) was submitted by {user.fullName} and is awaiting your approval.",
++                    )
++                db.session.commit()
++        except Exception:
++            db.session.rollback()
+ 
+     from routes.dashboard import clear_dashboard_cache
+     clear_dashboard_cache()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

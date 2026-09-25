@@ -1,0 +1,72 @@
+
+The command exited with code 0.
+Output:
+    @staticmethod
+    def calculate_tier1_2(
+        fuel_quantity,
+        fuel_unit,
+        emission_factors,
+        fuel_type="natural_gas",
+        hhv=None,
+        gwp_standard="AR5",
+        gwp_horizon="100",
+    ):
+        qty = float(fuel_quantity or 0.0)
+        u_fuel = str(fuel_unit or "m3").strip().lower()
+        f_co2 = float(emission_factors.get("co2") or emission_factors.get("ef_co2") or 0.0)
+        f_ch4 = float(emission_factors.get("ch4") or emission_factors.get("ef_ch4") or 0.0)
+        f_n2o = float(emission_factors.get("n2o") or emission_factors.get("ef_n2o") or 0.0)
+        f_unit = str(emission_factors.get("unit") or "kg/unit").strip().lower()
+
+        # Handle Energy-based factor denominator (kg/MMBtu)
+        if "mmbtu" in f_unit:
+            if u_fuel in ["mmbtu", "mm_btu"]:
+                energy_mmbtu = qty
+            elif u_fuel in ["gj", "gigajoule"]:
+                energy_mmbtu = qty * 0.947817
+            elif u_fuel in ["therm", "therms"]:
+                energy_mmbtu = qty * 0.1
+            elif u_fuel in ["kwh"]:
+                energy_mmbtu = qty * 0.003412142
+            else:
+                fuel_lower = str(fuel_type or "").lower()
+                is_liquid = any(x in fuel_lower for x in ["oil", "diesel", "crude", "petrol", "gasoline", "liquid"]) or u_fuel in ["bbl", "gal", "l", "liter"]
+                if is_liquid:
+                    hhv_liq = float(hhv or 138000.0)
+                    gal = IndependentUnitConverter.convert(qty, u_fuel, "gal")
+                    energy_mmbtu = (gal * hhv_liq) / 1_000_000.0
+                else:
+                    hhv_gas = float(hhv or 1020.0)
+                    scf = IndependentUnitConverter.convert(qty, u_fuel, "scf")
+                    energy_mmbtu = (scf * hhv_gas) / 1_000_000.0
+
+            co2_kg = energy_mmbtu * f_co2
+            ch4_kg = energy_mmbtu * f_ch4
+            n2o_kg = energy_mmbtu * f_n2o
+        else:
+            # Physical unit conversion: convert activity quantity to factor denominator unit
+            f_denom = f_unit.split("/")[1].strip() if "/" in f_unit else "m3"
+            qty_in_f_denom = IndependentUnitConverter.convert(qty, u_fuel, f_denom)
+            co2_kg = qty_in_f_denom * f_co2
+            ch4_kg = qty_in_f_denom * f_ch4
+            n2o_kg = qty_in_f_denom * f_n2o
+
+        # Check numerator unit of EF (kg vs tonne vs gram)
+        f_num = f_unit.split("/")[0].strip() if "/" in f_unit else f_unit
+        if any(t in f_num for t in ["tonne", "metric_ton", "t co2", "tco2", "mt"]):
+            co2_t = co2_kg
+            ch4_t = ch4_kg
+            n2o_t = n2o_kg
+        elif any(g in f_num for g in ["g", "gram"]):
+            co2_t = co2_kg / 1_000_000.0
+            ch4_t = ch4_kg / 1_000_000.0
+            n2o_t = n2o_kg / 1_000_000.0
+        else:
+            co2_t = co2_kg / 1000.0
+            ch4_t = ch4_kg / 1000.0
+            n2o_t = n2o_kg / 1000.0
+
+        co2e = IndependentGWPModel.calculate_co2e(co2_t, ch4_t, n2o_t, standard=gwp_standard, horizon=gwp_horizon)
+        return {"co2": co2_t, "ch4": ch4_t, "n2o": n2o_t, "co2e": co2e}
+
+

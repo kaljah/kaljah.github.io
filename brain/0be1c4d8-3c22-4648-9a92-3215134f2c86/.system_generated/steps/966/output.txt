@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/emissions.py:2834:@emissions_bp.route("/upload/start", methods=["POST"])
+new/server/test_csv_uploader.py:125:            "/api/emissions/upload/start", data=data, content_type="multipart/form-data"
+new/server/tests/test_all_bulk_imports.py:118:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:143:    res_ov = client.post("/api/emissions/upload/start", data=data_overwrite, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:187:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:234:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:278:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:322:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:364:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:409:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+new/server/tests/test_all_bulk_imports.py:452:    res = client.post("/api/emissions/upload/start", data=data, content_type="multipart/form-data")
+

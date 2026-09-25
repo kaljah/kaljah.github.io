@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -547,6 +547,7 @@
+ 
+ 
+ @auth_bp.route("/change-password", methods=["POST"])
++@limiter.limit("5 per hour")
+ @login_required
+ def change_password():
+     user_id = session.get("user_id")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

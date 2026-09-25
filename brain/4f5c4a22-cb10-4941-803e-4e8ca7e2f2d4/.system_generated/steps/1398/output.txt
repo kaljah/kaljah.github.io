@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\components\Scope1Form.jsx:2323:          <table className="excel-table">
+  new\client\src\components\Scope1Form.jsx:2324:            <thead>
+  new\client\src\components\Scope1Form.jsx:2325:              <tr>
+  new\client\src\components\Scope1Form.jsx:2326:                <th>Year</th>
+  new\client\src\components\Scope1Form.jsx:2327:                <th>Activity</th>
+  new\client\src\components\Scope1Form.jsx:2328:                <th>Region</th>
+
+
+

@@ -1,0 +1,81 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 395 lines>
+[2026-09-19 20:31:06,100] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 3e7d8ded-3e5b-43e0-8843-4dd7c33b0d64]
+127.0.0.1 - - [19/Sep/2026 20:31:06] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:31:06,447] INFO in app: GET /api/qaqc/dashboard 200 [0.381s] [ReqID: 5f2eeba8-843b-4be9-b307-67671716d123]
+127.0.0.1 - - [19/Sep/2026 20:31:06] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:31:21,555] INFO in app: GET /api/auth/me 200 [0.002s] [ReqID: f1c2910f-95cc-48cf-b71c-66fdbd3ed81d]
+127.0.0.1 - - [19/Sep/2026 20:31:21] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 20:31:21,577] INFO in app: GET /api/auth/settings 200 [0.002s] [ReqID: e4d4f02c-6a73-442c-a035-eae3f4aa0eff]
+127.0.0.1 - - [19/Sep/2026 20:31:21] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 20:31:21,630] INFO in app: GET /api/notifications 200 [0.014s] [ReqID: 4006f357-d341-4d3e-8a33-9d13ab2539a7]
+127.0.0.1 - - [19/Sep/2026 20:31:21] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 20:31:21,652] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 98cc92fd-2aa2-4713-a872-10d445d1ff6d]
+127.0.0.1 - - [19/Sep/2026 20:31:21] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:31:21,940] INFO in app: GET /api/qaqc/dashboard 200 [0.322s] [ReqID: 33ed26e6-9e5a-4561-b66b-fff545a6da37]
+127.0.0.1 - - [19/Sep/2026 20:31:21] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:31:28,078] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 53b23fec-fa04-48b4-8c71-ac8a1b3c6cf4]
+127.0.0.1 - - [19/Sep/2026 20:31:28] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 20:31:28,105] INFO in app: GET /api/auth/settings 200 [0.002s] [ReqID: 845ff90b-d88d-4925-925f-f3916b5100b7]
+127.0.0.1 - - [19/Sep/2026 20:31:28] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 20:31:28,160] INFO in app: GET /api/notifications 200 [0.013s] [ReqID: c2e4b849-f58d-4446-991d-4b0e4fcdedcf]
+127.0.0.1 - - [19/Sep/2026 20:31:28] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 20:31:28,182] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: 7ab094ce-d5ec-477c-9310-3628ba0b7bba]
+127.0.0.1 - - [19/Sep/2026 20:31:28] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:31:28,523] INFO in app: GET /api/qaqc/dashboard 200 [0.374s] [ReqID: dd3e99f2-19a1-409a-bbcd-10a124a5d57a]
+127.0.0.1 - - [19/Sep/2026 20:31:28] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:31:50,504] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 53aede7f-0792-412a-b783-f3c6187d6c3a]
+127.0.0.1 - - [19/Sep/2026 20:31:50] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 20:31:50,531] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: 5306fb44-b18d-4d80-84e4-e05e716805c3]
+127.0.0.1 - - [19/Sep/2026 20:31:50] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 20:31:50,591] INFO in app: GET /api/notifications 200 [0.015s] [ReqID: b9bcc2ad-969d-4f0a-a722-c59ece1b9edc]
+127.0.0.1 - - [19/Sep/2026 20:31:50] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 20:31:50,618] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: fc68dfa4-a4bb-4d1b-9b6f-3956f929c4a4]
+127.0.0.1 - - [19/Sep/2026 20:31:50] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:31:50,911] INFO in app: GET /api/qaqc/dashboard 200 [0.334s] [ReqID: 19711dd9-2347-428f-a421-af355c25a5fc]
+127.0.0.1 - - [19/Sep/2026 20:31:50] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:32:34,603] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 02d911b4-ae6c-43cc-8469-333bb5011bf9]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 20:32:34,625] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: 56524605-26a2-482a-8e93-17aaf6917cb5]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 20:32:34,683] INFO in app: GET /api/notifications 200 [0.016s] [ReqID: 9c1792ac-de49-4ad3-9b4a-308c0de6631a]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 20:32:34,706] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 29fc8f02-745e-49b6-8b00-0d927138c70c]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:32:34,999] INFO in app: GET /api/qaqc/dashboard 200 [0.332s] [ReqID: 1fdf00ec-b39f-4b7d-964f-8b728b9ce238]
+127.0.0.1 - - [19/Sep/2026 20:32:35] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:33:17,454] INFO in app: GET /api/qaqc/dashboard 200 [0.338s] [ReqID: 2fa0c22b-f1f6-48f5-b920-4d0ccbc55309]
+127.0.0.1 - - [19/Sep/2026 20:33:17] "GET /api/qaqc/dashboard?limit=100&offset=0&status=pending HTTP/1.1" 200 -
+[2026-09-19 20:33:18,224] INFO in app: GET /api/qaqc/dashboard 200 [0.397s] [ReqID: 581b904f-8b21-4ab7-922e-de78ccc98e38]
+127.0.0.1 - - [19/Sep/2026 20:33:18] "GET /api/qaqc/dashboard?limit=100&offset=0&status=verified HTTP/1.1" 200 -
+[2026-09-19 20:33:18,679] INFO in app: GET /api/qaqc/dashboard 200 [0.383s] [ReqID: 89b2b590-2a5c-4446-a884-8272d96896fe]
+127.0.0.1 - - [19/Sep/2026 20:33:18] "GET /api/qaqc/dashboard?limit=100&offset=0&status=rejected HTTP/1.1" 200 -
+[2026-09-19 20:33:20,316] INFO in app: GET /api/qaqc/dashboard 200 [0.381s] [ReqID: 0de78c97-5b48-466c-a71b-f2c39fc240df]
+127.0.0.1 - - [19/Sep/2026 20:33:20] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:33:21,753] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: d1d7db84-1b6d-411d-a4fd-7fe932929dc0]
+127.0.0.1 - - [19/Sep/2026 20:33:21] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:33:22,795] INFO in app: GET /api/qaqc/dashboard 200 [0.353s] [ReqID: 1a8d7cff-e257-47ec-a08d-996fbe14298f]
+127.0.0.1 - - [19/Sep/2026 20:33:22] "GET /api/qaqc/dashboard?limit=100&offset=0&status=pending HTTP/1.1" 200 -
+[2026-09-19 20:33:23,439] INFO in app: GET /api/qaqc/dashboard 200 [0.427s] [ReqID: 64c6c365-5919-452a-9450-49d3c472d121]
+127.0.0.1 - - [19/Sep/2026 20:33:23] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:33:31,103] INFO in app: GET /api/auth/me 200 [0.002s] [ReqID: 7770deb6-be83-443c-95ff-8e810aeabc73]
+127.0.0.1 - - [19/Sep/2026 20:33:31] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 20:33:31,108] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 4e261ae6-1acd-4cc2-8d28-9a650c740365]
+127.0.0.1 - - [19/Sep/2026 20:33:31] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-19 20:33:31,134] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: 14d69e93-9f0c-4368-b1ef-c5cb8bceccb1]
+127.0.0.1 - - [19/Sep/2026 20:33:31] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 20:33:31,195] INFO in app: GET /api/notifications 200 [0.010s] [ReqID: 157feda6-02b8-4df2-a5f5-e4f5b2f1fa22]
+127.0.0.1 - - [19/Sep/2026 20:33:31] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 20:33:31,236] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 97733a3e-fec3-4177-a8f3-7209605ec3af]
+127.0.0.1 - - [19/Sep/2026 20:33:31] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:33:31,458] INFO in app: POST /api/auth/login 200 [0.085s] [ReqID: f939558c-f74e-4825-98ec-a96b57bba4c5]
+127.0.0.1 - - [19/Sep/2026 20:33:31] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-19 20:33:31,837] INFO in app: GET /api/qaqc/dashboard 200 [0.354s] [ReqID: d1970626-8045-48a7-b157-542c9b9db2fd]
+127.0.0.1 - - [19/Sep/2026 20:33:31] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+[2026-09-19 20:33:33,909] INFO in app: GET /api/qaqc/dashboard 200 [0.425s] [ReqID: 322df18c-54ab-406b-acfe-65aea3bed1b7]
+127.0.0.1 - - [19/Sep/2026 20:33:33] "GET /api/qaqc/dashboard?status=all HTTP/1.1" 200 -
+[2026-09-19 20:33:36,333] INFO in app: GET /api/qaqc/dashboard 200 [0.400s] [ReqID: 91c8f4a0-a8cb-4d67-b5f0-84b80c857bb3]
+127.0.0.1 - - [19/Sep/2026 20:33:36] "GET /api/qaqc/dashboard?status=rejected HTTP/1.1" 200 -
+

@@ -1,0 +1,2 @@
+Created file file:///C:/Users/samsung/Desktop/H2/scratch/press_all_dashboard_buttons_and_verify_charts.py with requested content.
+If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.

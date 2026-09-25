@@ -1,0 +1,56 @@
+
+The command exited with code 1.
+Output:
+********************************************************************************
+STARTING EXHAUSTIVE WHOLE-SOFTWARE QA CAMPAIGN
+********************************************************************************
+
+================================================================================
+MODULE 1: TESTING ALL 16 BACKEND API BLUEPRINTS
+================================================================================
+Logged in as Admin: admin@ghg.com (role: admin)
+
+API Blueprint Coverage Results:
+  [FAIL] GET /api/auth/current-user (HTTP 404)
+  [FAIL] GET /api/auth/users (HTTP 403)
+  [PASS] GET /api/facilities (HTTP 200)
+  [FAIL] GET /api/facilities/all-regions (HTTP 403)
+  [PASS] GET /api/emissions/ (HTTP 200)
+  [PASS] GET /api/emissions/pending (HTTP 200)
+  [PASS] GET /api/emissions/template/csv (HTTP 200)
+  [PASS] GET /api/emissions/template/excel (HTTP 200)
+  [PASS] GET /api/scope2 (HTTP 200)
+  [PASS] GET /api/scope2/emission-factors (HTTP 200)
+  [PASS] GET /api/scope3 (HTTP 200)
+  [PASS] GET /api/production/years (HTTP 200)
+  [PASS] GET /api/sources (HTTP 200)
+  [PASS] GET /api/custom-factors (HTTP 200)
+  [PASS] GET /api/mitigation (HTTP 200)
+  [PASS] GET /api/emission-factors (HTTP 200)
+  [PASS] GET /api/emission-factors/segments (HTTP 200)
+  [PASS] GET /api/emission-factors/process-types (HTTP 200)
+  [PASS] GET /api/emission-factors/stats (HTTP 200)
+  [PASS] GET /api/qaqc/dashboard (HTTP 200)
+  [PASS] GET /api/reports/ogmp-export (HTTP 200)
+  [PASS] GET /api/reports/export (PDF) (HTTP 200)
+  [PASS] GET /api/satellite/sentinel5p/layer-config (HTTP 200)
+  [PASS] GET /api/sbti (HTTP 200)
+  [PASS] GET /api/goals (HTTP 200)
+  [PASS] GET /api/audit/stats (HTTP 200)
+  [PASS] GET /api/base-years (HTTP 200)
+  [PASS] GET /api/health (HTTP 200)
+  [PASS] GET /api/health/live (HTTP 200)
+  [PASS] GET /api/health/ready (HTTP 200)
+  [PASS] GET /api/docs/ (Swagger) (HTTP 200)
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 590, in <module>
+    success = run_full_qa_orchestration()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 568, in run_full_qa_orchestration
+    m1_ok = test_all_api_blueprints()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 175, in test_all_api_blueprints
+    assert passed_count == len(results), f"Some blueprints failed: {results}"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Some blueprints failed: [('GET /api/auth/current-user', False, 404), ('GET /api/auth/users', False, 403), ('GET /api/facilities', True, 200), ('GET /api/facilities/all-regions', False, 403), ('GET /api/emissions/', True, 200), ('GET /api/emissions/pending', True, 200), ('GET /api/emissions/template/csv', True, 200), ('GET /api/emissions/template/excel', True, 200), ('GET /api/scope2', True, 200), ('GET /api/scope2/emission-factors', True, 200), ('GET /api/scope3', True, 200), ('GET /api/production/years', True, 200), ('GET /api/sources', True, 200), ('GET /api/custom-factors', True, 200), ('GET /api/mitigation', True, 200), ('GET /api/emission-factors', True, 200), ('GET /api/emission-factors/segments', True, 200), ('GET /api/emission-factors/process-types', True, 200), ('GET /api/emission-factors/stats', True, 200), ('GET /api/qaqc/dashboard', True, 200), ('GET /api/reports/ogmp-export', True, 200), ('GET /api/reports/export (PDF)', True, 200), ('GET /api/satellite/sentinel5p/layer-config', True, 200), ('GET /api/sbti', True, 200), ('GET /api/goals', True, 200), ('GET /api/audit/stats', True, 200), ('GET /api/base-years', True, 200), ('GET /api/health', True, 200), ('GET /api/health/live', True, 200), ('GET /api/health/ready', True, 200), ('GET /api/docs/ (Swagger)', True, 200)]
+

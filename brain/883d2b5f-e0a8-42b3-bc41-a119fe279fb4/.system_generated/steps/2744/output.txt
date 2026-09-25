@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -422,8 +422,13 @@
+                     else:
+                         row_dict[h] = None
+ 
+-                # Extract mapped values
+-                mapped_data = {}
++                # Extract mapped values, preserving raw entries as case/spacing-insensitive fallbacks
++                mapped_data = {
++                    str(k).lower().replace("_", "").replace(" ", ""): v
++                    for k, v in row_dict.items()
++                    if k is not None
++                }
++                mapped_data.update(row_dict)
+                 for sys_key, header_name in mapping.items():
+                     if header_name:
+                         mapped_data[sys_key] = row_dict.get(header_name)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

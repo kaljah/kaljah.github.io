@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\equity_routes.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -99,7 +99,8 @@
+     if not facility_id or not partner_id or equity_pct is None:
+         return jsonify({"error": "facility_id, partner_id, and equity_share_pct are required"}), 400
+ 
+-    require_facility_access(user, int(facility_id))
++    if not require_facility_access(user, int(facility_id)):
++        return jsonify({"error": "Forbidden: You do not have access to this facility"}), 403
+ 
+     start_date = data.get("effective_start_date", "2021-01-01")
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

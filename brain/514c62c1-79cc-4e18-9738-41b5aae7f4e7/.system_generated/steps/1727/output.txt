@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":175,"LineContent":"@auth_bp.route(\"/register\", methods=[\"POST\"])"}

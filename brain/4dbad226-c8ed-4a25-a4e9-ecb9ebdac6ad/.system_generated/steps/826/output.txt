@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 9
+    assert tank_f.get('ch4') == 0.193, f'Expected 0.193, got {tank_f.get(" ch4\)}'
+                                                                         ^
+SyntaxError: unterminated string literal (detected at line 9)
+

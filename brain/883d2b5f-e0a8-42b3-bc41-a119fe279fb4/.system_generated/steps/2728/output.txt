@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -732,6 +732,7 @@
+         ("user_unc_n2o", "user uncertainty n2o"),
+         # Scope 2 fields
+         ("grid_region", "grid region"),
++        ("grid_region", "grid_region"),
+         (
+             "grid_region",
+             "region",
+@@ -738,13 +738,35 @@
+         ("consumption", "consumption"),
+         ("consumption", "kwh"),
++        ("consumption", "electricitykwh"),
++        ("consumption", "electricity"),
++        ("consumption", "steammmbtu"),
++        ("consumption", "steam"),
++        ("source_type", "source type"),
++        ("source_type", "source_type"),
++        ("source_type", "factor type"),
++        ("source_type", "factortype"),
++        ("source_type", "utility type"),
++        ("factor", "factor"),
++        ("unit", "heatunit"),
++        ("unit", "heat unit"),
+         # Scope 3 fields
+         ("category", "category"),
+         ("sub_category", "sub category"),
+-        ("amount", "amount"),
++        ("sub_category", "sub_category"),
++        ("amount", "activity amount"),
++        ("amount", "activity_amount"),
+         ("amount", "activity data"),
++        ("amount", "activity_data"),
++        ("amount", "amount"),
++        ("amount", "quantity"),
+         ("emission_factor", "emission factor"),
++        ("emission_factor", "emission_factor"),
+         ("emission_factor", "ef"),
++        ("emission_factor", "factor"),
+         ("ef_unit", "ef unit"),
++        ("ef_unit", "ef_unit"),
++        ("ef_unit", "emission factor unit"),
++        ("ef_unit", "factor unit"),
+         ("co2e", "co2e"),
+         ("notes", "notes"),
+         # Sources fields
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

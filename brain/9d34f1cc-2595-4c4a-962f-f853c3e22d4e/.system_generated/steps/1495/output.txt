@@ -1,0 +1,200 @@
+
+The command exited with code 0.
+Output:
+<truncated 31 lines>
++        V_std = (pi/4) * D^2 * Depth * (P_tubing_abs / P_std) * (T_std / T_well_abs) * (1 / Z)
+         """
+         self.validate_inputs(
+             {
+@@ -354,21 +356,33 @@ class LiquidsUnloadingCalculator(BaseCalculator):
+         # Volume at tubing conditions (m3)
+         v_tubing = (math.pi / 4.0) * (d_m**2) * depth_m
+ 
+-        # Pressure and temperature correction (API Eq. 6-3 & §4.2.1)
++        # Pressure, temperature, and compressibility correction (API Eq. 6-3 & §4.2.1)
+         p_abs = to_psia(pressure, press_unit)
+         p_factor = p_abs / STD_PRESSURE_PSIA
+ 
+         t_abs_k = to_kelvin(operating_temperature, temp_unit)
+         t_factor = STD_TEMP_K / max(1.0, t_abs_k)
+ 
+-        v_std = v_tubing * p_factor * t_factor
++        z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
++
++        v_std = v_tubing * p_factor * t_factor * (1.0 / z)
+         total_v_std = v_std * float(events)
+ 
+-        ch4_vol = total_v_std * float(ch4_content)
++        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
++        if c_ch4 > 1.0:
++            c_ch4 /= 100.0
++        c_ch4 = max(0.0, min(1.0, c_ch4))
++
++        c_co2 = float(co2_content or 0.0)
++        if c_co2 > 1.0:
++            c_co2 /= 100.0
++        c_co2 = max(0.0, min(1.0, c_co2))
++
++        ch4_vol = total_v_std * c_ch4
+         ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
+         ch4_tonnes = ch4_mass_kg / 1000.0
+ 
+-        co2_vol = total_v_std * float(co2_content or 0.0)
++        co2_vol = total_v_std * c_co2
+         co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
+         co2_tonnes = co2_mass_kg / 1000.0
+ 
+@@ -445,6 +459,7 @@ class BlowdownCalculator(BaseCalculator):
+         hhv=1020.0,
+         gwp_dict=None,
+     ):
++        uncertainties = uncertainties or {}
+         self.validate_inputs(
+             {
+                 "blowdown_volume": blowdown_volume,
+@@ -454,9 +469,9 @@ class BlowdownCalculator(BaseCalculator):
+             ["blowdown_volume", "pressure", "events"],
+         )
+ 
+-        # API Eq. 6-4 with complete temperature and pressure normalization (CALC-06 Remediation)
+-        p_abs = to_psia(pressure, press_unit)
+-        p_factor = p_abs / STD_PRESSURE_PSIA
++        # API Eq. 6-4: Vessel depressurization to standard atmospheric pressure
++        p_initial_psia = to_psia(pressure, press_unit)
++        p_factor = p_initial_psia / STD_PRESSURE_PSIA
+ 
+         t_abs_k = to_kelvin(operating_temperature, temp_unit)
+         t_factor = STD_TEMP_K / max(1.0, t_abs_k)
+@@ -466,11 +481,21 @@ class BlowdownCalculator(BaseCalculator):
+         v_std_per_event = float(blowdown_volume) * p_factor * t_factor * (1.0 / z)
+         total_v_std = v_std_per_event * float(events)
+ 
+-        ch4_vol = total_v_std * float(ch4_content)
++        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
++        if c_ch4 > 1.0:
++            c_ch4 /= 100.0
++        c_ch4 = max(0.0, min(1.0, c_ch4))
++
++        c_co2 = float(co2_content or 0.0)
++        if c_co2 > 1.0:
++            c_co2 /= 100.0
++        c_co2 = max(0.0, min(1.0, c_co2))
++
++        ch4_vol = total_v_std * c_ch4
+         ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
+         ch4_tonnes = ch4_mass_kg / 1000.0
+ 
+-        co2_vol = total_v_std * float(co2_content or 0.0)
++        co2_vol = total_v_std * c_co2
+         co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
+         co2_tonnes = co2_mass_kg / 1000.0
+ 
+@@ -545,6 +570,7 @@ class TankFlashingCalculator(BaseCalculator):
+         If Flashing: Uses GOR method with flared combustion products when control_efficiency > 0.
+         If Working/Breathing: Uses simple Factor * Throughput.
+         """
++        uncertainties = uncertainties or {}
+         self.validate_inputs({"throughput": throughput}, ["throughput"])
+ 
+         is_flashing = process_type in ["tank_flashing", "tank", "storage_tanks"] or (gas_oil_ratio and float(gas_oil_ratio) > 0 and not ef_ch4)
+@@ -585,7 +611,11 @@ class TankFlashingCalculator(BaseCalculator):
+                 process_category="tank_flashing",
+             )
+         else:
+-            ch4_kg = float(throughput) * float(ef_ch4 or 0.0)
++            ctrl_eff = float(control_efficiency or 0.0)
++            if ctrl_eff > 1.0:
++                ctrl_eff /= 100.0
++            ctrl_eff = max(0.0, min(1.0, ctrl_eff))
++            ch4_kg = float(throughput) * float(ef_ch4 or 0.0) * (1.0 - ctrl_eff)
+             ch4_tonnes = ch4_kg / 1000.0
+             total_ch4 = ch4_tonnes
+             total_co2 = 0.0
+@@ -633,12 +663,14 @@ class PneumaticDeviceCalculator(BaseCalculator):
+         ch4_content=0.85,
+         uncertainties=None,
+         actuations=None,
++        co2_content=0.0,
+         gwp_dict=None,
+     ):
+         """
+         API Section 6.10 & EPA Subpart W §98.233(a):
+         - Continuous bleed: Device count * Hours * Bleed rate (scf/hr)
+         - Intermittent / actuation-based: Device count * Actuations * Bleed per event (scf/actuation)
++        Accounts for both CH4 and native CO2 in supply gas.
+         """
+         uncertainties = uncertainties or {}
+         self.validate_inputs(
+@@ -646,14 +678,22 @@ class PneumaticDeviceCalculator(BaseCalculator):
+             ["count"],
+         )
+ 
++        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
++        if c_ch4 > 1.0:
++            c_ch4 /= 100.0
++        c_ch4 = max(0.0, min(1.0, c_ch4))
++
++        c_co2 = float(co2_content or 0.0)
++        if c_co2 > 1.0:
++            c_co2 /= 100.0
++        c_co2 = max(0.0, min(1.0, c_co2))
++
+         is_intermittent = actuations is not None and float(actuations) > 0
+         if is_intermittent:
+             # Bleed rate is scf/event (default 13.5 scf/event per EPA Subpart W Table W-1 / API §6.10 if bleed_rate <= 0)
+             event_bleed_scf = float(bleed_rate) if (bleed_rate and float(bleed_rate) > 0) else 13.5
+             event_bleed_m3 = convert(event_bleed_scf, "scf", "m3")
+-            total_ch4_vol = (
+-                float(count) * float(actuations) * event_bleed_m3 * float(ch4_content)
+-            )
++            total_bleed_vol = float(count) * float(actuations) * event_bleed_m3
+         else:
+             self.validate_inputs(
+                 {"hours": hours, "bleed_rate": bleed_rate},
+@@ -661,13 +701,16 @@ class PneumaticDeviceCalculator(BaseCalculator):
+             )
+             # Bleed rate in scf/hr -> m3/hr
+             bleed_m3_hr = convert(float(bleed_rate), "scf", "m3")
+-            total_ch4_vol = (
+-                float(count) * float(hours) * bleed_m3_hr * float(ch4_content)
+-            )
++            total_bleed_vol = float(count) * float(hours) * bleed_m3_hr
+ 
++        total_ch4_vol = total_bleed_vol * c_ch4
+         ch4_mass_kg = total_ch4_vol * CONVERSIONS["density_ch4"]
+         ch4_tonnes = ch4_mass_kg / 1000.0
+ 
++        total_co2_vol = total_bleed_vol * c_co2
++        co2_mass_kg = total_co2_vol * CONVERSIONS["density_co2"]
++        co2_tonnes = co2_mass_kg / 1000.0
++
+         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+         ch4_res = propagate_uncertainty(
+             ch4_tonnes,
+@@ -676,11 +719,22 @@ class PneumaticDeviceCalculator(BaseCalculator):
+             process_category="pneumatic",
+             gas="ch4",
+         )
+-        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
++        co2_res = propagate_uncertainty(
++            co2_tonnes,
++            resolve_ef_uncertainty("pneumatic", "co2", _tier, uncertainties.get("co2")),
++            tier=_tier,
++            process_category="pneumatic",
++            gas="co2",
++        ) if co2_tonnes > 0 else None
++
++        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict)
++
++        result_kwargs = {"ch4": ch4_res, "total_co2e": total_co2e}
++        if co2_res is not None:
++            result_kwargs["co2"] = co2_res
+ 
+         return self.format_result(
+-            ch4=ch4_res,
+-            total_co2e=total_co2e,
++            **result_kwargs,
+             inputs={
+                 "device_count": count,
+                 "hours_operating": hours if not is_intermittent else None,
+

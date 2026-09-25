@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -680,6 +680,7 @@
+     division=None,
+     allowed_fids=None,
+     segment=None,
++    gwp_horizon="100",
+ ):
+     """Pure query logic for /categorical-breakdown — returns a plain Python list."""
+     query = db.session.query(
+@@ -686,6 +686,9 @@
+         Facility.division,
+         Facility.name.label("region"),
+         Facility.field,
++        func.sum(Emission.co2_emissions).label("co2_total"),
++        func.sum(Emission.ch4_emissions).label("ch4_total"),
++        func.sum(Emission.n2o_emissions).label("n2o_total"),
+         func.sum(Emission.co2e_total).label("total_emissions"),
+     ).join(Facility, Emission.facility_id == Facility.id)
+     if allowed_fids is not None:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

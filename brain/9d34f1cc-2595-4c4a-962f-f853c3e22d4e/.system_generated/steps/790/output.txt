@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/data.py:5:from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+new/server/routes/data.py:37:            if not require_facility_access(user, fid):
+new/server/routes/data.py:88:    if not require_facility_access(user, fid):
+new/server/routes/data.py:227:    if not require_facility_access(user, prod.facility_id):
+new/server/routes/data.py:469:    if not require_facility_access(user, facility_id):
+new/server/routes/data.py:508:        if not require_facility_access(user, record.facility_id):
+new/server/routes/data.py:578:    if not require_facility_access(user, record.facility_id):
+new/server/routes/data.py:625:    if not require_facility_access(user, facility_id):
+new/server/routes/data.py:767:        if not require_facility_access(user, facility_id):
+new/server/routes/data.py:797:            if not require_facility_access(user, record.facility_id):
+new/server/routes/data.py:858:        if not require_facility_access(user, record.facility_id):
+new/server/routes/scope2.py:8:from utils import get_current_user, get_allowed_facility_ids, require_facility_access
+new/server/routes/scope2.py:369:    if not require_facility_access(user, emission.facility_id):
+new/server/routes/scope2.py:392:        if not require_facility_access(user, new_fid):
+new/server/routes/scope2.py:510:        if not require_facility_access(user, emission.facility_id):
+new/server/routes/scope3.py:8:from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+new/server/routes/scope3.py:230:    if not require_facility_access(user, emission.facility_id):
+new/server/routes/scope3.py:253:        if not require_facility_access(user, new_fid):
+new/server/routes/scope3.py:334:        if not require_facility_access(user, emission.facility_id):
+new/server/utils.py:55:def require_facility_access(user, facility_id):
+

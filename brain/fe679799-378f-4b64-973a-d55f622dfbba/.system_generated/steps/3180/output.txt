@@ -1,0 +1,22 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-3174
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-3174.log
+Log output:
+<truncated 3 lines>
+sion=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 1054 items
+
+new\server\tests\test_aggregation_reconciliation.py ......               [  0%]
+new\server\tests\test_all_bulk_imports.py ..........                     [  1%]
+new\server\tests\test_all_process_types_matrix.py ...................... [  3%]
+........................................................................ [ 10%]
+.......................................................                  [ 15%]
+new\server\tests\test_api_security.py ...............                    [ 17%]
+new\server\tests\test_audit.py ........                                  [ 17%]
+new\server\tests\test_audit_bug_fixes.py ....                            [ 18%]
+new\server\tests\test_audit_remediation.py ............................. [ 20%]
+......
+Last progress: 0s ago

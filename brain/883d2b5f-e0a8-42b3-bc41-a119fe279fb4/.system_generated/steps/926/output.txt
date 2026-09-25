@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -423,10 +423,11 @@
+                 continue
+ 
+             # 2. Extract Data and Calculate
++            from background_processor import _clean_float
+             cat = rec.get("category", "11")
+             sub_cat = rec.get("sub_category")
+-            amt = float(rec.get("amount") or 0)
+-            ef = float(rec.get("emission_factor") or 0)
++            amt = _clean_float(rec.get("amount"), default=0.0)
++            ef = _clean_float(rec.get("emission_factor"), default=0.0)
+             ef_unit = str(rec.get("ef_unit") or "kg").lower()
+ 
+             # co2e stored in the DB is always in TONNES CO2e.
+@@ -433,5 +433,5 @@
+             if rec.get("co2e"):
+-                co2e = float(rec.get("co2e"))
++                co2e = _clean_float(rec.get("co2e"), default=0.0)
+             elif "t" in ef_unit or "tonne" in ef_unit:
+                 # EF is in t CO2e/unit (e.g. 0.43 tCO2e/bbl for crude) -> result already in tonnes
+                 co2e = amt * ef
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

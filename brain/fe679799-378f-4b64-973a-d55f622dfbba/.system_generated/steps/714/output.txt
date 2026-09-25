@@ -1,0 +1,95 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -127,7 +127,7 @@
+     include_pending = request.args.get("includePending") == "true"
+ 
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -346,7 +346,7 @@
+ @login_required
+ def get_intensity_trend():
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -847,7 +847,7 @@
+     Delegates to _query_summary() for thread-safe reuse.
+     """
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -874,7 +874,7 @@
+ def get_available_years():
+     """Get list of all years present in the emissions and production data"""
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -890,7 +890,7 @@
+     Delegates to _query_mitigation() for thread-safe reuse.
+     """
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -914,7 +914,7 @@
+     Delegates to _query_scope3_summary() for thread-safe reuse.
+     """
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -993,7 +993,7 @@
+     Delegates to _query_categorical_breakdown() for thread-safe reuse.
+     """
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -1092,7 +1092,7 @@
+     Returns compliance deadlines, current L1-L5 levels, and reconciliation status.
+     """
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -1257,7 +1257,7 @@
+     Delegates to _query_intensity_stats() for thread-safe reuse.
+     """
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+@@ -2621,7 +2621,7 @@
+ def get_report_exclusions():
+     """Fetches items marked as exclusions for the report."""
+     user = get_current_user()
+-    if user and user.role == "it_admin":
++    if is_it_role(user):
+         return (
+             jsonify(
+                 {"error": "Forbidden: IT Administrators cannot access operational dashboard data"}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+<truncated 16 lines>
+brain/a90eeb0f-bc98-475f-a28e-d9a7a21e0fc8/implementation_plan.md.resolved.10:> The current implementation uses **simulated data** based on defined "zones" (Algerian oil fields). This update will extend the simulation logic to other pollutants with plausible values and distinct visual styles (colors). It will NOT connect to the live ESA Copernicus API unless specifically requested and credentials are provided, as that requires complex authentication and data processing.
+brain/c9768850-e325-4576-9c89-09f39787fb7c/walkthrough.md:- **Data Layers**: Added simulated red "pulsating" hotspots over active Algerian zones.
+brain/c9768850-e325-4576-9c89-09f39787fb7c/walkthrough.md.resolved:- **Data Layers**: Added simulated red "pulsating" hotspots over active Algerian zones.
+brain/c9768850-e325-4576-9c89-09f39787fb7c/walkthrough.md.resolved.11:- **Data Layers**: Added simulated red "pulsating" hotspots over active Algerian zones.
+docs/calculation-specification.md:  - Algerian National Grid: $0.522$
+docs/calculation-specification.md:  - Algerian Grid North: $0.510$
+docs/calculation-specification.md:  - Algerian Grid South (Isolated): $0.650$
+graphify-out/graph.json:      "label": "Ensure Algerian Executive Decree 06-138 limits are populated.",
+graphify-out/graph.json:      "norm_label": "ensure algerian executive decree 06-138 limits are populated."
+graphify-out/graph.json:      "label": "Evaluates Criteria Air Pollutant compliance against Algerian Executive Decree\u2026",
+graphify-out/graph.json:      "norm_label": "evaluates criteria air pollutant compliance against algerian executive decree..."
+graphify-out/graph.json:      "label": ".test_tier2_algerian_gas_sonatrach_iso6976()",
+graphify-out/graph.json:      "id": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gas_sonatrach_iso6976",
+graphify-out/graph.json:      "norm_label": ".test_tier2_algerian_gas_sonatrach_iso6976()"
+graphify-out/graph.json:      "label": ".test_tier2_algerian_gasoil_ianor_na8110()",
+graphify-out/graph.json:      "id": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gasoil_ianor_na8110",
+graphify-out/graph.json:      "norm_label": ".test_tier2_algerian_gasoil_ianor_na8110()"
+graphify-out/graph.json:      "source": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gas_sonatrach_iso6976",
+graphify-out/graph.json:      "source": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gasoil_ianor_na8110",
+graphify-out/graph.json:      "target": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gas_sonatrach_iso6976",
+graphify-out/graph.json:      "target": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gasoil_ianor_na8110",
+graphify-out/graph.json:      "target": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gas_sonatrach_iso6976",
+graphify-out/graph.json:      "target": "new_server_tests_test_tier_scope_kpi_numerical_testofficialpresetstier2_test_tier2_algerian_gasoil_ianor_na8110",
+new/client/src/components/Scope1Form.jsx:                                  Official Legal & Standard Presets (Algerian Law / API Compendium)
+new/client/src/pages/MethaneExplorer.jsx:  const [mapCenter, setMapCenter] = useState([31.68, 6.07]); // Default centered on Algerian basin
+new/client/src/utils/ModernReportGenerator.js:      "Flaring operations are classified into Routine, Non-Routine, and Safety flaring pursuant to the World Bank Zero Routine Flaring (ZRF) initiative and Algerian Executive Decree No. 21-330. Executive Decree 21-330 Article 9 imposes a binding national limit: total volume of gas flared from hydrocarbon production and processing installations must remain below 1.00% of gross gas production.",
+new/client/src/utils/ModernReportGenerator.js:      "Criteria Air Pollutants (CAP) are estimated under a dual methodology combining API Compendium 2021 Section 4/5 stoichiometric emission factors for mass emissions with isokinetic stack sampling in accordance with Algerian Executive Decree No. 06-138. Decree 06-138 establishes atmospheric emission limit values (ELVs) in mg/Nm³ for classified industrial facilities.",
+new/client/src/utils/ModernReportGenerator.js:      "This greenhouse gas inventory was compiled in compliance with Algerian national environmental legislation and international climate reporting standards. Primary statutory references include:",
+new/server/background_processor.py:        grid_region = "Algerian National Grid"
+new/server/background_processor.py:        factor_info = GRID_FACTORS.get("Algerian National Grid", {"factor": 0.522})
+new/server/electricity_factors.py:    "Algerian National Grid": {
+new/server/electricity_factors.py:        "description": "Algerian electricity mix (primarily Natural Gas)",
+new/server/electricity_factors.py:    "Algerian Grid - North": {
+new/server/electricity_factors.py:    "Algerian Grid - South / Isolated": {
+new/server/generate_test_csvs.py:    ["ADR", 2024, 1, "electricity", "Algerian National Grid", 50000, "kWh"],
+new/server/generate_test_csvs.py:    ["HBK", 2024, 3, "indirect_steam", "Algerian National Grid", 1500, "MMBtu"],
+new/server/generate_test_csvs.py:    ["GTL", 2024, 4, "cogen_allocation", "Algerian National Grid", 800, "tCO2e"],
+new/server/generate_test_csvs.py:    ["NON_EXISTENT_FACILITY", 2024, 6, "electricity", "Algerian National Grid", 1000, "kWh"],
+new/server/models.py:    Complies with Algerian Executive Decree 06-138 and API Compendium 2021.
+new/server/models.py:    Default standard: Algerian Executive Decree No. 06-138.
+new/server/models.py:    and field-measured DRE for Algerian Executive Decree 21-330 compliance.
+new/server/restore_full_data.py:# Standard Facilities across Algerian Oil & Gas assets
+new/server/restore_full_data.py:                    # Algerian grid factor ~0.55 kgCO2e/kWh = 0.00055 tCO2e/kWh
+new/server/restore_full_data.py:                        grid_region="Algerian National Grid",
+new/server/routes/dashboard.py:    Evaluates compliance against Algerian Executive Decree 21-330 Article 9 (1.00% threshold).
+new/server/test_scope2.csv:ADR,2024,1,electricity,Algerian National Grid,50000,kWh
+new/server/test_scope2.csv:HBK,2024,3,indirect_steam,Algerian National Grid,1500,MMBtu
+new/server/test_scope2.csv:GTL,2024,4,cogen_allocation,Algerian National Grid,800,tCO2e
+new/server/test_scope2.csv:NON_EXISTENT_FACILITY,2024,6,electricity,Algerian National Grid,1000,kWh
+new/server/tests/test_all_bulk_imports.py:        "Test Facility A,2024,6,Algerian National Grid,1000,MWh\n"
+new/server/tests/test_emission_factor_selection.py:        "Algerian National Grid",
+new/server/tests/test_independent_differential.py:        grid_ef = 0.522  # Algerian National Grid
+new/server/tests/test_tier_scope_kpi_numerical.py:        - Algerian National Grid: 0.522 kg/kWh
+new/server/tests/test_tier_scope_kpi_numerical.py:        for region, expected_factor in [("US Average", 0.385), ("EU Grid Average", 0.295), ("Algerian National Grid", 0.522)]:
+new/server/tests/test_tier_scope_kpi_numerical.py:            elif region == "Algerian National Grid":
+new/server/tests/test_tier_scope_kpi_numerical.py:    def test_tier2_algerian_gas_sonatrach_iso6976(self):
+new/server/tests/test_tier_scope_kpi_numerical.py:    def test_tier2_algerian_gasoil_ianor_na8110(self):
+validation/golden_dataset/dataset_generator.py:        grid_ef=0.522,  # Algerian National Grid
+validation/golden_dataset/dataset_generator.py:        emission_factor={"factor": 0.522, "unit": "kg CO2e/kWh", "grid": "Algerian National Grid"},
+validation/golden_dataset/dataset_generator.py:        assumptions="500 MWh consumption in Algerian National Grid",
+validation/golden_dataset/golden_cases.json:      "grid": "Algerian National Grid"
+validation/golden_dataset/golden_cases.json:    "assumptions": "500 MWh consumption in Algerian National Grid",
+

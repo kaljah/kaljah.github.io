@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Login status: 200
+Login resp: {'message': 'Login successful', 'user': {'default_activity': None, 'default_division': None, 'default_facility_id': None, 'default_facility_name': None, 'default_region': None, 'department': 'Sustainability & IT', 'email': 'a@a', 'fullName': 'Administrator', 'id': 2, 'jobTitle': 'Sustainability Lead', 'location': 'Global', 'orgName': 'GHG Operations', 'phone': None, 'role': 'admin', 'sector': 'Oil & Gas', 'status': 'active'}}
+Emissions list status: 200
+Total emissions in table: 426
+Count of items on page 1: 0
+Emissions stats status: 405
+

@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":194,"LineContent":"        2. 'rate_duration': Flowback rate (Mcf/hr) * duration (hours) * events."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":204,"LineContent":"        if method == \"rate_duration\" and flowback_rate and flowback_duration_hours:"}

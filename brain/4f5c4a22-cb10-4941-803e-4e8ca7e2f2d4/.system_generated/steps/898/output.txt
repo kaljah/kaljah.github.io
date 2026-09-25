@@ -1,0 +1,139 @@
+
+The command exited with code 1.
+Output:
+<truncated 51 lines>
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+      70 |   });
+      71 |
+    > 72 |   expect(uploadRes.status()).toBe(200);
+         |                              ^
+      73 |   const uploadJson = await uploadRes.json();
+      74 |   const jobId = uploadJson.job_id;
+      75 |   expect(jobId).toBeDefined();
+        at uploadCsvViaApi (C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:72:30)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:102:21
+
+    Error Context: test-results\test_bulk_csv_uploader-Bul-13b76-uels-Default-Factors-Units--chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_bulk_csv_uploader-Bul-13b76-uels-Default-Factors-Units--chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_bulk_csv_uploader-Bul-13b76-uels-Default-Factors-Units--chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_bulk_csv_uploader.spec.js:128:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 2. Tier 3 Bulk CSV Upload: 360 Scenarios per Region (1,080 Total Rows) 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+      70 |   });
+      71 |
+    > 72 |   expect(uploadRes.status()).toBe(200);
+         |                              ^
+      73 |   const uploadJson = await uploadRes.json();
+      74 |   const jobId = uploadJson.job_id;
+      75 |   expect(jobId).toBeDefined();
+        at uploadCsvViaApi (C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:72:30)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:135:21
+
+    Error Context: test-results\test_bulk_csv_uploader-Bul-169ce-er-Region-1-080-Total-Rows--chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+      70 |   });
+      71 |
+    > 72 |   expect(uploadRes.status()).toBe(200);
+         |                              ^
+      73 |   const uploadJson = await uploadRes.json();
+      74 |   const jobId = uploadJson.job_id;
+      75 |   expect(jobId).toBeDefined();
+        at uploadCsvViaApi (C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:72:30)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:135:21
+
+    Error Context: test-results\test_bulk_csv_uploader-Bul-169ce-er-Region-1-080-Total-Rows--chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_bulk_csv_uploader-Bul-169ce-er-Region-1-080-Total-Rows--chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_bulk_csv_uploader-Bul-169ce-er-Region-1-080-Total-Rows--chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_bulk_csv_uploader.spec.js:189:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 3. Post-Calculation KPI Recalculation & Re-Audit (Dashboard, Carbon & Methane) 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-kpi-card, .metric-card').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-kpi-card, .metric-card').first() with timeout 10000ms
+      - waiting for locator('.hero-kpi-card, .metric-card').first()
+
+
+      205 |     // Check Top KPIs
+      206 |     const totalCard = page.locator('.hero-kpi-card, .metric-card').first();
+    > 207 |     await expect(totalCard).toBeVisible({ timeout: 10000 });
+          |                             ^
+      208 |     const kpiText = await totalCard.innerText();
+      209 |     console.log(`[POST-BULK DASHBOARD KPI] Hero Total: ${kpiText.replace(/\n/g, ' ')}`);
+      210 |     expect(kpiText).not.toContain('0.00');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:207:29
+
+    Error Context: test-results\test_bulk_csv_uploader-Bul-b0310-t-Dashboard-Carbon-Methane--chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-kpi-card, .metric-card').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-kpi-card, .metric-card').first() with timeout 10000ms
+      - waiting for locator('.hero-kpi-card, .metric-card').first()
+
+
+      205 |     // Check Top KPIs
+      206 |     const totalCard = page.locator('.hero-kpi-card, .metric-card').first();
+    > 207 |     await expect(totalCard).toBeVisible({ timeout: 10000 });
+          |                             ^
+      208 |     const kpiText = await totalCard.innerText();
+      209 |     console.log(`[POST-BULK DASHBOARD KPI] Hero Total: ${kpiText.replace(/\n/g, ' ')}`);
+      210 |     expect(kpiText).not.toContain('0.00');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:207:29
+
+    Error Context: test-results\test_bulk_csv_uploader-Bul-b0310-t-Dashboard-Carbon-Methane--chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_bulk_csv_uploader-Bul-b0310-t-Dashboard-Carbon-Methane--chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_bulk_csv_uploader-Bul-b0310-t-Dashboard-Carbon-Methane--chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e\test_bulk_csv_uploader.spec.js:99:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 1. Tier 1 Bulk CSV Upload (All Fuels, Default Factors & Units) 
+    [chromium] › e2e\test_bulk_csv_uploader.spec.js:128:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 2. Tier 3 Bulk CSV Upload: 360 Scenarios per Region (1,080 Total Rows) 
+    [chromium] › e2e\test_bulk_csv_uploader.spec.js:189:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 3. Post-Calculation KPI Recalculation & Re-Audit (Dashboard, Carbon & Methane) 
+

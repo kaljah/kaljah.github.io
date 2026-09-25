@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -155,19 +155,27 @@
+ 
+   // Login via API to get session cookie
+   test.beforeEach(async ({ request }) => {
+-    // Get CSRF token
+-    const csrfResp = await request.get(`${BACKEND}/api/csrf-token`);
+-    if (csrfResp.ok()) {
+-      const data = await csrfResp.json();
+-      csrfToken = data.csrf_token || '';
+-    }
+-
+-    // Login
++    // 1. Initial CSRF token for login
++    const preResp = await request.get(`${BACKEND}/api/csrf-token`);
++    let preToken = '';
++    if (preResp.ok()) {
++      const data = await preResp.json();
++      preToken = data.csrf_token || '';
++    }
++
++    // 2. Authenticate
+     const loginResp = await request.post(`${BACKEND}/api/auth/login`, {
+       data: { email: 'a', password: 'a' },
+-      headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' }
++      headers: { 'X-CSRFToken': preToken, 'Content-Type': 'application/json' }
+     });
+     expect(loginResp.ok()).toBeTruthy();
++
++    // 3. Re-fetch CSRF token post-login so it binds to the newly created session cookie
++    const postResp = await request.get(`${BACKEND}/api/csrf-token`);
++    if (postResp.ok()) {
++      const data = await postResp.json();
++      csrfToken = data.csrf_token || '';
++    }
+   });
+ 
+   test('POST emission: Combustion Tier 1 Natural Gas 1000 m3 → backend returns correct CO2', async ({ request }) => {
+@@ -192,6 +192,7 @@
+       facility_id: facilityId,
+       process_type: 'combustion',
+       factor_source: 'default',
++      fuel: 'natural_gas',
+       fuel_type: 'natural_gas',
+       amount: 1000.0,
+       unit: 'm3',
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -62,7 +62,8 @@
+ # WAL checkpoint counter — runs PRAGMA wal_checkpoint(TRUNCATE) every 500 commits
+ # to prevent the SQLite WAL file from growing unboundedly.
+ _wal_commit_counter = 0
+-_WAL_CHECKPOINT_INTERVAL = 500
++_WAL_CHECKPOINT_INTERVAL = int(os.environ.get("WAL_CHECKPOINT_INTERVAL", "100"))
++
+ 
+ 
+ @event.listens_for(Engine, "connect")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

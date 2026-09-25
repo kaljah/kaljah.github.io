@@ -1,0 +1,16 @@
+Task: 7895247f-bda5-4fd8-8253-ed7e451de5a2/task-918
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\7895247f-bda5-4fd8-8253-ed7e451de5a2\.system_generated\tasks\task-918.log
+Log output:
+<truncated 39 lines>
+ 2022: 7 recs, CO2e=1,011,307.8, CH4=4,625.7, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2023: 7 recs, CO2e=1,004,418.7, CH4=4,203.3, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2024: 7 recs, CO2e=882,725.2, CH4=1,313.5, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Year 2025: 7 recs, CO2e=885,628.8, CH4=845.6, types={'venting', 'fuel_gas', 'mobile_combustion', 'safety_flaring', 'non_routine_flaring', 'fugitive_equipment_leaks', 'routine_flaring'}
+Prod Year 2021: 1 entries, Gas=3,655.7, BOE=59.2
+Prod Year 2022: 1 entries, Gas=3,964.7, BOE=60.7
+Prod Year 2023: 1 entries, Gas=4,244.5, BOE=64.7
+Prod Year 2024: 1 entries, Gas=4,353.7, BOE=64.4
+Prod Year 2025: 1 entries, Gas=4,239.9, BOE=60.8
+
+Last progress: 3s ago

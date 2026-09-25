@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\seed_production_and_cbam.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -192,7 +192,6 @@
+                     export_destination=item["export_destination"],
+                     specific_embedded_direct=item["specific_embedded_direct"],
+                     specific_embedded_indirect=item["specific_embedded_indirect"],
+-                    total_embedded_emissions=item["total_embedded_emissions"],
+                     created_by=admin_id,
+                 )
+                 db.session.add(rec)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

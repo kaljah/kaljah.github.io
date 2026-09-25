@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Saved neocarbon_flyer_page1_en.jpg at size 1240x1753
+Saved neocarbon_flyer_page1_fr.jpg at size 1240x1753
+

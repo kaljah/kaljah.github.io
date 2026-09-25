@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\scratch\check_browser_dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -13,19 +13,26 @@
+ 
+     ws = websocket.create_connection(tab["webSocketDebuggerUrl"])
+     
+-    # Perform login via form inputs
++    # Perform login via form inputs using React native value setter
+     login_js = """
+     (async () => {
+-        const emailInput = document.querySelector('input[type="email"]') || document.querySelector('input[name="email"]') || document.querySelector('input');
+-        const passInput = document.querySelector('input[type="password"]');
++        function setReactValue(el, val) {
++            const proto = window.HTMLInputElement.prototype;
++            const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
++            setter.call(el, val);
++            el.dispatchEvent(new Event('input', { bubbles: true }));
++            el.dispatchEvent(new Event('change', { bubbles: true }));
++        }
++
++        const emailInput = document.querySelector('input[type="email"]') || document.querySelector('input[type="text"]') || document.querySelectorAll('input')[0];
++        const passInput = document.querySelector('input[type="password"]') || document.querySelectorAll('input')[1];
+         const btn = document.querySelector('button[type="submit"]') || document.querySelector('button');
++        
+         if (emailInput && passInput && btn) {
+-            emailInput.value = 'a@a';
+-            emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+-            passInput.value = 'a';
+-            passInput.dispatchEvent(new Event('input', { bubbles: true }));
++            setReactValue(emailInput, 'a@a');
++            setReactValue(passInput, 'a');
+             btn.click();
+-            return { loggedIn: true };
++            return { loggedIn: true, email: emailInput.value, pass: passInput.value };
+         }
+         return { loggedIn: false };
+     })()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

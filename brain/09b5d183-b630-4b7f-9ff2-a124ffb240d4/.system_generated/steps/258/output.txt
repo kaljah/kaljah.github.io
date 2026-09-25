@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+test_lookup_api_factor_resilience ______________________
+
+    def test_lookup_api_factor_resilience():
+        """Verify that _lookup_api_factor resolves fuels regardless of casing, underscores, or common aliases."""
+        # Exact match
+        ng = _lookup_api_factor("Natural Gas")
+        assert ng is not None
+        assert ng.get("code") == "NG"
+    
+        # Lowercase with underscore
+        ng_snake = _lookup_api_factor("natural_gas")
+        assert ng_snake == ng
+    
+        # Lowercase with space
+        ng_lower = _lookup_api_factor("natural gas")
+        assert ng_lower == ng
+    
+        # Common alias
+        alias_gas = _lookup_api_factor("gas")
+>       assert alias_gas == ng
+E       AssertionError: assert {'code': 'GAS...': 0.003, ...} == {'code': 'NG'...': 0.001, ...}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'co2': 70.22} != {'co2': 53.06}
+E         {'code': 'GAS'} != {'code': 'NG'}
+E         {'hhv': 125000} != {'hhv': 1020}
+E         {'process_category': 'mobile_combustion'} != {'process_category': 'stationary_combustion'}...
+E         
+E         ...Full output truncated (8 lines hidden), use '-vv' to show
+
+new\server\tests\test_zero_trust_adversarial.py:44: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+

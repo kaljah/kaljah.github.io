@@ -1,0 +1,61 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 10 items
+
+new\server\tests\test_it_role_security.py::test_it_user_can_login_and_fetch_users PASSED [ 10%]
+new\server\tests\test_it_role_security.py::test_it_user_can_reset_password PASSED [ 20%]
+new\server\tests\test_it_role_security.py::test_it_user_cannot_register_user PASSED [ 30%]
+new\server\tests\test_it_role_security.py::test_it_user_cannot_update_user_profile PASSED [ 40%]
+new\server\tests\test_it_role_security.py::test_it_user_cannot_delete_user PASSED [ 50%]
+new\server\tests\test_it_role_security.py::test_it_user_cannot_access_audit_trail PASSED [ 60%]
+new\server\tests\test_it_role_security.py::test_it_user_cannot_access_operational_facilities_or_emissions FAILED [ 70%]
+new\server\tests\test_it_role_security.py::test_it_user_can_access_all_regions_for_filtering PASSED [ 80%]
+new\server\tests\test_it_role_security.py::test_it_user_cannot_modify_settings PASSED [ 90%]
+new\server\tests\test_it_role_security.py::test_it_admin_can_assign_it_role PASSED [100%]
+
+================================== FAILURES ===================================
+_______ test_it_user_cannot_access_operational_facilities_or_emissions ________
+
+client = <FlaskClient <Flask 'app'>>
+test_accounts = {'target_id': 46, 'it_id': 47, 'it_admin_id': 48}
+
+    def test_it_user_cannot_access_operational_facilities_or_emissions(client, test_accounts):
+        """IT role has zero access to facilities, emissions, scope 2/3, sources, or reports."""
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_accounts["it_id"]
+    
+        assert client.get("/api/facilities").status_code == 403
+        assert client.get("/api/emissions").status_code == 403
+        assert client.get("/api/scope2").status_code == 403
+        assert client.get("/api/scope3").status_code == 403
+>       assert client.get("/api/data/sources").status_code == 403
+E       AssertionError: assert 404 == 403
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [404 NOT FOUND]> = get('/api/data/sources')
+E        +      where get = <FlaskClient <Flask 'app'>>.get
+
+new\server\tests\test_it_role_security.py:163: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:160 GET /api/facilities 403 [0.001s] [ReqID: d3ee6fa3-efae-4c92-815a-591d92161bbe]
+INFO     app:app.py:160 GET /api/emissions 403 [0.001s] [ReqID: 7ef6a5c9-9ae0-4b94-83da-e1550461ce13]
+INFO     app:app.py:160 GET /api/scope2 403 [0.001s] [ReqID: 6a090bc2-f985-4564-96ba-d4a56d3d127e]
+INFO     app:app.py:160 GET /api/scope3 403 [0.001s] [ReqID: 6425bc5b-54a5-449d-8e8c-bbf4f59b91ab]
+INFO     app:app.py:160 GET /api/data/sources 404 [0.000s] [ReqID: ef915214-556b-4aa0-9ea1-5af8f5f9e321]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_it_role_security.py::test_it_user_cannot_access_operational_facilities_or_emissions
+=================== 1 failed, 9 passed, 1 warning in 4.14s ====================
+

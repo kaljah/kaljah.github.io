@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":172,"LineContent":"      const res = await api.get(\"/custom-factors\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":402,"LineContent":"      const res = await api.get(\"/facilities/\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":413,"LineContent":"      const res = await api.get(\"/sources\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":508,"LineContent":"      const res = await api.get(`/emissions?${filterParams}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":995,"LineContent":"      const res = await api.post(\"/emissions\", finalPayload);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1155,"LineContent":"      await api.delete(`/emissions/${realId}`);"}

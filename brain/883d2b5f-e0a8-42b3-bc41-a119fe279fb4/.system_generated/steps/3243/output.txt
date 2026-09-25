@@ -1,0 +1,101 @@
+
+The command exited with code 1.
+Output:
+<truncated 138 lines>
+INFO     app:app.py:153 POST /api/scope3 201 [0.052s] [ReqID: cdc23d13-b718-435d-943b-8ac8fa2de344]
+INFO     app:app.py:153 POST /api/scope2 201 [0.206s] [ReqID: 40f92626-4edc-41b5-86cd-5266f4e5bcb6]
+INFO     app:app.py:153 POST /api/scope2 201 [0.033s] [ReqID: edfd2857-886a-4de1-827e-b5ab45643fd1]
+INFO     app:app.py:153 POST /api/scope2 201 [0.130s] [ReqID: 40824522-eb79-4cf5-8990-a640449da658]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.463s] [ReqID: 11bbe691-5a6b-4257-8a24-ec3abca56545]
+INFO     app:app.py:153 GET /api/dashboard/summary 200 [0.003s] [ReqID: 34e1454a-6185-4d66-a76c-6705a732a1b0]
+INFO     app:app.py:153 POST /api/scope2 201 [0.217s] [ReqID: 8c513bc5-8024-4e6a-8a1b-332915d7aadb]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.468s] [ReqID: a86164bd-b69f-45f4-8ca4-ecbfd9d548be]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.463s] [ReqID: 966d579f-6351-4f73-8f58-46f1d631f542]
+INFO     app:app.py:153 GET /api/dashboard/summary 200 [0.007s] [ReqID: 3587e345-2d8f-47db-a662-4465ea7094d3]
+INFO     app:app.py:153 POST /api/scope3 201 [0.008s] [ReqID: f4371d48-6e6d-49f3-b762-3120ed419730]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.495s] [ReqID: 53632242-9732-4bf5-ae33-dd5f49041a3e]
+INFO     app:app.py:153 POST /api/scope3 201 [0.005s] [ReqID: 96ce7af1-227b-474e-88be-214cd2362677]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.505s] [ReqID: fdcb6c7e-2d91-47f1-8c03-376692f9bbf7]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.499s] [ReqID: 99aa9b10-f997-4d40-9164-a74c4c90df31]
+INFO     app:app.py:153 GET /api/dashboard/summary 200 [0.004s] [ReqID: a96cf560-b482-4b53-a969-a82fb48bdac3]
+INFO     app:app.py:153 POST /api/scope3 201 [0.212s] [ReqID: 22236476-6fee-426c-b03f-301dda0352a7]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.537s] [ReqID: 1ea9cb1f-9750-435b-9717-4ec1e5519c8f]
+INFO     app:app.py:153 POST /api/emissions 201 [0.006s] [ReqID: fe7b2ffc-4dfb-4574-b04c-6c4ca4f2ca7c]
+INFO     app:app.py:153 POST /api/scope2 201 [0.043s] [ReqID: d79862e1-a1e4-407f-98ad-d9e65fce6753]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.617s] [ReqID: aac4fa02-a6e3-4bd7-8b2e-e95ed6cfe418]
+INFO     app:app.py:153 POST /api/emissions 201 [0.006s] [ReqID: ee4dee28-db37-4b6d-a4ec-65a99893ec0c]
+INFO     app:app.py:153 POST /api/auth/login 200 [0.641s] [ReqID: 3c4bfeeb-8a0e-49b4-adf2-9627534b1cfb]
+INFO     app:app.py:153 POST /api/emissions 201 [0.006s] [ReqID: b56e27e1-6586-47fd-af80-de60a2d3352f]
+_ TestConcurrencyAndLockResilience.test_concurrent_session_and_token_isolation _
+
+self = <test_stress_concurrency.TestConcurrencyAndLockResilience object at 0x000001A832B37EC0>
+test_env = {'facility_id': 26, 'admin_id': 31}
+
+    def test_concurrent_session_and_token_isolation(self, test_env):
+        """Verify that concurrent requests maintain strict session identity and authorization."""
+        facility_id = test_env["facility_id"]
+        num_sessions = 15
+    
+        def session_task(idx):
+            with app.test_client() as client:
+                client.post(
+                    "/api/auth/login",
+                    json={"email": "concurrency_admin@test.com", "password": "StressPass2026!"},
+                )
+                res = client.get("/api/auth/profile")
+                if res.status_code != 200:
+                    return False
+                data = res.get_json()
+                return data.get("email") == "concurrency_admin@test.com"
+    
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_sessions) as executor:
+            futures = [executor.submit(session_task, i) for i in range(num_sessions)]
+            results = [f.result() for f in concurrent.futures.as_completed(futures)]
+    
+>       assert all(results)
+E       assert False
+E        +  where False = all([False, False, False, False, False, False, ...])
+
+new\server\tests\test_stress_concurrency.py:189: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 1cc6ad96-fd3c-427a-acbf-6b10df7b2506]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: 69342772-e8ad-42bc-90eb-1382717ec724]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.000s] [ReqID: 946b6e35-1084-4a22-8d8e-bebb2aea6d6e]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: b9ae9e6e-9ab4-4b69-859b-33c19d7ec588]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.000s] [ReqID: d932504f-7726-46f3-8a3e-c780314ab060]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.001s] [ReqID: c6afd2c6-0b02-4a52-bb21-8aa50645ce02]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.000s] [ReqID: 12a54d86-50c6-438c-b253-e9c3785bf39f]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: 4d78ec76-7068-41ec-8d82-213f707afb61]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.000s] [ReqID: 405ba6be-a3b5-4993-8958-104ed71a9a98]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: 70b59f09-8084-45de-9dc6-7e08b908af87]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.000s] [ReqID: a501790f-adb5-46a5-88d8-dc03e3e290a7]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: 813fbec0-0cac-41e8-8ab1-42adcced9195]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 87df195a-bedc-48f7-991a-7818b4df3498]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: 307f8552-ec69-422c-bd22-b9010a514b60]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.000s] [ReqID: 15da946b-ac66-48bf-840c-145a18e0c244]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: 64d0ef2f-5bb3-4cb8-86a1-9a9fd343ced6]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.002s] [ReqID: df7f47dc-c41d-4992-9e02-04383d98cf34]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: e51fc2c7-efbd-4e4a-92c3-abee78ef426e]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.002s] [ReqID: 7f9319d2-4446-4f08-9ddf-323f73346f8e]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: f69fa5b9-fd0a-4769-a270-cf61a0b173ee]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.004s] [ReqID: 150bfce6-f3cc-433a-8fda-71b299eb805a]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: a4afa240-9323-4c16-88a3-f6bc10de87b3]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 5321d4e1-e6ef-4993-a19d-c882797df3b8]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: da22cf4f-f3c1-430b-8355-5a95180fa6b4]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 6bcec3d3-f68a-40ef-9160-5f96d59bed1c]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: f8c14ff2-767b-4912-ab1a-8fda2575892b]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.000s] [ReqID: 9ff90fd2-17fe-42bf-b0dc-12a0bdc184b0]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.000s] [ReqID: 4af02c4d-8da5-4c82-81ed-cb5be1cfcbbe]
+INFO     app:app.py:153 POST /api/auth/login 429 [0.001s] [ReqID: 234c80fb-63ff-43cb-b559-c9f2d8033f3d]
+INFO     app:app.py:153 GET /api/auth/profile 405 [0.001s] [ReqID: 2e6bbdde-d074-4f7a-83d0-9a0a91c8b331]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation
+======================== 2 failed, 1 warning in 3.45s =========================
+

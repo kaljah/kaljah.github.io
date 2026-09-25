@@ -1,0 +1,39 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\base.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -47,6 +47,21 @@
+         self, co2=None, ch4=None, n2o=None, total_co2e=None, inputs=None, metadata=None
+     ):
+         """Formats the final calculation result into a standard structure."""
++        def _ensure_dict(val):
++            if isinstance(val, dict):
++                return val
++            v = float(val) if val is not None else 0.0
++            return {
++                "value": v,
++                "uncertainty": 0.0,
++                "abs_uncertainty": 0.0,
++                "abs_uncertainty_95": 0.0,
++                "lower_bound": v,
++                "upper_bound": v,
++                "confidence_level_pct": 95,
++                "coverage_factor": 2.0,
++            }
++
+         return {
+             "method": self.name,
+             "api_reference": self.section_ref,
+@@ -53,8 +53,8 @@
+             "total_co2e": total_co2e if total_co2e is not None else 0.0,
+             "results": {
+-                "co2": co2 if co2 is not None else 0.0,
+-                "ch4": ch4 if ch4 is not None else 0.0,
+-                "n2o": n2o if n2o is not None else 0.0,
++                "co2": _ensure_dict(co2),
++                "ch4": _ensure_dict(ch4),
++                "n2o": _ensure_dict(n2o),
+                 "total_co2e": total_co2e if total_co2e is not None else 0.0,
+             },
+             "metadata": metadata or {},
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

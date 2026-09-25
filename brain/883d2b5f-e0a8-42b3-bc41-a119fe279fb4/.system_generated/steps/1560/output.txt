@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":140,"LineContent":"        goal_year = int(year) if year and year != \"all\" else datetime.utcnow().year"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1020,"LineContent":"        else datetime.utcnow().year"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1957,"LineContent":"        yr_str = str(year) if year and year != \"all\" else str(datetime.utcnow().year)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1958,"LineContent":"        yr_int = int(yr_str) if yr_str.isdigit() else datetime.utcnow().year"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2239,"LineContent":"        year = latest or datetime.utcnow().year"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3190,"LineContent":"                        cutoff = datetime.datetime.utcnow() - timedelta(hours=24)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3504,"LineContent":"    record.updated_at = datetime.datetime.utcnow()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":191,"LineContent":"    factor.updated_at = datetime.datetime.utcnow()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":487,"LineContent":"    user.password_updated_at = datetime.datetime.utcnow()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":265,"LineContent":"    facility.updated_at = datetime.datetime.utcnow()"}

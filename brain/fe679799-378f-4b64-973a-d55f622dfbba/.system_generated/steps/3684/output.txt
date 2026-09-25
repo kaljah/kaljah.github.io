@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":242,"LineContent":"                uncertainties[\"_activity_uncertainty\"] = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":285,"LineContent":"            activity_uncertainty = uncertainties_dict.get(\"_activity_uncertainty\")"}

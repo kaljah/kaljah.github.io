@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"localStorage":{"ghg_auth_logout_event":"1790109873930"},"sessionStorage":{}}
+```

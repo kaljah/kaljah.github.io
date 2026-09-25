@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":352,"LineContent":"  const [showDebug, setShowDebug] = useState(false);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":750,"LineContent":"          border: `1.5px solid ${showDebug ? \"#f59e0b\" : \"var(--border-color)\"}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":754,"LineContent":"          boxShadow: showDebug ? \"0 0 0 3px rgba(245,158,11,.12)\" : \"none\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":761,"LineContent":"            if (!showDebug) fetchData(true);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":769,"LineContent":"            background: showDebug ? \"rgba(245,158,11,.08)\" : \"transparent\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":775,"LineContent":"            color: showDebug ? \"#d97706\" : \"var(--text-secondary)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":784,"LineContent":"            {showDebug ? \"hide\" : \"inspect live API calls\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":789,"LineContent":"              transform: showDebug ? \"rotate(180deg)\" : \"none\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":797,"LineContent":"        {showDebug \u0026\u0026 ("}

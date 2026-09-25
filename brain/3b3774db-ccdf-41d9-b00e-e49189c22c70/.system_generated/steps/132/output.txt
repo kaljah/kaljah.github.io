@@ -1,0 +1,5 @@
+Script ran on page and returned:
+```json
+{"url":"http://localhost:5173/login","title":"Carbon Tech"}
+```
+Page navigated to http://localhost:5173/.

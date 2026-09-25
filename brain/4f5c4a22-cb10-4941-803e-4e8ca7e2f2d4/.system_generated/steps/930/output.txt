@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Emissions by facility_id: [(1, 170), (2, 2), (3, 163), (4, 170), (5, 74), (6, 67), (7, 67), (8, 62), (9, 71), (10, 73), (11, 63), (12, 90), (13, 59), (16, 81), (17, 51), (20, 62)]
+Total emissions: 1325
+Recent emissions: [(4, ''), (3, ''), (1, ''), (1, None), (6, 'Unit-6'), (13, 'Unit-1'), (16, 'Tier3-Unit-4'), (5, 'Unit-3'), (5, 'Tier3-Unit-2'), (9, 'Tier3-Unit-5'), (16, ''), (6, 'Unit-3'), (16, 'Tier3-Unit-1'), (8, 'Tier3-Unit-4'), (11, 'Unit-6'), (17, 'Unit-2'), (13, 'Unit-8'), (11, 'Tier3-Unit-2'), (12, 'Unit-9'), (12, 'Unit-2')]
+

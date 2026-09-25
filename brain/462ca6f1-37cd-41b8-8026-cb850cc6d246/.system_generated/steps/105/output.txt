@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\legacy_engine.py:603:                    # API 2021: 13.5 scf/actuation/device (not per year 
+\u2014 multiply by actuations/yr)
+new\server\calculations\legacy_engine.py:604:                    annual_scf = 13.5 * count * actuations
+new\server\calculations\units.py:5:# P_std = 14.696 psia = 101.325 kPa = 1.01325 bar = 1.0 atm
+new\server\calculations\units.py:13:STD_PRESSURE_BAR = 1.01325
+new\server\calculations\vented.py:651:            # Bleed rate is scf/event (default 13.5 scf/event per EPA Subpart W 
+Table W-1 / API �6.10 if bleed_rate <= 0)
+new\server\calculations\vented.py:652:            event_bleed_scf = float(bleed_rate) if (bleed_rate and 
+float(bleed_rate) > 0) else 13.5
+new\server\services\sentinel5p.py:36:STD_SURFACE_PRESSURE_PA = 101325.0  # Pa (standard 1 atm surface pressure)
+new\server\tests\test_battery_midstream_process_equipment.py:357:        # When bleed_rate is None or 0, EPA Subpart W 
+default 13.5 scf/actuation is used
+new\server\tests\test_battery_midstream_process_equipment.py:359:        ref = 
+IndependentPneumatics.calculate(count=count, actuations=actuations, bleed_rate=13.5, ch4_content=0.88, 
+gwp_standard="AR5")
+new\server\tests\test_unit_conversions_exhaustive.py:127:        # Atmospheric pressure in bar: 1.01325 bar == 14.696 
+psia
+new\server\tests\test_unit_conversions_exhaustive.py:128:        assert pytest.approx(to_psia(1.01325, "bar"), 
+rel=1e-3) == STD_PRESSURE_PSIA
+new\server\tests\test_vented.py:44:        "bleed_rate": 13.5,  # 13.5 scf/actuation
+
+
+

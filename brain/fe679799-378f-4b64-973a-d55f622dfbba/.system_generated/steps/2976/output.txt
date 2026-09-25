@@ -1,0 +1,5 @@
+Found 4 results
+__pycache__/test_csv_uploader.cpython-312-pytest-9.1.1.pyc
+exhaustive_test_upload.csv
+test_csv_uploader.py
+upload_test_s2_s3.py

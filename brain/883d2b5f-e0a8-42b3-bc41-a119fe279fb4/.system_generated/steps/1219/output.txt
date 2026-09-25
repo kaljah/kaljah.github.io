@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1611,12 +1611,25 @@
+         return None, ["Missing process type."]
+ 
+     # 4. Resolve emission factor (same logic as emissions route)
+-    factor_type_raw = str(row.get("factor_type") or "").lower()
+-    factor_source = (
+-        global_factor_type
+-        if global_factor_type != "auto"
+-        else ("custom" if factor_type_raw == "custom" else "default")
+-    )
++    factor_type_raw = str(row.get("factor_type") or "").lower().strip()
++    if global_factor_type != "auto":
++        factor_source = global_factor_type
++    else:
++        if factor_type_raw in [
++            "specific",
++            "site_specific",
++            "site-specific",
++            "engineering",
++            "tier3",
++            "tier_3",
++            "t3",
++            "cems",
++        ]:
++            factor_source = "specific"
++        elif factor_type_raw in ["custom", "regional", "tier2", "tier_2", "t2"]:
++            factor_source = "custom"
++        else:
++            factor_source = "default"
+ 
+     factor_data = {}
+     if factor_source == "custom":
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,16 @@
+Task: 7895247f-bda5-4fd8-8253-ed7e451de5a2/task-63
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\7895247f-bda5-4fd8-8253-ed7e451de5a2\.system_generated\tasks\task-63.log
+Log output:
+<truncated 1691 lines>
+jsx("input",{type:"number",step:"any",autoFocus:!0,placeholder:"e.g. 1000",value:He.value,onChange:t=>Qe(i=>
+({...i,value:t.target.value})),className:"mole-input",style:{width:"100%",marginBottom:"12px",padding:"10px"}}),e.jsx("
+div",{style:{fontSize:"0.8rem",color:"var(--text-secondary)",marginBottom:"20px"},children:He.type==="gas"?"Conversion 
+Factor: m� � 0.0353147 = mcf (mscf)":"Conversion Factor: m� � 6.28981 = barrels (bbl)"}),e.jsxs("div",{style:{display:"
+flex",justifyContent:"flex-end",gap:"10px"},children:[e.jsx("button",{type:"button",className:"btn-ghost",onClick:()=>Q
+e(t=>({...t,isOpen:!1})),children:"Cancel"}),e.jsx("button",{type:"submit",className:"btn-primary",children:"Convert & 
+Apply"})]})]})}),e.jsx(xi,{isOpen:Ge.isOpen,title:Ge.title,message:Ge.message,confirmLabel:Ge.confirmLabel,confirmVaria
+nt:Ge.confirmVariant,onConfirm:Ge.onConfirm,onCancel:()=>Rt(t=>({...t,isOpen:!1}))})]})},Ks=()=>e.jsx(rs,{children:e.js
+x(Ns,{})});export{Ks as default};
+
+Last progress: 3s ago

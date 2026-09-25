@@ -1,0 +1,21 @@
+Task: b8bb2f6e-2e79-4fc8-814c-284436d7d715/task-189
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8bb2f6e-2e79-4fc8-814c-284436d7d715\.system_generated\tasks\task-189.log
+Log output:
+<truncated 5 lines>
+mup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 6 items
+
+tests/test_property_invariants.py::TestPropertyInvariantsHypothesis::test_combustion_linearity PASSED [ 16%]
+tests/test_property_invariants.py::TestPropertyInvariantsHypothesis::test_combustion_additivity PASSED [ 33%]
+tests/test_property_invariants.py::TestPropertyInvariantsHypothesis::test_monotonicity PASSED [ 50%]
+tests/test_property_invariants.py::TestPropertyInvariantsHypothesis::test_non_negativity PASSED [ 66%]
+tests/test_property_invariants.py::TestPropertyInvariantsHypothesis::test_zero_activity_yields_zero_emissions PASSED [ 83%]
+tests/test_property_invariants.py::TestPropertyInvariantsHypothesis::test_gwp_ordering_invariant PASSED [100%]
+
+============================== 6 passed in 3.46s ==============================
+
+Last progress: 2s ago

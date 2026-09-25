@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2983,7 +2983,9 @@
+     if user.role in ("auditor", "it_admin", "it_manager", "it"):
+         return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
+ 
+-    data = request.get_json(silent=True) or {}
++    data = request.get_json(silent=True)
++    if not isinstance(data, dict):
++        return jsonify({"error": "Invalid JSON: payload must be a JSON object"}), 400
+ 
+     # Map source_type to process_type if missing, and vice versa
+     if not data.get("process_type") and data.get("source_type"):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

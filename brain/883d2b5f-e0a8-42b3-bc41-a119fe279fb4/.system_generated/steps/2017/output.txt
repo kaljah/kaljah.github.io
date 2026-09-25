@@ -1,0 +1,145 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+                    if fn(
+                        cursor,
+                        sub_stmt,
+                        sub_params,
+                        context,
+                    ):
+                        break
+                else:
+>                   dialect.do_execute(
+                        cursor,
+                        sub_stmt,
+                        sub_params,
+                        context,
+                    )
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:2116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000022640852450>
+cursor = <sqlite3.Cursor object at 0x0000022642F6BCC0>
+statement = 'INSERT INTO emissions (record_id, year, month, company_name, group_name, equipment_id, process_type, fuel_type, quant... ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id'
+parameters = ('qaqc-test-nc-0', 2099, 1, None, None, None, ...)
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x00000226425E8C20>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlite3.IntegrityError: UNIQUE constraint failed: emissions.record_id
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: IntegrityError
+
+The above exception was the direct cause of the following exception:
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_qaqc_fuel_completeness_non_combustion(client, test_users):
+        """Verify non-combustion records (pneumatics, fugitives) without fuel do not depress QA/QC fuel_completeness."""
+        with app.app_context():
+            # Clear out test emissions for year 2099
+            Emission.query.filter_by(year=2099).delete()
+            db.session.commit()
+    
+            # Insert 3 non-combustion records without fuel
+            for i in range(3):
+                em = Emission(
+                    record_id=f"qaqc-test-nc-{i}",
+                    year=2099,
+                    month=i + 1,
+                    facility_id=1,
+                    process_type="pneumatics",
+                    fuel_type=None,
+                    quantity=100.0,
+                    unit="count",
+                    co2_emissions=0.0,
+                    ch4_emissions=1.0,
+                    n2o_emissions=0.0,
+                    co2e_total=28.0,
+                    status="Verified",
+                    created_by=test_users["admin"],
+                )
+                db.session.add(em)
+>           db.session.commit()
+
+new\server\tests\test_audit_remediation.py:1269: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\scoping.py:597: in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:2017: in commit
+    trans.commit(_to_root=True)
+<string>:2: in commit
+    ???
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:139: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1302: in commit
+    self._prepare_impl()
+<string>:2: in _prepare_impl
+    ???
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:139: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1277: in _prepare_impl
+    self.session.flush()
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4341: in flush
+    self._flush(objects)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4476: in _flush
+    with util.safe_reraise():
+..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4437: in _flush
+    flush_context.execute()
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py:466: in execute
+    rec.execute(self)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py:93: in save_obj
+    _emit_insert_statements(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py:1143: in _emit_insert_statements
+    result = connection.execute(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1418: in execute
+    return meth(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py:515: in _execute_on_connection
+    return connection._execute_clauseelement(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1640: in _execute_clauseelement
+    ret = self._execute_context(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1844: in _execute_context
+    return self._exec_insertmany_context(dialect, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:2124: in _exec_insertmany_context
+    self._handle_dbapi_exception(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:2353: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:2116: in _exec_insertmany_context
+    dialect.do_execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000022640852450>
+cursor = <sqlite3.Cursor object at 0x0000022642F6BCC0>
+statement = 'INSERT INTO emissions (record_id, year, month, company_name, group_name, equipment_id, process_type, fuel_type, quant... ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id'
+parameters = ('qaqc-test-nc-0', 2099, 1, None, None, None, ...)
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x00000226425E8C20>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: emissions.record_id
+E       [SQL: INSERT INTO emissions (record_id, year, month, company_name, group_name, equipment_id, process_type, fuel_type, quantity, unit, factor_source, ef_used_co2, ef_used_ch4, ef_used_n2o, ef_used_co, co2_emissions, ch4_emissions, n2o_emissions, co_emission ... 434 characters truncated ...  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+E       [parameters: ('qaqc-test-nc-0', 2099, 1, None, None, None, 'pneumatics', None, 100.0, 'count', None, None, None, None, 0.0, 0.0, 1.0, 0.0, 0.0, 28.0, 0.0, 0.0, None, None, None, None, None, 'Verified', 1, None, None, None, None, None, None, None, 3, None, None, None, None, 21, None, None, '2026-09-16 09:35:11.521467', None, None)]
+E       (Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: IntegrityError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_qaqc_fuel_completeness_non_combustion
+============ 1 failed, 3 passed, 39 deselected, 1 warning in 2.87s ============
+

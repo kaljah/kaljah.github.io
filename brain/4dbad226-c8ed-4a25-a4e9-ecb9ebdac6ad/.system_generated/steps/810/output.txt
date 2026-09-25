@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -24,6 +24,10 @@
+ import PneumaticsForm from "./scope1/PneumaticsForm"; // Can use for tank as well or separate
+ import TankForm from "./scope1/TankForm";
+ import FugitivesForm from "./scope1/FugitivesForm";
++import ChemicalProductionForm from "./scope1/ChemicalProductionForm";
++import NitricAcidForm from "./scope1/NitricAcidForm";
++import AdipicAcidForm from "./scope1/AdipicAcidForm";
++import AsphaltBlowingForm from "./scope1/AsphaltBlowingForm";
+ import GasCompositionCalculator from "./GasCompositionCalculator";
+ import {
+   API_FACTORS,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

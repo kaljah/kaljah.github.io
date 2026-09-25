@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+
+Name                             Length LastWriteTime        
+----                             ------ -------------        
+00-current-architecture.md        13403 9/20/2026 4:01:35 PM 
+00-repository-audit.md            18494 9/20/2026 4:41:28 PM 
+01-calculation-inventory.md       36909 9/20/2026 11:40:00 AM
+01-testing-inventory.md           10421 9/20/2026 4:44:03 PM 
+02-calculation-inventory.md       13658 9/20/2026 4:45:30 PM 
+02-test-inventory.md               8848 9/20/2026 4:02:18 PM 
+03-security-audit.md               9193 9/20/2026 4:02:29 PM 
+04-database-audit.md               8465 9/20/2026 4:02:38 PM 
+05-performance-audit.md            5385 9/20/2026 4:02:46 PM 
+06-accessibility-audit.md          4003 9/20/2026 4:02:54 PM 
+07-browser-audit.md                4168 9/20/2026 4:03:01 PM 
+08-production-readiness.md         7300 9/20/2026 4:03:10 PM 
+09-calculation-validation.md      10198 9/20/2026 4:03:23 PM 
+10-human-review.md                 6452 9/20/2026 4:03:30 PM 
+calculation-inventory.md          36909 9/20/2026 11:40:00 AM
+CALCULATION_VALIDATION_REPORT.md   9901 9/20/2026 4:47:51 PM 
+FINAL_VALIDATION_REPORT.md        11920 9/20/2026 4:46:38 PM 
+FINAL_VALIDATION_REPORT.pdf       21896 9/20/2026 4:14:41 PM 
+HUMAN_REVIEW_REQUIRED.md          10946 9/20/2026 4:48:46 PM 
+methodology-matrix.md              9524 9/20/2026 11:40:12 AM
+repository-audit.md               16830 9/20/2026 11:39:22 AM
+unit-and-dimensional-analysis.md   8332 9/20/2026 11:40:24 AM
+
+
+

@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\test_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,5 +1,7 @@
+ import sys
+ sys.path.insert(0, r"c:\Users\samsung\Desktop\H2\new\server")
++if hasattr(sys.stdout, "reconfigure"):
++    sys.stdout.reconfigure(encoding="utf-8")
+ 
+ from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS, EQUIPMENT_FACTORS
+ from calculations.dispatcher import CalculationDispatcher
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

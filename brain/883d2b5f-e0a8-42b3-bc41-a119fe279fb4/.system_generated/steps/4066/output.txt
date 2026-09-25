@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\bench_1m.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -36,7 +36,8 @@
+ c.execute("SELECT SUM(co2e_total) FROM emissions WHERE year = 2024 AND facility_id = 3 AND status = 'Verified'")
+ res_filt = c.fetchall()
+ t_filt = time.perf_counter() - t0
+-print(f"2. Scoped query (year=2024, facility=3): {t_filt*1000:.2f} ms (Result: {res_filt[0][0]:,.2f})")
++val = float(res_filt[0][0] or 0)
++print(f"2. Scoped query (year=2024, facility=3): {t_filt*1000:.2f} ms (Result: {val:,.2f})")
+ 
+ # Benchmark 3: Fetching single year (180,000 verified rows) into Python memory
+ t0 = time.perf_counter()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

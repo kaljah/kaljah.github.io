@@ -1,0 +1,132 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+[AUDIT] Notification Badge Count: 6
+[AUDIT] Notification Center Panel Opened
+[AUDIT] Notification Center Panel Closed via Escape
+  ok 7 [chromium] › e2e\test_dashboard_deep_audit.spec.js:315:3 › Dashboard Page Deep Audit › 6. Notification Center Panel, Real-time Counter & Actions (7.1s)
+[AUDIT] Target Action Button: "+ Set Target"
+[AUDIT] Manage Custom Factors button is visible and accessible
+  x  8 [chromium] › e2e\test_dashboard_deep_audit.spec.js:350:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons (5.5s)
+[AUDIT] Target Action Button: "+ Set Target"
+[AUDIT] Manage Custom Factors button is visible and accessible
+  ok 9 [chromium] › e2e\test_dashboard_deep_audit.spec.js:350:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons (retry #1) (7.9s)
+  x  10 [chromium] › e2e\test_dashboard_deep_audit.spec.js:366:3 › Dashboard Page Deep Audit › 8. Performance Intensity Card & Scope 3 Filter Parity (5.4s)
+  x  11 [chromium] › e2e\test_dashboard_deep_audit.spec.js:366:3 › Dashboard Page Deep Audit › 8. Performance Intensity Card & Scope 3 Filter Parity (retry #1) (7.4s)
+
+
+  1) [chromium] › e2e\test_dashboard_deep_audit.spec.js:252:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree 
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "151.0K"
+    Received string:    "151K"
+
+      275 |     expect(flaringRow).toContain('24.5K');
+      276 |     expect(ventingRow).toContain('16.5K');
+    > 277 |     expect(otherRow).toContain('151.0K');
+          |                      ^
+      278 |     expect(totalFootprintRow).toContain('256.4K');
+      279 |
+      280 |     // Expand Organizational Tree (Click Activity row)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:277:22
+
+    Error Context: test-results\test_dashboard_deep_audit--13c5d-ganizational-Hierarchy-Tree-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "151.0K"
+    Received string:    "151K"
+
+      275 |     expect(flaringRow).toContain('24.5K');
+      276 |     expect(ventingRow).toContain('16.5K');
+    > 277 |     expect(otherRow).toContain('151.0K');
+          |                      ^
+      278 |     expect(totalFootprintRow).toContain('256.4K');
+      279 |
+      280 |     // Expand Organizational Tree (Click Activity row)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:277:22
+
+    Error Context: test-results\test_dashboard_deep_audit--13c5d-ganizational-Hierarchy-Tree-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--13c5d-ganizational-Hierarchy-Tree-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--13c5d-ganizational-Hierarchy-Tree-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_dashboard_deep_audit.spec.js:366:3 › Dashboard Page Deep Audit › 8. Performance Intensity Card & Scope 3 Filter Parity 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Performance Intensity"
+    Received: "PERFORMANCE INTENSITY"
+
+      371 |     await expect(intensityCard).toBeVisible();
+      372 |     const intensityLabel = await intensityCard.locator('.stat-label').innerText();
+    > 373 |     expect(intensityLabel).toBe('Performance Intensity');
+          |                            ^
+      374 |
+      375 |     // Scope 3 Year Filter check: Ensure Scope 3 displays 0 when year has no scope 3 records
+      376 |     const yearDropdown = page.locator('.top-bar-injected-left .filter-wrapper').nth(0).locator('.dropdown-selected');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:373:28
+
+    Error Context: test-results\test_dashboard_deep_audit--44712--Card-Scope-3-Filter-Parity-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Performance Intensity"
+    Received: "PERFORMANCE INTENSITY"
+
+      371 |     await expect(intensityCard).toBeVisible();
+      372 |     const intensityLabel = await intensityCard.locator('.stat-label').innerText();
+    > 373 |     expect(intensityLabel).toBe('Performance Intensity');
+          |                            ^
+      374 |
+      375 |     // Scope 3 Year Filter check: Ensure Scope 3 displays 0 when year has no scope 3 records
+      376 |     const yearDropdown = page.locator('.top-bar-injected-left .filter-wrapper').nth(0).locator('.dropdown-selected');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:373:28
+
+    Error Context: test-results\test_dashboard_deep_audit--44712--Card-Scope-3-Filter-Parity-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--44712--Card-Scope-3-Filter-Parity-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--44712--Card-Scope-3-Filter-Parity-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_dashboard_deep_audit.spec.js:350:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons 
+
+    Error: locator.scrollIntoViewIfNeeded: Test ended.
+    Call log:
+      - waiting for locator('.manage-factors-btn')
+        - locator resolved to visible <button class="manage-factors-btn">…</button>
+
+
+      359 |     // 2. Reference Libraries Card & Manage Custom Factors button
+      360 |     const manageFactorsBtn = page.locator('.manage-factors-btn');
+    > 361 |     manageFactorsBtn.scrollIntoViewIfNeeded();
+          |                      ^
+      362 |     await expect(manageFactorsBtn).toBeVisible();
+      363 |     console.log('[AUDIT] Manage Custom Factors button is visible and accessible');
+      364 |   });
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:361:22
+
+    Error Context: test-results\test_dashboard_deep_audit--5ae3f-d-Reference-Library-Buttons-chromium\error-context.md
+
+  2 failed
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:252:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:366:3 › Dashboard Page Deep Audit › 8. Performance Intensity Card & Scope 3 Filter Parity 
+  1 flaky
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:350:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons 
+  5 passed (1.6m)
+

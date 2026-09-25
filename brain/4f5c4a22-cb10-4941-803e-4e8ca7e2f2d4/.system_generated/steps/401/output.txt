@@ -1,0 +1,23 @@
+Task: 4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/task-365
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-365.log
+Log output:
+<truncated 7 lines>
+_form_engine.spec.js:71:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) (4.1s)
+
+========================================
+[TIER 1 TEST] Testing Region: West (Tosyali)
+========================================
+  x  2 [chromium] › e2e\test_scope1_form_engine.spec.js:71:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) (retry #1) (4.9s)
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Combustion (Tier 3) -> ID: 9, CO2: 0, CH4: 110, Total: 3080 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2025	-	Complexe Sidérurgique DRI/EAF (Tosyali)	-	-	-	-	combustion	natural_gas	Default	1,00...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Flaring (Tier 3)
+========================================
+
+Last progress: 1m44s ago

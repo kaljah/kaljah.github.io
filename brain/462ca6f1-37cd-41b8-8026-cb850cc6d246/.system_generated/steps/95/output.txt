@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\dispatcher.py:4:    PneumaticDeviceCalculator,
+  new\server\calculations\dispatcher.py:5:    LiquidsUnloadingCalculator,
+> new\server\calculations\dispatcher.py:6:    MudDegassingCalculator,
+  new\server\calculations\dispatcher.py:7:    TankFlashingCalculator,
+  new\server\calculations\dispatcher.py:8:    CompletionFlowbackCalculator,
+  new\server\calculations\dispatcher.py:9:    BlowdownCalculator,
+  new\server\calculations\dispatcher.py:10:)
+  new\server\calculations\dispatcher.py:11:from .fugitive import (
+  new\server\calculations\dispatcher.py:42:            "safety_flaring": FlaringCalculator(),
+  new\server\calculations\dispatcher.py:43:            "flare": FlaringCalculator(),
+> new\server\calculations\dispatcher.py:44:            "drilling": MudDegassingCalculator(),
+> new\server\calculations\dispatcher.py:45:            "mud_degassing": MudDegassingCalculator(),
+  new\server\calculations\dispatcher.py:46:            "completions": CompletionFlowbackCalculator(),
+  new\server\calculations\dispatcher.py:47:            "completion_flowback": CompletionFlowbackCalculator(),
+  new\server\calculations\dispatcher.py:48:            "liquids_unloading": LiquidsUnloadingCalculator(),
+  new\server\calculations\dispatcher.py:49:            "unloading": LiquidsUnloadingCalculator(),
+  new\server\calculations\dispatcher.py:50:            "tank": TankFlashingCalculator(),
+  new\server\calculations\dispatcher.py:512:                )
+  new\server\calculations\dispatcher.py:513:
+> new\server\calculations\dispatcher.py:514:            elif process_type in ["drilling", "mud_degassing"]:
+> new\server\calculations\dispatcher.py:515:                mud_vol = self._require_float(
+  new\server\calculations\dispatcher.py:516:                    flat_inputs,
+> new\server\calculations\dispatcher.py:517:                    ["mud_vol", "mud_volume", "amount", "quantity"],
+> new\server\calculations\dispatcher.py:518:                    "drilling mud volume",
+  new\server\calculations\dispatcher.py:519:                )
+  new\server\calculations\dispatcher.py:520:                vol_m3 = self._normalize_volume(
+> new\server\calculations\dispatcher.py:521:                    mud_vol, flat_inputs.get("mud_unit") or unit, "m3"
+  new\server\calculations\dispatcher.py:522:                )
+> new\server\calculations\dispatcher.py:523:                raw_mud_type = str(flat_inputs.get("mud_type") or 
+"water_based").lower()
+> new\server\calculations\dispatcher.py:524:                if "oil" in raw_mud_type:
+> new\server\calculations\dispatcher.py:525:                    mud_type = "oil_based"
+> new\server\calculations\dispatcher.py:526:                elif "water" in raw_mud_type:
+> new\server\calculations\dispatcher.py:527:                    mud_type = "water_based"
+> new\server\calculations\dispatcher.py:528:                elif "synth" in raw_mud_type:
+> new\server\calculations\dispatcher.py:529:                    mud_type = "synthetic"
+  new\server\calculations\dispatcher.py:530:                else:
+> new\server\calculations\dispatcher.py:531:                    mud_type = raw_mud_type
+  new\server\calculations\dispatcher.py:532:                return calculator.calculate(
+> new\server\calculations\dispatcher.py:533:                    mud_volume=vol_m3,
+> new\server\calculations\dispatcher.py:534:                    mud_type=mud_type,
+  new\server\calculations\dispatcher.py:535:                    uncertainties=uncertainties,
+  new\server\calculations\dispatcher.py:536:                    ef_ch4=emission_factors.get("ch4", 0),
+  new\server\calculations\dispatcher.py:537:                    gwp_dict=gwp_dict,
+  new\server\calculations\dispatcher.py:538:                )
+  new\server\calculations\dispatcher.py:539:
+
+
+

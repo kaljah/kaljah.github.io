@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+STATUS CODE: 200
+SUMMARY: [{'ch4_total': 238.7, 'co2_total': 236200.0, 'combustion': 64408.1, 'facility_id': 'total', 'flaring': 24512.5, 'gwp_horizon': 100, 'n2o_total': 51.1, 'other': 150999.5, 'scope1_total': 256425.1, 'scope1_total_gwp100': 256425.1, 'scope1_total_gwp20': 269741.2, 'scope2_energy': 0, 'scope2_total': 0, 'venting': 16505.0, 'year': 2026}]
+YEARS: [2026]
+

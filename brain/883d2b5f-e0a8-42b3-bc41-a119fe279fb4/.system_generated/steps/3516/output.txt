@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -189,5 +189,40 @@
+ - **UI Parity Test Suite (`test_ui_calculation_parity.py`):** 17 passed in 4.07 seconds.
+ - **Client Formatter Unit Tests (`test_ui_numerical_parity.mjs`):** 100% pass across decimal formatting, trace gas thresholds, compact numbers, trend percentage, and calculation pipelines.
+ 
++---
++
++## 7. Industrial Stress Testing Across 5 Dimensions
++
++The platform was subjected to comprehensive stress testing across 5 industrial dimensions to certify production stability under high concurrency, massive data volume, parallel asynchronous ingestion, chaotic boundary conditions, and sustained calculation loops.
++
++### A. Summary of Stress Testing Results
++
++| Pillar | Test File | Test Scenarios | Benchmarks & SLAs | Outcome |
++| :--- | :--- | :--- | :--- | :---: |
++| **Pillar 1: Load & Concurrency** | `test_stress_concurrency.py` | 30–50 concurrent worker threads executing simultaneous reads and writes across Scopes 1, 2, and 3 | 32.3 req/s throughput<br>P50: 28.6 ms, P95: 325.0 ms<br>0 SQLite WAL locks (`database is locked`)<br>0 HTTP 500 errors | **100% PASS** |
++| **Pillar 2: Massive Volume & Analytics Aggregations** | `test_stress_volume_analytics.py` | Database seeded with 3,000+ records across 5 facilities and 5 operating years; high-volume analytics, parallel sub-queries, and document streaming | `/api/dashboard/summary`: 17.89 ms (< 400 ms SLA)<br>`/api/dashboard/batch-all` (7-thread parallel): 127.71 ms<br>PDF document stream: 441.88 ms<br>Grand Total mathematical fidelity: 100% | **100% PASS** |
++| **Pillar 3: Concurrent Asynchronous Bulk Upload Pipeline** | `test_stress_bulk_pipeline.py` | 8 simultaneous CSV upload jobs executed in parallel background worker threads; 30 parallel threads polling job statuses under contention | Ingested 200 rows in 2.38s (84.2 rows/sec throughput)<br>100% completion rate (8/8 jobs)<br>0 thread deadlocks or state corruption<br>0 lock contention errors on job polling | **100% PASS** |
++| **Pillar 4: Chaos, Extreme Boundaries & Malformed Payloads** | `test_stress_boundary_resilience.py` | Astronomical magnitudes ($10^{18}$, $10^{24}$), microscopic quantities ($10^{-20}$), `NaN`, `Infinity`, 1 MB string payloads, CSV formula injections (`=cmd\|`, `@SUM`), corrupted JSON, Unicode bursts | Astronomical / microscopic calcs: exact & finite<br>NaN / Inf API rejection: clean 400/422, 0 500s<br>1 MB payload: handled without memory crash<br>Formula injection: treated strictly as literal data<br>Malformed JSON: clean 400/422 responses | **100% PASS** |
++| **Pillar 5: Memory Leaks & Sustained Calculation Loops** | `test_stress_memory_leaks.py` | 10,000 sequential calculations, 25,000 unit conversions, 5,000 uncertainty propagations profiled with `tracemalloc` | 10,000 calculations: 3,473 calcs/sec, **0.0000 MB** net growth<br>25,000 conversions: 187,907 conv/sec, **0.0000 MB** growth<br>5,000 uncertainty ops: 34,013 ops/sec, **0.0001 MB** growth<br>Garbage collection: 0 uncollectable cyclic references | **100% PASS** |
++
++### B. Bug Discovered & Remediated Under Stress
++
++1. **`background_processor.py` UnboundLocalError Safeguard:**
++   - **Discovered:** When uploading non-Excel files (e.g. `.csv`), an unhandled exception before `wb = None` resulted in `UnboundLocalError: cannot access local variable 'wb' where it is not associated with a value` in the `finally:` block.
++   - **Remediation:** Initialized `wb = None` and `f = None` before the `try:` block, added safe filename string conversion (`str(original_filename or "").lower().endswith(".xlsx")`), and protected the `finally:` cleanup block with `if 'wb' in locals() and wb: wb.close()`.
++
++2. **`routes/emissions.py` Malformed Payload Protection:**
++   - **Discovered:** Sending `None` or non-integer `facility_id` to `POST /api/emissions/` caused unhandled `TypeError` or `ValueError`.
++   - **Remediation:** Replaced `request.get_json()` with `request.get_json(silent=True) or {}` and wrapped `facility_id` conversion in `try...except (ValueError, TypeError)` returning clean HTTP 422.
++
++3. **Pytest Flask-Limiter Test Suite Autouse Fixture:**
++   - **Discovered:** Running all 431 test suites in a single process triggered Flask-Limiter's 20 logins per 15 minutes limit (`SEC-01`), causing downstream authentication failures in subsequent test files.
++   - **Remediation:** Added an `autouse=True` fixture in `conftest.py` that temporarily sets `limiter.enabled = False` for all test client requests and restores state on teardown.
++
++### C. Total Verification Metric
++- **Total Backend Tests:** **431 passed / 431 total** in 37.93 seconds (100% pass rate).
++- **Knowledge Graph:** Updated via `graphify update .` (2,491 nodes, 5,241 edges, 245 communities).
++
++
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

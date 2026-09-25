@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\uncertainty.py:19:  Tier 3 (calibrated meters/CEMS):    �2%
+new\server\calculations\uncertainty.py:35:    T3 = 3  # Site-measured, CEMS, mass balance (most accurate)
+new\server\calculations\uncertainty.py:42:    Tier.T3: 0.02,  # �2%  - calibrated CEMS / Coriolis meters
+new\server\calculations\uncertainty.py:393:        "cems",
+
+
+

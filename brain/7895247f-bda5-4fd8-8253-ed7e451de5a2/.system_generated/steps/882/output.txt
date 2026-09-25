@@ -1,0 +1,144 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+32 GL1Z None GNL Algeria
+33 GL2Z None GNL Algeria
+34 GL3Z None GNL Algeria
+35 GL1K None GNL Algeria
+36 GP1Z None GPL Algeria
+37 GP2Z None GPL Algeria
+38 RA1K None Raffinerie Algeria
+39 RA1Z None Raffinerie Algeria
+40 RA1G None Raffinerie Algeria
+41 RA1A None Raffinerie Algeria
+42 CP1Z None P�trochimie Algeria
+43 CPEK None P�trochimie Algeria
+44 Audit Test Solar Compression Station None None Algeria
+45 Audit Test Solar Compression Station None None Algeria
+46 Facility-AGT01-01 Sonatrach Production Station None None Algeria
+47 Facility-AGT01-02 Sonatrach Association Station None None Algeria
+48 Facility-AGT01-03 Sonatrach Refining Station None None Algeria
+49 Facility-AGT01-04 Sonatrach LPG Station None None Algeria
+50 Facility-AGT01-05 Sonatrach LNG Station None None Algeria
+51 Facility-AGT01-06 Sonatrach Petrochemicals Station None None Algeria
+52 Facility-AGT01-07 Sonatrach Production Station None None Algeria
+53 Facility-AGT01-08 Sonatrach Association Station None None Algeria
+54 Facility-AGT01-09 Sonatrach Refining Station None None Algeria
+55 Facility-AGT01-10 Sonatrach LPG Station None None Algeria
+56 Facility-AGT02-01 Sonatrach Production Station None None Algeria
+57 Facility-AGT02-02 Sonatrach Association Station None None Algeria
+58 Facility-AGT02-03 Sonatrach Refining Station None None Algeria
+59 Facility-AGT02-04 Sonatrach LPG Station None None Algeria
+60 Facility-AGT02-05 Sonatrach LNG Station None None Algeria
+61 Facility-AGT02-06 Sonatrach Petrochemicals Station None None Algeria
+62 Facility-AGT02-07 Sonatrach Production Station None None Algeria
+63 Facility-AGT02-08 Sonatrach Association Station None None Algeria
+64 Facility-AGT02-09 Sonatrach Refining Station None None Algeria
+65 Facility-AGT02-10 Sonatrach LPG Station None None Algeria
+66 Facility-AGT03-01 Sonatrach Production Station None None Algeria
+67 Facility-AGT03-02 Sonatrach Association Station None None Algeria
+68 Facility-AGT03-03 Sonatrach Refining Station None None Algeria
+69 Facility-AGT03-04 Sonatrach LPG Station None None Algeria
+70 Facility-AGT03-05 Sonatrach LNG Station None None Algeria
+71 Facility-AGT03-06 Sonatrach Petrochemicals Station None None Algeria
+72 Facility-AGT03-07 Sonatrach Production Station None None Algeria
+73 Facility-AGT03-08 Sonatrach Association Station None None Algeria
+74 Facility-AGT03-09 Sonatrach Refining Station None None Algeria
+75 Facility-AGT03-10 Sonatrach LPG Station None None Algeria
+76 Facility-AGT04-01 Sonatrach Production Station None None Algeria
+77 Facility-AGT04-02 Sonatrach Association Station None None Algeria
+78 Facility-AGT04-03 Sonatrach Refining Station None None Algeria
+79 Facility-AGT04-04 Sonatrach LPG Station None None Algeria
+80 Facility-AGT04-05 Sonatrach LNG Station None None Algeria
+81 Facility-AGT04-06 Sonatrach Petrochemicals Station None None Algeria
+82 Facility-AGT04-07 Sonatrach Production Station None None Algeria
+83 Facility-AGT04-08 Sonatrach Association Station None None Algeria
+84 Facility-AGT04-09 Sonatrach Refining Station None None Algeria
+85 Facility-AGT04-10 Sonatrach LPG Station None None Algeria
+86 Facility-AGT05-01 Sonatrach Production Station None None Algeria
+87 Facility-AGT05-02 Sonatrach Association Station None None Algeria
+88 Facility-AGT05-03 Sonatrach Refining Station None None Algeria
+89 Facility-AGT05-04 Sonatrach LPG Station None None Algeria
+90 Facility-AGT05-05 Sonatrach LNG Station None None Algeria
+91 Facility-AGT05-06 Sonatrach Petrochemicals Station None None Algeria
+92 Facility-AGT05-07 Sonatrach Production Station None None Algeria
+93 Facility-AGT05-08 Sonatrach Association Station None None Algeria
+94 Facility-AGT05-09 Sonatrach Refining Station None None Algeria
+95 Facility-AGT05-10 Sonatrach LPG Station None None Algeria
+96 Facility-AGT06-01 Sonatrach Production Station None None Algeria
+97 Facility-AGT06-02 Sonatrach Association Station None None Algeria
+98 Facility-AGT06-03 Sonatrach Refining Station None None Algeria
+99 Facility-AGT06-04 Sonatrach LPG Station None None Algeria
+100 Facility-AGT06-05 Sonatrach LNG Station None None Algeria
+101 Facility-AGT06-06 Sonatrach Petrochemicals Station None None Algeria
+102 Facility-AGT06-07 Sonatrach Production Station None None Algeria
+103 Facility-AGT06-08 Sonatrach Association Station None None Algeria
+104 Facility-AGT06-09 Sonatrach Refining Station None None Algeria
+105 Facility-AGT06-10 Sonatrach LPG Station None None Algeria
+106 Facility-AGT07-01 Sonatrach Production Station None None Algeria
+107 Facility-AGT07-02 Sonatrach Association Station None None Algeria
+108 Facility-AGT07-03 Sonatrach Refining Station None None Algeria
+109 Facility-AGT07-04 Sonatrach LPG Station None None Algeria
+110 Facility-AGT07-05 Sonatrach LNG Station None None Algeria
+111 Facility-AGT07-06 Sonatrach Petrochemicals Station None None Algeria
+112 Facility-AGT07-07 Sonatrach Production Station None None Algeria
+113 Facility-AGT07-08 Sonatrach Association Station None None Algeria
+114 Facility-AGT07-09 Sonatrach Refining Station None None Algeria
+115 Facility-AGT07-10 Sonatrach LPG Station None None Algeria
+116 Facility-AGT08-01 Sonatrach Production Station None None Algeria
+117 Facility-AGT08-02 Sonatrach Association Station None None Algeria
+118 Facility-AGT08-03 Sonatrach Refining Station None None Algeria
+119 Facility-AGT08-04 Sonatrach LPG Station None None Algeria
+120 Facility-AGT08-05 Sonatrach LNG Station None None Algeria
+121 Facility-AGT08-06 Sonatrach Petrochemicals Station None None Algeria
+122 Facility-AGT08-07 Sonatrach Production Station None None Algeria
+123 Facility-AGT08-08 Sonatrach Association Station None None Algeria
+124 Facility-AGT08-09 Sonatrach Refining Station None None Algeria
+125 Facility-AGT08-10 Sonatrach LPG Station None None Algeria
+126 Facility-AGT09-01 Sonatrach Production Station None None Algeria
+127 Facility-AGT09-02 Sonatrach Association Station None None Algeria
+128 Facility-AGT09-03 Sonatrach Refining Station None None Algeria
+129 Facility-AGT09-04 Sonatrach LPG Station None None Algeria
+130 Facility-AGT09-05 Sonatrach LNG Station None None Algeria
+131 Facility-AGT09-06 Sonatrach Petrochemicals Station None None Algeria
+132 Facility-AGT09-07 Sonatrach Production Station None None Algeria
+133 Facility-AGT09-08 Sonatrach Association Station None None Algeria
+134 Facility-AGT09-09 Sonatrach Refining Station None None Algeria
+135 Facility-AGT09-10 Sonatrach LPG Station None None Algeria
+136 Facility-AGT10-01 Sonatrach Production Station None None Algeria
+137 Facility-AGT10-02 Sonatrach Association Station None None Algeria
+138 Facility-AGT10-03 Sonatrach Refining Station None None Algeria
+139 Facility-AGT10-04 Sonatrach LPG Station None None Algeria
+140 Facility-AGT10-05 Sonatrach LNG Station None None Algeria
+141 Facility-AGT10-06 Sonatrach Petrochemicals Station None None Algeria
+142 Facility-AGT10-07 Sonatrach Production Station None None Algeria
+143 Facility-AGT10-08 Sonatrach Association Station None None Algeria
+144 Facility-AGT10-09 Sonatrach Refining Station None None Algeria
+145 Facility-AGT10-10 Sonatrach LPG Station None None Algeria
+146 DB Integrity Verification Field None None Algeria
+147 Industrial Complex In-Salah Gas Central None None Algeria
+148 Updated Facility TFA-ADM-001 None Algeria
+149 None None None Algeria
+150 Updated Facility TFA-001 None Algeria
+151 None None None Algeria
+152  None None Algeria
+153 None None None Algeria
+154  None None Algeria
+155 Updated Facility TFA-D4D414 None Algeria
+156 None None None Algeria
+157  None None Algeria
+158 Updated Facility TFA-ADM-06B9B885 None Algeria
+159 None None None Algeria
+160 Updated Facility TFA-ADM-CFD45EA2 None Algeria
+161 None None None Algeria
+162 Updated Facility TFA-B8AD79 None Algeria
+163 None None None Algeria
+164  None None Algeria
+165 Updated Facility TFA-5CD005 None Algeria
+166 None None None Algeria
+167  None None Algeria
+168 <svg onload=alert(1)> XSS-001 None Algeria
+169 HBNS (Hassi Berkine South) HBNS Hassi Berkine South Algeria
+170 El Merk ELM Block 208 Algeria
+

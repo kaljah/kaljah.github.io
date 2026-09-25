@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -117,6 +117,18 @@
+             month=month
+         ).first()
+         
++        gross_gas_mmsm3 = float(data.get('gross_gas_mmsm3') or 0.0)
++        gas_without_injected_mmsm3 = float(data.get('gas_without_injected_mmsm3') or 0.0)
++        injected_gas_mmsm3 = float(data.get('injected_gas_mmsm3') or 0.0)
++        crude_oil_mmboe = float(data.get('crude_oil_mmboe') or 0.0)
++        condensate_mmboe = float(data.get('condensate_mmboe') or 0.0)
++        lpg_mmboe = float(data.get('lpg_mmboe') or 0.0)
++        ngl_mmboe = float(data.get('ngl_mmboe') or 0.0)
++        total_production_mmboe = float(data.get('total_production_mmboe') or 0.0)
++        total_production_no_injected_mmboe = float(data.get('total_production_no_injected_mmboe') or 0.0)
++        saleable_production_mmboe = float(data.get('saleable_production_mmboe') or 0.0)
++        fuel_gas_export_mmsm3 = float(data.get('fuel_gas_export_mmsm3') or 0.0)
++
+         if existing:
+             existing.oil_amount = oil_amount
+             existing.gas_amount = gas_amount
+@@ -123,4 +123,15 @@
+             existing.gas_unit = gas_unit
++            existing.gross_gas_mmsm3 = gross_gas_mmsm3
++            existing.gas_without_injected_mmsm3 = gas_without_injected_mmsm3
++            existing.injected_gas_mmsm3 = injected_gas_mmsm3
++            existing.crude_oil_mmboe = crude_oil_mmboe
++            existing.condensate_mmboe = condensate_mmboe
++            existing.lpg_mmboe = lpg_mmboe
++            existing.ngl_mmboe = ngl_mmboe
++            existing.total_production_mmboe = total_production_mmboe
++            existing.total_production_no_injected_mmboe = total_production_no_injected_mmboe
++            existing.saleable_production_mmboe = saleable_production_mmboe
++            existing.fuel_gas_export_mmsm3 = fuel_gas_export_mmsm3
+             existing.activity = activity
+             existing.division = division
+             existing.field = field
+@@ -135,6 +135,17 @@
+                 gas_amount=gas_amount,
+                 oil_unit=oil_unit,
+                 gas_unit=gas_unit,
++                gross_gas_mmsm3=gross_gas_mmsm3,
++                gas_without_injected_mmsm3=gas_without_injected_mmsm3,
++                injected_gas_mmsm3=injected_gas_mmsm3,
++                crude_oil_mmboe=crude_oil_mmboe,
++                condensate_mmboe=condensate_mmboe,
++                lpg_mmboe=lpg_mmboe,
++                ngl_mmboe=ngl_mmboe,
++                total_production_mmboe=total_production_mmboe,
++                total_production_no_injected_mmboe=total_production_no_injected_mmboe,
++                saleable_production_mmboe=saleable_production_mmboe,
++                fuel_gas_export_mmsm3=fuel_gas_export_mmsm3,
+                 activity=activity,
+                 division=division,
+                 field=field
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

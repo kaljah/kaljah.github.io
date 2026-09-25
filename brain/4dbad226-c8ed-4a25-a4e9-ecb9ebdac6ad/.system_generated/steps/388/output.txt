@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":960,"LineContent":"  // --- ACID GAS REMOVAL (AGR) ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1206,"LineContent":"  agr: \"Acid Gas Removal (AGR)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":254,"LineContent":"          name: \"Acid Gas Removal (AGR)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\AGRForm.jsx","LineNumber":8,"LineContent":"        Acid Gas Removal"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":166,"LineContent":"  { key: \"agr\",                    label: \"AGR / Acid Gas Removal\",   IconComp: Icon.Activity,  tier1Fields: [\"quantity\",\"unit\"],       tier3Extra: [\"agr_throughput\",\"agr_co2_in\",\"agr_co2_out\",\"agr_ch4_in\",\"agr_ch4_slip\",\"agr_control_eff\"] },"}

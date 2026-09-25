@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+<truncated 3 lines>
+emissions length: 50
+First element in emissions : None stationary_combustion 224.88054449999998
+pages: 9
+total: 426
+

@@ -1,0 +1,77 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\context\AuthContext.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -17,6 +17,53 @@
+   const idleWarningRef = useRef(null);
+   const lastActivityRef = useRef(Date.now());
+ 
++  // BroadcastChannel for cross-tab auth synchronization
++  const authChannelRef = useRef(null);
++
++  useEffect(() => {
++    if (typeof BroadcastChannel !== "undefined") {
++      try {
++        authChannelRef.current = new BroadcastChannel("ghg_auth_channel");
++        authChannelRef.current.onmessage = (event) => {
++          const msg = event.data;
++          if (msg?.type === "LOGOUT") {
++            setUser(null);
++            setPreferences({});
++            applyTheme("light");
++            setSessionWarning(false);
++            if (msg.isTimeout) {
++              setSessionExpired(true);
++            }
++          } else if (msg?.type === "ACTIVITY") {
++            lastActivityRef.current = msg.timestamp || Date.now();
++            setSessionWarning(false);
++          }
++        };
++      } catch (err) {
++        console.warn("[Auth] BroadcastChannel not supported in this environment", err);
++      }
++    }
++
++    // Storage event fallback for older browser tabs
++    const handleStorage = (e) => {
++      if (e.key === "ghg_auth_logout_event") {
++        setUser(null);
++        setPreferences({});
++        applyTheme("light");
++        setSessionWarning(false);
++      }
++    };
++    window.addEventListener("storage", handleStorage);
++
++    return () => {
++      if (authChannelRef.current) {
++        authChannelRef.current.close();
++        authChannelRef.current = null;
++      }
++      window.removeEventListener("storage", handleStorage);
++    };
++  }, []);
++
+   // Register global logout hook for API interceptor
+   useEffect(() => {
+     window.__authLogout = () => {
+@@ -45,6 +45,17 @@
+     if (isTimeout) {
+       setSessionExpired(true);
+     }
++
++    // Broadcast logout to all sibling browser tabs
++    if (authChannelRef.current) {
++      try {
++        authChannelRef.current.postMessage({ type: "LOGOUT", isTimeout });
++      } catch (e) {}
++    }
++    try {
++      localStorage.setItem("ghg_auth_logout_event", Date.now().toString());
++    } catch (e) {}
++
+     try {
+       await fetchCsrfToken();
+     } catch (e) {}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

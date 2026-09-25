@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":755,"LineContent":"  \"Fugitive - Compressor Seal (Centrifugal - Wet)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":764,"LineContent":"  \"Fugitive - Compressor Seal (Centrifugal - Dry)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":773,"LineContent":"  \"Fugitive - Compressor Seal (Reciprocating)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1070,"LineContent":"  \"Blowdown - Compressor (Reciprocating)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1079,"LineContent":"  \"Blowdown - Compressor (Centrifugal)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":847,"LineContent":"          centrifugal_compressor: ["}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":853,"LineContent":"          reciprocating_compressor: ["}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":241,"LineContent":"    label: \"Pneumatic / Compressor Parameters (Tier 3)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":253,"LineContent":"      { key: \"comp_mode\",       label: \"Compressor Mode\",      required: false, hint: \"e.g. wet_seal, dry_seal\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":254,"LineContent":"      { key: \"comp_hours\",      label: \"Compressor Hours\",     required: false, hint: \"Annual operating hours\" },"}

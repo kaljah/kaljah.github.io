@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"found":true,"className":"modal-overlay","text":"ISO 14064-1 Report Configuration\n×\n\nTo ensure 100% compliance with ISO 14064-1, please provide the following mandatory declarations before generating the report.\n\nExclusion Criteria (Significance)\n\nDocument the criteria used to define which indirect emissions are significant and justify any exclusio"}
+```

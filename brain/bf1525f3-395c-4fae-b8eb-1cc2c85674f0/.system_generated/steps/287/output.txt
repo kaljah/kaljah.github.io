@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -308,7 +308,7 @@
+                     role=u["role"],
+                     sector="Oil & Gas",
+                     department="Sustainability & IT",
+-                    jobTitle="Administrator",
++                    jobTitle="Sustainability Manager",
+                     location="Global",
+                     status="active",
+                 )
+@@ -317,6 +317,8 @@
+                 user.set_password(u["password"])
+                 user.status = "active"
+                 user.role = u["role"]
++                if not user.jobTitle:
++                    user.jobTitle = "Sustainability Manager"
+         db.session.commit()
+     except Exception as e:
+         app.logger.error(f"Failed to auto-seed admin: {e}")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

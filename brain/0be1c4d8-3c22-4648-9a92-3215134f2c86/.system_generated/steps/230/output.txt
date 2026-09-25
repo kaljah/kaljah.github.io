@@ -1,0 +1,557 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\CalculationDetails.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -106,17 +106,18 @@
+ }
+ 
+ .calc-section {
+-  margin-bottom: 32px;
+-}
+-
+-.calc-section:last-child {
+-  margin-bottom: 0;
+-}
+-
+-.calc-section h4 {
+-  margin: 0 0 16px 0;
+-  font-size: 1.1rem;
+-  color: var(--text-primary);
++  display: flex;
++  flex-direction: column;
++  gap: 12px;
++}
++
++.calc-section-title {
++  margin: 0;
++  font-size: 0.85rem;
++  font-weight: 700;
++  text-transform: uppercase;
++  letter-spacing: 0.05em;
++  color: #475569;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+@@ -123,34 +123,80 @@
+ 
+-/* Input Parameters */
++.calc-section-title svg {
++  color: #10b981;
++}
++
++/* 1. Input Parameters Grid */
+ .param-grid {
+   display: grid;
+-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+-  gap: 16px;
++  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
++  gap: 12px;
+ }
+ 
+ .param-item {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 6px;
++  background: #f8fafc;
++  border: 1px solid #e2e8f0;
++  border-radius: 10px;
++  padding: 12px 14px;
++  display: flex;
++  flex-direction: column;
++  gap: 4px;
++  transition: border-color 0.2s ease, box-shadow 0.2s ease;
++}
++
++.param-item:hover {
++  border-color: #cbd5e1;
++  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+ }
+ 
+ .param-label {
+-  font-size: 0.75rem;
+-  color: var(--text-secondary);
+-  text-transform: uppercase;
+-  letter-spacing: 0.5px;
++  font-size: 0.72rem;
++  font-weight: 600;
++  color: #64748b;
++  text-transform: uppercase;
++  letter-spacing: 0.04em;
+ }
+ 
+ .param-value {
+-  font-size: 1rem;
+-  color: var(--text-primary);
+-  font-weight: 600;
+-}
+-
+-/* Emission Factors */
++  font-size: 0.95rem;
++  color: #0f172a;
++  font-weight: 600;
++  word-break: break-word;
++}
++
++/* Status Badges */
++.status-pill {
++  display: inline-flex;
++  align-items: center;
++  gap: 4px;
++  padding: 3px 8px;
++  border-radius: 6px;
++  font-size: 0.75rem;
++  font-weight: 700;
++  width: fit-content;
++}
++
++.status-pill.verified {
++  background: #ecfdf5;
++  color: #059669;
++  border: 1px solid #a7f3d0;
++}
++
++.status-pill.pending {
++  background: #fffbeb;
++  color: #d97706;
++  border: 1px solid #fde68a;
++}
++
++.status-pill.draft {
++  background: #fee2e2;
++  color: #dc2626;
++  border: 1px solid #fecaca;
++}
++
++/* 2. Emission Factors Applied */
+ .factors-grid {
+-  display: flex;
+-  flex-direction: column;
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+   gap: 12px;
+ }
+ 
+@@ -157,10 +157,17 @@
+-  padding: 16px;
+-  background: rgba(255, 255, 255, 0.03);
+-  border: 1px solid rgba(255, 255, 255, 0.08);
+-  border-radius: 8px;
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: center;
++  padding: 12px 16px;
++  background: #ffffff;
++  border: 1px solid #e2e8f0;
++  border-radius: 10px;
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
++  transition: all 0.2s ease;
++}
++
++.factor-item:hover {
++  border-color: #cbd5e1;
++  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+ }
+ 
+ .factor-label {
+@@ -167,49 +167,54 @@
+   align-items: center;
+-  gap: 12px;
+-  font-size: 0.9rem;
+-  color: var(--text-primary);
++  gap: 10px;
++  font-size: 0.85rem;
++  font-weight: 600;
++  color: #334155;
+ }
+ 
+ .gas-badge {
+-  padding: 4px 10px;
+-  border-radius: 6px;
+-  font-size: 0.75rem;
+-  font-weight: 700;
+-  letter-spacing: 0.5px;
++  padding: 3px 8px;
++  border-radius: 6px;
++  font-size: 0.72rem;
++  font-weight: 700;
++  letter-spacing: 0.03em;
+ }
+ 
+ .gas-badge.co2 {
+-  background: rgba(239, 68, 68, 0.2);
+-  color: #ef4444;
++  background: #fee2e2;
++  color: #dc2626;
++  border: 1px solid #fecaca;
+ }
+ 
+ .gas-badge.ch4 {
+-  background: rgba(59, 130, 246, 0.2);
+-  color: #3b82f6;
++  background: #e0f2fe;
++  color: #0284c7;
++  border: 1px solid #bae6fd;
+ }
+ 
+ .gas-badge.n2o {
+-  background: rgba(168, 85, 247, 0.2);
+-  color: #a855f7;
++  background: #f3e8ff;
++  color: #9333ea;
++  border: 1px solid #e9d5ff;
+ }
+ 
+ .gas-badge.gwp {
+-  background: rgba(16, 185, 129, 0.2);
+-  color: #10b981;
++  background: #dcfce7;
++  color: #16a34a;
++  border: 1px solid #bbf7d0;
+ }
+ 
+ .factor-value {
+-  font-family: "Courier New", monospace;
+-  font-size: 0.9rem;
+-  color: var(--accent-color);
+-  font-weight: 600;
+-}
+-
+-/* Calculation Steps */
++  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
++  font-size: 0.88rem;
++  color: #0f172a;
++  font-weight: 700;
++}
++
++/* 3. Calculation Steps */
+ .steps-container {
+   display: flex;
+   flex-direction: column;
+-  gap: 16px;
++  gap: 12px;
+ }
+ 
+ .calc-step {
+@@ -216,17 +216,21 @@
+-  gap: 16px;
++  gap: 14px;
++  align-items: flex-start;
+ }
+ 
+ .step-number {
+-  width: 32px;
+-  height: 32px;
++  width: 30px;
++  height: 30px;
+   border-radius: 50%;
+-  background: rgba(16, 185, 129, 0.2);
+-  color: #10b981;
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  font-weight: 700;
+-  flex-shrink: 0;
++  background: #ecfdf5;
++  color: #059669;
++  border: 1px solid #a7f3d0;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  font-weight: 700;
++  font-size: 0.82rem;
++  flex-shrink: 0;
++  margin-top: 4px;
+ }
+ 
+ .step-content {
+@@ -233,71 +233,143 @@
+-  padding: 12px 16px;
+-  background: rgba(255, 255, 255, 0.03);
+-  border: 1px solid rgba(255, 255, 255, 0.08);
+-  border-radius: 8px;
++  padding: 14px 16px;
++  background: #f8fafc;
++  border: 1px solid #e2e8f0;
++  border-radius: 10px;
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
+ }
+ 
+ .step-label {
+-  font-size: 0.9rem;
+-  color: var(--text-primary);
+-  margin-bottom: 8px;
++  font-size: 0.92rem;
++  font-weight: 700;
++  color: #0f172a;
++}
++
++.step-desc {
++  font-size: 0.86rem;
++  color: #475569;
++  line-height: 1.45;
+ }
+ 
+ .step-formula {
+-  font-family: "Courier New", monospace;
+-  font-size: 0.85rem;
+-  color: var(--text-secondary);
++  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
++  font-size: 0.82rem;
++  color: #1e293b;
+   padding: 8px 12px;
+-  background: rgba(0, 0, 0, 0.2);
+-  border-radius: 4px;
+-  margin-bottom: 8px;
++  background: #ffffff;
++  border: 1px solid #cbd5e1;
++  border-radius: 6px;
++  overflow-x: auto;
++  line-height: 1.4;
++  margin-top: 2px;
+ }
+ 
+ .step-result {
+-  font-size: 0.9rem;
+-  color: var(--accent-color);
+-  font-weight: 600;
+-}
+-
+-/* Final Results */
++  font-size: 0.92rem;
++  color: #059669;
++  font-weight: 700;
++  margin-top: 2px;
++}
++
++/* 4. Uncertainty Breakdown */
++.uncertainty-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
++  gap: 12px;
++}
++
++.uncertainty-card {
++  background: #f8fafc;
++  border: 1px solid #e2e8f0;
++  border-radius: 10px;
++  padding: 12px 14px;
++  display: flex;
++  flex-direction: column;
++  gap: 4px;
++}
++
++.uncertainty-card .unc-label {
++  font-size: 0.75rem;
++  font-weight: 600;
++  color: #64748b;
++  display: flex;
++  align-items: center;
++  gap: 6px;
++}
++
++.uncertainty-card .unc-value {
++  font-size: 1.05rem;
++  font-weight: 700;
++  font-family: ui-monospace, monospace;
++}
++
++/* 5. Final Results */
+ .results-grid {
+   display: grid;
+-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+-  gap: 12px;
++  grid-template-columns: repeat(4, 1fr);
++  gap: 12px;
++}
++
++@media (max-width: 640px) {
++  .results-grid {
++    grid-template-columns: repeat(2, 1fr);
++  }
+ }
+ 
+ .result-card {
+-  padding: 20px;
+-  background: rgba(255, 255, 255, 0.05);
+-  border: 1px solid rgba(255, 255, 255, 0.1);
++  padding: 16px 12px;
++  background: #f8fafc;
++  border: 1px solid #e2e8f0;
+   border-radius: 12px;
+   text-align: center;
++  display: flex;
++  flex-direction: column;
++  gap: 4px;
++  transition: transform 0.2s ease, box-shadow 0.2s ease;
++}
++
++.result-card:hover {
++  transform: translateY(-2px);
++  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+ }
+ 
+ .result-card.total {
+-  background: linear-gradient(
+-    135deg,
+-    rgba(16, 185, 129, 0.1),
+-    rgba(5, 150, 105, 0.05)
+-  );
+-  border-color: rgba(16, 185, 129, 0.3);
++  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
++  border: 2px solid #10b981;
++  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+ }
+ 
+ .result-label {
+-  font-size: 0.8rem;
+-  color: var(--text-secondary);
+-  text-transform: uppercase;
+-  letter-spacing: 1px;
+-  margin-bottom: 8px;
++  font-size: 0.75rem;
++  color: #64748b;
++  text-transform: uppercase;
++  letter-spacing: 0.05em;
++  font-weight: 700;
++}
++
++.result-card.total .result-label {
++  color: #065f46;
+ }
+ 
+ .result-value {
+-  font-size: 1.5rem;
+-  font-weight: 700;
+-  color: var(--text-primary);
++  font-size: 1.35rem;
++  font-weight: 800;
++  color: #0f172a;
+ }
+ 
+ .result-card.total .result-value {
+-  color: #10b981;
++  color: #047857;
++  font-size: 1.5rem;
++}
++
++.result-unit {
++  font-size: 0.72rem;
++  font-weight: 600;
++  color: #64748b;
++}
++
++.result-card.total .result-unit {
++  color: #059669;
+ }
+ 
+ /* Footer */
+@@ -304,58 +304,51 @@
+-  margin-top: 24px;
+-  padding: 16px;
+-  background: rgba(59, 130, 246, 0.1);
+-  border: 1px solid rgba(59, 130, 246, 0.2);
+-  border-radius: 8px;
+-  display: flex;
+-  align-items: center;
+-  gap: 12px;
+-  font-size: 0.85rem;
+-  color: var(--text-secondary);
++  padding: 14px 24px;
++  background: #f8fafc;
++  border-top: 1px solid #e2e8f0;
++  display: flex;
++  align-items: center;
++  gap: 10px;
++  font-size: 0.82rem;
++  color: #64748b;
++  flex-shrink: 0;
+ }
+ 
+ .calc-footer svg {
+-  flex-shrink: 0;
+-  color: #3b82f6;
+-}
+-
+-/* Scrollbar */
+-.calc-modal::-webkit-scrollbar {
+-  width: 8px;
+-}
+-
+-.calc-modal::-webkit-scrollbar-track {
+-  background: rgba(255, 255, 255, 0.05);
+-  border-radius: 4px;
+-}
+-
+-.calc-modal::-webkit-scrollbar-thumb {
+-  background: rgba(255, 255, 255, 0.2);
+-  border-radius: 4px;
+-}
+-
+-.calc-modal::-webkit-scrollbar-thumb:hover {
+-  background: rgba(255, 255, 255, 0.3);
+-}
+-
+-@keyframes fadeIn {
+-  from {
+-    opacity: 0;
+-  }
+-
+-  to {
+-    opacity: 1;
+-  }
+-}
+-
+-@keyframes slideUp {
+-  from {
+-    opacity: 0;
+-    transform: translateY(30px);
+-  }
+-
+-  to {
+-    opacity: 1;
+-    transform: translateY(0);
++  color: #10b981;
++  flex-shrink: 0;
++}
++
++/* Minimal Scrollbar for Modal */
++.calc-modal ::-webkit-scrollbar {
++  width: 6px;
++  height: 6px;
++}
++
++.calc-modal ::-webkit-scrollbar-track {
++  background: #f1f5f9;
++}
++
++.calc-modal ::-webkit-scrollbar-thumb {
++  background: #cbd5e1;
++  border-radius: 999px;
++}
++
++.calc-modal ::-webkit-scrollbar-thumb:hover {
++  background: #94a3b8;
++}
++
++@keyframes calcFadeIn {
++  from { opacity: 0; }
++  to { opacity: 1; }
++}
++
++@keyframes calcSlideUp {
++  from {
++    opacity: 0;
++    transform: translateY(20px) scale(0.98);
++  }
++  to {
++    opacity: 1;
++    transform: translateY(0) scale(1);
+   }
+ }
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

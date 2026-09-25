@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -173,7 +173,9 @@
+             return default_val
+ 
+         # Scope 1
+-        s1_q = _fac_filter(Emission.query, Emission)
++        s1_q = _fac_filter(Emission.query, Emission).filter(
++            or_(Emission.status.is_(None), func.lower(Emission.status) != "rejected")
++        )
+         s1_rows = s1_q.with_entities(
+             Emission.co2e_total,
+             Emission.uncertainty_pct,
+@@ -184,7 +184,9 @@
+         )
+ 
+         # Scope 2
+-        s2_q = _fac_filter(Scope2Emission.query, Scope2Emission)
++        s2_q = _fac_filter(Scope2Emission.query, Scope2Emission).filter(
++            or_(Scope2Emission.status.is_(None), func.lower(Scope2Emission.status) != "rejected")
++        )
+         s2_rows = s2_q.with_entities(
+             Scope2Emission.co2e,
+             Scope2Emission.uncertainty_pct,
+@@ -195,7 +195,9 @@
+         )
+ 
+         # Scope 3
+-        s3_q = _fac_filter(Scope3Emission.query, Scope3Emission)
++        s3_q = _fac_filter(Scope3Emission.query, Scope3Emission).filter(
++            or_(Scope3Emission.status.is_(None), func.lower(Scope3Emission.status) != "rejected")
++        )
+         s3_rows = s3_q.with_entities(
+             Scope3Emission.co2e,
+             Scope3Emission.uncertainty_pct,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

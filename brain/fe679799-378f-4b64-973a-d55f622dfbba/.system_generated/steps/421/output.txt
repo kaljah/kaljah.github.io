@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":28,"LineContent":"class CalculationDispatcher:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1405,"LineContent":"dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":32,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":36,"LineContent":"dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":15,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":22,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":4,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":81,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":103,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":475,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":498,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":518,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":537,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":556,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1310,"LineContent":"    from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1320,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1335,"LineContent":"    from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1337,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1670,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":21,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":27,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":31,"LineContent":"    \"\"\"Verifies that CalculationDispatcher is completely re-entrant and thread-safe.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":22,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_gwp_horizons_regulatory.py","LineNumber":27,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_boundary_and_negative.py","LineNumber":21,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_boundary_and_negative.py","LineNumber":28,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":32,"LineContent":"from calculations.dispatcher import CalculationDispatcher, dispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":34,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":100,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":2,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":6,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":23,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":47,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":68,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":86,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":104,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":122,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":140,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":155,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":176,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":200,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_dispatcher.py","LineNumber":228,"LineContent":"    dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_emission_factor_selection.py","LineNumber":28,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_emission_factor_selection.py","LineNumber":34,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_golden_dataset_validation.py","LineNumber":16,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_golden_dataset_validation.py","LineNumber":23,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_independent_differential.py","LineNumber":14,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_independent_differential.py","LineNumber":52,"LineContent":"    return CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":84,"LineContent":"    from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":86,"LineContent":"    dispatcher = CalculationDispatcher()"}
+(...4 more results not shown)

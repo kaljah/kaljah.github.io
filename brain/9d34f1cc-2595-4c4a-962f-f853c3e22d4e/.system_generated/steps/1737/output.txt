@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Dashboard batch-all: 200 ['base_year', 'categorical_breakdown', 'goal', 'intensity_stats', 'intensity_stats_py', 'mitigation', 'pending_stats', 'scope3_summary', 'summary', 'uncertainty', 'years']
+

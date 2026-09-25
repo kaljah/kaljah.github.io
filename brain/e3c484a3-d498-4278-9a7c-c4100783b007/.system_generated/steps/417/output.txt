@@ -1,0 +1,41 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 6 items
+
+tests/test_aggregation_reconciliation.py::TestRollupAndGasReconciliation::test_gas_aggregation_commutativity PASSED [ 16%]
+tests/test_aggregation_reconciliation.py::TestRollupAndGasReconciliation::test_scope_inventory_aggregation PASSED [ 33%]
+tests/test_aggregation_reconciliation.py::TestOGMPSurveyReconciliation::test_ogmp_reconciled_within_threshold PASSED [ 50%]
+tests/test_aggregation_reconciliation.py::TestOGMPSurveyReconciliation::test_ogmp_unreconciled_exceeds_threshold FAILED [ 66%]
+tests/test_aggregation_reconciliation.py::TestIntensityMetrics::test_boe_calculation PASSED [ 83%]
+tests/test_aggregation_reconciliation.py::TestIntensityMetrics::test_carbon_intensity_calculation PASSED [100%]
+
+================================== FAILURES ===================================
+____ TestOGMPSurveyReconciliation.test_ogmp_unreconciled_exceeds_threshold ____
+
+self = <test_aggregation_reconciliation.TestOGMPSurveyReconciliation object at 0x00000299C45EC950>
+
+    def test_ogmp_unreconciled_exceeds_threshold(self):
+        bu = 100.0
+        td = 145.0  # +45% variance > 20% threshold
+        recon = IndependentOGMPModel.reconcile_survey(bu, td, threshold=20.0)
+    
+>       assert recon["reconciliation_status"] == "Unreconciled"
+E       AssertionError: assert 'Discrepancy Flagged' == 'Unreconciled'
+E         
+E         - Unreconciled
+E         + Discrepancy Flagged
+
+tests\test_aggregation_reconciliation.py:82: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_aggregation_reconciliation.py::TestOGMPSurveyReconciliation::test_ogmp_unreconciled_exceeds_threshold
+========================= 1 failed, 5 passed in 0.84s =========================
+

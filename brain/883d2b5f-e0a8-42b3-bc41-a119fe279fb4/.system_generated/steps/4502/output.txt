@@ -1,0 +1,102 @@
+
+The command exited with code 1.
+Output:
+..EE                                                                     [100%]
+=================================== ERRORS ====================================
+_________ ERROR at setup of test_delete_mitigation_invalid_id_format __________
+
+client = <FlaskClient <Flask 'app'>>
+
+    @pytest.fixture
+    def auth_tokens(client):
+        with app.app_context():
+            admin = User.query.filter_by(email="bugfix_admin@test.com").first()
+            if not admin:
+                admin = User(
+                    email="bugfix_admin@test.com",
+                    fullName="BugFix Admin",
+                    orgName="TestCorp",
+                    sector="Energy",
+                    role="admin",
+                    location="Algiers",
+                )
+                admin.set_password("AdminPass123!")
+                db.session.add(admin)
+                db.session.commit()
+    
+            user = User.query.filter_by(email="bugfix_user@test.com").first()
+            if not user:
+                user = User(
+                    email="bugfix_user@test.com",
+                    fullName="BugFix User",
+                    orgName="TestCorp",
+                    sector="Energy",
+                    role="engineer",
+                    location="Algiers",
+                )
+                user.set_password("UserPass123!")
+                db.session.add(user)
+                db.session.commit()
+    
+        r_admin = client.post("/api/auth/login", json={"email": "bugfix_admin@test.com", "password": "AdminPass123!"})
+>       admin_token = r_admin.get_json()["access_token"]
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'access_token'
+
+new\server\tests\test_audit_bug_fixes.py:48: KeyError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.109s] [ReqID: fbafaa60-525b-4290-a93e-62bebc071075]
+____________ ERROR at setup of test_ogmp_survey_null_measured_rate ____________
+
+client = <FlaskClient <Flask 'app'>>
+
+    @pytest.fixture
+    def auth_tokens(client):
+        with app.app_context():
+            admin = User.query.filter_by(email="bugfix_admin@test.com").first()
+            if not admin:
+                admin = User(
+                    email="bugfix_admin@test.com",
+                    fullName="BugFix Admin",
+                    orgName="TestCorp",
+                    sector="Energy",
+                    role="admin",
+                    location="Algiers",
+                )
+                admin.set_password("AdminPass123!")
+                db.session.add(admin)
+                db.session.commit()
+    
+            user = User.query.filter_by(email="bugfix_user@test.com").first()
+            if not user:
+                user = User(
+                    email="bugfix_user@test.com",
+                    fullName="BugFix User",
+                    orgName="TestCorp",
+                    sector="Energy",
+                    role="engineer",
+                    location="Algiers",
+                )
+                user.set_password("UserPass123!")
+                db.session.add(user)
+                db.session.commit()
+    
+        r_admin = client.post("/api/auth/login", json={"email": "bugfix_admin@test.com", "password": "AdminPass123!"})
+>       admin_token = r_admin.get_json()["access_token"]
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'access_token'
+
+new\server\tests\test_audit_bug_fixes.py:48: KeyError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.111s] [ReqID: 3c47510e-1430-46b5-afa3-eb5e4562c4f3]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR new\server\tests\test_audit_bug_fixes.py::test_delete_mitigation_invalid_id_format
+ERROR new\server\tests\test_audit_bug_fixes.py::test_ogmp_survey_null_measured_rate
+2 passed, 1 warning, 2 errors in 3.37s
+

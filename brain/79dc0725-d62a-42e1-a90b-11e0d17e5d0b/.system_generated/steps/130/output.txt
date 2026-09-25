@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                        Filename     
+---------- ----                                                        --------     
+       549 @managedata_bp.route("/filters/available", methods=["GET"]) managedata.py
+       551 def get_available_filters():                                managedata.py
+
+
+

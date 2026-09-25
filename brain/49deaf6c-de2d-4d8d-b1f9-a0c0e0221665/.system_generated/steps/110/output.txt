@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\audit.py:133:        if log.new_values:
+new\server\routes\audit.py:135:                new_val = json.loads(log.new_values)
+new\server\routes\audit.py:137:                new_val = log.new_values
+new\server\routes\audit.py:150:        "new_values": new_val,
+new\server\routes\audit.py:351:            json.dumps(item["new_values"])
+new\server\routes\audit.py:352:            if isinstance(item["new_values"], (dict, list))
+new\server\routes\audit.py:353:            else str(item["new_values"] or "")
+new\server\routes\facilities.py:332:                    "new_values": {k: v for k, v in data.items() if k in changes},
+new\server\models.py:294:    new_values = db.Column(db.Text, nullable=True)  # JSON after-state diff
+new\server\utils.py:83:    new_values=None,
+new\server\utils.py:96:    new_val_str = json.dumps(new_values, default=str) if isinstance(new_values, dict) else 
+(str(new_values) if new_values is not None else None)
+new\server\utils.py:104:        new_values=new_val_str,
+
+
+

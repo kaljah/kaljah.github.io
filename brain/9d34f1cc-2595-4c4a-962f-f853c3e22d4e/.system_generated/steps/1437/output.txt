@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -543,7 +543,12 @@
+                     or flat_inputs.get("calc_method")
+                     or flat_inputs.get("calculation_method", "metered_volume")
+                 )
+-                events_val = float(flat_inputs.get("amount") or flat_inputs.get("events") or 1.0)
++                events_val = float(
++                    flat_inputs.get("events")
++                    or flat_inputs.get("num_events")
++                    or (flat_inputs.get("amount") if str(unit).lower() in ["count", "event", "events"] else 1.0)
++                    or 1.0
++                )
+                 gas_sales_mcf = float(flat_inputs.get("comp_gas_produced_mcf") or 0.0)
+                 gas_sales_scf = gas_sales_mcf * 1000.0
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

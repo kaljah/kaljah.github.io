@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\auth.py:11:from extensions import db, limiter, csrf
+  new\server\routes\auth.py:12:from utils import log_activity_and_notify, is_unrestricted_location
+  new\server\routes\auth.py:13:
+  new\server\routes\auth.py:14:
+  new\server\routes\auth.py:15:def get_user_operational_defaults(user):
+  new\server\routes\auth.py:16:    """
+> new\server\routes\auth.py:310:@csrf.exempt
+  new\server\routes\auth.py:311:@limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "300 per 15 minutes"))
+  new\server\routes\auth.py:312:def login():
+  new\server\routes\auth.py:313:    data = request.get_json()
+  new\server\routes\auth.py:314:    if not data or not data.get("email") or not data.get("password"):
+  new\server\routes\auth.py:315:        return jsonify({"error": "Email and password required"}), 400
+> new\server\routes\auth.py:382:@csrf.exempt
+  new\server\routes\auth.py:383:@limiter.limit("5 per 15 minutes")
+  new\server\routes\auth.py:384:def forgot_password():
+  new\server\routes\auth.py:385:    """
+  new\server\routes\auth.py:386:    User triggers a password reset request.
+  new\server\routes\auth.py:387:    Creates a notification for the IT Role / Admin to reset their credentials.
+
+
+

@@ -1,0 +1,78 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 1627 lines>
+me," (",t.location||t.field||"General",")"]},t.id))]})]}),e.jsxs("div",{className:"input-group",children:[e.jsx("label"
+,{children:"Survey Date *"}),e.jsx("input",{type:"date",value:m.survey_date,onChange:t=>{const 
+i=t.target.value,a=i?new Date(i).getFullYear():m.year;oe({...m,survey_date:i,year:a})},className:"mole-input"})]}),e.js
+xs("div",{className:"input-group",children:[e.jsx("label",{children:"Measurement Technology (Level 4/5) *"}),e.jsxs("se
+lect",{value:m.survey_type,onChange:t=>oe({...m,survey_type:t.target.value}),className:"component-select",children:[e.j
+sx("option",{value:"Satellite (Sentinel-5P/MethaneSAT)",children:"Satellite (Sentinel-5P / MethaneSAT / 
+GHGSat)"}),e.jsx("option",{value:"Aircraft OGI / Hyperspectral",children:"Aircraft Hyperspectral / LiDAR 
+Aerial"}),e.jsx("option",{value:"Drone / UAV LiDAR Scanning",children:"Drone / UAV Tunable Diode Laser 
+(TDLAS)"}),e.jsx("option",{value:"Ground Mobile / OGI FLIR Camera",children:"Ground Mobile / Optical Gas Imaging (OGI 
+FLIR)"}),e.jsx("option",{value:"Fixed Continuous Sensor Array",children:"Fixed Continuous Point Sensor 
+Array"}),e.jsx("option",{value:"Bottom-Up Source Component Measurement",children:"Bottom-Up High-Flow Component 
+Sampling"})]})]}),e.jsxs("div",{className:"input-group",children:[e.jsx("label",{children:"Measured Emission Rate (kg 
+CH4 / hr) *"}),e.jsx("input",{type:"number",step:"0.1",value:m.measured_rate_kg_hr,onChange:t=>oe({...m,measured_rate_k
+g_hr:t.target.value}),className:"mole-input",placeholder:"0.0"})]}),e.jsxs("div",{className:"input-group",children:[e.j
+sx("label",{children:"Reconciliation Status"}),e.jsxs("select",{value:m.reconciliation_status,onChange:t=>oe({...m,reco
+nciliation_status:t.target.value}),className:"component-select",children:[e.jsx("option",{value:"Reconciled",children:"
+Reconciled (Within Uncertainty Margin)"}),e.jsx("option",{value:"Discrepancy Detected",children:"Discrepancy Detected 
+(Bottom-Up Underestimated)"}),e.jsx("option",{value:"Investigation Pending",children:"Investigation Pending / Root 
+Cause Analysis"}),e.jsx("option",{value:"Under Review",children:"Under Review by 
+Operations"})]})]}),e.jsxs("div",{className:"input-group",style:{gridColumn:"span 
+2"},children:[e.jsx("label",{children:"Operator Notes & Campaign Metadata"}),e.jsx("input",{type:"text",value:m.operato
+r_notes,onChange:t=>oe({...m,operator_notes:t.target.value}),className:"mole-input",placeholder:"Wind speed, flight 
+altitude, pass number, observation conditions"})]})]}),e.jsxs("div",{style:{display:"flex",gap:"12px",marginTop:"20px"}
+,children:[e.jsx("button",{className:"action-btn",onClick:$i,children:ht?"Update Survey Record":"Save OGMP Survey"}),ht
+&&e.jsx("button",{className:"action-btn",style:{background:"var(--text-secondary)"},onClick:()=>{Ot(null),oe({id:null,a
+ctivity:"",division:"",facility_id:"",year:new Date().getFullYear(),survey_date:new 
+Date().toISOString().split("T")[0],survey_type:"Satellite (Sentinel-5P/MethaneSAT)",measured_rate_kg_hr:"",reconciliati
+on_status:"Reconciled",operator_notes:""})},children:"Cancel Edit"})]}),e.jsxs("div",{className:"table-container",style
+:{marginTop:"40px"},children:[e.jsxs("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",ma
+rginBottom:"16px"},children:[e.jsx("h3",{children:"OGMP 2.0 Survey 
+Records"}),e.jsxs("span",{style:{fontSize:"0.85rem",color:"var(--text-secondary)"},children:["Total Surveys: ",ft.lengt
+h]})]}),e.jsxs("table",{className:"data-table",children:[e.jsx("thead",{children:e.jsxs("tr",{children:[e.jsx("th",{chi
+ldren:"Facility"}),e.jsx("th",{children:"Survey Date"}),e.jsx("th",{children:"Measurement 
+Method"}),e.jsx("th",{style:{textAlign:"right"},children:"Measured Rate (kg 
+CH4/hr)"}),e.jsx("th",{style:{textAlign:"right"},children:"Annualized 
+(tCH4/yr)"}),e.jsx("th",{children:"Reconciliation Status"}),e.jsx("th",{children:"Campaign Notes"}),e.jsx("th",{style:{
+textAlign:"center"},children:"Actions"})]})}),e.jsxs("tbody",{children:[ft.slice((P-1)*T,P*T).map(t=>{const 
+i=t.facility_id||t.facilityId,a=u.find(U=>U.id===i),l=t.facility_name||t.facilityName||a?.name||`Facility #${i}`,r=t.su
+rvey_date||t.surveyDate||"",g=t.survey_type||t.surveyType||"Satellite",C=parseFloat(t.measured_rate_kg_hr??t.measuredRa
+teKgHr??0),B=t.estimated_annual_tch4??t.estimatedAnnualTch4??C*8760/1e3,M=t.reconciliation_status||t.reconciliationStat
+us||"Reconciled",$=M==="Reconciled",te=t.operator_notes||t.operatorNotes||"-";return e.jsxs("tr",{children:[e.jsx("td",
+{children:e.jsx("strong",{children:l})}),e.jsx("td",{children:r}),e.jsx("td",{children:e.jsx("span",{style:{fontWeight:
+500},children:g})}),e.jsx("td",{style:{textAlign:"right",fontWeight:600},children:C.toLocaleString(void 0,{minimumFract
+ionDigits:1,maximumFractionDigits:2})}),e.jsx("td",{style:{textAlign:"right",color:"#10b981",fontWeight:700},children:p
+arseFloat(B).toLocaleString(void 
+0,{minimumFractionDigits:1,maximumFractionDigits:1})}),e.jsx("td",{children:e.jsx("span",{className:`status-badge 
+${$?"active":"planned"}`,style:{background:$?"rgba(16, 185, 129, 0.12)":"rgba(239, 68, 68, 0.12)",color:$?"#10b981":"#e
+f4444",borderColor:$?"#10b981":"#ef4444"},children:M})}),e.jsx("td",{style:{fontSize:"0.85rem",color:"var(--text-second
+ary)"},children:te}),e.jsx("td",{style:{textAlign:"center"},children:e.jsxs("div",{style:{display:"flex",gap:"6px",just
+ifyContent:"center"},children:[e.jsx("button",{className:"action-btn",style:{padding:"4px 8px",fontSize:"0.75rem",backg
+round:"#3b82f6"},onClick:()=>{Ot(t.id),oe({id:t.id,activity:a?.activity||"",division:a?.division||"",facility_id:i?i.to
+String():"",year:t.year||(r?new Date(r).getFullYear():new Date().getFullYear()),survey_date:r,survey_type:g,measured_ra
+te_kg_hr:C.toString(),reconciliation_status:M,operator_notes:te==="-"?"":te}),window.scrollTo({top:0,behavior:"smooth"}
+)},children:"Edit"}),e.jsx("button",{className:"btn-delete",style:{padding:"4px 8px",fontSize:"0.75rem"},onClick:()=>Bi
+(t.id),children:"Delete"})]})})]},t.id)}),ft.length===0&&e.jsx("tr",{children:e.jsx("td",{colSpan:"8",style:{textAlign:
+"center",padding:"40px",color:"var(--text-secondary)"},children:"No OGMP survey records found."})})]})]}),e.jsx(Me,{cur
+rentPage:P,totalItems:ft.length,itemsPerPage:T,onPageChange:Ce})]})]})]})]})}),ie.isOpen&&e.jsx(ps,{type:ie.type,onClos
+e:()=>F({...ie,isOpen:!1}),onUploadSuccess:()=>{ie.type==="sources"&&vt(),ie.type==="custom_factors"&&yt(),ie.type==="p
+roduction"&&nt(),ie.type==="mitigation"&&jt(),ie.type==="facilities"&&gt(),ie.type==="activity"&&(nt(),c.success("Activ
+ity data imported and emissions 
+calculated!"))}}),e.jsx(hs,{isOpen:He.isOpen,onClose:()=>Qe(t=>({...t,isOpen:!1})),title:`Convert Volume 
+(${He.type==="gas"?"Gas: m�  mscf":"Oil: m�  bbl"})`,children:e.jsxs("form",{onSubmit:Hi,style:{padding:"8px 0"},chil
+dren:[e.jsx("label",{style:{display:"block",marginBottom:"8px",fontSize:"0.88rem",fontWeight:600,color:"var(--text-seco
+ndary)"},children:"Enter volume in cubic meters 
+(m�):"}),e.jsx("input",{type:"number",step:"any",autoFocus:!0,placeholder:"e.g. 1000",value:He.value,onChange:t=>Qe(i=>
+({...i,value:t.target.value})),className:"mole-input",style:{width:"100%",marginBottom:"12px",padding:"10px"}}),e.jsx("
+div",{style:{fontSize:"0.8rem",color:"var(--text-secondary)",marginBottom:"20px"},children:He.type==="gas"?"Conversion 
+Factor: m� � 0.0353147 = mcf (mscf)":"Conversion Factor: m� � 6.28981 = barrels (bbl)"}),e.jsxs("div",{style:{display:"
+flex",justifyContent:"flex-end",gap:"10px"},children:[e.jsx("button",{type:"button",className:"btn-ghost",onClick:()=>Q
+e(t=>({...t,isOpen:!1})),children:"Cancel"}),e.jsx("button",{type:"submit",className:"btn-primary",children:"Convert & 
+Apply"})]})]})}),e.jsx(xi,{isOpen:Ge.isOpen,title:Ge.title,message:Ge.message,confirmLabel:Ge.confirmLabel,confirmVaria
+nt:Ge.confirmVariant,onConfirm:Ge.onConfirm,onCancel:()=>Rt(t=>({...t,isOpen:!1}))})]})},Ks=()=>e.jsx(rs,{children:e.js
+x(Ns,{})});export{Ks as default};
+

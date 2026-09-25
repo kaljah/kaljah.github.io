@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -804,6 +804,8 @@
+     doc.setFont("helvetica", "bold");
+     doc.text("Consolidated Emissions by Category", margin, curY);
+     curY += 5;
++    curY = addTextBlock(`Emissions are aggregated in metric tonnes of CO₂ equivalent (tCO₂e) applying ${resolvedGwp.label}.`, curY);
++    curY += 4;
+     
+     autoTable(doc, {
+         startY: curY,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,14 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":33,"LineContent":"    def __init__(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":86,"LineContent":"    def _require(self, key, inputs, description):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":102,"LineContent":"    def _normalize_volume(self, value, unit, target_unit=\"m3\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":133,"LineContent":"    def _require_float(self, flat_inputs, keys, desc):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":148,"LineContent":"    def _parse_fraction_value(self, val, key_name=\"\", is_percent=False):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":168,"LineContent":"    def _require_fraction(self, flat_inputs, keys, desc, is_percent=False):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":183,"LineContent":"    def _optional_fraction(self, flat_inputs, keys, default=0.0, is_percent=False):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":195,"LineContent":"    def dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":378,"LineContent":"                def safe_frac(key):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":443,"LineContent":"                def safe_frac(key):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":468,"LineContent":"                def _get_eff(keys):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":870,"LineContent":"                    def _wrap_unc(val, gas):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1249,"LineContent":"    def _generic_calculation("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1378,"LineContent":"        def wrap(val, gas):"}

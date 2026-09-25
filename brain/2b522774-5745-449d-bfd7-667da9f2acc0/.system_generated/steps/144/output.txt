@@ -1,0 +1,109 @@
+
+The command exited with code 0.
+Output:
+<truncated 198 lines>
+"active" : ""}`}
+> new\client\src\pages\Settings.jsx:1039:                <span>Copernicus Account (Email &amp; Password)</span>
+  new\client\src\pages\Settings.jsx:1040:              </label>
+  new\client\src\pages\Settings.jsx:1041:              <label
+  new\client\src\pages\Settings.jsx:1042:                className={`auth-mode-pill ${authMode === "oauth_client" ? 
+"active" : ""}`}
+  new\client\src\pages\Settings.jsx:1043:              >
+  new\client\src\pages\Settings.jsx:1044:                <input
+> new\client\src\pages\Settings.jsx:1060:                    Copernicus Email / Username
+  new\client\src\pages\Settings.jsx:1061:                  </label>
+  new\client\src\pages\Settings.jsx:1062:                  <input
+  new\client\src\pages\Settings.jsx:1063:                    type="email"
+  new\client\src\pages\Settings.jsx:1064:                    placeholder="user@example.com"
+> new\client\src\pages\Settings.jsx:1065:                    value={copernicusUsername}
+  new\client\src\pages\Settings.jsx:1066:                    disabled={!isAdmin}
+> new\client\src\pages\Settings.jsx:1067:                    onChange={(e) => setCopernicusUsername(e.target.value)}
+  new\client\src\pages\Settings.jsx:1068:                    className="form-input"
+> new\client\src\pages\Settings.jsx:1069:                    id="copernicus-email-input"
+  new\client\src\pages\Settings.jsx:1070:                  />
+  new\client\src\pages\Settings.jsx:1071:                  <span className="field-hint">
+> new\client\src\pages\Settings.jsx:1072:                    Registered account on dataspace.copernicus.eu
+  new\client\src\pages\Settings.jsx:1073:                  </span>
+  new\client\src\pages\Settings.jsx:1074:                </div>
+  new\client\src\pages\Settings.jsx:1075:                <div className="form-group">
+> new\client\src\pages\Settings.jsx:1076:                  <label className="field-label">Copernicus Password</label>
+  new\client\src\pages\Settings.jsx:1077:                  <input
+  new\client\src\pages\Settings.jsx:1078:                    type="password"
+  new\client\src\pages\Settings.jsx:1079:                    placeholder=""
+> new\client\src\pages\Settings.jsx:1080:                    value={copernicusPassword}
+  new\client\src\pages\Settings.jsx:1081:                    disabled={!isAdmin}
+> new\client\src\pages\Settings.jsx:1082:                    onChange={(e) => setCopernicusPassword(e.target.value)}
+  new\client\src\pages\Settings.jsx:1083:                    className="form-input"
+> new\client\src\pages\Settings.jsx:1084:                    id="copernicus-password-input"
+  new\client\src\pages\Settings.jsx:1085:                  />
+  new\client\src\pages\Settings.jsx:1086:                  <span className="field-hint">
+  new\client\src\pages\Settings.jsx:1087:                    Encrypted and authenticated directly against Keycloak
+  new\client\src\pages\Settings.jsx:1088:                  </span>
+  new\client\src\pages\Settings.jsx:1089:                </div>
+> new\client\src\pages\Settings.jsx:1098:                    value={copernicusClientId}
+  new\client\src\pages\Settings.jsx:1099:                    disabled={!isAdmin}
+> new\client\src\pages\Settings.jsx:1100:                    onChange={(e) => setCopernicusClientId(e.target.value)}
+  new\client\src\pages\Settings.jsx:1101:                    className="form-input"
+> new\client\src\pages\Settings.jsx:1102:                    id="copernicus-client-id-input"
+  new\client\src\pages\Settings.jsx:1103:                  />
+  new\client\src\pages\Settings.jsx:1104:                </div>
+  new\client\src\pages\Settings.jsx:1105:                <div className="form-group">
+  new\client\src\pages\Settings.jsx:1106:                  <label className="field-label">OAuth2 Client Secret</label>
+  new\client\src\pages\Settings.jsx:1107:                  <input
+> new\client\src\pages\Settings.jsx:1110:                    value={copernicusClientSecret}
+  new\client\src\pages\Settings.jsx:1111:                    disabled={!isAdmin}
+> new\client\src\pages\Settings.jsx:1112:                    onChange={(e) => 
+setCopernicusClientSecret(e.target.value)}
+  new\client\src\pages\Settings.jsx:1113:                    className="form-input"
+> new\client\src\pages\Settings.jsx:1114:                    id="copernicus-client-secret-input"
+  new\client\src\pages\Settings.jsx:1115:                  />
+  new\client\src\pages\Settings.jsx:1116:                </div>
+  new\client\src\pages\Settings.jsx:1117:              </div>
+  new\client\src\pages\Settings.jsx:1118:            )}
+  new\client\src\pages\Settings.jsx:1119:
+> new\client\src\pages\Settings.jsx:1135:                    &ge; {copernicusQaThreshold}
+  new\client\src\pages\Settings.jsx:1136:                  </span>
+  new\client\src\pages\Settings.jsx:1137:                </div>
+  new\client\src\pages\Settings.jsx:1138:                <input
+  new\client\src\pages\Settings.jsx:1139:                  type="range"
+  new\client\src\pages\Settings.jsx:1140:                  min="0.3"
+> new\client\src\pages\Settings.jsx:1144:                  value={copernicusQaThreshold}
+  new\client\src\pages\Settings.jsx:1145:                  onChange={(e) =>
+> new\client\src\pages\Settings.jsx:1146:                    setCopernicusQaThreshold(Number(e.target.value))
+  new\client\src\pages\Settings.jsx:1147:                  }
+> new\client\src\pages\Settings.jsx:1148:                  className="range-slider"
+> new\client\src\pages\Settings.jsx:1149:                  id="copernicus-qa-slider"
+  new\client\src\pages\Settings.jsx:1150:                />
+  new\client\src\pages\Settings.jsx:1151:                <span className="field-hint">
+  new\client\src\pages\Settings.jsx:1152:                  ESA standard: 0.5 (filters out cloud, snow, and 
+low-confidence
+  new\client\src\pages\Settings.jsx:1153:                  pixels)
+  new\client\src\pages\Settings.jsx:1154:                </span>
+> new\client\src\pages\Settings.jsx:1178:                    checked={copernicusEnabled}
+> new\client\src\pages\Settings.jsx:1179:                    onChange={(e) => setCopernicusEnabled(e.target.checked)}
+  new\client\src\pages\Settings.jsx:1180:                    style={{
+  new\client\src\pages\Settings.jsx:1181:                      width: "18px",
+  new\client\src\pages\Settings.jsx:1182:                      height: "18px",
+  new\client\src\pages\Settings.jsx:1183:                      accentColor: "#0284c7",
+  new\client\src\pages\Settings.jsx:1184:                    }}
+> new\client\src\pages\Settings.jsx:1185:                    id="copernicus-enabled-checkbox"
+  new\client\src\pages\Settings.jsx:1186:                  />
+  new\client\src\pages\Settings.jsx:1187:                  <span style={{ fontSize: "0.92rem", fontWeight: 600 }}>
+  new\client\src\pages\Settings.jsx:1188:                    Enable Live Sentinel-5P Methane Layer on Map
+  new\client\src\pages\Settings.jsx:1189:                  </span>
+  new\client\src\pages\Settings.jsx:1190:                </label>
+> new\client\src\pages\Settings.jsx:1201:                id="test-copernicus-connection-btn"
+  new\client\src\pages\Settings.jsx:1202:              >
+  new\client\src\pages\Settings.jsx:1203:                {testingConnection ? (
+  new\client\src\pages\Settings.jsx:1204:                  <>
+  new\client\src\pages\Settings.jsx:1205:                    <span className="spinner-small"></span>
+  new\client\src\pages\Settings.jsx:1206:                    <span>Testing Connection...</span>
+> new\client\src\pages\Settings.jsx:1211:                    <span>Test Copernicus Connection</span>
+  new\client\src\pages\Settings.jsx:1212:                  </>
+  new\client\src\pages\Settings.jsx:1213:                )}
+  new\client\src\pages\Settings.jsx:1214:              </button>
+  new\client\src\pages\Settings.jsx:1215:
+  new\client\src\pages\Settings.jsx:1216:              {connectionStatus && (
+
+
+

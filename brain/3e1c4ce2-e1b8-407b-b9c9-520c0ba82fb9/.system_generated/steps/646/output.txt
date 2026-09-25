@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":976,"LineContent":".variance-badge {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":984,"LineContent":".variance-badge.success {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":989,"LineContent":".variance-badge.danger {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1086,"LineContent":"                    className={`variance-badge ${variance.emissions.startsWith(\"+\") ? \"danger\" : \"success\"}`}"}

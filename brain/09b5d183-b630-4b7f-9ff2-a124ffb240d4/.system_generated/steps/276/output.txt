@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+Login Triggered: {'loggedIn': True, 'email': 'a@a', 'pass': 'a'}
+
+Rendered Dashboard Verification Result:
+{
+  "url": "http://localhost:5173/",
+  "title": "Carbon Tech",
+  "bodySnippet": "Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculations\nEmissions Map\nManage Data\nReports\nReference Data\nUncertainty\nAudit Trail\nQA/QC & Diagnostics\nSettings\nA\nAdministrator\nSustainability Lead\nCorporate ESG\nAll Years\nAll Supply Chains\nAll Activities\nAll Divisions\nAll Regions\nGWP-100\nGWP-20\n+ Set Target\n14\nGHG Emissions Dashboard\nLive Content \u2022 Updated 03:16 PM\nEMISSIONS OVERVIEW\nAll Regions\nExport Executive Brief (PDF)\nGROSS OPERATIONAL EMISSIONS (SCOPE 1+2)\n5.1B\ntCO",
+  "hasTotalEmissions": true,
+  "hasIntensity": true,
+  "cardsCount": 143,
+  "chartsCount": 323,
+  "hasError": false
+}
+

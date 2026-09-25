@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -460,8 +460,11 @@
+         ch4_val = float(row.ch4_total or 0)
+         n2o_val = float(row.n2o_total or 0)
+         gwp100_val = float(row.scope1_total or 0)
+-        # IPCC AR5/AR6 GWP-20: CO2=1, CH4=84, N2O=264
+-        gwp20_val = round(co2_val + (84.0 * ch4_val) + (264.0 * n2o_val), 2)
++        # IPCC AR5/AR6 GWP-20:
++        # Base scope1_total is computed under GWP-100 (CH4=28, N2O=265).
++        # Converting to GWP-20 (CH4=84, N2O=264) requires adding the delta: + (84 - 28)*CH4 + (264 - 265)*N2O.
++        # This guarantees all Scope 1 records (even if not split by gas) are preserved and GWP-20 >= GWP-100.
++        gwp20_val = round(max(gwp100_val, gwp100_val + (56.0 * ch4_val) - (1.0 * n2o_val)), 2)
+ 
+         yearly_data[key] = {
+             "year": yr,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

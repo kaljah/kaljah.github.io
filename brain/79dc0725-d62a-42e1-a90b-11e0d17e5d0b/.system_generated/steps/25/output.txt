@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":683,"LineContent":"        (\"name\", \"region name\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":823,"LineContent":"        (\"name\", \"region name\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1684,"LineContent":"        return None, [f\"Region '{fac_raw}' not found. Check that the region name matches exactly a region in the system.\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_comprehensive.py","LineNumber":10,"LineContent":"- Wrong region name → should be REJECTED (Region not found)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_comprehensive.py","LineNumber":252,"LineContent":"# ─── CATEGORY 5: ERROR rows — Wrong region name ──────────────────────────────  30 rows"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":978,"LineContent":"            \"Exact facility/region name from Manage Data → Regions. Required.\","}

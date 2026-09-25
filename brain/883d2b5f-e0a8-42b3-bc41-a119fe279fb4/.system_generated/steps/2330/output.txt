@@ -1,0 +1,148 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 24 items
+
+new\server\tests\test_numerical_invariants.py ................FFFFF...   [100%]
+
+================================== FAILURES ===================================
+___ TestNormativeGoldenBenchmarks.test_api_example_4_1_fuel_gas_combustion ____
+
+self = <test_numerical_invariants.TestNormativeGoldenBenchmarks object at 0x000001FD1C896F90>
+
+    def test_api_example_4_1_fuel_gas_combustion(self):
+        """API Compendium 2021 �4.2 Example 4-1: 10,000 m3 natural gas combustion."""
+        calc = CombustionCalculator()
+>       res = calc.calculate(
+            fuel_quantity=10000.0,
+            unit="m3",
+            fuel_type="fuel_gas",
+            hhv=1020.0,
+            ef_co2=53.06,  # kg CO2 / MMBtu
+            ef_ch4=0.001,  # kg CH4 / MMBtu
+            ef_n2o=0.0001,  # kg N2O / MMBtu
+            uncertainties={},
+            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+        )
+E       TypeError: CombustionCalculator.calculate() missing 2 required positional arguments: 'ef_unit' and 'fuel_unit'
+
+new\server\tests\test_numerical_invariants.py:370: TypeError
+_ TestNormativeGoldenBenchmarks.test_api_example_4_5_flaring_dual_efficiency __
+
+self = <test_numerical_invariants.TestNormativeGoldenBenchmarks object at 0x000001FD1C897290>
+
+    def test_api_example_4_5_flaring_dual_efficiency(self):
+        """API Compendium 2021 �4.3 Example 4-5: Dual-efficiency flaring with native CO2."""
+        from calculations.vented import _split_vented_and_flared
+    
+        split = _split_vented_and_flared(
+            total_gas_m3=1000.0,
+            ch4_tonnes=0.61065,  # 900 m3 CH4 * 0.6785 / 1000
+            co2_tonnes=0.09305,  # 50 m3 CO2 * 1.861 / 1000
+            ctrl_eff=0.98,
+            hhv=1020.0,
+        )
+        # Combusted CO2: 0.61065 * 0.98 * (44.01/16.04) + 0.09305 = 1.73503 tCO2
+>       assert pytest.approx(split["total_co2"], rel=1e-3) == 1.73503
+E       assert 1.70218142908...7 � 0.00170218 == 1.73503
+E         
+E         comparison failed
+E         Obtained: 1.73503
+E         Expected: 1.7021814290897757 � 0.00170218
+
+new\server\tests\test_numerical_invariants.py:398: AssertionError
+_ TestNormativeGoldenBenchmarks.test_api_example_6_5_vessel_blowdown_compressibility _
+
+self = <test_numerical_invariants.TestNormativeGoldenBenchmarks object at 0x000001FD1C897590>
+
+    def test_api_example_6_5_vessel_blowdown_compressibility(self):
+        """API Compendium 2021 �6.5 Eq. 6-12: Vessel blowdown real-gas compressibility."""
+        from calculations.vented import BlowdownCalculator
+    
+        calc = BlowdownCalculator()
+>       res = calc.calculate(
+            vessel_volume=50.0,
+            initial_pressure=5000.0,
+            final_pressure=101.325,
+            initial_temperature=300.0,
+            final_temperature=285.0,
+            ch4_content=0.85,
+            z1=0.88,
+            z2=1.00,
+            press_unit="kpa",
+            temp_unit="k",
+            uncertainties={},
+            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+        )
+E       TypeError: BlowdownCalculator.calculate() got an unexpected keyword argument 'vessel_volume'
+
+new\server\tests\test_numerical_invariants.py:409: TypeError
+_ TestNormativeGoldenBenchmarks.test_api_example_6_6_teg_dehydration_gri_glycalc _
+
+self = <test_numerical_invariants.TestNormativeGoldenBenchmarks object at 0x000001FD1C897890>
+
+    def test_api_example_6_6_teg_dehydration_gri_glycalc(self):
+        """API Compendium 2021 �6.6: TEG dehydration GRI-GLYCalc parametric methane solubility."""
+        calc = DehydratorCalculator()
+        res = calc.calculate(
+            pump_rate=600.0,  # 10 gpm = 600 gph
+            pump_unit="gph",
+            hours=8760,
+            ch4_content=0.90,
+            contactor_pressure=800.0,
+            press_unit="psia",
+            contactor_temperature=100.0,
+            temp_unit="F",
+            has_flash_tank=False,
+            still_control_type="none",
+            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+        )
+        # S_CH4 = 0.0032 * 800^0.96 * exp(-0.0022 * 40) * 0.90 = 1.5947 scf/gal
+        # Total CH4 = 5,256,000 gal * 1.5947 scf/gal * 0.0283168 m3/scf * 0.6785 / 1000 = 161.04 tonnes
+>       assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-2) == 161.04
+E       assert 163.07637815151722 � 1.63076 == 161.04
+E         
+E         comparison failed
+E         Obtained: 161.04
+E         Expected: 163.07637815151722 � 1.63076
+
+new\server\tests\test_numerical_invariants.py:444: AssertionError
+______ TestNormativeGoldenBenchmarks.test_api_table_7_3_compressor_seals ______
+
+self = <test_numerical_invariants.TestNormativeGoldenBenchmarks object at 0x000001FD1B66E870>
+
+    def test_api_table_7_3_compressor_seals(self):
+        """API Compendium 2021 Table 7-3: Reciprocating compressor seals (1.2 kg/hr)."""
+        calc = CompressorSealCalculator()
+        res = calc.calculate(
+            compressor_count=2,
+            seal_type="reciprocating",
+            uncertainties={},
+            gwp_dict={"CO2": 1.0, "CH4": 28.0, "N2O": 265.0},
+        )
+        # 2 * 1.2 kg/hr * 8760 hr / 1000 = 21.024 tonnes CH4
+        assert pytest.approx(res["results"]["ch4"]["value"], rel=1e-4) == 21.024
+        assert pytest.approx(res["total_co2e"], rel=1e-4) == 588.672
+        # Fugitive CH4 Tier 1 uncertainty (60%) combined with activity (10%) = sqrt(0.6^2 + 0.1^2) = 60.83%
+>       assert pytest.approx(res["results"]["ch4"]["relative_uncertainty"], rel=1e-3) == 0.6083
+E       assert 0.31622776601683794 � 3.2e-04 == 0.6083
+E         
+E         comparison failed
+E         Obtained: 0.6083
+E         Expected: 0.31622776601683794 � 3.2e-04
+
+new\server\tests\test_numerical_invariants.py:460: AssertionError
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_4_1_fuel_gas_combustion
+FAILED new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_4_5_flaring_dual_efficiency
+FAILED new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_6_5_vessel_blowdown_compressibility
+FAILED new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_example_6_6_teg_dehydration_gri_glycalc
+FAILED new\server\tests\test_numerical_invariants.py::TestNormativeGoldenBenchmarks::test_api_table_7_3_compressor_seals
+======================== 5 failed, 19 passed in 1.08s =========================
+

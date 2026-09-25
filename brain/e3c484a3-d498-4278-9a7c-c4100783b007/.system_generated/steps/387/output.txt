@@ -1,0 +1,88 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 10 items
+
+tests/test_emission_factor_selection.py::TestCatalogFactorIntegrity::test_catalog_has_comprehensive_factors FAILED [ 10%]
+tests/test_emission_factor_selection.py::TestCatalogFactorIntegrity::test_catalog_segments_represented FAILED [ 20%]
+tests/test_emission_factor_selection.py::TestCatalogFactorIntegrity::test_factor_metadata_validity PASSED [ 30%]
+tests/test_emission_factor_selection.py::TestFactorPrecedenceAndCustomOverrides::test_custom_factor_overrides_default PASSED [ 40%]
+tests/test_emission_factor_selection.py::TestGridFactorResolution::test_grid_factors_validity[Algerian National Grid] PASSED [ 50%]
+tests/test_emission_factor_selection.py::TestGridFactorResolution::test_grid_factors_validity[US Average] PASSED [ 60%]
+tests/test_emission_factor_selection.py::TestGridFactorResolution::test_grid_factors_validity[US-ERCOT] PASSED [ 70%]
+tests/test_emission_factor_selection.py::TestGridFactorResolution::test_grid_factors_validity[UK National Grid] PASSED [ 80%]
+tests/test_emission_factor_selection.py::TestUnitAwareFactorConversion::test_energy_factor_with_volume_activity FAILED [ 90%]
+tests/test_emission_factor_selection.py::TestUnitAwareFactorConversion::test_mass_factor_unit_scaling FAILED [100%]
+
+================================== FAILURES ===================================
+______ TestCatalogFactorIntegrity.test_catalog_has_comprehensive_factors ______
+
+self = <test_emission_factor_selection.TestCatalogFactorIntegrity object at 0x000002BF4ABB6570>
+
+    def test_catalog_has_comprehensive_factors(self):
+        """API Compendium 2021 database must contain 100+ factors."""
+>       assert len(ALL_EMISSION_FACTORS) >= 100
+E       AssertionError: assert 83 >= 100
+E        +  where 83 = len({'Natural Gas': {'code': 'NG', 'hhv': 1020, 'co2': 53.06, 'ch4': 0.001, ...}, 'Landfill Gas': {'code': 'LFG', 'hhv': 500, 'co2': 52.07, 'ch4': 0.0032, ...}, 'Coke Oven Gas': {'code': 'COG', 'hhv': 590, 'co2': 46.85, 'ch4': 0.00048, ...}, 'Blast Furnace Gas': {'code': 'BFG', 'hhv': 92, 'co2': 274.32, 'ch4': 2.2e-05, ...}, ...})
+
+tests\test_emission_factor_selection.py:42: AssertionError
+________ TestCatalogFactorIntegrity.test_catalog_segments_represented _________
+
+self = <test_emission_factor_selection.TestCatalogFactorIntegrity object at 0x000002BF4ABB6840>
+
+    def test_catalog_segments_represented(self):
+        """Every registered segment has non-empty factor sets."""
+        for seg in SEGMENTS:
+            factors = get_factor_by_segment(seg)
+>           assert len(factors) > 0, f"No factors found for segment {seg}"
+E           AssertionError: No factors found for segment upstream
+E           assert 0 > 0
+E            +  where 0 = len({})
+
+tests\test_emission_factor_selection.py:48: AssertionError
+____ TestUnitAwareFactorConversion.test_energy_factor_with_volume_activity ____
+
+self = <test_emission_factor_selection.TestUnitAwareFactorConversion object at 0x000002BF4ABB7440>
+
+    def test_energy_factor_with_volume_activity(self):
+        # 53.06 kg/MMBtu with natural gas in m3 (requires HHV)
+        hhv = 1020.0
+>       kg_per_m3 = convert_factor_to_kg_per_unit(
+            factor=53.06,
+            ef_unit="kg/MMBtu",
+            activity_unit="m3",
+            hhv=hhv,
+            fuel_type="natural_gas",
+        )
+E       TypeError: convert_factor_to_kg_per_unit() got an unexpected keyword argument 'factor'
+
+tests\test_emission_factor_selection.py:116: TypeError
+_________ TestUnitAwareFactorConversion.test_mass_factor_unit_scaling _________
+
+self = <test_emission_factor_selection.TestUnitAwareFactorConversion object at 0x000002BF4ABB7710>
+
+    def test_mass_factor_unit_scaling(self):
+        # 2.5 tonne CO2 / tonne fuel -> in kg/tonne
+>       kg_per_t = convert_factor_to_kg_per_unit(
+            factor=2.5,
+            ef_unit="tonne/tonne",
+            activity_unit="tonne",
+        )
+E       TypeError: convert_factor_to_kg_per_unit() got an unexpected keyword argument 'factor'
+
+tests\test_emission_factor_selection.py:129: TypeError
+=========================== short test summary info ===========================
+FAILED tests/test_emission_factor_selection.py::TestCatalogFactorIntegrity::test_catalog_has_comprehensive_factors
+FAILED tests/test_emission_factor_selection.py::TestCatalogFactorIntegrity::test_catalog_segments_represented
+FAILED tests/test_emission_factor_selection.py::TestUnitAwareFactorConversion::test_energy_factor_with_volume_activity
+FAILED tests/test_emission_factor_selection.py::TestUnitAwareFactorConversion::test_mass_factor_unit_scaling
+========================= 4 failed, 6 passed in 0.83s =========================
+

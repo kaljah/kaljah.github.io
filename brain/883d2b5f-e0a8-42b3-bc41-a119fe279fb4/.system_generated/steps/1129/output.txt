@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\ColumnMappingWizard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1288,7 +1288,6 @@
+         {/* ── STEP 2: File Select ── */}
+         {step === 2 && (
+           <div className="cmw-body">
+-            {type === "facilities" && (
+               <div className="cmw-config-section" style={{ marginBottom: '20px', padding: '16px', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}>
+                 <h3 style={{ marginBottom: '8px', fontSize: '1rem', color: 'var(--text-primary)' }}>Import Settings</h3>
+                 <label className="cmw-config-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+@@ -1296,11 +1296,16 @@
+                     checked={overwriteDuplicates} 
+                     onChange={(e) => setOverwriteDuplicates(e.target.checked)}
+                   />
+-                  Overwrite existing Regions with the same name
++                  {type === "facilities" 
++                    ? "Overwrite existing Regions with the same name" 
++                    : "Overwrite existing records with matching facility, date, and source"}
+                 </label>
+-                <p className="cmw-hint" style={{ marginTop: '4px', marginLeft: '24px' }}>If unchecked, duplicates will be skipped with an error.</p>
+-              </div>
+-            )}
++                <p className="cmw-hint" style={{ marginTop: '4px', marginLeft: '24px' }}>
++                  {type === "facilities" 
++                    ? "If unchecked, duplicate regions will be skipped with an error." 
++                    : "If unchecked, duplicate records will be skipped to prevent double-counting."}
++                </p>
++              </div>
+             {/* Drop zone */}
+             <div
+               className={`cmw-dropzone ${isDragging ? "dragging" : ""}`}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

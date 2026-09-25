@@ -1,0 +1,52 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -368,22 +368,30 @@
+     def test_dispatcher_nan_and_inf_guard(self):
+         """Proves that dispatcher.dispatch rejects NaN and Inf quantities."""
+         with pytest.raises(ValueError, match="cannot be NaN or Infinite"):
+-            dispatcher.dispatch({
+-                "process_type": "stationary_combustion",
+-                "fuel": "Diesel",
+-                "quantity": float("nan"),
+-                "unit": "m3",
+-                "factor_source": "default",
+-            })
+-
+-        with pytest.raises(ValueError, match="cannot be NaN or Infinite"):
+-            dispatcher.dispatch({
+-                "process_type": "stationary_combustion",
+-                "fuel": "Diesel",
+-                "quantity": float("inf"),
+-                "unit": "m3",
+-                "factor_source": "default",
+-            })
++            dispatcher.dispatch(
++                flat_inputs={
++                    "process_type": "stationary_combustion",
++                    "fuel": "Diesel",
++                    "quantity": float("nan"),
++                    "unit": "m3",
++                    "factor_source": "default",
++                },
++                emission_factors={"co2": 2.68, "ch4": 0.0001, "n2o": 0.0001},
++                uncertainties={},
++            )
++
++        with pytest.raises(ValueError, match="cannot be NaN or Infinite"):
++            dispatcher.dispatch(
++                flat_inputs={
++                    "process_type": "stationary_combustion",
++                    "fuel": "Diesel",
++                    "quantity": float("inf"),
++                    "unit": "m3",
++                    "factor_source": "default",
++                },
++                emission_factors={"co2": 2.68, "ch4": 0.0001, "n2o": 0.0001},
++                uncertainties={},
++            )
+ 
+     def test_blowdown_compressibility_zero_singularity_defense(self):
+         """Verifies that z_factor = 0 or negative is safely clamped to 1.0 (no ZeroDivisionError)."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

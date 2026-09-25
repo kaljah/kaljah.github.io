@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors_api2021.py","LineNumber":1290,"LineContent":"def get_factor_by_segment(segment):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":29,"LineContent":"    get_factor_by_segment,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":69,"LineContent":"    \"get_factor_by_segment\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":11,"LineContent":"    get_factor_by_segment,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":82,"LineContent":"    factors = get_factor_by_segment(segment_normalized)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":258,"LineContent":"        factors = get_factor_by_segment(segment_normalized)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":365,"LineContent":"        stats[\"by_segment\"][segment] = len(get_factor_by_segment(segment))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_emission_factor_selection.py","LineNumber":22,"LineContent":"    get_factor_by_segment,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_emission_factor_selection.py","LineNumber":47,"LineContent":"            factors = get_factor_by_segment(seg)"}

@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":6,"LineContent":"from flask_wtf.csrf import CSRFProtect, generate_csrf, CSRFError"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":13,"LineContent":"from extensions import db, limiter, csrf  # SEC-08 FIX: import limiter, csrf"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":40,"LineContent":"    allow_headers=[\"Content-Type\", \"Authorization\", \"X-CSRFToken\", \"X-Request-ID\", \"Accept\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":124,"LineContent":"# CSRF Protection"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":125,"LineContent":"csrf.init_app(app)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":128,"LineContent":"@app.errorhandler(CSRFError)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":129,"LineContent":"def handle_csrf_error(e):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":131,"LineContent":"        \"error\": \"CSRF token missing or invalid. Refresh the page and try again.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":213,"LineContent":"    # Prevent masking of CSRF errors"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":214,"LineContent":"    if \"CSRF\" in str(type(error)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":289,"LineContent":"        csrf.exempt(swaggerui_blueprint)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":437,"LineContent":"@app.route(\"/api/csrf-token\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":438,"LineContent":"def get_csrf_token():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":440,"LineContent":"    Issues a CSRF token for the double-submit cookie pattern."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":442,"LineContent":"    The client must send the same value as X-CSRFToken header on mutating requests."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":444,"LineContent":"    token = generate_csrf()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":445,"LineContent":"    resp = jsonify({\"csrf_token\": token})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":447,"LineContent":"        \"csrf_token\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\config.py","LineNumber":93,"LineContent":"    # CSRF Configuration"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\config.py","LineNumber":95,"LineContent":"    WTF_CSRF_SSL_STRICT = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\config.py","LineNumber":96,"LineContent":"    WTF_CSRF_TIME_LIMIT = 86400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\extensions.py","LineNumber":5,"LineContent":"from flask_wtf.csrf import CSRFProtect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\extensions.py","LineNumber":8,"LineContent":"csrf = CSRFProtect()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":10,"LineContent":"from extensions import db, limiter, csrf"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":309,"LineContent":"@csrf.exempt"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":381,"LineContent":"@csrf.exempt"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\conftest.py","LineNumber":28,"LineContent":"    flask_app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":28,"LineContent":"        app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":12,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":27,"LineContent":"    flask_app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":22,"LineContent":"            \"WTF_CSRF_ENABLED\": False,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_bug_fixes.py","LineNumber":11,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":12,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":9,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":47,"LineContent":"    flask_app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":62,"LineContent":"    flask_app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":9,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py","LineNumber":9,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":16,"LineContent":"        \"WTF_CSRF_ENABLED\": False,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":17,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_rate_limiting.py","LineNumber":10,"LineContent":"        \"WTF_CSRF_ENABLED\": False,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":12,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_sbti.py","LineNumber":9,"LineContent":"    app.config[\"WTF_CSRF_ENABLED\"] = False"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":6,"LineContent":"  - The CSRF token endpoint sets a double-submit cookie"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":18,"LineContent":"        \"WTF_CSRF_ENABLED\": False,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":72,"LineContent":"def test_csrf_token_endpoint_returns_token(client):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":73,"LineContent":"    \"\"\"CSRF token endpoint must return a non-empty token.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":74,"LineContent":"    resp = client.get(\"/api/csrf-token\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":77,"LineContent":"    assert \"csrf_token\" in data"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":78,"LineContent":"    assert len(data[\"csrf_token\"]) \u003e 20, \"CSRF token must be sufficiently long\""}
+(...14 more results not shown)

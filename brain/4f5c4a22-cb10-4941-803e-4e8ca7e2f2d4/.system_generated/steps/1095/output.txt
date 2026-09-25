@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":38,"LineContent":"def _lookup_api_factor(fuel_name: str) -\u003e dict:"}

@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":15,"LineContent":"  const [sessionWarning, setSessionWarning] = useState(false);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":204,"LineContent":"        sessionWarning,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Layout.jsx","LineNumber":12,"LineContent":"  const { sessionWarning } = useAuth() || {};"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Layout.jsx","LineNumber":16,"LineContent":"      {sessionWarning \u0026\u0026 ("}

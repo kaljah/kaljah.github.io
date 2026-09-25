@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -310,7 +310,8 @@
+                 "mobile",
+             ]:
+                 hhv_val = flat_inputs.get("hhv") or emission_factors.get("hhv")
+-                if hhv_val:
++                density_val = flat_inputs.get("density") or flat_inputs.get("fuel_density")
++                if hhv_val or density_val:
+                     return calculator.calculate(
+                         fuel_quantity=quantity,
+                         ef_co2=emission_factors.get("co2", 0),
+@@ -317,6 +317,6 @@
+                         ef_n2o=emission_factors.get("n2o", 0),
+                         uncertainties=uncertainties,
+-                        hhv=float(hhv_val),
++                        hhv=float(hhv_val) if hhv_val else 1020.0,
+                         ef_unit=flat_inputs.get(
+                             "ef_unit", emission_factors.get("unit", "kg/unit")
+                         ),
+@@ -333,6 +333,7 @@
+                         press_unit=flat_inputs.get("press_unit", "psig"),
+                         z_factor=flat_inputs.get("z_factor", 1.0),
+                         gwp_dict=gwp_dict,
++                        density=float(density_val) if density_val else None,
+                     )
+             # Default / Custom for all processes uses standard catalog multiplication
+             return self._generic_calculation(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

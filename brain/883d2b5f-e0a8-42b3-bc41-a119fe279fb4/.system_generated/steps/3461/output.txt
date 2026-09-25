@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Field Gas in API_FACTORS: False
+Flaring keys: ['Natural Gas (Flaring - Elevated)', 'Natural Gas (Flaring - Ground)', 'Natural Gas (Flaring)', 'Natural Gas (Flaring - Enclosed)', 'Associated Gas (Flaring)']
+

@@ -1,0 +1,15 @@
+The search for "Algeria gaz naturel PCS pouvoir calorifique superieur décret CREG ARH ALNAFT" returned the following summary:
+En Algérie, la gestion, la réglementation et le contrôle des spécifications techniques du gaz naturel — incluant le **Pouvoir Calorifique Supérieur (PCS)** — s'articulent autour de plusieurs instances et textes réglementaires :
+
+### Cadre institutionnel
+*   **ARH (Autorité de Régulation des Hydrocarbures) :** Elle joue un rôle central dans la régulation technique, le contrôle des installations et la fixation des paramètres économiques liés au gaz naturel. L'ARH intervient notamment dans la définition des méthodologies de prix et le contrôle de la conformité des produits.
+*   **CREG (Commission de Régulation de l'Électricité et du Gaz) :** Elle est chargée de la régulation des activités de transport et de distribution de gaz par canalisation. Elle établit notamment les programmes indicatifs d'approvisionnement et veille au bon fonctionnement du marché national.
+*   **ALNAFT (Agence Nationale pour la Valorisation des Ressources en Hydrocarbures) :** Elle est l'organisme en charge de la gestion et de la promotion des ressources en hydrocarbures au nom de l'État algérien.
+
+### Réglementation et spécifications du PCS
+Le PCS est une caractéristique essentielle de la qualité du gaz naturel, souvent référencée dans le cadre des normes de qualité du gaz de vente et des textes techniques régissant les réseaux.
+*   **Valeurs indicatives :** Bien que les spécifications précises puissent varier selon les conditions contractuelles et les usages, des textes réglementaires et des documents techniques (tels que ceux cités dans le cadre des activités de distribution) mentionnent généralement des ordres de grandeur du PCS du gaz naturel distribué (parfois cité autour de 8 à 12 Th/m³ à 15°C et 1 bar, selon les sources techniques locales).
+*   **Conformité normative :** L'utilisation de normes internationales (comme les **normes ISO 6976** pour le calcul du pouvoir calorifique, de l'indice de Wobbe, etc.) est courante en Algérie pour caractériser la qualité du gaz naturel circulant sur les réseaux de transport et de distribution.
+*   **Textes de référence :** La tarification et les conditions de vente du gaz aux distributeurs et producteurs d'électricité sont encadrées par des décrets exécutifs (par exemple, le **décret exécutif n° 21-64** du 11 février 2021 fixant la méthodologie de détermination du prix de vente du gaz naturel aux producteurs d'électricité et aux distributeurs).
+
+Pour obtenir les valeurs de PCS spécifiques à une région ou une période donnée, il convient de se référer aux fiches de spécifications techniques fournies par les opérateurs (comme GRTG pour le transport ou les entités de distribution de Sonelgaz) ou aux décisions publiées par l'ARH, qui régulent ces paramètres de qualité.

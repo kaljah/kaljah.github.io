@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Dashboard stats: 404 {"code":404,"error":"Not found","request_id":"c4ae662c-55e7-495d-b4a0-73225b5bbe8e"}
+
+

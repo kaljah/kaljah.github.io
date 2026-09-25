@@ -1,0 +1,21 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-3285
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-3285.log
+Log output:
+<truncated 159 lines>
+ission_id> [['DELETE', 'OPTIONS']]
+scope2.get_emission_factors: /api/scope2/emission-factors [['GET', 'OPTIONS', 'HEAD']]
+scope2.get_scope2_emissions: /api/scope2 [['GET', 'OPTIONS', 'HEAD']]
+scope2.update_scope2_emission: /api/scope2/<int:emission_id> [['PUT', 'OPTIONS']]
+scope3.bulk_import_scope3: /api/scope3/bulk-import [['POST', 'OPTIONS']]
+scope3.calculate_eeio: /api/scope3/eeio-calculate [['POST', 'OPTIONS']]
+scope3.create_scope3_emission: /api/scope3 [['POST', 'OPTIONS']]
+scope3.delete_scope3_emission: /api/scope3/<int:emission_id> [['DELETE', 'OPTIONS']]
+scope3.get_scope3_emissions: /api/scope3 [['GET', 'OPTIONS', 'HEAD']]
+scope3.update_scope3_emission: /api/scope3/<int:emission_id> [['PUT', 'OPTIONS']]
+static: /static/<path:filename> [['GET', 'OPTIONS', 'HEAD']]
+swagger_ui.show: /api/docs/ [['GET', 'OPTIONS', 'HEAD']]
+swagger_ui.show: /api/docs/<path:path> [['GET', 'OPTIONS', 'HEAD']]
+swagger_ui.static: /api/docs/dist/<path:filename> [['GET', 'OPTIONS', 'HEAD']]
+
+Last progress: 10s ago

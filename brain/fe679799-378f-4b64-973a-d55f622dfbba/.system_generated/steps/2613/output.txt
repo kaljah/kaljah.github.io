@@ -1,0 +1,117 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.InterfaceError: bad parameter or other API misuse
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_limits.py", line 326, in __inner
+    return cast(R, flask.current_app.ensure_sync(obj)(*a, **k))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 342, in login
+    user_defaults = get_user_operational_defaults(user)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 43, in get_user_operational_defaults
+    .first()
+     ^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\query.py", line 2728, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 2215, in _execute_internal
+    ) = compile_state_cls.orm_pre_session_exec(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\context.py", line 549, in orm_pre_session_exec
+    session._autoflush()
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 3050, in _autoflush
+    raise e.with_traceback(sys.exc_info()[2])
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 3039, in _autoflush
+    self.flush()
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 4341, in flush
+    self._flush(objects)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 4476, in _flush
+    with util.safe_reraise():
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py", line 4437, in _flush
+    flush_context.execute()
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py", line 85, in save_obj
+    _emit_update_statements(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py", line 912, in _emit_update_statements
+    c = connection.execute(
+        ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 2353, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.InterfaceError: (raised as a result of Query-invoked autoflush; consider using a session.no_autoflush block if this flush is occurring prematurely)
+(sqlite3.InterfaceError) bad parameter or other API misuse
+[SQL: UPDATE users SET last_login=? WHERE users.id = ?]
+[parameters: ('2026-09-23 14:10:32.652651', 1)]
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+
+INFO     app:app.py:183 POST /api/auth/login 500 [0.431s] [ReqID: d0847d10-d1d1-4352-b851-83ff6aa219d1]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.052s] [ReqID: 4dd71acc-65f8-405a-905c-5b1235cf3f02]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.007s] [ReqID: c54d4de9-b907-43fd-a16f-58aa1a907b4a]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.037s] [ReqID: 30d384bd-91f5-4da6-bf62-982b97641cb7]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.048s] [ReqID: e92e7253-3210-48f6-aa6c-ed27c6bb8b21]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.102s] [ReqID: 31b0ad4e-5d3d-475d-b0e4-cdeeacafa0ec]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.053s] [ReqID: 9f52432f-2c12-42b6-8194-2c0505218686]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.587s] [ReqID: 02793eee-e47a-4de6-bec0-db89ff883408]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.055s] [ReqID: 0d826d92-a6de-4e3a-b4e4-5c5118d5216c]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.004s] [ReqID: c6c2b75f-8a4c-4ea8-a836-34a6d184f19d]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.356s] [ReqID: 5adbb852-a8a9-4387-b195-2f006b63894d]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.002s] [ReqID: 882f772e-a718-406e-8012-3fc09c63eda4]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.316s] [ReqID: a7cb0275-b4ec-48db-a7b8-03b32f0c0af3]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.003s] [ReqID: f1f451d6-45ea-4672-bc78-b001ce96c25a]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.298s] [ReqID: 94a1930d-7f81-46dc-8402-e1156f29a08b]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.002s] [ReqID: d9b001f5-4c4d-4f3e-a48f-6613c57c8046]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation
+======================== 2 failed, 1 warning in 3.83s =========================
+

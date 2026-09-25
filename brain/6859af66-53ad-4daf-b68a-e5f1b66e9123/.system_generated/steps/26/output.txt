@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\specs
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/15/2026   9:49 PM                001-batch-approve-reject                                             
+d-----         8/15/2026  10:19 PM                002-qa-qc-ipcc-iso14064                                              
+
+
+

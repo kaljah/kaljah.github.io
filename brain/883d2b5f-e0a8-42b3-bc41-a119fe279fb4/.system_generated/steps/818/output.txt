@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":230,"LineContent":"                mapping = _build_mapping(headers)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":606,"LineContent":"def _build_mapping(headers):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":104,"LineContent":"        # Note: We must use the exact UI headers that _build_mapping expects (e.g. Region maps to facility)."}

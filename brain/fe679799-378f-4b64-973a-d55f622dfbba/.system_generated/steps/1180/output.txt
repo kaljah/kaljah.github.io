@@ -1,0 +1,83 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_manage_data_backend.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -208,8 +208,8 @@
+         "facility_id": test_fac_id,
+         "year": 2026,
+         "month": 7,
+-        "gross_production": -100.0,
+-        "oil_production": 50.0
++        "oil_amount": -100.0,
++        "gas_amount": 50.0
+     }
+     r = admin_session.post(f"{BASE_URL}/api/data/production", json=bad_prod)
+     record_test("Production: Validation negative gross (400)", r.status_code == 400, f"Status: {r.status_code}")
+@@ -218,12 +218,13 @@
+         "facility_id": test_fac_id,
+         "year": 2026,
+         "month": 7,
+-        "gross_production": 45000.0,
+-        "oil_production": 25000.0,
+-        "gas_production": 20000.0,
+-        "water_production": 5000.0,
+-        "flaring_rate": 150.0,
+-        "notes": "Audit Test Production Record"
++        "oil_amount": 25000.0,
++        "gas_amount": 20000.0,
++        "oil_unit": "bbl",
++        "gas_unit": "mscf",
++        "activity": "Production",
++        "division": "Upstream",
++        "field": "Hassi Messaoud"
+     }
+     r = it_session.post(f"{BASE_URL}/api/data/production", json=good_prod)
+     record_test("Production: IT create block (403)", r.status_code == 403, f"Status: {r.status_code}")
+@@ -311,7 +311,7 @@
+     record_test("BaseYears: IT RBAC block (403)", r.status_code == 403, f"Status: {r.status_code}")
+ 
+     r = admin_session.get(f"{BASE_URL}/api/base-years")
+-    record_test("BaseYears: Admin fetch (200)", r.status_code == 200 and ("active_base_year" in r.json() or "year" in r.json()), f"Response: {r.text[:80]}")
++    record_test("BaseYears: Admin fetch (200)", r.status_code == 200 and "active_year" in r.json(), f"Response: {r.text[:80]}")
+ 
+     recalc_payload = {
+         "year": 2023,
+@@ -352,7 +352,7 @@
+     record_test("SBTi: IT update target block (403)", r.status_code == 403, f"Status: {r.status_code}")
+ 
+     r = admin_session.post(f"{BASE_URL}/api/manage/sbti", json=sbti_payload)
+-    record_test("SBTi: Admin update target (200)", r.status_code == 200, f"Target configured: 2030 @ 4.2%/yr")
++    record_test("SBTi: Admin update target (200/201)", r.status_code in [200, 201], f"Target configured: 2030 @ 4.2%/yr")
+ 
+     # -------------------------------------------------------------
+     # 7. MITIGATION PROJECTS
+@@ -394,6 +394,10 @@
+     # -------------------------------------------------------------
+     print("\n--- Domain 8: OGMP 2.0 Surveys & Level Logs ---")
+ 
++    # Find Oil & Gas facility for OGMP scope
++    og_fac = next((f for f in facs if f.get('activity') not in ['Steel & Iron (Acier DRI)', 'Chemicals & Fertilizers', 'Cement & Clinker']), facs[0])
++    og_fac_id = og_fac["id"]
++
+     r = it_session.get(f"{BASE_URL}/api/data/methane-sources")
+     record_test("OGMP: IT sources block (403)", r.status_code == 403, f"Status: {r.status_code}")
+ 
+@@ -406,7 +406,7 @@
+     record_test("OGMP: Admin get surveys (200)", r.status_code == 200 and isinstance(r.json(), list), f"Surveys count: {len(r.json()) if r.status_code == 200 else 0}")
+ 
+     ogmp_payload = {
+-        "facility_id": test_fac_id,
++        "facility_id": og_fac_id,
+         "year": 2026,
+         "survey_date": "2026-05-18",
+         "survey_type": "Drone / OGI Camera",
+@@ -426,7 +426,7 @@
+ 
+     # Level upgrade log test
+     level_payload = {
+-        "facility_id": test_fac_id,
++        "facility_id": og_fac_id,
+         "source_type_code": "FLARE",
+         "old_level": 3,
+         "new_level": 4,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

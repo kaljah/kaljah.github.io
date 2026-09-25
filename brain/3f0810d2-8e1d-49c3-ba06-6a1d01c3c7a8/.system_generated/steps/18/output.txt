@@ -1,0 +1,90 @@
+
+The command exited with code 0.
+Output:
+# Agent 7 �?" VIEWER API Tester Report
+
+- �o. Login as test_viewer@ghg-test.com
+- �o. GET /auth/me �' 200
+- 
+## Read-Only Access (should all pass)
+- �o. GET /emissions �' 200
+- �o. GET /facilities �' 200
+- �o. GET /dashboard/summary �' 200
+- �Y?> BUG [�YY� High] API: Unexpected status on GET /dashboard/trends
+- �Y?> BUG [�YY� High] API: Unexpected status on GET /dashboard/scope-breakdown
+- �o. GET /scope2 �' 200
+- �o. GET /scope3 �' 200
+- �o. GET /notifications �' 200
+- �Y?> BUG [�YY� High] API: Unexpected status on GET /reports/list
+- �Y?> BUG [�YY� High] API: Unexpected status on GET /qaqc/anomalies
+- 
+## Write Attempts (ALL must be 401/403)
+- �o. Correctly denied POST /emissions (viewer write DENIED) �' 403
+- �Y?> BUG [�Y"� Critical] RBAC: Role 'viewer' should be DENIED PUT /emissions/1 (viewer write DENIED) but got 404
+- �Y?> BUG [�Y"� Critical] RBAC: Role 'viewer' should be DENIED DELETE /emissions/1 (viewer DENIED) but got 404
+- �o. Correctly denied POST /scope2 (viewer DENIED) �' 403
+- �o. Correctly denied POST /scope3 (viewer DENIED) �' 403
+- �o. Correctly denied POST /facilities (viewer DENIED) �' 403
+- �o. Correctly denied PUT /facilities/1 (viewer DENIED) �' 403
+- �o. Correctly denied DELETE /facilities/1 (viewer DENIED) �' 403
+- �o. Correctly denied GET /auth/users (viewer DENIED) �' 403
+- �Y?> BUG [�Y"� Critical] RBAC: Role 'viewer' should be DENIED POST /auth/users (viewer DENIED) but got 405
+- �Y?> BUG [�Y"� Critical] RBAC: Role 'viewer' should be DENIED CSV upload (viewer DENIED) but got 405
+- 
+## Own Profile (viewer)
+
+## Summary
+- �o. Passed: 15
+- �Y?> Bugs: 8
+
+## Bugs
+
+### �YY� High | API: Unexpected status on GET /dashboard/trends
+- **Expected**: 200
+- **Actual**: 404: {"code":404,"error":"Not found","request_id":"8b904a6a-9985-4f9d-8b12-6a9aca25d651"}
+
+- **Steps**: GET http://localhost:5000/api/dashboard/trends
+
+### �YY� High | API: Unexpected status on GET /dashboard/scope-breakdown
+- **Expected**: 200
+- **Actual**: 404: {"code":404,"error":"Not found","request_id":"8f8ab9ac-df56-4bbc-beb9-3f703bd2bf05"}
+
+- **Steps**: GET http://localhost:5000/api/dashboard/scope-breakdown
+
+### �YY� High | API: Unexpected status on GET /reports/list
+- **Expected**: 200
+- **Actual**: 404: {"code":404,"error":"Not found","request_id":"bc46ea0c-fea2-469d-a135-7feb903a1a05"}
+
+- **Steps**: GET http://localhost:5000/api/reports/list
+
+### �YY� High | API: Unexpected status on GET /qaqc/anomalies
+- **Expected**: 200
+- **Actual**: 404: {"code":404,"error":"Not found","request_id":"4860852f-1c40-412c-8f4e-63296109242b"}
+
+- **Steps**: GET http://localhost:5000/api/qaqc/anomalies
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED PUT /emissions/1 (viewer write DENIED) but got 404
+- **Expected**: 403 or 401
+- **Actual**: 404: {"error":"Not found"}
+
+- **Steps**: PUT http://localhost:5000/api/emissions/1
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED DELETE /emissions/1 (viewer DENIED) but got 404
+- **Expected**: 403 or 401
+- **Actual**: 404: {"error":"Record not found"}
+
+- **Steps**: DELETE http://localhost:5000/api/emissions/1
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED POST /auth/users (viewer DENIED) but got 405
+- **Expected**: 403 or 401
+- **Actual**: 405: {"code":405,"error":"The method is not allowed for the requested URL.","request_id":"8cfef260-7cb4-4b50-8397-28259547dc21"}
+
+- **Steps**: POST http://localhost:5000/api/auth/users
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED CSV upload (viewer DENIED) but got 405
+- **Expected**: 403 or 401
+- **Actual**: 405: {"code":405,"error":"The method is not allowed for the requested URL.","request_id":"39cd1b0a-6840-4451-9f3b-a850bfc3b0bc"}
+
+- **Steps**: POST http://localhost:5000/api/emissions/upload
+
+

@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -123,6 +123,29 @@
+     return decorated_function
+ 
+ 
++def it_access_required(f):
++    """Allows IT Admin and IT roles — for accessing user list and resetting passwords."""
++    @wraps(f)
++    def decorated_function(*args, **kwargs):
++        if request.method == "OPTIONS":
++            return ("", 204)
++        user_id = session.get("user_id")
++        if not user_id:
++            return jsonify({"error": "Not authenticated"}), 401
++        user = db.session.get(User, user_id)
++        if not user:
++            session.pop("user_id", None)
++            return jsonify({"error": "User not found"}), 401
++        if user.status != "active":
++            session.pop("user_id", None)
++            return jsonify({"error": "Account disabled"}), 403
++        if user.role not in ["it_admin", "it"]:
++            return jsonify({"error": "IT privileges required"}), 403
++        return f(*args, **kwargs)
++
++    return decorated_function
++
++
+ def admin_required(f):
+     """Restricts access to business/data Admin role only."""
+     @wraps(f)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

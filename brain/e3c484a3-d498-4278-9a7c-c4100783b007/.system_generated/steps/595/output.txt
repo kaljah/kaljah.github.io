@@ -1,0 +1,147 @@
+
+The command exited with code 1.
+Output:
+<truncated 23 lines>
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-G01-MISSING-OPTIONAL-HOURS] PASSED [ 56%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-H01-INVALID-NAN-QTY] PASSED [ 60%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-H02-INVALID-INF-QTY] PASSED [ 64%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-I01-NEGATIVE-QTY-REJECTED] PASSED [ 68%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-J01-UNIT-EQUIV-MASS] PASSED [ 72%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-K01-MULTI-GAS-MASS] PASSED [ 76%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-L01-MULTI-SOURCE-AGG] PASSED [ 80%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-M01-MULTI-FACILITY-BOE] PASSED [ 84%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-N01-MULTI-YEAR-WEC] PASSED [ 88%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-O01-CUSTOM-FACTOR] PASSED [ 92%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-P01-DEFAULT-DEHY-FACTOR] PASSED [ 96%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-Q01-METHODOLOGY-COMPARISON] PASSED [100%]
+
+================================== FAILURES ===================================
+______ TestGoldenDatasetCases.test_golden_case[GOLD-F02-EFFICIENCY-0PCT] ______
+
+self = <test_golden_dataset_validation.TestGoldenDatasetCases object at 0x0000023FADB27320>
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x0000023FADB27BF0>
+case = {'test_id': 'GOLD-F02-EFFICIENCY-0PCT', 'category_code': 'F', 'category_name': 'Boundary Value', 'calc_type': 'flaring', ...}
+
+    @pytest.mark.parametrize("case", GOLDEN_CASES, ids=[c["test_id"] for c in GOLDEN_CASES])
+    def test_golden_case(self, dispatcher, case):
+        test_id = case["test_id"]
+        calc_type = case["calc_type"]
+        act_data = dict(case["activity_data"])
+        ef = dict(case["emission_factor"])
+        gwp_dict = GWP_AR4 if case.get("gwp_version") == "AR4" else (
+            GWP_AR6 if case.get("gwp_version") == "AR6" else GWP_AR5
+        )
+        expected = case["expected_final_result"]
+        tol = case.get("tolerance", 1e-4)
+    
+        if case.get("is_invalid", False):
+            with pytest.raises(ValueError):
+                dispatcher.dispatch(calc_type, act_data, ef, {}, gwp_dict=gwp_dict)
+            return
+    
+        # Scope 2 Grid Electricity
+        if calc_type == "scope2_electricity":
+            kwh = act_data.get("electricity_kwh") or act_data.get("amount", 0)
+            ef_val = ef.get("factor", 0.522)
+            co2e = (kwh * ef_val) / 1000.0
+            assert pytest.approx(co2e, rel=tol) == expected["co2e"]
+            return
+    
+        # Scope 3 Spend EEIO
+        if calc_type == "scope3_spend":
+            res = compute_scope3_co2e(
+                act_data["spend_amount"],
+                ef["factor"],
+                ef["unit"],
+                calc_method="spend_eeio",
+            )
+            assert pytest.approx(res, rel=tol) == expected["co2e"]
+            return
+    
+        # Category Q is methodology comparison container
+        if calc_type == "dehydrator_methodology":
+            res_t1 = dispatcher.dispatch(
+                "dehydrator",
+                {"amount": act_data["tier1_throughput_mmscf"], "unit": "MMscf", "factor_source": "default"},
+                {"ch4": 0.266, "factor": 0.266, "unit": "tonnes CH4/MMscf"},
+                {},
+                gwp_dict=gwp_dict,
+            )
+            assert pytest.approx(get_val(res_t1, "ch4"), rel=tol) == expected["tier1"]["ch4"]
+            return
+    
+        # Dispatch field mapping for production dispatcher conventions
+        process_type = calc_type
+        payload = {**act_data, "unit": case.get("units", "m3"), "factor_source": case.get("factor_source", "default")}
+    
+        if calc_type == "flaring":
+            payload["amount"] = act_data.get("amount") or act_data.get("volume") or act_data.get("gas_volume")
+            payload["c1"] = act_data.get("c1") or act_data.get("ch4_fraction", 0.88)
+            payload["factor_source"] = "specific"
+            payload["ef_unit"] = "kg/m3"
+            if "ef_n2o" in ef and "n2o" not in ef:
+                ef["n2o"] = ef["ef_n2o"]
+    
+        elif calc_type == "liquids_unloading":
+            payload["unload_depth"] = act_data.get("well_depth") or act_data.get("unload_depth")
+            payload["unload_diam"] = act_data.get("diameter") or act_data.get("unload_diam")
+            payload["unload_press"] = act_data.get("pressure") or act_data.get("unload_press")
+            payload["unload_events"] = act_data.get("events") or act_data.get("unload_events")
+            payload["unload_ch4_content"] = act_data.get("ch4_content") or ef.get("ch4_content", 0.85)
+            payload["factor_source"] = "specific"
+    
+        elif calc_type == "tank_flashing":
+            payload["amount"] = act_data.get("amount") or act_data.get("throughput")
+            payload["tank_gor"] = act_data.get("tank_gor") or act_data.get("gas_oil_ratio") or ef.get("gor")
+            payload["tank_ch4_content"] = act_data.get("tank_ch4_content") or ef.get("ch4_content")
+            payload["factor_source"] = "specific"
+    
+        elif calc_type in ["pneumatic", "pneumatic_device"]:
+            process_type = "pneumatic"
+            payload["pneu_count"] = act_data.get("count") or act_data.get("pneu_count")
+            payload["pneu_hours"] = act_data.get("hours") or act_data.get("pneu_hours") or 8760
+            payload["pneu_bleed_rate"] = act_data.get("bleed_rate") or ef.get("bleed_rate")
+            payload["pneu_ch4_content"] = act_data.get("pneu_ch4_content") or act_data.get("ch4_content", 0.85)
+            payload["factor_source"] = "specific"
+    
+        elif calc_type in ["component_fugitive", "fugitive_component"]:
+            process_type = "component_fugitive"
+            c_count = act_data.get("equipment_count") or act_data.get("count") or 1
+            payload["component_counts"] = {
+                "valves": {"count": c_count, "ef": ef.get("factor", 0.0045), "unit": ef.get("unit", "kg/hr")}
+            }
+            payload["ch4_content"] = act_data.get("ch4_content", 0.85)
+            payload["factor_source"] = "specific"
+    
+        elif calc_type == "equipment_fugitive":
+            process_type = "equipment_fugitive"
+            payload["equipment_count"] = act_data.get("equipment_count", 0)
+            payload["ch4_content"] = act_data.get("ch4_content", 0.85)
+            payload["factor_source"] = "specific"
+            ef["ch4"] = ef.get("factor", 0.0045)
+    
+        elif calc_type == "dehydrator":
+            payload["amount"] = act_data.get("throughput_mmscf") or act_data.get("amount")
+            ef["ch4"] = ef.get("ch4") or ef.get("factor", 0.266)
+    
+        res = dispatcher.dispatch(
+            process_type,
+            payload,
+            ef,
+            {},
+            gwp_dict=gwp_dict,
+        )
+    
+        if "co2" in expected and "co2" in res.get("results", {}):
+>           assert pytest.approx(get_val(res, "co2"), rel=tol) == expected["co2"]
+E           assert 15.565404000000001 � 1.6e-04 == 0.0
+E             
+E             comparison failed
+E             Obtained: 0.0
+E             Expected: 15.565404000000001 � 1.6e-04
+
+tests\test_golden_dataset_validation.py:158: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-F02-EFFICIENCY-0PCT]
+======================== 1 failed, 24 passed in 0.88s =========================
+

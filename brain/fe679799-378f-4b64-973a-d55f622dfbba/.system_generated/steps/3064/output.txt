@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":138,"LineContent":"        \"error\": \"CSRF token missing or invalid. Refresh the page and try again.\","}

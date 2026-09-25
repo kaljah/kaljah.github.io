@@ -1,0 +1,163 @@
+
+The command exited with code 0.
+Output:
+{
+  "combustion": [
+    "Natural Gas",
+    "Landfill Gas",
+    "Coke Oven Gas",
+    "Blast Furnace Gas",
+    "Propane (Gas)",
+    "Acetylene",
+    "Propylene",
+    "Butane",
+    "Isobutane",
+    "Naphtha",
+    "Compressed Natural Gas (CNG)",
+    "Liquefied Natural Gas (LNG)",
+    "Natural Gas - 4-Stroke Lean Burn Engine",
+    "Natural Gas - 4-Stroke Rich Burn Engine",
+    "Natural Gas - 2-Stroke Lean Burn Engine",
+    "Natural Gas - Turbine",
+    "Natural Gas - Heater/Boiler",
+    "Diesel (No. 2 Fuel Oil)",
+    "Residual Fuel Oil (No. 6)",
+    "Kerosene",
+    "Motor Gasoline",
+    "Jet Fuel",
+    "Propane (Liquid)",
+    "Ethane",
+    "Ethanol (100%)",
+    "Biodiesel (100%)",
+    "Crude Oil",
+    "Lubricants",
+    "Waste Oil",
+    "Anthracite Coal",
+    "Bituminous Coal",
+    "Sub-Bituminous Coal",
+    "Lignite Coal",
+    "Petroleum Coke",
+    "Wood / Wood Waste",
+    "Tires"
+  ],
+  "venting": [
+    "Natural Gas (Venting/Blowdown)",
+    "Blowdown - Compressor (Reciprocating)",
+    "Blowdown - Compressor (Centrifugal)",
+    "Blowdown - Pipeline"
+  ],
+  "flaring": [
+    "Coke Oven Gas",
+    "Propylene",
+    "Butane",
+    "Isobutane",
+    "Natural Gas (Flaring - Elevated)",
+    "Natural Gas (Flaring - Ground)",
+    "Natural Gas (Flaring - Enclosed)",
+    "Natural Gas (Flaring)",
+    "Associated Gas (Flaring)",
+    "Sour Gas (Flaring)",
+    "Propane (Flaring)",
+    "Butane (Flaring)",
+    "Ethylene (Flaring)",
+    "Propylene (Flaring)"
+  ],
+  "mobile": [
+    "Compressed Natural Gas (CNG)",
+    "Liquefied Natural Gas (LNG)",
+    "Diesel (No. 2 Fuel Oil)",
+    "Kerosene",
+    "Motor Gasoline",
+    "Jet Fuel",
+    "Propane (Liquid)",
+    "Ethanol (100%)",
+    "Biodiesel (100%)"
+  ],
+  "dehydrator": [
+    "Glycol Dehydrator",
+    "Desiccant Dehydrator",
+    "Dehydrator - Glycol (Uncontrolled)",
+    "Dehydrator - Glycol (Controlled)",
+    "Dehydrator - TEG (No Controls)",
+    "Dehydrator - TEG (Flash Tank)",
+    "Dehydrator - TEG (Condenser)"
+  ],
+  "pneumatic": [
+    "Pneumatic Controller - High Bleed",
+    "Pneumatic Controller - Low Bleed",
+    "Pneumatic Controller - Intermittent",
+    "Pneumatic Controller - Continuous Vent (T&S)",
+    "Pneumatic Pump - Chemical Injection (Piston)",
+    "Pneumatic Pump - Chemical Injection (Diaphragm)",
+    "Pneumatic Device - High Bleed",
+    "Pneumatic Device - Low Bleed",
+    "Pneumatic Device - Intermittent"
+  ],
+  "fugitive": [
+    "Fugitive - Valve (Gas/Vapor)",
+    "Fugitive - Connector (Gas/Vapor)",
+    "Fugitive - Flange (Gas/Vapor)",
+    "Fugitive - Valve (Light Oil)",
+    "Fugitive - Valve (Heavy Oil)",
+    "Fugitive - Connector (Light Oil)",
+    "Fugitive - Connector (Heavy Oil)",
+    "Fugitive - Open-Ended Line (Gas)",
+    "Fugitive - Open-Ended Line (Light Oil)",
+    "Fugitive - Pressure Relief Valve (Gas)",
+    "Fugitive - Pressure Relief Valve (Light Oil)",
+    "Fugitive - Compressor Seal (Centrifugal - Wet)",
+    "Fugitive - Compressor Seal (Centrifugal - Dry)",
+    "Fugitive - Compressor Seal (Reciprocating)",
+    "Fugitive - Pump Seal (Gas)",
+    "Fugitive - Pump Seal (Light Oil)"
+  ],
+  "fugitive_pipeline": [
+    "Fugitive - Pipeline Leaks (Gas)",
+    "Fugitive - Pipeline Leaks (Oil)"
+  ],
+  "tank": [
+    "Methane Flashing - Crude Oil (Small Tank)",
+    "Methane Flashing - Crude Oil (Large Tank)",
+    "Methane Flashing - Production Condensate (Small Tank)",
+    "Methane Flashing - Production Condensate (Large Tank)",
+    "Methane Flashing - Produced Water (Tank)"
+  ],
+  "completions": [
+    "Completion - Gas Well (No Flaring)",
+    "Workover - Gas Well (No Flaring)"
+  ],
+  "unloading": [
+    "Liquids Unloading - Plunger Lift",
+    "Liquids Unloading - Non-Plunger"
+  ],
+  "drilling": [
+    "Drilling - Mud Degassing (Water Based)",
+    "Drilling - Mud Degassing (Oil Based)"
+  ],
+  "agr": [
+    "Amine Unit - Venting (Generic)"
+  ],
+  "loading": [
+    "Loading - Crude Oil (Tank Truck)",
+    "Loading - Crude Oil (Rail)",
+    "Loading - Crude Oil (Marine Vessel)",
+    "Loading - Condensate (Tank Truck)",
+    "Loading - Gasoline (Tank Truck)"
+  ],
+  "separation": [
+    "Separator Venting - Gas Well",
+    "Separator Venting - Oil Well",
+    "Wastewater - CH4 (Open System)",
+    "Wastewater - Oil/Water Separator"
+  ],
+  "tank_flashing": [
+    "Tank - Flash Emissions (Oil)"
+  ],
+  "tank_working": [
+    "Tank - Working Losses (Oil)"
+  ],
+  "tank_breathing": [
+    "Tank - Breathing Losses (Oil)"
+  ]
+}
+

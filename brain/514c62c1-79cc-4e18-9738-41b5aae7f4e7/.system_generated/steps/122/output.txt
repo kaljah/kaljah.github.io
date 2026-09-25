@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Layout.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -5,6 +5,7 @@
+ import TopBar from "./TopBar";
+ import LoadingSpinner from "../LoadingSpinner";
+ import { useAuth } from "../../context/AuthContext";
++import { useLayout } from "../../context/LayoutContext";
+ import "./Layout.css";
+ 
+ const Layout = () => {
+@@ -11,4 +11,5 @@
+   const { sessionWarning } = useAuth() || {};
++  const { isMobileNavOpen, closeMobileNav } = useLayout();
+   const [isOnline, setIsOnline] = React.useState(
+     typeof navigator !== "undefined" ? navigator.onLine : true
+   );
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

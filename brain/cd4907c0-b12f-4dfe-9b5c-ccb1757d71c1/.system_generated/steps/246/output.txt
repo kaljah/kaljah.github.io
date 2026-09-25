@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 1
+    content = open('new/server/routes/managedata.py', encoding='utf-8').read(); print(content.count('user.role == " it_admin\'),
+                                                                                                    ^
+SyntaxError: unterminated string literal (detected at line 1)
+

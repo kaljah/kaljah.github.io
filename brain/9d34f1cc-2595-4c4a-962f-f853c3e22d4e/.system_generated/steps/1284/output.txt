@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\reference_model
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/24/2026  10:57 PM                __pycache__                                                          
+-a----         9/20/2026  10:09 AM           2683 aggregation_intensity.py                                             
+-a----         9/20/2026  10:17 AM           9255 combustion_flaring.py                                                
+-a----         9/20/2026  10:08 AM           3721 fugitives.py                                                         
+-a----         9/20/2026  10:08 AM           1780 gwp.py                                                               
+-a----         9/20/2026  10:09 AM           7075 midstream.py                                                         
+-a----         9/20/2026  10:09 AM           2746 ogmp.py                                                              
+-a----         9/20/2026   6:27 PM           6198 ref_combustion.py                                                    
+-a----         9/20/2026   6:23 PM           3818 ref_constants.py                                                     
+-a----         9/20/2026   6:27 PM           5196 ref_flaring.py                                                       
+-a----         9/20/2026   6:24 PM           2506 ref_fugitives.py                                                     
+-a----         9/20/2026   6:24 PM           2002 ref_intensity.py                                                     
+-a----         9/20/2026   6:27 PM           3211 ref_midstream.py                                                     
+-a----         9/20/2026   6:24 PM           2220 ref_scope2.py                                                        
+-a----         9/20/2026   6:24 PM           2103 ref_scope3.py                                                        
+-a----         9/20/2026   6:24 PM           1599 ref_stoichiometry.py                                                 
+-a----         9/20/2026   6:24 PM           2358 ref_uncertainty.py                                                   
+-a----         9/20/2026   6:27 PM           4732 ref_venting.py                                                       
+-a----         9/20/2026  10:09 AM           3443 scope2.py                                                            
+-a----         9/20/2026  10:09 AM           1651 scope3.py                                                            
+-a----         9/20/2026  10:16 AM           2782 uncertainty.py                                                       
+-a----         9/20/2026  10:10 AM           8812 unit_conversions.py                                                  
+-a----         9/24/2026  10:57 PM          11921 vented_processes.py                                                  
+-a----         9/23/2026   3:47 PM           3555 __init__.py                                                          
+
+
+

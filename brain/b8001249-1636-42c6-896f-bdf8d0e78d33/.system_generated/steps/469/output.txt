@@ -1,0 +1,1 @@
+A1: (Recommended) Only `admin` gets unrestricted global access; all `superuser` accounts must be restricted to their assigned region/location

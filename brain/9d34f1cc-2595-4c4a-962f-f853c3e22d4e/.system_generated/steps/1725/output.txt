@@ -1,0 +1,20 @@
+Task: 9d34f1cc-2595-4c4a-962f-f853c3e22d4e/task-1723
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\.system_generated\tasks\task-1723.log
+Log output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+testpaths: tests, .
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 1136 items
+
+test_csv_uploader.py .                                                   [  0%]
+test_emission_calculations.py .......................................... [  3%]
+..........                                                               [  4%]
+test_performance.py .                                                    [  4%]
+tests\test_aggregation_reconciliation.py ......                          [  5%]
+tests\test_all_bulk_imports.py .
+Last progress: 0s ago

@@ -1,0 +1,42 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\TopBar.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -105,7 +105,17 @@
+   color: var(--text-primary);
+ }
+ 
+-/* Dropdown Styles */
++/* User Tab & Dropdown Styles (Always On Top) */
++.user-profile-tab-wrapper {
++  position: relative;
++  z-index: 1102;
++}
++
++.user-profile-tab-btn {
++  position: relative;
++  z-index: 1102;
++}
++
+ .notification-dropdown,
+ .top-profile-dropdown {
+   position: absolute;
+@@ -112,11 +112,11 @@
+   right: 0;
+-  background: rgba(255, 255, 255, 0.9);
+-  backdrop-filter: blur(12px);
+-  -webkit-backdrop-filter: blur(12px);
+-  border: 1px solid rgba(255, 255, 255, 0.5);
++  background: rgba(255, 255, 255, 0.96);
++  backdrop-filter: blur(16px);
++  -webkit-backdrop-filter: blur(16px);
++  border: 1px solid rgba(255, 255, 255, 0.6);
+   border-radius: 12px;
+-  box-shadow: var(--shadow-hover);
+-  z-index: 1000;
++  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.15), var(--shadow-hover);
++  z-index: 2000;
+   overflow: hidden;
+   animation: fadeInScale 0.2s ease-out;
+ }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+
+LocalAddress  : 0.0.0.0
+LocalPort     : 5173
+OwningProcess : 14232
+ProcessName   : node
+Path          : C:\Program Files\nodejs\node.exe
+
+
+
+

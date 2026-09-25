@@ -1,0 +1,99 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Dashboard.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1056,14 +1056,40 @@
+ 
+ /* Mobile (max-width: 768px) */
+ @media (max-width: 768px) {
++  .dashboard-content {
++    padding: 14px 12px 36px;
++  }
++
++  .dashboard-filters {
++    overflow-x: auto;
++    -webkit-overflow-scrolling: touch;
++    padding-bottom: 4px;
++    width: 100%;
++    scrollbar-width: none;
++  }
++
++  .dashboard-filters::-webkit-scrollbar {
++    display: none;
++  }
++
++  .dashboard-filters .filter-wrapper {
++    min-width: 110px;
++    flex-shrink: 0;
++  }
++
+   .hero-header {
+     flex-direction: column;
+-    gap: 12px;
+-  }
+-
+-  .hero-stats-grid {
+-    grid-template-columns: 1fr;
+-    gap: 24px;
++    align-items: flex-start;
++    gap: 12px;
++  }
++
++  .hero-stats-card {
++    padding: 20px 16px;
++  }
++
++  .hero-stats-grid {
++    grid-template-columns: 1fr;
++    gap: 20px;
+   }
+ 
+   .categorical-hierarchy-grid {
+@@ -1084,6 +1084,46 @@
+     align-items: flex-start;
+     gap: 12px;
+   }
++
++  .trend-card-enhanced,
++  .distribution-card,
++  .detailed-table-card {
++    padding: 16px;
++    border-radius: 16px;
++  }
++
++  .table-container {
++    overflow-x: auto;
++    -webkit-overflow-scrolling: touch;
++    width: 100%;
++  }
++
++  .data-table {
++    min-width: 480px;
++  }
++
++  .dashboard-header-right {
++    width: 100%;
++    justify-content: space-between;
++    flex-wrap: wrap;
++    gap: 8px;
++  }
++}
++
++@media (max-width: 480px) {
++  .dashboard-title {
++    font-size: 1.35rem;
++  }
++
++  .stat-value {
++    font-size: 1.75rem;
++  }
++
++  .scope-pills-row {
++    display: grid;
++    grid-template-columns: 1fr;
++    width: 100%;
++  }
+ }
+ 
+ /* Collapsible card animations & styles */
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

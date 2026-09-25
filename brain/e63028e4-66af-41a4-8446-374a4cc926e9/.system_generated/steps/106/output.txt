@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":137,"LineContent":"    gwp_ar5_20 = {\"CO2\": 1.0, \"CH4\": 84.0, \"N2O\": 264.0}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":139,"LineContent":"    expected_ar5_20 = 100.0 * 1.0 + 10.0 * 84.0 + 1.0 * 264.0  # 100 + 840 + 264 = 1204"}

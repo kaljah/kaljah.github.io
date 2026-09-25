@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -294,7 +294,16 @@
+         missing_amount_q = q_s1_all.filter(
+             or_(Emission.quantity.is_(None), Emission.quantity <= 0)
+         )
+-        missing_amount_count = missing_amount_q.count()
++        missing_amount_s2_count = q_s2_all.filter(
++            (Scope2Emission.electricity_kwh.is_(None) | (Scope2Emission.electricity_kwh <= 0))
++            & (Scope2Emission.steam_ton.is_(None) | (Scope2Emission.steam_ton <= 0))
++            & (Scope2Emission.heat_mmbtu.is_(None) | (Scope2Emission.heat_mmbtu <= 0))
++            & (Scope2Emission.cooling_ton.is_(None) | (Scope2Emission.cooling_ton <= 0))
++        ).count()
++        missing_amount_s3_count = q_s3_all.filter(
++            or_(Scope3Emission.activity_data.is_(None), Scope3Emission.activity_data <= 0)
++        ).count()
++        missing_amount_count = missing_amount_q.count() + missing_amount_s2_count + missing_amount_s3_count
+ 
+         missing_co2e_q = q_s1_all.filter(
+             or_(Emission.co2e_total.is_(None), Emission.co2e_total < 0)
+@@ -301,4 +301,10 @@
+-        missing_co2e_count = missing_co2e_q.count()
++        missing_co2e_s2_count = q_s2_all.filter(
++            or_(Scope2Emission.co2e.is_(None), Scope2Emission.co2e < 0)
++        ).count()
++        missing_co2e_s3_count = q_s3_all.filter(
++            or_(Scope3Emission.co2e.is_(None), Scope3Emission.co2e < 0)
++        ).count()
++        missing_co2e_count = missing_co2e_q.count() + missing_co2e_s2_count + missing_co2e_s3_count
+ 
+         # Facilities coverage (scoped to allowed facilities and reporting year)
+         if allowed_fids is not None:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

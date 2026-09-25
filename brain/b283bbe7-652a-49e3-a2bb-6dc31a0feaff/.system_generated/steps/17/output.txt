@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_seed.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -7,8 +7,13 @@
+ import requests
+ import json
+ import sys
++import io
+ from datetime import datetime, timezone
+ 
++# Force UTF-8 output on Windows (avoids cp1252 UnicodeEncodeError)
++sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
++sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
++
+ BASE_URL = "http://localhost:5000"
+ OUTPUT_DIR = r"c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm"
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

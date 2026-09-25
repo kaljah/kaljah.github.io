@@ -1,0 +1,72 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -464,32 +464,40 @@
+         except Exception as e:
+             errors.append(f"Row {i}: {str(e)}")
+ 
+-    db.session.commit()
+-    from routes.dashboard import clear_dashboard_cache
+-
+-    clear_dashboard_cache()
+-    if bulk_status in ("Pending", "Pending Approval") and imported_count > 0:
+-        from models import Notification
+-        admins = User.query.filter_by(role="admin", status="active").all()
+-        for admin in admins:
+-            Notification.create(
+-                user_id=admin.id,
+-                type="audit",
+-                title="Scope 3 Bulk Upload Pending Review",
+-                message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
+-            )
+-        db.session.commit()
+-
+-    if imported_count > 0:
+-        log_activity_and_notify(
+-            action="BULK_IMPORT",
+-            record_id=f"count:{imported_count}",
+-            user=user,
+-            request=request,
+-            entity="Scope3Emission",
+-            details=f"Bulk imported {imported_count} Scope 3 records (Status: {bulk_status})",
+-        )
+-        db.session.commit()
++    try:
++        db.session.commit()
++    except Exception as e:
++        db.session.rollback()
++        return jsonify({"error": f"Failed to bulk import Scope 3 emissions: {str(e)}"}), 500
++
++    from routes.dashboard import clear_dashboard_cache
++
++    clear_dashboard_cache()
++    try:
++        if bulk_status in ("Pending", "Pending Approval") and imported_count > 0:
++            from models import Notification
++            admins = User.query.filter_by(role="admin", status="active").all()
++            for admin in admins:
++                Notification.create(
++                    user_id=admin.id,
++                    type="audit",
++                    title="Scope 3 Bulk Upload Pending Review",
++                    message=f"{imported_count} new Scope 3 emission records were uploaded by {user.fullName} and are awaiting your approval.",
++                )
++            db.session.commit()
++
++        if imported_count > 0:
++            log_activity_and_notify(
++                action="BULK_IMPORT",
++                record_id=f"count:{imported_count}",
++                user=user,
++                request=request,
++                entity="Scope3Emission",
++                details=f"Bulk imported {imported_count} Scope 3 records (Status: {bulk_status})",
++            )
++            db.session.commit()
++    except Exception:
++        db.session.rollback()
+ 
+     return jsonify(
+         {"message": f"Successfully imported {imported_count} records", "errors": errors}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

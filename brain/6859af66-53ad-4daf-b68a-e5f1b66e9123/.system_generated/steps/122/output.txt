@@ -1,0 +1,5 @@
+Using prompt: The exact same corporate advertising flyer design and layout as the reference image, but in French. At top left, a bright green pill badge with text 'Logiciel' above bold dark headline 'Devrait Résoudre les Problèmes Pas en Créer'. At top right, the minimalist logo 'NeoCarbon'. In the center, a large sleek computer display showcasing an oil and gas emissions dashboard, with a professional executive in a dark blue suit sitting in an armchair beside it. Beside the screen, a floating callout card with text 'Conçu pour le Pétrole & Gaz : Élimine les surtaxes UE & automatise la physique Tier 3'. Bottom footer has website 'www.neocarbon.dz' and icons. Clean, ultra-sharp commercial photography.
+
+Generated image is saved at C:\Users\samsung\.gemini\antigravity\brain\6859af66-53ad-4daf-b68a-e5f1b66e9123\neocarbon_computer_hero_fr_1790344327892.jpg.
+
+ Do not output the path of this image to show to the user since the user can already see it. However, you can embed this image in artifacts for the USER's review.

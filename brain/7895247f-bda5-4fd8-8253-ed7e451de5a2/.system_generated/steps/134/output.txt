@@ -1,0 +1,65 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\emissions.py:28:from process_categories import NON_COMBUSTION_PROCESSES
+new\server\routes\emission_factors_routes.py:15:    PROCESS_TYPES,
+new\server\routes\emission_factors_routes.py:17:    get_process_types_for_segment,
+new\server\routes\emission_factors_routes.py:91:def get_all_process_types():
+new\server\routes\emission_factors_routes.py:98:    return jsonify({"process_types": PROCESS_TYPES, "categories": 
+CATEGORIES})
+new\server\routes\emission_factors_routes.py:103:def get_process_types_for_seg(segment):
+new\server\routes\emission_factors_routes.py:126:    process_types = get_process_types_for_segment(segment_normalized)
+new\server\routes\emission_factors_routes.py:129:    # get_process_types_for_segment returns a dict, not a list
+new\server\routes\emission_factors_routes.py:131:    for pt_id, pt_data in process_types.items():
+new\server\routes\emission_factors_routes.py:144:            "process_types": detailed_types,
+new\server\routes\qaqc.py:10:from process_categories import NON_COMBUSTION_PROCESSES
+new\server\tests\test_all_process_types_matrix.py:2:test_all_process_types_matrix.py
+new\server\tests\test_all_process_types_matrix.py:17:from process_categories import PROCESS_TYPES, 
+NON_COMBUSTION_PROCESSES
+new\server\tests\test_all_process_types_matrix.py:30:    """Every single process type in PROCESS_TYPES must calculate 
+successfully in Tier 1."""
+new\server\tests\test_all_process_types_matrix.py:32:    @pytest.mark.parametrize("process_id", 
+list(PROCESS_TYPES.keys()))
+new\server\tests\test_all_process_types_matrix.py:34:        meta = PROCESS_TYPES[process_id]
+new\server\tests\test_all_process_types_matrix.py:58:        """Verify additional process types not in PROCESS_TYPES 
+table (indirect steam, cogen, fccu, stoichiometry)."""
+new\server\tests\test_all_process_types_matrix.py:333:    @pytest.mark.parametrize("process_id", 
+list(PROCESS_TYPES.keys()))
+new\server\tests\test_all_process_types_matrix.py:339:            "unit": "m3" if 
+PROCESS_TYPES[process_id]["category"] in ["combustion", "vented"] else "devices",
+new\server\tests\test_all_process_types_matrix.py:340:            "fuel_type": "Natural Gas" if 
+PROCESS_TYPES[process_id]["category"] == "combustion" else None,
+new\server\tests\test_all_process_types_matrix.py:343:            "co2": 53.06 if 
+PROCESS_TYPES[process_id]["category"] == "combustion" else 1.0,
+new\server\tests\test_all_process_types_matrix.py:346:            "unit": "kg/m3" if 
+PROCESS_TYPES[process_id]["category"] in ["combustion", "vented"] else "kg/unit",
+new\server\tests\test_all_process_types_matrix.py:363:        for pid, pdata in PROCESS_TYPES.items():
+new\server\tests\test_all_process_types_matrix.py:370:        for pid, pdata in PROCESS_TYPES.items():
+new\server\tests\test_all_process_types_matrix.py:455:    @pytest.mark.parametrize("process_id", 
+list(PROCESS_TYPES.keys()))
+new\server\tests\test_all_process_types_matrix.py:458:        meta = PROCESS_TYPES[process_id]
+new\server\tests\test_all_process_types_matrix.py:470:    @pytest.mark.parametrize("process_id", 
+list(PROCESS_TYPES.keys()))
+new\server\tests\test_all_process_types_matrix.py:473:        meta = PROCESS_TYPES[process_id]
+new\server\tests\test_deep_injection_matrix.py:37:from process_categories import PROCESS_TYPES
+new\server\background_processor.py:93:from process_categories import NON_COMBUSTION_PROCESSES
+new\server\emission_factors.py:35:from process_categories import (
+new\server\emission_factors.py:37:    PROCESS_TYPES,
+new\server\emission_factors.py:39:    get_process_types_for_segment,
+new\server\emission_factors.py:41:    get_process_types_by_category,
+new\server\emission_factors.py:73:    "PROCESS_TYPES",
+new\server\emission_factors.py:75:    "get_process_types_for_segment",
+new\server\emission_factors.py:77:    "get_process_types_by_category",
+new\server\emission_factors.py:364:PROCESS_TYPES = {
+new\server\process_categories.py:30:PROCESS_TYPES = {
+new\server\process_categories.py:286:def get_process_types_for_segment(segment):
+new\server\process_categories.py:301:        for process_id, process_data in PROCESS_TYPES.items()
+new\server\process_categories.py:317:    if process_type not in PROCESS_TYPES:
+new\server\process_categories.py:320:    return PROCESS_TYPES[process_type]["segments"]
+new\server\process_categories.py:324:def get_process_types_by_category(segment=None):
+new\server\process_categories.py:334:    processes = get_process_types_for_segment(segment) if segment else 
+PROCESS_TYPES
+
+
+

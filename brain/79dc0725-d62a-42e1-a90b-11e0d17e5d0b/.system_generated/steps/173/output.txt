@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+ManageData.jsx:1468: {availableFilters.regions?.map(r => <option key={r} value={r}>{r}</option>)}
+MethaneExplorer.jsx:108: const [availableRegions, setAvailableRegions] = useState([]);
+MethaneExplorer.jsx:183: setAvailableRegions(regions);
+MethaneExplorer.jsx:1047: {availableRegions.map((reg) => (
+Reports.jsx:794: {availableFilters.regions.map((f) => (
+

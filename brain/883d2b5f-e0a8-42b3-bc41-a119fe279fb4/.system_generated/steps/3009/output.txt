@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\test_ui_numerical_parity.mjs. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -26,7 +26,7 @@
+ const compact1M = formatCompactNumber(1250000, 1);
+ assert.ok(compact1M.includes('1.3M') || compact1M.includes('1.2M') || compact1M.includes('1.25M'));
+ const compact45K = formatCompactNumber(45200, 1);
+-assert.ok(compact45K.toUpperCase().includes('45K'));
++assert.ok(compact45K.toUpperCase().includes('45.2K'));
+ assert.strictEqual(formatCompactNumber(0), '0');
+ 
+ // 4. Trend calculation
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

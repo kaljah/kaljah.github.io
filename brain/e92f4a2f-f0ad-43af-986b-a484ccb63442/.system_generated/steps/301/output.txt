@@ -1,0 +1,27 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":71,"LineContent":"  const HIERARCHY = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":730,"LineContent":"      // Check Hierarchy"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":731,"LineContent":"      if (record.activity \u0026\u0026 !HIERARCHY[record.activity]) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":738,"LineContent":"        !HIERARCHY[record.activity].includes(record.division)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":788,"LineContent":"        if (record.activity \u0026\u0026 !HIERARCHY[record.activity]) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":795,"LineContent":"          !HIERARCHY[record.activity].includes(record.division)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1257,"LineContent":"                      {Object.entries(HIERARCHY).map(([act, divs]) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1641,"LineContent":"                            const isHierarchyError ="}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1645,"LineContent":"                              !HIERARCHY[rec.activity]?.includes(rec.division);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":1651,"LineContent":"                                  color: isHierarchyError"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":768,"LineContent":"    const hierarchy = {};"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":772,"LineContent":"      if (!hierarchy[act]) hierarchy[act] = { total: 0, divisions: {} };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":773,"LineContent":"      if (!hierarchy[act].divisions[div])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":774,"LineContent":"        hierarchy[act].divisions[div] = { total: 0, regions: [] };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":775,"LineContent":"      hierarchy[act].total += item.total_emissions;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":776,"LineContent":"      hierarchy[act].divisions[div].total += item.total_emissions;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":777,"LineContent":"      hierarchy[act].divisions[div].regions.push(item);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":779,"LineContent":"    return hierarchy;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1427,"LineContent":"            \u003cdiv className=\"categorical-hierarchy-grid\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":84,"LineContent":"    const HIERARCHY = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":108,"LineContent":"        // Sort by the defined hierarchy order, then alphabetically for unknowns"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":109,"LineContent":"        const order = Object.keys(HIERARCHY);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1261,"LineContent":"        const options = Object.keys(HIERARCHY).map(a =\u003e ({ value: a, label: ACTIVITY_LABELS[a] || a }));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1272,"LineContent":"        const fromHierarchy = HIERARCHY[filterActivity] || [];"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1277,"LineContent":"        return [...new Set([...fromHierarchy, ...fromFacilities])].sort();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2433,"LineContent":"                                                    {Object.keys(HIERARCHY).map(a =\u003e \u003coption key={a} value={a}\u003e{ACTIVITY_LABELS[a]}\u003c/option\u003e)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2440,"LineContent":"                                                    {facilityForm.activity \u0026\u0026 HIERARCHY[facilityForm.activity] \u0026\u0026 HIERARCHY[facilityForm.activity].map(d =\u003e \u003coption key={d} value={d}\u003e{d}\u003c/option\u003e)}"}

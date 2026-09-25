@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -790,11 +790,21 @@
+               <BarChart
+                 data={regionalData.map((d) => ({
+                   name: d.facility_name,
+-                  scope1: Number((d.scope1_intensity || 0).toFixed(2)),
++                  scope1: Number(
++                    (
++                      (gwpHorizon === "20"
++                        ? d.scope1_intensity_gwp20 || d.scope1_intensity
++                        : d.scope1_intensity) || 0
++                    ).toFixed(2)
++                  ),
+                   scope2: Number((d.scope2_intensity || 0).toFixed(2)),
+                 }))}
+                 bars={[
+-                  { dataKey: "scope1", name: "Scope 1 (Direct)", color: "#2563eb" },
++                  {
++                    dataKey: "scope1",
++                    name: gwpHorizon === "20" ? "Scope 1 (GWP₂₀ Direct)" : "Scope 1 (Direct)",
++                    color: "#2563eb",
++                  },
+                   { dataKey: "scope2", name: "Scope 2 (Indirect)", color: "#0ea5e9" },
+                 ]}
+                 xKey="name"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+200 {"message":"Admin accounts seeded and ready","status":"ok","users":["a","a@a","z","z@z","admin@ghg.com","itadmin@ghg.com","it@ghg.com"]}
+
+

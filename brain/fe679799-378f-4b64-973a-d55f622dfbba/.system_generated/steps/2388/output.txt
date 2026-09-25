@@ -1,0 +1,17 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-2377
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-2377.log
+Log output:
+<truncated 2250 lines>
+gs.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_production_upsert_and_delete_audit
+FAILED new\server\tests\test_battery_gwp_horizons_regulatory.py::TestGWPHorizonsAndProfilesBattery::test_flaring_methane_slip_20yr_sensitivity
+FAILED new\server\tests\test_operational_defaults.py::test_login_and_me_operational_defaults_regular_user
+FAILED new\server\tests\test_security_hardening.py::test_dev_account_a_at_a_does_not_exist
+FAILED new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_eight_concurrent_bulk_upload_jobs
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation
+================ 7 failed, 1047 passed, 26 warnings in 49.99s =================
+
+Last progress: 5s ago

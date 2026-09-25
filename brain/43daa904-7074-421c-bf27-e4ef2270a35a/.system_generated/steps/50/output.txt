@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+new/server/tests/test_battery_gwp_horizons_regulatory.py:21:from calculations.combustion import CombustionCalculator, FlaringCalculator
+new/server/tests/test_battery_gwp_horizons_regulatory.py:103:        calc = FlaringCalculator()
+new/server/tests/test_combustion.py:1:from calculations.combustion import FlaringCalculator, CombustionCalculator
+new/server/tests/test_combustion.py:5:    calc = FlaringCalculator()
+new/server/tests/test_combustion.py:18:    calc = FlaringCalculator()
+new/server/tests/test_csv_engine_matrix.py:34:from calculations.combustion import CombustionCalculator, FlaringCalculator
+new/server/tests/test_csv_engine_matrix.py:454:        fl_calc = FlaringCalculator()
+new/server/tests/test_n2o_flaring_consistency.py:3:Verifies that FlaringCalculator and _split_vented_and_flared use the exact same
+new/server/tests/test_n2o_flaring_consistency.py:7:from calculations.combustion import FlaringCalculator
+new/server/tests/test_n2o_flaring_consistency.py:13:    calc = FlaringCalculator()
+new/server/tests/test_numerical_invariants.py:33:    FlaringCalculator,
+new/server/tests/test_numerical_invariants.py:75:        calc = FlaringCalculator()
+new/server/tests/test_numerical_invariants.py:161:        assert FlaringCalculator().calculate(0.0, 0.90, "elevated", {})["total_co2e"] == 0.0
+new/server/tests/test_tier_scope_kpi_numerical.py:17:from calculations.combustion import CombustionCalculator, FlaringCalculator
+new/server/tests/test_tier_scope_kpi_numerical.py:161:        calc = FlaringCalculator()
+new/server/tests/test_zero_trust_adversarial.py:20:from calculations.combustion import CombustionCalculator, FlaringCalculator
+new/server/tests/test_zero_trust_adversarial.py:106:    calc = FlaringCalculator()
+

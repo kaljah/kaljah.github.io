@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Facilities Regions: [('West',), ('Center',), ('South',)]
+Facility details: [(1, 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'STL-TOS-01', 'West', 'Steel & Iron (Acier DRI)', 'Metallurgy', 'Heavy Industry'), (2, 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'FERT-ARZ-01', 'West', 'Chemicals & Fertilizers', 'Petrochemicals', 'Heavy Industry'), (3, 'Cimenterie Industrielle de Chlef (GICA)', 'CIM-GIC-01', 'Center', 'Cement & Clinker', 'Building Materials', 'Heavy Industry'), (4, 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)', 'GAS-HMD-01', 'South', 'Upstream & Midstream Gas', 'Exploration & Production', 'Oil & Gas'), (5, 'ADR', None, None, 'Activit� E&P', 'DP', 'Upstream'), (6, 'REB', None, None, 'Activit� E&P', 'DP', 'Upstream'), (7, 'HBK', None, None, 'Activit� E&P', 'DP', 'Upstream'), (8, 'GTL', None, None, 'Activit� E&P', 'DP', 'Upstream'), (9, 'OHT', None, None, 'Activit� E&P', 'DP', 'Upstream'), (10, 'STAH', None, None, 'Activit� E&P', 'DP', 'Upstream')]
+

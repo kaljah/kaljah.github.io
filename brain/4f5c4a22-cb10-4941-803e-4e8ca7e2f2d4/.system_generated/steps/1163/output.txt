@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":302,"LineContent":"            from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":508,"LineContent":"                        API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1631,"LineContent":"    API_FACTORS_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1764,"LineContent":"            factor_data = API_FACTORS_dict.get(fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1766,"LineContent":"        factor_data = API_FACTORS_dict.get(fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":19,"LineContent":"    API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":47,"LineContent":"# The original API_FACTORS dictionary has been replaced by imports from"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":55,"LineContent":"# All existing code referencing API_FACTORS will continue to work."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":60,"LineContent":"    \"API_FACTORS\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":81,"LineContent":"# This combines Section 5/6 (API_FACTORS) and Section 7 (EQUIPMENT_FACTORS)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":166,"LineContent":"API_FACTORS = {**ALL_EMISSION_FACTORS, **LEGACY_FACTORS}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors.py","LineNumber":171,"LineContent":"    for k, v in API_FACTORS.items()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors_api2021.py","LineNumber":589,"LineContent":"API_FACTORS = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors_api2021.py","LineNumber":1219,"LineContent":"ALL_EMISSION_FACTORS = {**API_FACTORS, **EQUIPMENT_FACTORS}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_csv.py","LineNumber":31,"LineContent":"    # Fuels must match API_FACTORS keys exactly"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":13,"LineContent":"from emission_factors import API_FACTORS, EQUIPMENT_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":411,"LineContent":"                    API_FACTORS.get(fuel_name) or EQUIPMENT_FACTORS.get(fuel_name) or {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":1,"LineContent":"from emission_factors_api2021 import API_FACTORS, EQUIPMENT_FACTORS, VENTED_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":3,"LineContent":"print(\"=== API_FACTORS keys ===\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":4,"LineContent":"for k in sorted(API_FACTORS.keys()):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\list_all_factors.py","LineNumber":5,"LineContent":"    f = API_FACTORS[k]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":221,"LineContent":"    Uses API_FACTORS for 'Associated Gas' (typically direct vol EF)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1036,"LineContent":"        from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1063,"LineContent":"            API_FACTORS_dict=API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1091,"LineContent":"        from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1109,"LineContent":"            API_FACTORS_dict=API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1121,"LineContent":"        from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1138,"LineContent":"            API_FACTORS_dict=API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1149,"LineContent":"        from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1168,"LineContent":"            API_FACTORS_dict=API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1172,"LineContent":"        # If Associated Gas is in API_FACTORS, should succeed; if not, will error on EF lookup"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1183,"LineContent":"        from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1206,"LineContent":"            API_FACTORS_dict=API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_runner.py","LineNumber":47,"LineContent":"API_FACTORS = get_all_factors()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_runner.py","LineNumber":102,"LineContent":"            API_FACTORS_dict=API_FACTORS,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":21,"LineContent":"from emission_factors import API_FACTORS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":39,"LineContent":"    \"\"\"Look up an emission factor from API_FACTORS supporting exact, normalized, and alias matches.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":42,"LineContent":"    if fuel_name in API_FACTORS:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":43,"LineContent":"        return API_FACTORS[fuel_name]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":45,"LineContent":"    for k, v in API_FACTORS.items():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":61,"LineContent":"    if canonical and canonical in API_FACTORS:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":62,"LineContent":"        return API_FACTORS[canonical]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":651,"LineContent":"                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":655,"LineContent":"            factor_data = API_FACTORS.get(fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":657,"LineContent":"            factor_data = API_FACTORS.get(fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3008,"LineContent":"            # API_FACTORS usually has: { 'co2': val, 'ch4': val, 'n2o': val, 'unit': '...', 'hhv': ... }"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3051,"LineContent":"                parent_factor = API_FACTORS.get(cf.parent_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3471,"LineContent":"                    parent_factor = API_FACTORS.get(cf.parent_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3766,"LineContent":"            factor_data = API_FACTORS.get(canonical_fuel, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3769,"LineContent":"                factor_data = API_FACTORS.get(fuel_key, {})"}
+(...11 more results not shown)

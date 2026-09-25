@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+ M graphify-out/.graphify_labels.json
+ M graphify-out/.graphify_labels.json.sig
+ M graphify-out/GRAPH_REPORT.md
+ M graphify-out/graph.html
+ M graphify-out/graph.json
+ M graphify-out/manifest.json
+ M new/client/src/components/CustomDropdown.css
+ M new/client/src/components/CustomDropdown.jsx
+ M new/client/src/components/MultiSelectDropdown.jsx
+ M new/client/src/components/layout/Layout.css
+ M new/client/src/components/layout/Layout.jsx
+ M new/client/src/components/layout/Sidebar.css
+ M new/client/src/components/layout/Sidebar.jsx
+ M new/client/src/components/layout/TopBar.css
+ M new/client/src/components/layout/TopBar.jsx
+ M new/client/src/context/LayoutContext.jsx
+ M new/client/src/index.css
+ M new/client/src/pages/Dashboard.css
+ M new/client/src/pages/DashboardEnhanced.jsx
+ M new/client/src/pages/Emissions.css
+ M new/client/src/pages/ManageData.css
+ M new/client/src/pages/QADashboard.css
+ M new/client/src/pages/QADashboard.jsx
+ M new/client/stats.html
+ M new/server/routes/dashboard.py
+ M new/server/routes/qaqc.py
+ M new/server/tests/test_qaqc_diagnostics.py
+?? graphify-out/2026-09-19/
+

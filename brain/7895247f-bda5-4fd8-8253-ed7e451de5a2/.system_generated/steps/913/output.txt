@@ -1,0 +1,15 @@
+Task: 7895247f-bda5-4fd8-8253-ed7e451de5a2/task-911
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\7895247f-bda5-4fd8-8253-ed7e451de5a2\.system_generated\tasks\task-911.log
+Log output:
+[2026-09-24 20:39:42,049] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+<string>:4: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+Traceback (most recent call last):
+  File "<string>", line 20, in <module>
+  File "<string>", line 20, in <genexpr>
+AttributeError: 'ProductionData' object has no attribute 'total_boe'
+=== FACILITY 4: Centre de Traitement Gazier Hassi Messaoud (Sonatrach) (GAS-HMD-01) ===
+Year 2020: 20 recs, CO2e=48,981.5, CH4=113.6, types={'stationary_combustion'}
+Year 2023: 40 recs, CO2e=68,011.8, CH4=217.3, types={'stationary_combustion'}
+
+Last progress: 3s ago

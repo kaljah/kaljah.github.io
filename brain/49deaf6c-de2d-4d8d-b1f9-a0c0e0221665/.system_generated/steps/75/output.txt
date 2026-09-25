@@ -1,0 +1,62 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\uncertainty.py:1:"""
+> new\server\calculations\uncertainty.py:2:GHG Inventory Uncertainty Quantification Module
+  new\server\calculations\uncertainty.py:3:================================================
+  new\server\calculations\uncertainty.py:4:Compliant with:
+> new\server\calculations\uncertainty.py:5:  - ISO 14064-1:2018 �7.5 (Uncertainty quantification and aggregation)
+  new\server\calculations\uncertainty.py:6:  - IPCC 2006 GL Vol.1 �3.3 (Error propagation, SRSS Approach 1)
+  new\server\calculations\uncertainty.py:7:  - ISO/IEC Guide 98-3 (GUM) �6.2 (Coverage factor k=2 for 95% CI)
+> new\server\calculations\uncertainty.py:8:  - API Compendium 2021 �2.4 (Uncertainty ranges by source type)
+> new\server\calculations\uncertainty.py:9:  - OGMP 2.0 Framework �5 (Tier-specific uncertainty requirements)
+  new\server\calculations\uncertainty.py:10:
+  new\server\calculations\uncertainty.py:15:
+> new\server\calculations\uncertainty.py:16:Activity-data uncertainty is tier-specific per IPCC GL Vol.1 Table 3.1:
+  new\server\calculations\uncertainty.py:17:  Tier 1 (allocation/default):        �10-15%
+  new\server\calculations\uncertainty.py:37:
+> new\server\calculations\uncertainty.py:38:# Activity-data uncertainty by tier - IPCC GL Vol.1 Table 3.1
+> new\server\calculations\uncertainty.py:39:ACTIVITY_UNCERTAINTY = {
+  new\server\calculations\uncertainty.py:40:    Tier.T1: 0.10,  # �10% - metering without calibration, allocation 
+methods
+  new\server\calculations\uncertainty.py:44:
+> new\server\calculations\uncertainty.py:45:# Supplemental activity uncertainty for processes dominated by physical 
+variance
+> new\server\calculations\uncertainty.py:46:ACTIVITY_UNCERTAINTY_FUGITIVE = 0.20  # �20%  - equipment leak frequency / 
+count
+> new\server\calculations\uncertainty.py:47:ACTIVITY_UNCERTAINTY_VENTED = 0.15  # �15%  - vent volume measurement
+  new\server\calculations\uncertainty.py:48:
+  new\server\calculations\uncertainty.py:52:
+> new\server\calculations\uncertainty.py:53:# Per-GHG EF uncertainty defaults when no measured value is available
+  new\server\calculations\uncertainty.py:54:# Values align with API Compendium 2021 �2.4 and IPCC 2006 GL Vol.1 Annex 
+3A
+> new\server\calculations\uncertainty.py:55:DEFAULT_EF_UNCERTAINTY = {
+  new\server\calculations\uncertainty.py:56:    # Combustion sources - well-characterised stoichiometry
+  new\server\calculations\uncertainty.py:163:    Reference: IPCC 2006 GL Vol.1 �3.3 Eq. 3.1
+> new\server\calculations\uncertainty.py:164:    Returns: combined relative standard uncertainty (1s)
+  new\server\calculations\uncertainty.py:165:    """
+  new\server\calculations\uncertainty.py:173:    Reference: IPCC 2006 GL Vol.1 �3.3 Eq. 3.2
+> new\server\calculations\uncertainty.py:174:    Returns: combined relative standard uncertainty (1s)
+  new\server\calculations\uncertainty.py:175:    """
+  new\server\calculations\uncertainty.py:186:    """
+> new\server\calculations\uncertainty.py:187:    Aggregate uncertainty across multiple sources using SRSS Approach 1.
+  new\server\calculations\uncertainty.py:188:    Formula: U_inv = V(S(E?�u?)�) / S(E?)
+  new\server\calculations\uncertainty.py:191:    Args:
+> new\server\calculations\uncertainty.py:192:        source_list: list of dicts with keys 'value' (tCO2e) and 
+'relative_uncertainty' (1s)
+  new\server\calculations\uncertainty.py:193:
+  new\server\calculations\uncertainty.py:194:    Returns:
+> new\server\calculations\uncertainty.py:195:        dict with relative_uncertainty_1sigma, 
+relative_uncertainty_95pct, total_value
+  new\server\calculations\uncertainty.py:196:    """
+  new\server\calculations\uncertainty.py:198:        return {
+> new\server\calculations\uncertainty.py:199:            "relative_uncertainty_1sigma": 0.0,
+> new\server\calculations\uncertainty.py:200:            "relative_uncertainty_95pct": 0.0,
+  new\server\calculations\uncertainty.py:201:            "total_value": 0.0,
+  new\server\calculations\uncertainty.py:206:        val = float(s.get("value") or 0.0)
+> new\server\calculations\uncertainty.py:207:        u_rel = s.get("relative_uncertainty")
+  new\server\calculations\uncertainty.py:208:        if u_rel is None:
+
+
+

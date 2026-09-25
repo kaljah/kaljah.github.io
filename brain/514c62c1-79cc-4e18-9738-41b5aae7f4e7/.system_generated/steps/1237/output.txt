@@ -1,0 +1,9 @@
+Task: 514c62c1-79cc-4e18-9738-41b5aae7f4e7/task-1235
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\514c62c1-79cc-4e18-9738-41b5aae7f4e7\.system_generated\tasks\task-1235.log
+Log output:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ImportError: cannot import name 'create_app' from 'app' (C:\Users\samsung\Desktop\H2\new\server\app.py)
+
+Last progress: 7s ago

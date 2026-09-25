@@ -1,0 +1,87 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Sidebar.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -404,4 +404,81 @@
+   background: #fef2f2 !important;
+   color: #dc2626 !important;
+ }
++
++/* ============================================================
++   MOBILE RESPONSIVE DRAWER (<= 768px)
++   ============================================================ */
++@media (max-width: 768px) {
++  .sidebar {
++    position: fixed;
++    top: 0;
++    left: 0;
++    bottom: 0;
++    width: 280px !important;
++    max-width: 85vw;
++    height: 100dvh;
++    padding: 20px 16px !important;
++    z-index: 1050;
++    transform: translateX(-100%);
++    box-shadow: none;
++    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s ease;
++    background: var(--bg-card, #ffffff) !important;
++    border-right: 1px solid var(--border-color, #e2e8f0);
++  }
++
++  .sidebar.mobile-open {
++    transform: translateX(0);
++    box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
++  }
++
++  .sidebar-header {
++    justify-content: space-between;
++    width: 100%;
++    margin-bottom: 20px;
++  }
++
++  .mobile-sidebar-close {
++    display: flex;
++  }
++
++  /* Labels and brand text are permanently fully visible in mobile drawer */
++  .brand-text {
++    opacity: 1 !important;
++    max-width: 200px !important;
++  }
++
++  .nav-link {
++    gap: 12px !important;
++    padding: 12px 14px !important;
++  }
++
++  .nav-label {
++    opacity: 1 !important;
++    max-width: 200px !important;
++  }
++
++  .nav-badge,
++  .nav-arrow {
++    opacity: 1 !important;
++  }
++
++  .sidebar-footer {
++    padding: 12px 0 0 !important;
++  }
++
++  .account-collapsed-btn {
++    width: 100% !important;
++    justify-content: flex-start !important;
++    padding: 10px 12px !important;
++    gap: 10px !important;
++  }
++
++  .user-info-text,
++  .user-chevron {
++    opacity: 1 !important;
++    max-width: 180px !important;
++    display: block !important;
++  }
++}
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

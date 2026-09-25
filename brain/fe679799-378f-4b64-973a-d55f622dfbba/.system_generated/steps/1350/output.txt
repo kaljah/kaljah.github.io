@@ -1,0 +1,72 @@
+
+Encountered error in step execution: context canceled
+Output:
+================================================================================
+STARTING WHOLE-SOFTWARE AUDIT: POST-INJECTION RENDERING VERIFICATION
+================================================================================
+[CDP] Connecting to Chrome on port 9222...
+(node:26152) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+============================================================
+STAGE 1: AUDITING ALL 9 TABS OF MANAGE DATA (POST-INJECTION)
+============================================================
+
+--- Checking Manage Data Tab: [Pending Review] (pending) ---
+  Pending badge indicator: S1
+Scope 1
+0
+
+--- Checking Manage Data Tab: [Emission Factors] (factors) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Regions] (facilities) ---
+  Pagination info: 'Page 1 of 10' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Production Data] (production) ---
+  Pagination info: 'Page 1 of 65' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Emission Sources] (sources) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Emission Goals & Base Years] (goals) ---
+  Agent search for 'AGT01' verified: 1 matching records returned.
+
+--- Checking Manage Data Tab: [Mitigation Projects] (mitigation) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [OGMP 2.0 Surveys] (ogmp) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [CBAM Products] (cbam) ---
+  Pagination info: 'Page 1 of 8' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+============================================================
+STAGE 2: AUDITING OPERATIONAL DASHBOARD (/)
+============================================================
+  Dashboard KPI Cards (0): {}
+  Dashboard active SVG charts: 0
+
+============================================================
+STAGE 3: AUDITING CARBON INTENSITY (/carbon-intensity)
+============================================================
+  [ERROR] Carbon Intensity audit error: 'charmap' codec can't encode character '\u2082' in position 73: character maps to <undefined>
+
+============================================================
+STAGE 4: AUDITING METHANE INTENSITY (/methane-intensity)
+============================================================
+

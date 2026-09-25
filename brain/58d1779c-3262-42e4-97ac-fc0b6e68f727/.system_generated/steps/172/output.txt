@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 7
+    c.execute('SELECT id, email, role, status FROM users WHERE email IN (" a@a\,
+              ^
+SyntaxError: unterminated string literal (detected at line 7)
+

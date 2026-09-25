@@ -1,0 +1,123 @@
+
+The command exited with code 0.
+Output:
+# Agent 4 �?" SUPERUSER API Tester Report
+
+- �o. Login as test_superuser@ghg-test.com
+- 
+## Auth Checks
+- �o. GET /auth/me �' 200
+- 
+## RBAC: Admin-only endpoints (should all be 403)
+- �o. Correctly denied GET /auth/users (admin-only) �' 403
+- �o. Correctly denied POST /auth/users (admin-only) �' 403
+- �o. Correctly denied DELETE /auth/users/1 (admin-only) �' 403
+- 
+## Emission Workflow: Pending Status
+- �o. POST /emissions (superuser�'Pending) �' 201
+- �o. Superuser emission status = None (Pending)
+- 
+## Data Ownership: Cannot delete others' records
+- �o. Correctly denied DELETE /emissions/1 (not own) �' 404
+- 
+## Facility Access
+- �o. GET /facilities �' 200
+- 
+## Dashboard
+- �o. GET /dashboard/summary �' 200
+- 
+## Bulk CSV Upload (superuser)
+- 
+## Scope 2
+- �o. POST /scope2 (superuser) �' 201
+- 
+## Scope 3
+- �o. POST /scope3 (superuser) �' 201
+- 
+## Analytics
+- �o. GET /dashboard/intensity-trend �' 200
+- �o. GET /dashboard/categorical-breakdown �' 200
+- �o. GET /qaqc/dashboard �' 200
+- 
+## Reports
+- �o. GET /reports/export �' 200
+- �o. GET /notifications �' 200
+
+## Summary
+- �o. Passed: 17
+- �Y?> Bugs: 0
+
+## Bugs
+
+---
+# Agent 5 �?" USER API Tester Report
+
+- �o. Login as test_user@ghg-test.com
+- 
+## Auth
+- �o. GET /auth/me �' 200
+- 
+## RBAC: Forbidden Endpoints (user)
+- �o. Correctly denied GET /auth/users (admin-only) �' 403
+- �o. Correctly denied DELETE /auth/users (admin-only) �' 403
+- �o. Correctly denied POST /facilities (user may not create) �' 403
+- 
+## Emission Workflow: User Creates Record
+- �o. POST /emissions (user) �' 201
+- �o. User emission status = None
+- 
+## Data Isolation
+- �o. Correctly denied PUT /emissions/1 (not own) (should be 403) �' 404
+- �o. Correctly denied DELETE /emissions/1 (not own) �' 404
+- 
+## Boundary & Edge Cases
+- 
+## Dashboard
+- �o. GET /dashboard/summary �' 200
+- �o. GET /dashboard/intensity-trend �' 200
+- 
+## Scope 2 & 3 (user)
+- �o. POST /scope2 �' 201
+- �o. POST /scope3 �' 201
+- �o. GET /notifications �' 200
+
+## Summary
+- �o. Passed: 14
+- �Y?> Bugs: 0
+
+## Bugs
+
+---
+# Agent 6 �?" IT_ADMIN API Tester Report
+
+- �o. Login as test_itadmin@ghg-test.com
+- �o. GET /auth/me �' 200
+- 
+## RBAC (it_admin)
+-   it_admin can list users �?" check if this is intended
+- �o. Correctly denied it_admin tries to create admin user �' 403
+- 
+## Satellite Data
+- �o. Correctly denied GET /satellite/sentinel5p/layer-config (it_admin denied operational data) �' 403
+- 
+## Emission Access (it_admin)
+- �o. GET /emissions list (it_admin denied) �' 403
+- �o. Correctly denied POST /emissions (it_admin DENIED) �' 403
+- 
+## Facilities (it_admin)
+- �o. GET /facilities (it_admin denied) �' 403
+- 
+## Dashboard & Reports (it_admin)
+- �o. GET /dashboard/summary (it_admin denied) �' 403
+- 
+## Audit Trail (it_admin)
+- 
+## Cross-role data leak checks
+
+## Summary
+- �o. Passed: 8
+- �Y?> Bugs: 0
+
+## Bugs
+
+

@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 9
+    print(f'=== PAGE {p_num}: {page.extract_text().splitlines()[0] if page.extract_text() else " \}
+                                                                                               ^
+SyntaxError: unterminated string literal (detected at line 9)
+

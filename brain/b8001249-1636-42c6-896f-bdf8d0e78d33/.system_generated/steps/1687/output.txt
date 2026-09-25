@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_10_user_playwright.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -94,7 +94,10 @@
+         for path, label in restricted_pages:
+             try:
+                 page.goto(f"{BASE_URL}{path}", wait_until="domcontentloaded")
+-                time.sleep(1)
++                try:
++                    page.wait_for_url(lambda u: not u.rstrip("/").endswith(path.rstrip("/")), timeout=5000)
++                except Exception:
++                    time.sleep(2)
+                 url = page.url
+                 # If user is redirected away from restricted route, guard succeeded
+                 if not url.rstrip("/").endswith(path.rstrip("/")):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

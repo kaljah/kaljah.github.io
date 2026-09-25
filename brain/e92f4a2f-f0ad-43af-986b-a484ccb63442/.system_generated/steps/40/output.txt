@@ -1,0 +1,152 @@
+
+The command exited with code 0.
+Output:
+commit a6e10bb428f98d3751035f6bad40f2fefb6f39db
+Author: kaljah <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 15:25:50 2026 +0200
+
+    Fix admin auto-seeding without circular imports and add init-admin endpoint
+
+diff --git a/new/server/app.py b/new/server/app.py
+index 927e1e6..9f229cb 100644
+--- a/new/server/app.py
++++ b/new/server/app.py
+@@ -206,13 +206,69 @@ if (
+         app.logger.warning(f"Could not initialize Swagger UI: {e}")
+ 
+ 
+-with app.app_context():
+-    db.create_all()
++def ensure_admin_seeded():
+     try:
+-        from seed_admin import seed_admin
+-        seed_admin()
++        from models import User
++        users_to_seed = [
++            {
++                "email": "admin@ghg.com",
++                "password": "Admin12345!",
++                "role": "admin",
++                "fullName": "System Administrator",
++            },
++            {
++                "email": "a@a",
++                "password": "a",
++                "role": "admin",
++                "fullName": "Admin User",
++            },
++            {
++                "email": "a",
++                "password": "a",
++                "role": "admin",
++                "fullName": "Admin User",
++            },
++        ]
++        for u in users_to_seed:
++            user = User.query.filter_by(email=u["email"]).first()
++            if not user:
++                user = User(
++                    fullName=u["fullName"],
++                    orgName="GHG Operations",
++                    email=u["email"],
++                    role=u["role"],
++                    sector="Oil & Gas",
++                    department="Sustainability & IT",
++                    jobTitle="Administrator",
++                    location="Global",
++                    status="active",
++                )
++                user.set_password(u["password"])
++                db.session.add(user)
++            else:
++                user.set_password(u["password"])
++                user.status = "active"
++                user.role = u["role"]
++        db.session.commit()
+     except Exception as e:
+-        app.logger.warning(f"Could not auto-seed admin: {e}")
++        app.logger.error(f"Failed to auto-seed admin: {e}")
++
++
++with app.app_context():
++    db.create_all()
++    ensure_admin_seeded()
++
++
++@app.route("/api/auth/init-admin")
++def init_admin_route():
++    ensure_admin_seeded()
++    from models import User
++    users = User.query.all()
++    return jsonify({
++        "status": "ok",
++        "message": "Admin accounts seeded and ready",
++        "users": [u.email for u in users]
++    })
+ 
+ 
+ @app.route("/api/csrf-token")
+
+commit e77e43dd299cd51c2008cae5573a5a47cfcd72b1
+Author: Antigravity Sync <sync@antigravity.local>
+Date:   Sun Sep 13 20:18:45 2026 +0200
+
+    Sync: 2026-09-13T18:18:44.790Z
+
+diff --git a/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.system_generated/click_feedback/click_feedback_1776800933382.png b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.system_generated/click_feedback/click_feedback_1776800933382.png
+new file mode 100644
+index 0000000..1639351
+Binary files /dev/null and b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.system_generated/click_feedback/click_feedback_1776800933382.png differ
+diff --git a/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776801624224.png b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776801624224.png
+new file mode 100644
+index 0000000..3ff38e5
+Binary files /dev/null and b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776801624224.png differ
+diff --git a/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776805271614.png b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776805271614.png
+new file mode 100644
+index 0000000..ee210f8
+Binary files /dev/null and b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776805271614.png differ
+diff --git a/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776805287093.png b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776805287093.png
+new file mode 100644
+index 0000000..3b96e5d
+Binary files /dev/null and b/brain/07fbb312-062d-4fc8-a75b-337f4d1780ba/.tempmediaStorage/media_07fbb312-062d-4fc8-a75b-337f4d1780ba_1776805287093.png differ
+diff --git a/brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/uploaded_image_1768674780275.png b/brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/uploaded_image_1768674780275.png
+new file mode 100644
+index 0000000..77047b7
+Binary files /dev/null and b/brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/uploaded_image_1768674780275.png differ
+diff --git a/conversations/224ec251-a8e0-4226-b81c-7484bb759378.pb b/conversations/224ec251-a8e0-4226-b81c-7484bb759378.pb
+new file mode 100644
+index 0000000..800d4a6
+Binary files /dev/null and b/conversations/224ec251-a8e0-4226-b81c-7484bb759378.pb differ
+diff --git a/conversations/3cbc2f14-f670-45f2-89f7-b215ef0f1cc5.pb b/conversations/3cbc2f14-f670-45f2-89f7-b215ef0f1cc5.pb
+new file mode 100644
+index 0000000..03e7641
+Binary files /dev/null and b/conversations/3cbc2f14-f670-45f2-89f7-b215ef0f1cc5.pb differ
+diff --git a/conversations/6f3b0214-86d8-4c32-ae7b-51068644ff56.pb b/conversations/6f3b0214-86d8-4c32-ae7b-51068644ff56.pb
+new file mode 100644
+index 0000000..0e8ed13
+Binary files /dev/null and b/conversations/6f3b0214-86d8-4c32-ae7b-51068644ff56.pb differ
+diff --git a/conversations/9d0ebfb4-1dc7-4728-a047-1f4cdd67c22b.pb b/conversations/9d0ebfb4-1dc7-4728-a047-1f4cdd67c22b.pb
+new file mode 100644
+index 0000000..ab7c78e
+Binary files /dev/null and b/conversations/9d0ebfb4-1dc7-4728-a047-1f4cdd67c22b.pb differ
+diff --git a/conversations/a6f9d3fc-0d90-44ce-abb1-effaa734eb01.pb b/conversations/a6f9d3fc-0d90-44ce-abb1-effaa734eb01.pb
+new file mode 100644
+index 0000000..6556483
+Binary files /dev/null and b/conversations/a6f9d3fc-0d90-44ce-abb1-effaa734eb01.pb differ
+diff --git a/conversations/a90eeb0f-bc98-475f-a28e-d9a7a21e0fc8.pb b/conversations/a90eeb0f-bc98-475f-a28e-d9a7a21e0fc8.pb
+new file mode 100644
+index 0000000..66f3996
+Binary files /dev/null and b/conversations/a90eeb0f-bc98-475f-a28e-d9a7a21e0fc8.pb differ
+diff --git a/conversations/b62e61be-7226-486f-91f6-85d536fec818.pb b/conversations/b62e61be-7226-486f-91f6-85d536fec818.pb
+new file mode 100644
+index 0000000..a9558aa
+Binary files /dev/null and b/conversations/b62e61be-7226-486f-91f6-85d536fec818.pb differ
+diff --git a/conversations/cb1e2599-6eda-488f-8f5a-372c19ceca8f.pb b/conversations/cb1e2599-6eda-488f-8f5a-372c19ceca8f.pb
+new file mode 100644
+index 0000000..ce677eb
+Binary files /dev/null and b/conversations/cb1e2599-6eda-488f-8f5a-372c19ceca8f.pb differ
+diff --git a/conversations/fa667970-6544-43ed-9980-019760f9806b.pb b/conversations/fa667970-6544-43ed-9980-019760f9806b.pb
+new file mode 100644
+index 0000000..0c0e7c8
+Binary files /dev/null and b/conversations/fa667970-6544-43ed-9980-019760f9806b.pb differ
+

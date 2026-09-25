@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -96,8 +96,8 @@
+   await page.waitForTimeout(300);
+ }
+ 
+-async function setupScope1(page) {
+-  await page.goto(`${FRONTEND}/emissions?scope=1`, { waitUntil: 'domcontentloaded', timeout: 30000 });
++async function ensureAuthenticated(page, targetUrl = '/') {
++  await page.goto(`${FRONTEND}${targetUrl}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+   await page.waitForTimeout(1000);
+ 
+   const skipBtn = page.locator('button.skip-intro-btn, button:has-text("Skip Intro")');
+@@ -106,6 +106,24 @@
+   }
+   await page.locator('.login-intro-overlay').waitFor({ state: 'detached', timeout: 3000 }).catch(() => {});
+ 
++  const emailInput = page.locator('input[placeholder="Email Address"], input[name="username"], input[type="text"]').first();
++  if (await emailInput.isVisible({ timeout: 1500 }).catch(() => false)) {
++    await emailInput.fill('a');
++    await page.locator('input[type="password"]').fill('a');
++    await page.locator('button[type="submit"]:has-text("Sign In"), button:has-text("Sign In"), button[type="submit"]').first().click();
++    await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 }).catch(() => {});
++    await page.waitForTimeout(1000);
++    const targetPath = targetUrl.split('?')[0];
++    if (targetPath && targetPath !== '/' && !page.url().includes(targetPath)) {
++      await page.goto(`${FRONTEND}${targetUrl}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
++      await page.waitForTimeout(1000);
++    }
++  }
++}
++
++async function setupScope1(page) {
++  await ensureAuthenticated(page, '/emissions?scope=1');
++
+   page.on('console', msg => console.log('BROWSER LOG:', msg.text()));
+   page.on('response', resp => {
+     if (resp.status() >= 400) {
+@@ -112,7 +112,7 @@
+     }
+   });
+ 
+-  await expect(page.locator('.scope-form, .calc-panel').first()).toBeVisible({ timeout: 15000 });
++  await expect(page.locator('.scope-form, .calc-panel').first()).toBeVisible({ timeout: 20000 });
+   await page.waitForTimeout(500);
+ }
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

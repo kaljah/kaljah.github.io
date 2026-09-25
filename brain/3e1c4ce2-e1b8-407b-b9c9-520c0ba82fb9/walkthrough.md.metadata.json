@@ -1,0 +1,5 @@
+{
+  "summary":  "Detailed walkthrough report documenting the zero-trust audit, findings, root causes, codebase fixes, and automated test verifications across the entire Carbon Intensity vertical (database, backend, API, frontend).",
+  "updatedAt":  "2026-09-21T18:33:08.224343900Z",
+  "userFacing":  true
+}

@@ -1,0 +1,48 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.jsx","LineNumber":47,"LineContent":"                {process_type || \"Scope 1 Emission Record\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":491,"LineContent":"              \u003cp\u003eUnrestricted Maker-Checker verification pipeline · Auditing 100% of staged records across Scope 1, 2, and 3\u003c/p\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":579,"LineContent":"                Scope 1 ({stats.count1})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":509,"LineContent":"      \"This report aimed to estimate both direct GHG emissions (Scope 1)\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":1418,"LineContent":"        labels: [\"Scope 1\", \"Scope 2\", \"Scope 3\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":1446,"LineContent":"      labels: [\"Scope 1\", \"Scope 2\", \"Scope 3\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1028,"LineContent":"          : \"Scope 1 entry added successfully\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1064,"LineContent":"    const pType = entry.process || entry.process_type || \"Scope 1\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1114,"LineContent":"      process_type: `Scope 1 - ${pLabel}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2262,"LineContent":"            Recent Activity (Scope 1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2744,"LineContent":"        title=\"Delete Scope 1 Emission\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.css","LineNumber":1,"LineContent":"/* Scope 1 Specific Styles */"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":25,"LineContent":"  // Identity State (Hoisted to match Scope 1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":572,"LineContent":"                \u003cspan className=\"kpi-label\"\u003eScope 1 Direct Intensity\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":782,"LineContent":"                \u003ch3\u003eScope 1 Direct vs Scope 2 Intensity\u003c/h3\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":805,"LineContent":"                    name: gwpHorizon === \"20\" ? \"Scope 1 (GWP₂₀ Direct)\" : \"Scope 1 (Direct)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":645,"LineContent":"              \u003ch2 className=\"s1w-title\"\u003eScope 1 Bulk Import\u003c/h2\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":245,"LineContent":"        // BUG-UI-04 FIX: Apply year filter to Scope 3 just like Scope 1 \u0026 2"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":996,"LineContent":"                  Import Scope 1 fuel, Scope 2 electricity, or Scope 3 supply chain CSVs."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1102,"LineContent":"              \u003cdiv className=\"stat-label\"\u003eGross Operational Emissions (Scope 1+2)\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1191,"LineContent":"                  \"CO₂e Intensity (Scope 1+2)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1199,"LineContent":"              \u003cspan className=\"pill-label\"\u003eScope 1 (Direct)\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1278,"LineContent":"                          name: \"Scope 1\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1551,"LineContent":"                        \u003ctd\u003eScope 1 (Direct)\u003c/td\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":55,"LineContent":"      {/* ── SCOPE 1 ── */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":81,"LineContent":"            \u003ch3 className=\"scope-card-title\"\u003eScope 1\u003c/h3\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":251,"LineContent":"                ? \"Scope 1 (Direct)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":264,"LineContent":"              \u003cspan className=\"tab-pill\"\u003e01\u003c/span\u003e Scope 1"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":465,"LineContent":"                                \u003coption value=\"1\"\u003eScope 1 (Direct)\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":1060,"LineContent":"                                {/* Scope 1 */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":1063,"LineContent":"                                        \u003cspan className=\"qa-scope-badge scope-1\"\u003eScope 1 (Direct)\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":740,"LineContent":"                  \u003coption value=\"all\"\u003eTotal Inventory (Scope 1,2,3)\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":741,"LineContent":"                  \u003coption value=\"1\"\u003eScope 1 (Direct)\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1766,"LineContent":"                                            \u003cspan\u003eScope 1\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3008,"LineContent":"                                                                    Corporate Total (Scope 1 + Scope 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":175,"LineContent":"      \"Scope 1 (tCO2e)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":178,"LineContent":"      \"Scope 1+2 (tCO2e)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":225,"LineContent":"      name: `Actual Emissions (${scopeMode === \"s1_s2\" ? \"Scope 1+2\" : \"Scope 1+2+3\"})`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":254,"LineContent":"    { dataKey: \"scope1\", name: \"Scope 1 (Direct)\", color: \"#ff6600\", stackId: \"a\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":289,"LineContent":"              title=\"Track across all scopes (Scope 1, 2, and 3)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":296,"LineContent":"              title=\"Track operational emissions (Scope 1 and 2 only)\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":298,"LineContent":"              Scope 1+2 (Operational)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":564,"LineContent":"                Verified Scope 1, Scope 2, and Scope 3 breakdown"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":592,"LineContent":"              Yearly comparison of targets, actual emissions, and progress towards net-zero alignment ({scopeMode === \"s1_s2\" ? \"Scope 1+2 Operational View\" : \"All Scopes View\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":605,"LineContent":"                \u003cth\u003eScope 1\u003c/th\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":608,"LineContent":"                \u003cth\u003eScope 1+2\u003c/th\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":505,"LineContent":"                    \u003ctd\u003eCorporate GHG Inventory / Scope 1\u003c/td\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.jsx","LineNumber":164,"LineContent":"    { value: \"1\", label: \"Scope 1\" },"}

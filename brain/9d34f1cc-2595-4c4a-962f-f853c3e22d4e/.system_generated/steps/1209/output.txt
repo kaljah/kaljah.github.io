@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\uncertainty.py:159:def combine_uncertainties_product(u_ef, u_ad):
+  new\server\calculations\uncertainty.py:160:    """
+  new\server\calculations\uncertainty.py:161:    Combine relative uncertainties for E = Activity � EF (multiplicative).
+  new\server\calculations\uncertainty.py:162:    Exact formula for product of independent random variables:
+  new\server\calculations\uncertainty.py:163:    u_E = V(u_AD� + u_EF� + u_AD�u_EF�)
+  new\server\calculations\uncertainty.py:164:    Reference: IPCC 2006 GL Vol.1 �3.3 Eq. 3.1 / Goodman (1960) / GUM �H.1
+  new\server\calculations\uncertainty.py:165:    Returns: combined relative standard uncertainty (1s)
+  new\server\calculations\uncertainty.py:166:    """
+  new\server\calculations\uncertainty.py:167:    u_ef_f = float(u_ef or 0.0)
+  new\server\calculations\uncertainty.py:168:    u_ad_f = float(u_ad or 0.0)
+  new\server\calculations\uncertainty.py:169:    return math.sqrt(u_ef_f**2 + u_ad_f**2 + (u_ef_f**2 * u_ad_f**2))
+  new\server\calculations\uncertainty.py:170:
+  new\server\calculations\uncertainty.py:171:
+  new\server\calculations\uncertainty.py:172:def combine_uncertainties_sum(val1, u1_rel, val2, u2_rel):
+  new\server\calculations\uncertainty.py:173:    """
+  new\server\calculations\uncertainty.py:174:    Combine relative uncertainties for E = A + B (additive, independent).
+  new\server\calculations\uncertainty.py:175:    Formula: u_total = V((E�u�)� + (E�u�)�) / |E�+E�|
+  new\server\calculations\uncertainty.py:176:    Reference: IPCC 2006 GL Vol.1 �3.3 Eq. 3.2
+  new\server\calculations\uncertainty.py:177:    Returns: combined relative standard uncertainty (1s)
+  new\server\calculations\uncertainty.py:178:    """
+  new\server\calculations\uncertainty.py:179:    u1_abs = abs(val1 * (u1_rel or 0.0))
+
+
+

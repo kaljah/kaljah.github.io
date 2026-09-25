@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -23,39 +23,30 @@
+ }
+ 
+ async function loginAndSetup(page, targetUrl = '/') {
+-  await page.goto(FRONTEND, { waitUntil: 'domcontentloaded', timeout: 25000 });
+-  await page.waitForTimeout(1500);
++  await page.goto(`${FRONTEND}${targetUrl}`, { waitUntil: 'domcontentloaded', timeout: 25000 });
++  await page.waitForTimeout(1000);
+ 
+   // Skip intro video if present
+   const skipBtn = page.locator('button.skip-intro-btn, button:has-text("Skip Intro")');
+-  if (await skipBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
++  if (await skipBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+     await skipBtn.click();
+   }
+-  await page.locator('.login-intro-overlay').waitFor({ state: 'detached', timeout: 4000 }).catch(() => {});
++  await page.locator('.login-intro-overlay').waitFor({ state: 'detached', timeout: 3000 }).catch(() => {});
+   await page.waitForTimeout(500);
+ 
+-  // Fill credentials if on login page
++  // Fallback if somehow on login page
+   const emailInput = page.locator('input[placeholder="Email Address"]');
+-  if (await emailInput.isVisible({ timeout: 3000 }).catch(() => false)) {
++  if (await emailInput.isVisible({ timeout: 1000 }).catch(() => false)) {
+     await emailInput.fill('a');
+     await page.locator('input[type="password"]').fill('a');
+     await page.locator('button[type="submit"]:has-text("Sign In")').click();
+-    await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 15000 }).catch(() => {});
+-  }
+-
+-  await expect(page.locator('.app-container, .dashboard-grid, .sidebar').first()).toBeVisible({ timeout: 15000 });
+-  await page.waitForTimeout(1500);
+-
+-  // If navigating to subpage
+-  if (targetUrl !== '/') {
+-    const navLink = page.locator(`a[href="${targetUrl}"], a[title*="${targetUrl.replace('/', '')}"]`).first();
+-    if (await navLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+-      await navLink.click();
+-    } else {
+-      await page.goto(`${FRONTEND}${targetUrl}`, { waitUntil: 'domcontentloaded', timeout: 15000 });
+-    }
+-    await page.waitForTimeout(2000);
+-  }
++    await page.waitForURL(url => !url.toString().includes('/login'), { timeout: 12000 }).catch(() => {});
++    await page.waitForTimeout(1000);
++  }
++
++  // Verify page structure
++  await expect(page.locator('.app-container, .dashboard-grid, .sidebar, .intensity-grid').first()).toBeVisible({ timeout: 15000 });
++  await page.waitForTimeout(1000);
+ }
+ 
+ test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

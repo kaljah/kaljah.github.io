@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\indirect.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -125,6 +125,9 @@
+             ["total_emissions", "heat_output", "power_output"],
+         )
+ 
++        # Convert power_output (MWh) to MMBtu (3.412142 MMBtu/MWh) for consistent energy allocation
++        power_mmbtu = power_output * 3.412142
++
+         if method == "wri_efficiency":
+             # API Equation 8-5: WRI/WBCSD Efficiency Method
+             # e_h = 0.8 (default), e_p = 0.33 (default)
+@@ -131,12 +131,12 @@
+             e_p = 0.33
+-            denominator = (heat_output / e_h) + (power_output / e_p)
++            denominator = (heat_output / e_h) + (power_mmbtu / e_p)
+             allocated_heat = ((heat_output / e_h) / denominator) * total_emissions if denominator > 0 else 0.0
+-            allocated_power = ((power_output / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
++            allocated_power = ((power_mmbtu / e_p) / denominator) * total_emissions if denominator > 0 else 0.0
+         else:
+             # Energy content allocation
+-            denominator = heat_output + power_output
++            denominator = heat_output + power_mmbtu
+             allocated_heat = (heat_output / denominator) * total_emissions if denominator > 0 else 0.0
+-            allocated_power = (power_output / denominator) * total_emissions if denominator > 0 else 0.0
++            allocated_power = (power_mmbtu / denominator) * total_emissions if denominator > 0 else 0.0
+ 
+         _unc_dict = uncertainties or {}
+         _tier = resolve_tier(_unc_dict.get("_factor_source", "default"))
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

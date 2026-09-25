@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Active Chrome tabs count: 3
+Carbon Tech http://localhost:5173/login
+Omnibox Popup chrome://omnibox-popup.top-chrome/
+Omnibox Popup chrome://omnibox-popup.top-chrome/omnibox_popup_aim.html
+

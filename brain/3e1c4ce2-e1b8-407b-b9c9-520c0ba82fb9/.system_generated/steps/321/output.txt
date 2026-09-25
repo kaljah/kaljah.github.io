@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2850,"LineContent":"        return jsonify({\"error\": \"No file part\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2853,"LineContent":"        return jsonify({\"error\": \"No selected file\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2894,"LineContent":"                    return jsonify({\"error\": \"Invalid or corrupted XLSX file\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3584,"LineContent":"        return jsonify({\"error\": \"No IDs provided\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3633,"LineContent":"        return jsonify({\"error\": \"No records provided\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3887,"LineContent":"        return jsonify({\"error\": \"Import failed\", \"details\": errors}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4400,"LineContent":"        return jsonify({\"error\": \"Record is not pending approval\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4496,"LineContent":"        return jsonify({\"error\": \"No IDs or scope mapping provided\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4541,"LineContent":"        return jsonify({\"error\": f\"Invalid scope: {scope}\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4583,"LineContent":"        return jsonify({\"error\": \"No IDs or scope mapping provided\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4633,"LineContent":"        return jsonify({\"error\": f\"Invalid scope: {scope}\"}), 400"}

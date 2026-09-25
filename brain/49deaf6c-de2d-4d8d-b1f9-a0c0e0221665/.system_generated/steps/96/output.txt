@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\audit.py:59:    query = ActivityLog.query
+new\server\routes\audit.py:209:        total_events = 
+ActivityLog.query.filter(ActivityLog.action.in_(sec_actions)).count()
+new\server\routes\audit.py:210:        total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
+new\server\routes\audit.py:212:        security_alerts = ActivityLog.query.filter(
+new\server\routes\audit.py:222:        total_events = ActivityLog.query.count()
+new\server\routes\audit.py:223:        total_logins = ActivityLog.query.filter(ActivityLog.action == "LOGIN").count()
+new\server\routes\audit.py:224:        data_mutations = ActivityLog.query.filter(
+new\server\routes\audit.py:227:        security_alerts = ActivityLog.query.filter(
+new\server\routes\audit.py:392:    logs = ActivityLog.query.order_by(ActivityLog.id.asc()).all()
+
+
+

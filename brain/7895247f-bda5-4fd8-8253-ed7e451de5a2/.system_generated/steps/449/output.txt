@@ -1,0 +1,43 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:117:class Emission(db.Model):
+  new\server\models.py:118:    __tablename__ = "emissions"
+  new\server\models.py:119:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:120:    record_id = db.Column(db.String(50), unique=True, index=True)
+  new\server\models.py:121:    year = db.Column(db.Integer, index=True)
+  new\server\models.py:122:    month = db.Column(db.Integer)
+  new\server\models.py:123:    company_name = db.Column(db.String(120))
+  new\server\models.py:124:    group_name = db.Column(db.String(120), index=True)
+  new\server\models.py:125:    equipment_id = db.Column(db.String(50))
+  new\server\models.py:126:    process_type = db.Column(db.String(50), index=True)
+  new\server\models.py:127:    fuel_type = db.Column(db.String(50))
+  new\server\models.py:128:    quantity = db.Column(db.Float)
+  new\server\models.py:129:    unit = db.Column(db.String(20))
+  new\server\models.py:130:    factor_source = db.Column(db.String(50))
+  new\server\models.py:131:
+  new\server\models.py:132:    # EF Used
+  new\server\models.py:133:    ef_used_co2 = db.Column(db.Float)
+  new\server\models.py:134:    ef_used_ch4 = db.Column(db.Float)
+  new\server\models.py:135:    ef_used_n2o = db.Column(db.Float)
+  new\server\models.py:136:    ef_used_co = db.Column(db.Float, default=0)
+  new\server\models.py:137:
+  new\server\models.py:138:    # Calculated Emissions
+  new\server\models.py:139:    co2_emissions = db.Column(db.Float)
+  new\server\models.py:140:    ch4_emissions = db.Column(db.Float)
+  new\server\models.py:141:    n2o_emissions = db.Column(db.Float)
+  new\server\models.py:142:    co_emissions = db.Column(db.Float, default=0)
+  new\server\models.py:143:    co2e_total = db.Column(db.Float)
+  new\server\models.py:144:    co2_biogenic = db.Column(db.Float, default=0)
+  new\server\models.py:145:
+  new\server\models.py:146:    combustion_efficiency = db.Column(db.Float, default=0)
+  new\server\models.py:147:    # Per-GHG relative uncertainties (e.g. 0.05 = �5%).
+  new\server\models.py:148:    # Only populated for default (API-catalogue) factors;
+  new\server\models.py:149:    # NULL for custom or specific (measurement-based) factors.
+  new\server\models.py:150:    uncertainty = db.Column(db.Float, nullable=True)  # CO� uncertainty
+  new\server\models.py:151:    uncertainty_ch4 = db.Column(db.Float, nullable=True)  # CH4 uncertainty
+  new\server\models.py:152:    uncertainty_n2o = db.Column(db.Float, nullable=True)  # N�O uncertainty
+
+
+

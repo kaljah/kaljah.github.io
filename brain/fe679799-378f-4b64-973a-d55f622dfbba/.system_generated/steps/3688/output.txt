@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1550,"LineContent":"            \"[Unc] meter_uncertainty_pct\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1551,"LineContent":"            \"meter_uncertainty_pct\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":240,"LineContent":"        if flat_inputs.get(\"meter_uncertainty_pct\") not in [None, \"\", \"-\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":243,"LineContent":"                    float(flat_inputs[\"meter_uncertainty_pct\"]) / 100.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1010,"LineContent":"        meter_uncertainty_pct:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":164,"LineContent":"      id: \"meter_uncertainty_pct\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":242,"LineContent":"        id: \"meter_uncertainty_pct\","}

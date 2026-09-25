@@ -1,0 +1,40 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":475,"LineContent":"        Emission.query.filter_by(year=2025, month=1).delete()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":480,"LineContent":"        \"Test Facility A,2025-01,combustion,Natural Gas,1000,scf\\n\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":503,"LineContent":"        count1 = Emission.query.filter_by(year=2025, month=1).count()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":522,"LineContent":"        count2 = Emission.query.filter_by(year=2025, month=1).count()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":528,"LineContent":"        \"Test Facility A,2025-01,combustion,Natural Gas,2500,scf\\n\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":542,"LineContent":"        count3 = Emission.query.filter_by(year=2025, month=1).count()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":544,"LineContent":"        updated_rec = Emission.query.filter_by(year=2025, month=1).first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":547,"LineContent":"        Emission.query.filter_by(year=2025, month=1).delete()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":561,"LineContent":"        Emission.query.filter_by(year=2025, month=2).delete()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":567,"LineContent":"        \"Test Facility A,2025-02,pneumatics,,500,count\\n\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":589,"LineContent":"        count1 = Emission.query.filter_by(year=2025, month=2).count()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":597,"LineContent":"        \"Test Facility A,2025-02,pneumatics,Natural Gas,500,count\\n\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":613,"LineContent":"        count2 = Emission.query.filter_by(year=2025, month=2).count()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":616,"LineContent":"        Emission.query.filter_by(year=2025, month=2).delete()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":432,"LineContent":"                year=2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":874,"LineContent":"        \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":875,"LineContent":"        \"survey_date\": \"2025-06-15\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":91,"LineContent":"                        \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":111,"LineContent":"                        \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":124,"LineContent":"                        \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":138,"LineContent":"                    res = client.get(\"/api/dashboard/summary?year=2025\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":66,"LineContent":"        for year in [2021, 2022, 2023, 2024, 2025]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":92,"LineContent":"        for year in [2021, 2022, 2023, 2024, 2025]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":114,"LineContent":"        for year in [2021, 2022, 2023, 2024, 2025]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":527,"LineContent":"             - 2025 ($1,200/t): 17.15 * 1200 = $20,580.00"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":545,"LineContent":"        fee_2025 = round(excess_ch4 * 1200.0, 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":548,"LineContent":"        assert fee_2025 == 20580.00"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":141,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":206,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":239,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":268,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":298,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":332,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":372,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":394,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":416,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":443,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":481,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":502,"LineContent":"            \"year\": 2025,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":530,"LineContent":"        res = client.get(\"/api/dashboard/summary?year=2025\")"}

@@ -1,0 +1,59 @@
+# QFULL Validation Task List
+
+- [x] **Phase 1** — Architecture inspection and process type inventory (all 18 types)
+- [x] **Phase 2** — Read all calculator source files (combustion, vented, fugitive, midstream, indirect, stoichiometry)
+- [x] **Phase 3** — Create implementation plan artifact
+- [x] **Phase 4** — Write `test_qfull_validation.py` (44 tests — core formula validation)
+  - [x] TestCombustionTier1 (5 tests)
+  - [x] TestCombustionTier3 (3 tests)
+  - [x] TestFlaringTier3 (3 tests)
+  - [x] TestMudDegassing (3 tests)
+  - [x] TestCompletions (3 tests)
+  - [x] TestLiquidsUnloading (2 tests)
+  - [x] TestTankFlashing (2 tests)
+  - [x] TestPneumatics (2 tests)
+  - [x] TestAGR (2 tests)
+  - [x] TestBlowdown (2 tests)
+  - [x] TestIndirectSteam (2 tests)
+  - [x] TestCogen (1 test)
+  - [x] TestGWPValues (3 tests)
+  - [x] TestCO2eCalculation (2 tests)
+  - [x] TestSensitivityOAT (5 tests)
+  - [x] TestGasByGasValidation (2 tests)
+  - [x] TestBoundaryZero (1 test)
+  - [x] TestNegativeRejected (1 test)
+- [x] **Phase 5** — Write `test_qfull_api_pipeline.py` (29 tests — HTTP + calculation engine)
+  - [x] TestCombustionTier1Pipeline
+  - [x] TestCombustionTier3Pipeline
+  - [x] TestFlaringTier3Pipeline
+  - [x] TestMudDegassingPipeline
+  - [x] TestCompletionsPipeline
+  - [x] TestPneumaticsPipeline
+  - [x] TestAGRPipeline
+  - [x] TestBlowdownPipeline
+  - [x] TestGWPValidation
+  - [x] TestIntermediateValues
+  - [x] TestTankFlashingPipeline
+  - [x] TestLiquidsUnloadingPipeline
+  - [x] TestIndirectSteamPipeline
+- [x] **Phase 6** — Write `test_qfull_unit_conversions.py` (32 tests)
+  - [x] TestMudVolumeUnits (m3/bbl/gal/liter)
+  - [x] TestBlowdownVolumeUnits (m3/scf/bbl)
+  - [x] TestCompletionsVolumeUnits (m3/scf/mscf)
+  - [x] TestTankThroughputUnits (bbl/m3/gal)
+  - [x] TestEnergyUnitsIndirectSteam (MMBtu/BTU/kWh/MWh)
+  - [x] TestCombustionFactorUnits
+  - [x] TestPneumaticBleedRateUnits
+  - [x] TestVolumeRoundTrip
+- [x] **Phase 7** — Write `test_qfull_boundary_sensitivity.py` (26 tests)
+  - [x] TestBoundaryConditions (14 tests)
+  - [x] TestOATSensitivity (12 tests)
+  - [x] TestCO2eSensitivity (3 tests)
+- [x] **Phase 8** — Write and execute `test_qfull_e2e_ui.spec.js` (Playwright E2E: 25/25 PASSED)
+  - [x] Auth & Navigation (Login, Admin redirect, Invalid error)
+  - [x] API Pipeline via request context (CSRF handling, POST emission 201, GET emission list)
+  - [x] UI Pipeline (Navigate to Manage Data, Form entry, Data table rendering)
+  - [x] Reference Accuracy Matrix (10 scenarios + consistency check)
+  - [x] GWP & Unit Verification (AR5/AR4 ratio, volume round-trip, barrel-to-gal, flare efficiency, GOR scaling)
+- [x] **Phase 9** — Run all test suites: **156/156 PASSED (131 pytest + 25 Playwright)**
+- [x] **Phase 10** — Write and update QFULL_VALIDATION_REPORT.md

@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+*   Trying 127.0.0.1:9222...
+* Established connection to 127.0.0.1 (127.0.0.1 port 9222) from 127.0.0.1 port 55186 
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+  0      0   0      0   0      0      0      0                              0* using HTTP/1.x
+> GET /json/list HTTP/1.1
+> Host: 127.0.0.1:9222
+> User-Agent: curl/8.21.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 404 Not Found
+< Content-Length:0
+< Content-Type:text/html
+< 
+  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0
+* Connection #0 to host 127.0.0.1:9222 left intact
+

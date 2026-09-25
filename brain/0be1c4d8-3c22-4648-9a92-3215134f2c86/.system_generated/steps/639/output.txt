@@ -1,0 +1,72 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -999,7 +999,7 @@
+     return source, errors
+ 
+ 
+-def _process_row_production(row, user_id, fac_name_map, fac_id_map):
++def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_map=None):
+     from models import ProductionData
+     from extensions import db
+ 
+@@ -1030,15 +1030,14 @@
+         errors.append("Invalid year or month format")
+         return None, errors
+ 
+-    try:
+-        oil_vol = float(row.get("production_volume") or row.get("oil_volume") or row.get("oil_amount") or 0)
+-    except (ValueError, TypeError):
+-        oil_vol = 0
+-
+-    try:
+-        gas_vol = float(row.get("energy_consumption") or row.get("gas_volume") or row.get("gas_amount") or 0)
+-    except (ValueError, TypeError):
+-        gas_vol = 0
++    oil_vol = _clean_float(
++        row.get("production_volume") or row.get("oil_volume") or row.get("oil_amount"),
++        default=0.0,
++    )
++    gas_vol = _clean_float(
++        row.get("energy_consumption") or row.get("gas_volume") or row.get("gas_amount"),
++        default=0.0,
++    )
+ 
+     oil_unit = row.get("production_unit") or row.get("oil_unit") or "bbl"
+     gas_unit = row.get("energy_unit") or row.get("gas_unit") or "mscf"
+@@ -1046,11 +1046,19 @@
+     field = row.get("field") or facility.field
+ 
+     # Upsert: respect the (facility_id, month, year) UniqueConstraint
+-    existing = ProductionData.query.filter_by(
+-        facility_id=facility.id,
+-        year=year,
+-        month=month,
+-    ).first()
++    # In-batch duplicate tracking prevents bulk_save_objects collision
++    key = (facility.id, year, month)
++    existing = None
++    if batch_prod_map is not None and key in batch_prod_map:
++        existing = batch_prod_map[key]
++    else:
++        existing = ProductionData.query.filter_by(
++            facility_id=facility.id,
++            year=year,
++            month=month,
++        ).first()
++        if existing and batch_prod_map is not None:
++            batch_prod_map[key] = existing
+ 
+     if existing:
+         existing.oil_amount = oil_vol
+@@ -1078,6 +1078,8 @@
+         field=field,
+         created_by=user_id,
+     )
++    if batch_prod_map is not None:
++        batch_prod_map[key] = prod
+     return prod, errors
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

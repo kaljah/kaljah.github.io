@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+[{"text":"Select Region...","hasMenu":false,"options":[]},{"text":"Select Emission Source...","hasMenu":false,"options":[]},{"text":"Stationary Combustion","hasMenu":false,"options":[]},{"text":"Select Emission Factor...","hasMenu":false,"options":[]},{"text":"Select...","hasMenu":false,"options":[]}]
+```

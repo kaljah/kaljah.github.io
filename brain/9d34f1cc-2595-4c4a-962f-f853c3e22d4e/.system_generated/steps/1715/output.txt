@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+[2026-09-25 15:47:53,086] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Connecting to database via Flask app context (URI: sqlite:///C:\Users\samsung\Desktop\H2\new\server\ghg_app.db)...
+Database reset successfully committed!
+

@@ -1,0 +1,76 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -243,34 +243,9 @@
+             }
+             return true;
+         });
+-    }, [data?.flagged_records, statusFilter, searchQuery]);
+-
+-    if (loading && !data) {
+-        return (
+-            <div className="qa-dashboard-page">
+-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+-                    <LoadingSpinner message="Scanning inventory & loading diagnostics..." />
+-                </div>
+-            </div>
+-        );
+-    }
+-
+-    if (!data) {
+-        return (
+-            <div className="qa-dashboard-page">
+-                <div className="qa-hero-card">
+-                    <h2 className="qa-title">QA/QC & Diagnostics</h2>
+-                    <p className="qa-subtitle">No data available for the current selection.</p>
+-                </div>
+-            </div>
+-        );
+-    }
+-
+-    // ── Safe Data Destructuring ───────────────────────────────────────────
+-    const { tier1_uncertainty = {}, flagged_records = [], total_flagged_count = 0, returned_count = 0 } = data;
+-    const diagnostics = data.diagnostics || {};
++    // ── Anomalies Summary Memo ───────────────────────────────────────────
+     const anomaliesSummary = useMemo(() => {
+-        const raw = diagnostics.anomalies_summary || {};
++        const raw = data?.diagnostics?.anomalies_summary || {};
+         const pending = raw.pending ?? 0;
+         const verified = raw.verified ?? 0;
+         const rejected = raw.rejected ?? 0;
+@@ -280,7 +280,32 @@
+             rejected,
+             total: raw.total ?? (pending + verified + rejected),
+         };
+-    }, [diagnostics.anomalies_summary]);
++    }, [data?.diagnostics?.anomalies_summary]);
++
++    if (loading && !data) {
++        return (
++            <div className="qa-dashboard-page">
++                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
++                    <LoadingSpinner message="Scanning inventory & loading diagnostics..." />
++                </div>
++            </div>
++        );
++    }
++
++    if (!data) {
++        return (
++            <div className="qa-dashboard-page">
++                <div className="qa-hero-card">
++                    <h2 className="qa-title">QA/QC & Diagnostics</h2>
++                    <p className="qa-subtitle">No data available for the current selection.</p>
++                </div>
++            </div>
++        );
++    }
++
++    // ── Safe Data Destructuring ───────────────────────────────────────────
++    const { tier1_uncertainty = {}, flagged_records = [], total_flagged_count = 0, returned_count = 0 } = data;
++    const diagnostics = data.diagnostics || {};
+     const healthScore = diagnostics.health_score ?? 95;
+     const completeness = diagnostics.completeness ?? 98.4;
+     const dimCompleteness = diagnostics.dimension_completeness || {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

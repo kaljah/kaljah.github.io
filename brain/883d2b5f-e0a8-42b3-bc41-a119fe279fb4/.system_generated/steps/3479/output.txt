@@ -1,0 +1,20 @@
+Task: 883d2b5f-e0a8-42b3-bc41-a119fe279fb4/task-3473
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\.system_generated\tasks\task-3473.log
+Log output:
+<truncated 92 lines>
+port_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\writer\excel.py:292: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    workbook.properties.modified = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_scope_filter - ...
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_csv_export - as...
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_95ci_correctness
+FAILED new\server\tests\test_uncertainty.py::test_uncertainty_category_95ci
+4 failed, 427 passed, 13 warnings in 36.97s
+
+Last progress: 8s ago

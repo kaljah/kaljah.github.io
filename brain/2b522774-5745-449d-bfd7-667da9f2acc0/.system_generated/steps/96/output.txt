@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\.gemini\antigravity\brain\2b522774-5745-449d-bfd7-667da9f2acc0
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/24/2026   9:07 PM                .system_generated                                                    
+d-----         9/24/2026   9:07 PM                .user_uploaded                                                       
+d-----         9/24/2026   9:07 PM                scratch                                                              
+
+
+

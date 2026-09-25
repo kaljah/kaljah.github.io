@@ -1,0 +1,107 @@
+
+The command exited with code 0.
+Output:
+<truncated 30 lines>
+:42:      487 |       await calcBtn.click();
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:43:      488 |       await page.waitForTimeout(800);
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:44:      489 |
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:45:        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:486:21
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:46:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:47:    Error Context: 
+test-results\test_scope1_tier1_tier3_ad-42402-nks-AGR-Dehydrator-Blowdown-chromium\error-context.md
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:48:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:49:    Retry #1 �
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:50:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:51:    Test timeout of 300000ms exceeded.
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:52:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:53:    Error: locator.scrollIntoViewIfNeeded: Test timeout of 300000ms exceeded.
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:54:    Call log:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:55:      - waiting for locator('button:has-text("Calculate Emissions")').first()
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:56:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:57:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:58:      484 |       // Calculation preview
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:59:      485 |       const calcBtn = page.locator('button:has-text("Calculate Emissions")').first();
+> C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:77:  2) [chromium] > e2e\test_scope1_tier1_tier3_advanced.spec.js:520:3 > Advanced Scope 1 Calculations: Tier 1 & 
+Tier 3 Full Audit > 2. Tier 1 Advanced Catalog Scenarios: Fuels, Units, Equipment Factors & Default Uncertainties 
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:78:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:79:    Test timeout of 240000ms exceeded.
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:80:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:81:    Error: locator.scrollIntoViewIfNeeded: Test timeout of 240000ms exceeded.
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:82:    Call log:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:83:      - waiting for locator('button:has-text("Calculate Emissions")').first()
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:84:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:85:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:86:      621 |       // Calculate
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:87:      622 |       const calcBtn = page.locator('button:has-text("Calculate Emissions")').first();
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:88:    > 623 |       await calcBtn.scrollIntoViewIfNeeded();
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:89:          |                     ^
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:90:      624 |       await calcBtn.click();
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:91:      625 |       await page.waitForTimeout(800);
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:92:      626 |
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:93:        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:623:21
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:94:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:95:    Error Context: 
+test-results\test_scope1_tier1_tier3_ad-03bbb-ctors-Default-Uncertainties-chromium\error-context.md
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:96:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:97:    Retry #1 �
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:98:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:99:    Test timeout of 240000ms exceeded.
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:100:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:101:    Error: locator.scrollIntoViewIfNeeded: Test timeout of 240000ms exceeded.
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:102:    Call log:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:103:      - waiting for locator('button:has-text("Calculate Emissions")').first()
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:104:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:105:
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:106:      621 |       // Calculate
+  C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-1538.log
+:107:      622 |       const calcBtn = page.locator('button:has-text("Calculate Emissions")').first();
+
+
+

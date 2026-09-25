@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\vented_processes.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -218,8 +218,9 @@
+         gwp_horizon="100",
+     ):
+         v_phys = IndependentUnitConverter.convert(blowdown_volume, volume_unit, "m3")
+-        p_abs = to_psia(pressure, press_unit)
+-        p_factor = p_abs / STD_P_PSIA
++        p_initial_psia = to_psia(pressure, press_unit)
++        delta_p = max(0.0, p_initial_psia - STD_P_PSIA)
++        p_factor = delta_p / STD_P_PSIA
+ 
+         t_abs = to_kelvin(temp, temp_unit)
+         t_factor = STD_T_K / max(1.0, t_abs)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

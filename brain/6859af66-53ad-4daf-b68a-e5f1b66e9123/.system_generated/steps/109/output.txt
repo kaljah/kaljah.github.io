@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+ui_dashboard.png (1582, 798)
+ui_methane.png (1582, 798)
+ui_reports.png (1582, 798)
+

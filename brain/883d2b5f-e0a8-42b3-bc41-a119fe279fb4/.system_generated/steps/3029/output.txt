@@ -1,0 +1,43 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\scope3.py:1:from flask import Blueprint, request, jsonify, session
+new\server\routes\scope3.py:20:        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+new\server\routes\scope3.py:43:    return jsonify(
+new\server\routes\scope3.py:76:        return jsonify({"error": "Not authenticated"}), 401
+new\server\routes\scope3.py:78:        return jsonify({"error": "Read-only or administrative role cannot create 
+emission records"}), 403
+new\server\routes\scope3.py:83:        return jsonify({"error": "Missing facility_id"}), 422
+new\server\routes\scope3.py:87:        return jsonify({"error": "Unauthorized for this facility"}), 403
+new\server\routes\scope3.py:176:    return jsonify({
+new\server\routes\scope3.py:210:        return jsonify({"error": "Not authenticated"}), 401
+new\server\routes\scope3.py:212:        return jsonify({"error": "Read-only or administrative role cannot modify 
+emission records"}), 403
+new\server\routes\scope3.py:216:        return jsonify({"error": "Emission not found"}), 404
+new\server\routes\scope3.py:219:        return jsonify({"error": "Unauthorized: Outside your region"}), 403
+new\server\routes\scope3.py:223:        return jsonify({"error": "Unauthorized: You may only modify records you 
+created"}), 403
+new\server\routes\scope3.py:242:            return jsonify({"error": "Unauthorized to reassign to this facility"}), 403
+new\server\routes\scope3.py:288:    return jsonify({"message": "Scope 3 emission updated"})
+new\server\routes\scope3.py:297:        return jsonify({"error": "Not authenticated"}), 401
+new\server\routes\scope3.py:299:        return jsonify({"error": "IT Admins do not have access to emission data"}), 403
+new\server\routes\scope3.py:302:        return jsonify({"error": "Forbidden: Read-only accounts cannot delete emission 
+records"}), 403
+new\server\routes\scope3.py:306:        return jsonify({"error": "Emission not found"}), 404
+new\server\routes\scope3.py:311:                jsonify(
+new\server\routes\scope3.py:318:            return jsonify({"error": "Unauthorized: Outside your region"}), 403
+new\server\routes\scope3.py:336:        return jsonify({"error": "Failed to delete Scope 3 record"}), 500
+new\server\routes\scope3.py:342:    return jsonify({"message": "Scope 3 emission deleted"})
+new\server\routes\scope3.py:351:        return jsonify({"error": "Not authenticated"}), 401
+new\server\routes\scope3.py:353:        return jsonify({"error": "IT Admins do not have access to upload emission 
+data"}), 403
+new\server\routes\scope3.py:358:        return jsonify({"error": "No records provided"}), 400
+new\server\routes\scope3.py:363:            jsonify(
+new\server\routes\scope3.py:479:    return jsonify(
+new\server\routes\scope3.py:489:        return jsonify({"error": "No data provided"}), 400
+new\server\routes\scope3.py:495:        return jsonify({"co2e": 0, "emission_factor": 0, "message": "Zero spend"}), 200
+new\server\routes\scope3.py:508:    return jsonify({
+
+
+

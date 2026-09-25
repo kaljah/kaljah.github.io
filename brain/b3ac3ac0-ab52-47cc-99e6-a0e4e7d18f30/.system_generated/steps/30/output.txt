@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":6,"LineContent":"from flask_wtf.csrf import CSRFProtect, generate_csrf"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":117,"LineContent":"csrf = CSRFProtect(app)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":242,"LineContent":"csrf.exempt(auth_bp)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":273,"LineContent":"        csrf.exempt(swaggerui_blueprint)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":371,"LineContent":"@app.route(\"/api/csrf-token\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":372,"LineContent":"def get_csrf_token():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":373,"LineContent":"    return jsonify({\"csrf_token\": generate_csrf()})"}

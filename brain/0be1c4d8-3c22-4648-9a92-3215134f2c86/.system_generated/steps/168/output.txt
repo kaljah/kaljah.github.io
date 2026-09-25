@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+100: const [inspectRecord, setInspectRecord] = useState(null);
+2557: {inspectRecord && (
+2559: calculation={inspectRecord}
+

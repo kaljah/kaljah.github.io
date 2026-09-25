@@ -1,0 +1,198 @@
+
+The command exited with code 1.
+Output:
+<truncated 28 lines>
+________ TestDifferentialScope1.test_diff_stationary_combustion_tier1 _________
+
+self = <test_independent_differential.TestDifferentialScope1 object at 0x000001B280779790>
+prod_dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001B2FFEDF320>
+
+    def test_diff_stationary_combustion_tier1(self, prod_dispatcher):
+        """Diff Test: Tier 1 Fuel-based combustion."""
+        qty = 50_000.0
+        unit = "m3"
+        ef = {"co2": 53.06, "ch4": 0.001, "n2o": 0.0001, "unit": "kg/MMBtu"}
+        hhv = 1020.0
+    
+        # Production Result
+        res_prod = prod_dispatcher.dispatch(
+            "stationary_combustion",
+            {"quantity": qty, "unit": unit, "fuel_type": "natural_gas", "hhv": hhv, "factor_source": "default"},
+            ef,
+            {},
+            gwp_dict=GWP_AR5,
+        )
+    
+        # Reference Result
+        res_ref = IndependentCombustionModel.calculate_tier1_2(
+            fuel_quantity=qty,
+            fuel_unit=unit,
+            emission_factors=ef,
+            fuel_type="natural_gas",
+            hhv=hhv,
+            gwp_standard="AR5",
+        )
+    
+        prod_co2 = res_prod["results"]["co2"]["value"]
+        prod_ch4 = res_prod["results"]["ch4"]["value"]
+        prod_co2e = res_prod["total_co2e"]
+    
+>       assert pytest.approx(prod_co2, rel=1e-4) == res_ref["co2"]
+E       assert 95.56369708200002 � 0.00955637 == 0.09556360702835143
+E         
+E         comparison failed
+E         Obtained: 0.09556360702835143
+E         Expected: 95.56369708200002 � 0.00955637
+
+tests\test_independent_differential.py:82: AssertionError
+__________ TestDifferentialScope1.test_diff_flaring_dual_efficiency ___________
+
+self = <test_independent_differential.TestDifferentialScope1 object at 0x000001B28077BEF0>
+prod_dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001B280872450>
+
+    def test_diff_flaring_dual_efficiency(self, prod_dispatcher):
+        """Diff Test: Flaring dual-efficiency model (elevated and enclosed)."""
+        qty = 25_000.0
+        payload = {
+            "amount": qty,
+            "unit": "m3",
+            "factor_source": "specific",
+            "c1": 0.88,
+            "flare_type": "elevated",
+            "ef_unit": "kg/m3",
+            "co2_mol": 0.015,
+        }
+    
+        res_prod = prod_dispatcher.dispatch("flaring", payload, {"n2o": 0.0001}, {}, gwp_dict=GWP_AR5)
+        res_ref = IndependentFlaringModel.calculate(
+            gas_volume=qty,
+            volume_unit="m3",
+            ch4_fraction=0.88,
+            flare_type="elevated",
+            composition={"c1": 0.88, "co2_mol": 0.015},
+            ef_n2o=0.0001,
+            gwp_standard="AR5",
+        )
+    
+        assert pytest.approx(res_prod["results"]["ch4"]["value"], rel=1e-4) == res_ref["ch4"]
+        assert pytest.approx(res_prod["results"]["co2"]["value"], rel=1e-4) == res_ref["co2"]
+>       assert pytest.approx(res_prod["total_co2e"], rel=1e-4) == res_ref["co2e"]
+E       assert 50.0064230000...5 � 0.00500064 == 49.36778688603705
+E         
+E         comparison failed
+E         Obtained: 49.36778688603705
+E         Expected: 50.006423000000005 � 0.00500064
+
+tests\test_independent_differential.py:151: AssertionError
+_____________ TestDifferentialScope1.test_diff_pneumatic_devices ______________
+
+self = <test_independent_differential.TestDifferentialScope1 object at 0x000001B2807A4800>
+prod_dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001B280873BC0>
+
+    def test_diff_pneumatic_devices(self, prod_dispatcher):
+        """Diff Test: Pneumatic devices continuous bleed and intermittent."""
+        payload_cont = {
+            "pneu_count": 25,
+            "pneu_hours": 8760,
+            "pneu_bleed_rate": 18.5,
+            "pneu_bleed_unit": "scf",
+            "pneu_ch4_content": 0.85,
+            "factor_source": "specific",
+        }
+    
+        res_prod = prod_dispatcher.dispatch("pneumatics", payload_cont, {}, {}, gwp_dict=GWP_AR5)
+        res_ref = IndependentPneumatics.calculate(
+            count=25,
+            hours=8760,
+            bleed_rate=18.5,
+            bleed_unit="scf",
+            ch4_content=0.85,
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(res_prod["results"]["ch4"]["value"], rel=1e-4) == res_ref["ch4"]
+E       assert 0.0 � 1.0e-12 == 66.16518162064953
+E         
+E         comparison failed
+E         Obtained: 66.16518162064953
+E         Expected: 0.0 � 1.0e-12
+
+tests\test_independent_differential.py:254: AssertionError
+______________ TestDifferentialScope1.test_diff_acid_gas_removal ______________
+
+self = <test_independent_differential.TestDifferentialScope1 object at 0x000001B2807A4BC0>
+prod_dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001B2809BDA90>
+
+    def test_diff_acid_gas_removal(self, prod_dispatcher):
+        """Diff Test: Acid gas removal (amine) CO2 balance and methane slip."""
+        payload = {
+            "agr_throughput": 75.0,
+            "agr_unit": "mmscf",
+            "agr_co2_in": 4.5,  # 4.5%
+            "agr_co2_out": 0.05,  # 0.05%
+            "agr_ch4_in": 85.0,
+            "agr_ch4_slip": 0.1,  # 0.1%
+            "agr_control_eff": 0.0,
+            "factor_source": "specific",
+        }
+    
+        res_prod = prod_dispatcher.dispatch("agr", payload, {}, {}, gwp_dict=GWP_AR5)
+        res_ref = IndependentAGRModel.calculate(
+            throughput_mmscf=75.0,
+            co2_in=0.045,
+            co2_out=0.0005,
+            ch4_in=0.85,
+            ch4_slip_fraction=0.001,
+            control_eff=0.0,
+            gwp_standard="AR5",
+        )
+    
+        assert pytest.approx(res_prod["results"]["co2"]["value"], rel=1e-4) == res_ref["co2"]
+>       assert pytest.approx(res_prod["results"]["ch4"]["value"], rel=1e-4) == res_ref["ch4"]
+E       assert 122.482750130784 � 0.0122483 == 1.22482750130784
+E         
+E         comparison failed
+E         Obtained: 1.22482750130784
+E         Expected: 122.482750130784 � 0.0122483
+
+tests\test_independent_differential.py:282: AssertionError
+_ TestDifferentialUncertaintyAndCompliance.test_diff_uncertainty_product_and_sum _
+
+self = <test_independent_differential.TestDifferentialUncertaintyAndCompliance object at 0x000001B2807A5EB0>
+
+    def test_diff_uncertainty_product_and_sum(self):
+        """Diff Test: IPCC 2006 SRSS propagation and GUM k=2 95% CI."""
+        val = 1500.0
+        u_ad = 0.05
+        u_ef = 0.10
+    
+        prod_res = propagate_uncertainty(
+            val,
+            ef_uncertainty=u_ef,
+            activity_uncertainty=u_ad,
+            tier=Tier.T2,
+        )
+    
+        ref_res = IndependentUncertaintyModel.propagate(
+            value=val,
+            ef_uncertainty=u_ef,
+            activity_uncertainty=u_ad,
+            coverage_factor=2.0,
+        )
+    
+>       assert pytest.approx(prod_res["relative_uncertainty"], rel=1e-6) == ref_res["relative_uncertainty_1sigma"]
+E       assert 0.05590169943749475 � 5.6e-08 == 0.1118033988749895
+E         
+E         comparison failed
+E         Obtained: 0.1118033988749895
+E         Expected: 0.05590169943749475 � 5.6e-08
+
+tests\test_independent_differential.py:416: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_independent_differential.py::TestDifferentialScope1::test_diff_stationary_combustion_tier1
+FAILED tests/test_independent_differential.py::TestDifferentialScope1::test_diff_flaring_dual_efficiency
+FAILED tests/test_independent_differential.py::TestDifferentialScope1::test_diff_pneumatic_devices
+FAILED tests/test_independent_differential.py::TestDifferentialScope1::test_diff_acid_gas_removal
+FAILED tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_uncertainty_product_and_sum
+======================== 5 failed, 11 passed in 0.97s =========================
+

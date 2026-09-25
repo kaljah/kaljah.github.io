@@ -1,0 +1,100 @@
+
+The command exited with code 0.
+Output:
+# Agent 02 - Account Seeder Report
+
+**Timestamp:** 2026-09-23T20:13:02.082421+00:00  
+**Method:** Direct database insertion (Flask app context)  
+**Server:** http://localhost:5000  
+
+## Account Status
+
+| # | Full Name | Email | Requested Role | Actual Role | Status | Login OK | Login Detail |
+|---|-----------|-------|---------------|-------------|--------|----------|--------------|
+| 1 | Test Admin | test_admin@ghg-test.com | admin | admin | NEW | YES | admin |
+| 2 | Test Superuser | test_superuser@ghg-test.com | superuser | superuser | NEW | YES | superuser |
+| 3 | Test User | test_user@ghg-test.com | user | user | NEW | YES | user |
+| 4 | Test IT Admin | test_itadmin@ghg-test.com | it_admin | it_admin | NEW | YES | it_admin |
+| 5 | Test Viewer | test_viewer@ghg-test.com | viewer | user | NEW | YES | user |
+
+**All 5 accounts ready:** YES
+
+## Bugs Found
+
+### [Invalid Role] Role 'viewer' does not exist in the platform
+- **Time:** 2026-09-23T20:12:40.676270+00:00
+- **Detail:** `Role 'viewer' is not in the system's VALID_ROLES (admin, it, it_admin, it_manager, superuser, user). Assigned 'user' as fallback.`
+
+---EXISTING_MASTER---
+# �Y"� MASTER BUG REPORT �?" GHG Platform Bug Swarm
+> Generated: 2026-09-24 00:40:07
+> Agents executed: 3, 4, 5, 6, 7, 8, 9, 10, 11 (9/9 testing agents)
+
+---
+
+## �Y"S Executive Summary
+
+| Metric | Value |
+|--------|-------|
+| Total unique bugs found | **0** |
+| �Y"� Critical | **0** |
+| �YY� High | **0** |
+| �YY� Medium | **0** |
+| �YY� Low | **0** |
+
+---
+
+## �Y?> All Bugs (sorted by severity)
+
+| # | Severity | Role | Area | Description |
+|---|----------|------|------|-------------|
+
+---
+
+## �Y"� Critical Issues (Full Detail)
+
+---
+
+## �YY� High Priority Issues
+
+---
+
+## �YY� Medium Issues
+
+
+---
+
+## �Y"' Security Findings
+
+- No dedicated security bugs found (check Critical/High sections above)
+
+---
+
+## �Y"? Bugs by Area
+
+---
+
+## �Y"< Recommendations
+
+1. **Fix all �Y"� Critical bugs immediately** �?" especially any RBAC violations or 500 errors
+2. **Review session management** �?" ensure logout destroys server-side session
+3. **Add input validation** on all API endpoints �?" reject extreme values at the controller layer
+4. **Audit emission status workflow** �?" confirm only admin can set `Verified`
+5. **Test CSV upload edge cases** �?" empty files, malformed headers, encoding issues
+6. **Add UI guards** �?" admin-only routes should be hidden from non-admin roles at the React router level
+7. **Review XSS handling** �?" sanitize all user-supplied strings before rendering
+
+---
+
+## �Y"' Individual Agent Reports
+
+- [Agent 3 Report](agent_03_report.md)
+- [Agent 4 Report](agent_04_report.md)
+- [Agent 5 Report](agent_05_report.md)
+- [Agent 6 Report](agent_06_report.md)
+- [Agent 7 Report](agent_07_report.md)
+- [Agent 8 Report](agent_08_report.md)
+- [Agent 9 Report](agent_09_report.md)
+- [Agent 10 Report](agent_10_report.md)
+- [Agent 11 Report](agent_11_report.md)
+

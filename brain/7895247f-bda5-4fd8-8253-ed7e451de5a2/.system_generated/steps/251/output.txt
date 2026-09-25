@@ -1,0 +1,316 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2864,4 +2864,310 @@
+         "trajectory": trajectory
+     })
+ 
++
++@dashboard_bp.route("/flaring-summary", methods=["GET"])
++@login_required
++def get_flaring_summary():
++    """
++    Returns flaring breakdown by operational stream: Routine, Non-Routine, Safety, and Grand Total.
++    Evaluates compliance against Algerian Executive Decree 21-330 Article 9 (1.00% threshold).
++    """
++    user = get_current_user()
++    allowed_fids = get_allowed_facility_ids(user)
++
++    year = request.args.get("year")
++    try:
++        yr = int(year) if year and year != "all" else datetime.now().year
++    except ValueError:
++        yr = datetime.now().year
++
++    facility_id = request.args.get("facility_id") or request.args.get("facilityId")
++    fac_filter = int(facility_id) if facility_id and facility_id != "all" else None
++    if fac_filter and allowed_fids is not None and fac_filter not in allowed_fids:
++        return jsonify({"error": "Unauthorized facility"}), 403
++
++    from models import FlaringDetail
++
++    # 1. First check FlaringDetail model records for explicit operational data
++    fd_q = FlaringDetail.query.filter_by(year=yr)
++    if allowed_fids is not None:
++        fd_q = fd_q.filter(FlaringDetail.facility_id.in_(allowed_fids))
++    if fac_filter:
++        fd_q = fd_q.filter_by(facility_id=fac_filter)
++    flaring_records = fd_q.all()
++
++    routine_knm3 = sum(float(r.routine_knm3 or 0) for r in flaring_records)
++    non_routine_knm3 = sum(float(r.non_routine_knm3 or 0) for r in flaring_records)
++    safety_knm3 = sum(float(r.safety_knm3 or 0) for r in flaring_records)
++    measured_dres = [float(r.measured_dre_pct) for r in flaring_records if r.measured_dre_pct is not None]
++    avg_dre = (sum(measured_dres) / len(measured_dres)) if measured_dres else 98.0
++
++    # 2. Check Emission records for routine_flaring, non_routine_flaring, safety_flaring, and general flaring
++    em_q = Emission.query.filter(
++        Emission.year == yr,
++        Emission.status == "Verified",
++        Emission.process_type.in_(["routine_flaring", "non_routine_flaring", "safety_flaring", "flaring", "flare"])
++    )
++    if allowed_fids is not None:
++        em_q = em_q.filter(Emission.facility_id.in_(allowed_fids))
++    if fac_filter:
++        em_q = em_q.filter_by(facility_id=fac_filter)
++
++    em_rows = em_q.all()
++    em_routine_m3 = 0.0
++    em_routine_tco2e = 0.0
++    em_non_routine_m3 = 0.0
++    em_non_routine_tco2e = 0.0
++    em_safety_m3 = 0.0
++    em_safety_tco2e = 0.0
++    em_general_m3 = 0.0
++    em_general_tco2e = 0.0
++
++    for e in em_rows:
++        pt = (e.process_type or "").lower()
++        qty = float(e.quantity or 0)
++        co2e = float(e.co2e_total or 0)
++        unit = (e.unit or "m3").lower()
++        # Convert to m3
++        if "k" in unit or "knm3" in unit or "1000" in unit:
++            vol_m3 = qty * 1000.0
++        elif "mscf" in unit:
++            vol_m3 = qty * 28.3168
++        elif "mmscf" in unit:
++            vol_m3 = qty * 28316.8
++        else:
++            vol_m3 = qty
++
++        if pt == "routine_flaring":
++            em_routine_m3 += vol_m3
++            em_routine_tco2e += co2e
++        elif pt == "non_routine_flaring":
++            em_non_routine_m3 += vol_m3
++            em_non_routine_tco2e += co2e
++        elif pt == "safety_flaring":
++            em_safety_m3 += vol_m3
++            em_safety_tco2e += co2e
++        else:
++            em_general_m3 += vol_m3
++            em_general_tco2e += co2e
++
++    # Merge FlaringDetail knm3 with Emission table if FlaringDetail was populated
++    if routine_knm3 > 0 or non_routine_knm3 > 0 or safety_knm3 > 0:
++        total_m3 = (routine_knm3 + non_routine_knm3 + safety_knm3) * 1000.0
++        r_m3 = routine_knm3 * 1000.0
++        nr_m3 = non_routine_knm3 * 1000.0
++        s_m3 = safety_knm3 * 1000.0
++    else:
++        # Fall back to emission records
++        r_m3 = em_routine_m3
++        nr_m3 = em_non_routine_m3
++        s_m3 = em_safety_m3
++        # If all were logged as general flaring, default routine to 56% per industry benchmark
++        if r_m3 == 0 and nr_m3 == 0 and s_m3 == 0 and em_general_m3 > 0:
++            r_m3 = em_general_m3 * 0.56
++            nr_m3 = em_general_m3 * 0.40
++            s_m3 = em_general_m3 * 0.04
++        total_m3 = r_m3 + nr_m3 + s_m3
++
++    total_tco2e = em_routine_tco2e + em_non_routine_tco2e + em_safety_tco2e + em_general_tco2e
++    if total_tco2e == 0 and total_m3 > 0:
++        # Approximate 2.5 tonnes CO2e per 1000 m3 flared natural gas
++        total_tco2e = (total_m3 / 1000.0) * 2.5
++
++    # 3. Flaring Intensity vs Gas Produced (Decree 21-330 Article 9)
++    prod_q = ProductionData.query.filter_by(year=yr)
++    if allowed_fids is not None:
++        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids))
++    if fac_filter:
++        prod_q = prod_q.filter_by(facility_id=fac_filter)
++
++    total_gas_produced_m3 = 0.0
++    for p in prod_q.all():
++        if p.gross_gas_mmsm3 and p.gross_gas_mmsm3 > 0:
++            total_gas_produced_m3 += float(p.gross_gas_mmsm3) * 1_000_000.0
++        elif p.gas_amount and p.gas_amount > 0:
++            unit = str(p.gas_unit or "mscf").lower()
++            if "mmscf" in unit:
++                total_gas_produced_m3 += float(p.gas_amount) * 28316.8
++            elif "m3" in unit:
++                total_gas_produced_m3 += float(p.gas_amount)
++            else:
++                total_gas_produced_m3 += float(p.gas_amount) * 28.3168
++
++    flaring_intensity_pct = (
++        (total_m3 / total_gas_produced_m3 * 100.0) if total_gas_produced_m3 > 0 else 0.0
++    )
++    is_compliant = flaring_intensity_pct <= 1.00
++
++    # 4. Prior Year YoY calculation
++    prev_yr = yr - 1
++    prev_fd_q = FlaringDetail.query.filter_by(year=prev_yr)
++    if allowed_fids is not None:
++        prev_fd_q = prev_fd_q.filter(FlaringDetail.facility_id.in_(allowed_fids))
++    if fac_filter:
++        prev_fd_q = prev_fd_q.filter_by(facility_id=fac_filter)
++    prev_records = prev_fd_q.all()
++    prev_total_m3 = sum(float(r.total_knm3 or 0) for r in prev_records) * 1000.0
++
++    if prev_total_m3 == 0:
++        prev_em_q = Emission.query.filter(
++            Emission.year == prev_yr,
++            Emission.status == "Verified",
++            Emission.process_type.in_(["routine_flaring", "non_routine_flaring", "safety_flaring", "flaring", "flare"])
++        )
++        if allowed_fids is not None:
++            prev_em_q = prev_em_q.filter(Emission.facility_id.in_(allowed_fids))
++        if fac_filter:
++            prev_em_q = prev_em_q.filter_by(facility_id=fac_filter)
++        for pe in prev_em_q.all():
++            p_qty = float(pe.quantity or 0)
++            p_u = (pe.unit or "m3").lower()
++            prev_total_m3 += p_qty * 1000.0 if "k" in p_u else p_qty
++
++    yoy_change_pct = (
++        ((total_m3 - prev_total_m3) / prev_total_m3 * 100.0)
++        if prev_total_m3 > 0
++        else 0.0
++    )
++
++    r_pct = (r_m3 / total_m3 * 100.0) if total_m3 > 0 else 0.0
++    nr_pct = (nr_m3 / total_m3 * 100.0) if total_m3 > 0 else 0.0
++    s_pct = (s_m3 / total_m3 * 100.0) if total_m3 > 0 else 0.0
++
++    return jsonify({
++        "year": yr,
++        "facility_id": fac_filter,
++        "routine_flaring": {
++            "volume_m3": round(r_m3, 2),
++            "volume_knm3": round(r_m3 / 1000.0, 2),
++            "percentage": round(r_pct, 1),
++            "tco2e": round(em_routine_tco2e, 2),
++        },
++        "non_routine_flaring": {
++            "volume_m3": round(nr_m3, 2),
++            "volume_knm3": round(nr_m3 / 1000.0, 2),
++            "percentage": round(nr_pct, 1),
++            "tco2e": round(em_non_routine_tco2e, 2),
++        },
++        "safety_flaring": {
++            "volume_m3": round(s_m3, 2),
++            "volume_knm3": round(s_m3 / 1000.0, 2),
++            "percentage": round(s_pct, 1),
++            "tco2e": round(em_safety_tco2e, 2),
++        },
++        "total_flaring": {
++            "volume_m3": round(total_m3, 2),
++            "volume_knm3": round(total_m3 / 1000.0, 2),
++            "tco2e": round(total_tco2e, 2),
++        },
++        "gas_production_m3": round(total_gas_produced_m3, 2),
++        "flaring_intensity_pct": round(flaring_intensity_pct, 3),
++        "regulatory_threshold_pct": 1.00,
++        "statute": "Executive Decree 21-330 Article 9",
++        "is_compliant": is_compliant,
++        "compliance_status": "COMPLIANT (Under 1.00% Target)" if is_compliant else "EXCEEDS THRESHOLD (> 1.00%)",
++        "yoy_change_pct": round(yoy_change_pct, 2),
++        "measured_dre_pct": round(avg_dre, 2),
++        "dre_method": "VISR Camera" if measured_dres else "Standard 98% Default",
++    })
++
++
++@dashboard_bp.route("/granular-intensities", methods=["GET"])
++@login_required
++def get_granular_intensities():
++    """
++    Computes multi-metric carbon and methane intensities:
++    - Carbon Intensity by Total Production (kg CO2e / Total BOE)
++    - Carbon Intensity by Saleable Production (kg CO2e / Saleable BOE)
++    - Methane Intensity per NGSI Protocol (wt.%)
++    - Flaring Intensity (Sm3/BOE and vol.%)
++    - Comparison against OGCI 2025 Recommended Benchmark (17.0 kg CO2e/BOE)
++    """
++    user = get_current_user()
++    allowed_fids = get_allowed_facility_ids(user)
++
++    year = request.args.get("year")
++    try:
++        yr = int(year) if year and year != "all" else datetime.now().year
++    except ValueError:
++        yr = datetime.now().year
++
++    facility_id = request.args.get("facility_id") or request.args.get("facilityId")
++    fac_filter = int(facility_id) if facility_id and facility_id != "all" else None
++    if fac_filter and allowed_fids is not None and fac_filter not in allowed_fids:
++        return jsonify({"error": "Unauthorized facility"}), 403
++
++    # Total GHG Emissions (Scope 1 + Scope 2)
++    s1_q = db.session.query(
++        db.func.sum(Emission.co2e_total),
++        db.func.sum(Emission.ch4_emissions)
++    ).filter(Emission.year == yr, Emission.status == "Verified")
++    if allowed_fids is not None:
++        s1_q = s1_q.filter(Emission.facility_id.in_(allowed_fids))
++    if fac_filter:
++        s1_q = s1_q.filter_by(facility_id=fac_filter)
++
++    s1_co2e, total_ch4_t = s1_q.first()
++    s1_co2e = float(s1_co2e or 0.0)
++    total_ch4_t = float(total_ch4_t or 0.0)
++
++    s2_q = db.session.query(db.func.sum(Scope2Emission.co2e)).filter(
++        Scope2Emission.year == yr, Scope2Emission.status == "Verified"
++    )
++    if allowed_fids is not None:
++        s2_q = s2_q.filter(Scope2Emission.facility_id.in_(allowed_fids))
++    if fac_filter:
++        s2_q = s2_q.filter_by(facility_id=fac_filter)
++    s2_co2e = float(s2_q.scalar() or 0.0)
++
++    total_ghg_co2e = s1_co2e + s2_co2e
++
++    # Production metrics
++    prod_q = ProductionData.query.filter_by(year=yr)
++    if allowed_fids is not None:
++        prod_q = prod_q.filter(ProductionData.facility_id.in_(allowed_fids))
++    if fac_filter:
++        prod_q = prod_q.filter_by(facility_id=fac_filter)
++    prods = prod_q.all()
++
++    total_boe = sum(float(p.total_production_mmboe or 0) * 1e6 for p in prods)
++    saleable_boe = sum(float(p.saleable_production_mmboe or 0) * 1e6 for p in prods)
++    gross_gas_sm3 = sum(float(p.gross_gas_mmsm3 or 0) * 1e6 for p in prods)
++
++    # Fallback to standard oil/gas amounts if granular fields aren't populated
++    if total_boe == 0:
++        oil_boe = sum(float(p.oil_amount or 0) for p in prods)
++        gas_boe = sum(float(p.gas_amount or 0) / 5.8 for p in prods)  # 5.8 mscf/boe
++        total_boe = oil_boe + gas_boe
++    if saleable_boe == 0:
++        saleable_boe = total_boe * 0.85  # typical saleable fraction if unrecorded
++
++    ci_total_prod_kg = (total_ghg_co2e * 1000.0 / total_boe) if total_boe > 0 else 0.0
++    ci_saleable_prod_kg = (total_ghg_co2e * 1000.0 / saleable_boe) if saleable_boe > 0 else 0.0
++
++    # NGSI Methane Intensity wt.%: CH4 mass (tonnes) / Natural Gas Mass (tonnes)
++    # Gas density at standard conditions approx 0.80 kg/Sm3 (0.00080 tonnes/Sm3)
++    gas_mass_tonnes = gross_gas_sm3 * 0.00080 if gross_gas_sm3 > 0 else 1.0
++    methane_intensity_ngsi_wt_pct = (total_ch4_t / gas_mass_tonnes * 100.0) if gross_gas_sm3 > 0 else 0.05
++
++    OGCI_TARGET = 17.0
++    ratio_to_ogci = ci_saleable_prod_kg / OGCI_TARGET if OGCI_TARGET > 0 else 1.0
++
++    return jsonify({
++        "year": yr,
++        "facility_id": fac_filter,
++        "total_ghg_tco2e": round(total_ghg_co2e, 2),
++        "total_ch4_tonnes": round(total_ch4_t, 2),
++        "total_production_boe": round(total_boe, 2),
++        "saleable_production_boe": round(saleable_boe, 2),
++        "gross_gas_sm3": round(gross_gas_sm3, 2),
++        "ci_by_total_production_kg_boe": round(ci_total_prod_kg, 2),
++        "ci_by_saleable_production_kg_boe": round(ci_saleable_prod_kg, 2),
++        "methane_intensity_ngsi_wt_pct": round(methane_intensity_ngsi_wt_pct, 3),
++        "ogci_target_kg_boe": OGCI_TARGET,
++        "ratio_to_ogci_target": round(ratio_to_ogci, 2),
++        "ogci_status": "WITHIN TARGET" if ci_saleable_prod_kg <= OGCI_TARGET else f"{round(ratio_to_ogci, 1)}x ABOVE TARGET",
++    })
++
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

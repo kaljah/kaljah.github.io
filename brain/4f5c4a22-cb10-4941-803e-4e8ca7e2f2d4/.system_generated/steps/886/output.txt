@@ -1,0 +1,14 @@
+Found 13 results
+scope1_acid_gas_removal___agr__tier_3_.png
+scope1_blowdowns___venting__tier_3_.png
+scope1_combustion__tier_3_.png
+scope1_eng_combustion.png
+scope1_flaring__tier_3_.png
+scope1_glycol_dehydrator__tier_3_.png
+scope1_liquids_unloading__tier_3_.png
+scope1_pneumatic_devices__tier_3_.png
+scope1_storage_tanks__tier_3_.png
+scope1_tier1_center.png
+scope1_tier1_south.png
+scope1_tier1_west.png
+scope1_well_completions_flowback__tier_3_.png

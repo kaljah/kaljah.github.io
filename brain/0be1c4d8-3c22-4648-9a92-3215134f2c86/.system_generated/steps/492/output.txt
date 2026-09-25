@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -242,8 +242,8 @@
+         # Stream Partitioning & Control Systems:
+         # If Flash Tank is present: ~80% flashes off in flash tank, ~20% goes to regenerator still vent
+         # If no Flash Tank: 100% goes directly to regenerator still vent
+-        still_eff = float(control_eff or 0.0)
+-        flash_eff = float(flash_control_eff or 0.0)
++        still_eff = normalize_efficiency(control_eff, default=0.0)
++        flash_eff = normalize_efficiency(flash_control_eff, default=0.0)
+ 
+         # Auto-detect still control efficiency from device type if not explicitly overridden
+         s_type = str(still_control_type).strip().lower()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

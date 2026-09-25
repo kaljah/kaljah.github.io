@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":18,"LineContent":"    \"213\": {\"name\": \"Support Activities for Mining\", \"kg_co2e_per_1000_usd\": 950.6},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors\\eeio_factors.py","LineNumber":51,"LineContent":"    \"522\": {\"name\": \"Credit Intermediation and Related Activities\", \"kg_co2e_per_1000_usd\": 45.3},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_csv.py","LineNumber":9,"LineContent":"        \"Activity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_csv.py","LineNumber":17,"LineContent":"        \"Activity / Fuel\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_comprehensive.py","LineNumber":131,"LineContent":"    r[\"activity\"]      = \"Activité E\u0026P\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_comprehensive.py","LineNumber":155,"LineContent":"    r[\"activity\"]      = \"Activité E\u0026P\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_csv.py","LineNumber":9,"LineContent":"        \"Activity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_csv.py","LineNumber":16,"LineContent":"        \"Activity/Fuel\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_excel.py","LineNumber":14,"LineContent":"        \"Activity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1m_excel.py","LineNumber":22,"LineContent":"        \"Activity / Fuel\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":486,"LineContent":"        # Assuming 'amount' is the Activity Data (Count, Volume, etc.)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_1k_csv.py","LineNumber":8,"LineContent":"        \"Activity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":272,"LineContent":"class ActivityLog(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":12,"LineContent":"  E = Activity × Emission_Factor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":16,"LineContent":"Activity-data uncertainty is tier-specific per IPCC GL Vol.1 Table 3.1:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":38,"LineContent":"# Activity-data uncertainty by tier — IPCC GL Vol.1 Table 3.1"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":161,"LineContent":"    Combine relative uncertainties for E = Activity × EF (multiplicative)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":250,"LineContent":"    E = Activity × EF,  u_E = √(u_AD² + u_EF²)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":271,"LineContent":"          ad_uncertainty_1sigma — Activity-data component (1σ, relative)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":89,"LineContent":"    from models import ActivityLog, Notification, User"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":101,"LineContent":"    log = ActivityLog("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":126,"LineContent":"                    title=\"Super User Activity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":140,"LineContent":"                        title=\"User Activity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":978,"LineContent":"    Get emissions breakdown by Activity -\u003e Division -\u003e Region."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1184,"LineContent":"            rec_status = \"No Activity\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2106,"LineContent":"            reconciliation_status = \"No Activity\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":6,"LineContent":"from models import User, Facility, OgmpSurvey, Emission, ActivityLog"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":319,"LineContent":"    # Activity logging"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":320,"LineContent":"    log = ActivityLog("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1043,"LineContent":"            \"Activity label (e.g. Exploration \u0026 Production). Defaults to facility activity if blank.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2176,"LineContent":"            \"Activity\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2224,"LineContent":"            \"Activity / Fuel\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2296,"LineContent":"    fac_cols = [\"Facility Name\", \"Activity / Segment\", \"Division\", \"Field\", \"Notes\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2360,"LineContent":"        (\"Activity\", 22, True),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2369,"LineContent":"        (\"Activity / Fuel\", 24, True),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4351,"LineContent":"            (\"Total Activity Quantity\", total_qty, \"mixed units\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":10,"LineContent":"from models import ActivityLog, db"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":55,"LineContent":"    query = ActivityLog.query"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":60,"LineContent":"            ActivityLog.action.in_([\"LOGIN\", \"LOGOUT\", \"REGISTER\", \"SECURITY\", \"UPDATE_PASSWORD\", \"PASSWORD_RESET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":64,"LineContent":"        query = query.filter(ActivityLog.user_name == user_filter)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":67,"LineContent":"        query = query.filter(ActivityLog.action == action_filter)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":74,"LineContent":"                    func.lower(ActivityLog.entity) == \"emission\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":75,"LineContent":"                    func.lower(ActivityLog.entity) == \"scope1_emission\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":76,"LineContent":"                    func.lower(ActivityLog.entity) == \"scope1emission\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":80,"LineContent":"            query = query.filter(func.lower(ActivityLog.entity) == \"batch_emissions\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":82,"LineContent":"            query = query.filter(func.lower(ActivityLog.entity) == ent_lower)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":88,"LineContent":"                ActivityLog.user_name.ilike(term),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":89,"LineContent":"                ActivityLog.details.ilike(term),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":90,"LineContent":"                ActivityLog.record_id.ilike(term),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":91,"LineContent":"                ActivityLog.entity_id.ilike(term),"}
+(...46 more results not shown)

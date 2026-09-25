@@ -1,0 +1,55 @@
+
+The command exited with code 0.
+Output:
+pp'>, job_id = 'test-job-efcd6fbf6e50'
+file_path = 'C:\\Users\\samsung\\AppData\\Local\\Temp\\tmpj9f6wszm.csv'
+original_filename = 'test_semicolon.csv', user_id = 24
+global_factor_type = 'auto', provided_mapping = None, scope = 1
+overwrite_duplicates = True
+
+    def _process_file_thread(
+        app,
+        job_id,
+        file_path,
+        original_filename,
+        user_id,
+        global_factor_type,
+        provided_mapping,
+        scope=1,
+        overwrite_duplicates=False,
+    ):
+        wb = None
+        f = None
+        with app.app_context():
+            try:
+                is_excel = str(original_filename or "").lower().endswith(".xlsx")
+    
+                headers = []
+                rows_iterator = None
+    
+                # 1. Open File & Extract Headers
+                tier3_data_map = {}
+                if is_excel:
+                    wb = load_workbook(file_path, read_only=True, data_only=True)
+    
+                    # Check for Gas Composition and Tier 3 sheets
+                    for sheet_name in wb.sheetnames:
+                        if sheet_name == "Gas Composition" or sheet_name.startswith("\u2699 "):
+                            t3_ws = wb[sheet_name]
+                            # Tier 3 sheets have headers on row 3, but let's just find the header row by looking for 'Equipment ID'
+                            t3_iter = t3_ws.iter_rows(values_only=True)
+                            t3_headers = []
+                            for row in t3_iter:
+                                str_row = [
+                                    str(c).strip().lower() if c is not None else ""
+                                    for c in row
+                                ]
+                                if "equipment id" in str_row:
+                                    t3_headers = str_row
+                                    break
+    
+                            if not t3_headers:
+                                continue
+    
+                            # 
+

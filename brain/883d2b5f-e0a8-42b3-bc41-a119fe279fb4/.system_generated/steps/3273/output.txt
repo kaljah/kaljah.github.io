@@ -1,0 +1,80 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 4 items
+
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_dashboard_summary_high_volume_latency 
+[VOLUME TEST] /api/dashboard/summary aggregated in 12.52 ms (11 year buckets)
+PASSED
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_dashboard_batch_all_parallel_threads_under_volume 
+[VOLUME TEST] /api/dashboard/batch-all 7-thread parallel query completed in 61.65 ms
+PASSED
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_excel_export_streaming_under_volume FAILED
+new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_mathematical_aggregation_grand_total_fidelity FAILED
+
+================================== FAILURES ===================================
+___ TestVolumeAnalyticsPerformance.test_excel_export_streaming_under_volume ___
+
+self = <test_stress_volume_analytics.TestVolumeAnalyticsPerformance object at 0x0000012C9C789460>
+auth_client = <FlaskClient <Flask 'app'>>
+
+    def test_excel_export_streaming_under_volume(self, auth_client):
+        """Benchmark Excel report generation streaming across thousands of records."""
+        start = time.perf_counter()
+        res = auth_client.get("/api/reports/export?scope=all")
+        duration_ms = (time.perf_counter() - start) * 1000.0
+    
+        assert res.status_code == 200
+>       assert res.content_type in [
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/octet-stream",
+        ]
+E       AssertionError: assert 'application/pdf' in ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream']
+E        +  where 'application/pdf' = <WrapperTestResponse streamed [200 OK]>.content_type
+
+new\server\tests\test_stress_volume_analytics.py:195: AssertionError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.076s] [ReqID: ac5092d6-195f-4e55-b394-1df2849e148b]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/reports/export 200 [0.271s] [ReqID: b33e5072-6c31-4803-8dc3-4bdb691b2c74]
+_ TestVolumeAnalyticsPerformance.test_mathematical_aggregation_grand_total_fidelity _
+
+self = <test_stress_volume_analytics.TestVolumeAnalyticsPerformance object at 0x0000012CA017D2B0>
+auth_client = <FlaskClient <Flask 'app'>>
+
+    def test_mathematical_aggregation_grand_total_fidelity(self, auth_client):
+        """Verify that multi-thousand row aggregations produce mathematically exact sums."""
+        res = auth_client.get("/api/dashboard/summary")
+        assert res.status_code == 200
+        summary_rows = res.get_json()
+    
+        for row in summary_rows:
+            s1 = float(row.get("scope1_total", 0) or 0)
+            s2 = float(row.get("scope2_total", 0) or 0)
+            total = float(row.get("total", 0) or (s1 + s2))
+>           assert total > 0
+E           assert 0.0 > 0
+
+new\server\tests\test_stress_volume_analytics.py:215: AssertionError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.076s] [ReqID: b07b063a-395c-4d8e-9228-76cca898728e]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/dashboard/summary 200 [0.000s] [ReqID: 0efad053-cd76-457d-8652-3079f8f890e0]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_excel_export_streaming_under_volume
+FAILED new\server\tests\test_stress_volume_analytics.py::TestVolumeAnalyticsPerformance::test_mathematical_aggregation_grand_total_fidelity
+=================== 2 failed, 2 passed, 1 warning in 3.59s ====================
+

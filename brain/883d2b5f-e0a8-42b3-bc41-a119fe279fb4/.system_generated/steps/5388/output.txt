@@ -1,0 +1,103 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -655,28 +655,78 @@
+     );
+ 
+     setTopBarRight(
+-      goal ? (
+-        <div className="topbar-goal-badge">
+-          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+-            Target {goal.year}: <strong style={{ color: "var(--text-primary)" }}>{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
+-          </span>
++      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
++        {/* Dual GWP Horizon Toggle */}
++        <div
++          style={{
++            display: "inline-flex",
++            alignItems: "center",
++            background: "var(--bg-card, rgba(255, 255, 255, 0.08))",
++            borderRadius: "8px",
++            padding: "2px",
++            border: "1px solid var(--border-color, rgba(226, 232, 240, 0.8))",
++          }}
++          title="Global Warming Potential Horizon: 100-Year (Standard, CH4=28) vs 20-Year (Near-term, CH4=84 per IPCC AR5/AR6)"
++        >
++          <button
++            type="button"
++            style={{
++              padding: "4px 8px",
++              fontSize: "0.75rem",
++              fontWeight: 600,
++              borderRadius: "6px",
++              border: "none",
++              cursor: "pointer",
++              background: gwpHorizon === "100" ? "var(--accent-color, #ff6600)" : "transparent",
++              color: gwpHorizon === "100" ? "#fff" : "var(--text-secondary)",
++              transition: "all 0.15s ease",
++            }}
++            onClick={() => setGwpHorizon("100")}
++          >
++            GWP-100
++          </button>
++          <button
++            type="button"
++            style={{
++              padding: "4px 8px",
++              fontSize: "0.75rem",
++              fontWeight: 600,
++              borderRadius: "6px",
++              border: "none",
++              cursor: "pointer",
++              background: gwpHorizon === "20" ? "#ef4444" : "transparent",
++              color: gwpHorizon === "20" ? "#fff" : "var(--text-secondary)",
++              transition: "all 0.15s ease",
++            }}
++            onClick={() => setGwpHorizon("20")}
++          >
++            GWP-20
++          </button>
++        </div>
++
++        {goal ? (
++          <div className="topbar-goal-badge">
++            <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
++              Target {goal.year}: <strong style={{ color: "var(--text-primary)" }}>{Number(goal.target_amount).toLocaleString()} tCO₂e</strong>
++            </span>
++            <button
++              className="btn-target-action"
++              onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
++              title="Manage emission goals and base years in Manage Data"
++            >
++              Edit Target
++            </button>
++          </div>
++        ) : (
+           <button
+             className="btn-target-action"
+             onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
+-            title="Manage emission goals and base years in Manage Data"
+-          >
+-            Edit Target
+-          </button>
+-        </div>
+-      ) : (
+-        <button
+-          className="btn-target-action"
+-          onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
+-          title="Set emission targets in Manage Data"
+-        >
+-          + Set Target
+-        </button>
+-      )
++            title="Set emission targets in Manage Data"
++          >
++            + Set Target
++          </button>
++        )}
++      </div>
+     );
+ 
+     return () => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

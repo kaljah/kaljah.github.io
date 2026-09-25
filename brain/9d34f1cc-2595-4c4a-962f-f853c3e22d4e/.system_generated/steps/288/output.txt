@@ -1,0 +1,70 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\tests
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/24/2026   5:19 PM                __pycache__                                                          
+-a----         9/23/2026   4:21 PM           1630 conftest.py                                                          
+-a----         9/20/2026  10:25 AM           4009 test_aggregation_reconciliation.py                                   
+-a----         9/16/2026   9:25 AM          22383 test_all_bulk_imports.py                                             
+-a----         9/16/2026  12:24 PM          20112 test_all_process_types_matrix.py                                     
+-a----         9/16/2026  11:05 AM          10910 test_api_security.py                                                 
+-a----         9/12/2026  11:10 PM           8398 test_audit.py                                                        
+-a----         9/17/2026  10:37 AM           4648 test_audit_bug_fixes.py                                              
+-a----         9/24/2026  12:16 AM          61999 test_audit_remediation.py                                            
+-a----         9/20/2026  10:54 AM           4824 test_battery_compressor_fugitives_equipment.py                       
+-a----         9/20/2026  11:02 AM           6698 test_battery_concurrency_stress_invariants.py                        
+-a----         9/23/2026   4:00 PM           6272 test_battery_gwp_horizons_regulatory.py                              
+-a----         9/20/2026  10:50 AM          12863 test_battery_midstream_process_equipment.py                          
+-a----         9/20/2026  10:51 AM           5066 test_battery_statistical_anomaly_detection.py                        
+-a----         9/20/2026  10:50 AM           6933 test_battery_stoichiometry_indirect_energy.py                        
+-a----         9/24/2026   5:19 PM           3038 test_berkine_cap_equity.py                                           
+-a----         9/20/2026  10:25 AM           4557 test_boundary_and_negative.py                                        
+-a----         9/16/2026  11:05 AM           8893 test_calculations_page.py                                            
+-a----         9/21/2026   8:12 PM          15246 test_carbon_intensity_validation.py                                  
+-a----         8/11/2026  12:56 PM           1351 test_combustion.py                                                   
+-a----         9/16/2026   9:24 AM          20373 test_csv_engine_matrix.py                                            
+-a----         9/16/2026  12:46 PM          23289 test_deep_injection_matrix.py                                        
+-a----         9/12/2026   4:30 PM           7862 test_dispatcher.py                                                   
+-a----         9/20/2026  10:24 AM           5178 test_emission_factor_selection.py                                    
+-a----         9/20/2026  10:41 AM           7018 test_golden_dataset_validation.py                                    
+-a----         8/11/2026  12:55 PM           1992 test_gwp_dynamic.py                                                  
+-a----         9/20/2026  10:19 AM          16735 test_independent_differential.py                                     
+-a----         9/20/2026   9:55 AM           9459 test_it_role_security.py                                             
+-a----         9/20/2026   5:18 PM           1675 test_log_handler.py                                                  
+-a----         9/20/2026   5:27 PM           1365 test_n2o_flaring_consistency.py                                      
+-a----         9/16/2026  12:14 PM          22030 test_numerical_invariants.py                                         
+-a----         9/20/2026   9:44 AM           5086 test_operational_defaults.py                                         
+-a----         9/20/2026   5:33 PM           4429 test_production_smoke.py                                             
+-a----         9/20/2026  10:22 AM           6016 test_property_invariants.py                                          
+-a----         9/19/2026   9:19 PM           5417 test_qaqc_diagnostics.py                                             
+-a----         9/21/2026   9:45 AM          43896 test_qfull_api_pipeline.py                                           
+-a----         9/21/2026  11:52 AM          26453 test_qfull_boundary_sensitivity.py                                   
+-a----         9/21/2026  11:50 AM          22086 test_qfull_unit_conversions.py                                       
+-a----         9/21/2026  11:48 AM          32163 test_qfull_validation.py                                             
+-a----         9/20/2026   5:25 PM           1007 test_rate_limiting.py                                                
+-a----         9/12/2026   6:44 PM          11610 test_reports.py                                                      
+-a----         8/11/2026  12:56 PM           3348 test_satellite.py                                                    
+-a----         9/23/2026   3:58 PM           4091 test_sbti.py                                                         
+-a----         9/20/2026   5:25 PM           4096 test_security_hardening.py                                           
+-a----         9/16/2026   4:51 PM          10382 test_stress_boundary_resilience.py                                   
+-a----         9/16/2026   4:37 PM           6997 test_stress_bulk_pipeline.py                                         
+-a----         9/16/2026   4:19 PM           8051 test_stress_concurrency.py                                           
+-a----         9/20/2026   3:05 PM           8166 test_stress_memory_leaks.py                                          
+-a----         9/20/2026   3:05 PM           8876 test_stress_volume_analytics.py                                      
+-a----         9/24/2026   1:07 PM           7763 test_tier2_api_e2e.py                                                
+-a----         9/24/2026  12:59 PM          29694 test_tier_scope_kpi_numerical.py                                     
+-a----         9/16/2026   4:11 PM          26600 test_ui_calculation_parity.py                                        
+-a----         9/23/2026   3:58 PM           8060 test_uncertainty.py                                                  
+-a----         9/20/2026  10:22 AM           7569 test_unit_conversions_exhaustive.py                                  
+-a----         9/19/2026  10:10 PM           3863 test_user_profile_update.py                                          
+-a----         9/12/2026   4:30 PM           2585 test_vented.py                                                       
+-a----         9/21/2026   7:37 PM           9611 test_zero_trust_adversarial.py                                       
+
+
+

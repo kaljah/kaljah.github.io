@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":109,"LineContent":"/* GWP Horizon Toggle */"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":110,"LineContent":".gwp-toggle-container {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":120,"LineContent":".gwp-toggle-label {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":126,"LineContent":".gwp-pill-group {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":131,"LineContent":".gwp-pill {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":143,"LineContent":".gwp-pill.active {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":149,"LineContent":".gwp-subtag {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":10,"LineContent":"import { getActiveGwpFactors } from \"../constants\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":41,"LineContent":"  // GWP Horizon State: '100' or '20' \u0026 Active Standard"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":42,"LineContent":"  const [gwpHorizon, setGwpHorizon] = useState(\"100\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":43,"LineContent":"  const [activeGwpStandard, setActiveGwpStandard] = useState(\"AR5\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":51,"LineContent":"    avgCo2IntensityGwp20: 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":57,"LineContent":"    totalCo2EmissionsGwp20: 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":91,"LineContent":"        if (settingsRes?.data?.gwp_standard) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":92,"LineContent":"          setActiveGwpStandard(settingsRes.data.gwp_standard);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":175,"LineContent":"        wCo2Gwp20Sum = 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":184,"LineContent":"        tCo2eGwp20 = 0;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":196,"LineContent":"        tCo2eGwp20 += d.total_co2e_gwp20 || d.total_co2e || 0;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":200,"LineContent":"          wCo2Gwp20Sum += (d.co2_intensity_gwp20 || d.co2_intensity || 0) * boe;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":211,"LineContent":"        avgCo2IntensityGwp20: tBoe \u003e 0 ? wCo2Gwp20Sum / tBoe : (tCo2eGwp20 \u003e 0 ? null : 0),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":217,"LineContent":"        totalCo2EmissionsGwp20: tCo2eGwp20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":405,"LineContent":"  // Trend chart data based on active GWP toggle"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":416,"LineContent":"        wCo2Gwp20 = 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":422,"LineContent":"          wCo2Gwp20 += (d.co2_intensity_gwp20 || d.co2_intensity || 0) * boe;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":430,"LineContent":"        co2_20: tBoe \u003e 0 ? wCo2Gwp20 / tBoe : 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":432,"LineContent":"          tBoe \u003e 0 ? (gwpHorizon === \"20\" ? wCo2Gwp20 / tBoe : wCo2 / tBoe) : 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":435,"LineContent":"  }, [rawTrendData, currentRegion, gwpHorizon]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":447,"LineContent":"    gwpHorizon === \"20\" ? stats.avgCo2IntensityGwp20 : stats.avgCo2Intensity;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":449,"LineContent":"    gwpHorizon === \"20\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":450,"LineContent":"      ? stats.totalCo2EmissionsGwp20"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":480,"LineContent":"            {/* GWP Time Horizon Toggle */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":481,"LineContent":"            \u003cdiv className=\"gwp-toggle-container\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":482,"LineContent":"              \u003cspan className=\"gwp-toggle-label\"\u003eGWP Horizon:\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":483,"LineContent":"              \u003cdiv className=\"gwp-pill-group\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":485,"LineContent":"                  const f100 = getActiveGwpFactors(activeGwpStandard, \"100\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":486,"LineContent":"                  const f20 = getActiveGwpFactors(activeGwpStandard, \"20\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":490,"LineContent":"                        className={`gwp-pill ${gwpHorizon === \"100\" ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":491,"LineContent":"                        onClick={() =\u003e setGwpHorizon(\"100\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":492,"LineContent":"                        title={`IPCC ${activeGwpStandard} 100-Year GWP (CH4: ${f100.CH4}, N2O: ${f100.N2O})`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":494,"LineContent":"                        {activeGwpStandard} 100-Yr"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":497,"LineContent":"                        className={`gwp-pill ${gwpHorizon === \"20\" ? \"active\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":498,"LineContent":"                        onClick={() =\u003e setGwpHorizon(\"20\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":499,"LineContent":"                        title={`IPCC ${activeGwpStandard} 20-Year GWP (CH4: ${f20.CH4}, N2O: ${f20.N2O})`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":501,"LineContent":"                        {activeGwpStandard} 20-Yr"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":537,"LineContent":"                \u003cspan className=\"gwp-subtag\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":538,"LineContent":"                  {gwpHorizon === \"20\" ? \"GWP₂₀ Active\" : \"GWP₁₀₀ Standard\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":748,"LineContent":"                    gwpHorizon === \"20\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":749,"LineContent":"                      ? d.co2_intensity_gwp20 || d.co2_intensity"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":876,"LineContent":"                    name: `GHG Intensity (${activeGwpStandard} 100-Yr GWP)`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":881,"LineContent":"                    name: `GHG Intensity (${activeGwpStandard} 20-Yr GWP)`,"}
+(...71 more results not shown)

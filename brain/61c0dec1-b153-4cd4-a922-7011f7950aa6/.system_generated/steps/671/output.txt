@@ -1,0 +1,44 @@
+
+The command exited with code 1.
+Output:
+
+> client@0.0.0 build
+> vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 38 modules transformed.
+✗ Build failed in 454ms
+error during build:
+[vite:esbuild] Transform failed with 2 errors:
+C:/Users/samsung/Desktop/H2/new/client/src/pages/ManageData.jsx:1198:10: ERROR: The symbol "handleFactorChange" has already been declared
+C:/Users/samsung/Desktop/H2/new/client/src/pages/ManageData.jsx:1202:10: ERROR: The symbol "handleFacilityChange" has already been declared
+file: C:/Users/samsung/Desktop/H2/new/client/src/pages/ManageData.jsx:1198:10
+
+The symbol "handleFactorChange" has already been declared
+1196 |      };
+1197 |  
+1198 |      const handleFactorChange = (e) => {
+     |            ^
+1199 |          setFactorForm({ ...factorForm, [e.target.name]: e.target.value });
+1200 |      };
+
+The symbol "handleFacilityChange" has already been declared
+1200 |      };
+1201 |  
+1202 |      const handleFacilityChange = (e) => {
+     |            ^
+1203 |          setFacilityForm({ ...facilityForm, [e.target.name]: e.target.value });
+1204 |      };
+
+    at failureErrorWithLog (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:736:50
+    at responseCallbacks.<computed> (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+

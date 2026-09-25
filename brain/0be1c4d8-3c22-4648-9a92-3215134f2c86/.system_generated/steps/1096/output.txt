@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -107,7 +107,7 @@
+     };
+ 
+     // ── Bulk resolve ───────────────────────────────────────────────────────
+-    const handleBulkResolve = async (resolution) => {
++    const handleBulkResolve = (resolution) => {
+         if (selectedIds.size === 0) {
+             toast.error('Select at least one record first');
+             return;
+@@ -114,5 +114,9 @@
+-        if (!window.confirm(`Mark ${selectedIds.size} record(s) as "${resolution}"?`)) return;
+-
++        setResolveModal({ isOpen: true, resolution });
++    };
++
++    const confirmBulkResolve = async () => {
++        const resolution = resolveModal.resolution;
++        setResolveModal({ isOpen: false, resolution: null });
+         setResolving(true);
+         try {
+             const records = [...selectedIds].map(key => {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

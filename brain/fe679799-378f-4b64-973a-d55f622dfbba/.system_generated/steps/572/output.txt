@@ -1,0 +1,51 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 09:54:51,073] INFO in app: Updated account: a
+[2026-09-23 09:54:51,160] INFO in app: Updated account: a@a
+[2026-09-23 09:54:51,242] INFO in app: Updated account: z
+[2026-09-23 09:54:51,327] INFO in app: Updated account: z@z
+C:\Users\samsung\Desktop\H2\scratch\run_20_beta_testers_20k.py:455: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "timestamp": datetime.utcnow().isoformat(),
+================================================================================
+STARTING 20 BETA TESTERS EMISSION CALCULATION AUDIT (20,000 UNIQUE ENTRIES)
+================================================================================
+[01/20] Dr. Amine Mansouri (Senior Drilling & Upstream Engineer): 1000 entries validated in 0.12s | Success: 100.00% | Total CO2e: 20249665826.69 t
+[02/20] Elena Rostova (Combustion Efficiency Specialist): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 1314925.4 t
+[03/20] Karim Benali (Flaring Operations Auditor): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 23245684.57 t
+[04/20] Sarah Jenkins (Pipeline & Transmission Lead): 1000 entries validated in 0.10s | Success: 100.00% | Total CO2e: 26715468160.26 t
+[05/20] Ahmed Belkacem (Pneumatic Instrumentation Auditor): 1000 entries validated in 0.12s | Success: 100.00% | Total CO2e: 1825698.97 t
+[06/20] Fatima Zohra (Pneumatic Pumping Systems Lead): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 18896888.65 t
+[07/20] Marcus Vance (Storage Terminal Environmental Lead): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 21947669911.85 t
+[08/20] Nadia Ould-Ali (Crude Flashing & VRU Specialist): 1000 entries validated in 0.14s | Success: 100.00% | Total CO2e: 2259891.6 t
+[09/20] David Thorne (Well Completion & Fracturing Engineer): 1000 entries validated in 0.11s | Success: 100.00% | Total CO2e: 26108777.37 t
+[10/20] Lydia Boucher (Production Optimization Engineer): 1000 entries validated in 0.10s | Success: 100.00% | Total CO2e: 29311897483.7 t
+[11/20] Tariq Khelifi (Gas Sweetening & AGR Specialist): 1000 entries validated in 0.10s | Success: 100.00% | Total CO2e: 2397042.4 t
+[12/20] Rachel Adams (Dehydration Process Chemist): 1000 entries validated in 0.11s | Success: 100.00% | Total CO2e: 35082317.06 t
+[13/20] Omar Mahfoud (LDAR & Fugitive Component Inspector): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 38227934698.76 t
+[14/20] Claire Dupuis (Rotating Equipment Specialist): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 1814600.11 t
+[15/20] Yassine Zerrouki (Fleet & Transport Logistics Manager): 1000 entries validated in 0.10s | Success: 100.00% | Total CO2e: 35480613.56 t
+[16/20] Chloe Martin (Off-Road Heavy Equipment Specialist): 1000 entries validated in 0.12s | Success: 100.00% | Total CO2e: 38565798738.29 t
+[17/20] Sofiane Brahimi (Cogeneration & Utility Systems Engineer): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 2448497.07 t
+[18/20] Laura Chen (Petrochemical Process Stoichiometrist): 1000 entries validated in 0.10s | Success: 100.00% | Total CO2e: 25650094.08 t
+[19/20] Djamel Senoussi (Direct Reduction Metallurgy Auditor): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 29980665942.63 t
+[20/20] Lucia Morales (Refinery Asphalt & Bitumen Chemist): 1000 entries validated in 0.09s | Success: 100.00% | Total CO2e: 3157368.89 t
+================================================================================
+ALL 20,000 CALCULATIONS PROCESSED IN 2.04 SECONDS
+Overall Passed: 20000 / 20000 (100.00%) | Failed: 0
+================================================================================
+
+Starting Database Parity & Ingestion Audit...
+Database Ingestion: Successfully inserted 400 verified tester records.
+Database Count: 24 -> 424 (Delta: +400)
+Database Total CO2e: 10,183.73 t -> 5,101,536,795.45 t (Delta: +5,101,526,611.72 t)
+Table Query Parity Check: PASS (10/10 sampled records verified in DB query)
+
+Auditing Dashboard, Carbon Intensity & Methane Intensity KPIs...
+Gross Operational Emissions (Scope 1+2): 5,101,536,847.65 tCO2e
+Total Methane Mass: 14,313,410.403 tCH4 (STP Volume: 21,095,667,507 m3)
+Carbon Intensity: 19632.6221 kg CO2e / BOE
+Methane Loss Rate: 66.64256% (OGMP 2.0 Target <= 0.20%: NON-COMPLIANT)
+
+Audit Report written to: C:\Users\samsung\Desktop\H2\scratch\20_beta_testers_audit_report.json
+

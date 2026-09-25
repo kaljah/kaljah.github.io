@@ -1,0 +1,18 @@
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":6,"LineContent":"from flask_wtf.csrf import CSRFProtect, generate_csrf"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":124,"LineContent":"csrf = CSRFProtect(app)"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":249,"LineContent":"csrf.exempt(auth_bp)"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":280,"LineContent":"        csrf.exempt(swaggerui_blueprint)"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":408,"LineContent":"@app.route(\"/api/csrf-token\")"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":409,"LineContent":"def get_csrf_token():"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":415,"LineContent":"    token = generate_csrf()"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":416,"LineContent":"    resp = jsonify({\"csrf_token\": token})"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":418,"LineContent":"        \"csrf_token\","}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":72,"LineContent":"def test_csrf_token_endpoint_returns_token(client):"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":74,"LineContent":"    resp = client.get(\"/api/csrf-token\")"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":77,"LineContent":"    assert \"csrf_token\" in data"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":78,"LineContent":"    assert len(data[\"csrf_token\"]) \u003e 20, \"CSRF token must be sufficiently long\""}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":81,"LineContent":"def test_csrf_token_endpoint_sets_readable_cookie(client):"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":83,"LineContent":"    CSRF token endpoint must set a cookie named 'csrf_token'."}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":87,"LineContent":"    resp = client.get(\"/api/csrf-token\")"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":89,"LineContent":"    assert \"csrf_token\" in set_cookie, ("}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":90,"LineContent":"        \"CSRF endpoint must set a csrf_token cookie for the double-submit pattern. \""}

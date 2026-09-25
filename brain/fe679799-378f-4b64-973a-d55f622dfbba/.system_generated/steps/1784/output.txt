@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+<string>:12: SyntaxWarning: invalid escape sequence '\)'
+URL: http://localhost:5173/login
+User: None
+

@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+[2026-09-22 22:03:36,180] INFO in app: Updated account: a
+[2026-09-22 22:03:36,287] INFO in app: Updated account: a@a
+[2026-09-22 22:03:36,392] INFO in app: Updated account: z
+[2026-09-22 22:03:36,514] INFO in app: Updated account: z@z
+Null region count before: 23
+Updated 23 records with region.
+

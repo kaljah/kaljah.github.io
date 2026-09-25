@@ -1,0 +1,89 @@
+
+The command exited with code 0.
+Output:
+<truncated 196 lines>
+graphify-out/2026-09-22/graph.json:114866:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-22/graph.json:115071:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:115095:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:115131:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:115227:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:115263:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:115287:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:115371:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:115407:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:119888:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-22/graph.json:120245:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:120281:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:120463:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-22/graph.json:120665:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:120701:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-22/graph.json:142197:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-22/graph.json:142231:      "source": "new_server_utils_require_facility_access",
+graphify-out/2026-09-22/graph.json:142243:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-23/graph.json:33892:      "label": "require_facility_access()",
+graphify-out/2026-09-23/graph.json:33898:      "id": "new_server_utils_require_facility_access",
+graphify-out/2026-09-23/graph.json:33901:      "norm_label": "require_facility_access()"
+graphify-out/2026-09-23/graph.json:115533:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-23/graph.json:115894:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:115918:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:115954:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:116050:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:116086:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:116110:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:116194:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:116230:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:120711:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-23/graph.json:121068:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:121104:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:121286:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-23/graph.json:121488:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:121524:      "target": "new_server_utils_require_facility_access"
+graphify-out/2026-09-23/graph.json:143248:      "target": "new_server_utils_require_facility_access",
+graphify-out/2026-09-23/graph.json:143282:      "source": "new_server_utils_require_facility_access",
+graphify-out/2026-09-23/graph.json:143294:      "target": "new_server_utils_require_facility_access",
+graphify-out/graph.json:34693:      "label": "require_facility_access()",
+graphify-out/graph.json:34699:      "id": "new_server_utils_require_facility_access",
+graphify-out/graph.json:34702:      "norm_label": "require_facility_access()"
+graphify-out/graph.json:114967:      "target": "new_server_utils_require_facility_access",
+graphify-out/graph.json:115133:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118179:      "target": "new_server_utils_require_facility_access",
+graphify-out/graph.json:118540:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118564:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118600:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118696:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118732:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118756:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118840:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:118876:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:120765:      "target": "new_server_utils_require_facility_access",
+graphify-out/graph.json:120909:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:123626:      "target": "new_server_utils_require_facility_access",
+graphify-out/graph.json:123983:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:124019:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:124201:      "target": "new_server_utils_require_facility_access",
+graphify-out/graph.json:124403:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:124439:      "target": "new_server_utils_require_facility_access"
+graphify-out/graph.json:146475:      "target": "new_server_utils_require_facility_access",
+graphify-out/graph.json:146509:      "source": "new_server_utils_require_facility_access",
+graphify-out/graph.json:146521:      "target": "new_server_utils_require_facility_access",
+new/server/routes/data.py:5:from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+new/server/routes/data.py:37:            if not require_facility_access(user, fid):
+new/server/routes/data.py:88:    if not require_facility_access(user, fid):
+new/server/routes/data.py:227:    if not require_facility_access(user, prod.facility_id):
+new/server/routes/data.py:469:    if not require_facility_access(user, facility_id):
+new/server/routes/data.py:508:        if not require_facility_access(user, record.facility_id):
+new/server/routes/data.py:578:    if not require_facility_access(user, record.facility_id):
+new/server/routes/data.py:625:    if not require_facility_access(user, facility_id):
+new/server/routes/data.py:767:        if not require_facility_access(user, facility_id):
+new/server/routes/data.py:797:            if not require_facility_access(user, record.facility_id):
+new/server/routes/data.py:858:        if not require_facility_access(user, record.facility_id):
+new/server/routes/scope2.py:8:from utils import get_current_user, get_allowed_facility_ids, require_facility_access
+new/server/routes/scope2.py:368:    if not require_facility_access(user, emission.facility_id):
+new/server/routes/scope2.py:391:        if not require_facility_access(user, new_fid):
+new/server/routes/scope2.py:509:        if not require_facility_access(user, emission.facility_id):
+new/server/routes/scope3.py:8:from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+new/server/routes/scope3.py:230:    if not require_facility_access(user, emission.facility_id):
+new/server/routes/scope3.py:253:        if not require_facility_access(user, new_fid):
+new/server/routes/scope3.py:334:        if not require_facility_access(user, emission.facility_id):
+new/server/utils.py:55:def require_facility_access(user, facility_id):
+

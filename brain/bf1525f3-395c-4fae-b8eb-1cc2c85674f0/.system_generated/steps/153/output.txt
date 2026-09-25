@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\TopBar.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -51,11 +51,12 @@
+ 
+         <NotificationCenter />
+ 
+-        <div style={{ position: "relative" }} ref={profileRef}>
++        <div style={{ position: "relative" }} ref={profileRef} className="user-profile-tab-wrapper">
+           <button
+-            className="icon-button"
++            className="icon-button user-profile-tab-btn"
+             onClick={() => setIsProfileOpen(!isProfileOpen)}
+             title="User Profile"
++            aria-label="User Profile"
+           >
+             <User size={18} />
+           </button>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

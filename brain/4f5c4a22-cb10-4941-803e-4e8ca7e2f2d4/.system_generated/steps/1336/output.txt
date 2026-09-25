@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\utils\EmissionFactors.js:1195:export const PROCESS_TYPES = {
+  new\client\src\utils\EmissionFactors.js:1196:  combustion: "Stationary Combustion",
+  new\client\src\utils\EmissionFactors.js:1197:  flaring: "Flaring",
+  new\client\src\utils\EmissionFactors.js:1198:  venting: "Venting (Blowdown)",
+  new\client\src\utils\EmissionFactors.js:1199:  pneumatic: "Pneumatic Device",
+  new\client\src\utils\EmissionFactors.js:1200:  tank_flashing: "Storage Tank - Flashing/Events",
+  new\client\src\utils\EmissionFactors.js:1201:  tank_working: "Storage Tank - Working Losses",
+  new\client\src\utils\EmissionFactors.js:1202:  tank_breathing: "Storage Tank - Breathing Losses",
+  new\client\src\utils\EmissionFactors.js:1203:  drilling: "Drilling Operations",
+  new\client\src\utils\EmissionFactors.js:1204:  completions: "Well Completions & Workovers",
+  new\client\src\utils\EmissionFactors.js:1205:  unloading: "Liquids Unloading",
+  new\client\src\utils\EmissionFactors.js:1206:  agr: "Acid Gas Removal (AGR)",
+  new\client\src\utils\EmissionFactors.js:1207:  dehydrator: "Dehydrator",
+  new\client\src\utils\EmissionFactors.js:1208:  mobile: "Mobile Combustion",
+  new\client\src\utils\EmissionFactors.js:1209:  fugitive: "Fugitive Emissions",
+  new\client\src\utils\EmissionFactors.js:1210:  loading: "Loading Losses",
+> new\client\src\utils\EmissionFactors.js:1216:export const PROCESS_GROUPS = [
+  new\client\src\utils\EmissionFactors.js:1217:  {
+  new\client\src\utils\EmissionFactors.js:1218:    id: "Upstream",
+  new\client\src\utils\EmissionFactors.js:1219:    label: "Upstream (Exploration & Production)",
+  new\client\src\utils\EmissionFactors.js:1220:    options: [
+  new\client\src\utils\EmissionFactors.js:1221:      "drilling",
+  new\client\src\utils\EmissionFactors.js:1222:      "completions",
+  new\client\src\utils\EmissionFactors.js:1223:      "unloading",
+  new\client\src\utils\EmissionFactors.js:1224:      "combustion",
+  new\client\src\utils\EmissionFactors.js:1225:      "flaring",
+  new\client\src\utils\EmissionFactors.js:1226:      "venting",
+  new\client\src\utils\EmissionFactors.js:1227:      "pneumatic",
+  new\client\src\utils\EmissionFactors.js:1228:      "tank_flashing",
+  new\client\src\utils\EmissionFactors.js:1229:      "tank_working",
+  new\client\src\utils\EmissionFactors.js:1230:      "tank_breathing",
+  new\client\src\utils\EmissionFactors.js:1231:      "mobile",
+
+
+

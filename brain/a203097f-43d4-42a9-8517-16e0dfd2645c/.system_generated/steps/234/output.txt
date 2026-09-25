@@ -1,0 +1,16 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-232
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-232.log
+Log output:
+<truncated 12 lines>
+ry::test_hydrocarbon_mass_balance_closure[Ethane-2-6] PASSED [ 25%]
+validation/calculation/test_clean_stoichiometry.py::TestCleanStoichiometry::test_hydrocarbon_mass_balance_closure[Propane-3-8] PASSED [ 37%]
+validation/calculation/test_clean_stoichiometry.py::TestCleanStoichiometry::test_hydrocarbon_mass_balance_closure[Butane-4-10] PASSED [ 50%]
+validation/calculation/test_clean_stoichiometry.py::TestCleanStoichiometry::test_hydrocarbon_mass_balance_closure[Pentane-5-12] PASSED [ 62%]
+validation/calculation/test_clean_stoichiometry.py::TestCleanStoichiometry::test_hydrocarbon_mass_balance_closure[Hexane-6-14] PASSED [ 75%]
+validation/calculation/test_clean_stoichiometry.py::TestCleanStoichiometry::test_production_stoichiometric_calculator_vs_reference PASSED [ 87%]
+validation/calculation/test_clean_stoichiometry.py::TestCleanStoichiometry::test_stoichiometric_mass_unit_conversions PASSED [100%]
+
+============================== 8 passed in 1.90s ==============================
+
+Last progress: 5s ago

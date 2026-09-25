@@ -1,0 +1,46 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                     Filename                 
+---------- ----                                                     --------                 
+        43   const { setTopBarLeft, setTopBarRight } = useLayout(); AuditTrail.jsx           
+       232     setTopBarLeft(                                       AuditTrail.jsx           
+       241     setTopBarRight(                                      AuditTrail.jsx           
+       253       setTopBarLeft(null);                               AuditTrail.jsx           
+       254       setTopBarRight(null);                              AuditTrail.jsx           
+       256   }, [user, setTopBarLeft, setTopBarRight]);             AuditTrail.jsx           
+        30   const { setTopBarLeft, setTopBarRight } = useLayout(); CarbonIntensity.jsx      
+       346   // TopBar layout integration                           CarbonIntensity.jsx      
+       348     setTopBarLeft(                                       CarbonIntensity.jsx      
+       400       setTopBarLeft(null);                               CarbonIntensity.jsx      
+       401       setTopBarRight(null);                              CarbonIntensity.jsx      
+        64   const { setTopBarLeft, setTopBarRight } = useLayout(); DashboardEnhanced.jsx    
+       619   // Set TopBar content                                  DashboardEnhanced.jsx    
+       621     setTopBarLeft(                                       DashboardEnhanced.jsx    
+       666     setTopBarRight(                                      DashboardEnhanced.jsx    
+       717           <div className="topbar-goal-badge">            DashboardEnhanced.jsx    
+       742       setTopBarLeft(null);                               DashboardEnhanced.jsx    
+       743       setTopBarRight(null);                              DashboardEnhanced.jsx    
+       754     setTopBarLeft,                                       DashboardEnhanced.jsx    
+       755     setTopBarRight,                                      DashboardEnhanced.jsx    
+        65     const { setTopBarLeft } = useLayout();               ManageData.jsx           
+        68         if (setTopBarLeft) {                             ManageData.jsx           
+        69             setTopBarLeft(                               ManageData.jsx           
+        79             if (setTopBarLeft) setTopBarLeft(null);      ManageData.jsx           
+        81     }, [setTopBarLeft]);                                 ManageData.jsx           
+        36   const { setTopBarLeft, setTopBarRight } = useLayout(); MethaneIntensity.jsx     
+       516   // TopBar layout integration                           MethaneIntensity.jsx     
+       518     setTopBarLeft(                                       MethaneIntensity.jsx     
+       569     setTopBarRight(                                      MethaneIntensity.jsx     
+       582       setTopBarLeft(null);                               MethaneIntensity.jsx     
+       583       setTopBarRight(null);                              MethaneIntensity.jsx     
+        20   const { setTopBarLeft, setTopBarRight } = useLayout(); UncertaintyAssessment.jsx
+        90   // TopBar layout integration - breadcrumb              UncertaintyAssessment.jsx
+        92     setTopBarLeft(                                       UncertaintyAssessment.jsx
+       107       setTopBarLeft(null);                               UncertaintyAssessment.jsx
+       108       setTopBarRight(null);                              UncertaintyAssessment.jsx
+       110   }, [setTopBarLeft, setTopBarRight]);                   UncertaintyAssessment.jsx
+
+
+

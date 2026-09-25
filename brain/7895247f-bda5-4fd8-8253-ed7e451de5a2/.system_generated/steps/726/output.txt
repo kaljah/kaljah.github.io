@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+=== 2025 CPF Flaring Breakdown (p32) ===
+['HBNS CPF Flaring', None, None, None, None]
+['Year', 'Routine Flaring', 'Non-Routine Flaring', 'Safety Flaring', 'Total Flaring']
+['2021', '25,428.49', '62,429.83', '1,819.94', None]
+['2022', '26,765.98', '34,736.81', '1,932.68', None]
+['2023', '26,842.94', '21,860.97', '1,959.52', None]
+['2024', '26,450.85', '35,233.83', '1,905.84', None]
+['2025', '26,819.69', '18,971.93', '1,959.52', None]
+['ELM CPF Flaring', None, None, None, None]
+['Year', 'Routine Flaring', 'Non-Routine Flaring', 'Safety Flaring', 'Total Flaring']
+['2021', '29,081.24', '37,938.84', '29,365.70', None]
+['2022', '43,816.61', '72,950.32', '5,256.74', None]
+['2023', '46,806.84', '18,628.80', '4,225.82', None]
+['2024', '46,814.62', '8,779.38', '4,237.40', None]
+['2025', '44,786.50', '16,369.70', '4,225.82', None]
+

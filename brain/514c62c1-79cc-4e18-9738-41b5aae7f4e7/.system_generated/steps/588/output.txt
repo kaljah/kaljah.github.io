@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+python.exe : ScriptBlock should only be specified as a value of the Command parameter.
+At line:1 char:1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [], ParameterBindingException
+    + FullyQualifiedErrorId : IncorrectValueForCommandParameter
+ 
+

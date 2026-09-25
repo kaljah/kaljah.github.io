@@ -1,0 +1,50 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\DashboardEnhanced.jsx:990:                  style={{ fontSize: "0.75rem", padding: "4px 10px", 
+width: "100%" }}
+  new\client\src\pages\DashboardEnhanced.jsx:991:                  onClick={() => navigate("/manage-data")}
+  new\client\src\pages\DashboardEnhanced.jsx:992:                >
+  new\client\src\pages\DashboardEnhanced.jsx:993:                  Manage Facilities 
+> new\client\src\pages\DashboardEnhanced.jsx:1013:                  style={{ fontSize: "0.75rem", padding: "4px 10px", 
+width: "100%" }}
+  new\client\src\pages\DashboardEnhanced.jsx:1014:                  onClick={() => navigate("/emissions")}
+  new\client\src\pages\DashboardEnhanced.jsx:1015:                >
+  new\client\src\pages\DashboardEnhanced.jsx:1016:                  Enter Emissions 
+> new\client\src\pages\DashboardEnhanced.jsx:1036:                  style={{ fontSize: "0.75rem", padding: "4px 10px", 
+width: "100%" }}
+  new\client\src\pages\DashboardEnhanced.jsx:1037:                  onClick={() => navigate("/qa-dashboard")}
+  new\client\src\pages\DashboardEnhanced.jsx:1038:                >
+  new\client\src\pages\DashboardEnhanced.jsx:1039:                  QA/QC Console 
+> new\client\src\pages\DashboardEnhanced.jsx:1059:                  style={{ fontSize: "0.75rem", padding: "4px 10px", 
+width: "100%" }}
+  new\client\src\pages\DashboardEnhanced.jsx:1060:                  onClick={() => navigate("/reports")}
+  new\client\src\pages\DashboardEnhanced.jsx:1061:                >
+  new\client\src\pages\DashboardEnhanced.jsx:1062:                  View Reports 
+> new\client\src\pages\DashboardEnhanced.jsx:1338:                      width: `${Math.min(100, 
+(flaringData.flaring_intensity_pct / 1.00) * 100)}%`,
+  new\client\src\pages\DashboardEnhanced.jsx:1339:                      backgroundColor: flaringData.is_compliant ? 
+"#10b981" : "#ef4444",
+  new\client\src\pages\DashboardEnhanced.jsx:1340:                    }}
+  new\client\src\pages\DashboardEnhanced.jsx:1341:                  />
+> new\client\src\pages\DashboardEnhanced.jsx:1387:                width: "100%",
+  new\client\src\pages\DashboardEnhanced.jsx:1388:                minWidth: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:1389:                position: "relative",
+  new\client\src\pages\DashboardEnhanced.jsx:1390:              }}
+> new\client\src\pages\DashboardEnhanced.jsx:1444:                  width: "100%",
+  new\client\src\pages\DashboardEnhanced.jsx:1445:                  minWidth: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:1446:                  position: "relative",
+  new\client\src\pages\DashboardEnhanced.jsx:1447:                }}
+> new\client\src\pages\DashboardEnhanced.jsx:1465:                  width: "100%",
+  new\client\src\pages\DashboardEnhanced.jsx:1466:                  minWidth: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:1467:                  position: "relative",
+  new\client\src\pages\DashboardEnhanced.jsx:1468:                }}
+> new\client\src\pages\DashboardEnhanced.jsx:1513:            <div className="chart-container" style={{ height: 
+"320px", width: "100%" }}>
+  new\client\src\pages\DashboardEnhanced.jsx:1514:              <LineChartWrapper
+  new\client\src\pages\DashboardEnhanced.jsx:1515:                data={sbtiData.trajectory}
+  new\client\src\pages\DashboardEnhanced.jsx:1516:                xAxisKey="year"
+
+
+

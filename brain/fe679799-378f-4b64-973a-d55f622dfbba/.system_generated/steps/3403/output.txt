@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+def get_emissions():
+def apply_filters(q, model, filter_model=None):
+def resolve_gwp_standard(user=None):
+def resolve_gwp_dict(user=None):
+def add_bulk_upload():
+def get_csv_template():
+def _row(**kw):
+def get_excel_template():
+def hdr_style(cell, bg=GREEN_DARK, fg=WHITE, sz=11, bold=True, wrap=True):
+def sub_hdr(cell, bg=GREEN_MID):
+def info_cell(cell, bg=BLUE_HINT, fg="1A237E"):
+def req_cell(cell, bg=YELLOW_HINT):
+def add_comment(cell, text, author="GHG Platform"):
+def upload_start():
+def upload_status(job_id):
+def upload_errors(job_id):
+def add_emission():
+def delete_emission(id):
+def update_emission(id):
+def bulk_delete_emissions():
+def import_emissions():
+def _safe_excel_value(val):
+def export_emissions():
+def approve_emission(emission_id):
+def reject_emission(emission_id):
+def approve_batch_emissions():
+def apply_approval(model, target_ids=None):
+def reject_batch_emissions():
+def apply_rejection(model, scope_label, target_ids=None):
+def trigger_erp_sync():
+

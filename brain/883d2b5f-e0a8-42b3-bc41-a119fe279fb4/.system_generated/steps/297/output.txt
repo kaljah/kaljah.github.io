@@ -1,0 +1,129 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -715,7 +715,8 @@
+                 background:
+                   stats.ogmpGoldStatus === "Compliant"
+                     ? "rgba(16, 185, 129, 0.1)"
+-                    : stats.ogmpGoldStatus === "Warning"
++                    : stats.ogmpGoldStatus === "Warning" ||
++                      stats.ogmpGoldStatus === "Pending Production"
+                     ? "rgba(245, 158, 11, 0.1)"
+                     : "rgba(239, 68, 68, 0.1)",
+                 border: `1px solid ${
+@@ -722,5 +722,6 @@
+                     ? "#10b981"
+-                    : stats.ogmpGoldStatus === "Warning"
++                    : stats.ogmpGoldStatus === "Warning" ||
++                      stats.ogmpGoldStatus === "Pending Production"
+                     ? "#f59e0b"
+                     : "#ef4444"
+                 }`,
+@@ -727,6 +727,7 @@
+                   stats.ogmpGoldStatus === "Compliant"
+                     ? "#10b981"
+-                    : stats.ogmpGoldStatus === "Warning"
++                    : stats.ogmpGoldStatus === "Warning" ||
++                      stats.ogmpGoldStatus === "Pending Production"
+                     ? "#f59e0b"
+                     : "#ef4444",
+                 fontWeight: 600,
+@@ -738,9 +738,10 @@
+                 <AlertTriangle size={16} />
+               )}
+               <span>
+-                OGMP 2.0 Targets: {stats.ogmpGoldStatus} (&le;
+-                {upstreamTargetPct.toFixed(2)}% Upstream / &le;
+-                {midstreamTargetPct.toFixed(2)}% Midstream)
++                OGMP 2.0 Targets: {stats.ogmpGoldStatus}{" "}
++                {stats.ogmpGoldStatus === "Pending Production"
++                  ? "(Gas production figures required)"
++                  : `(≤${upstreamTargetPct.toFixed(2)}% Upstream / ≤${midstreamTargetPct.toFixed(2)}% Midstream)`}
+               </span>
+             </div>
+           </div>
+@@ -785,17 +785,25 @@
+                   className="total-value"
+                   style={{
+                     color:
+-                      stats.avgMethaneLossRatePct <= upstreamTargetPct
+-                        ? "#10b981"
+-                        : stats.avgMethaneLossRatePct <=
+-                            upstreamTargetPct * 1.25
+-                          ? "#f59e0b"
+-                          : "#ef4444",
+-                  }}
+-                >
+-                  {(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%
+-                </span>
+-                <span className="kpi-unit">Overall Avg</span>
++                      stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
++                        ? "#f59e0b"
++                        : stats.avgMethaneLossRatePct <= upstreamTargetPct
++                          ? "#10b981"
++                          : stats.avgMethaneLossRatePct <=
++                              upstreamTargetPct * 1.25
++                            ? "#f59e0b"
++                            : "#ef4444",
++                  }}
++                >
++                  {stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
++                    ? "Pending Prod."
++                    : `${(stats.avgMethaneLossRatePct ?? 0).toFixed(3)}%`}
++                </span>
++                <span className="kpi-unit">
++                  {stats.totalGasProductionM3 === 0 && stats.totalCh4Emissions > 0
++                    ? "Gas prod. required"
++                    : "Overall Avg"}
++                </span>
+               </div>
+ 
+               {/* Upstream & Midstream Segment Loss Rates */}
+@@ -827,12 +827,16 @@
+                       fontSize: "0.95rem",
+                       fontWeight: 700,
+                       color:
+-                        stats.upstreamLossRatePct <= upstreamTargetPct
+-                          ? "#10b981"
+-                          : "#ef4444",
+-                    }}
+-                  >
+-                    {(stats.upstreamLossRatePct ?? 0).toFixed(3)}%
++                        stats.upstreamGasM3 === 0 && stats.upstreamCh4Tonnes > 0
++                          ? "#f59e0b"
++                          : stats.upstreamLossRatePct <= upstreamTargetPct
++                            ? "#10b981"
++                            : "#ef4444",
++                    }}
++                  >
++                    {stats.upstreamGasM3 === 0 && stats.upstreamCh4Tonnes > 0
++                      ? "Pending Prod."
++                      : `${(stats.upstreamLossRatePct ?? 0).toFixed(3)}%`}
+                   </div>
+                   <div
+                     style={{
+@@ -865,12 +865,16 @@
+                       fontSize: "0.95rem",
+                       fontWeight: 700,
+                       color:
+-                        stats.midstreamLossRatePct <= midstreamTargetPct
+-                          ? "#10b981"
+-                          : "#ef4444",
+-                    }}
+-                  >
+-                    {(stats.midstreamLossRatePct ?? 0).toFixed(3)}%
++                        stats.midstreamGasM3 === 0 && stats.midstreamCh4Tonnes > 0
++                          ? "#f59e0b"
++                          : stats.midstreamLossRatePct <= midstreamTargetPct
++                            ? "#10b981"
++                            : "#ef4444",
++                    }}
++                  >
++                    {stats.midstreamGasM3 === 0 && stats.midstreamCh4Tonnes > 0
++                      ? "Pending Prod."
++                      : `${(stats.midstreamLossRatePct ?? 0).toFixed(3)}%`}
+                   </div>
+                   <div
+                     style={{
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

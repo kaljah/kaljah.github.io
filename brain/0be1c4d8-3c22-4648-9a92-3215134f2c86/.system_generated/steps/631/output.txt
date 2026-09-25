@@ -1,0 +1,39 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -716,7 +716,7 @@
+         return None, errors
+ 
+     ef = factor_info["factor"]
+-    val = float(row.get("consumption") or 0)
++    val = _clean_float(row.get("consumption"), default=0.0)
+     unit = str(row.get("unit") or "kWh").strip()
+ 
+     # Default to electricity
+@@ -756,8 +756,8 @@
+             return None, errors
+ 
+         heat_mmbtu = val * known_steam_units[u]
+-        boiler_eff = float(row.get("boiler_eff") or 0.80)
+-        trans_loss = float(row.get("trans_loss") or 0.0)
++        boiler_eff = _clean_float(row.get("boiler_eff"), default=0.80)
++        trans_loss = _clean_float(row.get("trans_loss"), default=0.0)
+         net_eff = boiler_eff * (1.0 - trans_loss)
+         if net_eff <= 0:
+             errors.append(f"Row {row_idx}: Net efficiency must be greater than 0 (got {net_eff:.4f})")
+@@ -764,5 +764,5 @@
+ 
+-        boiler_ef = float(row.get("emission_factor") or row.get("ef_co2") or 53.06)
++        boiler_ef = _clean_float(row.get("emission_factor") or row.get("ef_co2"), default=53.06)
+         co2_kg = (heat_mmbtu * boiler_ef) / net_eff
+         co2e = co2_kg / 1000.0
+         ef = boiler_ef
+@@ -769,5 +769,5 @@
+         source_type = "cogen_allocation"
+-        co2e = float(row.get("co2e") or ((val * ef) / 1000 if ef else val))
++        co2e = _clean_float(row.get("co2e"), default=((val * ef) / 1000 if ef else val))
+     else:
+         source_type = "electricity"
+         u = unit.lower().replace(" ", "")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

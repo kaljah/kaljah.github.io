@@ -1,0 +1,20 @@
+You have 2 background task(s) currently running:
+{
+  "taskId":  "b8001249-1636-42c6-896f-bdf8d0e78d33/task-823",
+  "toolName":  "run_command",
+  "toolSummary":  "Start fresh Flask server",
+  "description":  "python app.py",
+  "startTime":  "2026-09-23T22:28:07.364669Z",
+  "stepIndex":  823,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/b8001249-1636-42c6-896f-bdf8d0e78d33/.system_generated/tasks/task-823.log",
+  "isDaemon":  true
+}
+{
+  "taskId":  "b8001249-1636-42c6-896f-bdf8d0e78d33/task-1080",
+  "toolName":  "run_command",
+  "toolSummary":  "Update knowledge graph with graphify",
+  "description":  "graphify update .",
+  "startTime":  "2026-09-23T22:40:32.334078500Z",
+  "stepIndex":  1080,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/b8001249-1636-42c6-896f-bdf8d0e78d33/.system_generated/tasks/task-1080.log"
+}

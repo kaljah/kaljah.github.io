@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\utils\ModernReportGenerator.js:290:    function addSectionHeader(
+  new\client\src\utils\ModernReportGenerator.js:291:      number,
+  new\client\src\utils\ModernReportGenerator.js:292:      title,
+> new\client\src\utils\ModernReportGenerator.js:738:    curY = addSectionHeader(2, "ORGANIZATIONAL BOUNDARIES", null, 
+true);
+  new\client\src\utils\ModernReportGenerator.js:739:    
+  new\client\src\utils\ModernReportGenerator.js:740:    const uniqueBoundaries = [...new Set(reportFacilities.map(f => 
+{
+> new\client\src\utils\ModernReportGenerator.js:762:    curY = addSectionHeader(3, "REPORTING BOUNDARIES", null, true);
+  new\client\src\utils\ModernReportGenerator.js:763:
+  new\client\src\utils\ModernReportGenerator.js:764:    doc.setFontSize(14);
+> new\client\src\utils\ModernReportGenerator.js:799:    curY = addSectionHeader(4, "QUANTIFIED GHG INVENTORY", null, 
+true);
+  new\client\src\utils\ModernReportGenerator.js:800:    
+  new\client\src\utils\ModernReportGenerator.js:801:    // Emissions by Category (Table)
+> new\client\src\utils\ModernReportGenerator.js:1046:    curY = addSectionHeader(5, "GHG REDUCTION INITIATIVES", null, 
+true);
+  new\client\src\utils\ModernReportGenerator.js:1047:    
+  new\client\src\utils\ModernReportGenerator.js:1048:    if (mitigationData.length > 0) {
+> new\client\src\utils\ModernReportGenerator.js:1077:    curY = addSectionHeader(6, "QUALITY ASSURANCE & QUALITY 
+CONTROL", null, true);
+  new\client\src\utils\ModernReportGenerator.js:1078:    
+  new\client\src\utils\ModernReportGenerator.js:1079:    curY = addTextBlock("To ensure the integrity of this 
+inventory, a comprehensive Quality Assurance (QA) and Quality Control (QC) process is implemented in accordance with 
+ISO 14064-1.", curY);
+> new\client\src\utils\ModernReportGenerator.js:1114:    curY = addSectionHeader(7, "REGULATORY FRAMEWORK & 
+REFERENCES", null, true);
+  new\client\src\utils\ModernReportGenerator.js:1115:    
+  new\client\src\utils\ModernReportGenerator.js:1116:    curY = addTextBlock("This greenhouse gas inventory was 
+compiled in compliance with both national regulations and international conventions. The primary standards and 
+references utilized include:", curY);
+
+
+

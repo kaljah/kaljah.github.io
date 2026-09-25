@@ -1,0 +1,77 @@
+
+The command exited with code 0.
+Output:
+Logging in as Admin (admin@ghg.com)...
+Logged in successfully as Admin.
+  [Executive Dashboard] Found 8 interactive elements in content area
+  [Executive Dashboard] Successfully verified 7 distinct button actions cleanly.
+  [Emissions Scope Selection] Found 5 interactive elements in content area
+  [Emissions Scope Selection] Successfully verified 4 distinct button actions cleanly.
+  [Emissions Scope 1 Direct] Found 35 interactive elements in content area
+  [Emissions Scope 1 Direct] Successfully verified 5 distinct button actions cleanly.
+  [Emissions Scope 2 Indirect] Found 41 interactive elements in content area
+  [Emissions Scope 2 Indirect] Successfully verified 5 distinct button actions cleanly.
+  [Emissions Scope 3 Value Chain] Found 31 interactive elements in content area
+  [Emissions Scope 3 Value Chain] Successfully verified 5 distinct button actions cleanly.
+  [Manage Data (pending)] Found 1145 interactive elements in content area
+  [Manage Data (pending)] Successfully verified 17 distinct button actions cleanly.
+  [Manage Data (factors)] Found 22 interactive elements in content area
+  [Manage Data (factors)] Successfully verified 15 distinct button actions cleanly.
+  [Manage Data (facilities)] Found 31 interactive elements in content area
+  [Manage Data (facilities)] Successfully verified 15 distinct button actions cleanly.
+  [Manage Data (production)] Found 21 interactive elements in content area
+  [Manage Data (production)] Successfully verified 15 distinct button actions cleanly.
+  [Manage Data (sources)] Found 31 interactive elements in content area
+  [Manage Data (sources)] Successfully verified 15 distinct button actions cleanly.
+  [Manage Data (goals)] Found 56 interactive elements in content area
+  [Manage Data (goals)] Successfully verified 17 distinct button actions cleanly.
+  [Manage Data (mitigation)] Found 31 interactive elements in content area
+  [Manage Data (mitigation)] Successfully verified 15 distinct button actions cleanly.
+  [Manage Data (ogmp)] Found 16 interactive elements in content area
+  [Manage Data (ogmp)] Successfully verified 14 distinct button actions cleanly.
+  [Manage Data (cbam)] Found 44 interactive elements in content area
+  [Manage Data (cbam)] Successfully verified 15 distinct button actions cleanly.
+  [Manage Data (metadata)] Found 11 interactive elements in content area
+  [Manage Data (metadata)] Successfully verified 10 distinct button actions cleanly.
+  [Manage Data (level_upgrades)] Found 11 interactive elements in content area
+  [Manage Data (level_upgrades)] Successfully verified 10 distinct button actions cleanly.
+  [QA Dashboard (Anomaly Queue)] Found 213 interactive elements in content area
+  [QA Dashboard (Anomaly Queue)] Successfully verified 6 distinct button actions cleanly.
+  [QA Dashboard (Health & Completeness Diagnostics)] Found 10 interactive elements in content area
+  [QA Dashboard (Health & Completeness Diagnostics)] Successfully verified 6 distinct button actions cleanly.
+  [QA Dashboard (Uncertainty & Rigor Analysis (IPCC))] Found 7 interactive elements in content area
+  [QA Dashboard (Uncertainty & Rigor Analysis (IPCC))] Successfully verified 6 distinct button actions cleanly.
+  [Reports (Main)] Found 9 interactive elements in content area
+  [Reports (Main)] Successfully verified 7 distinct button actions cleanly.
+  [Carbon Intensity] Found 2 interactive elements in content area
+  [Carbon Intensity] Successfully verified 1 distinct button actions cleanly.
+  [Methane Intensity] Found 0 interactive elements in content area
+  [Methane Intensity] Successfully verified 0 distinct button actions cleanly.
+  [Methane Explorer Map] Found 0 interactive elements in content area
+  [Methane Explorer Map] Successfully verified 0 distinct button actions cleanly.
+  [SBTi Trajectory] Found 2 interactive elements in content area
+  [SBTi Trajectory] Successfully verified 1 distinct button actions cleanly.
+  [Uncertainty Monte Carlo] Found 0 interactive elements in content area
+  [Uncertainty Monte Carlo] Successfully verified 0 distinct button actions cleanly.
+  [Reference Data Factors] Found 2 interactive elements in content area
+  [Reference Data Factors] Successfully verified 1 distinct button actions cleanly.
+  [Audit Trail (Admin)] Found 2 interactive elements in content area
+  [Audit Trail (Admin)] Successfully verified 1 distinct button actions cleanly.
+  [Settings] Found 2 interactive elements in content area
+  [Settings] Successfully verified 1 distinct button actions cleanly.
+
+Logging in as IT Admin (itadmin@ghg.com)...
+Logged in successfully as IT Admin.
+  [User Management & RBAC] Found 4 interactive elements in content area
+  [User Management & RBAC] Successfully verified 3 distinct button actions cleanly.
+  [Audit Trail (IT Admin)] Found 2 interactive elements in content area
+  [Audit Trail (IT Admin)] Successfully verified 1 distinct button actions cleanly.
+
+=================================================================
+ DEEP BUTTON AUDIT RESULTS SUMMARY
+=================================================================
+Total Button & Interactive Actions Executed: 222
+Total Console Errors Encountered: 0
+
+[SUCCESS] Pressed every button across all pages with ZERO console errors!
+

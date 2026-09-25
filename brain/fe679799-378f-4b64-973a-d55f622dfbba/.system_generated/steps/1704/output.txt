@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":117,"LineContent":"        res = client.get(\"/api/emissions/export\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":187,"LineContent":"    assert client.get(\"/api/emissions/export?format=excel\").status_code == 401"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":201,"LineContent":"    assert client.get(\"/api/emissions/export?format=excel\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":213,"LineContent":"    res = client.get(\"/api/emissions/export?format=excel\u0026year=2024\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":258,"LineContent":"    res = client.get(\"/api/emissions/export?format=excel\u0026year=2024\u0026month=6\")"}

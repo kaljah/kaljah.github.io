@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Found inputs on login page: 2
+Input name/type/placeholder: None text Email Address
+Input name/type/placeholder: None password Password
+

@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1419,4 +1419,31 @@
+   - Frontend production build passed: **`npm run build` completed in 9.69s** (0 errors, 3,199 modules).
+   - Codebase knowledge graph synchronized: **`graphify update .`** (2,146 nodes, 4,491 edges).
+ - **Status:** Complete, verified, and in full synchronization with the repository.
++
++### [2026-09-16T01:10:00Z] - COMPREHENSIVE PRODUCT AUDIT REMEDIATION (DEF-01 TO DEF-08 & FINDINGS 2, 5)
++- **Action:** Remediated all verified usability friction points and functional defects identified in the End-to-End Product Experience & Feature Verification Audit.
++- **Files Modified:**
++  - `new/client/src/App.jsx`: Wrapped `/qa-dashboard` in `<SuperuserRoute><QADashboard /></SuperuserRoute>`, granting `superuser` access and aligning with backend RBAC (DEF-01).
++  - `new/client/src/components/layout/Sidebar.jsx`: Decoupled Audit Trail (`["admin", "superuser", "it_admin"]`) and QA/QC (`["admin", "superuser"]`) navigation links, eliminating double-redirect loops for `it_admin` users (DEF-02).
++  - `new/client/src/pages/MethaneIntensity.jsx`: Addressed zero-production edge case (`tGasM3 === 0 && tCh4Tonnes > 0`) by setting `goldStatus` to `"Pending Production"`. Rendered an amber badge (*"Pending Production (Gas production figures required)"*) and amber *"Pending Prod."* loss rate cards instead of an erroneous green 0.000% "Compliant" status (DEF-03).
++  - `new/server/background_processor.py`: Implemented in-batch and database duplicate key tracking across Scope 1, Scope 2, and Scope 3 ingestion (`_process_row`, `_process_row_scope2`, `_process_row_scope3`, `_process_row_scope3_eeio`). When `overwrite_duplicates=False`, duplicates are skipped and logged with explicit diagnostic reasoning; when `True`, records update existing database entities in place without silent duplication (DEF-04).
++  - `new/server/tests/test_all_bulk_imports.py`: Added `test_bulk_import_duplicate_prevention_and_overwrite` test case covering duplicate detection and overwrite flags.
++  - `new/client/src/components/UploadProgress.jsx` & `UploadProgress.css`: Added role-sensitive post-upload CTAs: reviewers (`admin`, `superuser`) receive a primary *"Review Pending Records →"* button routing to `/manage-data?tab=pending`, while operators receive *"Close & View Inventory"*. Added `.tag-duplicate` diagnostic styling (DEF-05).
++  - `new/client/src/pages/DashboardEnhanced.jsx`:
++    - Updated pending records review banner to include `superuser` alongside `admin` (DEF-06).
++    - Clarified Hero Metric label to *"Gross Operational Emissions (Scope 1+2)"* with explanatory context (Finding 2).
++    - Integrated "Export Executive Brief (PDF)" with `generateModernPDF` from `ModernReportGenerator.js` with loading spinner and fallback (DEF-07).
++    - Added a 4-step Quick-Start Onboarding card (Set Boundaries -> Log Activity Data -> QA/QC Review -> Generate Reports) with direct action navigation buttons when zero inventory is detected (Finding 5).
++  - `new/client/src/components/ConfirmModal.jsx`: Created unified, accessible in-app confirmation modal component replacing browser-native modal prompts (DEF-08).
++  - `new/client/src/pages/ManageData.jsx`: Replaced all 10 native `confirm()` calls with `ConfirmModal` across batch approvals, reduction targets, base year recalculations, custom factors, CBAM exports, OGMP surveys, facility boundaries, production figures, emission sources, and mitigation entries (DEF-08).
++  - `new/client/src/components/Scope1Form.jsx`: Replaced native delete confirmation with `ConfirmModal`.
++  - `new/client/src/components/Scope2Form.jsx`: Replaced native delete confirmation with `ConfirmModal`.
++  - `new/client/src/components/Scope3Form.jsx`: Replaced native delete confirmation with `ConfirmModal`.
++  - `new/client/src/components/BatchReviewWizard.jsx`: Replaced native batch approval `window.confirm()` with `ConfirmModal`.
++  - `new/client/src/pages/UserManagement.jsx`: Replaced native user revoke `window.confirm()` with `ConfirmModal`.
++- **Verification:**
++  - Full backend pytest suite passed: **161 passed, 52 warnings** in 20.16s (`python -m pytest new/server/tests/`).
++  - Frontend production build passed: **`npm run build` completed in 9.59s** (0 errors, 3,200 modules).
++- **Status:** Complete, verified, and in full synchronization with the repository.
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

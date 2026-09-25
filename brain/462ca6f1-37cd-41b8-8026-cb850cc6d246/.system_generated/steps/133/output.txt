@@ -1,0 +1,43 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:2:import autoTable from "jspdf-autotable";
+new\client\src\utils\ModernReportGenerator.js:682:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:689:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:844:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:851:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:988:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:997:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1013:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1043:    curY = doc.lastAutoTable.finalY + 8;
+new\client\src\utils\ModernReportGenerator.js:1070:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1079:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1119:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1128:    curY = doc.lastAutoTable.finalY + 8;
+new\client\src\utils\ModernReportGenerator.js:1146:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1155:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1179:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1188:    curY = doc.lastAutoTable.finalY + 8;
+new\client\src\utils\ModernReportGenerator.js:1205:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1214:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1243:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1252:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1286:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1295:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1318:      autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1327:      curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1357:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1366:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1391:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1400:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1438:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1447:    curY = doc.lastAutoTable.finalY + 8;
+new\client\src\utils\ModernReportGenerator.js:1466:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1475:    curY = doc.lastAutoTable.finalY + 8;
+new\client\src\utils\ModernReportGenerator.js:1492:    autoTable(doc, {
+new\client\src\utils\ModernReportGenerator.js:1501:    curY = doc.lastAutoTable.finalY + 10;
+new\client\src\utils\ModernReportGenerator.js:1526:    autoTable(doc, {
+
+
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[(1, 'Administrator', 'a', 'admin', 'active'), (2, 'Administrator', 'a@a', 'admin', 'active'), (3, 'IT Manager', 'z', 'it_manager', 'active'), (4, 'IT Manager', 'z@z', 'it_manager', 'active'), (5, 'Administrator', 'admin@ghg.com', 'admin', 'active'), (6, 'IT Administrator', 'itadmin@ghg.com', 'it_admin', 'active'), (7, 'IT Support', 'it@ghg.com', 'it', 'active'), (8, "'; DROP TABLE users; --", 'test_admin@ghg-test.com', 'admin', 'active'), (9, 'Test Superuser', 'test_superuser@ghg-test.com', 'superuser', 'active'), (10, 'Test User', 'test_user@ghg-test.com', 'user', 'active'), (11, 'Test IT Admin', 'test_itadmin@ghg-test.com', 'it_admin', 'active'), (12, 'Viewer Tester', 'test_viewer@ghg-test.com', 'user', 'active'), (13, 'IT Created User', 'it_created_user_865957@ghg-test.com', 'user', 'active'), (14, 'IT Superuser Attempt', 'it_su_865957@ghg-test.com', 'superuser', 'active'), (15, 'Test IT Manager', 'test_itmanager@ghg-test.com', 'it_manager', 'active')]
+

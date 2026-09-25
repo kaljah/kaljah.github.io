@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -922,15 +922,23 @@
+     else:
+         ef = factor_info["factor"]
+ 
+-    val = _clean_float(
+-        row.get("consumption")
+-        or row.get("electricitykwh")
+-        or row.get("steammmbtu")
+-        or row.get("steam")
+-        or row.get("amount")
+-        or row.get("quantity"),
+-        default=0.0,
+-    )
++    if source_type == "indirect_steam":
++        val = _clean_float(
++            row.get("steammmbtu")
++            or row.get("steam")
++            or row.get("consumption")
++            or row.get("amount")
++            or row.get("quantity"),
++            default=0.0,
++        )
++    else:
++        val = _clean_float(
++            row.get("electricitykwh")
++            or row.get("consumption")
++            or row.get("amount")
++            or row.get("quantity"),
++            default=0.0,
++        )
+     unit = str(
+         row.get("unit")
+         or row.get("heat_unit")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

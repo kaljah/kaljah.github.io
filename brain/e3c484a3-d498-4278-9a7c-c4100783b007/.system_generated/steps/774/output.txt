@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\scripts\run_full_validation_suite.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -66,8 +66,13 @@
+         ("Exhaustive Unit Conversions", SERVER_DIR / "tests" / "test_unit_conversions_exhaustive.py", SERVER_DIR),
+         ("Property Invariants (Hypothesis)", SERVER_DIR / "tests" / "test_property_invariants.py", SERVER_DIR),
+         ("Emission Factor Selection", SERVER_DIR / "tests" / "test_emission_factor_selection.py", SERVER_DIR),
+-        ("Boundary & Resilience Suite", SERVER_DIR / "tests" / "test_boundary_and_negative.py", SERVER_DIR),
+         ("Aggregation & Reconciliation", SERVER_DIR / "tests" / "test_aggregation_reconciliation.py", SERVER_DIR),
++        ("Battery: Midstream & Process Equipment", SERVER_DIR / "tests" / "test_battery_midstream_process_equipment.py", SERVER_DIR),
++        ("Battery: Stoichiometry & Indirect Energy", SERVER_DIR / "tests" / "test_battery_stoichiometry_indirect_energy.py", SERVER_DIR),
++        ("Battery: Statistical Anomaly Detection", SERVER_DIR / "tests" / "test_battery_statistical_anomaly_detection.py", SERVER_DIR),
++        ("Battery: Compressor Seals & Fugitives", SERVER_DIR / "tests" / "test_battery_compressor_fugitives_equipment.py", SERVER_DIR),
++        ("Battery: GWP Horizons & Regulatory", SERVER_DIR / "tests" / "test_battery_gwp_horizons_regulatory.py", SERVER_DIR),
++        ("Battery: Concurrency & Stress Invariants", SERVER_DIR / "tests" / "test_battery_concurrency_stress_invariants.py", SERVER_DIR),
+     ]
+ 
+     total_duration = 0.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

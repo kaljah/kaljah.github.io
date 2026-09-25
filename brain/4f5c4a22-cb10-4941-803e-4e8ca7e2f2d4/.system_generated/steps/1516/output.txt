@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Res keys: ['method', 'api_reference', 'inputs', 'total_co2e', 'results', 'metadata']
+Res results: {'co2': 0.0, 'ch4': {'value': 68.50042332490774, 'ef_uncertainty_1sigma': 0.05, 'ad_uncertainty_1sigma': 0.01, 'comp_uncertainty_1sigma': 0.0, 'relative_uncertainty_1sigma': 0.050990195135927854, 'relative_uncertainty': 0.050990195135927854, 'uncertainty': 0.050990195135927854, 'absolute_uncertainty': 3.49284995223071, 'relative_uncertainty_95pct': 0.10198039027185571, 'ci_95_abs': 6.98569990446142, 'ci_95_pct': 10.19803902718557, 'lower_bound_95': 61.51472342044632, 'upper_bound_95': 75.48612322936916, 'lower_bound': 61.51472342044632, 'upper_bound': 75.48612322936916, 'tier': 3, 'coverage_factor': 2.0, 'confidence_level_pct': 95}, 'n2o': 0.0, 'total_co2e': 1918.0118530974169}
+

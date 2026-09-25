@@ -1,0 +1,159 @@
+
+The command exited with code 0.
+Output:
+commit 152f3656a0aa9f4b53ce8b70b53480f4f643edb6
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 15:55:24 2026 +0200
+
+    g
+
+diff --git a/new/server/calculations/uncertainty.py b/new/server/calculations/uncertainty.py
+index d6710b2..a77c87d 100644
+--- a/new/server/calculations/uncertainty.py
++++ b/new/server/calculations/uncertainty.py
+@@ -102,24 +102,41 @@ PROCESS_CATEGORY = {
+     "combustion": "combustion",
+     "stationary_combustion": "combustion",
+     "mobile": "combustion",
++    "mobile_combustion": "combustion",
+     "flaring": "flaring",
++    "flare": "flaring",
+     "fugitive": "fugitive",
+     "fugitive_component": "fugitive",
+     "equipment_fugitive": "fugitive",
+     "compressor_fugitive": "fugitive",
++    "compressor_seal": "fugitive",
++    "wellhead_fugitive": "fugitive",
++    "separator_fugitive": "fugitive",
+     "venting": "vented",
+     "blowdown": "vented",
+     "completions": "vented",
++    "completion_flowback": "vented",
+     "drilling": "vented",
++    "mud_degassing": "vented",
+     "unloading": "vented",
++    "liquids_unloading": "vented",
+     "tank": "vented",
+     "tank_flashing": "vented",
+     "tank_working": "vented",
+     "tank_breathing": "vented",
++    "storage_tanks": "vented",
+     "pneumatic": "vented",
++    "pneumatic_device": "vented",
+     "pneumatic_devices": "vented",
+     "agr": "midstream",
++    "acid_gas_removal": "midstream",
+     "dehydrator": "midstream",
++    "gathering_boosting": "fugitive",
++    "gas_processing": "fugitive",
++    "transmission_storage": "fugitive",
++    "refinery_fugitive": "fugitive",
++    "distribution_fugitive": "fugitive",
++    "lng_operations": "fugitive",
+     "indirect": "indirect",
+     "indirect_steam": "indirect",
+     "steam": "indirect",
+@@ -128,6 +145,10 @@ PROCESS_CATEGORY = {
+     "scope2": "indirect",
+     "stoichiometric": "stoichiometric",
+     "stoichiometry": "stoichiometric",
++    "chemical_production": "stoichiometric",
++    "nitric_acid_production": "stoichiometric",
++    "adipic_acid_production": "stoichiometric",
++    "fccu": "combustion",
+ }
+ 
+ # ---------------------------------------------------------------------------
+@@ -148,17 +169,17 @@ def combine_uncertainties_product(u_ef, u_ad):
+ def combine_uncertainties_sum(val1, u1_rel, val2, u2_rel):
+     """
+     Combine relative uncertainties for E = A + B (additive, independent).
+-    Formula: u_total = √((E₁·u₁)² + (E₂·u₂)²) / (E₁+E₂)
++    Formula: u_total = √((E₁·u₁)² + (E₂·u₂)²) / |E₁+E₂|
+     Reference: IPCC 2006 GL Vol.1 §3.3 Eq. 3.2
+     Returns: combined relative standard uncertainty (1σ)
+     """
+-    u1_abs = val1 * u1_rel
+-    u2_abs = val2 * u2_rel
++    u1_abs = abs(val1 * (u1_rel or 0.0))
++    u2_abs = abs(val2 * (u2_rel or 0.0))
+     total_val = val1 + val2
+-    if total_val == 0:
++    if abs(total_val) < 1e-12:
+         return 0.0
+     u_total_abs = math.sqrt(u1_abs**2 + u2_abs**2)
+-    return u_total_abs / total_val
++    return u_total_abs / abs(total_val)
+ 
+ 
+ def srss_inventory(source_list):
+@@ -173,14 +194,34 @@ def srss_inventory(source_list):
+     Returns:
+         dict with relative_uncertainty_1sigma, relative_uncertainty_95pct, total_value
+     """
+-    total_value = sum(s["value"] for s in source_list if s["value"] > 0)
+-    if total_value == 0:
++    if not source_list:
+         return {
+             "relative_uncertainty_1sigma": 0.0,
+             "relative_uncertainty_95pct": 0.0,
+             "total_value": 0.0,
+         }
+-    sum_sq = sum((s["value"] * s["relative_uncertainty"]) ** 2 for s in source_list)
++
++    valid_sources = []
++    for s in source_list:
++        val = float(s.get("value") or 0.0)
++        u_rel = s.get("relative_uncertainty")
++        if u_rel is None:
++            u_rel = s.get("uncertainty") or s.get("uncertainty_1sigma") or 0.05
++        u_rel = float(u_rel or 0.0)
++        valid_sources.append({"value": val, "relative_uncertainty": u_rel})
++
++    total_value = sum(s["value"] for s in valid_sources if s["value"] > 0)
++    if total_value <= 0:
++        return {
++            "relative_uncertainty_1sigma": 0.0,
++            "relative_uncertainty_95pct": 0.0,
++            "total_value": 0.0,
++        }
++    sum_sq = sum(
++        (s["value"] * s["relative_uncertainty"]) ** 2
++        for s in valid_sources
++        if s["value"] > 0
++    )
+     u_1sigma = math.sqrt(sum_sq) / total_value
+     return {
+         "relative_uncertainty_1sigma": u_1sigma,
+@@ -247,27 +288,10 @@ def propagate_uncertainty(
+ 
+     # --- Resolve activity uncertainty from tier if not explicitly provided ---
+     if activity_uncertainty is None:
+-        if process_category in (
+-            "fugitive",
+-            "fugitive_component",
+-            "equipment_fugitive",
+-            "compressor_fugitive",
+-        ):
++        resolved_cat = PROCESS_CATEGORY.get(str(process_category).lower(), process_category)
++        if resolved_cat == "fugitive":
+             activity_uncertainty = ACTIVITY_UNCERTAINTY_FUGITIVE
+-        elif process_category in (
+-            "vented",
+-            "venting",
+-            "blowdown",
+-            "completions",
+-            "drilling",
+-            "unloading",
+-            "tank",
+-            "tank_flashing",
+-            "tank_working",
+-            "tank_breathing",
+-            "pneumatic",
+-            "pneumatic_devices",
+-        ):
++        elif resolved_cat == "vented":
+             if tier == Tier.T3:
+                 activity_uncertainty = ACTIVITY_UNCERTAINTY[Tier.T3]
+             else:
+

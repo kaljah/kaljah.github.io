@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+--- Running UI Agent 1: Auth & RBAC ---
+
+--- Running UI Agent 2: Dashboard & KPIs ---
+
+--- Running UI Agent 3: Scope 1 Forms ---
+
+--- Running UI Agent 4: Scope 2 & 3 Forms ---
+
+--- Running UI Agent 5: Bulk Ingestion ---
+
+--- Running UI Agent 6: Methane Explorer ---
+
+--- Running UI Agent 7: Carbon Intensity ---
+
+--- Running UI Agent 8: QA/QC Data Health ---
+
+--- Running UI Agent 9: Reports & Export ---
+
+--- Running UI Agent 10: Settings & Audit Trail ---
+
+All 10 UI agents completed. Results saved to new/test_results/ui_swarm_results.json
+

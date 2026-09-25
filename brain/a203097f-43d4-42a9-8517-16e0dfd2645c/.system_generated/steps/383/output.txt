@@ -1,0 +1,145 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 10 items
+
+validation\mutation\test_clean_mutations.py F.F.FF..F.                   [100%]
+
+================================== FAILURES ===================================
+__________ TestCleanMutations.test_kill_operator_mutation_combustion __________
+
+self = <test_clean_mutations.TestCleanMutations object at 0x0000021E71116720>
+
+    def test_kill_operator_mutation_combustion(self):
+        """Mutant: Activity * EF is mutated to Activity + EF or Activity / EF.
+        Suite must detect discrepancy against first-principles reference."""
+        activity = 1500.0  # m3
+        ef_co2 = 1.93  # kg/m3
+    
+        # Legitimate calculation
+        valid_res = ref_calculate_combustion(activity, ef_co2=ef_co2)
+    
+        # Mutants
+        mutant_plus = activity + ef_co2
+        mutant_div = activity / ef_co2
+    
+        # Validation check kills both mutants
+        tolerance = 1e-4
+>       assert abs(mutant_plus - valid_res["co2_emissions_kg"]) > tolerance, "Mutant (Activity + EF) survived!"
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2_emissions_kg'
+
+validation\mutation\test_clean_mutations.py:66: KeyError
+_________ TestCleanMutations.test_kill_carbon_atomic_weight_mutation __________
+
+self = <test_clean_mutations.TestCleanMutations object at 0x0000021E71116C30>
+
+    def test_kill_carbon_atomic_weight_mutation(self):
+        """Mutant: Carbon atomic weight mutated to 14.0 (Nitrogen) instead of 12.011.
+        Suite must catch mass balance violation in Tier 3 stoichiometry."""
+        mutant_mw_c = 14.00
+        legit_mw_c = MW_C  # 12.011
+    
+        # Stoichiometry for Methane: CH4 + 2 O2 -> CO2 + 2 H2O
+        legit_stoich = ref_calculate_hydrocarbon_stoichiometry(1, 4)
+>       assert legit_stoich["balance_error"] < 1e-9
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'balance_error'
+
+validation\mutation\test_clean_mutations.py:93: KeyError
+_____ TestCleanMutations.test_kill_flaring_methane_slip_omission_mutation _____
+
+self = <test_clean_mutations.TestCleanMutations object at 0x0000021E71117170>
+
+    def test_kill_flaring_methane_slip_omission_mutation(self):
+        """Mutant: Assuming 100% flare destruction efficiency (omitting methane slip).
+        Suite must detect unburned methane underestimation."""
+        flare_volume_m3 = 10000.0
+        ch4_vol_frac = 0.85
+        destruction_eff = 0.98  # 2% slip
+    
+>       legit_flare = ref_calculate_flaring(
+            flare_volume_m3=flare_volume_m3,
+            ch4_mole_fraction=ch4_vol_frac,
+            combustion_efficiency=0.98,
+            destruction_efficiency=0.98,
+        )
+E       TypeError: ref_calculate_flaring() got an unexpected keyword argument 'flare_volume_m3'
+
+validation\mutation\test_clean_mutations.py:120: TypeError
+___ TestCleanMutations.test_kill_agr_methane_coabsorption_omission_mutation ___
+
+self = <test_clean_mutations.TestCleanMutations object at 0x0000021E71117410>
+
+    def test_kill_agr_methane_coabsorption_omission_mutation(self):
+        """Mutant: Acid Gas Removal drops API Table 6-5 0.1% methane slip.
+        Suite must detect missing CH4 fugitive in gas processing."""
+        feed_gas_m3 = 500000.0
+        co2_mole_frac = 0.04
+        ch4_mole_frac = 0.90
+    
+>       legit_agr = ref_calculate_agr(
+            feed_gas_flow_m3=feed_gas_m3,
+            co2_mol_fraction=co2_mole_frac,
+            ch4_mol_fraction=ch4_mole_frac,
+            ch4_slip_fraction=0.001,  # API standard
+        )
+E       TypeError: ref_calculate_agr() got an unexpected keyword argument 'feed_gas_flow_m3'
+
+validation\mutation\test_clean_mutations.py:140: TypeError
+______ TestCleanMutations.test_kill_negative_activity_boundary_mutation _______
+
+self = <test_clean_mutations.TestCleanMutations object at 0x0000021E71117050>
+
+    def test_kill_negative_activity_boundary_mutation(self):
+        """Mutant: Accepting negative activity data producing negative (carbon credit) emissions without validation error."""
+        calc = CombustionCalculator()
+>       res = calc.calculate(
+            fuel_quantity=-500.0,
+            ef_co2=1.93,
+            ef_ch4=0.0,
+            ef_n2o=0.0,
+            uncertainties={},
+            hhv=None,
+            ef_unit="kg/m3",
+            fuel_unit="m3",
+            fuel_type="gases",
+        )
+
+validation\mutation\test_clean_mutations.py:198: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+new\server\calculations\combustion.py:198: in calculate
+    self.validate_inputs({"quantity": fuel_quantity}, ["quantity"])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <calculations.combustion.CombustionCalculator object at 0x0000021E71191CA0>
+inputs = {'quantity': -500.0}, required_keys = ['quantity']
+
+    def validate_inputs(self, inputs, required_keys):
+        """Validates that all required inputs are present, finite, and non-negative."""
+        for key in required_keys:
+            if key not in inputs:
+                raise ValueError(f"Missing required input: {key}")
+            val = inputs[key]
+            if isinstance(val, (int, float)):
+                if math.isnan(val) or math.isinf(val):
+                    raise ValueError(f"Input {key} cannot be NaN or Infinite: {val}")
+                if val < 0:
+>                   raise ValueError(f"Input {key} cannot be negative: {val}")
+E                   ValueError: Input quantity cannot be negative: -500.0
+
+new\server\calculations\base.py:26: ValueError
+=========================== short test summary info ===========================
+FAILED validation/mutation/test_clean_mutations.py::TestCleanMutations::test_kill_operator_mutation_combustion
+FAILED validation/mutation/test_clean_mutations.py::TestCleanMutations::test_kill_carbon_atomic_weight_mutation
+FAILED validation/mutation/test_clean_mutations.py::TestCleanMutations::test_kill_flaring_methane_slip_omission_mutation
+FAILED validation/mutation/test_clean_mutations.py::TestCleanMutations::test_kill_agr_methane_coabsorption_omission_mutation
+FAILED validation/mutation/test_clean_mutations.py::TestCleanMutations::test_kill_negative_activity_boundary_mutation
+========================= 5 failed, 5 passed in 4.83s =========================
+

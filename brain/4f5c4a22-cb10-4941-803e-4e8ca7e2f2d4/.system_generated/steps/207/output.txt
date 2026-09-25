@@ -1,0 +1,12 @@
+{"name":"01_dashboard_initial_view.png", "sizeBytes":"109347"}
+{"name":"02_dashboard_year_switching.png", "sizeBytes":"109505"}
+{"name":"03_dashboard_gwp20_active.png", "sizeBytes":"109443"}
+{"name":"04_dashboard_compare_regions.png", "sizeBytes":"109783"}
+{"name":"06_dashboard_detailed_breakdown_expanded.png", "sizeBytes":"80538"}
+{"name":"07_carbon_intensity_initial.png", "sizeBytes":"40638"}
+{"name":"08_carbon_intensity_gwp20.png", "sizeBytes":"40574"}
+{"name":"10_carbon_intensity_cbam_table.png", "sizeBytes":"44774"}
+{"name":"11_methane_intensity_initial.png", "sizeBytes":"48123"}
+{"name":"12_methane_intensity_ogmp_roadmap.png", "sizeBytes":"43697"}
+
+Summary: This directory contains 0 subdirectories and 10 files.

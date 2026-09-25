@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":214,"LineContent":"                _query_intensity_stats,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1231,"LineContent":"    Delegates to _query_intensity_stats() for thread-safe reuse."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1243,"LineContent":"        _query_intensity_stats("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1603,"LineContent":"    cache=DASHBOARD_CACHE, key=make_cache_key(\"_query_intensity_stats\"), lock=CACHE_LOCK"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1605,"LineContent":"def _query_intensity_stats("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":748,"LineContent":"    \"\"\"Verify _query_intensity_stats properly normalizes MMscf gas and flaring volumes.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":749,"LineContent":"    from routes.dashboard import _query_intensity_stats"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":786,"LineContent":"        stats = _query_intensity_stats(facility_id=str(fid), year=\"2029\", allowed_fids=[fid])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":801,"LineContent":"    from routes.dashboard import _query_intensity_stats, _query_intensity_trend_bulk"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":840,"LineContent":"        stats_mid = _query_intensity_stats(facility_id=str(fid), year=\"2028\", allowed_fids=[fid])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":855,"LineContent":"        stats_up = _query_intensity_stats(facility_id=str(fid), year=\"2028\", allowed_fids=[fid])"}

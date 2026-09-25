@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                   Filename            
+---------- ----                                                                                   --------            
+        15   const [availableFilters, setAvailableFilters] = useState({                           Reports.jsx         
+        28   const [regionId, setRegionId] = useState("all");                                     Reports.jsx         
+        45     setRegionId("all");                                                                Reports.jsx         
+        67         setAvailableFilters({                                                          Reports.jsx         
+        89           if (opDefaults.defaultFacilityId) setRegionId(opDefaults.defaultFacilityId); Reports.jsx         
+       580                   {availableFilters.years.length > 0 ? (                               Reports.jsx         
+       581                     availableFilters.years.map((y) => (                                Reports.jsx         
+       602                   {availableFilters.years                                              Reports.jsx         
+       761                   {availableFilters.years.map((y) => (                                 Reports.jsx         
+       791                   onChange={(e) => setRegionId(e.target.value)}                        Reports.jsx         
+       794                   {availableFilters.regions.map((f) => (                               Reports.jsx         
+        69   const [regionalData, setRegionalData] = useState([]);                                CarbonIntensity.jsx 
+       175       setRegionalData(data);                                                           CarbonIntensity.jsx 
+        81   const [regionalData, setRegionalData] = useState([]);                                MethaneIntensity.jsx
+       192       setRegionalData(data);                                                           MethaneIntensity.jsx
+
+
+

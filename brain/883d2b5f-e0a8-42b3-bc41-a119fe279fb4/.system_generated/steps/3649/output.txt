@@ -1,0 +1,22 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":6,"LineContent":"import { BarChart, LineChart } from \"../components/charts\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":15,"LineContent":"  BarChart2,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":744,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":770,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":796,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":819,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":855,"LineContent":"                  \u003cBarChart2 size={16} /\u003e Chart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\BarChart.jsx","LineNumber":3,"LineContent":"  BarChart as RechartsBar,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\BarChart.jsx","LineNumber":14,"LineContent":"export const BarChart = ({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\BarChart.jsx","LineNumber":104,"LineContent":"export default BarChart;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":43,"LineContent":"  BarChart3,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1525,"LineContent":"              \u003cBarChart3 size={15} color=\"#ff6600\" /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\index.js","LineNumber":1,"LineContent":"export { BarChart } from \"./BarChart\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":6,"LineContent":"import { BarChart, LineChart } from \"../components/charts\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":14,"LineContent":"  BarChart2,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1447,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1470,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1493,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1516,"LineContent":"              \u003cBarChart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":1552,"LineContent":"                  \u003cBarChart2 size={16} /\u003e Chart"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":6,"LineContent":"import { LineChart, BarChart } from \"../components/charts\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":571,"LineContent":"              \u003cBarChart"}

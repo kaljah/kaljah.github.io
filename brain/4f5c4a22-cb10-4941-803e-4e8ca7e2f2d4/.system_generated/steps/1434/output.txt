@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Missing in backend API_FACTORS: ['Completion - Gas Well (No Flaring)', 'Workover - Gas Well (No Flaring)', 'Liquids Unloading - Plunger Lift', 'Liquids Unloading - Non-Plunger', 'Pneumatic Pump - Chemical Injection (Piston)', 'Tank - Working Losses (Oil)', 'Tank - Breathing Losses (Oil)', 'Loading - Crude Oil (Tank Truck)', 'Loading - Crude Oil (Marine Vessel)', 'Wastewater - Oil/Water Separator', 'Natural Gas - Turbine', 'Natural Gas - 2-Stroke Lean Burn Engine', 'Propane (Liquid)']
+

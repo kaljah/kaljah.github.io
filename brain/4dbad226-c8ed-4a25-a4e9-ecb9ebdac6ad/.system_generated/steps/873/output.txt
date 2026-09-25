@@ -1,0 +1,13 @@
+Task: 4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad/task-855
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\.system_generated\tasks\task-855.log
+Log output:
+<truncated 3 lines>
+on: 200/340 uncached files (58%) [8 workers]
+  AST extraction: 300/340 uncached files (88%) [8 workers]
+  AST extraction: 340/340 uncached files (100%) [8 workers]
+  warning: 231 source file(s) produced zero nodes and are absent from the graph: init-options.json, integration.json, gemini.manifest.json, speckit.manifest.json, .constitution-template.json (+226 more). A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+  warning: 26 file(s) had syntax errors and may be partially extracted: BatchReviewWizard.jsx (first error at line 490), BulkImportModal.jsx (first error at line 1603), CalculationDetails.jsx (first error at line 45), ColumnMappingWizard.jsx (first error at line 1361), Scope1Form.jsx (first error at line 1498) (+21 more) (#2551)
+[graphify watch] community set changed since labeling (455 saved labels, 436 communities now; renamed 67 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.
+
+Last progress: 4s ago

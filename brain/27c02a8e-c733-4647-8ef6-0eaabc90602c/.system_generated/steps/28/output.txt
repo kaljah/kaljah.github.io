@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:504:class CbamProductExport(db.Model):
+  new\server\models.py:505:    __tablename__ = 'cbam_product_exports'
+  new\server\models.py:506:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:507:    facility_id = db.Column(db.Integer, db.ForeignKey('facilities.id'), index=True, 
+nullable=False)
+  new\server\models.py:508:    facility = db.relationship('Facility', overlaps="facility_parent,cbam_exports")
+  new\server\models.py:509:    year = db.Column(db.Integer, index=True, nullable=False)
+  new\server\models.py:510:    month = db.Column(db.Integer, nullable=False, default=1)
+  new\server\models.py:511:    product_name = db.Column(db.String(120), nullable=False)
+  new\server\models.py:512:    cn_code = db.Column(db.String(50), nullable=False, index=True) # e.g. '2814 10 00', 
+'2804 10 00', '2710'
+  new\server\models.py:513:    quantity_tonnes = db.Column(db.Float, nullable=False, default=0.0)
+  new\server\models.py:514:    export_destination = db.Column(db.String(100), default='EU')
+  new\server\models.py:515:    specific_embedded_direct = db.Column(db.Float, default=0.0)   # tCO2e / t product
+  new\server\models.py:516:    specific_embedded_indirect = db.Column(db.Float, default=0.0) # tCO2e / t product
+  new\server\models.py:517:    notes = db.Column(db.Text)
+  new\server\models.py:518:    created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+  new\server\models.py:519:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:520:
+  new\server\models.py:521:
+  new\server\models.py:522:class OgmpSurvey(db.Model):
+  new\server\models.py:523:    __tablename__ = "ogmp_surveys"
+  new\server\models.py:524:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:525:    facility_id = db.Column(
+  new\server\models.py:526:        db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False
+  new\server\models.py:527:    )
+  new\server\models.py:528:    facility = db.relationship("Facility", overlaps="facility_parent,ogmp_surveys")
+  new\server\models.py:529:    year = db.Column(db.Integer, index=True, nullable=False)
+  new\server\models.py:530:    survey_date = db.Column(db.String(20), nullable=False)  # YYYY-MM-DD
+  new\server\models.py:531:    survey_type = db.Column(
+  new\server\models.py:532:        db.String(50), nullable=False
+  new\server\models.py:533:    )  # Satellite (Sentinel-5P/MethaneSAT), Flyover/Aerial, Drone OGI, Continuous Monitor, 
+Site Survey
+  new\server\models.py:534:    measured_rate_kg_hr = db.Column(db.Float, nullable=False, default=0.0)
+
+
+

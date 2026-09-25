@@ -1,0 +1,94 @@
+
+The command exited with code 0.
+Output:
+================================================================================
+STARTING WHOLE-SOFTWARE AUDIT: POST-INJECTION RENDERING VERIFICATION
+================================================================================
+[CDP] Connecting to Chrome on port 9222...
+(node:13052) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+============================================================
+STAGE 1: AUDITING ALL 9 TABS OF MANAGE DATA (POST-INJECTION)
+============================================================
+
+--- Checking Manage Data Tab: [Pending Review] (pending) ---
+  Pending badge indicator: S1
+Scope 1
+0
+
+--- Checking Manage Data Tab: [Emission Factors] (factors) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Regions] (facilities) ---
+  Pagination info: 'Page 1 of 10' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Production Data] (production) ---
+  Pagination info: 'Page 1 of 65' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Emission Sources] (sources) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [Emission Goals & Base Years] (goals) ---
+  Agent search for 'AGT01' verified: 1 matching records returned.
+
+--- Checking Manage Data Tab: [Mitigation Projects] (mitigation) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [OGMP 2.0 Surveys] (ogmp) ---
+  Pagination info: 'Page 1 of 7' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+--- Checking Manage Data Tab: [CBAM Products] (cbam) ---
+  Pagination info: 'Page 1 of 8' | Current page rows: 15
+  Agent search for 'AGT01' verified: 10 matching records returned.
+  Pagination Next -> Prev verified responsive.
+
+============================================================
+STAGE 2: AUDITING OPERATIONAL DASHBOARD (/)
+============================================================
+  Dashboard Captured KPIs (4): {'GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)': '5.1B', 'NET EMISSIONS': '5.1B', 'TOTAL CH4 (METHANE)': '14.3M', 'PERFORMANCE INTENSITY': '19.22K'}
+  Dashboard active SVG charts: 20
+
+============================================================
+STAGE 3: AUDITING CARBON INTENSITY (/carbon-intensity)
+============================================================
+  Production context bar captured: {'GHG INTENSITY (AVG)': '19215.53', 'SCOPE 1 DIRECT INTENSITY': '19215.53', 'FLARING CARBON INTENSITY': '0.00', 'SCOPE 3 VALUE CHAIN': '0.00'}
+  CBAM Product Table on Carbon Intensity: 106 products rendered.
+  Carbon Intensity active SVG charts: 12
+
+============================================================
+STAGE 4: AUDITING METHANE INTENSITY (/methane-intensity)
+============================================================
+  Methane Intensity KPIs: {'METHANE INTENSITY (AVG)': '53.9131', 'METHANE LOSS RATE': '65.995%', 'GAS FLARING RATE': '0.000%', 'EPA WEC LIABILITY': '$21,461,108,586'}
+  OGMP Roadmap facility milestone cards: 145 rendered.
+  Methane Intensity active SVG charts: 14
+
+============================================================
+STAGE 5: AUDITING SBTI DECARBONIZATION (/sbti)
+============================================================
+  SBTi Decarbonization KPIs: {'BASE YEAR BASELINE': '750,000tCO2e', 'CURRENT YEAR TARGET': '687,000tCO2e', 'PATHWAY STATUS': 'ON TRACK', 'NET-ZERO GOAL (2030)': '561,000tCO2e'}
+  SBTi Annual Pathway Milestone rows: 7 pathway years.
+  SBTi active trajectory charts: 10
+
+============================================================
+STAGE 6: AUDITING EMISSIONS INVENTORY (/emissions)
+============================================================
+
+================================================================================
+WHOLE SOFTWARE AUDIT COMPLETE: Passed Modules: 14 | Failed: 0
+Total Uncaught Console Errors: 0
+================================================================================
+Audit report saved to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\whole_software_post_injection_audit_report.json
+

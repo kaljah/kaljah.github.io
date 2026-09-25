@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['Natural Gas', 'Landfill Gas', 'Coke Oven Gas', 'Blast Furnace Gas', 'Propane (Gas)', 'Refinery Fuel Gas', 'Marine Diesel Oil', 'Diesel (No. 2 Fuel Oil)', 'Residual Fuel Oil (No. 6)', 'Kerosene', 'Motor Gasoline', 'Jet Fuel', 'Propane (Liquid/LPG)', 'Ethane', 'Crude Oil']
+

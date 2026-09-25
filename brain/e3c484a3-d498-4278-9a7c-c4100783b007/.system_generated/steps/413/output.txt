@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 13 items
+
+tests/test_boundary_and_negative.py::TestNegativeValuesRejection::test_negative_quantity_combustion PASSED [  7%]
+tests/test_boundary_and_negative.py::TestNegativeValuesRejection::test_negative_amount_flaring PASSED [ 15%]
+tests/test_boundary_and_negative.py::TestNaNAndInfinityHandling::test_nan_inf_activity_rejection[nan] PASSED [ 23%]
+tests/test_boundary_and_negative.py::TestNaNAndInfinityHandling::test_nan_inf_activity_rejection[inf] PASSED [ 30%]
+tests/test_boundary_and_negative.py::TestNaNAndInfinityHandling::test_nan_inf_activity_rejection[-inf] PASSED [ 38%]
+tests/test_boundary_and_negative.py::TestMissingAndEmptyInputs::test_tier3_missing_c1_rejected[None] PASSED [ 46%]
+tests/test_boundary_and_negative.py::TestMissingAndEmptyInputs::test_tier3_missing_c1_rejected[] PASSED [ 53%]
+tests/test_boundary_and_negative.py::TestMissingAndEmptyInputs::test_tier3_missing_c1_rejected[-] PASSED [ 61%]
+tests/test_boundary_and_negative.py::TestMissingAndEmptyInputs::test_tier3_missing_c1_rejected[ ] PASSED [ 69%]
+tests/test_boundary_and_negative.py::TestMissingAndEmptyInputs::test_non_numeric_string_quantity_rejected PASSED [ 76%]
+tests/test_boundary_and_negative.py::TestExtremeMagnitudesAndThermodynamicBoundaries::test_ultra_small_quantity PASSED [ 84%]
+tests/test_boundary_and_negative.py::TestExtremeMagnitudesAndThermodynamicBoundaries::test_ultra_large_quantity PASSED [ 92%]
+tests/test_boundary_and_negative.py::TestExtremeMagnitudesAndThermodynamicBoundaries::test_high_pressure_normalization PASSED [100%]
+
+============================= 13 passed in 0.57s ==============================
+

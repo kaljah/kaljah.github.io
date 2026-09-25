@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Tables: ['alembic_version', 'users', 'goals', 'base_year', 'mitigation_records', 'scope3_data', 'reporting_metadata', 'methane_source_types', 'system_settings', 'facilities', 'custom_factors', 'activity_log', 'base_year_recalculations', 'notifications', 'sbti_targets', 'emissions', 'production_data', 'emission_sources', 'scope2_emissions', 'scope3_emissions', 'mitigation_projects', 'cbam_product_exports', 'ogmp_surveys', 'level_upgrade_logs']
+Columns in users: ['id', 'fullName', 'orgName', 'password_hash', 'sector', 'email', 'jobTitle', 'department', 'phone', 'location', 'bio', 'profilePic', 'consolidationApproach', 'role', 'status', 'password_updated_at', 'last_login', 'preferences', 'created_at']
+Columns in facilities: ['id', 'name', 'location', 'description', 'boundary_notes', 'boundary_type', 'boundary_detail', 'activity', 'division', 'region', 'field', 'code', 'external_id', 'segment', 'operator_status', 'country', 'ogmp_membership_year', 'reconciliation_threshold', 'latitude', 'longitude', 'created_by', 'updated_at', 'created_at']
+Columns in emission_sources: ['id', 'facility_id', 'name', 'type', 'equipment_id', 'fuel_type', 'design_capacity', 'installation_date', 'status', 'description', 'activity', 'division', 'region', 'field', 'code', 'external_id', 'created_by', 'updated_at', 'created_at']
+

@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\utils\ModernReportGenerator.js:1591:  let co2Total = 0,
+  new\client\src\utils\ModernReportGenerator.js:1592:    ch4Total = 0,
+  new\client\src\utils\ModernReportGenerator.js:1593:    n2oTotal = 0;
+  new\client\src\utils\ModernReportGenerator.js:1594:  let scope1Total = 0,
+> new\client\src\utils\ModernReportGenerator.js:1638:      co2Total += tVal;
+  new\client\src\utils\ModernReportGenerator.js:1639:    } else {
+> new\client\src\utils\ModernReportGenerator.js:1640:      co2Total += co2Val;
+  new\client\src\utils\ModernReportGenerator.js:1641:      ch4Total += ch4Val;
+  new\client\src\utils\ModernReportGenerator.js:1642:      n2oTotal += n2oVal;
+  new\client\src\utils\ModernReportGenerator.js:1643:    }
+> new\client\src\utils\ModernReportGenerator.js:1754:    co2Total,
+  new\client\src\utils\ModernReportGenerator.js:1755:    ch4Total,
+  new\client\src\utils\ModernReportGenerator.js:1756:    n2oTotal,
+  new\client\src\utils\ModernReportGenerator.js:1757:    scope1Total,
+
+
+

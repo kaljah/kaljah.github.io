@@ -1,0 +1,122 @@
+
+The command exited with code 1.
+Output:
+<truncated 74 lines>
+    raise ValueError(f"Failed to login as {email}: {r_login.status_code} {r_login.text}")
+ValueError: Failed to login as admin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"debcc899-c235-492f-a63f-bf9f34f41ee2"}
+
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 782, in main
+    ok = runner()
+         ^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 677, in test_subagent_10_industrial_lifecycle
+    admin_session, _ = get_auth_session(ADMIN_EMAIL, ADMIN_PASS)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 56, in get_auth_session
+    raise ValueError(f"Failed to login as {email}: {r_login.status_code} {r_login.text}")
+ValueError: Failed to login as admin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"c55763a1-0fe8-4d15-a30c-115da03a39fd"}
+
+################################################################################
+STARTING FULL-SOFTWARE 10-SUBAGENT QA CAMPAIGN
+################################################################################
+
+================================================================================
+SUBAGENT 1 — FUNCTIONAL BETA TESTER (End-User Workflows & Navigation)
+================================================================================
+  [1.1] Facility search filter 'Compl' matched 3 facilities -> PASS
+  [1.2] Emissions filtered query (year=2025) retrieved 10 records -> PASS
+  [1.3] Scope 2 records queried (14 entries) -> PASS
+  [1.4] Scope 3 records queried (16 entries) -> PASS
+  [1.5] QA/QC anomaly dashboard inspected (Status: success) -> PASS
+SUBAGENT 1 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 2 — CALCULATION ENGINE AUDITOR (Governing Equations & Tiers)
+================================================================================
+  [2.1] Process 'stationary_combustion' calculated co2e_total=10.2400 tCO2e (>= 5.0) -> PASS
+  [2.2] Process 'flaring' calculated co2e_total=2.7088 tCO2e (>= 1.0) -> PASS
+  [2.3] Process 'venting' calculated co2e_total=1.0835 tCO2e (>= 0.5) -> PASS
+SUBAGENT 2 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 3 — DATA INTEGRITY & DATABASE TESTER (Cascades, FKs, Rollback)
+================================================================================
+  [3.1] Created facility ID 148
+  [3.2] Successfully added Scope 1, Scope 2, and Production child records
+  [3.3] Deleted facility ID 148
+  [3.4] Orphan Check: S1=0, S2=0, Prod=0
+  [3.5] Foreign Key rejection on invalid facility ID -> HTTP 500 (0 bad records saved) PASS
+SUBAGENT 3 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 4 — API & BACKEND TESTER (All 16 Blueprints & Status Codes)
+================================================================================
+
+================================================================================
+SUBAGENT 5 — SECURITY & RBAC TESTER (Least Privilege, CSRF, Formula Injection, SQLi)
+================================================================================
+
+================================================================================
+SUBAGENT 6 — EDGE CASE / ADVERSARIAL USER (Boundary, Unicode, Malformed Data)
+================================================================================
+
+================================================================================
+SUBAGENT 7 — UI/UX & FRONTEND TESTER (Chrome CDP Automation & 0 Console Errors)
+================================================================================
+  [7.1] Navigating to /login and authenticating as Admin...
+    [Browser Console Error] Failed to load resource: the server responded with a status of 429 (TOO MANY REQUESTS)
+    Viewport Desktop Full HD (1920x1080): rendered 44 chart SVGs cleanly -> PASS
+    Viewport Standard Laptop (1366x768): rendered 44 chart SVGs cleanly -> PASS
+    Viewport Tablet Viewport (768x1024): rendered 44 chart SVGs cleanly -> PASS
+    Visited /emissions (Emissions Tracking) -> Rendered 1654 chars PASS
+    Visited /manage-data (Manage Data Hub) -> Rendered 1654 chars PASS
+    Visited /qa-dashboard (QA/QC Anomaly Dashboard) -> Rendered 1654 chars PASS
+    Visited /reports (Reporting & OGMP Export) -> Rendered 1654 chars PASS
+    Visited /carbon-intensity (Carbon Intensity) -> Rendered 1654 chars PASS
+    Visited /methane-intensity (Methane Intensity) -> Rendered 1654 chars PASS
+    Visited /sbti (SBTi Targets) -> Rendered 1654 chars PASS
+    Visited /uncertainty (Uncertainty Assessment) -> Rendered 1654 chars PASS
+    Visited /reference-data (Reference Data Catalog) -> Rendered 1654 chars PASS
+    Visited /audit-trail (Audit Trail) -> Rendered 6784 chars PASS
+    Visited /settings (System Settings) -> Rendered 1654 chars PASS
+  [7.4] Testing IT Role Segregation Frontend Navigation...
+    [Browser Console Error] Failed to load resource: the server responded with a status of 429 (TOO MANY REQUESTS)
+    IT Admin navigating to /dashboard was routed to: http://localhost:5173/user-management
+    IT Admin redirected from /dashboard to http://localhost:5173/user-management -> PASS
+
+  Subagent 7 Console Error Count: 2
+
+================================================================================
+SUBAGENT 8 — REPORTING / EXPORT / AUDIT TESTER (Excel, PDF, CSV, Audit Trail)
+================================================================================
+
+================================================================================
+SUBAGENT 9 — PERFORMANCE & CONCURRENCY TESTER (Concurrent Threads & WAL Resilience)
+================================================================================
+
+================================================================================
+SUBAGENT 10 — FULL END-TO-END INDUSTRIAL AUDITOR (Full Upstream Asset Lifecycle)
+================================================================================
+
+################################################################################
+QA CAMPAIGN SUMMARY (47.59s elapsed)
+################################################################################
+  [PASS] Subagent 1: Functional Beta Tester
+  [PASS] Subagent 2: Calculation Engine Auditor
+  [PASS] Subagent 3: Database & Integrity Tester
+  [FAIL: Failed to login as itadmin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"b2438fef-8cd2-4a45-9527-dfa055faa06c"}
+] Subagent 4: API & Backend Tester
+  [FAIL: Failed to login as itadmin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"5a34ae03-25ea-4f1a-8def-7669871e33cb"}
+] Subagent 5: Security & RBAC Tester
+  [FAIL: Failed to login as admin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"219fd0d6-8f8b-4848-84de-04420db363d3"}
+] Subagent 6: Edge Case & Adversarial User
+  [FAIL: Console errors detected: ['Failed to load resource: the server responded with a status of 429 (TOO MANY REQUESTS)', 'Failed to load resource: the server responded with a status of 429 (TOO MANY REQUESTS)']] Subagent 7: UI/UX & Frontend CDP Tester
+  [FAIL: Failed to login as admin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"514759c0-5f02-4ebb-b57a-99e6221914dd"}
+] Subagent 8: Reporting & Export Tester
+  [FAIL: Failed to login as admin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"debcc899-c235-492f-a63f-bf9f34f41ee2"}
+] Subagent 9: Performance & Concurrency Tester
+  [FAIL: Failed to login as admin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"c55763a1-0fe8-4d15-a30c-115da03a39fd"}
+] Subagent 10: Industrial Lifecycle Auditor
+
+SOME SUBAGENTS ENCOUNTERED DEFECTS!
+

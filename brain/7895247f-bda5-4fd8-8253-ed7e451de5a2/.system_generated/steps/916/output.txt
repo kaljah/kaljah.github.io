@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['id', 'facility_id', 'month', 'year', 'oil_amount', 'gas_amount', 'unit', 'oil_unit', 'gas_unit', 'gross_gas_mmsm3', 'injected_gas_mmsm3', 'gas_without_injected_mmsm3', 'crude_oil_mmboe', 'condensate_mmboe', 'lpg_mmboe', 'ngl_mmboe', 'total_production_mmboe', 'total_production_no_injected_mmboe', 'saleable_production_mmboe', 'fuel_gas_export_mmsm3', 'activity', 'division', 'region', 'field', 'created_by', 'updated_at', 'created_at']
+

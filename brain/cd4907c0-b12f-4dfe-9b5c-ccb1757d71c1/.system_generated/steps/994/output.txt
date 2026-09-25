@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -473,7 +473,7 @@
+   };
+ 
+   useEffect(() => {
+-    if (["it_admin", "it"].includes(user?.role)) fetchData();
++    if (["it_admin", "it_manager", "it"].includes(user?.role)) fetchData();
+   }, [user]);
+ 
+   const handleOpenModal = (userToEdit = null) => {
+@@ -488,6 +488,7 @@
+         jobTitle: userToEdit.jobTitle || "",
+         role: userToEdit.role || "user",
+         location: userToEdit.location || "",
++        status: userToEdit.status || "active",
+         password: "",
+       });
+     } else {
+@@ -500,6 +500,7 @@
+         jobTitle: "",
+         role: "user",
+         location: regions[0] || "",
++        status: "active",
+         password: "",
+       });
+     }
+@@ -532,6 +532,7 @@
+           jobTitle: (formData.jobTitle || "").trim(),
+           role: formData.role,
+           location: formData.location,
++          status: formData.status || "active",
+         };
+         const res = await api.put(`/auth/users/${editingUser.id}`, payload);
+         const updated = res.data?.user;
+@@ -550,6 +550,7 @@
+                     jobTitle: payload.jobTitle,
+                     role: formData.role,
+                     location: formData.location,
++                    status: payload.status,
+                   }
+                 : u,
+             ),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

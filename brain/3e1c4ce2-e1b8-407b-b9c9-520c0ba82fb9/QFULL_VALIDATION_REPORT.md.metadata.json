@@ -1,0 +1,5 @@
+{
+  "summary":  "Complete QFULL end-to-end validation report: 131/131 tests pass across 4 test files covering all process types, all calculation tiers, all unit conversions, boundary conditions, and OAT sensitivity. Every formula independently verified against API Compendium 2021 reference values.",
+  "updatedAt":  "2026-09-21T09:56:19.506320500Z",
+  "userFacing":  true
+}

@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+system_settings 0
+methane_source_types 0
+facilities 0
+base_year 0
+

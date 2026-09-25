@@ -1,0 +1,48 @@
+
+The command exited with code 1.
+Output:
+At line:15 char:59
++     'actual': \"Role 'viewer' is not in VALID_ROLES (admin, it, it_ad ...
++                                                           ~
+Missing argument in parameter list.
+At line:207 char:1
++ })
++ ~
+Unexpected token '}' in expression or statement.
+At line:207 char:2
++ })
++  ~
+Unexpected token ')' in expression or statement.
+At line:211 char:9
++     'id': 'BUG-019',
++         ~
+Unexpected token ':' in expression or statement.
+At line:223 char:9
++     'id': 'BUG-020',
++         ~
+Unexpected token ':' in expression or statement.
+At line:234 char:9
++     'id': 'BUG-021',
++         ~
+Unexpected token ':' in expression or statement.
+At line:245 char:9
++     'id': 'BUG-022',
++         ~
+Unexpected token ':' in expression or statement.
+At line:258 char:22
++ print(json.dumps(bugs, indent=2))
++                      ~
+Missing argument in parameter list.
+At line:259 char:21
++ print('TOTAL_BUGS:', len(bugs))
++                     ~
+Missing expression after ','.
+At line:259 char:22
++ print('TOTAL_BUGS:', len(bugs))
++                      ~~~
+Unexpected token 'len' in expression or statement.
+Not all parse errors were reported.  Correct the reported errors and try again.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingArgument
+ 
+

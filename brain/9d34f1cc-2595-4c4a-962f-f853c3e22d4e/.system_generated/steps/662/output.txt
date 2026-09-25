@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -89,6 +89,11 @@
+         f_type_str in ["liquids", "liquid"]
+         or any(k in f_type_str for k in ["diesel", "gasoil", "gasoline", "oil", "petroleum", "kerosene", "jet"])
+     )
++    is_solid_fuel = (
++        f_type_str in ["solids", "solid"]
++        or any(k in f_type_str for k in ["coal", "coke", "lignite", "anthracite", "bituminous", "peat", "wood", "biomass", "solid"])
++        or a_unit in ["tonne", "tonnes", "metric_ton", "metric_tons", "mt", "t", "ton", "tons", "short_ton", "short_tons", "us_ton", "kg", "kgs", "kilogram", "kilograms", "lb", "lbs", "pound", "pounds"]
++    )
+     if "mmbtu" in factor_denom or "mm_btu" in factor_denom:
+         if a_unit in ["mmbtu", "mm_btu"]:
+             return val
+@@ -95,6 +95,20 @@
+             return val * 0.947817
+         if a_unit in ["therm", "therms"]:
+             return val * 0.1
++        if is_solid_fuel:
++            # Solid fuel HHV: catalog has kBtu/short ton (e.g. 24930, 25090) or MMBtu/ton
++            hhv_val = float(hhv) if hhv else 26000.0
++            mmbtu_per_ton = (hhv_val / 1000.0) if hhv_val > 1000 else hhv_val
++            # 1 metric tonne = 1.10231 short tons
++            if a_unit in ["tonne", "tonnes", "metric_ton", "metric_tons", "mt", "t"]:
++                return val * (mmbtu_per_ton * 1.10231)
++            if a_unit in ["short_ton", "short_tons", "ton", "tons", "us_ton"]:
++                return val * mmbtu_per_ton
++            if a_unit in ["kg", "kgs", "kilogram", "kilograms"]:
++                return val * ((mmbtu_per_ton * 1.10231) / 1000.0)
++            if a_unit in ["lb", "lbs", "pound", "pounds"]:
++                return val * (mmbtu_per_ton / 2000.0)
++            return val * (mmbtu_per_ton * 1.10231)
+         if a_unit in ["scf", "cf", "ft3"]:
+             return val * ((hhv or 1020.0) / 1_000_000.0)
+         if a_unit in ["m3", "cubic_meters", "m³"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

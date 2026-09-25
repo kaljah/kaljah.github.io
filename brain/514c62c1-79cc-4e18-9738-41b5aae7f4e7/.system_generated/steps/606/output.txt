@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId CommandLine    CreationDate        
+--------- -----------    ------------        
+    14444 python  app.py 9/19/2026 5:00:05 PM
+
+
+

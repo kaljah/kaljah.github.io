@@ -1,0 +1,83 @@
+
+The command exited with code 1.
+Output:
+<truncated 867 lines>
+[2026-09-23 16:20:38,160] INFO in app: GET /api/auth/me 200 [0.000s] [ReqID: 151d0834-b769-431d-b05b-fa7fd7fb3fb4]
+[2026-09-23 16:20:38,190] INFO in app: POST /api/auth/login 401 [0.019s] [ReqID: cedb21b0-08ed-49bf-a016-654dc51a0ea5]
+[2026-09-23 16:20:38,193] INFO in app: GET /api/auth/me 200 [0.000s] [ReqID: a629d354-b3b2-4fcc-9d74-6cd9b2414738]
+[2026-09-23 16:20:38,490] INFO in app: POST /api/auth/login 200 [0.323s] [ReqID: a7aa4ca9-8f22-4465-a396-0fa93f21bda2]
+[2026-09-23 16:20:38,504] INFO in app: POST /api/auth/login 200 [0.363s] [ReqID: 2f1273c4-1f89-4a89-9821-33b82d6f5fda]
+[2026-09-23 16:20:38,513] INFO in app: GET /api/auth/me 200 [0.014s] [ReqID: 705dcddb-8f16-4458-bd55-1a33f192303e]
+[2026-09-23 16:20:38,523] INFO in app: GET /api/auth/me 200 [0.014s] [ReqID: b9692c55-8b51-4d7b-825c-f1259bb5cee9]
+[2026-09-23 16:20:38,528] INFO in app: POST /api/auth/login 200 [0.362s] [ReqID: 04c507b1-b599-4378-964f-7b763c28993a]
+[2026-09-23 16:20:38,539] INFO in app: POST /api/auth/login 200 [0.343s] [ReqID: 1f2b9587-32c4-44f0-8d2a-4dac96233d15]
+[2026-09-23 16:20:38,540] INFO in app: GET /api/auth/me 200 [0.007s] [ReqID: 1ce56e5f-42b5-4734-a70c-0500d38faf98]
+[2026-09-23 16:20:38,547] INFO in app: GET /api/auth/me 200 [0.004s] [ReqID: 3024414c-e664-414a-a1b1-d32edc7c5b55]
+[2026-09-23 16:20:38,561] INFO in app: POST /api/auth/login 200 [0.413s] [ReqID: 8490abb2-a464-4230-83ec-7d4a5f767d66]
+[2026-09-23 16:20:38,576] INFO in app: POST /api/auth/login 200 [0.348s] [ReqID: bff6f424-3ffd-4c78-9d31-ab1016292aeb]
+[2026-09-23 16:20:38,587] INFO in app: GET /api/auth/me 200 [0.018s] [ReqID: 37cb8489-119e-47d6-9600-2a2aa0d89ca5]
+[2026-09-23 16:20:38,594] WARNING in auth: Login commit warning under concurrency: (sqlite3.InterfaceError) bad parameter or other API misuse
+[SQL: UPDATE users SET last_login=? WHERE users.id = ?]
+[parameters: ('2026-09-23 14:20:38.589027', 1)]
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2026-09-23 16:20:38,596] INFO in app: POST /api/auth/login 200 [0.451s] [ReqID: 84d65870-c2a0-485f-97be-6a891d38df4b]
+[2026-09-23 16:20:38,605] INFO in app: GET /api/auth/me 200 [0.026s] [ReqID: 21c4f692-71a3-4309-8aea-f4ca9b26542f]
+[2026-09-23 16:20:38,608] INFO in app: POST /api/auth/login 200 [0.445s] [ReqID: c77733e9-a74a-48c5-bd26-d432559e14b0]
+[2026-09-23 16:20:38,616] INFO in app: POST /api/auth/login 200 [0.459s] [ReqID: 92b9cea0-381a-4006-80a1-530770a709df]
+[2026-09-23 16:20:38,624] INFO in app: GET /api/auth/me 200 [0.023s] [ReqID: d64b13c5-a4a6-43cd-8321-9c9e23c4a08d]
+[2026-09-23 16:20:38,632] INFO in app: GET /api/auth/me 200 [0.018s] [ReqID: 2d8cfb6d-1227-4d16-a57c-ad9695542518]
+[2026-09-23 16:20:38,633] INFO in app: GET /api/auth/me 200 [0.014s] [ReqID: 5124e144-5bf3-4745-9302-bd0dec8c3aa8]
+[2026-09-23 16:20:38,703] INFO in app: POST /api/auth/login 200 [0.423s] [ReqID: f7c21bf3-ecfc-46f0-b188-e228a827e12f]
+[2026-09-23 16:20:38,710] INFO in app: GET /api/auth/me 200 [0.005s] [ReqID: c8801a88-d3d4-4142-a0ee-b34cc6092600]
+[2026-09-23 16:20:38,719] INFO in app: POST /api/auth/login 200 [0.352s] [ReqID: a0956d6a-f599-4339-9813-18b3dcacad4b]
+[2026-09-23 16:20:38,725] INFO in app: GET /api/auth/me 200 [0.003s] [ReqID: f3102368-641d-442c-8bf8-264d216b4192]
+[2026-09-23 16:20:38,744] INFO in app: POST /api/auth/login 200 [0.251s] [ReqID: af43ba5a-322e-409b-9f05-6b77a1986c41]
+[2026-09-23 16:20:38,750] INFO in app: GET /api/auth/me 200 [0.003s] [ReqID: fed2b703-e88b-4b5b-af78-f1c0ce27a8b4]
+[2026-09-23 16:20:38,754] INFO in app: POST /api/auth/login 200 [0.233s] [ReqID: f12032ed-c3e0-44c8-88c5-00a504a1d3d0]
+[2026-09-23 16:20:38,758] INFO in app: GET /api/auth/me 200 [0.002s] [ReqID: bd4228e0-da05-4f01-b3c8-99000201baea]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:183 POST /api/auth/login 401 [0.001s] [ReqID: 9310848c-d88f-4f74-b722-c5acc9b18e73]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.000s] [ReqID: 151d0834-b769-431d-b05b-fa7fd7fb3fb4]
+INFO     app:app.py:183 POST /api/auth/login 401 [0.019s] [ReqID: cedb21b0-08ed-49bf-a016-654dc51a0ea5]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.000s] [ReqID: a629d354-b3b2-4fcc-9d74-6cd9b2414738]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.323s] [ReqID: a7aa4ca9-8f22-4465-a396-0fa93f21bda2]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.363s] [ReqID: 2f1273c4-1f89-4a89-9821-33b82d6f5fda]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.014s] [ReqID: 705dcddb-8f16-4458-bd55-1a33f192303e]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.014s] [ReqID: b9692c55-8b51-4d7b-825c-f1259bb5cee9]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.362s] [ReqID: 04c507b1-b599-4378-964f-7b763c28993a]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.343s] [ReqID: 1f2b9587-32c4-44f0-8d2a-4dac96233d15]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.007s] [ReqID: 1ce56e5f-42b5-4734-a70c-0500d38faf98]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.004s] [ReqID: 3024414c-e664-414a-a1b1-d32edc7c5b55]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.413s] [ReqID: 8490abb2-a464-4230-83ec-7d4a5f767d66]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.348s] [ReqID: bff6f424-3ffd-4c78-9d31-ab1016292aeb]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.018s] [ReqID: 37cb8489-119e-47d6-9600-2a2aa0d89ca5]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.451s] [ReqID: 84d65870-c2a0-485f-97be-6a891d38df4b]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.026s] [ReqID: 21c4f692-71a3-4309-8aea-f4ca9b26542f]
+WARNING  app:auth.py:392 Login commit warning under concurrency: (sqlite3.InterfaceError) bad parameter or other API misuse
+[SQL: UPDATE users SET last_login=? WHERE users.id = ?]
+[parameters: ('2026-09-23 14:20:38.589027', 1)]
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+INFO     app:app.py:183 POST /api/auth/login 200 [0.445s] [ReqID: c77733e9-a74a-48c5-bd26-d432559e14b0]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.459s] [ReqID: 92b9cea0-381a-4006-80a1-530770a709df]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.023s] [ReqID: d64b13c5-a4a6-43cd-8321-9c9e23c4a08d]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.018s] [ReqID: 2d8cfb6d-1227-4d16-a57c-ad9695542518]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.014s] [ReqID: 5124e144-5bf3-4745-9302-bd0dec8c3aa8]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.423s] [ReqID: f7c21bf3-ecfc-46f0-b188-e228a827e12f]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.005s] [ReqID: c8801a88-d3d4-4142-a0ee-b34cc6092600]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.352s] [ReqID: a0956d6a-f599-4339-9813-18b3dcacad4b]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.003s] [ReqID: f3102368-641d-442c-8bf8-264d216b4192]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.251s] [ReqID: af43ba5a-322e-409b-9f05-6b77a1986c41]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.003s] [ReqID: fed2b703-e88b-4b5b-af78-f1c0ce27a8b4]
+INFO     app:app.py:183 POST /api/auth/login 200 [0.233s] [ReqID: f12032ed-c3e0-44c8-88c5-00a504a1d3d0]
+INFO     app:app.py:183 GET /api/auth/me 200 [0.002s] [ReqID: bd4228e0-da05-4f01-b3c8-99000201baea]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation
+======================== 2 failed, 1 warning in 3.49s =========================
+

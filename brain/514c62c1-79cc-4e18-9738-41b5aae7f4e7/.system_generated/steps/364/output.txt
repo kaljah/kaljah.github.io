@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\index.css","LineNumber":182,"LineContent":".status-pill.pending, .status-pill.draft, .status-pill.warning {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":97,"LineContent":"  const [rawPending, setRawPending] = useState({ scope1: [], scope2: [], scope3: [], total_pending: 0 });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":125,"LineContent":"  // Fetch ALL pending data without exception"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":126,"LineContent":"  const fetchAllPendingData = useCallback(async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":129,"LineContent":"      const res = await api.get('/emissions/pending?all=true');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":130,"LineContent":"      setRawPending(res.data);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":132,"LineContent":"      console.error(\"Failed to load all pending records\", err);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":133,"LineContent":"      toast.error(\"Failed to load pending records for wizard\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":141,"LineContent":"      fetchAllPendingData();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":144,"LineContent":"  }, [isOpen, fetchAllPendingData]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":162,"LineContent":"    (rawPending.scope1 || []).forEach(r =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":180,"LineContent":"    (rawPending.scope2 || []).forEach(r =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":198,"LineContent":"    (rawPending.scope3 || []).forEach(r =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":217,"LineContent":"  }, [rawPending, facilities]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":323,"LineContent":"      fetchAllPendingData();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":350,"LineContent":"      fetchAllPendingData();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":365,"LineContent":"      : `Approve ALL ${targetCount} pending records in the system across all scopes?`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":381,"LineContent":"            toast.success(`Approved all ${res.data.approved_count} pending records`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":398,"LineContent":"          fetchAllPendingData();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":446,"LineContent":"        toast.success(`Purged all ${res.data.deleted_count} pending records`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":465,"LineContent":"      fetchAllPendingData();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":485,"LineContent":"              \u003ch2\u003ePending Data Audit \u0026 Verification Wizard\u003c/h2\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":493,"LineContent":"              onClick={fetchAllPendingData}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":548,"LineContent":"              title=\"Verify all pending records across all scopes without exception\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":557,"LineContent":"              title=\"Delete all pending records with audit justification\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":723,"LineContent":"              \u003cp style={{ fontWeight: 600 }}\u003eLoading 100% of pending records across all scopes...\u003c/p\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":730,"LineContent":"              \u003ch3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)' }}\u003eAll Pending Data Verified\u003c/h3\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":897,"LineContent":"                    ? `Delete ALL ${stats.totalCount} Pending Records`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":529,"LineContent":"                    ? \"Pending Production\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":564,"LineContent":"                    ? \"Pending Production\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":576,"LineContent":"                      ? \"Pending\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":120,"LineContent":"                                        {syncResult.synced_records} records have been imported and are now marked as \"Pending\" in the Manage Data view."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":398,"LineContent":"   Pending Review Maker-Checker UI Refinements"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":401,"LineContent":".pending-review-panel {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":409,"LineContent":".pending-kpi-grid {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":416,"LineContent":".pending-kpi-card {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":429,"LineContent":".pending-kpi-card:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":435,"LineContent":".pending-kpi-icon-wrap {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":445,"LineContent":".pending-kpi-info {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":452,"LineContent":".pending-kpi-label {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":460,"LineContent":".pending-kpi-val {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":467,"LineContent":".pending-kpi-sub {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":476,"LineContent":".pending-toolbar {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":490,"LineContent":".pending-segmented-tabs {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":498,"LineContent":".pending-tab-btn {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":513,"LineContent":".pending-tab-btn:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":518,"LineContent":".pending-tab-btn.active {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":525,"LineContent":".pending-count-chip {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":539,"LineContent":".pending-tab-btn.active .pending-count-chip {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.css","LineNumber":544,"LineContent":".pending-search-box {"}
+(...236 more results not shown)

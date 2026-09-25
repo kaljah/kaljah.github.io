@@ -1,0 +1,48 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\UploadProgress.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -431,9 +431,39 @@
+           )}
+ 
+           <div className="up-footer-actions">
+-            <button className="up-btn-primary" onClick={onComplete}>
+-              View Pending Review
+-            </button>
++            {isReviewer ? (
++              <>
++                <button
++                  type="button"
++                  className="up-btn-ghost"
++                  onClick={() => {
++                    if (onComplete) onComplete();
++                  }}
++                >
++                  Close
++                </button>
++                <button
++                  type="button"
++                  className="up-btn-primary"
++                  onClick={() => {
++                    if (onComplete) onComplete();
++                    navigate("/manage-data", { state: { tab: "pending" } });
++                  }}
++                >
++                  Review Pending Records →
++                </button>
++              </>
++            ) : (
++              <button
++                type="button"
++                className="up-btn-primary"
++                onClick={() => {
++                  if (onComplete) onComplete();
++                }}
++              >
++                Close & View Inventory
++              </button>
++            )}
+           </div>
+         </div>
+       )}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Successfully generated publication report at: c:\Users\samsung\Desktop\H2\Groupement_Berkine_2025_Annual_GHG_Report.pdf (264535 bytes)
+Successfully generated publication report at: C:\Users\samsung\.gemini\antigravity\brain\7895247f-bda5-4fd8-8253-ed7e451de5a2\Groupement_Berkine_2025_Annual_GHG_Report.pdf (264535 bytes)
+

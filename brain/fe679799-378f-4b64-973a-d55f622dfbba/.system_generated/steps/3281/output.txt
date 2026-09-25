@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -144,9 +144,13 @@
+     print("\nAPI Blueprint Coverage Results:")
+     passed_count = sum(1 for _, ok, _ in results if ok)
+     for endpoint, ok, status in results:
+-        mark = "✓ PASS" if ok else "✗ FAIL"
++        mark = "PASS" if ok else "FAIL"
+         print(f"  [{mark}] {endpoint} (HTTP {status})")
+ 
++    for endpoint, ok, status in results:
++        if not ok:
++            print(f"  FAILED ENDPOINT: {endpoint} returned HTTP {status}")
++
+     assert passed_count == len(results), f"Some blueprints failed: {results}"
+     print(f"\nAll {len(results)} primary blueprint routes verified successfully!")
+     return True
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

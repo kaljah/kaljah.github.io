@@ -1,0 +1,137 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1967: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000001AC5C7D23C0>
+cursor = <sqlite3.Cursor object at 0x000001AC5F2AD5C0>
+statement = 'SELECT users.id AS users_id, users."fullName" AS "users_fullName", users."orgName" AS "users_orgName", users.password...ces AS users_preferences, users.created_at AS users_created_at \nFROM users \nWHERE users.email = ?\n LIMIT ? OFFSET ?'
+parameters = ('admin_audit@test.com', 1, 0)
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x000001AC5F381070>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlite3.OperationalError: no such table: users
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+    @pytest.fixture
+    def admin_user():
+        with app.app_context():
+>           user = User.query.filter_by(email="admin_audit@test.com").first()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_audit.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\query.py:2728: in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\query.py:2827: in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:2351: in execute
+    return self._execute_internal(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:2236: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\context.py:293: in orm_execute_statement
+    result = conn.execute(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1418: in execute
+    return meth(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py:515: in _execute_on_connection
+    return connection._execute_clauseelement(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1640: in _execute_clauseelement
+    ret = self._execute_context(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1846: in _execute_context
+    return self._exec_single_context(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:2353: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000001AC5C7D23C0>
+cursor = <sqlite3.Cursor object at 0x000001AC5F2AD5C0>
+statement = 'SELECT users.id AS users_id, users."fullName" AS "users_fullName", users."orgName" AS "users_orgName", users.password...ces AS users_preferences, users.created_at AS users_created_at \nFROM users \nWHERE users.email = ?\n LIMIT ? OFFSET ?'
+parameters = ('admin_audit@test.com', 1, 0)
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x000001AC5F381070>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users
+E       [SQL: SELECT users.id AS users_id, users."fullName" AS "users_fullName", users."orgName" AS "users_orgName", users.password_hash AS users_password_hash, users.sector AS users_sector, users.email AS users_email, users."jobTitle" AS "users_jobTitle", users.department AS users_department, users.phone AS users_phone, users.location AS users_location, users.bio AS users_bio, users."profilePic" AS "users_profilePic", users."consolidationApproach" AS "users_consolidationApproach", users.role AS users_role, users.status AS users_status, users.password_updated_at AS users_password_updated_at, users.last_login AS users_last_login, users.preferences AS users_preferences, users.created_at AS users_created_at 
+E       FROM users 
+E       WHERE users.email = ?
+E        LIMIT ? OFFSET ?]
+E       [parameters: ('admin_audit@test.com', 1, 0)]
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: OperationalError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_audit.py::test_audit_rbac_regular_user_forbidden - sqlalchem...
+ERROR tests/test_audit.py::test_audit_admin_and_it_admin_authorized - sqlalch...
+ERROR tests/test_audit.py::test_audit_search_and_filtering - sqlalchemy.exc.O...
+ERROR tests/test_audit.py::test_audit_entity_id_fallback - sqlalchemy.exc.Ope...
+ERROR tests/test_audit.py::test_audit_stats_endpoint - sqlalchemy.exc.Operati...
+ERROR tests/test_audit.py::test_audit_export_csv_and_formula_injection_defense
+ERROR tests/test_audit.py::test_audit_pagination_limits - sqlalchemy.exc.Oper...
+=================== 9 passed, 1 warning, 7 errors in 4.96s ====================
+

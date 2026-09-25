@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Scope2: 200
+Scope3: 200
+Production: 200
+Custom Factors: 200
+Notifications: 200
+Equity Shares: 200
+

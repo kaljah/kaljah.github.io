@@ -1,0 +1,25 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":1137,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":1144,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":1305,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":1312,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":1449,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":1456,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":1137,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":1144,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":1305,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":1312,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":1449,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":1456,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_scope1_form_engine.spec.js","LineNumber":129,"LineContent":"      // 1. Select Region (Facility)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_scope1_extended_scenarios.spec.js","LineNumber":627,"LineContent":"      // 1. Select Region / Facility"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":638,"LineContent":"                    label=\"Select Regions...\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2626,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2633,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2788,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2795,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3339,"LineContent":"                                                { value: '', label: 'Select Region' },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3346,"LineContent":"                                            placeholder=\"Select Region\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1267,"LineContent":"    { value: \"\", label: \"Select Region...\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1413,"LineContent":"                placeholder=\"Select Region...\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":338,"LineContent":"    { value: \"\", label: \"Select Region...\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":401,"LineContent":"                placeholder=\"Select Region...\""}

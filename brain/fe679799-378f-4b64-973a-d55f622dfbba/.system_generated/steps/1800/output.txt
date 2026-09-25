@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+===============================================================================================
+STARTING 100% EXHAUSTIVE BROWSER AUDIT FOR 5 REMAINING MODULES
+===============================================================================================
+Connected to Chrome Tab: Carbon Tech (http://localhost:5173/login)
+
+[Auth] Logging into Chrome browser as a@a...
+  [Auth Result] URL: http://localhost:5173/login | User: None
+  [ERROR] Failed to authenticate as admin (a@a)!
+

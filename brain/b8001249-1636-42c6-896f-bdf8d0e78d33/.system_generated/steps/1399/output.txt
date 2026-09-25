@@ -1,0 +1,36 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\emissions.py:3337:def delete_emission(id):
+  new\server\routes\emissions.py:3338:    user = get_current_user()
+  new\server\routes\emissions.py:3339:    if not user:
+  new\server\routes\emissions.py:3340:        return jsonify({"error": "Unauthorized"}), 401
+  new\server\routes\emissions.py:3341:
+  new\server\routes\emissions.py:3342:    record = Emission.query.filter_by(record_id=id).first() or db.session.get(
+  new\server\routes\emissions.py:3343:        Emission, int(id) if str(id).isdigit() else -1
+  new\server\routes\emissions.py:3344:    )
+  new\server\routes\emissions.py:3345:    if not record:
+  new\server\routes\emissions.py:3346:        return jsonify({"error": "Record not found"}), 404
+  new\server\routes\emissions.py:3347:    # SEC-03 FIX: IDOR - enforce ownership; admins may delete any record, users 
+can delete own records
+  new\server\routes\emissions.py:3348:    if user.role in ["auditor"]:
+  new\server\routes\emissions.py:3349:        return (
+  new\server\routes\emissions.py:3350:            jsonify({"error": "Forbidden: Read-only accounts cannot delete 
+emission records"}),
+  new\server\routes\emissions.py:3351:            403,
+  new\server\routes\emissions.py:3352:        )
+  new\server\routes\emissions.py:3353:
+  new\server\routes\emissions.py:3354:    if user.role not in ["admin", "superuser"]:
+  new\server\routes\emissions.py:3355:        if record.created_by != user.id:
+  new\server\routes\emissions.py:3356:            return (
+  new\server\routes\emissions.py:3357:                jsonify(
+  new\server\routes\emissions.py:3358:                    {"error": "Forbidden: You do not have permission to delete 
+records created by another user"}
+  new\server\routes\emissions.py:3359:                ),
+  new\server\routes\emissions.py:3360:                403,
+  new\server\routes\emissions.py:3361:            )
+  new\server\routes\emissions.py:3362:    else:
+
+
+

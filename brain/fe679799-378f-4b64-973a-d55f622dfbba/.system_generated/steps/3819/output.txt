@@ -1,0 +1,1 @@
+A1: (Recommended) Display an explicit 'Official Source' reference badge on each preset (e.g. 'IANOR NA 8110', 'CREG Décret 21-64', 'Sonatrach ISO 6976', 'API Compendium 2021').

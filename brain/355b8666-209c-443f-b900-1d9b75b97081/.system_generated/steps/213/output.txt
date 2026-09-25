@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"pathname":"/emissions","title":"Carbon Tech","hasSbtiHeading":["New Activity Entry"]}
+```

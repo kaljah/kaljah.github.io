@@ -1,0 +1,3 @@
+Successfully navigated to http://localhost:5173/carbon-intensity.
+## Pages
+1: http://localhost:5173/carbon-intensity [selected]

@@ -1,0 +1,169 @@
+
+The command exited with code 1.
+Output:
+<truncated 888 lines>
+        s3_map = {s3.facility_id: float(s3.total_co2e or 0) for s3 in s3_results}
+    
+        # Top-Down OGMP Surveys
+        ogmp_query = db.session.query(
+            OgmpSurvey.facility_id,
+            func.avg(OgmpSurvey.estimated_annual_tch4).label("total_top_down_tch4"),
+        ).join(Facility, OgmpSurvey.facility_id == Facility.id)
+        if allowed_fids is not None:
+            ogmp_query = ogmp_query.filter(OgmpSurvey.facility_id.in_(allowed_fids))
+        if year and year != "all":
+            ogmp_query = ogmp_query.filter(OgmpSurvey.year == int(year))
+        if facility_id and facility_id != "all":
+            ogmp_query = ogmp_query.filter(OgmpSurvey.facility_id == int(facility_id))
+        if segment and segment != "all":
+            ogmp_query = ogmp_query.filter(Facility.segment == segment)
+        if activity and activity != "all":
+            ogmp_query = ogmp_query.filter(Facility.activity == activity)
+        if division and division != "all":
+            ogmp_query = ogmp_query.filter(Facility.division == division)
+        ogmp_surveys = {
+            o.facility_id: float(o.total_top_down_tch4 or 0)
+            for o in ogmp_query.group_by(OgmpSurvey.facility_id).all()
+        }
+    
+        output = []
+        facilities = Facility.query.all()
+        fac_info = {f.id: f for f in facilities}
+        prod_details_map = {fid: d for fid, d in prod_results.items()}
+        all_fids = set(em_map.keys()) | set(prod_map.keys())
+    
+        for fid in all_fids:
+            ed = em_map.get(
+                fid,
+                {
+                    "total_co2e": 0,
+                    "total_co2": 0,
+                    "total_ch4": 0,
+                    "total_n2o": 0,
+                    "total_biogenic": 0,
+                    "total_flaring": 0,
+                    "total_flaring_vol": 0,
+                    "ch4_venting": 0,
+                    "ch4_fugitive": 0,
+                    "ch4_flaring": 0,
+                    "ch4_combustion": 0,
+                    "l3_emissions": 0,
+                    "l4_emissions": 0,
+                },
+            )
+            boe = prod_map.get(fid, 0)
+            prod_details = prod_details_map.get(
+                fid, {"total_oil": 0, "total_gas": 0, "total_gas_m3": 0}
+            )
+            gas_m3 = prod_details.get("total_gas_m3", 0)
+    
+            # Methane conversion: 1 tonne CH4 = 1000 kg. Density at std cond ~ 0.6785 kg/m3
+            ch4_vol_m3 = (ed["total_ch4"] * 1000.0) / 0.6785 if ed["total_ch4"] > 0 else 0.0
+            methane_loss_rate_pct = (
+                round((ch4_vol_m3 / gas_m3 * 100.0), 4) if gas_m3 > 0 else 0.0
+            )
+    
+            # Flaring Rate %
+            flaring_rate_pct = (
+                round((ed["total_flaring_vol"] / gas_m3 * 100.0), 4) if gas_m3 > 0 else 0.0
+            )
+    
+            # GWP 20-Year Horizon: dynamic resolution per active standard
+            gwp20_factors = get_active_gwp(horizon="20")
+            ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
+            n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
+            s1_gwp20 = (
+                ed["total_co2"]
+                + (ed["total_ch4"] * ch4_gwp20)
+                + (ed["total_n2o"] * n2o_gwp20)
+            )
+            s2_val = s2_map.get(fid, 0)
+            total_co2e_gwp20 = s1_gwp20 + s2_val
+    
+            # Intensities in kg/BOE
+            if boe > 0:
+                co2_int = (ed["total_co2e"] * 1000.0) / boe
+                co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe
+                scope1_int = ((ed["total_co2e"] - s2_val) * 1000.0) / boe
+                scope2_int = (s2_val * 1000.0) / boe
+                scope3_int = (s3_map.get(fid, 0) * 1000.0) / boe
+                ch4_int = (ed["total_ch4"] * 1000.0) / boe
+                flare_int = (ed["total_flaring"] * 1000.0) / boe
+                biogenic_int = (ed["total_biogenic"] * 1000.0) / boe
+            else:
+                co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = (
+                    flare_int
+                ) = biogenic_int = 0.0
+    
+            # EPA WEC (Waste Emissions Charge per 40 CFR Part 99 / IRA �136)
+            from routes.auth import _app_settings
+    
+            up_target = float(_app_settings.get("ogmp_upstream_target_pct", 0.20)) / 100.0
+            mid_target = float(_app_settings.get("ogmp_midstream_target_pct", 0.05)) / 100.0
+            fac = fac_info.get(fid)
+            segment = (fac.segment or "Upstream").lower() if fac else "upstream"
+            wec_threshold_pct = (
+                mid_target
+                if ("processing" in segment or "midstream" in segment or "lng" in segment)
+                else up_target
+            )
+            oil_bbl = prod_details.get("total_oil", 0)
+            if gas_m3 > 0:
+                allowed_ch4_tonnes = (gas_m3 * wec_threshold_pct * 0.6785) / 1000.0
+            elif oil_bbl > 0 and "upstream" in segment:
+                # 40 CFR 99.20(a)(2): 10 metric tons CH4 per million barrels of oil for assets with no gas sales
+                allowed_ch4_tonnes = (oil_bbl / 1_000_000.0) * 10.0
+            else:
+                allowed_ch4_tonnes = 0.0
+            excess_ch4_tonnes = max(0.0, ed["total_ch4"] - allowed_ch4_tonnes)
+    
+            # WEC Rate: $900/tonne in 2024, $1,200/tonne in 2025, $1,500/tonne in 2026+ (effective starting 2024)
+            yr_str = str(year) if year and year != "all" else str(datetime.utcnow().year)
+            yr_int = int(yr_str) if yr_str.isdigit() else datetime.utcnow().year
+            wec_fee_map = _app_settings.get("wec_fee_rates", {})
+    
+            if yr_int < 2024:
+                wec_rate = 0.0
+                excess_ch4_tonnes = 0.0
+                wec_fee_usd = 0.0
+                wec_status = "Not Applicable (Pre-2024)"
+            elif "downstream" in segment or "refining" in segment or "petrochem" in segment:
+                wec_rate = 0.0
+                excess_ch4_tonnes = 0.0
+                wec_fee_usd = 0.0
+                wec_status = "Exempt (Downstream)"
+            else:
+                wec_rate = float(
+                    wec_fee_map.get(
+                        yr_str,
+                        900.0 if yr_int == 2024 else (1200.0 if yr_int == 2025 else 1500.0),
+                    )
+                )
+                wec_fee_usd = round(excess_ch4_tonnes * wec_rate, 2)
+                wec_status = "Compliant" if excess_ch4_tonnes <= 0 else "Taxable Liability"
+    
+            # OGMP Level Distribution & Level Progression
+            total_s1 = ed["total_co2e"] - s2_val
+            l3_pct = (
+                round((ed["l3_emissions"] / total_s1 * 100.0), 1) if total_s1 > 0 else 0.0
+            )
+            l4_pct = (
+                round((ed["l4_emissions"] / total_s1 * 100.0), 1) if total_s1 > 0 else 0.0
+            )
+            # Invariant Zero (Decision D-02): OGMP Top-Down Survey Reconciliation & Zero Bottom-Up Edge Case
+>           if ed["total_ch4"] > 0 and top_down_tch4 > 0:
+                                       ^^^^^^^^^^^^^
+E           NameError: name 'top_down_tch4' is not defined
+
+routes\dashboard.py:1946: NameError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_audit_remediation.py::test_dashboard_intensity_mmscf_scaling
+FAILED tests/test_audit_remediation.py::test_dashboard_ogmp_target_status_segment_specific
+=================== 2 failed, 1 passed, 1 warning in 2.52s ====================
+

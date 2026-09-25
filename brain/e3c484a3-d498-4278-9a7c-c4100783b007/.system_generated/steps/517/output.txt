@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+CO2: 91.590976 total_co2e: 108.30921600000002
+

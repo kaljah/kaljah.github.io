@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":506,"LineContent":".division-group {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":513,"LineContent":".division-group-header {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":139,"LineContent":"      if (currentDivision \u0026\u0026 currentDivision !== 'all') params.append('division', currentDivision);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":159,"LineContent":"        division: currentDivision,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":247,"LineContent":"        division: currentDivision,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":306,"LineContent":"    let divisions = [{ value: \"all\", label: \"All Divisions\" }];"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":312,"LineContent":"    const divs = new Set(filtered.map((f) =\u003e f.division).filter(Boolean));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":313,"LineContent":"    divisions.push("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":318,"LineContent":"    return divisions;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":326,"LineContent":"        (currentDivision === \"all\" || f.division === currentDivision),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":175,"LineContent":"        division: currentDivision,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":474,"LineContent":"    let divisionsSet = new Set();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":480,"LineContent":"    filtered.forEach((r) =\u003e divisionsSet.add(r.division));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":483,"LineContent":"      ...Array.from(divisionsSet)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":494,"LineContent":"        (currentDivision === \"all\" || f.division === currentDivision),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":763,"LineContent":"      const div = item.division || \"Unknown\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":764,"LineContent":"      if (!hierarchy[act]) hierarchy[act] = { total: 0, divisions: {} };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":765,"LineContent":"      if (!hierarchy[act].divisions[div])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":766,"LineContent":"        hierarchy[act].divisions[div] = { total: 0, regions: [] };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":768,"LineContent":"      hierarchy[act].divisions[div].total += item.total_emissions;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":769,"LineContent":"      hierarchy[act].divisions[div].regions.push(item);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1427,"LineContent":"                        getHierarchicalData[opt.value].divisions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1429,"LineContent":"                        \u003cdiv key={div} className=\"division-group\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1430,"LineContent":"                          \u003cdiv className=\"division-group-header\"\u003e{div}\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1598,"LineContent":"                              Object.entries(actData.divisions).map("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":233,"LineContent":"      const division = (f.division || \"\").toLowerCase();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":238,"LineContent":"        division.includes(searchLower);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":946,"LineContent":"                        {fac.activity || fac.division || \"Facility\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":996,"LineContent":"                  placeholder=\"Search name, region, division...\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1214,"LineContent":"                              {fac.activity || fac.division || \"Industrial Asset\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1299,"LineContent":"                  {selectedFacility.activity || selectedFacility.division || \"Facility\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":119,"LineContent":"    // Derive available divisions for a given activity from the filtered facilities list"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":123,"LineContent":"            facilitiesList.filter(f =\u003e f.activity === activity).map(f =\u003e f.division).filter(Boolean)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":573,"LineContent":"        name: '', activity: '', division: '', field: '', location: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":586,"LineContent":"        activity: '', division: '', facility_id: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":593,"LineContent":"        activity: '', division: '', facility_id: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":599,"LineContent":"        activity: '', division: '', facility_id: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":607,"LineContent":"    division: \"\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":622,"LineContent":"        id: null, activity: '', division: '', facility_id: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":664,"LineContent":"    // Non-admin users: cascade-fill activity → division → region when unambiguous"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":673,"LineContent":"        // Step 2: unique divisions within that activity"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":675,"LineContent":"            ? [...new Set(facilities.filter(f =\u003e f.activity === autoActivity).map(f =\u003e f.division).filter(Boolean))]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":679,"LineContent":"        // Step 3: facilities matching the resolved activity + division"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":682,"LineContent":"            (!autoDivision || f.division === autoDivision)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":686,"LineContent":"        const autoFill = { activity: autoActivity, division: autoDivision, facility_id: autoFacilityId };"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":865,"LineContent":"        if (!facilityForm.name || !facilityForm.activity || !facilityForm.division) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":880,"LineContent":"                name: '', activity: '', division: '', field: '', location: '',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":993,"LineContent":"        id: null, activity: cbamForm.activity, division: cbamForm.division, facility_id: cbamForm.facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1041,"LineContent":"                id: null, activity: ogmpForm.activity, division: ogmpForm.division, facility_id: ogmpForm.facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1218,"LineContent":"        const matchesDivision = filterDivision ? f.division === filterDivision : true;"}
+(...63 more results not shown)

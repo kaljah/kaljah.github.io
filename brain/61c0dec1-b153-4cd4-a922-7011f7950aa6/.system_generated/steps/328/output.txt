@@ -1,0 +1,35 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":296,"LineContent":"                CustomFactor,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":335,"LineContent":"            custom_factors = CustomFactor.query.all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1516,"LineContent":"    from models import CustomFactor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1524,"LineContent":"    factor = CustomFactor("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":87,"LineContent":"        \"CustomFactor\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":247,"LineContent":"class CustomFactor(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrations\\versions\\2ef6f882b02c_add_ghg_uncertainties_to_customfactor.py","LineNumber":1,"LineContent":"\"\"\"Add GHG uncertainties to CustomFactor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":12,"LineContent":"    CustomFactor,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":468,"LineContent":"    custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2975,"LineContent":"        cf = db.session.get(CustomFactor, custom_factor_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2978,"LineContent":"            # Map CustomFactor to factor_data structure"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3401,"LineContent":"            cf = db.session.get(CustomFactor, cf_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3765,"LineContent":"                cf = db.session.get(CustomFactor, cf_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":3,"LineContent":"from models import CustomFactor, User"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":20,"LineContent":"    factors = CustomFactor.query.all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":89,"LineContent":"    factor = CustomFactor("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":122,"LineContent":"            entity=\"CustomFactor\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":139,"LineContent":"    factor = db.session.get(CustomFactor, factor_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":206,"LineContent":"            entity=\"CustomFactor\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":223,"LineContent":"    factor = db.session.get(CustomFactor, factor_id)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":255,"LineContent":"            entity=\"CustomFactor\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":298,"LineContent":"        factor = CustomFactor("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":332,"LineContent":"            entity=\"CustomFactor\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":5,"LineContent":"from models import Emission, Scope2Emission, Scope3Emission, ActivityLog, Facility, CustomFactor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":316,"LineContent":"            total_custom_factors = CustomFactor.query.count()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":10,"LineContent":"    CustomFactor,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":39,"LineContent":"            CustomFactor.query.filter_by(fuel_type=\"Special Test Fuel\").delete()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":158,"LineContent":"        CustomFactor.query.filter_by(name=\"My Factor\").delete()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":195,"LineContent":"        factor = CustomFactor.query.filter_by(name=\"My Factor\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":972,"LineContent":"    from models import CustomFactor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":974,"LineContent":"        cf = CustomFactor.query.filter_by(name=\"Test 5% Factor Audit\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":976,"LineContent":"            cf = CustomFactor("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":23,"LineContent":"    CustomFactor,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":453,"LineContent":"        cf = CustomFactor.query.filter_by(name=\"Regional Saharan Sweet Gas\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":455,"LineContent":"            cf = CustomFactor("}

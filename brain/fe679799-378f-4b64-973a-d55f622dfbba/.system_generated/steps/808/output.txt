@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+12: import CustomDropdown from "../components/CustomDropdown";
+649: <CustomDropdown
+657: <CustomDropdown
+665: <CustomDropdown
+673: <CustomDropdown
+681: <CustomDropdown
+705: <button
+718: onClick={() => setGwpHorizon("100")}
+722: <button
+735: onClick={() => setGwpHorizon("20")}
+746: <button
+748: onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
+755: <button
+757: onClick={() => navigate("/manage-data", { state: { tab: "goals" } })}
+901: <button
+904: onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
+975: <button
+978: onClick={() => navigate("/manage-data")}
+998: <button
+1001: onClick={() => navigate("/emissions")}
+1021: <button
+1024: onClick={() => navigate("/qa-dashboard")}
+1044: <button
+1047: onClick={() => navigate("/reports")}
+1071: <button
+1072: onClick={handleExportPDF}
+1231: <button
+1233: onClick={() => setIsCompareMode(!isCompareMode)}
+1359: <button
+1374: onClick={() => navigate("/sbti")}
+1418: onClick={() => setCategoricalCollapsed(!categoricalCollapsed)}
+1509: onClick={() =>
+1625: onClick={() => toggleActivity(act)}
+1643: onClick={(e) => {
+1747: <button
+1749: onClick={() =>
+

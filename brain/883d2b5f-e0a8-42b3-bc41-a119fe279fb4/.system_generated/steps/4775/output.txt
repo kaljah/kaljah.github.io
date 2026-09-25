@@ -1,0 +1,42 @@
+
+Encountered error in step execution: context canceled
+Output:
+
+Authenticating as admin (admin@ghg.com)...
+Logged in successfully as admin. URL: http://127.0.0.1:5173/
+
+============================================================
+ CRAWLING: Executive Dashboard (/)
+============================================================
+  [Main View] Found 8 interactive elements
+  [Main View] Successfully pressed 7 controls cleanly.
+
+============================================================
+ CRAWLING: Emissions Scope Selection (/emissions)
+============================================================
+  [Main View] Found 5 interactive elements
+  [Main View] Successfully pressed 4 controls cleanly.
+
+============================================================
+ CRAWLING: Emissions Scope 1 (Direct) (/emissions?scope=1)
+============================================================
+  [Main View] Found 35 interactive elements
+  [Main View] Successfully pressed 5 controls cleanly.
+
+============================================================
+ CRAWLING: Emissions Scope 2 (Indirect) (/emissions?scope=2)
+============================================================
+  [Main View] Found 11 interactive elements
+  [Main View] Successfully pressed 5 controls cleanly.
+
+============================================================
+ CRAWLING: Emissions Scope 3 (Value Chain) (/emissions?scope=3)
+============================================================
+  [Main View] Found 31 interactive elements
+  [Main View] Successfully pressed 5 controls cleanly.
+
+============================================================
+ CRAWLING: Manage Data - Pending Review (/manage-data?tab=pending)
+============================================================
+  [Main View] Found 1136 interactive elements
+

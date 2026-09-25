@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":16,"LineContent":"    Computes default region, division, activity, and facility for a user."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":17,"LineContent":"    For regional users and superusers tied to a location/region,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":21,"LineContent":"        \"region\": None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":32,"LineContent":"        defaults[\"region\"] = user_loc"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":35,"LineContent":"                Facility.region.ilike(user_loc),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":41,"LineContent":"            defaults[\"region\"] = fac.region or fac.location or user_loc"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":368,"LineContent":"                    \"default_region\": user_defaults[\"region\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":515,"LineContent":"            \"default_region\": user_defaults[\"region\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":918,"LineContent":"    # IT Admins have global authority over all accounts — no regional restriction"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":948,"LineContent":"    # IT Admins have global authority over all user accounts — no regional restriction"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1030,"LineContent":"    # IT Admins have global authority over all user accounts — no regional restriction"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":48,"LineContent":"                \"region\": f.region,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":66,"LineContent":"@facilities_bp.route(\"/all-regions\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":68,"LineContent":"def get_all_regions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":70,"LineContent":"    Return all unique region identifiers — IT personnel only, no access filtering."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":73,"LineContent":"      - Uses facility.region when set"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":74,"LineContent":"      - Falls back to facility.name for facilities where region is NULL"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":85,"LineContent":"    # 1. Facilities that have an explicit region value"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":86,"LineContent":"    region_rows = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":87,"LineContent":"        db.session.query(Facility.region)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":88,"LineContent":"        .filter(Facility.region.isnot(None), Facility.region != \"\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":92,"LineContent":"    for (r,) in region_rows:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":96,"LineContent":"    # 2. For facilities with no region set, fall back to their name"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":97,"LineContent":"    #    (mirrors utils.py line 28: filter_by(name=user_region))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":101,"LineContent":"            db.or_(Facility.region.is_(None), Facility.region == \"\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":133,"LineContent":"        fac_region = (data.get(\"region\") or \"\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":136,"LineContent":"        if user_loc not in (fac_region, fac_location, fac_name):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":139,"LineContent":"                    {\"error\": f\"Superusers can only create facilities in their assigned region: {user.location}\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":149,"LineContent":"        region=data.get(\"region\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":225,"LineContent":"        return jsonify({\"error\": \"Unauthorized: Outside your region\"}), 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":243,"LineContent":"    if \"region\" in data:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":244,"LineContent":"        facility.region = data[\"region\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":352,"LineContent":"        return jsonify({\"error\": \"Unauthorized: Outside your region\"}), 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":408,"LineContent":"            fac_region = (fac_data.get(\"region\") or \"\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":411,"LineContent":"            if user_loc not in (fac_region, fac_location, fac_name):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":415,"LineContent":"                            \"error\": f\"Superusers can only import facilities in their assigned region: {user.location}\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":432,"LineContent":"            region=fac_data.get(\"region\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":607,"LineContent":"                \"region\": p.facility.name if p.facility else \"-\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":689,"LineContent":"        Facility.name.label(\"region\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":716,"LineContent":"        Facility.name.label(\"region\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":740,"LineContent":"        Facility.name.label(\"region\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":765,"LineContent":"        key = (r.activity, r.division, r.region, r.field)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":772,"LineContent":"        key = (r.activity, r.division, r.region, r.field)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":775,"LineContent":"        key = (r.activity, r.division, r.region, r.field)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":785,"LineContent":"                \"region\": reg,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":971,"LineContent":"    Get emissions breakdown by Activity -\u003e Division -\u003e Region."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1568,"LineContent":"                \"region\": fac.region or (fac.name if fac else \"N/A\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2140,"LineContent":"                \"region\": fac.region or (fac.name if fac else \"N/A\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2409,"LineContent":"        #   Tier 2 (regional/custom): EF ±5–10%, AD ±7% → combined ≈ ±9–12%"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2433,"LineContent":"            for x in [\"tier 2\", \"tier2\", \"regional\", \"custom\", \"site-specific\"]"}
+(...49 more results not shown)

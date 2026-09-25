@@ -1,0 +1,64 @@
+
+The command exited with code 0.
+Output:
+C:\Users\samsung\Desktop\H2\new\server\models.py:499: # The caller (log_activity_and_notify  route handler) commits the full
+C:\Users\samsung\Desktop\H2\new\server\utils.py:73: def log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\audit.py:11: from utils import get_current_user, log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\audit.py:305: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:12: from utils import log_activity_and_notify, is_unrestricted_location
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:301: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:388: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:458: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:496: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:623: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:916: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:1032: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\auth.py:1158: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py:6: from utils import log_activity_and_notify, get_current_user
+C:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py:144: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py:235: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py:284: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py:362: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py:17: from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py:1087: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\data.py:5: from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+C:\Users\samsung\Desktop\H2\new\server\routes\data.py:185: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\data.py:231: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\data.py:550: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\data.py:586: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\data.py:829: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\data.py:863: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:16: from utils import log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3233: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3379: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3639: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3682: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:3979: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:4496: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:4547: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:4629: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py:4721: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\facilities.py:4: from utils import get_allowed_facility_ids, log_activity_and_notify, is_unrestricted_location
+C:\Users\samsung\Desktop\H2\new\server\routes\facilities.py:196: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\facilities.py:322: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\facilities.py:382: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\managedata.py:18: from utils import log_activity_and_notify, get_current_user, get_allowed_facility_ids
+C:\Users\samsung\Desktop\H2\new\server\routes\managedata.py:105: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\managedata.py:141: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\managedata.py:225: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\managedata.py:727: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py:764: from utils import log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py:765: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py:854: from utils import log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py:855: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py:290: from utils import log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py:291: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py:516: from utils import log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py:517: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py:668: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\scope3.py:8: from utils import get_current_user, get_allowed_facility_ids, log_activity_and_notify, require_facility_access
+C:\Users\samsung\Desktop\H2\new\server\routes\scope3.py:158: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\scope3.py:340: from utils import log_activity_and_notify
+C:\Users\samsung\Desktop\H2\new\server\routes\scope3.py:341: log_activity_and_notify(
+C:\Users\samsung\Desktop\H2\new\server\routes\scope3.py:492: log_activity_and_notify(
+

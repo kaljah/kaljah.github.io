@@ -1,0 +1,85 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 198 lines>
+[2026-09-23 12:08:25,354] INFO in app: DELETE /api/sources/1 200 [0.005s] [ReqID: 159c8685-4911-45e5-8866-d6e0ad39aa60]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/sources/1 HTTP/1.1" 200 -
+[2026-09-23 12:08:25,361] INFO in app: GET /api/goals 403 [0.001s] [ReqID: 6640e581-a0e6-4710-a5bc-230aa928a96e]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/goals HTTP/1.1" 403 -
+[2026-09-23 12:08:25,368] INFO in app: GET /api/goals 200 [0.001s] [ReqID: c023cdee-f684-4642-bbf9-2b95fa316762]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/goals HTTP/1.1" 200 -
+[2026-09-23 12:08:25,374] INFO in app: POST /api/goals 403 [0.001s] [ReqID: af84d153-819d-43e2-b3da-7cf2c99c9a80]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/goals HTTP/1.1" 403 -
+[2026-09-23 12:08:25,384] INFO in app: POST /api/goals 200 [0.005s] [ReqID: f3b8165e-90a4-4300-84de-5c603c25ca4b]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/goals HTTP/1.1" 200 -
+[2026-09-23 12:08:25,392] INFO in app: DELETE /api/goals/2045 403 [0.002s] [ReqID: c3a28022-b274-49d8-aa79-d4bf07030a6b]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/goals/2045 HTTP/1.1" 403 -
+[2026-09-23 12:08:25,401] INFO in app: DELETE /api/goals/2045 200 [0.003s] [ReqID: 7cd04873-d2b3-4287-9822-c20574e7fce7]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/goals/2045 HTTP/1.1" 200 -
+[2026-09-23 12:08:25,408] INFO in app: GET /api/base-years 403 [0.001s] [ReqID: e0b1538a-5280-4d4e-95a6-aacd865d0d95]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/base-years HTTP/1.1" 403 -
+[2026-09-23 12:08:25,416] INFO in app: GET /api/base-years 200 [0.002s] [ReqID: 04470fcf-24b2-4997-a96f-a8239d6dae84]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/base-years HTTP/1.1" 200 -
+[2026-09-23 12:08:25,423] INFO in app: POST /api/base-years 403 [0.001s] [ReqID: d5bffb93-8fe4-42b7-b1eb-5c1fb3692f4c]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/base-years HTTP/1.1" 403 -
+[2026-09-23 12:08:25,435] INFO in app: POST /api/base-years 201 [0.006s] [ReqID: dc480d82-bfcf-4311-8204-d37cd89535eb]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/base-years HTTP/1.1" 201 -
+[2026-09-23 12:08:25,442] INFO in app: DELETE /api/base-years/1 403 [0.001s] [ReqID: 2f6103f2-395f-41ad-960f-9349eb538a68]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/base-years/1 HTTP/1.1" 403 -
+[2026-09-23 12:08:25,451] INFO in app: DELETE /api/base-years/1 200 [0.003s] [ReqID: 9f7f5f70-a699-4860-bc39-89209cff33ae]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/base-years/1 HTTP/1.1" 200 -
+[2026-09-23 12:08:25,457] INFO in app: GET /api/manage/sbti 403 [0.001s] [ReqID: e233dd38-39d7-46f0-aad2-b7f4754c9681]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/manage/sbti HTTP/1.1" 403 -
+[2026-09-23 12:08:25,468] INFO in app: GET /api/manage/sbti 200 [0.006s] [ReqID: 0b97981e-c044-47b7-8c3b-5d0baf2a590e]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/manage/sbti HTTP/1.1" 200 -
+[2026-09-23 12:08:25,474] INFO in app: POST /api/manage/sbti 403 [0.001s] [ReqID: 7ba0208e-81b7-4478-860b-a8514b7a164c]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/manage/sbti HTTP/1.1" 403 -
+[2026-09-23 12:08:25,484] INFO in app: POST /api/manage/sbti 201 [0.004s] [ReqID: 2b7a1952-0021-4d9a-9d8e-4f034fd4e18c]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/manage/sbti HTTP/1.1" 201 -
+[2026-09-23 12:08:25,490] INFO in app: GET /api/mitigation 403 [0.001s] [ReqID: 48a8d4bb-c9a1-4c77-85b1-690ffdc55488]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/mitigation HTTP/1.1" 403 -
+[2026-09-23 12:08:25,497] INFO in app: GET /api/mitigation 200 [0.002s] [ReqID: 21900f1f-e526-4d73-a8b7-dce4bef49d87]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/mitigation HTTP/1.1" 200 -
+[2026-09-23 12:08:25,505] INFO in app: POST /api/mitigation 403 [0.000s] [ReqID: de096cc4-cf1a-4f92-8530-9a996c0018ad]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/mitigation HTTP/1.1" 403 -
+[2026-09-23 12:08:25,516] INFO in app: POST /api/mitigation 201 [0.005s] [ReqID: 43967139-1f85-4ca9-ae8e-3608bb4c3f29]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/mitigation HTTP/1.1" 201 -
+[2026-09-23 12:08:25,524] INFO in app: DELETE /api/mitigation/proj_1 403 [0.002s] [ReqID: 2080a551-07cc-4b93-8b98-d610e3e363cc]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/mitigation/proj_1 HTTP/1.1" 403 -
+[2026-09-23 12:08:25,536] INFO in app: DELETE /api/mitigation/proj_1 200 [0.004s] [ReqID: 652b3ad6-fb74-496d-b27f-2af79c9545a6]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/mitigation/proj_1 HTTP/1.1" 200 -
+[2026-09-23 12:08:25,544] INFO in app: GET /api/data/methane-sources 403 [0.001s] [ReqID: 3262981a-b1bc-4b69-a80c-ba230f1e5114]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/methane-sources HTTP/1.1" 403 -
+[2026-09-23 12:08:25,556] INFO in app: GET /api/data/methane-sources 200 [0.005s] [ReqID: 6855e68b-f089-43b0-8528-6f76d7229187]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/methane-sources HTTP/1.1" 200 -
+[2026-09-23 12:08:25,565] INFO in app: GET /api/data/ogmp-surveys 403 [0.001s] [ReqID: 3eb7d1db-974c-41b8-8b90-8cc7fef849f6]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/ogmp-surveys HTTP/1.1" 403 -
+[2026-09-23 12:08:25,576] INFO in app: GET /api/data/ogmp-surveys 200 [0.004s] [ReqID: 4a5a3f29-d07b-42d4-9c37-9fc19210968c]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/ogmp-surveys HTTP/1.1" 200 -
+[2026-09-23 12:08:25,583] INFO in app: POST /api/data/ogmp-surveys 403 [0.001s] [ReqID: 27dccb94-2516-4c32-bac2-366e4408a8ec]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/data/ogmp-surveys HTTP/1.1" 403 -
+[2026-09-23 12:08:25,591] INFO in app: POST /api/data/ogmp-surveys 400 [0.003s] [ReqID: 8cdd75c1-6b24-4ee8-878a-3c88460b4b57]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/data/ogmp-surveys HTTP/1.1" 400 -
+[2026-09-23 12:08:25,600] INFO in app: POST /api/data/ogmp/level-upgrade 403 [0.002s] [ReqID: e66b4126-7ddb-4ef1-890e-5d94e30ffc17]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/data/ogmp/level-upgrade HTTP/1.1" 403 -
+[2026-09-23 12:08:25,617] INFO in app: POST /api/data/ogmp/level-upgrade 201 [0.007s] [ReqID: 3584418e-f186-49d0-8a82-f5d50c6713bc]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/data/ogmp/level-upgrade HTTP/1.1" 201 -
+[2026-09-23 12:08:25,627] INFO in app: GET /api/data/ogmp/level-logs 403 [0.002s] [ReqID: 8ee8d8c3-665b-4096-8913-1115cc845384]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/ogmp/level-logs HTTP/1.1" 403 -
+[2026-09-23 12:08:25,639] INFO in app: GET /api/data/ogmp/level-logs 200 [0.005s] [ReqID: 84882498-fb60-4f88-a5f5-837c5836bf0a]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/ogmp/level-logs HTTP/1.1" 200 -
+[2026-09-23 12:08:25,646] INFO in app: GET /api/data/cbam-exports 403 [0.002s] [ReqID: 0f587e13-8315-4054-a7c4-37fe0cc187d0]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/cbam-exports HTTP/1.1" 403 -
+[2026-09-23 12:08:25,657] INFO in app: GET /api/data/cbam-exports 200 [0.004s] [ReqID: 80d8a25a-db91-425a-aa7a-4e3bf5cb4a24]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "GET /api/data/cbam-exports HTTP/1.1" 200 -
+[2026-09-23 12:08:25,668] INFO in app: POST /api/data/cbam-exports 400 [0.003s] [ReqID: fa8d4b3a-abdb-4d06-b2d1-dcecbead3571]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/data/cbam-exports HTTP/1.1" 400 -
+[2026-09-23 12:08:25,677] INFO in app: POST /api/data/cbam-exports 403 [0.001s] [ReqID: 4183add9-27c4-454d-87e2-89387c6ee5db]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/data/cbam-exports HTTP/1.1" 403 -
+[2026-09-23 12:08:25,700] INFO in app: POST /api/data/cbam-exports 200 [0.016s] [ReqID: a9be955f-75f8-44c6-9ae4-1ea539bdf16a]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "POST /api/data/cbam-exports HTTP/1.1" 200 -
+[2026-09-23 12:08:25,708] INFO in app: DELETE /api/data/cbam-exports/7 403 [0.001s] [ReqID: 2983cbea-0c91-41b7-ae0a-6489b800bc75]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/data/cbam-exports/7 HTTP/1.1" 403 -
+[2026-09-23 12:08:25,719] INFO in app: DELETE /api/data/cbam-exports/7 200 [0.005s] [ReqID: b3f320e7-4c9b-4f68-a9dd-7d94e847df24]
+127.0.0.1 - - [23/Sep/2026 12:08:25] "DELETE /api/data/cbam-exports/7 HTTP/1.1" 200 -
+

@@ -1,0 +1,86 @@
+
+The command exited with code 1.
+Output:
+[20:53:05] 1. Logging into application as user 'a' / 'a'...
+[20:53:18] 2. Navigating to Scope 1 emissions calculator...
+[20:53:20] Executing Test 1: Stationary Combustion (Tier 1)...
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\run_all_scope1_tests.py", line 711, in <module>
+    run_tests()
+  File "C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\run_all_scope1_tests.py", line 162, in run_tests
+    submit_and_record(page, f"TEST_{equip_id}", "Stationary Combustion", "Tier 1")
+  File "C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\run_all_scope1_tests.py", line 116, in submit_and_record
+    close_result_modal(page)
+  File "C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\run_all_scope1_tests.py", line 47, in close_result_modal
+    close_btn.click()
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\playwright\sync_api\_generated.py", line 15631, in click
+    self._sync(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\playwright\_impl\_locator.py", line 162, in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\playwright\_impl\_frame.py", line 566, in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\playwright\_impl\_connection.py", line 69, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\playwright\_impl\_connection.py", line 559, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator(".result-overlay .close-btn, .result-header .close-btn, .close-btn").first
+    - locator resolved to <button class="close-btn">�</button>
+  - attempting click action
+    2 � waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="scope-switcher-tabs">�</div> from <header class="top-bar">�</header> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <div class="scope-switcher-tabs">�</div> from <header class="top-bar">�</header> subtree intercepts pointer events
+  2 � retrying click action
+      - waiting 100ms
+      - waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <header class="top-bar">�</header> intercepts pointer events
+  14 � retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="scope-switcher-tabs">�</div> from <header class="top-bar">�</header> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="scope-switcher-tabs">�</div> from <header class="top-bar">�</header> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <header class="top-bar">�</header> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+       - waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <header class="top-bar">�</header> intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+
+

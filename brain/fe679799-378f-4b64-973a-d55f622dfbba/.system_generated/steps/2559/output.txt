@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -338,7 +338,8 @@
+         current_app.logger.debug(f"Session set for user_id={user.id}")
+         user.last_login = datetime.datetime.now(datetime.timezone.utc)
+ 
+-        db.session.commit()
++        # Compute operational defaults before audit log to prevent autoflush during Facility query
++        user_defaults = get_user_operational_defaults(user)
+ 
+         # Audit
+         try:
+@@ -352,7 +352,7 @@
+         except Exception as e:
+             current_app.logger.error(f"Audit Log Error on login: {e}")
+ 
+-        user_defaults = get_user_operational_defaults(user)
++        db.session.commit()
+ 
+         return jsonify(
+             {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":545,"LineContent":"          {/* NEW: Create Report Card (Matches Legacy UI) */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":663,"LineContent":"                {loading ? \"Generating...\" : \"Create Report\"}"}

@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Total flagged: 110
+Any with fuel in flag or process? []
+Any with quantity in flag or process? []
+Any with facility in flag or process? []
+Any with co2 in flag or process? []
+

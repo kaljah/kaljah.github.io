@@ -1,0 +1,57 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -34,9 +34,14 @@
+         self.calculators = {
+             "stationary_combustion": CombustionCalculator(),
+             "combustion": CombustionCalculator(),
++            "mobile_combustion": CombustionCalculator(),
++            "mobile": CombustionCalculator(),
+             "flaring": FlaringCalculator(),
++            "flare": FlaringCalculator(),
+             "drilling": MudDegassingCalculator(),
++            "mud_degassing": MudDegassingCalculator(),
+             "completions": CompletionFlowbackCalculator(),
++            "completion_flowback": CompletionFlowbackCalculator(),
+             "liquids_unloading": LiquidsUnloadingCalculator(),
+             "unloading": LiquidsUnloadingCalculator(),
+             "tank": TankFlashingCalculator(),
+@@ -43,5 +43,6 @@
+             "tank_working": TankFlashingCalculator(),
+             "tank_breathing": TankFlashingCalculator(),
++            "storage_tanks": TankFlashingCalculator(),
+             "pneumatic_devices": PneumaticDeviceCalculator(),
+             "pneumatic_device": PneumaticDeviceCalculator(),
+             "pneumatic": PneumaticDeviceCalculator(),
+@@ -48,4 +48,13 @@
++            "component_fugitive": ComponentFugitiveCalculator(),
+             "equipment_fugitive": EquipmentFugitiveCalculator(),
++            "wellhead_fugitive": EquipmentFugitiveCalculator(),
++            "separator_fugitive": EquipmentFugitiveCalculator(),
++            "gathering_boosting": EquipmentFugitiveCalculator(),
++            "gas_processing": EquipmentFugitiveCalculator(),
++            "transmission_storage": EquipmentFugitiveCalculator(),
++            "refinery_fugitive": EquipmentFugitiveCalculator(),
++            "distribution_fugitive": EquipmentFugitiveCalculator(),
++            "lng_operations": EquipmentFugitiveCalculator(),
+             "compressor_fugitive": CompressorSealCalculator(),
+             "compressor_seal": CompressorSealCalculator(),
+             "fugitive": EquipmentFugitiveCalculator(),
+@@ -52,10 +52,14 @@
++            "acid_gas_removal": AGRCalculator(),
+             "dehydrator": DehydratorCalculator(),
+             "indirect_steam": IndirectSteamCalculator(),
+             "cogen_allocation": CogenAllocationCalculator(),
++            "cogen": CogenAllocationCalculator(),
+             "stoichiometry": StoichiometricCalculator(),
++            "chemical_production": StoichiometricCalculator(),
++            "nitric_acid_production": StoichiometricCalculator(),
++            "adipic_acid_production": StoichiometricCalculator(),
+             "venting": BlowdownCalculator(),
+             "blowdown": BlowdownCalculator(),
+-            "storage_tanks": TankFlashingCalculator(),
+         }
+ 
+     def _require(self, key, inputs, description):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

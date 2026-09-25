@@ -1,0 +1,41 @@
+The search for ""Hassi R'Mel" gaz composition "PCS" "Sonatrach" "ISO 6976"" returned the following summary:
+The Hassi R'Mel gas field is Algeria's largest gas producer[1][2]. Its gas composition is characterized by a high methane content, typically ranging between **77% and 82% mole fraction**[3][4].
+
+### Typical Gas Composition (Hassi R'Mel)
+While composition can vary depending on the specific well or processing unit (e.g., Module IV), reported data for Hassi R'Mel raw gas often includes the following approximate molar fractions[3][5]:
+
+| Component | Mole Fraction (%) |
+| :--- | :--- |
+| **Methane (CH₄)** | 77.0 – 82.0% |
+| **Ethane (C₂H₆)** | ~7.4% |
+| **Nitrogen (N₂)** | ~5.5% |
+| **Propane (C₃H₈)** | ~2.9% |
+| **Carbon Dioxide (CO₂)** | ~0.2 – 0.24% |
+| **Butanes (i-C₄ / n-C₄)** | ~1.7% |
+| **Pentanes+ (C₅+)** | ~1.0 – 2.0% |
+
+*Note: These values are indicative; exact composition varies by production zone and field maturation[6][5].*
+
+### PCS (Gross Calorific Value) and ISO 6976
+*   **PCS (Pouvoir Calorifique Supérieur):** In the oil and gas industry, the *Pouvoir Calorifique Supérieur* (Gross Calorific Value) represents the total energy released upon complete combustion of the gas[7][8]. Because Hassi R'Mel gas is rich in methane with significant fractions of heavier hydrocarbons (ethane, propane, butanes), it possesses a substantial calorific value, making it highly suitable for export and industrial use[3][4].
+*   **ISO 6976 Standard:** Sonatrach and other major industry players utilize the **ISO 6976** international standard to calculate the thermodynamic properties of natural gas[9][8]. This standard provides the rigorous mathematical framework required to determine:
+    *   Gross and Net Calorific Values (PCS/PCI)[10][11].
+    *   Density and Relative Density[10][8].
+    *   Wobbe Index[10][8].
+
+These calculations are performed using the molar composition of the gas as input[10]. If you are performing these calculations, ensure that your molar fractions are normalized to 100% and that the reference conditions (e.g., 15°C/15°C or 0°C/0°C) align with your specific contractual or regulatory requirements[10][12][13].
+
+Sources:
+[1] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGNOrjpHgpS-gywHy_xV03xG10srsJZ6pHvXhQpd_oL_nzqkChgCKkJno0n9h-BbJimwlPVUctq9rORJMlndXl1uRBCs0dsx6KtqlEC6pFTR98-Ici9hXi_Pe5i6mlg4FPC4TbEjeNrUwSrb6qCYHxipRUM_IOERp74vNoV2NnxhZtVs_VV6sj261nJnJOjcrUW_Qb-AA==)
+[2] [wikipedia.org](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFiWdydymv6T2ku9GJUAsyI35JjF9own4XgcsVzIaBT7U4mNmtVtHvPNEePw0wWHJ0fAEGwS4hYbolCaYDstWfhjGtAuOD_SudJhyFiC2HXkATXPOOodXUkzSdubBsFFgFB-scStLS22G4J)
+[3] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGNOrjpHgpS-gywHy_xV03xG10srsJZ6pHvXhQpd_oL_nzqkChgCKkJno0n9h-BbJimwlPVUctq9rORJMlndXl1uRBCs0dsx6KtqlEC6pFTR98-Ici9hXi_Pe5i6mlg4FPC4TbEjeNrUwSrb6qCYHxipRUM_IOERp74vNoV2NnxhZtVs_VV6sj261nJnJOjcrUW_Qb-AA==)
+[4] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGNOrjpHgpS-gywHy_xV03xG10srsJZ6pHvXhQpd_oL_nzqkChgCKkJno0n9h-BbJimwlPVUctq9rORJMlndXl1uRBCs0dsx6KtqlEC6pFTR98-Ici9hXi_Pe5i6mlg4FPC4TbEjeNrUwSrb6qCYHxipRUM_IOERp74vNoV2NnxhZtVs_VV6sj261nJnJOjcrUW_Qb-AA==)
+[5] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEBK38SjyanKXMvN0Sh02JKBVSyQh4o8mhCa8vvQSoHdSGf0eoBwG6Qi-XJ0P7t6Qu7x3IdzoVCnu2XkV24aebRACLhacfVFor2YKA3tunDMbs9fe-DSxjgJ-fp0gqLmw_OOB-5nDFkgfAjlRGcb2XZJg==)
+[6] [univ-bouira.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFdjwHhcgMDUYqVaqex1IWN36HWaJ06w1yOrnjptHw09t3vpd_0dT5a8crYHUXw5ExnD7a_4WHcu5_7riPgK1DYeu9O4Y3caglFJfR4TflWCkcuBoTq-PCpIAISzx5yG1kEXiL8rhsvWASZm9tf2g9d1lF-43xJfVPHWQ4eoFaplLfztjr8ITa7MpJAPQnYTVvYbXoeBGSCXGqwdZkJMaGG2KXOlR_JQMDaxmeMRnw9QvvLDXwiqDm3qrk7aqVMgEU1zOsinhLXwOWSIlWliGJIFOwYdY9ikxd02LbTfjSEv6JO0dMiPyCVPFYv7TD4HZua2-TieeVTv4OQM0l2P19fgS1dEeWe0ndyRemkJuJL1Q==)
+[7] [iteh.ai](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGfOjt8P_3b_VFUpFlF2z5gWiP1yUTN_UlwjXpWV_Nh2fcIo1J7uEdtbI1Eyp-gimZMF8PDQ-VUT3U8VMvXVfNe2nK6NuIKSgsB6cs_TT5Wmm3A79LdtFjc__R_YdSPrw5pbtXFGC68gU9s0NZmS2xQ5e4NNFBIasp6R_exS1gw6_CqNSUkdHYTqAFGUdMkwvOPrN8=)
+[8] [abb.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG_lhwSiGl-LQdY9GNINhQMMGuPY9NnhykBh3eD-i2wK4ejGqo-7RGV2YKa60KlOsCUg04x6ua8S7khqSajfVfqycDJmb1-3RhN7dpOV8gn9oa4iom5_RCNnG8G34mjMX--JvnnWEGzecFLFSGCrx0OY4snMrV9Bi2J0Dblo1LLg6tBwj2pg8sIYaU_UYACN2wuF1zNd1cPFS3VZtMeDuJHiwZqgX64UzAPzg==)
+[9] [iteh.ai](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGqAcqeFLt3PlybGQ3gMwkA6t6-_QYh7JTeANJXwfdv0zIGGJiG_eGeX9kxnknl7lxfWIEkxEAfwvHmW2FzAuj7V0tIwo_0-dhoaCF-gHfM4ykNdmChknPLHPodyjSYD7jGkSbzb62dKT9NfwBBqSX2QQGsCPWvhOd1svGCPknDFkGCxfKfG2-Skrufr0IjYi91vWs=)
+[10] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFRu8RT__5q659wLgnf5993L16G4r2_Q2lPaFKRDT0A91NzrZP429XGr9RIauhTi1bGHw_m4JV53c5Zonl-DRqhsV3SapgY-u4CGKMohGGw6TZafz8sNVsx4avo9P1eVrWbaDopMvSbq-kUsC3CnCxtmnd1aWbj9Qcr6FVZOkA7BM8GXLmFjE4oMv8_HLSYKZ38yTr17jwdawnz7V6jEEmMRIb1V0d09CRKkd8xX8CxHxCgaeq1gmRts_8bFwzTXLUJPD7e96kF7YXLjke-PUJ7dfnTvznixg==)
+[11] [antpedia.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQElH7ian2fhc5_IHs2gpVHaWBaBHPBLAzmUcI4nlQ9YAc3smOuoM6FlacTqRs5vit5lHlGPQSlvAQ279vYm5incq1KHKITCBNBME_vZPccMQmYdBMicakEWVetKnThoC-ilTOfwEZydf-ZXpOS_Ae4Cg8DfbfhMsnI2nYcGVmKjozKu)
+[12] [rmg.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGNxm2201B_nxPZIaEYs8o_lwSbm1TGAyaWa-52nViFohPqLHjuHQHLS6U_ojMuawcCSdowguZlHZuid8qeM4kv4oT0Lja5m0L_i4pEuUzAeeB_IO-gngLHCdS-Njk12ZGN)
+[13] [mdpi.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGJ-oCkBSSk3oNtBFBmAUiSxGmQ_BDIrM35sqo53xqht_6SgtayI6XmaVwVlBNZ6W44Q69lKWktCngCjSMtmSAvZ0DRdK0NHc9ozMaUYD8KMRpHk_HQ2vso4w==)

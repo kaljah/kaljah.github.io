@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+Facility model columns: 23
+id INTEGER
+name VARCHAR(120)
+location VARCHAR(120)
+description TEXT
+boundary_notes TEXT
+boundary_type VARCHAR(100)
+boundary_detail TEXT
+activity VARCHAR(100)
+division VARCHAR(100)
+region VARCHAR(100)
+field VARCHAR(100)
+code VARCHAR(50)
+external_id VARCHAR(50)
+segment VARCHAR(20)
+operator_status VARCHAR(20)
+country VARCHAR(100)
+ogmp_membership_year INTEGER
+reconciliation_threshold FLOAT
+latitude FLOAT
+longitude FLOAT
+created_by INTEGER
+updated_at DATETIME
+created_at DATETIME
+

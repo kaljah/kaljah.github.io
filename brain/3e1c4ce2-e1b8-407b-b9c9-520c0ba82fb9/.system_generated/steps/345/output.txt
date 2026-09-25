@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -108,15 +108,8 @@
+     expect(page.url()).not.toContain('/login');
+     console.log(`[QFULL E2E] Logged in, current URL: ${page.url()}`);
+ 
+-    // Should see some dashboard-level content
+-    const isOnApp = await Promise.race([
+-      page.locator('text=Dashboard').first().isVisible({ timeout: 5000 }),
+-      page.locator('text=Manage Data').first().isVisible({ timeout: 5000 }),
+-      page.locator('text=Emissions').first().isVisible({ timeout: 5000 }),
+-      page.locator('nav, .sidebar, [class*="nav"]').first().isVisible({ timeout: 5000 }),
+-    ]).catch(() => false);
+-
+-    expect(isOnApp).toBeTruthy();
++    // Wait for the main layout to appear
++    await expect(page.locator('.sidebar, .app-container, .brand-text').first()).toBeVisible({ timeout: 12000 });
+     console.log('[QFULL E2E] Dashboard loaded successfully ✓');
+ 
+     if (errors.length) console.warn(`[QFULL E2E] JS errors: ${errors.slice(0, 3).join('; ')}`);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

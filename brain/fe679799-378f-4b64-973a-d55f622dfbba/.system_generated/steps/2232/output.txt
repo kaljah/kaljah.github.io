@@ -1,0 +1,124 @@
+
+The command exited with code 0.
+Output:
+--- GOLDEN-S1-COMB-001 stationary_combustion
+inputs: {'fuel_quantity': 10000.0, 'ef_co2': 1.93, 'ef_ch4': 0.0001, 'ef_n2o': 3e-05}
+units: {'fuel_unit': 'm3', 'ef_unit': 'kg/m3'}
+factor: {'co2': 1.93, 'ch4': 0.0001, 'n2o': 3e-05}
+expected: {'co2': 19.3, 'ch4': 0.001, 'n2o': 0.0003, 'co2e': 19.4075}
+--- GOLDEN-S1-COMB-002 stationary_combustion
+inputs: {'fuel_quantity': 5000.0, 'ef_co2': 1.93, 'ef_ch4': 0.0001, 'ef_n2o': 3e-05, 'temp': 50.0, 'temp_unit': 'C', 'press': 100.0, 'press_unit': 'psig', 'z_factor': 0.98}
+units: {'fuel_unit': 'm3', 'ef_unit': 'kg/m3'}
+factor: {'co2': 1.93, 'ch4': 0.0001, 'n2o': 3e-05}
+expected: {'co2': 68.65992665628166, 'ch4': 0.003557509153175215, 'n2o': 0.0010672527459525646, 'co2e': 69.042358890248}
+--- GOLDEN-S1-COMB-003 stationary_combustion
+inputs: {'fuel_quantity': 20000.0, 'combustion_efficiency': 0.995, 'gas_composition': {'c1': 0.88, 'c2': 0.06, 'c3': 0.03, 'ic4': 0.01, 'nc4': 0.01, 'co2': 0.01}}
+units: {'fuel_unit': 'm3', 'ef_unit': 'stoichiometric'}
+factor: Gas Composition
+expected: {'co2': 43.70186300000001, 'ch4': 0.05970800000000005, 'n2o': 0.0, 'co2e': 45.37368700000001}
+--- GOLDEN-S1-COMB-004 stationary_combustion
+inputs: {'fuel_quantity': 500.0, 'ef_co2': 432.0, 'ef_ch4': 0.018, 'ef_n2o': 0.0035, 'fuel_type': 'liquids'}
+units: {'fuel_unit': 'bbl', 'ef_unit': 'kg/bbl'}
+factor: {'co2': 432.0, 'ch4': 0.018, 'n2o': 0.0035}
+expected: {'co2': 216.0, 'ch4': 0.009, 'n2o': 0.00175, 'co2e': 216.72885}
+--- GOLDEN-S1-COMB-005 stationary_combustion
+inputs: {'fuel_quantity': 0.0, 'ef_co2': 1.93, 'ef_ch4': 0.0001, 'ef_n2o': 3e-05}
+units: {'fuel_unit': 'm3', 'ef_unit': 'kg/m3'}
+factor: {'co2': 1.93, 'ch4': 0.0001, 'n2o': 3e-05}
+expected: {'co2': 0.0, 'ch4': 0.0, 'n2o': 0.0, 'co2e': 0.0}
+--- GOLDEN-S1-COMB-006 stationary_combustion
+inputs: {'fuel_quantity': 1000000.0, 'ef_co2': 1.93, 'ef_ch4': 0.0001, 'ef_n2o': 3e-05}
+units: {'fuel_unit': 'm3', 'ef_unit': 'kg/m3'}
+factor: {'co2': 1.93, 'ch4': 0.0001, 'n2o': 3e-05}
+expected: {'co2': 1930.0, 'ch4': 0.1, 'n2o': 0.03, 'co2e': 1940.75}
+--- GOLDEN-S1-FLARE-001 flaring
+inputs: {'gas_volume': 50000.0, 'ch4_fraction': 0.88, 'flare_type': 'elevated', 'gas_composition': {'co2': 0.02}}
+units: {'gas_unit': 'm3'}
+factor: {'eta_c': 0.984, 'eta_d': 0.98}
+expected: {'co2': 82.43485600000001, 'ch4': 0.4776640000000004, 'n2o': 0.0, 'co2e': 95.80944800000002}
+--- GOLDEN-S1-FLARE-002 flaring
+inputs: {'gas_volume': 25000.0, 'ch4_fraction': 0.92, 'flare_type': 'enclosed'}
+units: {'gas_unit': 'm3'}
+factor: {'eta_c': 0.996, 'eta_d': 0.995}
+expected: {'co2': 42.631788, 'ch4': 0.062422000000000054, 'n2o': 0.0, 'co2e': 44.373361800000005}
+--- GOLDEN-S1-FLARE-003 flaring
+inputs: {'gas_volume': 10000.0, 'ch4_fraction': 0.85, 'flare_type': 'pit'}
+units: {'gas_unit': 'm3'}
+factor: {'eta_c': 0.92, 'eta_d': 0.95}
+expected: {'co2': 14.55302, 'ch4': 0.4613799999999998, 'n2o': 0.0, 'co2e': 27.471659999999993}
+--- GOLDEN-S1-VENT-001 pneumatic_devices
+inputs: {'device_count': 10, 'hours': 8760, 'device_type': 'intermittent', 'ch4_fraction': 0.9}
+units: {'rate_unit': 'scf/hr/device'}
+factor: 13.5
+expected: {'co2': 0.6232024267302021, 'ch4': 20.449143572423317, 'n2o': 0.0, 'co2e': 573.1992224545832}
+--- GOLDEN-S1-VENT-002 blowdown
+inputs: {'vessel_volume_m3': 50.0, 'initial_press': 600.0, 'final_press': 0.0, 'events': 2, 'ch4_fraction': 0.88}
+units: {'volume_unit': 'm3', 'press_unit': 'psig'}
+factor: Boyle-Mariotte Ideal Gas Law
+expected: {'co2': 0.07597907049084131, 'ch4': 2.4376992696760627, 'n2o': 0.0, 'co2e': 68.3315586214206}
+--- GOLDEN-S1-MID-001 acid_gas_removal
+inputs: {'feed_gas_volume': 100000.0, 'co2_inlet_fraction': 0.04, 'co2_outlet_fraction': 0.0001, 'control_eff': 0.0}
+units: {'volume_unit': 'm3'}
+factor: Mass balance delta CO2
+expected: {'co2': 7.42539, 'ch4': 0.0, 'n2o': 0.0, 'co2e': 7.42539}
+--- GOLDEN-S1-FUG-001 component_fugitive
+inputs: {'component_count': 150, 'hours': 8760, 'component_type': 'valve', 'ch4_fraction': 0.9}
+units: {'count_unit': 'components'}
+factor: 0.0045
+expected: {'co2': 0.059129999999999995, 'ch4': 5.321699999999999, 'n2o': 0.0, 'co2e': 149.06672999999998}
+--- GOLDEN-S2-ELEC-001 scope2_electricity
+inputs: {'electricity_kwh': 500000.0, 'emission_factor_kg_kwh': 0.582, 'method': 'location_based'}
+units: {'electricity_unit': 'kWh', 'ef_unit': 'kg CO2e/kWh'}
+factor: 0.582
+expected: {'co2e': 291.0, 'method': 'location_based'}
+--- GOLDEN-S2-ELEC-002 scope2_electricity
+inputs: {'electricity_kwh': 250000.0, 'emission_factor_kg_kwh': 0.0, 'method': 'market_based'}
+units: {'electricity_unit': 'kWh', 'ef_unit': 'kg CO2e/kWh'}
+factor: 0.0
+expected: {'co2e': 0.0, 'method': 'market_based'}
+--- GOLDEN-S2-STEAM-001 scope2_steam
+inputs: {'steam_tonnes': 1200.0, 'ef_kg_per_tonne': 180.0, 'boiler_efficiency': 0.8, 'loss_factor': 0.05}
+units: {'steam_unit': 'tonnes', 'ef_unit': 'kg CO2e/tonne'}
+factor: 180.0
+expected: {'co2e': 284.2105263157894}
+--- GOLDEN-S3-CAT1-001 scope3
+inputs: {'category_id': 1, 'activity_value': 150000.0, 'emission_factor': 0.42, 'ef_unit': 'kg/USD'}
+units: {'activity_unit': 'USD', 'ef_unit': 'kg CO2e/USD'}
+factor: 0.42
+expected: {'category_id': 1, 'category_name': 'Purchased Goods and Services', 'co2e': 63.0, 'method': 'activity_based'}
+--- GOLDEN-S3-CAT4-001 scope3
+inputs: {'category_id': 4, 'activity_value': 100000.0, 'emission_factor': 0.095, 'ef_unit': 'kg/tkm'}
+units: {'activity_unit': 'tonne-km', 'ef_unit': 'kg CO2e/tkm'}
+factor: 0.095
+expected: {'category_id': 4, 'category_name': 'Upstream Transportation and Distribution', 'co2e': 9.5, 'method': 'activity_based'}
+--- GOLDEN-S3-CAT6-001 scope3
+inputs: {'category_id': 6, 'activity_value': 40000.0, 'emission_factor': 0.102, 'ef_unit': 'kg/pkm'}
+units: {'activity_unit': 'passenger-km', 'ef_unit': 'kg CO2e/pkm'}
+factor: 0.102
+expected: {'category_id': 6, 'category_name': 'Business Travel', 'co2e': 4.079999999999999, 'method': 'activity_based'}
+--- GOLDEN-S3-CAT11-001 scope3
+inputs: {'category_id': 11, 'activity_value': 10000.0, 'emission_factor': 432.0, 'ef_unit': 'kg/bbl'}
+units: {'activity_unit': 'bbl', 'ef_unit': 'kg CO2e/bbl'}
+factor: 432.0
+expected: {'category_id': 11, 'category_name': 'Use of Sold Products', 'co2e': 4320.0, 'method': 'activity_based'}
+--- GOLDEN-STOICH-001 stoichiometry
+inputs: {'n_carbons': 1, 'm_hydrogens': 4, 'fuel': 'Methane'}
+units: {'n': 'moles', 'm': 'moles', 'yield': 'kg product / kg fuel'}
+factor: NIST IUPAC Atomic Weights
+expected: {'mw_fuel': 16.043, 'carbon_fraction': 0.7486754347690582, 'kg_co2_per_kg_fuel': 2.7431901764009226, 'kg_o2_per_kg_fuel': 3.989029483263729, 'kg_h2o_per_kg_fuel': 2.2458393068628064, 'mass_balance_error': 0.0}
+--- GOLDEN-STOICH-002 stoichiometry
+inputs: {'n_carbons': 2, 'm_hydrogens': 6, 'fuel': 'Ethane'}
+units: {'n': 'moles', 'm': 'moles', 'yield': 'kg product / kg fuel'}
+factor: NIST IUPAC Atomic Weights
+expected: {'mw_fuel': 30.07, 'carbon_fraction': 0.7988693049551047, 'kg_co2_per_kg_fuel': 2.927103425340871, 'kg_o2_per_kg_fuel': 3.7244097106750917, 'kg_h2o_per_kg_fuel': 1.79730628533422, 'mass_balance_error': 2.842170943040401e-14}
+--- GOLDEN-STOICH-003 stoichiometry
+inputs: {'n_carbons': 3, 'm_hydrogens': 8, 'fuel': 'Propane'}
+units: {'n': 'moles', 'm': 'moles', 'yield': 'kg product / kg fuel'}
+factor: NIST IUPAC Atomic Weights
+expected: {'mw_fuel': 44.097, 'carbon_fraction': 0.8171304170351724, 'kg_co2_per_kg_fuel': 2.9940131981767464, 'kg_o2_per_kg_fuel': 3.6281379685692907, 'kg_h2o_per_kg_fuel': 1.6341247703925437, 'mass_balance_error': 2.842170943040401e-14}
+--- GOLDEN-STOICH-004 stoichiometry
+inputs: {'n_carbons': 4, 'm_hydrogens': 10, 'fuel': 'Butane'}
+units: {'n': 'moles', 'm': 'moles', 'yield': 'kg product / kg fuel'}
+factor: NIST IUPAC Atomic Weights
+expected: {'mw_fuel': 58.123999999999995, 'carbon_fraction': 0.8265776615511665, 'kg_co2_per_kg_fuel': 3.0286284495217126, 'kg_o2_per_kg_fuel': 3.578332530452137, 'kg_h2o_per_kg_fuel': 1.5497040809304248, 'mass_balance_error': 0.0}
+

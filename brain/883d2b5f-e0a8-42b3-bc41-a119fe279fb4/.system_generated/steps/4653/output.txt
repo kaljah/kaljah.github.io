@@ -1,0 +1,81 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 833 lines>
+[2026-09-17 10:59:53,405] INFO in app: POST /api/emissions/approve/14875 200 [0.004s] [ReqID: 1a7f19d7-3ab5-489c-bdaa-ca6f7a0d7852]
+127.0.0.1 - - [17/Sep/2026 10:59:53] "POST /api/emissions/approve/14875 HTTP/1.1" 200 -
+[2026-09-17 10:59:53,453] INFO in app: GET /api/emissions/pending 200 [0.039s] [ReqID: d04a2741-d037-4095-a09b-f24debc58824]
+127.0.0.1 - - [17/Sep/2026 10:59:53] "GET /api/emissions/pending HTTP/1.1" 200 -
+[2026-09-17 10:59:54,323] INFO in app: GET /api/notifications 200 [0.007s] [ReqID: 580706ea-1a22-4dc0-98d6-3f2a070f5521]
+127.0.0.1 - - [17/Sep/2026 10:59:54] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 10:59:54,399] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 3309eb80-198d-4aec-890b-b9f898c9f74c]
+127.0.0.1 - - [17/Sep/2026 10:59:54] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 10:59:56,861] INFO in app: GET /api/notifications 200 [0.009s] [ReqID: ce049913-325c-480b-a22e-fd598c1318ec]
+127.0.0.1 - - [17/Sep/2026 10:59:56] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 10:59:56,878] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: af77f935-e3ba-4bfe-9ae2-91653028e7a7]
+127.0.0.1 - - [17/Sep/2026 10:59:56] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 10:59:58,512] INFO in app: POST /api/emissions/approve/14870 200 [0.005s] [ReqID: b66d6ae4-7f12-4970-b603-d9bc75576731]
+127.0.0.1 - - [17/Sep/2026 10:59:58] "POST /api/emissions/approve/14870 HTTP/1.1" 200 -
+[2026-09-17 10:59:58,581] INFO in app: GET /api/emissions/pending 200 [0.058s] [ReqID: 70178530-856d-45a1-8042-14b9dc1a3404]
+127.0.0.1 - - [17/Sep/2026 10:59:58] "GET /api/emissions/pending HTTP/1.1" 200 -
+[2026-09-17 11:00:00,691] INFO in app: GET /api/notifications 200 [0.008s] [ReqID: 53e29056-6605-49f3-895d-ad07b3cb2e47]
+127.0.0.1 - - [17/Sep/2026 11:00:00] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:00,846] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: 43186e64-c54c-49de-b88f-d5cec735c695]
+127.0.0.1 - - [17/Sep/2026 11:00:00] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:02,590] INFO in app: GET /api/notifications 200 [0.011s] [ReqID: d2984df4-1ae4-4d43-8e56-5164b129f2ce]
+127.0.0.1 - - [17/Sep/2026 11:00:02] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:03,586] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: be32523c-cdea-4327-8367-e0c1ce301803]
+127.0.0.1 - - [17/Sep/2026 11:00:03] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:05,420] INFO in app: POST /api/emissions/approve/14868 200 [0.004s] [ReqID: 5fbe5b50-8b31-4bd5-8cbe-05c44c0889d9]
+127.0.0.1 - - [17/Sep/2026 11:00:05] "POST /api/emissions/approve/14868 HTTP/1.1" 200 -
+[2026-09-17 11:00:05,493] INFO in app: GET /api/emissions/pending 200 [0.063s] [ReqID: 0eb0c95d-eab8-4b4e-9481-a77574caab0e]
+127.0.0.1 - - [17/Sep/2026 11:00:05] "GET /api/emissions/pending HTTP/1.1" 200 -
+[2026-09-17 11:00:06,491] INFO in app: GET /api/notifications 200 [0.009s] [ReqID: 24445456-b452-442c-bc20-fbf3bbea8ccf]
+127.0.0.1 - - [17/Sep/2026 11:00:06] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:06,588] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: 3b6001ac-dcb6-4726-b17f-609a8aec2bba]
+127.0.0.1 - - [17/Sep/2026 11:00:06] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:09,138] INFO in app: GET /api/notifications 200 [0.019s] [ReqID: be343a36-2ea0-43e2-a45b-ac935d492300]
+127.0.0.1 - - [17/Sep/2026 11:00:09] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:09,155] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: ed32263e-2421-41fb-a505-9ad55ae9116d]
+127.0.0.1 - - [17/Sep/2026 11:00:09] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:10,789] INFO in app: POST /api/emissions/approve/11834 200 [0.003s] [ReqID: 4e85f1eb-5125-4c06-968c-44b102b72872]
+127.0.0.1 - - [17/Sep/2026 11:00:10] "POST /api/emissions/approve/11834 HTTP/1.1" 200 -
+[2026-09-17 11:00:10,841] INFO in app: GET /api/emissions/pending 200 [0.041s] [ReqID: afda7159-51ad-45ea-83b5-75d76b5bfc87]
+127.0.0.1 - - [17/Sep/2026 11:00:10] "GET /api/emissions/pending HTTP/1.1" 200 -
+[2026-09-17 11:00:11,740] INFO in app: GET /api/notifications 200 [0.007s] [ReqID: 8fa802c4-903e-44b6-9e78-924ed90f3596]
+127.0.0.1 - - [17/Sep/2026 11:00:11] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:11,819] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 47632b7b-647b-42e2-8c0e-0832581eacbd]
+127.0.0.1 - - [17/Sep/2026 11:00:11] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:14,176] INFO in app: GET /api/notifications 200 [0.007s] [ReqID: b77a70be-420f-4a08-a153-92fb9bed2118]
+127.0.0.1 - - [17/Sep/2026 11:00:14] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:14,187] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 58a4f41d-c2b7-4786-b836-ab6ab18ddd2e]
+127.0.0.1 - - [17/Sep/2026 11:00:14] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:15,845] INFO in app: POST /api/emissions/approve/11829 200 [0.003s] [ReqID: 8b1e4f62-d0b9-4119-8828-a251db997e67]
+127.0.0.1 - - [17/Sep/2026 11:00:15] "POST /api/emissions/approve/11829 HTTP/1.1" 200 -
+[2026-09-17 11:00:15,913] INFO in app: GET /api/emissions/pending 200 [0.059s] [ReqID: d864f1f5-ad3b-48ad-80df-f0c984058972]
+127.0.0.1 - - [17/Sep/2026 11:00:15] "GET /api/emissions/pending HTTP/1.1" 200 -
+[2026-09-17 11:00:16,790] INFO in app: GET /api/notifications 200 [0.008s] [ReqID: c898b681-64d7-4cba-b4c0-1d3f2ca2076f]
+127.0.0.1 - - [17/Sep/2026 11:00:16] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:16,878] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 918ae05c-0c96-422f-a6b9-009f649eeba8]
+127.0.0.1 - - [17/Sep/2026 11:00:16] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:19,216] INFO in app: GET /api/notifications 200 [0.008s] [ReqID: ab9edb31-c609-49a5-85e3-b59e842b7d78]
+127.0.0.1 - - [17/Sep/2026 11:00:19] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:19,227] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 17cc1960-efa5-4f90-8ffd-1ecbca69ab8c]
+127.0.0.1 - - [17/Sep/2026 11:00:19] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:20,919] INFO in app: POST /api/emissions/approve/11827 200 [0.003s] [ReqID: fddbe68b-3c40-4119-8dad-b59b5160e2f7]
+127.0.0.1 - - [17/Sep/2026 11:00:20] "POST /api/emissions/approve/11827 HTTP/1.1" 200 -
+[2026-09-17 11:00:20,970] INFO in app: GET /api/emissions/pending 200 [0.042s] [ReqID: 6bc99d4a-ca88-4d08-9eb8-7681a86cf631]
+127.0.0.1 - - [17/Sep/2026 11:00:20] "GET /api/emissions/pending HTTP/1.1" 200 -
+[2026-09-17 11:00:21,853] INFO in app: GET /api/notifications 200 [0.007s] [ReqID: b6259326-0175-4117-b612-1d24369bb310]
+127.0.0.1 - - [17/Sep/2026 11:00:21] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:21,931] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: bcd8dddf-9088-444b-b2ba-a34988cc9dc1]
+127.0.0.1 - - [17/Sep/2026 11:00:21] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:24,268] INFO in app: GET /api/notifications 200 [0.009s] [ReqID: 8b06f866-9d99-400c-8e0f-f5b80d1ecb3d]
+127.0.0.1 - - [17/Sep/2026 11:00:24] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-17 11:00:24,281] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: f31f0f4d-eb3e-4f8b-8c14-a820fbec6891]
+127.0.0.1 - - [17/Sep/2026 11:00:24] "GET /api/notifications/stream?last_id=155 HTTP/1.1" 200 -
+[2026-09-17 11:00:25,949] INFO in app: POST /api/emissions/approve/10286 200 [0.005s] [ReqID: 2bce5c4b-4587-439b-bf08-e95e6f070a21]
+127.0.0.1 - - [17/Sep/2026 11:00:25] "POST /api/emissions/approve/10286 HTTP/1.1" 200 -
+[2026-09-17 11:00:26,010] INFO in app: GET /api/emissions/pending 200 [0.052s] [ReqID: 45902955-b034-4dd9-bac4-1ea96302c3b5]
+127.0.0.1 - - [17/Sep/2026 11:00:26] "GET /api/emissions/pending HTTP/1.1" 200 -
+

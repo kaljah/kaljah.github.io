@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+usage types: {<class 'NoneType'>, <class 'list'>}
+combustion count: 20
+

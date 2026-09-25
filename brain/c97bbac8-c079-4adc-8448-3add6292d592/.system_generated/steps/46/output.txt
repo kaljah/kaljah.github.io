@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+python :   File "<string>", line 132
+At line:1 char:1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (  File "<string>", line 132:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    log('T26', 'Dashboard batch-all', 'PASS', f'HTTP 200, keys={list(data.keys()) if isinstance(data, dict) else " 
+list\}')
+                                                                                                                 ^
+SyntaxError: unterminated string literal (detected at line 132)
+

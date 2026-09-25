@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+SEGMENTS: {'upstream': {'display_name': 'Upstream', 'description': 'Exploration, drilling, production operations', 'icon': '⛽'}, 'midstream': {'display_name': 'Midstream', 'description': 'Gathering, processing, transmission, storage', 'icon': '🔄'}, 'downstream': {'display_name': 'Downstream', 'description': 'Refining, petrochemical, distribution, marketing', 'icon': '🏭'}}
+Upstream in SEGMENTS: False
+upstream in SEGMENTS: True
+

@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -335,7 +335,12 @@
+         scope1_query = scope1_query.filter(Emission.division == division)
+     if year and year != "all":
+         scope1_query = scope1_query.filter(Emission.year == int(year))
+-    scope1_query = scope1_query.filter(Emission.status == "Verified")
++    s1_status_filter = (
++        Emission.status.in_(["Verified", "Pending"])
++        if include_pending
++        else (Emission.status == "Verified")
++    )
++    scope1_query = scope1_query.filter(s1_status_filter)
+     groups = [Emission.year]
+     if group_by == "facility":
+         groups.append(Emission.facility_id)
+@@ -364,7 +364,12 @@
+         scope2_query = scope2_query.filter(Scope2Emission.division == division)
+     if year and year != "all":
+         scope2_query = scope2_query.filter(Scope2Emission.year == int(year))
+-    scope2_query = scope2_query.filter(Scope2Emission.status == "Verified")
++    s2_status_filter = (
++        Scope2Emission.status.in_(["Verified", "Pending"])
++        if include_pending
++        else (Scope2Emission.status == "Verified")
++    )
++    scope2_query = scope2_query.filter(s2_status_filter)
+     groups2 = [Scope2Emission.year]
+     if group_by == "facility":
+         groups2.append(Scope2Emission.facility_id)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

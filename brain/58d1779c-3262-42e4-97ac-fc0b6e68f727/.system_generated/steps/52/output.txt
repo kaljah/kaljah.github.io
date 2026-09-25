@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+head : The term 'head' is not recognized as the name of a cmdlet, function, script file, or operable program. Check 
+the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:58
++ python -m pytest tests/ --tb=short -q --no-header 2>&1 | head -120
++                                                          ~~~~
+    + CategoryInfo          : ObjectNotFound: (head:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+

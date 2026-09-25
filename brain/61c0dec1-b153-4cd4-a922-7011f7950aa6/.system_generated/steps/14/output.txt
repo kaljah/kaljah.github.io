@@ -1,0 +1,15 @@
+{"name":"__init__.py", "sizeBytes":"1063"}
+{"name":"__pycache__", "isDir":true}
+{"name":"aggregation_intensity.py", "sizeBytes":"2683"}
+{"name":"combustion_flaring.py", "sizeBytes":"9255"}
+{"name":"fugitives.py", "sizeBytes":"3721"}
+{"name":"gwp.py", "sizeBytes":"1780"}
+{"name":"midstream.py", "sizeBytes":"7075"}
+{"name":"ogmp.py", "sizeBytes":"2746"}
+{"name":"scope2.py", "sizeBytes":"3443"}
+{"name":"scope3.py", "sizeBytes":"1651"}
+{"name":"uncertainty.py", "sizeBytes":"2782"}
+{"name":"unit_conversions.py", "sizeBytes":"8812"}
+{"name":"vented_processes.py", "sizeBytes":"11854"}
+
+Summary: This directory contains 1 subdirectories and 12 files.

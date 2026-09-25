@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_03_admin_api.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -120,14 +120,14 @@
+     # Valid minimal CSV
+     csv_content = b"source_type,sub_type,fuel_type,quantity,unit,year,month\nCombustion,Stationary,Natural Gas,100,MMBtu,2024,1\n"
+     files = {"file": ("test.csv", io.BytesIO(csv_content), "text/csv")}
+-    t.req("POST", "/emissions/upload", files=files, label="CSV upload (valid)")
++    t.req("POST", "/emissions/bulk-upload", files=files, label="CSV upload (valid)")
+     # Malformed CSV
+     bad_csv = b"not,valid\ncsvformat\n"
+     files2 = {"file": ("bad.csv", io.BytesIO(bad_csv), "text/csv")}
+-    t.req("POST", "/emissions/upload", files=files2, label="CSV upload (malformed headers)")
++    t.req("POST", "/emissions/bulk-upload", files=files2, label="CSV upload (malformed headers)")
+     # Empty file
+     files3 = {"file": ("empty.csv", io.BytesIO(b""), "text/csv")}
+-    t.req("POST", "/emissions/upload", files=files3, label="CSV upload (empty file)")
++    t.req("POST", "/emissions/bulk-upload", files=files3, label="CSV upload (empty file)")
+ 
+     # ── Dashboard ─────────────────────────────────────────────────────────────
+     t.log("\n## Dashboard & Analytics")
+@@ -134,6 +134,6 @@
+-    t.get("/dashboard/scope-breakdown", expected_status=200, label="GET /dashboard/scope-breakdown")
+-    t.get("/dashboard/trends", expected_status=200, label="GET /dashboard/trends")
+-    t.get("/dashboard/facility-breakdown", expected_status=200, label="GET /dashboard/facility-breakdown")
++    t.get("/dashboard/batch-all", expected_status=200, label="GET /dashboard/batch-all")
++    t.get("/dashboard/intensity-trend", expected_status=200, label="GET /dashboard/intensity-trend")
++    t.get("/dashboard/categorical-breakdown", expected_status=200, label="GET /dashboard/categorical-breakdown")
+ 
+     # ── Reports ──────────────────────────────────────────────────────────────
+     t.log("\n## Reports")
+@@ -140,14 +140,15 @@
+-    t.get("/reports/list", expected_status=200, label="GET /reports/list")
++    t.get("/reports/export", expected_status=200, label="GET /reports/export")
+ 
+     # ── Audit Trail ──────────────────────────────────────────────────────────
+     t.log("\n## Audit Trail")
+-    t.get("/audit/logs", expected_status=200, label="GET /audit/logs")
+-    t.get("/audit/logs?limit=1000000", expected_status=200, label="GET /audit/logs with huge limit")
++    t.get("/audit/", expected_status=200, label="GET /audit/")
++    t.get("/audit/stats", expected_status=200, label="GET /audit/stats")
++    t.get("/audit/filters", expected_status=200, label="GET /audit/filters")
+ 
+     # ── QAQC ─────────────────────────────────────────────────────────────────
+     t.log("\n## QA/QC")
+-    t.get("/qaqc/anomalies", expected_status=200, label="GET /qaqc/anomalies")
+-    t.get("/qaqc/summary", expected_status=200, label="GET /qaqc/summary")
++    t.get("/qaqc/dashboard", expected_status=200, label="GET /qaqc/dashboard")
++    t.get("/qaqc/export", expected_status=200, label="GET /qaqc/export")
+ 
+     # ── Notifications ─────────────────────────────────────────────────────────
+     t.log("\n## Notifications")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

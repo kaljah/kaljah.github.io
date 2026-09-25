@@ -1,0 +1,32 @@
+Task: a3c28989-4445-41dc-96bf-4ae4635723e7/task-15
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\a3c28989-4445-41dc-96bf-4ae4635723e7\.system_generated\tasks\task-15.log
+Log output:
+<truncated 17 lines>
+the page and try again."}
+
+[Agent02] 
+  [CREATE] test_user@ghg-test.com...
+[Agent02]      POST /api/auth/register -> 400
+[Agent02]      [FAIL] Create failed: {"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+[Agent02] 
+  [CREATE] test_itadmin@ghg-test.com...
+[Agent02]      POST /api/auth/register -> 400
+[Agent02]      [FAIL] Create failed: {"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+[Agent02] 
+  [CREATE] test_itmanager@ghg-test.com...
+[Agent02]      POST /api/auth/register -> 400
+[Agent02]      [FAIL] Create failed: {"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+[Agent02] 
+  [TEST] Duplicate email detection...
+[Agent02]   Duplicate register -> 400
+[Agent02]   [OK] Duplicate correctly rejected with 400
+[Agent02] 
+=== STEP 2b: Verify Logins ===
+[Agent02]   Login test_admin@ghg-test.com -> 200
+[Agent02]   Login test_superuser@ghg-test.com -> 200
+
+Last progress: 2s ago

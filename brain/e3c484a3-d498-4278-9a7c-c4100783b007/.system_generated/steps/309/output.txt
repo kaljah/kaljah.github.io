@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\combustion_flaring.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -228,12 +228,17 @@
+         co2_native_kg = vol_m3_std * co2_native * DENSITY_CO2_STD
+         co2_t = (co2_combusted_kg + co2_native_kg) / 1000.0
+ 
+-        # 3. Flared N2O from energy
++        # 3. Flared N2O
+         n2o_t = 0.0
+         if ef_n2o and float(ef_n2o) > 0:
+-            scf = vol_m3_std / 0.028316846592
+-            mmbtu = (scf * float(hhv or 1020.0)) / 1_000_000.0
+-            n2o_t = (mmbtu * float(ef_n2o)) / 1000.0
++            ef_u = str(ef_unit or "kg/m3").lower()
++            if "mmbtu" in ef_u:
++                scf = vol_m3_std / 0.028316846592
++                mmbtu = (scf * float(hhv or 1020.0)) / 1_000_000.0
++                n2o_t = (mmbtu * float(ef_n2o)) / 1000.0
++            else:
++                n2o_kg = vol_m3_std * float(ef_n2o)
++                n2o_t = n2o_kg / 1000.0
+ 
+         co2e = IndependentGWPModel.calculate_co2e(co2_t, ch4_t, n2o_t, standard=gwp_standard, horizon=gwp_horizon)
+         return {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

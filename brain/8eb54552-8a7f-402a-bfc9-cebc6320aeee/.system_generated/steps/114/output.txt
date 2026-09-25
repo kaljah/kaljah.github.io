@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+["Natural Gas\n±20.0%","Acetylene\n±20.0%","Propylene\n±20.0%","Butane\n±20.0%","Isobutane\n±20.0%","Naphtha\n±20.0%","Compressed Natural Gas (CNG)\n±20.0%","Liquefied Natural Gas (LNG)\n±20.0%","Natural Gas - 4-Stroke Lean Burn Engine\n±30.0%","Natural Gas - 4-Stroke Rich Burn Engine\n±20.0%"]
+```

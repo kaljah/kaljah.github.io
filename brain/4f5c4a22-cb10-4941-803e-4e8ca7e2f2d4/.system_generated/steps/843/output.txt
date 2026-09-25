@@ -1,0 +1,115 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -283,6 +283,9 @@
+ 
+           const hhv = page.locator('#hhv-input, input[placeholder*="983"]').first();
+           if (await hhv.isVisible()) await hhv.fill('1020');
++
++          const flareCh4 = page.locator('#flare-ch4-input, input[placeholder*="85.0"]').first();
++          if (await flareCh4.isVisible().catch(() => false)) await flareCh4.fill('88.5');
+         }
+       },
+       {
+@@ -314,6 +314,9 @@
+ 
+           const co2Out = page.locator('.agr-form input[placeholder*="0.05"]').first();
+           if (await co2Out.isVisible()) await co2Out.fill('0.05');
++
++          const ch4 = page.locator('.agr-form input[placeholder*="85.0"]').first();
++          if (await ch4.isVisible().catch(() => false)) await ch4.fill('82.0');
+         }
+       },
+       {
+@@ -324,8 +324,20 @@
+           const th = page.locator('.dehydrator-form input[placeholder="Volume"]').first();
+           if (await th.isVisible()) await th.fill('35');
+ 
+-          const pump = page.locator('.dehydrator-form input[placeholder*="Pump rate"], .dehydrator-form input[step="0.1"]').first();
++          const pump = page.locator('.dehydrator-form input[placeholder*="Rate"], .dehydrator-form input[placeholder*="Pump rate"], .dehydrator-form input[step="0.1"]').first();
+           if (await pump.isVisible()) await pump.fill('4.2');
++
++          const ch4 = page.locator('.dehydrator-form input[placeholder*="85"]').first();
++          if (await ch4.isVisible().catch(() => false)) await ch4.fill('85.0');
++
++          const hours = page.locator('.dehydrator-form input[placeholder*="8760"]').first();
++          if (await hours.isVisible().catch(() => false)) await hours.fill('8760');
++
++          const press = page.locator('.dehydrator-form input[placeholder*="1000"]').first();
++          if (await press.isVisible().catch(() => false)) await press.fill('800');
++
++          const temp = page.locator('.dehydrator-form input[placeholder*="100"]').first();
++          if (await temp.isVisible().catch(() => false)) await temp.fill('95');
+         }
+       },
+       {
+@@ -338,6 +338,12 @@
+ 
+           const bleed = page.locator('.pneumatics-form input[placeholder*="15.4"]').first();
+           if (await bleed.isVisible()) await bleed.fill('4.5');
++
++          const ch4 = page.locator('.pneumatics-form input[placeholder*="85"]').first();
++          if (await ch4.isVisible().catch(() => false)) await ch4.fill('88.0');
++
++          const hours = page.locator('.pneumatics-form input[placeholder*="8760"]').first();
++          if (await hours.isVisible().catch(() => false)) await hours.fill('8760');
+         }
+       },
+       {
+@@ -354,8 +354,11 @@
+           const depth = page.locator('.unloading-form input[placeholder*="5000"]').first();
+           if (await depth.isVisible()) await depth.fill('7200');
+ 
+-          const press = page.locator('.unloading-form input[placeholder*="500"], .unloading-form input[type="number"]').nth(3);
++          const press = page.locator('.unloading-form input[placeholder*="150"]').first();
+           if (await press.isVisible()) await press.fill('220');
++
++          const ch4 = page.locator('.unloading-form input[placeholder*="85"]').first();
++          if (await ch4.isVisible()) await ch4.fill('85.0');
+         }
+       },
+       {
+@@ -366,8 +366,11 @@
+           const dur = page.locator('.completions-form input[placeholder*="24"]').first();
+           if (await dur.isVisible()) await dur.fill('48');
+ 
+-          const rate = page.locator('.completions-form input[type="number"]').nth(1);
+-          if (await rate.isVisible()) await rate.fill('120');
++          const rate = page.locator('.completions-form input[placeholder*="0.5"]').first();
++          if (await rate.isVisible()) await rate.fill('1.2');
++
++          const ch4 = page.locator('.completions-form input[placeholder*="85"]').first();
++          if (await ch4.isVisible().catch(() => false)) await ch4.fill('90.0');
+         }
+       },
+       {
+@@ -381,8 +381,11 @@
+           const press = page.locator('.blowdown-form input[placeholder*="Before blowdown"]').first();
+           if (await press.isVisible()) await press.fill('600');
+ 
+-          const ev = page.locator('.blowdown-form input[placeholder*="1"]').first();
++          const ev = page.locator('.blowdown-form input[placeholder="Count"]').first();
+           if (await ev.isVisible()) await ev.fill('6');
++
++          const ch4 = page.locator('.blowdown-form input[placeholder*="85"]').first();
++          if (await ch4.isVisible()) await ch4.fill('85.0');
+         }
+       }
+     ];
+@@ -427,7 +427,7 @@
+       await page.waitForTimeout(300);
+ 
+       // 4. Fill uncertainties (Meter ±2.5%, GC ±1.8%, User CO2 ±3%, CH4 ±5%, N2O ±7%)
+-      const meterUnc = page.locator('.input-group:has-text("Meter Calibration Tolerance") input, input[placeholder="2.0"]').first();
++      const meterUnc = page.locator('div:has-text("Meter Calibration Tolerance") input.mole-input, input[placeholder="2.0"]').first();
+       if (await meterUnc.isVisible().catch(() => false)) {
+         await meterUnc.fill('2.5');
+       }
+@@ -434,4 +434,4 @@
+-      const gcUnc = page.locator('.input-group:has-text("GC Analytical Precision") input, input[placeholder="Opt."]').first();
++      const gcUnc = page.locator('div:has-text("GC Analytical Precision") input.mole-input, input[placeholder="Opt."]').first();
+       if (await gcUnc.isVisible().catch(() => false)) {
+         await gcUnc.fill('1.8');
+       }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

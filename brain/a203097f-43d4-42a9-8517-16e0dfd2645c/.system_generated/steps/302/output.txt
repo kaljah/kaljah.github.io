@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 11 items
+
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_round_trip_conversions_a_to_b_to_a[100.0-scf-m3-0.028316846592] PASSED [  9%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_round_trip_conversions_a_to_b_to_a[10.0-mscf-m3-28.316846592] PASSED [ 18%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_round_trip_conversions_a_to_b_to_a[50.0-bbl-m3-0.158987294928] PASSED [ 27%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_round_trip_conversions_a_to_b_to_a[1000.0-lb-kg-0.45359237] PASSED [ 36%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_round_trip_conversions_a_to_b_to_a[5.0-short_ton-kg-907.18474] PASSED [ 45%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_round_trip_conversions_a_to_b_to_a[25.0-mmbtu-mj-1055.05585262] PASSED [ 54%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_round_trip_conversions_a_to_b_to_a[1000.0-kwh-mj-3.6] PASSED [ 63%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_extreme_values_and_precision PASSED [ 72%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_incompatible_unit_error PASSED [ 81%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_temperature_conversions PASSED [ 90%]
+validation/calculation/test_clean_units.py::TestCleanUnitConversions::test_pressure_conversions PASSED [100%]
+
+============================= 11 passed in 0.63s ==============================
+

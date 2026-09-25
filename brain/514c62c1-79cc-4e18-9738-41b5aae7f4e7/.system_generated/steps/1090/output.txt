@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -269,6 +269,19 @@
+     // ── Safe Data Destructuring ───────────────────────────────────────────
+     const { tier1_uncertainty = {}, flagged_records = [], total_flagged_count = 0, returned_count = 0 } = data;
+     const diagnostics = data.diagnostics || {};
++    const anomaliesSummary = useMemo(() => {
++        const raw = diagnostics.anomalies_summary || {};
++        const pending = raw.pending ?? 0;
++        const verified = raw.verified ?? 0;
++        const rejected = raw.rejected ?? 0;
++        return {
++            all: pending + verified,
++            pending,
++            verified,
++            rejected,
++            total: raw.total ?? (pending + verified + rejected),
++        };
++    }, [diagnostics.anomalies_summary]);
+     const healthScore = diagnostics.health_score ?? 95;
+     const completeness = diagnostics.completeness ?? 98.4;
+     const dimCompleteness = diagnostics.dimension_completeness || {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

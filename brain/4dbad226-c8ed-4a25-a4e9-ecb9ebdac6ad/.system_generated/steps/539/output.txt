@@ -1,0 +1,9 @@
+
+The command exited with code 1.
+Output:
+<string>:6: SyntaxWarning: invalid escape sequence '\]'
+  File "<string>", line 6
+    if 'def add_emission' in line or 'def create_emission' in line or 'methods=[" POST\]'
+                                                                                         ^
+SyntaxError: expected ':'
+

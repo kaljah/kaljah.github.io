@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+activity_log: 1307
+alembic_version: 1
+base_year: 1
+base_year_recalculations: 0
+cap_emissions: 200
+cap_regulatory_limits: 5
+cbam_product_exports: 106
+custom_factors: 101
+emission_sources: 100
+emissions: 744
+facilities: 170
+facility_equity_shares: 10
+flaring_details: 10
+goals: 100
+jv_partners: 6
+level_upgrade_logs: 2
+methane_source_types: 8
+mitigation_projects: 100
+mitigation_records: 0
+notifications: 184
+ogmp_surveys: 100
+production_data: 974
+reporting_metadata: 0
+sbti_targets: 3
+scope2_emissions: 37
+scope3_data: 0
+scope3_emissions: 28
+system_settings: 1
+users: 15
+

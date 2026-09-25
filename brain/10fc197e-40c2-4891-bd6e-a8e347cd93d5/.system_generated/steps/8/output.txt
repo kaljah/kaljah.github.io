@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_runner.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,8 +1,12 @@
+ #!/usr/bin/env python3
+-"""
+-Agent 7 – Security & Edge Case Tester
++# -*- coding: utf-8 -*-
++"""
++Agent 7 - Security & Edge Case Tester
+ GHG Accounting & Reporting Platform
+ """
++import sys, io
++sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
++sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+ 
+ import json
+ import os
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

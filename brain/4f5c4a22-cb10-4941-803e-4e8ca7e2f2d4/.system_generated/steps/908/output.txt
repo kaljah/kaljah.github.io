@@ -1,0 +1,65 @@
+
+The command exited with code 1.
+Output:
+
+Running 1 test using 1 worker
+
+[API UPLOAD] Starting upload for bulk_tier1_all_fuels.csv...
+[API UPLOAD RESULT] status=400 body={"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+  x  1 [chromium] › e2e\test_bulk_csv_uploader.spec.js:101:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 1. Tier 1 Bulk CSV Upload (All Fuels, Default Factors & Units) (644ms)
+[API UPLOAD] Starting upload for bulk_tier1_all_fuels.csv...
+[API UPLOAD RESULT] status=400 body={"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+  x  2 [chromium] › e2e\test_bulk_csv_uploader.spec.js:101:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 1. Tier 1 Bulk CSV Upload (All Fuels, Default Factors & Units) (retry #1) (748ms)
+
+
+  1) [chromium] › e2e\test_bulk_csv_uploader.spec.js:101:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 1. Tier 1 Bulk CSV Upload (All Fuels, Default Factors & Units) 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+      72 |   const bodyText = await uploadRes.text();
+      73 |   console.log(`[API UPLOAD RESULT] status=${uploadRes.status()} body=${bodyText}`);
+    > 74 |   expect(uploadRes.status()).toBe(200);
+         |                              ^
+      75 |   const uploadJson = JSON.parse(bodyText);
+      76 |   const jobId = uploadJson.job_id;
+      77 |   expect(jobId).toBeDefined();
+        at uploadCsvViaApi (C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:74:30)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:104:21
+
+    Error Context: test-results\test_bulk_csv_uploader-Bul-13b76-uels-Default-Factors-Units--chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+      72 |   const bodyText = await uploadRes.text();
+      73 |   console.log(`[API UPLOAD RESULT] status=${uploadRes.status()} body=${bodyText}`);
+    > 74 |   expect(uploadRes.status()).toBe(200);
+         |                              ^
+      75 |   const uploadJson = JSON.parse(bodyText);
+      76 |   const jobId = uploadJson.job_id;
+      77 |   expect(jobId).toBeDefined();
+        at uploadCsvViaApi (C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:74:30)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_bulk_csv_uploader.spec.js:104:21
+
+    Error Context: test-results\test_bulk_csv_uploader-Bul-13b76-uels-Default-Factors-Units--chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_bulk_csv_uploader-Bul-13b76-uels-Default-Factors-Units--chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_bulk_csv_uploader-Bul-13b76-uels-Default-Factors-Units--chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_bulk_csv_uploader.spec.js:101:3 › Bulk CSV Uploader & Post-Calculation KPI Audit › 1. Tier 1 Bulk CSV Upload (All Fuels, Default Factors & Units) 
+

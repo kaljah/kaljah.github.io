@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Sidebar.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -73,7 +73,7 @@
+   width: 36px;
+   height: 36px;
+   min-width: 36px;
+-  background: var(--accent-color);
++  background: transparent;
+   border-radius: 9px;
+   display: flex;
+   align-items: center;
+@@ -80,6 +80,6 @@
+   color: white;
+   flex-shrink: 0;
+-  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
++  box-shadow: none;
+ }
+ 
+ .brand-text {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

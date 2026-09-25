@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -384,6 +384,7 @@
+   }));
+ 
+   const [showConfigModal, setShowConfigModal] = useState(false);
++  const [reportFormat, setReportFormat] = useState("master");
+   const [exclusionCriteria, setExclusionCriteria] = useState("Sources contributing less than 1% of the total footprint are excluded.");
+   const [verificationStatus, setVerificationStatus] = useState("Not externally verified");
+ 
+@@ -394,8 +394,16 @@
+     setShowConfigModal(true);
+   };
+ 
+-  const handleISOReportWrapper = async () => {
++  const handleGenerateModalReport = async () => {
+     setShowConfigModal(false);
++    if (reportFormat === "master") {
++      await handleMasterReportDownload();
++      return;
++    }
++    await handleISOReportWrapper();
++  };
++
++  const handleISOReportWrapper = async () => {
+     setLoading(true);
+     toast.info("Generating ISO 14064-1 Report...");
+     try {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

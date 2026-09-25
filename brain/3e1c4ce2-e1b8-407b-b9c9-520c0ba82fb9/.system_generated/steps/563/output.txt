@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -287,20 +287,6 @@
+             "totalCo2e": round(float(p1.tot or 0.0) + float(p2.tot or 0.0), 2),
+         }
+ 
+-        return jsonify(
+-            {
+-                "summary": f_summary.result(),
+-                "mitigation": f_mitigation.result(),
+-                "scope3_summary": f_scope3.result(),
+-                "categorical_breakdown": f_categorical.result(),
+-                "intensity_stats": f_intensity.result(),
+-                "uncertainty": f_uncertainty.result(),
+-                "years": f_years.result(),
+-                "goal": goal_obj,
+-                "base_year": base_year_obj,
+-                "pending_stats": pending_stats,
+-            }
+-        )
+         batch_result = {
+             "summary": f_summary.result(),
+             "mitigation": f_mitigation.result(),
+@@ -310,6 +310,7 @@
+             "years": f_years.result(),
+             "goal": goal_obj,
+             "base_year": base_year_obj,
++            "pending_stats": pending_stats,
+         }
+         with CACHE_LOCK:
+             DASHBOARD_CACHE[cache_key] = batch_result
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

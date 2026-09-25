@@ -1,0 +1,73 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_stress_boundary_resilience.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -79,7 +79,13 @@
+         """Quantities of 10^18 and 10^24 must compute without float overflow or crash."""
+         magnitudes = [1e18, 1e20, 1e24]
+         for mag in magnitudes:
+-            res, method = compute_emissions("combustion", "Natural Gas", mag, "m3")
++            payload = {
++                "process_type": "combustion",
++                "fuel": "Natural Gas",
++                "quantity": mag,
++                "unit": "m3",
++            }
++            res, method = compute_emissions(payload)
+             assert math.isfinite(res["totalCo2e"]), f"Non-finite result for mag {mag}"
+             assert res["totalCo2e"] > 0
+             assert math.isfinite(res["co2"])
+@@ -94,7 +94,13 @@
+         """Quantities of 10^-15 and 10^-20 must compute without underflow errors or ZeroDivision."""
+         micros = [1e-12, 1e-15, 1e-20]
+         for micro in micros:
+-            res, method = compute_emissions("combustion", "Diesel", micro, "gal")
++            payload = {
++                "process_type": "combustion",
++                "fuel": "Diesel",
++                "quantity": micro,
++                "unit": "gal",
++            }
++            res, method = compute_emissions(payload)
+             assert math.isfinite(res["totalCo2e"]), f"Non-finite result for micro {micro}"
+             assert res["totalCo2e"] >= 0
+             assert math.isfinite(res["co2"])
+@@ -101,5 +101,10 @@
+         # Zero quantity edge case
+-        res_zero, _ = compute_emissions("combustion", "Natural Gas", 0.0, "m3")
++        res_zero, _ = compute_emissions({
++            "process_type": "combustion",
++            "fuel": "Natural Gas",
++            "quantity": 0.0,
++            "unit": "m3",
++        })
+         assert res_zero["totalCo2e"] == 0.0
+ 
+     def test_nan_infinity_rejection_or_handling(self):
+@@ -108,7 +108,12 @@
+ 
+         # Check engine behavior
+         try:
+-            res, _ = compute_emissions("combustion", "Natural Gas", nan_val, "m3")
++            res, _ = compute_emissions({
++                "process_type": "combustion",
++                "fuel": "Natural Gas",
++                "quantity": nan_val,
++                "unit": "m3",
++            })
+             assert math.isnan(res.get("totalCo2e", 0)) or res.get("totalCo2e") == 0
+         except (ValueError, TypeError):
+             pass
+@@ -115,5 +115,10 @@
+         try:
+-            res_inf, _ = compute_emissions("combustion", "Natural Gas", inf_val, "m3")
++            res_inf, _ = compute_emissions({
++                "process_type": "combustion",
++                "fuel": "Natural Gas",
++                "quantity": inf_val,
++                "unit": "m3",
++            })
+         except (ValueError, OverflowError):
+             pass
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

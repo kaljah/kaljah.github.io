@@ -1,0 +1,133 @@
+
+The command exited with code 1.
+Output:
+........................................................................ [ 32%]
+F.FF.................................................................... [ 65%]
+........................................................................ [ 97%]
+.....                                                                    [100%]
+================================== FAILURES ===================================
+_________________ test_qaqc_fuel_completeness_non_combustion __________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_qaqc_fuel_completeness_non_combustion(client, test_users):
+        """Verify non-combustion records (pneumatics, fugitives) without fuel do not depress QA/QC fuel_completeness."""
+        with app.app_context():
+            # Clear out test emissions
+            Emission.query.filter(Emission.record_id.like("qaqc-test-%")).delete()
+            db.session.commit()
+    
+            # Insert 3 non-combustion records without fuel
+            for i in range(3):
+                em = Emission(
+                    record_id=f"qaqc-test-nc-{i}",
+                    year=2024,
+                    month=i + 1,
+                    facility_id=1,
+                    process_type="pneumatics",
+                    fuel_type=None,
+                    quantity=100.0,
+                    unit="count",
+                    co2_emissions=0.0,
+                    ch4_emissions=1.0,
+                    n2o_emissions=0.0,
+                    co2e_total=28.0,
+                    status="Verified",
+                    created_by=test_users["admin"],
+                )
+                db.session.add(em)
+            db.session.commit()
+    
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        res = client.get("/api/qaqc/dashboard?year=2024")
+        assert res.status_code == 200
+        data = res.get_json()
+        metrics = data.get("completeness_metrics", {})
+        # Since all records in this set are non-combustion, fuel_completeness should be 100.0%
+>       assert metrics.get("fuel_completeness") == 100.0
+E       AssertionError: assert None == 100.0
+E        +  where None = <built-in method get of dict object at 0x00000209010589C0>('fuel_completeness')
+E        +    where <built-in method get of dict object at 0x00000209010589C0> = {}.get
+
+new\server\tests\test_audit_remediation.py:1279: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/qaqc/dashboard 200 [0.094s] [ReqID: 605acda2-b73b-4888-b0cf-e1673e229ab4]
+__________ test_compressor_seal_and_storage_tank_uncertainty_mapping __________
+
+    def test_compressor_seal_and_storage_tank_uncertainty_mapping():
+        """Verify compressor_seal and storage_tanks map to proper categories and propagate uncertainty."""
+        from calculations.dispatcher import CalculationDispatcher
+        from calculations.uncertainty import PROCESS_CATEGORY, resolve_ef_uncertainty, Tier
+    
+        assert PROCESS_CATEGORY["compressor_seal"] == "fugitive"
+        assert PROCESS_CATEGORY["storage_tanks"] == "vented"
+    
+        # Fugitive CH4 Tier 1 uncertainty should be 0.60 (60%), NOT 0.15 (combustion)
+        u_seal = resolve_ef_uncertainty("compressor_seal", "ch4", Tier.T1)
+        assert u_seal == 0.60
+    
+        dispatcher = CalculationDispatcher()
+        # Test compressor seal dispatch
+        seal_res = dispatcher.dispatch(
+            process_type="compressor_seal",
+            inputs={"compressor_count": 2, "seal_type": "reciprocating"},
+            emission_factors={},
+            uncertainties={"_factor_source": "default"},
+        )
+>       assert seal_res["status"] == "success"
+               ^^^^^^^^^^^^^^^^^^
+E       KeyError: 'status'
+
+new\server\tests\test_audit_remediation.py:1326: KeyError
+________________ test_stoichiometry_dispatcher_gwp_propagation ________________
+
+    def test_stoichiometry_dispatcher_gwp_propagation():
+        """Verify stoichiometry calculator accepts gwp_dict and calculates deterministically."""
+        from calculations.dispatcher import CalculationDispatcher
+    
+        dispatcher = CalculationDispatcher()
+        res = dispatcher.dispatch(
+            process_type="stoichiometry",
+            inputs={"quantity": 1000, "carbon_content": 0.85, "unit": "kg"},
+            emission_factors={},
+            uncertainties={"_factor_source": "default"},
+            gwp_dict={"CO2": 1, "CH4": 28, "N2O": 265},
+        )
+>       assert res["status"] == "success"
+               ^^^^^^^^^^^^^
+E       KeyError: 'status'
+
+new\server\tests\test_audit_remediation.py:1344: KeyError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\packaging\core.py:99: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.datetime.utcnow()
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\writer\excel.py:292: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    workbook.properties.modified = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_qaqc_fuel_completeness_non_combustion
+FAILED new\server\tests\test_audit_remediation.py::test_compressor_seal_and_storage_tank_uncertainty_mapping
+FAILED new\server\tests\test_audit_remediation.py::test_stoichiometry_dispatcher_gwp_propagation
+3 failed, 218 passed, 13 warnings in 22.55s
+

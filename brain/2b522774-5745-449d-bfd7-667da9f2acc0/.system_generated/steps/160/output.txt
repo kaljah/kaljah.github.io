@@ -1,0 +1,105 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  new\client\src\pages\DashboardEnhanced.jsx:335:
+> new\client\src\pages\DashboardEnhanced.jsx:417:      if (gObj && bYearObj && !isCompareMode) {
+  new\client\src\pages\DashboardEnhanced.jsx:418:        const baseEmissions =
+  new\client\src\pages\DashboardEnhanced.jsx:419:          yearlyTrend[bYearObj.year]?.emissions ||
+  new\client\src\pages\DashboardEnhanced.jsx:420:          trendArray[0]?.emissions ||
+  new\client\src\pages\DashboardEnhanced.jsx:421:          0;
+  new\client\src\pages\DashboardEnhanced.jsx:422:        const startYear = bYearObj.year;
+  new\client\src\pages\DashboardEnhanced.jsx:423:        const endYear = gObj.year;
+  new\client\src\pages\DashboardEnhanced.jsx:424:        const targetVal = gObj.target_amount;
+  new\client\src\pages\DashboardEnhanced.jsx:425:
+  new\client\src\pages\DashboardEnhanced.jsx:426:        // Pad trendArray with future years up to endYear if needed
+  new\client\src\pages\DashboardEnhanced.jsx:427:        const lastYearWithData =
+  new\client\src\pages\DashboardEnhanced.jsx:428:          trendArray.length > 0
+  new\client\src\pages\DashboardEnhanced.jsx:429:            ? trendArray[trendArray.length - 1].year
+  new\client\src\pages\DashboardEnhanced.jsx:430:            : startYear;
+  new\client\src\pages\DashboardEnhanced.jsx:431:        if (endYear > lastYearWithData) {
+  new\client\src\pages\DashboardEnhanced.jsx:432:          for (let y = lastYearWithData + 1; y <= endYear; y++) {
+  new\client\src\pages\DashboardEnhanced.jsx:433:            // Check if year already exists (e.g. from forecast)
+  new\client\src\pages\DashboardEnhanced.jsx:434:            if (!trendArray.find((t) => t.year === y)) {
+  new\client\src\pages\DashboardEnhanced.jsx:435:              trendArray.push({ year: y });
+  new\client\src\pages\DashboardEnhanced.jsx:436:            }
+  new\client\src\pages\DashboardEnhanced.jsx:437:          }
+> new\client\src\pages\DashboardEnhanced.jsx:457:      if (!isCompareMode) {
+  new\client\src\pages\DashboardEnhanced.jsx:458:        const historicalData = trendArray
+  new\client\src\pages\DashboardEnhanced.jsx:459:          .filter((d) => d.emissions !== undefined)
+  new\client\src\pages\DashboardEnhanced.jsx:460:          .map((d) => ({ year: d.year, emissions: d.emissions }));
+  new\client\src\pages\DashboardEnhanced.jsx:461:        const forecastPoints = calculateForecast(historicalData);
+  new\client\src\pages\DashboardEnhanced.jsx:462:
+  new\client\src\pages\DashboardEnhanced.jsx:463:        // Merge forecast into trendArray
+  new\client\src\pages\DashboardEnhanced.jsx:464:        forecastPoints.forEach((fp) => {
+  new\client\src\pages\DashboardEnhanced.jsx:465:          const existing = trendArray.find((t) => t.year === fp.year);
+  new\client\src\pages\DashboardEnhanced.jsx:466:          if (existing) {
+  new\client\src\pages\DashboardEnhanced.jsx:467:            existing.forecast = fp.forecast;
+  new\client\src\pages\DashboardEnhanced.jsx:468:          } else {
+  new\client\src\pages\DashboardEnhanced.jsx:469:            trendArray.push(fp);
+  new\client\src\pages\DashboardEnhanced.jsx:470:          }
+  new\client\src\pages\DashboardEnhanced.jsx:471:        });
+  new\client\src\pages\DashboardEnhanced.jsx:472:        trendArray.sort((a, b) => a.year - b.year);
+  new\client\src\pages\DashboardEnhanced.jsx:473:      }
+  new\client\src\pages\DashboardEnhanced.jsx:474:
+  new\client\src\pages\DashboardEnhanced.jsx:475:      if (bYearObj && yearlyTrend[bYearObj.year]) {
+  new\client\src\pages\DashboardEnhanced.jsx:476:        bYearObj.value = yearlyTrend[bYearObj.year].emissions;
+  new\client\src\pages\DashboardEnhanced.jsx:477:      }
+> new\client\src\pages\DashboardEnhanced.jsx:1366:                  className={`compare-toggle-btn ${isCompareMode ? 
+"active" : ""}`}
+> new\client\src\pages\DashboardEnhanced.jsx:1367:                  onClick={() => setIsCompareMode(!isCompareMode)}
+  new\client\src\pages\DashboardEnhanced.jsx:1368:                >
+  new\client\src\pages\DashboardEnhanced.jsx:1369:                  <svg
+  new\client\src\pages\DashboardEnhanced.jsx:1370:                    width="16"
+  new\client\src\pages\DashboardEnhanced.jsx:1371:                    height="16"
+  new\client\src\pages\DashboardEnhanced.jsx:1372:                    viewBox="0 0 24 24"
+  new\client\src\pages\DashboardEnhanced.jsx:1373:                    fill="none"
+  new\client\src\pages\DashboardEnhanced.jsx:1374:                    stroke="currentColor"
+  new\client\src\pages\DashboardEnhanced.jsx:1375:                    strokeWidth="2"
+  new\client\src\pages\DashboardEnhanced.jsx:1376:                  >
+  new\client\src\pages\DashboardEnhanced.jsx:1377:                    <path d="M18 20V10M12 20V4M6 20v-6" />
+  new\client\src\pages\DashboardEnhanced.jsx:1378:                  </svg>
+> new\client\src\pages\DashboardEnhanced.jsx:1379:                  {isCompareMode ? "Standard View" : "Compare 
+Regions"}
+  new\client\src\pages\DashboardEnhanced.jsx:1380:                </button>
+  new\client\src\pages\DashboardEnhanced.jsx:1381:              </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1382:            </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1383:            <div
+  new\client\src\pages\DashboardEnhanced.jsx:1384:              className="chart-container"
+  new\client\src\pages\DashboardEnhanced.jsx:1385:              style={{
+  new\client\src\pages\DashboardEnhanced.jsx:1386:                height: "360px",
+  new\client\src\pages\DashboardEnhanced.jsx:1387:                width: "100%",
+  new\client\src\pages\DashboardEnhanced.jsx:1388:                minWidth: 0,
+  new\client\src\pages\DashboardEnhanced.jsx:1389:                position: "relative",
+  new\client\src\pages\DashboardEnhanced.jsx:1390:              }}
+  new\client\src\pages\DashboardEnhanced.jsx:1391:            >
+  new\client\src\pages\DashboardEnhanced.jsx:1392:              <LineChartWrapper
+  new\client\src\pages\DashboardEnhanced.jsx:1393:                data={trendData}
+  new\client\src\pages\DashboardEnhanced.jsx:1394:                xKey="year"
+  new\client\src\pages\DashboardEnhanced.jsx:1395:                lines={
+> new\client\src\pages\DashboardEnhanced.jsx:1396:                  isCompareMode
+  new\client\src\pages\DashboardEnhanced.jsx:1397:                    ? Object.keys(trendData[0] || {})
+  new\client\src\pages\DashboardEnhanced.jsx:1398:                        .filter((k) => k !== "year" && k !== 
+"trajectory")
+  new\client\src\pages\DashboardEnhanced.jsx:1399:                        .map((k, i) => ({
+  new\client\src\pages\DashboardEnhanced.jsx:1400:                          dataKey: k,
+  new\client\src\pages\DashboardEnhanced.jsx:1401:                          name: k,
+  new\client\src\pages\DashboardEnhanced.jsx:1402:                          color: `hsl(${(i * 137.5) % 360}, 70%, 
+60%)`,
+  new\client\src\pages\DashboardEnhanced.jsx:1403:                        }))
+  new\client\src\pages\DashboardEnhanced.jsx:1404:                    : [
+  new\client\src\pages\DashboardEnhanced.jsx:1405:                        {
+  new\client\src\pages\DashboardEnhanced.jsx:1406:                          dataKey: "emissions",
+  new\client\src\pages\DashboardEnhanced.jsx:1407:                          name: "Total Emissions",
+  new\client\src\pages\DashboardEnhanced.jsx:1408:                          color: "#ff6600",
+  new\client\src\pages\DashboardEnhanced.jsx:1409:                        },
+  new\client\src\pages\DashboardEnhanced.jsx:1410:                        {
+  new\client\src\pages\DashboardEnhanced.jsx:1411:                          dataKey: "scope1",
+  new\client\src\pages\DashboardEnhanced.jsx:1412:                          name: "Scope 1",
+  new\client\src\pages\DashboardEnhanced.jsx:1413:                          color: "#3b82f6",
+  new\client\src\pages\DashboardEnhanced.jsx:1414:                        },
+  new\client\src\pages\DashboardEnhanced.jsx:1415:                        {
+  new\client\src\pages\DashboardEnhanced.jsx:1416:                          dataKey: "trajectory",
+
+
+

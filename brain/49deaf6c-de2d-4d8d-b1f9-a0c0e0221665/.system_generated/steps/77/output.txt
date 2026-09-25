@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+new\server\create_anomalies.py:17:            e1.uncertainty_pct = 15.0
+new\server\create_anomalies.py:23:            e2.uncertainty_pct = 10.0
+new\server\create_anomalies.py:29:            e3.uncertainty_pct = 20.0
+new\server\models.py:153:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+new\server\models.py:280:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+new\server\models.py:368:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+new\server\models.py:406:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+
+
+

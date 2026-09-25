@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:6:def utc_now():
+  new\server\models.py:7:    return datetime.now(timezone.utc)
+  new\server\models.py:8:
+  new\server\models.py:9:
+  new\server\models.py:10:class User(db.Model):
+  new\server\models.py:11:    __tablename__ = "users"
+
+
+

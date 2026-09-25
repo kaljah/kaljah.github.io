@@ -1,0 +1,172 @@
+
+The command exited with code 1.
+Output:
+<truncated 2346 lines>
+                )
+                c_method = flat_inputs.get("cogen_method") or flat_inputs.get(
+                    "method", "wri_efficiency"
+                )
+                return calculator.calculate(
+                    total_emissions=tot_em,
+                    heat_output=heat_out,
+                    power_output=power_out,
+                    method=c_method,
+                    uncertainties=uncertainties,
+                )
+    
+            elif process_type in [
+                "stoichiometry",
+                "chemical_production",
+                "nitric_acid_production",
+                "adipic_acid_production",
+            ]:
+                raw_amt = self._require_float(
+                    flat_inputs,
+                    ["quantity", "amount", "fuel_mass", "production_amount"],
+                    "mass / production amount",
+                )
+                carbon_content = self._optional_fraction(
+                    flat_inputs,
+                    ["carbon_content", "c_content"],
+                    0.85,
+                )
+    
+                return calculator.calculate(
+                    fuel_mass=raw_amt,
+                    carbon_content=carbon_content,
+                    uncertainties=uncertainties,
+                    mass_unit=unit,
+                    gwp_dict=gwp_dict,
+                )
+    
+            elif process_type == "dehydrator":
+                throughput = (
+                    flat_inputs.get("dehy_throughput")
+                    or flat_inputs.get("amount")
+                    or flat_inputs.get("quantity")
+                )
+                pump_rate = flat_inputs.get("dehy_pump_rate") or flat_inputs.get(
+                    "pump_rate"
+                )
+                pump_unit = flat_inputs.get("dehy_pump_unit", "gph")
+                hours = float(
+                    flat_inputs.get("dehy_hours")
+                    or flat_inputs.get("hours_operating")
+                    or 8760
+                )
+                ch4_content = self._optional_fraction(
+                    flat_inputs, ["dehy_ch4_content", "ch4_content", "c1"], 0.85
+                )
+                control_eff = self._optional_fraction(
+                    flat_inputs, ["dehy_eff", "control_efficiency"], 0.0
+                )
+                contactor_press = float(
+                    flat_inputs.get("dehy_press")
+                    or flat_inputs.get("contactor_pressure")
+                    or 800.0
+                )
+                press_u = flat_inputs.get("dehy_press_unit", "psig")
+                contactor_t = float(
+                    flat_inputs.get("dehy_temp")
+                    or flat_inputs.get("contactor_temperature")
+                    or 100.0
+                )
+                temp_u = flat_inputs.get("dehy_temp_unit", "F")
+                has_flash = flat_inputs.get("dehy_has_flash", True)
+                if isinstance(has_flash, str):
+                    has_flash = has_flash.lower() in ["true", "1", "yes"]
+                flash_eff = self._optional_fraction(
+                    flat_inputs, ["dehy_flash_eff", "flash_control_eff"], 0.0
+                )
+                still_type = flat_inputs.get("dehy_still_type", "none")
+                flash_type = flat_inputs.get("dehy_flash_type", "none")
+    
+                return calculator.calculate(
+                    throughput=throughput,
+                    pump_rate=pump_rate,
+                    pump_unit=pump_unit,
+                    hours=hours,
+                    ch4_content=ch4_content,
+                    control_eff=control_eff,
+                    uncertainties=uncertainties,
+                    contactor_pressure=contactor_press,
+                    press_unit=press_u,
+                    contactor_temperature=contactor_t,
+                    temp_unit=temp_u,
+                    has_flash_tank=has_flash,
+                    flash_control_eff=flash_eff,
+                    still_control_type=still_type,
+                    flash_control_type=flash_type,
+                    gwp_dict=gwp_dict,
+                )
+    
+            elif process_type == "indirect_steam":
+                heat = self._require_float(
+                    flat_inputs, ["quantity", "amount", "heat_energy"], "heat energy"
+                )
+                boiler_eff = self._require_float(
+                    flat_inputs,
+                    ["boiler_eff", "boiler_efficiency"],
+                    "boiler efficiency fraction (e.g. 0.80)",
+                )
+                trans_loss = self._optional_fraction(
+                    flat_inputs, ["trans_loss", "transmission_loss"], 0.0
+                )
+    
+                return calculator.calculate(
+                    heat_energy=heat,
+                    ef_co2=emission_factors.get("co2", 0),
+                    boiler_efficiency=boiler_eff,
+                    transmission_loss=trans_loss,
+                    uncertainties=uncertainties,
+                    heat_unit=flat_inputs.get("heat_unit", "btu"),
+                )
+    
+            else:
+                return self._generic_calculation(
+                    flat_inputs,
+                    emission_factors,
+                    uncertainties,
+                    process_type,
+                    gwp_dict=gwp_dict,
+                )
+    
+        except Exception as e:
+            from flask import current_app, has_app_context
+    
+            if has_app_context():
+                current_app.logger.error(
+                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
+                    exc_info=True,
+                )
+            else:
+                import logging
+    
+                logging.error(
+                    f"[Dispatcher] Calculation failed for process_type='{process_type}': {e}",
+                    exc_info=True,
+                )
+>           raise ValueError(f"Calculation error for '{process_type}': {str(e)}") from e
+E           ValueError: Calculation error for 'pneumatic': Missing required parameter for Tier 3 specific calculation: 'pneu_ch4_content' (gas CH4 content %)
+
+calculations\dispatcher.py:1181: ValueError
+------------------------------ Captured log call ------------------------------
+ERROR    root:dispatcher.py:1177 [Dispatcher] Calculation failed for process_type='pneumatic': Missing required parameter for Tier 3 specific calculation: 'pneu_ch4_content' (gas CH4 content %)
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 769, in dispatch
+    ch4_content = self._require_fraction(
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 176, in _require_fraction
+    raise ValueError(
+ValueError: Missing required parameter for Tier 3 specific calculation: 'pneu_ch4_content' (gas CH4 content %)
+=========================== short test summary info ===========================
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A02-FLARE-ELEV-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A03-UNLOAD-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A04-TANK-FLASH-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A06-SCOPE3-EEIO-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-E01-DECIMAL-VALS]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-F01-EFFICIENCY-100PCT]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-F02-EFFICIENCY-0PCT]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-G01-MISSING-OPTIONAL-HOURS]
+======================== 8 failed, 17 passed in 0.96s =========================
+

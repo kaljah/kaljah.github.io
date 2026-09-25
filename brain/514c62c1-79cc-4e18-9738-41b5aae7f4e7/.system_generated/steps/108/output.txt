@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":22,"LineContent":"  max-width: 860px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CustomDropdown.css","LineNumber":66,"LineContent":"  width: 8px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\EmissionResult.css","LineNumber":335,"LineContent":"  width: 8px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.css","LineNumber":238,"LineContent":"@media (max-width: 850px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":72,"LineContent":"  width: 8px;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":78,"LineContent":"  max-width: 820px;"}

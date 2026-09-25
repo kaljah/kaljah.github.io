@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1128,6 +1128,16 @@
+                 )
+                 still_type = flat_inputs.get("dehy_still_type", "none")
+                 flash_type = flat_inputs.get("dehy_flash_type", "none")
++                stripping_rate = (
++                    flat_inputs.get("dehy_stripping_rate")
++                    or flat_inputs.get("stripping_rate")
++                    or flat_inputs.get("stripping_gas_rate")
++                )
++                stripping_scf = (
++                    flat_inputs.get("dehy_stripping_scf")
++                    or flat_inputs.get("stripping_scf")
++                    or flat_inputs.get("stripping_gas_scf")
++                )
+ 
+                 return calculator.calculate(
+                     throughput=throughput,
+@@ -1144,6 +1144,8 @@
+                     flash_control_eff=flash_eff,
+                     still_control_type=still_type,
+                     flash_control_type=flash_type,
++                    stripping_gas_rate=float(stripping_rate) if stripping_rate not in [None, "", "-"] else 0.0,
++                    stripping_gas_scf=float(stripping_scf) if stripping_scf not in [None, "", "-"] else None,
+                     gwp_dict=gwp_dict,
+                 )
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

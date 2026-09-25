@@ -1,0 +1,128 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -660,38 +660,77 @@
+         fetchSbti();
+     }, []);
+ 
+-    // Auto-populate forms based on user's accessible facilities
+-    // Admin users: skip (keep all dropdowns optional)
+-    // Non-admin users: cascade-fill activity → division → region when unambiguous
+-    useEffect(() => {
+-        if (facilities.length === 0) return;
+-        if (isPrivileged) return;
+-
+-        // Step 1: unique activities the user can see
+-        const availableActivities = [...new Set(facilities.map(f => f.activity).filter(Boolean))];
+-        const autoActivity = availableActivities.length === 1 ? availableActivities[0] : '';
+-
+-        // Step 2: unique divisions within that activity
+-        const availableDivisions = autoActivity
+-            ? [...new Set(facilities.filter(f => f.activity === autoActivity).map(f => f.division).filter(Boolean))]
+-            : [];
+-        const autoDivision = availableDivisions.length === 1 ? availableDivisions[0] : '';
+-
+-        // Step 3: facilities matching the resolved activity + division
+-        const matchingFacilities = facilities.filter(f =>
+-            (!autoActivity || f.activity === autoActivity) &&
+-            (!autoDivision || f.division === autoDivision)
+-        );
+-        const autoFacilityId = matchingFacilities.length === 1 ? matchingFacilities[0].id.toString() : '';
+-
+-        const autoFill = { activity: autoActivity, division: autoDivision, facility_id: autoFacilityId };
+-
+-        setProdForm(prev => ({ ...prev, ...autoFill }));
+-        setSourceForm(prev => ({ ...prev, ...autoFill }));
+-        setMitigationForm(prev => ({ ...prev, ...autoFill }));
+-    setCbamForm((prev) => ({ ...prev, ...autoFill }));
+-        setOgmpForm(prev => ({ ...prev, ...autoFill }));
+-    }, [facilities]);
++    // Auto-populate filters and forms based on connected user's and superuser's region, division, and activity
++    useEffect(() => {
++        if (!user) return;
++        const userLoc = (user.location || '').trim();
++        const isGlobalAdmin = user.role === 'admin' && isUnrestrictedLocation(userLoc);
++        if (isGlobalAdmin && facilities.length > 1) return;
++
++        const opDefaults = getUserOperationalDefaults(user, facilities);
++
++        // 1. Set Toolbar Filter Dropdowns (region, activity, division)
++        if (opDefaults.defaultRegion) {
++            setFilterRegion(prev => prev || opDefaults.defaultRegion);
++        }
++        if (opDefaults.defaultActivity) {
++            let actToSet = opDefaults.defaultActivity;
++            if (['Upstream', 'Exploration & Production', 'EP'].includes(actToSet)) actToSet = 'EP';
++            else if (['Downstream', 'Refining and Petrochemicals', 'RPC'].includes(actToSet)) actToSet = 'RPC';
++            else if (['Midstream', 'Transport', 'TRC'].includes(actToSet)) actToSet = 'TRC';
++            else if (['LQS', 'Liquifaction and Separation'].includes(actToSet)) actToSet = 'LQS';
++            setFilterActivity(prev => prev || actToSet);
++        }
++        if (opDefaults.defaultDivision) {
++            setFilterDivision(prev => prev || opDefaults.defaultDivision);
++        }
++
++        // 2. Set Entry Form Defaults
++        const autoFill = {
++            activity: opDefaults.defaultActivity || '',
++            division: opDefaults.defaultDivision || '',
++            facility_id: opDefaults.defaultFacilityId || ''
++        };
++
++        if (autoFill.activity || autoFill.division || autoFill.facility_id || opDefaults.defaultRegion) {
++            setProdForm(prev => ({
++                ...prev,
++                activity: prev.activity || autoFill.activity,
++                division: prev.division || autoFill.division,
++                facility_id: prev.facility_id || autoFill.facility_id,
++            }));
++            setSourceForm(prev => ({
++                ...prev,
++                activity: prev.activity || autoFill.activity,
++                division: prev.division || autoFill.division,
++                facility_id: prev.facility_id || autoFill.facility_id,
++            }));
++            setMitigationForm(prev => ({
++                ...prev,
++                activity: prev.activity || autoFill.activity,
++                division: prev.division || autoFill.division,
++                facility_id: prev.facility_id || autoFill.facility_id,
++            }));
++            setCbamForm(prev => ({
++                ...prev,
++                activity: prev.activity || autoFill.activity,
++                division: prev.division || autoFill.division,
++                facility_id: prev.facility_id || autoFill.facility_id,
++            }));
++            setOgmpForm(prev => ({
++                ...prev,
++                activity: prev.activity || autoFill.activity,
++                division: prev.division || autoFill.division,
++                facility_id: prev.facility_id || autoFill.facility_id,
++            }));
++            setFacilityForm(prev => ({
++                ...prev,
++                location: prev.location || opDefaults.defaultRegion,
++                activity: prev.activity || autoFill.activity,
++                division: prev.division || autoFill.division,
++            }));
++        }
++    }, [facilities, user]);
+ 
+     // API Calls
+     const fetchFacilities = async () => {
+@@ -698,7 +698,11 @@
+             const res = await api.get('/facilities');
+             const data = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+             setFacilities(data);
+-            const regions = [...new Set(data.map(f => f.location))].filter(Boolean);
++            const regions = [...new Set(data.flatMap(f => [f.region, f.location]).filter(Boolean))].sort();
++            const userLoc = (user?.location || '').trim();
++            if (userLoc && !isUnrestrictedLocation(userLoc) && !regions.includes(userLoc)) {
++                regions.unshift(userLoc);
++            }
+             setAvailableFilters(prev => ({ ...prev, regions }));
+         } catch (err) { console.error(err); }
+     };
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

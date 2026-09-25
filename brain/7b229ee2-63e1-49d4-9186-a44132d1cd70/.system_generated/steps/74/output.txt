@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/dashboard.py:1181:        op_status = f.operator_status or "operated"
+new/server/routes/dashboard.py:1228:                "operator_status": op_status,
+new/server/routes/dashboard.py:2114:        op_status = fac.operator_status or "operated" if fac else "operated"
+new/server/routes/dashboard.py:2190:                "operator_status": op_status,
+

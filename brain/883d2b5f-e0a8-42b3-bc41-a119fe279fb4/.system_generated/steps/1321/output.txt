@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -346,6 +346,23 @@
+         assert status["skipped_count"] == 1
+         assert "Missing process type" in status["skipped_preview"][0]["reason"]
+ 
++    def test_auto_factor_type_supports_tier3_specific(self, app, test_user, test_facility):
++        """Verifies that in global_factor_type='auto' mode, rows with factor_type='specific' route to Tier 3."""
++        # Row with specific Tier 3 flaring parameters
++        specific_csv = (
++            "Facility,Date,Process,Fuel,Quantity,Unit,factor_type,ch4_content,flare_type\n"
++            f"{test_facility.name},2024-11,Flaring,Natural Gas,1000,m3,specific,90,elevated\n"
++        ).encode("utf-8")
++        status = self._execute_sync_thread(app, specific_csv, "specific_auto.csv", test_user.id)
++        assert status["status"] == "completed"
++        assert status["processed"] == 1
++        assert status["skipped_count"] == 0
++        from models import Emission
++        with app.app_context():
++            em = Emission.query.filter_by(facility_id=test_facility.id, year=2024, month=11).first()
++            assert em is not None
++            assert em.co2e_total > 0
++
+ 
+ # ==============================================================================
+ # PHASE 3: MATHEMATICAL & ENGINEERING CALCULATION AUDIT
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

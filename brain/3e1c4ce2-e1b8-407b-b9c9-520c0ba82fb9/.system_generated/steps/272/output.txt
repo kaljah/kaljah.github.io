@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                                                            
+--------                                                                                            
+C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\chrome.exe                  
+C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\chrome_proxy.exe            
+C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\chrome_pwa_launcher.exe     
+C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\elevated_tracing_service.exe
+C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\elevation_service.exe       
+C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\notification_helper.exe     
+C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\setup.exe                   
+
+
+

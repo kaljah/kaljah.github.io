@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":320,"LineContent":"  transform: translateY(10px) scale(0.96);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":322,"LineContent":"  transform-origin: bottom left;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":329,"LineContent":"  transform: translateY(0) scale(1);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":367,"LineContent":"    transform 0.15s;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":382,"LineContent":"  transform: translateX(3px);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":422,"LineContent":"    transform: translateX(-100%);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":424,"LineContent":"    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s ease;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.css","LineNumber":430,"LineContent":"    transform: translateX(0);"}

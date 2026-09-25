@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+3209: data_source_ref=(
+3210: str(data.get("data_source_ref") or data.get("ticket_ref") or data.get("bulletin_ref") or "")[:120]
+

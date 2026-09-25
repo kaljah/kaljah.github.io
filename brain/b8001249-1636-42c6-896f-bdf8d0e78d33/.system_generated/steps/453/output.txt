@@ -1,0 +1,1 @@
+A1: (Recommended) Return 401 Unauthorized with {"error": "Not authenticated"} when unauthenticated or logged out (standard REST security)

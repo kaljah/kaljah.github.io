@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\facilities.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -256,6 +256,8 @@
+         facility.boundary_type = data["boundary_type"]
+     if "boundary_detail" in data:
+         facility.boundary_detail = data["boundary_detail"]
++    if "equity_share_pct" in data and data["equity_share_pct"] is not None:
++        facility.equity_share_pct = float(data["equity_share_pct"])
+     if "activity" in data:
+         facility.activity = data["activity"]
+     if "region" in data:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

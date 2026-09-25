@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\process_categories.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -338,4 +338,17 @@
+             )
+ 
+     return {k: v for k, v in organized.items() if v}  # Remove empty categories
++
++
++# Canonical set of non-combustion processes where fuel_type is not physical and not required
++NON_COMBUSTION_PROCESSES = {
++    "pneumatics", "pneumatic", "pneumatic_devices", "pneumatic_device",
++    "vented", "venting", "blowdown", "blowdowns", "unloading", "liquids_unloading",
++    "tank", "tanks", "tank_flashing", "tank_working", "tank_breathing", "storage_tanks",
++    "fugitive", "fugitives", "equipment_fugitive", "component_fugitive", "wellhead_fugitive", "separator_fugitive",
++    "compressor_seal", "compressor_fugitive",
++    "drilling", "mud_degassing", "completions", "well_completions",
++    "dehydrator", "dehydrators", "agr", "acid_gas_removal",
++}
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

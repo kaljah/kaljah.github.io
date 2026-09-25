@@ -1,0 +1,14 @@
+
+The command exited with code 1.
+Output:
+[2026-09-23 11:26:17,429] INFO in app: Updated account: a
+[2026-09-23 11:26:17,528] INFO in app: Updated account: a@a
+[2026-09-23 11:26:17,630] INFO in app: Updated account: z
+[2026-09-23 11:26:17,745] INFO in app: Updated account: z@z
+[2026-09-23 11:26:17,867] INFO in app: GET /api/dashboard/batch-all 200 [0.108s] [ReqID: 173662e4-f746-4294-8c16-2f55ce77050c]
+Traceback (most recent call last):
+  File "<string>", line 15, in <module>
+AssertionError: IT User was not blocked!
+IT User ID: 3
+IT User batch-all status: 200 {'base_year': None, 'categorical_breakdown': [], 'goal': None, 'intensity_stats': [], 'intensity_stats_py': None, 'mitigation': [], 'pending_stats': {'count': 0, 'totalCo2e': 0.0}, 'scope3_summary': {'by_year': {}, 'total': 0.0}, 'summary': [], 'uncertainty': {'categories': [], 'confidence_level_pct': 95, 'coverage_factor': 2.0, 'facility_id': None, 'inventory_uncertainty_1sigma': 0.0, 'inventory_uncertainty_decimal': 0.0, 'inventory_uncertainty_pct': '�0.0%', 'scope': 'all', 'tier_breakdown': {'Tier 1': 0, 'Tier 2': 0, 'Tier 3': 0}, 'total_inventory_emissions': 0.0, 'year': 2026}, 'years': [2026, 2025, 2024, 2023, 2022, 2021, 2020]}
+

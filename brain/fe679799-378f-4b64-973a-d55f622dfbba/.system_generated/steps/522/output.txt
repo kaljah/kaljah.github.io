@@ -1,0 +1,113 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\scratch\run_20_beta_testers_20k.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -210,6 +210,35 @@
+     return payload, factor_data
+ 
+ 
++def extract_val(r):
++    if r is None:
++        return 0.0
++    if isinstance(r, dict):
++        return float(r.get("value", 0.0) or 0.0)
++    try:
++        return float(r or 0.0)
++    except (ValueError, TypeError):
++        return 0.0
++
++
++def extract_unc(r, payload):
++    unc = r.get("uncertainty")
++    if isinstance(unc, dict):
++        val = unc.get("combined_95ci") or unc.get("uncertainty_95pct")
++        if val is not None:
++            return float(val)
++    if isinstance(unc, (int, float)):
++        return float(unc)
++    results = r.get("results", {})
++    for g in ["ch4", "co2", "n2o"]:
++        gas_dict = results.get(g)
++        if isinstance(gas_dict, dict):
++            ci = gas_dict.get("ci_95_pct") or gas_dict.get("relative_uncertainty_95pct")
++            if ci:
++                return float(ci)
++    return float(payload.get("user_unc_co2", 5.0))
++
++
+ def run_full_suite():
+     print("=" * 80)
+     print("STARTING 20 BETA TESTERS EMISSION CALCULATION AUDIT (20,000 UNIQUE ENTRIES)")
+@@ -243,7 +243,7 @@
+                 res = dispatcher.dispatch(payload["process_type"], payload, factor_data, {})
+                 assert res is not None, "Dispatcher returned None"
+                 
+-                co2e = res.get("total_co2e", 0.0)
++                co2e = float(res.get("total_co2e", 0.0))
+                 assert co2e >= 0, f"Negative CO2e: {co2e}"
+                 assert not math.isnan(co2e), "CO2e is NaN"
+                 assert not math.isinf(co2e), "CO2e is Infinite"
+@@ -250,8 +250,8 @@
+                 # Check results sub-dictionary
+                 results = res.get("results", {})
+-                co2_val = results.get("co2", {}).get("value", 0.0)
+-                ch4_val = results.get("ch4", {}).get("value", 0.0)
+-                n2o_val = results.get("n2o", {}).get("value", 0.0)
++                co2_val = extract_val(results.get("co2"))
++                ch4_val = extract_val(results.get("ch4"))
++                n2o_val = extract_val(results.get("n2o"))
+                 
+                 assert co2_val >= 0 and not math.isnan(co2_val)
+                 assert ch4_val >= 0 and not math.isnan(ch4_val)
+@@ -258,8 +258,7 @@
+                 
+                 # Check uncertainty
+-                uncertainty = res.get("uncertainty", {})
+-                combined_95 = uncertainty.get("combined_95ci", 0.0)
+-                assert not math.isnan(combined_95)
++                combined_95 = extract_unc(res, payload)
++                assert combined_95 >= 0 and not math.isnan(combined_95)
+                 
+                 t_passed += 1
+                 t_co2e_sum += co2e
+@@ -278,7 +278,7 @@
+                         "month": payload["month"],
+                         "co2": co2_val,
+                         "ch4": ch4_val,
+-                        "n2o": n2_mol,
++                        "n2o": n2o_val,
+                         "co2e": co2e,
+                         "uncertainty": combined_95,
+                         "factor_source": payload["factor_source"]
+@@ -333,6 +333,7 @@
+         for s in sample_records_to_insert:
+             f_id = fac_cache.get(s["facility_name"]) or 1
+             e = Emission(
++                record_id=str(uuid.uuid4()),
+                 facility_id=f_id,
+                 year=s["year"],
+                 month=s["month"],
+@@ -339,11 +339,11 @@
+                 fuel_type=s["fuel_type"],
+-                amount=s["amount"],
++                quantity=s["amount"],
+                 unit=s["unit"],
+                 co2_emissions=s["co2"],
+                 ch4_emissions=s["ch4"],
+-                n2o_emissions=s["n2o"] / 1000.0,
++                n2o_emissions=s["n2o"],
+                 co2e_total=s["co2e"],
+-                uncertainty_percentage=s["uncertainty"],
++                uncertainty_pct=s["uncertainty"],
+                 status="Verified",
+                 created_by=admin_id,
+                 equipment_id=f"BETA-{s['entry_id']}",
+@@ -353,6 +353,7 @@
+             db_insert_count += 1
+             
+         db.session.commit()
++
+         
+         post_emissions_count = Emission.query.count()
+         post_total_co2e = db.session.query(db.func.sum(Emission.co2e_total)).scalar() or 0.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

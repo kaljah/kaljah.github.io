@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":24,"LineContent":"    PROCESS_CATEGORY,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1189,"LineContent":"        _cat = PROCESS_CATEGORY.get(str(process_type).lower(), \"combustion\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":101,"LineContent":"PROCESS_CATEGORY = {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":420,"LineContent":"    category = PROCESS_CATEGORY.get(str(process_type).lower(), \"combustion\")"}

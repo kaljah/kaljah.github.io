@@ -1,0 +1,13 @@
+
+The command exited with code 1.
+Output:
+ImportError while loading conftest 'C:\Users\samsung\Desktop\H2\new\server\tests\conftest.py'.
+new\server\tests\conftest.py:22: in <module>
+    from app import app as flask_app
+new\server\app.py:243: in <module>
+    from routes.emissions import emissions_bp
+E     File "C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py", line 3185
+E       log_activity_and_notify(
+E                              ^
+E   SyntaxError: '(' was never closed
+

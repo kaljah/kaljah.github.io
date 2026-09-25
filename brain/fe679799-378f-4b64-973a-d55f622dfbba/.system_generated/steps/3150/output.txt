@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+_clean_float(1250,50): 1250.5
+_clean_float(1,500.75): 1500.75
+

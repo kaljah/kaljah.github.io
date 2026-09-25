@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -120,8 +120,9 @@
+     if _wal_commit_counter % _WAL_CHECKPOINT_INTERVAL == 0:
+         try:
+             conn = db.engine.raw_connection()
+-            if isinstance(conn.connection, sqlite3.Connection):
+-                conn.connection.execute("PRAGMA wal_checkpoint(PASSIVE)")
++            driver_conn = getattr(conn, "driver_connection", getattr(conn, "connection", None))
++            if isinstance(driver_conn, sqlite3.Connection):
++                driver_conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
+             conn.close()
+         except Exception as _wal_err:
+             app.logger.warning(f"WAL checkpoint failed: {_wal_err}")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

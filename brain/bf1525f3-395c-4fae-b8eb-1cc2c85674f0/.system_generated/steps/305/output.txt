@@ -1,0 +1,108 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+testpaths: tests, .
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 493 items
+
+test_csv_uploader.py .                                                   [  0%]
+test_emission_calculations.py .......................................... [  8%]
+..........                                                               [ 10%]
+test_performance.py .                                                    [ 10%]
+tests\test_all_bulk_imports.py ..........                                [ 12%]
+tests\test_all_process_types_matrix.py ................................. [ 19%]
+........................................................................ [ 34%]
+........................................                                 [ 42%]
+tests\test_api_security.py ...............                               [ 45%]
+tests\test_audit.py ........                                             [ 47%]
+tests\test_audit_bug_fixes.py ....                                       [ 47%]
+tests\test_audit_remediation.py ........................................ [ 55%]
+........                                                                 [ 57%]
+tests\test_calculations_page.py ....                                     [ 58%]
+tests\test_combustion.py ...                                             [ 59%]
+tests\test_csv_engine_matrix.py ........................................ [ 67%]
+..............                                                           [ 69%]
+tests\test_deep_injection_matrix.py ...............                      [ 73%]
+tests\test_dispatcher.py ............                                    [ 75%]
+tests\test_gwp_dynamic.py ...                                            [ 76%]
+tests\test_numerical_invariants.py ........................              [ 80%]
+tests\test_qaqc_diagnostics.py .....                                     [ 81%]
+tests\test_reports.py ......                                             [ 83%]
+tests\test_satellite.py .....                                            [ 84%]
+tests\test_sbti.py ...                                                   [ 84%]
+tests\test_stress_boundary_resilience.py ........                        [ 86%]
+tests\test_stress_bulk_pipeline.py ..                                    [ 86%]
+tests\test_stress_concurrency.py ..                                      [ 87%]
+tests\test_stress_memory_leaks.py ....                                   [ 88%]
+tests\test_stress_volume_analytics.py ....                               [ 88%]
+tests\test_tier_scope_kpi_numerical.py .......................           [ 93%]
+tests\test_ui_calculation_parity.py .................                    [ 96%]
+tests\test_uncertainty.py ........                                       [ 98%]
+tests\test_user_profile_update.py F.                                     [ 98%]
+tests\test_vented.py .....                                               [100%]
+
+================================== FAILURES ===================================
+____________________ test_update_user_profile_information _____________________
+
+client = <FlaskClient <Flask 'app'>>, it_admin = 38, target_user = 40
+
+    def test_update_user_profile_information(client, it_admin, target_user):
+        payload = {
+            "fullName": "Updated Target Name",
+            "email": "new_target_email@domain.com",
+            "department": "Renewables & Carbon",
+            "jobTitle": "Lead Carbon Analyst",
+            "role": "user",
+            "location": "Algiers",
+        }
+        res = client.put(f"/api/auth/users/{target_user}", json=payload)
+>       assert res.status_code == 200
+E       assert 400 == 200
+E        +  where 400 = <WrapperTestResponse streamed [400 BAD REQUEST]>.status_code
+
+tests\test_user_profile_update.py:86: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:160 PUT /api/auth/users/40 400 [0.003s] [ReqID: c9963b42-2838-4b7a-aa37-3af6578b4518]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\packaging\core.py:99: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.datetime.utcnow()
+
+tests/test_reports.py::test_emissions_excel_export_multi_scope
+tests/test_reports.py::test_excel_formula_injection_defense
+tests/test_reports.py::test_reports_ogmp_excel_export
+  C:\Users\samsung\anaconda3\Lib\site-packages\openpyxl\writer\excel.py:292: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    workbook.properties.modified = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+----------------------------------------------------------- benchmark: 1 tests ----------------------------------------------------------
+Name (time in us)                             Min      Max    Mean  StdDev  Median     IQR     Outliers  OPS (Kops/s)  Rounds  Iterations
+-----------------------------------------------------------------------------------------------------------------------------------------
+test_benchmark_uncertainty_propagation     2.6000  88.9000  3.7415  2.1450  2.8000  0.2000  10393;11169      267.2741   54645           1
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Legend:
+  Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
+  OPS: Operations Per Second, computed as 1 / Mean
+=========================== short test summary info ===========================
+FAILED tests/test_user_profile_update.py::test_update_user_profile_information
+============ 1 failed, 492 passed, 13 warnings in 72.82s (0:01:12) ============
+

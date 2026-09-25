@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":102,"LineContent":"        is_factor_tonne = any(t in factor_unit for t in [\"tonne\", \"metric_ton\", \"tco2\", \"mtco2\", \"t/\"]) or factor_unit.startswith(\"t \")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":103,"LineContent":"        is_factor_per_thousand = any(t in factor_unit for t in [\"1000\", \"1,000\", \"1k\"]) or (\"eeio\" in calc_method and not is_factor_tonne)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":104,"LineContent":"        if is_factor_tonne:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":273,"LineContent":"        is_factor_tonne = any(t in factor_unit for t in [\"tonne\", \"metric_ton\", \"tco2\", \"mtco2\", \"t/\"]) or factor_unit.startswith(\"t \")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":274,"LineContent":"        is_factor_per_thousand = any(t in factor_unit for t in [\"1000\", \"1,000\", \"1k\"]) or (\"eeio\" in calc_method and not is_factor_tonne)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":275,"LineContent":"        if is_factor_tonne:"}

@@ -1,0 +1,139 @@
+
+The command exited with code 1.
+Output:
+<truncated 200 lines>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>, test_facility = 23
+
+    def test_scope3_spend_based_eeio_ui_parity(self, client, auth_admin, test_facility):
+        """Category 1 Spend-Based EEIO: $75,000 spend in NAICS 2111."""
+        payload = {
+            "year": 2025,
+            "month": 8,
+            "facility_id": test_facility,
+            "category": "1",
+            "sub_category": "Purchased Goods & Services",
+            "activity_data": 75000,
+            "unit": "USD",
+            "emission_factor": 0.42,  # kg CO2e / $1
+            "status": "Verified",
+        }
+        res = client.post("/api/scope3", json=payload)
+        assert res.status_code == 201
+        rec = res.get_json()["record"]
+    
+        # 75,000 * 0.42 / 1,000 = 31.50 tCO2e
+>       assert pytest.approx(rec["co2e"], 1e-2) == 31.50
+                             ^^^^^^^^^^^
+E       KeyError: 'co2e'
+
+new\server\tests\test_ui_calculation_parity.py:416: KeyError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.081s] [ReqID: c347fbde-e9be-4eb4-b486-33e227cd7d1c]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/scope3 201 [0.007s] [ReqID: 351c5d21-0735-4e85-afab-b8015b0c1ab0]
+__ TestScope3UINumericalParity.test_scope3_upstream_transportation_ui_parity __
+
+self = <test_ui_calculation_parity.TestScope3UINumericalParity object at 0x000001E390643CE0>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>, test_facility = 23
+
+    def test_scope3_upstream_transportation_ui_parity(self, client, auth_admin, test_facility):
+        """Category 4 Upstream Transportation: 80,000 tonne-km at 0.15 kg CO2e/t-km."""
+        payload = {
+            "year": 2025,
+            "month": 9,
+            "facility_id": test_facility,
+            "category": "4",
+            "sub_category": "Freight Trucking",
+            "activity_data": 80000,
+            "unit": "t-km",
+            "emission_factor": 0.15,
+            "status": "Verified",
+        }
+        res = client.post("/api/scope3", json=payload)
+        assert res.status_code == 201
+        rec = res.get_json()["record"]
+    
+        # 80,000 * 0.15 / 1,000 = 12.00 tCO2e
+>       assert pytest.approx(rec["co2e"], 1e-2) == 12.00
+                             ^^^^^^^^^^^
+E       KeyError: 'co2e'
+
+new\server\tests\test_ui_calculation_parity.py:454: KeyError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.077s] [ReqID: fc937ae1-9281-4ea0-9c36-562fde35df1d]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/scope3 201 [0.004s] [ReqID: 3a49690b-64de-41e6-bf22-2dad214a0f6c]
+_ TestDashboardKPIParity.test_dashboard_kpis_identity_and_compact_formatting __
+
+self = <test_ui_calculation_parity.TestDashboardKPIParity object at 0x000001E390643F50>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>, test_facility = 23
+
+    def test_dashboard_kpis_identity_and_compact_formatting(self, client, auth_admin, test_facility):
+        """Verify: totalEmissions == scope1 + scope2 + scope3 and compact numbers match UI display."""
+        res = client.get("/api/dashboard/kpis")
+>       assert res.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+
+new\server\tests\test_ui_calculation_parity.py:468: AssertionError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.075s] [ReqID: 22e95f94-81af-4f65-9f26-8063de1973b7]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/dashboard/kpis 404 [0.001s] [ReqID: 8af5ddfe-fabb-47ce-aa90-b02219fad3f7]
+_______ TestTableFooterZeroDrift.test_scope2_table_footer_sum_exactness _______
+
+self = <test_ui_calculation_parity.TestTableFooterZeroDrift object at 0x000001E3900B1EE0>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>
+
+    def test_scope2_table_footer_sum_exactness(self, client, auth_admin):
+        """Simulate Scope2Form table footer reduce((sum, e) => sum + e.co2e, 0)."""
+        res = client.get("/api/scope2?page=1&per_page=100")
+        assert res.status_code == 200
+        data = res.get_json()
+>       records = data.get("records", data.get("items", []))
+                  ^^^^^^^^
+E       AttributeError: 'list' object has no attribute 'get'
+
+new\server\tests\test_ui_calculation_parity.py:529: AttributeError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.075s] [ReqID: 355cecde-17f6-4b41-98e2-4464c065558a]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/scope2 200 [0.014s] [ReqID: 4dba6d2a-0716-4d5e-ad23-b3e3e7bde337]
+_______ TestTableFooterZeroDrift.test_scope3_table_footer_sum_exactness _______
+
+self = <test_ui_calculation_parity.TestTableFooterZeroDrift object at 0x000001E390643E30>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>
+
+    def test_scope3_table_footer_sum_exactness(self, client, auth_admin):
+        """Simulate Scope3Form table footer reduce((sum, e) => sum + e.co2e, 0)."""
+        res = client.get("/api/scope3?page=1&per_page=100")
+        assert res.status_code == 200
+        data = res.get_json()
+>       records = data.get("records", data.get("items", []))
+                  ^^^^^^^^
+E       AttributeError: 'list' object has no attribute 'get'
+
+new\server\tests\test_ui_calculation_parity.py:542: AttributeError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.075s] [ReqID: 1099d884-3d94-4857-8304-159510d81e5e]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/scope3 200 [0.010s] [ReqID: 24d057f7-0127-4bf4-ab8f-7d8da78bdf29]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope1UINumericalParity::test_flaring_sour_gas_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope1UINumericalParity::test_cems_tier3_continuous_measurement_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_grid_electricity_location_based_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_indirect_steam_heat_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_cogen_allocation_wri_efficiency_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope3UINumericalParity::test_scope3_spend_based_eeio_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope3UINumericalParity::test_scope3_upstream_transportation_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestDashboardKPIParity::test_dashboard_kpis_identity_and_compact_formatting
+FAILED new\server\tests\test_ui_calculation_parity.py::TestTableFooterZeroDrift::test_scope2_table_footer_sum_exactness
+FAILED new\server\tests\test_ui_calculation_parity.py::TestTableFooterZeroDrift::test_scope3_table_footer_sum_exactness
+=================== 10 failed, 4 passed, 1 warning in 3.85s ===================
+

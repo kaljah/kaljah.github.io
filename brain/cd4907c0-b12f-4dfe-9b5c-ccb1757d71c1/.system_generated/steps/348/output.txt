@@ -1,0 +1,19 @@
+Task: cd4907c0-b12f-4dfe-9b5c-ccb1757d71c1/task-346
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\cd4907c0-b12f-4dfe-9b5c-ccb1757d71c1\.system_generated\tasks\task-346.log
+Log output:
+<truncated 46 lines>
+ [ReqID: 6a090bc2-f985-4564-96ba-d4a56d3d127e]
+INFO     app:app.py:160 GET /api/scope3 403 [0.001s] [ReqID: 6425bc5b-54a5-449d-8e8c-bbf4f59b91ab]
+INFO     app:app.py:160 GET /api/data/sources 404 [0.000s] [ReqID: ef915214-556b-4aa0-9ea1-5af8f5f9e321]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_it_role_security.py::test_it_user_cannot_access_operational_facilities_or_emissions
+=================== 1 failed, 9 passed, 1 warning in 4.14s ====================
+
+Last progress: 1s ago

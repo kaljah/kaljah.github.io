@@ -1,0 +1,45 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -47,6 +47,7 @@
+         - acid_gas_control_eff: Destruction/recovery efficiency (e.g. 0.98 for Claus/thermal oxidizer)
+         - acid_gas_control_type: Control technology ('vent', 'agi', 'ccus', 'claus', 'thermal_oxidizer', 'flare')
+         """
++        uncertainties = uncertainties or {}
+         self.validate_inputs(
+             {"throughput": throughput, "co2_in": co2_in}, ["throughput", "co2_in"]
+         )
+@@ -53,8 +53,14 @@
+         # Throughput in scf
+         throughput_scf = float(throughput) * 1_000_000.0
+ 
+-        # 1. CO2 Mass Balance Venting
+-        diff_co2 = max(0.0, float(co2_in) - float(co2_out or 0.0))
++        # 1. CO2 Mass Balance Venting with Contactor Shrinkage Correction (API Compendium 2021 Eq. 6-7)
++        cin = float(co2_in or 0.0)
++        if cin > 1.0:
++            cin /= 100.0
++        cout = float(co2_out or 0.0)
++        if cout > 1.0:
++            cout /= 100.0
++        diff_co2 = max(0.0, (cin - cout) / max(0.0001, 1.0 - cout))
+         co2_vented_scf = throughput_scf * diff_co2
+         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
+         co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
+@@ -62,8 +62,12 @@
+         slip_rate = max(
+             0.0, float(ch4_slip_fraction if ch4_slip_fraction is not None else 0.001)
+         )
+-        ch4_feed_frac = max(0.0, float(ch4_in or 0.85))
+-        ch4_slipped_scf = throughput_scf * ch4_feed_frac * slip_rate
++        if slip_rate > 1.0:
++            slip_rate /= 100.0
++        c_ch4 = max(0.0, float(ch4_in if ch4_in is not None else 0.85))
++        if c_ch4 > 1.0:
++            c_ch4 /= 100.0
++        ch4_slipped_scf = throughput_scf * c_ch4 * slip_rate
+         ch4_slipped_m3 = convert(ch4_slipped_scf, "scf", "m3")
+         ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

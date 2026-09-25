@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+Traversal: BFS depth=2 | Start: ['ROLE_META', 'Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard.…'] | 24 nodes found
+
+[!] TRUNCATED: showing 24 of 24 nodes (~2000-token budget). The answer may be among the 0 cut nodes — raise the token budget (CLI: --budget) or narrow the query (e.g. context_filter=['call'], or get_node for a specific symbol).
+
+NODE ROLE_META [src=new/client/src/pages/UserManagement.jsx loc=L37 community=Scope2Form.jsx]
+NODE Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard.… [src=new/server/routes/emissions.py loc=L4725 community=emissions.py]
+NODE UserManagement.jsx [src=new/client/src/pages/UserManagement.jsx loc=L1 community=Scope2Form.jsx]
+NODE get_pending_emissions() [src=new/server/routes/emissions.py loc=L4724 community=emissions.py]
+NODE login_required() [src=new/server/routes/auth.py loc=L137 community=login_required]
+NODE get_current_user() [src=new/server/utils.py loc=L5 community=login_required]
+NODE get_allowed_facility_ids() [src=new/server/utils.py loc=L21 community=login_required]
+NODE emissions.py [src=new/server/routes/emissions.py loc=L1 community=emissions.py]
+NODE App.jsx [src=new/client/src/App.jsx loc=L1 community=App.jsx]
+NODE useAuth() [src=new/client/src/context/AuthContext.jsx loc=L276 community=useAuth]
+NODE useToast() [src=new/client/src/components/Toast.jsx loc=L6 community=useAuth]
+NODE api.js [src=new/client/src/api.js loc=L1 community=api.js]
+NODE api [src=new/client/src/api.js loc=L3 community=api.js]
+NODE Toast.jsx [src=new/client/src/components/Toast.jsx loc=L1 community=App.jsx]
+NODE AuthContext.jsx [src=new/client/src/context/AuthContext.jsx loc=L1 community=App.jsx]
+NODE route [src= loc= community=emissions.py]
+NODE ConfirmModal.jsx [src=new/client/src/components/ConfirmModal.jsx loc=L1 community=Scope2Form.jsx]
+NODE ConfirmModal() [src=new/client/src/components/ConfirmModal.jsx loc=L4 community=Scope2Form.jsx]
+NODE UserManagement() [src=new/client/src/pages/UserManagement.jsx loc=L402 community=Scope2Form.jsx]
+NODE UserManagement [src=new/client/src/App.jsx loc=L24 community=Scope2Form.jsx]
+NODE Drawer.jsx [src=new/client/src/components/Drawer.jsx loc=L1 community=Scope2Form.jsx]
+NODE Drawer() [src=new/client/src/components/Drawer.jsx loc=L5 community=Scope2Form.jsx]
+NODE getRoleMeta() [src=new/client/src/pages/UserManagement.jsx loc=L75 community=Scope2Form.jsx]
+NODE S [src=new/client/src/pages/UserManagement.jsx loc=L84 community=Scope2Form.jsx]
+EDGE UserManagement.jsx --contains [EXTRACTED]--> ROLE_META at=new/client/src/pages/UserManagement.jsx:L37
+EDGE Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard.… --rationale_for [EXTRACTED]--> get_pending_emissions() at=new/server/routes/emissions.py:L4725
+EDGE get_pending_emissions() --references [EXTRACTED context=decorator]--> login_required() at=new/server/routes/emissions.py:L4723
+EDGE emissions.py --contains [EXTRACTED]--> get_pending_emissions() at=new/server/routes/emissions.py:L4724
+EDGE get_pending_emissions() --references [EXTRACTED context=decorator]--> route at=new/server/routes/emissions.py:L4722
+EDGE get_pending_emissions() --calls [EXTRACTED context=call]--> get_allowed_facility_ids() at=new/server/routes/emissions.py:L4732
+EDGE get_pending_emissions() --calls [EXTRACTED context=call]--> get_current_user() at=new/server/routes/emissions.py:L4728
+EDGE App.jsx --dynamic_import [EXTRACTED]--> UserManagement.jsx
+EDGE UserManagement --imports_from [EXTRACTED context=import]--> UserManagement.jsx at=new/client/src/App.jsx:L24
+EDGE UserManagement.jsx --imports_from [EXTRACTED context=import]--> api.js at=new/client/src/pages/UserManagement.jsx:L2
+EDGE UserManagement.jsx --imports [EXTRACTED context=import]--> api at=new/client/src/pages/UserManagement.jsx:L2
+EDGE UserManagement.jsx --imports_from [EXTRACTED context=import]--> ConfirmModal.jsx at=new/client/src/pages/UserManagement.jsx:L6
+EDGE UserManagement.jsx --imports [EXTRACTED context=import]--> ConfirmModal() at=new/client/src/pages/UserManagement.jsx:L6
+EDGE UserManagement.jsx --imports_from [EXTRACTED context=import]--> Drawer.jsx at=new/client/src/pages/UserManagement.jsx:L5
+EDGE UserManagement.jsx --imports [EXTRACTED context=import]--> Drawer() at=new/client/src/pages/UserManagement.jsx:L5
+EDGE UserManagement.jsx --imports_from [EXTRACTED context=import]--> Toast.jsx at=new/client/src/pages/UserManagement.jsx:L4
+EDGE UserManagement.jsx --imports [EXTRACTED context=import]--> useToast() at=new/client/src/pages/UserManagement.jsx:L4
+EDGE UserManagement.jsx --imports_from [EXTRACTED context=import]--> AuthContext.jsx at=new/client/src/pages/UserManagement.jsx:L3
+EDGE UserManagement.jsx --imports [EXTRACTED context=import]--> useAuth() at=new/client/src/pages/UserManagement.jsx:L3
+EDGE UserManagement.jsx --contains [EXTRACTED]--> getRoleMeta() at=new/client/src/pages/UserManagement.jsx:L75
+EDGE UserManagement.jsx --contains [EXTRACTED]--> S at=new/client/src/pages/UserManagement.jsx:L84
+EDGE UserManagement.jsx --contains [EXTRACTED]--> UserManagement() at=new/client/src/pages/UserManagement.jsx:L402
+EDGE App.jsx --imports_from [EXTRACTED context=import]--> api.js at=new/client/src/App.jsx:L3
+EDGE api.js --contains [EXTRACTED]--> api at=new/client/src/api.js:L3
+EDGE AuthContext.jsx --imports_from [EXTRACTED context=import]--> api.js at=new/client/src/context/AuthContext.jsx:L2
+EDGE AuthContext.jsx --imports [EXTRACTED context=import]--> api at=new/client/src/context/AuthContext.jsx:L2
+EDGE App.jsx --contains [EXTRACTED]--> UserManagement at=new/client/src/App.jsx:L24
+EDGE App.jsx --imports_from [EXTRACTED context=import]--> Toast.jsx at=new/client/src/App.jsx:L6
+EDGE App.jsx --imports_from [EXTRACTED context=import]--> AuthContext.jsx at=new/client/src/App.jsx:L4
+EDGE App.jsx --imports [EXTRACTED context=import]--> useAuth() at=new/client/src/App.jsx:L4
+EDGE ConfirmModal.jsx --contains [EXTRACTED]--> ConfirmModal() at=new/client/src/components/ConfirmModal.jsx:L4
+EDGE Drawer.jsx --contains [EXTRACTED]--> Drawer() at=new/client/src/components/Drawer.jsx:L5
+EDGE Toast.jsx --contains [EXTRACTED]--> useToast() at=new/client/src/components/Toast.jsx:L6
+EDGE UserManagement() --calls [EXTRACTED context=call]--> useToast() at=new/client/src/pages/UserManagement.jsx:L404
+... (truncated — 0 more nodes cut by ~2000-token budget. Narrow with context_filter=['call'] or use get_node for a specific symbol)
+

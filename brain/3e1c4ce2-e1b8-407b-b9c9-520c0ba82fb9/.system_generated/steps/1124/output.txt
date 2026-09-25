@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Non-zero pending: [('completions', 'Activit� E&P', 837058.72, 'scf', 6432.310895999999, 102.54585600000009, 9293.3402784), ('completions', 'Activit� E&P', 935531.16, 'm3', 17760.99305376, 283.15115136000026, 25660.91017670401), ('completions', 'Activit� E&P', 869070.78, 'm3', 63487.8009216, 1369.5365375999984, 101697.87032063995), ('completions', 'Activit� E&P', 49561.08, 'scf', 146998.84913999998, 1370.618640000001, 185239.109196), ('completions', 'Activit� E&P', 737422.07, 'm3', 132677.24156544, 4081.5716198399973, 246553.0897589759)]
+Zero pending: [('pneumatic_pump', 'Activit� E&P', 830582.86, 'scf/hr', 0.0, 0.0, 0.0), ('combustion', 'Activit� E&P', 147291.67, 'm3', 0.0, 0.0, 0.0), ('venting', 'Activit� E&P', 765552.3, 'scf', 0.0, 0.0, 0.0), ('combustion', 'Activit� E&P', 114026.35, 'MMBtu', 0.0, 0.0, 0.0), ('flaring', 'Activit� E&P', 149348.07, 'MMBtu', 0.0, 0.0, 0.0)]
+

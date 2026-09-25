@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -166,10 +166,10 @@
+         skipped_all = list(job.get("skipped", []))
+         anomalies = list(job.get("anomalies", []))
+         return {
+-            "status": job["status"],
+-            "progress": job["progress"],
+-            "processed": job["processed"],
+-            "total": job["total"],
++            "status": job.get("status", "unknown"),
++            "progress": job.get("progress", 0),
++            "processed": job.get("processed", 0),
++            "total": job.get("total", 0),
+             "errors": list(job.get("errors", [])),
+             "skipped_count": len(skipped_all),
+             "skipped_preview": skipped_all[:100],  # first 100 for inline display
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

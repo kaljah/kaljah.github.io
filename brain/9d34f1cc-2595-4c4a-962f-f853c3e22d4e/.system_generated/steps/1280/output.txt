@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+C:\Users\samsung\Desktop\H2\validation
+C:\Users\samsung\Desktop\H2\docs\validation
+C:\Users\samsung\Desktop\H2\new\client\node_modules\@babel\core\lib\config\validation
+

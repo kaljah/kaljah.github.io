@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+[INFO] Restoring backups/ghg_app_20260920_173146.db into sandbox_restore.db...
+[INFO] Found 24 tables in restored database.
+[INFO] PRAGMA integrity_check: [('ok',)]
+[SUCCESS] Sandbox verified and removed.
+

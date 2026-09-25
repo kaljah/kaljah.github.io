@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\context\AuthContext.jsx:29:          if (msg?.type === "LOGOUT") {
+  new\client\src\context\AuthContext.jsx:30:            setUser(null);
+  new\client\src\context\AuthContext.jsx:31:            setPreferences({});
+> new\client\src\context\AuthContext.jsx:49:      if (e.key === "ghg_auth_logout_event") {
+  new\client\src\context\AuthContext.jsx:50:        setUser(null);
+  new\client\src\context\AuthContext.jsx:51:        setPreferences({});
+> new\client\src\context\AuthContext.jsx:67:  // Register global logout hook for API interceptor
+  new\client\src\context\AuthContext.jsx:68:  useEffect(() => {
+> new\client\src\context\AuthContext.jsx:69:    window.__authLogout = () => {
+  new\client\src\context\AuthContext.jsx:70:      setUser(null);
+  new\client\src\context\AuthContext.jsx:71:      setLoading(false);
+> new\client\src\context\AuthContext.jsx:74:      delete window.__authLogout;
+  new\client\src\context\AuthContext.jsx:75:    };
+  new\client\src\context\AuthContext.jsx:76:  }, []);
+> new\client\src\context\AuthContext.jsx:83:  const logout = useCallback(async (isTimeout = false) => {
+  new\client\src\context\AuthContext.jsx:84:    try {
+> new\client\src\context\AuthContext.jsx:85:      await api.post("/auth/logout");
+  new\client\src\context\AuthContext.jsx:86:    } catch (e) {
+> new\client\src\context\AuthContext.jsx:87:      // Ignore network errors on logout
+  new\client\src\context\AuthContext.jsx:88:    }
+  new\client\src\context\AuthContext.jsx:89:    setUser(null);
+> new\client\src\context\AuthContext.jsx:97:    // Broadcast logout to all sibling browser tabs
+  new\client\src\context\AuthContext.jsx:98:    if (authChannelRef.current) {
+  new\client\src\context\AuthContext.jsx:99:      try {
+> new\client\src\context\AuthContext.jsx:100:        authChannelRef.current.postMessage({ type: "LOGOUT", isTimeout });
+  new\client\src\context\AuthContext.jsx:101:      } catch (e) {}
+  new\client\src\context\AuthContext.jsx:102:    }
+> new\client\src\context\AuthContext.jsx:104:      localStorage.setItem("ghg_auth_logout_event", 
+Date.now().toString());
+  new\client\src\context\AuthContext.jsx:105:    } catch (e) {}
+  new\client\src\context\AuthContext.jsx:106:
+> new\client\src\context\AuthContext.jsx:146:        logout(true);
+  new\client\src\context\AuthContext.jsx:147:      }, IDLE_TIMEOUT_MS);
+  new\client\src\context\AuthContext.jsx:148:    };
+> new\client\src\context\AuthContext.jsx:183:  }, [user, logout]);
+  new\client\src\context\AuthContext.jsx:184:
+  new\client\src\context\AuthContext.jsx:185:  useEffect(() => {
+> new\client\src\context\AuthContext.jsx:263:        logout,
+  new\client\src\context\AuthContext.jsx:264:        loading,
+  new\client\src\context\AuthContext.jsx:265:        sessionExpired,
+
+
+

@@ -1,0 +1,36 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\auth.py:983:def update_user(id):
+  new\server\routes\auth.py:984:    db.session.expire_all()
+  new\server\routes\auth.py:985:    user = db.session.get(User, id)
+  new\server\routes\auth.py:986:    if not user:
+  new\server\routes\auth.py:987:        return jsonify({"error": "User not found"}), 404
+  new\server\routes\auth.py:988:
+  new\server\routes\auth.py:989:    # IT Admins have global authority over all user accounts - no regional restriction
+  new\server\routes\auth.py:990:    it_admin_id = session.get("user_id")
+  new\server\routes\auth.py:991:    it_admin = db.session.get(User, it_admin_id)
+  new\server\routes\auth.py:992:
+  new\server\routes\auth.py:993:    data = request.get_json()
+  new\server\routes\auth.py:994:
+  new\server\routes\auth.py:995:    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, 
+"it_manager": 4}
+  new\server\routes\auth.py:996:    VALID_ROLES = set(ROLE_RANK.keys())
+  new\server\routes\auth.py:997:    requester_rank = ROLE_RANK.get(it_admin.role if it_admin else "user", 0)
+  new\server\routes\auth.py:998:
+  new\server\routes\auth.py:999:    if "role" in data:
+  new\server\routes\auth.py:1000:        new_role = str(data["role"]).strip().lower()
+  new\server\routes\auth.py:1001:        if new_role not in VALID_ROLES:
+  new\server\routes\auth.py:1002:            return jsonify({"error": f"Invalid role. Must be one of: {', 
+'.join(sorted(VALID_ROLES))}"}), 400
+  new\server\routes\auth.py:1003:        target_new_rank = ROLE_RANK.get(new_role, 0)
+  new\server\routes\auth.py:1004:        if target_new_rank > requester_rank:
+  new\server\routes\auth.py:1005:            return jsonify({"error": "Cannot assign a role higher than your own"}), 
+403
+  new\server\routes\auth.py:1006:        user.role = new_role
+  new\server\routes\auth.py:1007:
+  new\server\routes\auth.py:1008:    if "fullName" in data and data["fullName"]:
+
+
+

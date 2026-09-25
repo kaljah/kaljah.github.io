@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_04_superuser_api.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -67,7 +67,7 @@
+     t.log("\n## Bulk CSV Upload (superuser)")
+     csv_content = b"source_type,sub_type,fuel_type,quantity,unit,year,month\nFlaring,Gas Flaring,Natural Gas,500,MMBtu,2024,2\n"
+     files = {"file": ("superuser_upload.csv", io.BytesIO(csv_content), "text/csv")}
+-    t.req("POST", "/emissions/upload", files=files, label="Bulk upload as superuser (records should be Pending)")
++    t.req("POST", "/emissions/bulk-upload", files=files, label="Bulk upload as superuser (records should be Pending)")
+ 
+     # ── Scope 2 & 3 ───────────────────────────────────────────────────────────
+     t.log("\n## Scope 2")
+@@ -84,13 +84,13 @@
+ 
+     # ── Analytics ────────────────────────────────────────────────────────────
+     t.log("\n## Analytics")
+-    t.get("/dashboard/scope-breakdown", expected_status=200, label="GET /dashboard/scope-breakdown")
+-    t.get("/dashboard/trends", expected_status=200, label="GET /dashboard/trends")
+-    t.get("/qaqc/anomalies", expected_status=200, label="GET /qaqc/anomalies")
++    t.get("/dashboard/intensity-trend", expected_status=200, label="GET /dashboard/intensity-trend")
++    t.get("/dashboard/categorical-breakdown", expected_status=200, label="GET /dashboard/categorical-breakdown")
++    t.get("/qaqc/dashboard", expected_status=200, label="GET /qaqc/dashboard")
+ 
+     # ── Reports ──────────────────────────────────────────────────────────────
+     t.log("\n## Reports")
+-    t.get("/reports/list", expected_status=200, label="GET /reports/list")
++    t.get("/reports/export", expected_status=200, label="GET /reports/export")
+     t.post("/reports/generate", json_body={"year": 2024, "format": "pdf"}, label="POST /reports/generate")
+ 
+     # ── Notifications ─────────────────────────────────────────────────────────
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

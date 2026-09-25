@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\emissions.py:3392:@emissions_bp.route("/<id>", methods=["PUT"])
+  new\server\routes\emissions.py:3393:@login_required  # EXTRA-06 FIX: decorator was present but get_current_user() 
+could return None causing 500
+> new\server\routes\emissions.py:3394:def update_emission(id):
+  new\server\routes\emissions.py:3395:    user = get_current_user()
+  new\server\routes\emissions.py:3396:    if not user:
+  new\server\routes\emissions.py:3397:        return jsonify({"error": "Unauthorized"}), 401
+  new\server\routes\emissions.py:3398:
+  new\server\routes\emissions.py:3399:    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+  new\server\routes\emissions.py:3400:        return jsonify({"error": "Read-only or administrative role cannot modify 
+emission records"}), 403
+  new\server\routes\emissions.py:3401:
+  new\server\routes\emissions.py:3402:    data = request.get_json()  # EXTRA-03 FIX: removed duplicate call below
+  new\server\routes\emissions.py:3403:    record = Emission.query.filter_by(record_id=id).first() or db.session.get(
+  new\server\routes\emissions.py:3404:        Emission, int(id) if str(id).isdigit() else -1
+  new\server\routes\emissions.py:3405:    )  # EXTRA-02 FIX
+  new\server\routes\emissions.py:3406:
+  new\server\routes\emissions.py:3407:    if not record:
+  new\server\routes\emissions.py:3408:        return jsonify({"error": "Not found"}), 404
+  new\server\routes\emissions.py:3409:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\emissions.py:3410:    if allowed_fids is not None and record.facility_id not in allowed_fids:
+  new\server\routes\emissions.py:3411:        return jsonify({"error": "Unauthorized: Outside your region"}), 403
+  new\server\routes\emissions.py:3412:
+  new\server\routes\emissions.py:3413:    # Enforce creator ownership for standard user role
+  new\server\routes\emissions.py:3414:    if user.role == "user" and record.created_by is not None and 
+record.created_by != user.id:
+  new\server\routes\emissions.py:3415:        return jsonify({"error": "Unauthorized: You may only modify records you 
+created"}), 403
+  new\server\routes\emissions.py:3416:
+  new\server\routes\emissions.py:3417:    # If non-admin modifies a verified record, reset status to Pending for 
+maker-checker review
+  new\server\routes\emissions.py:3418:    if user.role not in ["admin", "superuser"] and record.status == "Verified":
+  new\server\routes\emissions.py:3419:        record.status = "Pending"
+
+
+

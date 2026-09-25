@@ -1,0 +1,111 @@
+
+The command exited with code 0.
+Output:
+<truncated 12 lines>
+  new\client\src\pages\CarbonIntensity.jsx:76:  const isFirstLoadRef = useRef(true);
+  new\client\src\pages\CarbonIntensity.jsx:77:
+> new\client\src\pages\CarbonIntensity.jsx:135:      loadTrendData(selectedYear);
+  new\client\src\pages\CarbonIntensity.jsx:136:    }
+  new\client\src\pages\CarbonIntensity.jsx:137:  }, [selectedYear, currentActivity, currentDivision, currentSegment, 
+currentRegion]);
+  new\client\src\pages\CarbonIntensity.jsx:138:
+  new\client\src\pages\CarbonIntensity.jsx:139:  useEffect(() => {
+  new\client\src\pages\CarbonIntensity.jsx:140:    loadCbamData();
+> new\client\src\pages\CarbonIntensity.jsx:253:  const loadTrendData = async (endYear) => {
+  new\client\src\pages\CarbonIntensity.jsx:254:    const years = [];
+  new\client\src\pages\CarbonIntensity.jsx:255:    const yearInt = isNaN(parseInt(endYear))
+  new\client\src\pages\CarbonIntensity.jsx:256:      ? new Date().getFullYear()
+  new\client\src\pages\CarbonIntensity.jsx:257:      : parseInt(endYear);
+  new\client\src\pages\CarbonIntensity.jsx:258:    for (let i = 4; i >= 0; i--) years.push(yearInt - i);
+> new\client\src\pages\CarbonIntensity.jsx:275:      const trendData = Array.isArray(res.data)
+  new\client\src\pages\CarbonIntensity.jsx:276:        ? res.data
+  new\client\src\pages\CarbonIntensity.jsx:277:        : res.data?.data || [];
+> new\client\src\pages\CarbonIntensity.jsx:278:      setRawTrendData(trendData);
+  new\client\src\pages\CarbonIntensity.jsx:279:    } catch (error) {
+  new\client\src\pages\CarbonIntensity.jsx:280:      console.error("Trend load error:", error);
+  new\client\src\pages\CarbonIntensity.jsx:281:    }
+  new\client\src\pages\CarbonIntensity.jsx:282:  };
+  new\client\src\pages\CarbonIntensity.jsx:283:
+> new\client\src\pages\CarbonIntensity.jsx:423:    return rawTrendData.map((item) => {
+  new\client\src\pages\CarbonIntensity.jsx:424:      let yearData = item.data;
+  new\client\src\pages\CarbonIntensity.jsx:425:      if (currentRegion !== "all") {
+  new\client\src\pages\CarbonIntensity.jsx:426:        yearData = yearData.filter(
+> new\client\src\pages\CarbonIntensity.jsx:427:          (d) => d.facility_id.toString() === currentRegion,
+  new\client\src\pages\CarbonIntensity.jsx:428:        );
+  new\client\src\pages\CarbonIntensity.jsx:429:      }
+  new\client\src\pages\CarbonIntensity.jsx:430:
+  new\client\src\pages\CarbonIntensity.jsx:431:      let wCo2 = 0,
+  new\client\src\pages\CarbonIntensity.jsx:432:        wCo2Gwp20 = 0,
+> new\client\src\pages\CarbonIntensity.jsx:451:  }, [rawTrendData, currentRegion, gwpHorizon]);
+  new\client\src\pages\CarbonIntensity.jsx:452:
+> new\client\src\pages\CarbonIntensity.jsx:453:  const getHeatmapClass = (val) => {
+  new\client\src\pages\CarbonIntensity.jsx:454:    if (val === null || val === undefined || isNaN(val) || val === 0) 
+return "heat-null";
+  new\client\src\pages\CarbonIntensity.jsx:455:    if (val < 18) return "heat-lux";
+  new\client\src\pages\CarbonIntensity.jsx:456:    if (val < 28) return "heat-low";
+  new\client\src\pages\CarbonIntensity.jsx:457:    if (val < 38) return "heat-mid";
+  new\client\src\pages\CarbonIntensity.jsx:458:    if (val < 48) return "heat-high";
+> new\client\src\pages\CarbonIntensity.jsx:718:                                        const fac = facilities.find(f 
+=> String(f.id) === String(p.facility_id));
+  new\client\src\pages\CarbonIntensity.jsx:719:                                        const facName = fac ? fac.name 
+: (p.facilityName || p.facility_name || '-');
+  new\client\src\pages\CarbonIntensity.jsx:720:                                        const prodName = p.productName 
+|| p.product_name || '-';
+  new\client\src\pages\CarbonIntensity.jsx:721:                                        const cn = p.cnCode || 
+p.cn_code || '-';
+  new\client\src\pages\CarbonIntensity.jsx:722:                                        const qty = p.quantityTonnes ?? 
+p.quantity_tonnes ?? 0;
+  new\client\src\pages\CarbonIntensity.jsx:723:                                        const dest = 
+p.exportDestination || p.export_destination || 'EU';
+> new\client\src\pages\CarbonIntensity.jsx:888:                  className={`view-btn ${trendView === "heatmap" ? 
+"active" : ""}`}
+> new\client\src\pages\CarbonIntensity.jsx:889:                  onClick={() => setTrendView("heatmap")}
+  new\client\src\pages\CarbonIntensity.jsx:890:                >
+> new\client\src\pages\CarbonIntensity.jsx:891:                  <Grid size={16} /> Heatmap
+  new\client\src\pages\CarbonIntensity.jsx:892:                </button>
+  new\client\src\pages\CarbonIntensity.jsx:893:              </div>
+  new\client\src\pages\CarbonIntensity.jsx:894:            </div>
+  new\client\src\pages\CarbonIntensity.jsx:895:          </div>
+  new\client\src\pages\CarbonIntensity.jsx:896:
+> new\client\src\pages\CarbonIntensity.jsx:918:            <div className="heatmap-container">
+> new\client\src\pages\CarbonIntensity.jsx:919:              <div className="heatmap-header">
+  new\client\src\pages\CarbonIntensity.jsx:920:                <div
+> new\client\src\pages\CarbonIntensity.jsx:921:                  className="heatmap-header-cell"
+  new\client\src\pages\CarbonIntensity.jsx:922:                  style={{ textAlign: "left" }}
+  new\client\src\pages\CarbonIntensity.jsx:923:                >
+  new\client\src\pages\CarbonIntensity.jsx:924:                  FACILITY / REGION
+  new\client\src\pages\CarbonIntensity.jsx:925:                </div>
+> new\client\src\pages\CarbonIntensity.jsx:926:                {rawTrendData.map((d) => (
+> new\client\src\pages\CarbonIntensity.jsx:927:                  <div key={d.year} className="heatmap-header-cell">
+  new\client\src\pages\CarbonIntensity.jsx:928:                    {d.year}
+  new\client\src\pages\CarbonIntensity.jsx:929:                  </div>
+  new\client\src\pages\CarbonIntensity.jsx:930:                ))}
+  new\client\src\pages\CarbonIntensity.jsx:931:              </div>
+> new\client\src\pages\CarbonIntensity.jsx:932:              <div className="heatmap-body">
+  new\client\src\pages\CarbonIntensity.jsx:933:                {regionalData.length > 0 ? (
+  new\client\src\pages\CarbonIntensity.jsx:934:                  regionalData.map((facData) => (
+> new\client\src\pages\CarbonIntensity.jsx:935:                    <div key={facData.facility_id} 
+className="heatmap-row">
+> new\client\src\pages\CarbonIntensity.jsx:936:                      <div className="heatmap-label">
+  new\client\src\pages\CarbonIntensity.jsx:937:                        {facData.facility_name}
+  new\client\src\pages\CarbonIntensity.jsx:938:                      </div>
+> new\client\src\pages\CarbonIntensity.jsx:939:                      {rawTrendData.map((yData) => {
+  new\client\src\pages\CarbonIntensity.jsx:940:                        const record = yData.data.find(
+> new\client\src\pages\CarbonIntensity.jsx:941:                          (r) => r.facility_id === facData.facility_id,
+  new\client\src\pages\CarbonIntensity.jsx:942:                        );
+  new\client\src\pages\CarbonIntensity.jsx:943:                        const rawVal = record
+  new\client\src\pages\CarbonIntensity.jsx:944:                          ? gwpHorizon === "20"
+  new\client\src\pages\CarbonIntensity.jsx:945:                            ? record.co2_intensity_gwp20 || 
+record.co2_intensity
+  new\client\src\pages\CarbonIntensity.jsx:946:                            : record.co2_intensity
+> new\client\src\pages\CarbonIntensity.jsx:953:                            className={`heatmap-cell 
+${getHeatmapClass(val)}`}
+  new\client\src\pages\CarbonIntensity.jsx:954:                            title={`${yData.year} Intensity: 
+${val.toFixed(3)} kg CO2e/BOE`}
+  new\client\src\pages\CarbonIntensity.jsx:955:                          >
+  new\client\src\pages\CarbonIntensity.jsx:956:                            {val > 0 ? val.toFixed(2) : "-"}
+  new\client\src\pages\CarbonIntensity.jsx:957:                          </div>
+  new\client\src\pages\CarbonIntensity.jsx:958:                        );
+
+
+

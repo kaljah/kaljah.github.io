@@ -1,0 +1,69 @@
+
+The command exited with code 0.
+Output:
+
+> models.py:353:class Scope2Emission(db.Model):
+  models.py:354:    __tablename__ = "scope2_emissions"
+  models.py:355:    id = db.Column(db.Integer, primary_key=True)
+  models.py:356:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+  models.py:357:    facility = db.relationship("Facility", overlaps="facility_parent,scope2_emissions")
+  models.py:358:    year = db.Column(db.Integer, index=True)
+  models.py:359:    month = db.Column(db.Integer)
+  models.py:360:    source_type = db.Column(db.String(50))  # electricity, steam, heat, cooling
+  models.py:361:    electricity_kwh = db.Column(db.Float, default=0)
+  models.py:362:    steam_ton = db.Column(db.Float, default=0)
+  models.py:363:    heat_mmbtu = db.Column(db.Float, default=0)
+  models.py:364:    cooling_ton = db.Column(db.Float, default=0)
+  models.py:365:    emission_factor = db.Column(db.Float)
+  models.py:366:    co2e = db.Column(db.Float)
+  models.py:367:    uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+  models.py:368:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+  models.py:369:    qa_flag = db.Column(db.String(255), nullable=True)
+  models.py:370:    location = db.Column(db.String(100))
+  models.py:371:    grid_region = db.Column(db.String(100))
+  models.py:372:
+  models.py:373:    # Matching Scope 1 Identity
+  models.py:374:    activity = db.Column(db.String(100), index=True)
+  models.py:375:    division = db.Column(db.String(100), index=True)
+  models.py:376:    region = db.Column(db.String(100))
+  models.py:377:    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P�trochimie
+  models.py:378:
+  models.py:379:    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+  models.py:380:    status = db.Column(db.String(20), default="Pending", index=True)
+  models.py:381:    created_at = db.Column(db.DateTime, default=utc_now)
+  models.py:382:    # Maker-Checker Approval
+  models.py:383:    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+> models.py:392:class Scope3Emission(db.Model):
+  models.py:393:    __tablename__ = "scope3_emissions"
+  models.py:394:    id = db.Column(db.Integer, primary_key=True)
+  models.py:395:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+  models.py:396:    facility = db.relationship("Facility", overlaps="facility_parent,scope3_emissions")
+  models.py:397:    year = db.Column(db.Integer, index=True)
+  models.py:398:    month = db.Column(db.Integer)
+  models.py:399:    category = db.Column(db.String(100))  # Category 11, etc.
+  models.py:400:    sub_category = db.Column(db.String(100))
+  models.py:401:    activity_data = db.Column(db.Float, default=0)
+  models.py:402:    unit = db.Column(db.String(50))
+  models.py:403:    emission_factor = db.Column(db.Float)
+  models.py:404:    co2e = db.Column(db.Float)
+  models.py:405:    uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+  models.py:406:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty percentage
+  models.py:407:    qa_flag = db.Column(db.String(255), nullable=True)
+  models.py:408:    calculation_method = db.Column(db.String(50))
+  models.py:409:    data_quality = db.Column(db.String(50))
+  models.py:410:    notes = db.Column(db.Text)
+  models.py:411:    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+  models.py:412:    status = db.Column(db.String(20), default="Pending", index=True)
+  models.py:413:    created_at = db.Column(db.DateTime, default=utc_now)
+  models.py:414:    # Maker-Checker Approval
+  models.py:415:    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+  models.py:416:    approved_at = db.Column(db.DateTime, nullable=True)
+  models.py:417:
+  models.py:418:    __table_args__ = (
+  models.py:419:        db.Index("ix_scope3_fac_yr_status", "facility_id", "year", "status"),
+  models.py:420:        db.Index("ix_scope3_status_yr_co2e", "status", "year", "co2e"),
+  models.py:421:    )
+  models.py:422:
+
+
+

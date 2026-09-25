@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\calculations
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/24/2026  11:01 PM                __pycache__                                                          
+-a----         9/14/2026   1:33 AM          13123 anomaly.py                                                           
+-a----         9/16/2026   1:09 AM           2400 base.py                                                              
+-a----          8/5/2026   5:14 PM          33187 calculations.rar                                                     
+-a----         9/24/2026  10:48 PM          21804 combustion.py                                                        
+-a----         9/24/2026  10:58 PM           2929 constants.py                                                         
+-a----         9/24/2026   4:56 PM          62865 dispatcher.py                                                        
+-a----         9/24/2026  10:54 PM           6652 fugitive.py                                                          
+-a----         9/24/2026  11:01 PM           6661 indirect.py                                                          
+-a----         9/24/2026  12:58 PM          36124 legacy_engine.py                                                     
+-a----         9/24/2026  10:56 PM          15533 midstream.py                                                         
+-a----         9/24/2026  10:50 PM           3122 stoichiometry.py                                                     
+-a----         9/16/2026  12:20 PM          16320 uncertainty.py                                                       
+-a----         9/24/2026  10:58 PM          16690 units.py                                                             
+-a----         9/24/2026  10:52 PM          26090 vented.py                                                            
+-a----         8/11/2026  12:55 PM            308 __init__.py                                                          
+
+
+

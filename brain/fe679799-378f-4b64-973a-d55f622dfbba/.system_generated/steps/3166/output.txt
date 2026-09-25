@@ -1,0 +1,86 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 1045 lines>
+[2026-09-23 17:23:07,527] INFO in emissions: [Emissions] Scope 2 count: 13
+[2026-09-23 17:23:07,537] INFO in emissions: [Emissions] Scope 2 count: 13
+[2026-09-23 17:23:07,549] INFO in emissions: [Emissions] Fetch requested by user_id: 5
+[2026-09-23 17:23:07,561] INFO in app: GET /api/emissions/ 200 [0.253s] [ReqID: 4fa63797-60fe-4359-b386-86d997904846]
+[2026-09-23 17:23:07,569] INFO in emissions: [Emissions] Scope 1 count: 632
+127.0.0.1 - - [23/Sep/2026 17:23:07] "GET /api/emissions/?limit=5 HTTP/1.1" 200 -
+[2026-09-23 17:23:07,584] INFO in emissions: [Emissions] Scope 2 count: 13
+[2026-09-23 17:23:07,617] INFO in app: GET /api/emissions/ 200 [0.242s] [ReqID: ada87d8f-524b-4f7d-9949-3b989786c966]
+127.0.0.1 - - [23/Sep/2026 17:23:07] "GET /api/emissions/?limit=5 HTTP/1.1" 200 -
+[2026-09-23 17:23:07,700] INFO in app: GET /api/emissions/ 200 [0.228s] [ReqID: c89fa1fa-905d-4281-a2c2-8fd9f529a34e]
+127.0.0.1 - - [23/Sep/2026 17:23:07] "GET /api/emissions/?limit=5 HTTP/1.1" 200 -
+[2026-09-23 17:23:07,707] INFO in app: GET /api/emissions/ 200 [0.237s] [ReqID: fcf96e19-9c03-4741-baae-221d8f293280]
+127.0.0.1 - - [23/Sep/2026 17:23:07] "GET /api/emissions/?limit=5 HTTP/1.1" 200 -
+[2026-09-23 17:23:07,716] INFO in app: GET /api/emissions/ 200 [0.234s] [ReqID: 04c053c3-0fb2-4894-85eb-b6615d6b9f21]
+127.0.0.1 - - [23/Sep/2026 17:23:07] "GET /api/emissions/?limit=5 HTTP/1.1" 200 -
+[2026-09-23 17:23:08,638] INFO in app: GET /api/qaqc/dashboard 200 [2.229s] [ReqID: 2804a3d5-de19-4a70-a7d4-421198e0b393]
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:08,747] INFO in app: GET /api/qaqc/dashboard 200 [2.352s] [ReqID: 85edaffe-0821-4160-b48f-88a401c3e9ae]
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:08,775] INFO in app: GET /api/qaqc/dashboard 200 [1.946s] [ReqID: 7f881641-657f-438a-afcd-195711c67ec0]
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:08,799] INFO in app: GET /api/qaqc/dashboard 200 [2.291s] [ReqID: 36ff2cc1-da3d-45f1-a658-58caf4b22c08]
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:08,880] INFO in app: GET /api/qaqc/dashboard 200 [2.019s] [ReqID: 75baba87-c563-4d00-a3d2-8af81a25849b]
+[2026-09-23 17:23:08,893] INFO in app: GET /api/qaqc/dashboard 200 [1.999s] [ReqID: 79064fa7-fa20-420c-9b56-c5b7d828b9fb]
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:08,931] INFO in app: GET /api/qaqc/dashboard 200 [1.993s] [ReqID: b6810513-94c6-4f6a-a78f-60045558d563]
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:08,960] INFO in app: GET /api/qaqc/dashboard 200 [1.936s] [ReqID: d460585d-8a54-4670-8261-3e6dd525bcc5]
+127.0.0.1 - - [23/Sep/2026 17:23:08] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:09,003] INFO in app: GET /api/qaqc/dashboard 200 [1.817s] [ReqID: f8da1055-73d0-44b5-b2ff-6b27fefe4445]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:09,058] INFO in app: GET /api/qaqc/dashboard 200 [1.413s] [ReqID: e11a90e5-78d6-428e-b524-bc0922d36d99]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:09,077] INFO in app: GET /api/qaqc/dashboard 200 [1.541s] [ReqID: 049d66d6-0fd1-48a2-9583-6fa9679ff827]
+[2026-09-23 17:23:09,085] INFO in app: GET /api/qaqc/dashboard 200 [1.488s] [ReqID: 7f53ea74-2332-4721-af03-d406ffdfbf3e]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:09,100] INFO in app: GET /api/qaqc/dashboard 200 [1.376s] [ReqID: 1452bcc0-927e-464b-b231-71ef55f8ec22]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:09,111] INFO in app: GET /api/qaqc/dashboard 200 [1.377s] [ReqID: 249a3941-fe29-4787-906f-b0b543cadaa0]
+[2026-09-23 17:23:09,120] INFO in app: GET /api/qaqc/dashboard 200 [1.398s] [ReqID: afb6749a-bf70-4dd3-be7e-7b3e264882e7]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/qaqc/dashboard HTTP/1.1" 200 -
+[2026-09-23 17:23:09,152] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 448cb378-522c-4f7e-b23d-c3c4d060be50]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:23:09,301] INFO in app: POST /api/auth/login 200 [0.141s] [ReqID: 89aafb5b-b0ea-40f1-af3a-94fddbb24382]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-23 17:23:09,310] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: bc47e5be-3e47-4932-bc41-8a2a33db84c4]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:23:09,346] INFO in app: POST /api/facilities 201 [0.029s] [ReqID: 84329308-c29a-4a83-ace8-60f1500c88e9]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "POST /api/facilities HTTP/1.1" 201 -
+[2026-09-23 17:23:09,412] INFO in app: POST /api/emissions 201 [0.054s] [ReqID: 65b74fb1-5664-4c71-af37-4109a9206cb8]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "POST /api/emissions HTTP/1.1" 201 -
+[2026-09-23 17:23:09,428] INFO in app: POST /api/scope2 201 [0.008s] [ReqID: a2931d31-7c1a-4943-a95a-556901a14475]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "POST /api/scope2 HTTP/1.1" 201 -
+[2026-09-23 17:23:09,436] INFO in app: POST /api/production 404 [0.000s] [ReqID: 80033bfe-0415-4461-90f3-bbfb20a770b1]
+127.0.0.1 - - [23/Sep/2026 17:23:09] "POST /api/production HTTP/1.1" 404 -
+[2026-09-23 17:23:16,381] INFO in app: POST /api/auth/login 429 [0.002s] [ReqID: 9aff8daf-bec3-4e2b-9fd3-b565dab1d901]
+127.0.0.1 - - [23/Sep/2026 17:23:16] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-23 17:23:16,388] INFO in app: GET /api/qaqc/dashboard 401 [0.000s] [ReqID: 744585e5-9af1-4dc2-8a96-387bb229e7ca]
+127.0.0.1 - - [23/Sep/2026 17:23:16] "GET /api/qaqc/dashboard HTTP/1.1" 401 -
+[2026-09-23 17:23:25,162] INFO in app: POST /api/auth/login 429 [0.002s] [ReqID: 4b1eab50-b168-4222-ba4b-c6672f2946bb]
+127.0.0.1 - - [23/Sep/2026 17:23:25] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-23 17:23:49,357] INFO in app: GET /api/notifications/stream 200 [0.006s] [ReqID: 2099ff36-9b8d-4f77-8bf0-8cdf330afd4c]
+127.0.0.1 - - [23/Sep/2026 17:23:49] "GET /api/notifications/stream?last_id=84 HTTP/1.1" 200 -
+[2026-09-23 17:24:36,419] INFO in app: GET /api/notifications/stream 200 [0.004s] [ReqID: fb4cc690-748b-42e1-a4a5-9a213e20e1e6]
+127.0.0.1 - - [23/Sep/2026 17:24:36] "GET /api/notifications/stream?last_id=84 HTTP/1.1" 200 -
+[2026-09-23 17:25:23,467] INFO in app: GET /api/notifications/stream 200 [0.004s] [ReqID: 5b484723-72af-4b89-b8d5-f7b08e3f955e]
+127.0.0.1 - - [23/Sep/2026 17:25:23] "GET /api/notifications/stream?last_id=84 HTTP/1.1" 200 -
+[2026-09-23 17:26:10,519] INFO in app: GET /api/notifications/stream 200 [0.005s] [ReqID: b7b5eb73-13a4-4235-95e5-4cf8dcbca1db]
+127.0.0.1 - - [23/Sep/2026 17:26:10] "GET /api/notifications/stream?last_id=84 HTTP/1.1" 200 -
+[2026-09-23 17:26:37,728] INFO in app: POST /api/auth/login 429 [0.002s] [ReqID: 0f6c8e3e-3845-4191-a54b-4448c975789d]
+127.0.0.1 - - [23/Sep/2026 17:26:37] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-23 17:26:37,736] INFO in app: GET /api/reports/ogmp-export 401 [0.001s] [ReqID: e64e9cc1-8f9d-491a-8ea8-0eb806c7af87]
+127.0.0.1 - - [23/Sep/2026 17:26:37] "GET /api/reports/ogmp-export?year=2025 HTTP/1.1" 401 -
+[2026-09-23 17:26:47,818] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: 6b2bc41c-614e-48c8-943d-c7b60bed8445]
+127.0.0.1 - - [23/Sep/2026 17:26:47] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-23 17:26:47,825] INFO in app: GET /api/reports/ogmp-export 401 [0.001s] [ReqID: 37557910-3cdb-42f2-886e-73ebb06ca3a8]
+127.0.0.1 - - [23/Sep/2026 17:26:47] "GET /api/reports/ogmp-export?year=2025 HTTP/1.1" 401 -
+

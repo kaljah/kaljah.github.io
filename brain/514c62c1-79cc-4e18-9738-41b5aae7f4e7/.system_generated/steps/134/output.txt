@@ -1,0 +1,66 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Sidebar.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,6 +1,8 @@
+ import React, { useState, useRef, useEffect } from "react";
+ import { NavLink, Link } from "react-router-dom";
+ import { useAuth } from "../../context/AuthContext";
++import { useLayout } from "../../context/LayoutContext";
++import { X } from "lucide-react";
+ import "./Sidebar.css";
+ 
+ const Sidebar = () => {
+@@ -7,3 +7,4 @@
++  const { isMobileNavOpen, closeMobileNav } = useLayout();
+   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+   const accountMenuRef = useRef(null);
+ 
+@@ -21,6 +21,7 @@
+ 
+   const handleLogout = () => {
+     setIsAccountMenuOpen(false);
++    if (closeMobileNav) closeMobileNav();
+     logout();
+   };
+ 
+@@ -27,13 +27,30 @@
+-    <aside className="sidebar glass-panel">
++    <aside className={`sidebar glass-panel ${isMobileNavOpen ? "mobile-open" : ""}`}>
+       {/* Header */}
+       <div className="sidebar-header">
+-        <div className="logo-box" style={{ background: 'transparent', padding: 0 }}>
+-          <img src="/carbon_tech.svg" alt="Carbon Tech Logo" style={{ width: '32px', height: '32px' }} />
+-        </div>
+-        <span className="brand-text">Carbon tech</span>
+-      </div>
+-
+-      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
++        <div className="sidebar-brand-group">
++          <div className="logo-box" style={{ background: 'transparent', padding: 0 }}>
++            <img src="/carbon_tech.svg" alt="Carbon Tech Logo" style={{ width: '32px', height: '32px' }} />
++          </div>
++          <span className="brand-text">Carbon tech</span>
++        </div>
++        <button
++          className="mobile-sidebar-close"
++          onClick={closeMobileNav}
++          aria-label="Close navigation"
++          type="button"
++        >
++          <X size={20} />
++        </button>
++      </div>
++
++      <nav
++        style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}
++        onClick={(e) => {
++          if (e.target.closest("a") && closeMobileNav) {
++            closeMobileNav();
++          }
++        }}
++      >
+         <ul className="nav-links">
+           {user?.role !== "it_admin" && (
+             <>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

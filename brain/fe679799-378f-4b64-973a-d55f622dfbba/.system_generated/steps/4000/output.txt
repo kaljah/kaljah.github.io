@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\emissions.py:472:@emissions_bp.route("/bulk-upload", methods=["POST"])
+new\server\routes\emissions.py:2881:@emissions_bp.route("/upload/start", methods=["POST"])
+new\server\routes\emissions.py:2977:@emissions_bp.route("/", methods=["POST"])
+new\server\routes\emissions.py:3657:@emissions_bp.route("/bulk-delete", methods=["POST"])
+new\server\routes\emissions.py:3699:@emissions_bp.route("/import", methods=["POST"])
+new\server\routes\emissions.py:4454:@emissions_bp.route("/approve/<int:emission_id>", methods=["POST"])
+new\server\routes\emissions.py:4509:@emissions_bp.route("/reject/<int:emission_id>", methods=["POST"])
+new\server\routes\emissions.py:4560:@emissions_bp.route("/approve/batch", methods=["POST"])
+new\server\routes\emissions.py:4646:@emissions_bp.route("/reject/batch", methods=["POST"])
+new\server\routes\emissions.py:4734:@emissions_bp.route("/erp/sync", methods=["POST"])
+
+
+

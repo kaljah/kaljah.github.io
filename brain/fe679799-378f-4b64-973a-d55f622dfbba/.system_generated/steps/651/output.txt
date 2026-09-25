@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 11:25:00,070] INFO in app: Updated account: a
+[2026-09-23 11:25:00,182] INFO in app: Updated account: a@a
+[2026-09-23 11:25:00,266] INFO in app: Updated account: z
+[2026-09-23 11:25:00,350] INFO in app: Updated account: z@z
+Query executed in 36.32ms
+Summary rows: 1
+Intensity rows: 3
+Categorical rows: 3
+

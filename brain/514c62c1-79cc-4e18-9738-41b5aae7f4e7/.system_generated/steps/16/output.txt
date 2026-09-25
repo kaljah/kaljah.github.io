@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":107,"LineContent":"  const [categoricalCollapsed, setCategoricalCollapsed] = useState(false);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1348,"LineContent":"          className={`card categorical-card glass-panel ${categoricalCollapsed ? \"collapsed-card\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1352,"LineContent":"            onClick={() =\u003e setCategoricalCollapsed(!categoricalCollapsed)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1356,"LineContent":"              marginBottom: categoricalCollapsed ? \"0\" : \"24px\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1383,"LineContent":"              {categoricalCollapsed ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1391,"LineContent":"            className={`collapsible-body-wrapper ${categoricalCollapsed ? \"collapsed\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1439,"LineContent":"              className={`card detailed-table-card glass-panel ${detailedBreakdownCollapsed ? \"collapsed-card\" : \"\"}`}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1444,"LineContent":"                  setDetailedBreakdownCollapsed(!detailedBreakdownCollapsed)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1465,"LineContent":"                  {detailedBreakdownCollapsed ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1473,"LineContent":"                className={`collapsible-body-wrapper ${detailedBreakdownCollapsed ? \"collapsed\" : \"\"}`}"}

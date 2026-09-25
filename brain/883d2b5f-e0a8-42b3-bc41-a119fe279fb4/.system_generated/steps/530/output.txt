@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":358,"LineContent":"    if (!window.confirm(msg)) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1145,"LineContent":"    if (!confirm(\"Delete this entry?\")) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":284,"LineContent":"    if (!window.confirm(\"Delete this entry?\")) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":356,"LineContent":"    if (!confirm(\"Delete this entry?\")) return;"}

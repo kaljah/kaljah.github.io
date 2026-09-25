@@ -1,0 +1,127 @@
+
+The command exited with code 0.
+Output:
+================================================================================
+STARTING EXHAUSTIVE MANAGE DATA FRONTEND BROWSER AUDIT
+================================================================================
+[CDP] Connecting to Chrome on port 9222...
+(node:15276) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  Navigating to /manage-data...
+  Manage Data container loaded successfully.
+
+Beginning Exhaustive Verification across all 9 tabs...
+
+-------------------------------------------------------------
+Testing Tab: [Pending Review] (key: pending)
+-------------------------------------------------------------
+  -> Nav item clicked for 'Pending Review'
+  Tab active state: True
+  [INFO] No data table currently visible in this view.
+  Search input responsive and functional.
+  Tested 2 dropdown filter controls.
+  Identified 9 interactive controls: ['Refresh Queue', 'Launch Review Wizard', 'All Scopes\n0', 'S1\nScope 1\n0', 'S2\nScope 2\n0', 'S3\nScope 3\n0']
+  [PASS] Tab 'Pending Review' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [Emission Factors] (key: factors)
+-------------------------------------------------------------
+  -> Nav item clicked for 'Emission Factors'
+  Tab active state: True
+  Table mounted. Columns (10): ['FACTOR NAME', 'UNIT', 'CO2', 'CH4', 'N2O', 'CERTIFICATION / DESCRIPTION'] | Rows: 1
+  Cell integrity verified: Zero NaN/undefined values.
+  Search input responsive and functional.
+  Tested 3 dropdown filter controls.
+  Identified 7 interactive controls: ['Bulk Import (CSV)', 'Calculate Combined Uncertainty (SRSS)', 'Save Factor', 'Edit', 'Delete', 'Previous']
+  [PASS] Tab 'Emission Factors' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [Regions] (key: facilities)
+-------------------------------------------------------------
+  -> Nav item clicked for 'Regions'
+  Tab active state: True
+  Table mounted. Columns (8): ['REGION NAME', 'ACTIVITY', 'DIVISION', 'LOCATION', 'BOUNDARY', 'SEGMENT'] | Rows: 15
+  Cell integrity verified: Zero NaN/undefined values.
+  Search input responsive and functional.
+  Tested 5 dropdown filter controls.
+  Identified 6 interactive controls: ['Add Region', 'Bulk Import (CSV)', 'Export CSV', 'Delete', 'Previous', 'Next']
+  Testing pagination controls (Next -> Prev)...
+  [PASS] Tab 'Regions' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [Production Data] (key: production)
+-------------------------------------------------------------
+  -> Nav item clicked for 'Production Data'
+  Tab active state: True
+  Table mounted. Columns (8): ['ACTIVITY', 'DIVISION', 'REGION', 'YEAR', 'MONTH', 'OIL (BBL)'] | Rows: 15
+  Cell integrity verified: Zero NaN/undefined values.
+  Search input responsive and functional.
+  Tested 7 dropdown filter controls.
+  Identified 7 interactive controls: ['Bulk Import (CSV)', 'Convert m�', 'Save Record', 'Export CSV', 'Delete', 'Previous']
+  Testing pagination controls (Next -> Prev)...
+  [PASS] Tab 'Production Data' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [Emission Sources] (key: sources)
+-------------------------------------------------------------
+  -> Nav item clicked for 'Emission Sources'
+  Tab active state: True
+  Table mounted. Columns (6): ['NAME', 'EQUIPMENT ID', 'TYPE', 'REGION', 'STATUS', 'ACTIONS'] | Rows: 1
+  Cell integrity verified: Zero NaN/undefined values.
+  Search input responsive and functional.
+  Tested 4 dropdown filter controls.
+  Identified 5 interactive controls: ['Add Source', 'Import Sources CSV', 'Export CSV', 'Previous', 'Next']
+  [PASS] Tab 'Emission Sources' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [Emission Goals & Base Years] (key: goals)
+-------------------------------------------------------------
+  -> Nav item clicked for 'Emission Goals & Base Years'
+  Tab active state: True
+  Table check note: 'charmap' codec can't encode character '\u2082' in position 64: character maps to <undefined>
+  Search input responsive and functional.
+  Tested 1 dropdown filter controls.
+  Identified 3 interactive controls: ['Save Goal', 'Save Recalculation', 'Save SBTi Target Configuration']
+  [PASS] Tab 'Emission Goals & Base Years' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [Mitigation Projects] (key: mitigation)
+-------------------------------------------------------------
+  -> Nav item clicked for 'Mitigation Projects'
+  Tab active state: True
+  Table mounted. Columns (8): ['PROJECT NAME', 'ACTIVITY', 'REGION', 'YEAR', 'TYPE', 'STATUS'] | Rows: 1
+  Cell integrity verified: Zero NaN/undefined values.
+  Search input responsive and functional.
+  Tested 6 dropdown filter controls.
+  Identified 5 interactive controls: ['Bulk Import (CSV)', 'Save Record', 'Import Mitigation CSV', 'Previous', 'Next']
+  [PASS] Tab 'Mitigation Projects' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [OGMP 2.0 Surveys] (key: ogmp)
+-------------------------------------------------------------
+  -> Nav item clicked for 'OGMP 2.0 Surveys'
+  Tab active state: True
+  Table check note: 'charmap' codec can't encode character '\u2084' in position 101: character maps to <undefined>
+  Search input responsive and functional.
+  Tested 6 dropdown filter controls.
+  Identified 3 interactive controls: ['Save OGMP Survey', 'Previous', 'Next']
+  [PASS] Tab 'OGMP 2.0 Surveys' verified successfully.
+
+-------------------------------------------------------------
+Testing Tab: [CBAM Products] (key: cbam)
+-------------------------------------------------------------
+  -> Nav item clicked for 'CBAM Products'
+  Tab active state: True
+  Table mounted. Columns (10): ['FACILITY', 'PRODUCT', 'EU CN CODE', 'PERIOD', 'DESTINATION', 'QUANTITY (T)'] | Rows: 6
+  Cell integrity verified: Zero NaN/undefined values.
+  Search input responsive and functional.
+  Tested 7 dropdown filter controls.
+  Identified 5 interactive controls: ['Save CBAM Record', 'Edit', 'Delete', 'Previous', 'Next']
+  [PASS] Tab 'CBAM Products' verified successfully.
+
+================================================================================
+FRONTEND AUDIT COMPLETE: Tabs: 9 | PASSED: 9 | FAILED: 0
+Console Errors: 0
+================================================================================
+Report saved to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\manage_data_frontend_test_results.json
+

@@ -1,0 +1,199 @@
+
+The command exited with code 0.
+Output:
+reports/list: 404 {"code":404,"error":"Not found","request_id":"53dc10f4-6831-478a-a945-b88fd284231f"}
+
+[T10] Reports list: FAIL | HTTP 404 {"code":404,"error":"Not found","request_id":"53dc10f4-6831-478a-a945-b88fd284231f"}
+
+reports/generate 2024: 200 %PDF-1.4
+%� ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /ZapfDingbats /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/Contents 23 0 R /MediaBox [ 0 0 612 792 ] /Parent 22 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans 
+[T11] Reports generate year=2024: PASS | HTTP 200 %PDF-1.4
+%� ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name 
+reports/generate year=1800: 200 %PDF-1.4
+%� ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /ZapfDingbats /Name /F3 /
+[T12] Reports generate invalid year=1800: FAIL | HTTP 200 - no validation of invalid year 1800
+reports/generate empty: 200 %PDF-1.4
+%� ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /ZapfDingbats /Name /F3 /
+[T13] Reports generate empty body: FAIL | HTTP 200 - no validation of empty body
+reports/export: 200 %PDF-1.4
+%� ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEnc
+[T14] Reports export: PASS | HTTP 200 %PDF-1.4
+%� ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R
+>>
+endobj
+2 0 obj
+<<
+/Bas
+qaqc/dashboard: 200 {"diagnostics":{"active_facilities":118,"anomalies_summary":{"pending":0,"rejected":0,"total":0,"verified":0},"completeness":89.7,"dimension_completeness":{"activity_amount":80.8,"calculation":100.0,"facility":100.0,"fuel_source":78.1},"health_score":80,"issues":[],"recent_records_30d":700,"records_by_scope":{"scope1":655,"scope2":22,"scope3":23},"suggestions":[{"action":"Manage Facilities","actio
+[T15] QAQC dashboard: PASS | HTTP 200 {"diagnostics":{"active_facilities":118,"anomalies_summary":{"pending":0,"rejected":0,"total":0,"verified":0},"completeness":89.7,"dimension_completeness":{"activity_amount":80.8,"calculation":100.0,"
+qaqc/summary: 404 {"code":404,"error":"Not found","request_id":"6cfc3d98-e76d-4fb8-8afe-fd8588858079"}
+
+[T16] QAQC summary: PASS | HTTP 404 {"code":404,"error":"Not found","request_id":"6cfc3d98-e76d-4fb8-8afe-fd8588858079"}
+
+POST extreme emission: 201 {"calculation_method":"Stationary Combustion","emissions":{"ch4":999.9999990000001,"co2":53059999.946940005,"n2o":99.9999999,"totalCo2e":53114499.946885504,"uncertainty":{"ch4":0.1118033988749895,"co2":0.05590169943749475,"n2o":0.1118033988749895}},"id":660,"message":"Record added","record":{"amount":null,"facility_name":"Complexe Sid\u00e9rurgique DRI/EAF (Tosyali)","fuel":null,"month":1,"process
+[T17] POST extreme emission for anomaly: PASS | ID=660
+qaqc/dashboard after anomaly: 200 {"diagnostics":{"active_facilities":118,"anomalies_summary":{"pending":0,"rejected":0,"total":0,"verified":0},"completeness":89.7,"dimension_completeness":{"activity_amount":80.6,"calculation":100.0,"facility":100.0,"fuel_source":78.0},"health_score":80,"issues":[],"recent_records_30d":701,"records_by_scope":{"scope1":656,"scope2":22,"scope3":23},"suggestions":[{"action":"Manage Facilities","action_url":"/manage-data?tab=facilities","affected_count":43,"description":"43 facility boundary(ies) are registered in master data but have no emissions reported for this period.","id":"unused_facilities
+[T18] QAQC anomaly detection: PASS | Anomaly detected: True, response: {'diagnostics': {'active_facilities': 118, 'anomalies_summary': {'pending': 0, 'rejected': 0, 'total': 0, 'verified': 0}, 'completeness': 89.7, 'dimension_completeness': {'activity_amount': 80.6, 'calculation': 100.0, 'facility': 100.0, 'fuel_source': 78.0}, 'health
+Cleaned up anomaly emission 660
+{
+  "results": [
+    {
+      "test_id": "T10",
+      "name": "Reports list",
+      "status": "FAIL",
+      "details": "HTTP 404 {\"code\":404,\"error\":\"Not found\",\"request_id\":\"53dc10f4-6831-478a-a945-b88fd284231f\"}\n"
+    },
+    {
+      "test_id": "T11",
+      "name": "Reports generate year=2024",
+      "status": "PASS",
+      "details": "HTTP 200 %PDF-1.4\n%\u201c\u0152\u2039\u017e ReportLab Generated PDF document http://www.reportlab.com\n1 0 obj\n<<\n/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R\n>>\nendobj\n2 0 obj\n<<\n/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name "
+    },
+    {
+      "test_id": "T12",
+      "name": "Reports generate invalid year=1800",
+      "status": "FAIL",
+      "details": "HTTP 200 - no validation of invalid year 1800"
+    },
+    {
+      "test_id": "T13",
+      "name": "Reports generate empty body",
+      "status": "FAIL",
+      "details": "HTTP 200 - no validation of empty body"
+    },
+    {
+      "test_id": "T14",
+      "name": "Reports export",
+      "status": "PASS",
+      "details": "HTTP 200 %PDF-1.4\n%\u201c\u0152\u2039\u017e ReportLab Generated PDF document http://www.reportlab.com\n1 0 obj\n<<\n/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 18 0 R\n>>\nendobj\n2 0 obj\n<<\n/Bas"
+    },
+    {
+      "test_id": "T15",
+      "name": "QAQC dashboard",
+      "status": "PASS",
+      "details": "HTTP 200 {\"diagnostics\":{\"active_facilities\":118,\"anomalies_summary\":{\"pending\":0,\"rejected\":0,\"total\":0,\"verified\":0},\"completeness\":89.7,\"dimension_completeness\":{\"activity_amount\":80.8,\"calculation\":100.0,\""
+    },
+    {
+      "test_id": "T16",
+      "name": "QAQC summary",
+      "status": "PASS",
+      "details": "HTTP 404 {\"code\":404,\"error\":\"Not found\",\"request_id\":\"6cfc3d98-e76d-4fb8-8afe-fd8588858079\"}\n"
+    },
+    {
+      "test_id": "T17",
+      "name": "POST extreme emission for anomaly",
+      "status": "PASS",
+      "details": "ID=660"
+    },
+    {
+      "test_id": "T18",
+      "name": "QAQC anomaly detection",
+      "status": "PASS",
+      "details": "Anomaly detected: True, response: {'diagnostics': {'active_facilities': 118, 'anomalies_summary': {'pending': 0, 'rejected': 0, 'total': 0, 'verified': 0}, 'completeness': 89.7, 'dimension_completeness': {'activity_amount': 80.6, 'calculation': 100.0, 'facility': 100.0, 'fuel_source': 78.0}, 'health_score': 80, 'issues': [], 'recent"
+    }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-09-08",
+      "severity": "MEDIUM",
+      "title": "Reports generate accepts year=1800 without validation",
+      "endpoint": "POST /api/reports/generate",
+      "expected": "HTTP 400",
+      "actual": "HTTP 200"
+    },
+    {
+      "id": "BUG-09-09",
+      "severity": "MEDIUM",
+      "title": "Reports generate accepts empty body without validation",
+      "endpoint": "POST /api/reports/generate",
+      "expected": "HTTP 400",
+      "actual": "HTTP 200"
+    }
+  ]
+}
+

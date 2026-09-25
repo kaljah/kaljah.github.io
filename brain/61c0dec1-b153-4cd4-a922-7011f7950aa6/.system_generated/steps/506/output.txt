@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -579,7 +579,8 @@
+     const [factorForm, setFactorForm] = useState({
+         factor_name: '', parent_fuel: '', unit: 'scf',
+         co2_factor: '', ch4_factor: '', n2o_factor: '',
+-        co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: ''
++        co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '',
++        source: '', description: ''
+     });
+     const [editingFactorId, setEditingFactorId] = useState(null);
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

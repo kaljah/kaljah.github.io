@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+agent_07_runner.py:386:# � RATE LIMITING �
+agent_07_runner.py:387:print("\n=== RATE LIMITING TEST ===")
+agent_07_runner.py:404:detail13 = (f"Rate limiting triggered after {len(attempt_statuses)} attempts" if got_429
+agent_07_runner.py:405:            else f"No rate limiting after 25 attempts. Statuses: {set(attempt_statuses)}")
+agent_07_runner.py:406:record(13, "Rate limiting: 25 wrong-password login attempts", "POST",
+agent_07_runner.py:516:    "- Implement rate limiting on `/api/auth/login` (e.g., 5 attempts / 15 min per IP).",
+
+
+

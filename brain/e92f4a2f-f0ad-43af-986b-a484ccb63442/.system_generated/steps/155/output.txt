@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+[2026-09-20 18:51:18,939] INFO in app: Seeded admin account: a
+[2026-09-20 18:51:19,131] INFO in app: Seeded admin account: a@a
+[2026-09-20 18:51:19,275] INFO in app: Seeded it_manager account: z
+[2026-09-20 18:51:19,401] INFO in app: Seeded it_manager account: z@z
+[WARNING] ADMIN_PASSWORD not set in env; using temporary dev password. Set ADMIN_PASSWORD in production!
+[WARNING] IT_ADMIN_PASSWORD not set in env; using temporary dev password. Set IT_ADMIN_PASSWORD in production!
+  [OK] User 'a' already existed. Password reset due to --force-reset-password flag.
+  [OK] User 'a@a' already existed. Password reset due to --force-reset-password flag.
+  [OK] User 'z' already existed. Password reset due to --force-reset-password flag.
+  [OK] User 'z@z' already existed. Password reset due to --force-reset-password flag.
+  [OK] User 'admin@ghg.com' (role: admin) seeded successfully.
+  [OK] User 'itadmin@ghg.com' (role: it_admin) seeded successfully.
+  [OK] User 'it@ghg.com' (role: it) seeded successfully.
+

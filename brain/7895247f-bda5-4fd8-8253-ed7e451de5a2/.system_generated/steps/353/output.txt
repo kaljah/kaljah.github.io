@@ -1,0 +1,228 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Dashboard.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1444,7 +1444,219 @@
+     margin-top: 4px;
+     padding-top: 10px;
+     border-top: 1px solid rgba(226, 232, 240, 0.8);
+-  }
+-}
+-
++}
++
++/* ==========================================================================
++   Operational Flaring Streams & Regulatory Compliance (Decree 21-330)
++   ========================================================================== */
++.flaring-kpi-banner {
++  margin-top: 20px;
++  padding: 22px 24px;
++  border-radius: 18px;
++  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 247, 237, 0.6) 100%);
++  border: 1px solid rgba(251, 146, 60, 0.3);
++  box-shadow: 0 4px 20px -2px rgba(234, 88, 12, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
++}
++
++.flaring-banner-header {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 18px;
++}
++
++.flaring-banner-title-group {
++  display: flex;
++  align-items: center;
++  gap: 12px;
++}
++
++.flaring-banner-icon {
++  width: 38px;
++  height: 38px;
++  border-radius: 10px;
++  background: rgba(234, 88, 12, 0.12);
++  color: #ea580c;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++}
++
++.flaring-banner-title {
++  margin: 0;
++  font-size: 1.05rem;
++  font-weight: 700;
++  color: var(--text-primary, #0f172a);
++}
++
++.flaring-banner-sub {
++  margin: 0;
++  font-size: 0.8rem;
++  color: var(--text-secondary, #64748b);
++}
++
++.flaring-banner-badges {
++  display: flex;
++  align-items: center;
++  gap: 8px;
++  flex-wrap: wrap;
++}
++
++.flaring-badge {
++  display: inline-flex;
++  align-items: center;
++  gap: 5px;
++  font-size: 0.76rem;
++  font-weight: 700;
++  padding: 4px 10px;
++  border-radius: 20px;
++  letter-spacing: 0.02em;
++}
++
++.flaring-badge.compliant {
++  background: #dcfce7;
++  color: #15803d;
++  border: 1px solid #86efac;
++}
++
++.flaring-badge.non-compliant {
++  background: #fee2e2;
++  color: #b91c1c;
++  border: 1px solid #fca5a5;
++}
++
++.flaring-badge.dre {
++  background: #e0f2fe;
++  color: #0369a1;
++  border: 1px solid #bae6fd;
++}
++
++.flaring-badge.yoy {
++  background: #f1f5f9;
++  color: #475569;
++  border: 1px solid #cbd5e1;
++}
++
++.flaring-streams-grid {
++  display: grid;
++  grid-template-columns: repeat(4, 1fr);
++  gap: 14px;
++  margin-bottom: 16px;
++}
++
++.flaring-stream-item {
++  background: rgba(255, 255, 255, 0.85);
++  border: 1px solid rgba(226, 232, 240, 0.9);
++  border-radius: 12px;
++  padding: 14px 16px;
++  transition: all 0.2s ease;
++}
++
++.flaring-stream-item:hover {
++  transform: translateY(-2px);
++  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
++}
++
++.flaring-stream-item.total-stream {
++  border-left: 4px solid #ea580c;
++}
++
++.flaring-stream-item.routine-stream {
++  border-left: 4px solid #ef4444;
++}
++
++.flaring-stream-item.non-routine-stream {
++  border-left: 4px solid #f59e0b;
++}
++
++.flaring-stream-item.safety-stream {
++  border-left: 4px solid #3b82f6;
++}
++
++.stream-label {
++  font-size: 0.78rem;
++  font-weight: 600;
++  color: var(--text-secondary, #64748b);
++  text-transform: uppercase;
++  letter-spacing: 0.5px;
++  margin-bottom: 6px;
++}
++
++.stream-value {
++  font-size: 1.25rem;
++  font-weight: 700;
++  color: var(--text-primary, #0f172a);
++  margin-bottom: 4px;
++}
++
++.stream-value .stream-unit {
++  font-size: 0.82rem;
++  font-weight: 500;
++  color: #64748b;
++  margin-left: 4px;
++}
++
++.stream-sublabel {
++  font-size: 0.78rem;
++  color: #64748b;
++  display: flex;
++  align-items: center;
++  gap: 4px;
++}
++
++.flaring-intensity-bar-card {
++  background: rgba(255, 255, 255, 0.7);
++  border: 1px solid rgba(226, 232, 240, 0.7);
++  border-radius: 10px;
++  padding: 12px 16px;
++}
++
++.flaring-intensity-meta {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  font-size: 0.82rem;
++  margin-bottom: 8px;
++}
++
++.flaring-progress-track {
++  position: relative;
++  height: 10px;
++  background: #e2e8f0;
++  border-radius: 5px;
++  overflow: visible;
++}
++
++.flaring-progress-fill {
++  height: 100%;
++  border-radius: 5px;
++  transition: width 0.4s ease;
++}
++
++.flaring-progress-marker {
++  position: absolute;
++  top: -4px;
++  bottom: -4px;
++  width: 2px;
++  background: #b91c1c;
++  z-index: 2;
++}
++
++@media (max-width: 1024px) {
++  .flaring-streams-grid {
++    grid-template-columns: repeat(2, 1fr);
++  }
++}
++
++@media (max-width: 640px) {
++  .flaring-streams-grid {
++    grid-template-columns: 1fr;
++  }
++  .flaring-banner-header {
++    flex-direction: column;
++    align-items: flex-start;
++  }
++}
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

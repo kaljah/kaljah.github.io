@@ -1,0 +1,65 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 7 items
+
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_location_based_electricity_standard PASSED [ 14%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_market_based_zero_emission_ppa PASSED [ 28%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_location_based_with_grid_loss PASSED [ 42%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Electricity::test_zero_electricity_boundary PASSED [ 57%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2SteamAndHeat::test_purchased_steam_indirect_calculator PASSED [ 71%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2SteamAndHeat::test_steam_invalid_efficiency_rejected FAILED [ 85%]
+validation/calculation/test_clean_scope2.py::TestCleanScope2Cogeneration::test_cogen_wri_efficiency_method FAILED [100%]
+
+================================== FAILURES ===================================
+_____ TestCleanScope2SteamAndHeat.test_steam_invalid_efficiency_rejected ______
+
+self = <test_clean_scope2.TestCleanScope2SteamAndHeat object at 0x0000024A1CD490D0>
+
+    def test_steam_invalid_efficiency_rejected(self):
+        calc = IndirectSteamCalculator()
+        # Net efficiency <= 0 must raise ValueError
+>       with pytest.raises(ValueError):
+E       Failed: DID NOT RAISE ValueError
+
+validation\calculation\test_clean_scope2.py:90: Failed
+________ TestCleanScope2Cogeneration.test_cogen_wri_efficiency_method _________
+
+self = <test_clean_scope2.TestCleanScope2Cogeneration object at 0x0000024A1CCC3500>
+
+    def test_cogen_wri_efficiency_method(self):
+        calc = CogenAllocationCalculator()
+        total_co2e = 1000.0  # total CHP plant emissions
+        heat_mmbtu = 50000.0
+        power_mwh = 10000.0
+    
+        # WRI method: e_h = 0.80, e_p = 0.33
+        # heat_credit = heat / 0.80 = 62,500
+        # power_credit = (power * 3.412142) / 0.33 = 34,121.42 / 0.33 = 103,398.24
+        # denom = 62,500 + 103,398.24 = 165,898.24
+        # heat_share = 62,500 / 165,898.24 = 37.67%
+>       res = calc.calculate(
+            total_facility_emissions=total_co2e,
+            heat_output_mmbtu=heat_mmbtu,
+            power_output_mwh=power_mwh,
+            method="efficiency",
+            heat_efficiency=0.80,
+            power_efficiency=0.33,
+            uncertainties={},
+        )
+E       TypeError: CogenAllocationCalculator.calculate() got an unexpected keyword argument 'total_facility_emissions'
+
+validation\calculation\test_clean_scope2.py:114: TypeError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_scope2.py::TestCleanScope2SteamAndHeat::test_steam_invalid_efficiency_rejected
+FAILED validation/calculation/test_clean_scope2.py::TestCleanScope2Cogeneration::test_cogen_wri_efficiency_method
+========================= 2 failed, 5 passed in 2.11s =========================
+

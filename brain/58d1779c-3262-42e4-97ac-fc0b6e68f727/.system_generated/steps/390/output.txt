@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+> client@0.0.0 test
+> vitest run
+
+
+ RUN  v5.0.1 C:/Users/samsung/Desktop/H2/new/client
+
+ ✓ src/__tests__/EmissionResult.test.jsx (3 tests) 114ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  17:28:12
+   Duration  31.93s (environment 82%, setup 16%, import 1%, transform 1%)
+
+

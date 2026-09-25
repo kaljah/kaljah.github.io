@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 5
+    assert abs(res_pct['co2'] - res_dec['co2']) < 1e-3, f'Mismatch: {res_pct[" co2\]}
+                                                                             ^
+SyntaxError: unterminated string literal (detected at line 5)
+

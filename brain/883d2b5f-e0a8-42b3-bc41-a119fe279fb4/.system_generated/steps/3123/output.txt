@@ -1,0 +1,138 @@
+
+The command exited with code 1.
+Output:
+<truncated 12 lines>
+new\server\tests\test_ui_calculation_parity.py::TestScope1UINumericalParity::test_tier3_gas_composition_stoichiometric_ui_parity FAILED [ 30%]
+new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_grid_electricity_location_based_ui_parity PASSED [ 38%]
+new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_indirect_steam_heat_ui_parity FAILED [ 46%]
+new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_cogen_allocation_wri_efficiency_ui_parity FAILED [ 53%]
+new\server\tests\test_ui_calculation_parity.py::TestScope3UINumericalParity::test_scope3_spend_based_eeio_ui_parity PASSED [ 61%]
+new\server\tests\test_ui_calculation_parity.py::TestScope3UINumericalParity::test_scope3_upstream_transportation_ui_parity PASSED [ 69%]
+new\server\tests\test_ui_calculation_parity.py::TestDashboardKPIParity::test_dashboard_summary_identity_and_compact_formatting PASSED [ 76%]
+new\server\tests\test_ui_calculation_parity.py::TestTableFooterZeroDrift::test_scope1_table_footer_sum_exactness PASSED [ 84%]
+new\server\tests\test_ui_calculation_parity.py::TestTableFooterZeroDrift::test_scope2_table_footer_sum_exactness PASSED [ 92%]
+new\server\tests\test_ui_calculation_parity.py::TestTableFooterZeroDrift::test_scope3_table_footer_sum_exactness PASSED [100%]
+
+================================== FAILURES ===================================
+_ TestScope1UINumericalParity.test_tier3_gas_composition_stoichiometric_ui_parity _
+
+self = <test_ui_calculation_parity.TestScope1UINumericalParity object at 0x000001479470A990>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>, test_facility = 23
+
+    def test_tier3_gas_composition_stoichiometric_ui_parity(self, client, auth_admin, test_facility):
+        """Tier 3: Detailed chromatographic fuel gas composition with carbon mass balance."""
+        payload = {
+            "year": 2025,
+            "month": 4,
+            "facility_id": test_facility,
+            "process_type": "combustion",
+            "fuel": "Natural Gas",
+            "amount": 15000,
+            "unit": "m3",
+            "factor_source": "specific",
+            "c1": 0.85,
+            "c2": 0.08,
+            "c3": 0.04,
+            "co2_comp": 0.03,
+            "combustion_efficiency": 0.995,
+            "status": "Verified",
+        }
+        res = client.post("/api/emissions", json=payload)
+>       assert res.status_code in [200, 201]
+E       assert 422 in [200, 201]
+E        +  where 422 = <WrapperTestResponse streamed [422 UNPROCESSABLE ENTITY]>.status_code
+
+new\server\tests\test_ui_calculation_parity.py:284: AssertionError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.083s] [ReqID: c252cade-284f-4d33-a6f1-d85088da98a7]
+------------------------------ Captured log call ------------------------------
+ERROR    app:dispatcher.py:1170 [Dispatcher] Calculation failed for process_type='combustion': Missing required parameter for Tier 3 specific calculation: 'hhv' (Higher Heating Value (HHV))
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 351, in dispatch
+    hhv_val = self._require_float(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py", line 141, in _require_float
+    raise ValueError(
+ValueError: Missing required parameter for Tier 3 specific calculation: 'hhv' (Higher Heating Value (HHV))
+INFO     app:app.py:153 POST /api/emissions 422 [0.003s] [ReqID: 4fd54909-f0d1-412d-ab1b-375459a62f65]
+_______ TestScope2UINumericalParity.test_indirect_steam_heat_ui_parity ________
+
+self = <test_ui_calculation_parity.TestScope2UINumericalParity object at 0x000001479470AF60>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>, test_facility = 23
+
+    def test_indirect_steam_heat_ui_parity(self, client, auth_admin, test_facility):
+        """Indirect Steam / District Heat: 1,200 MMBtu with boiler efficiency."""
+        payload = {
+            "year": 2025,
+            "month": 6,
+            "facility_id": test_facility,
+            "source_type": "indirect_steam",
+            "heat_mmbtu": 1200,
+            "boiler_efficiency": 0.80,
+            "status": "Verified",
+        }
+        res = client.post("/api/scope2", json=payload)
+        assert res.status_code == 201
+        rec = res.get_json()["record"]
+    
+        # UI Scope2Form Table Cell:
+        # Line 692: `${formatNumber(entry.heat_mmbtu, 2)} MMBtu`
+        consumption_display = f"{ui_format_number(rec['heat_mmbtu'], 2)} MMBtu"
+>       assert consumption_display == "1,200.00 MMBtu"
+E       AssertionError: assert '0.00 MMBtu' == '1,200.00 MMBtu'
+E         
+E         - 1,200.00 MMBtu
+E         ? ----
+E         + 0.00 MMBtu
+
+new\server\tests\test_ui_calculation_parity.py:360: AssertionError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.083s] [ReqID: 7bdd1ae8-271e-462a-8251-f9c3ee892558]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/scope2 201 [0.004s] [ReqID: 13fe3a8d-6528-43a8-91ad-2864c2ad97c3]
+_ TestScope2UINumericalParity.test_cogen_allocation_wri_efficiency_ui_parity __
+
+self = <test_ui_calculation_parity.TestScope2UINumericalParity object at 0x000001479470B260>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>, test_facility = 23
+
+    def test_cogen_allocation_wri_efficiency_ui_parity(self, client, auth_admin, test_facility):
+        """Cogeneration / CHP allocation via WRI efficiency method."""
+        payload = {
+            "year": 2025,
+            "month": 7,
+            "facility_id": test_facility,
+            "source_type": "cogen_allocation",
+            "fuel_consumed_mmbtu": 5000,
+            "heat_output_mmbtu": 2500,
+            "power_output_mwh": 500,
+            "allocation_method": "wri_efficiency",
+            "status": "Verified",
+        }
+        res = client.post("/api/scope2", json=payload)
+        assert res.status_code == 201
+        rec = res.get_json()["record"]
+    
+        # Scope2Form Line 695: `${formatNumber(entry.co2e, 3)} tCO\u2082e allocated`
+        consumption_display = f"{ui_format_number(rec['co2e'], 3)} tCO\u2082e allocated"
+        assert "allocated" in consumption_display
+>       assert float(rec["co2e"]) > 0
+E       assert 0.0 > 0
+E        +  where 0.0 = float(0)
+
+new\server\tests\test_ui_calculation_parity.py:384: AssertionError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.081s] [ReqID: ce7f9d92-3a51-41f3-af18-d29c5eb920a4]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/scope2 201 [0.003s] [ReqID: 9c84dd2b-5a42-45e5-ac1c-93d08f22b515]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope1UINumericalParity::test_tier3_gas_composition_stoichiometric_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_indirect_steam_heat_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_cogen_allocation_wri_efficiency_ui_parity
+=================== 3 failed, 10 passed, 1 warning in 3.99s ===================
+

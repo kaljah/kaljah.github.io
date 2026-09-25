@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":271,"LineContent":"          ad_uncertainty_1sigma — Activity-data component (1σ, relative)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":351,"LineContent":"        \"ad_uncertainty_1sigma\": u_act_1sigma,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":85,"LineContent":"        assert res[\"results\"][\"co2\"][\"ad_uncertainty_1sigma\"] == (ACTIVITY_UNCERTAINTY[Tier.T1] / COVERAGE_FACTOR_95)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":110,"LineContent":"        assert res[\"results\"][\"co2\"][\"ad_uncertainty_1sigma\"] == (ACTIVITY_UNCERTAINTY[Tier.T2] / COVERAGE_FACTOR_95)"}

@@ -1,0 +1,144 @@
+
+The command exited with code 1.
+Output:
+<truncated 66 lines>
+
+    Call log:
+      - Expect "not toHaveValue" locator('.input-group:has-text("Activity") input') with timeout 5000ms
+      - waiting for locator('.input-group:has-text("Activity") input')
+
+
+      117 |       // Verify Auto-filled Activity with Playwright auto-retry
+      118 |       const actInput = page.locator('.input-group:has-text("Activity") input');
+    > 119 |       await expect(actInput).not.toHaveValue('', { timeout: 5000 });
+          |                                  ^
+      120 |       await expect(actInput).not.toHaveValue('Auto-filled', { timeout: 5000 });
+      121 |       const actVal = await actInput.inputValue();
+      122 |       console.log(`[TIER 1 TEST] Auto-filled Activity: ${actVal}`);
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js:119:34
+
+    Error Context: test-results\test_scope1_form_engine-Sc-eeb63--Regions-West-Center-South--chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_form_engine-Sc-eeb63--Regions-West-Center-South--chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_form_engine-Sc-eeb63--Regions-West-Center-South--chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_scope1_form_engine.spec.js:190:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More 
+
+    Test timeout of 300000ms exceeded.
+
+    Error: locator.click: Test timeout of 300000ms exceeded.
+    Call log:
+      - waiting for locator('.input-group:has-text("Region") .dropdown-selected').first()
+        - locator resolved to <div class="dropdown-selected">…</div>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="comp-inputs">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - <div class="comp-inputs">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+      2 × retrying click action
+          - waiting 100ms
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="modal-header">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+      134 × retrying click action
+            - waiting 500ms
+            - waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div class="comp-inputs">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+            - waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div class="comp-inputs">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+            - waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div class="modal-header">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+            - waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div class="modal-header">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+      - retrying click action
+        - waiting 500ms
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - <div class="comp-inputs">…</div> from <div class="modal-backdrop">…</div> subtree intercepts pointer events
+      - retrying click action
+        - waiting 500ms
+
+
+      353 |     for (const ef of engineeringFormulas) {
+      354 |       console.log(`\n========================================`);
+    > 355 |       console.log(`[TIER 3 ENGINEERING] Testing: ${ef.name}`);
+          |                            ^
+      356 |       console.log(`========================================`);
+      357 |
+      358 |       await closeAnyOverlay(page);
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js:355:28
+
+    Error Context: test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.result-overlay')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.result-overlay') with timeout 10000ms
+      - waiting for locator('.result-overlay')
+
+
+      409 |       // Wait for Result Overlay
+      410 |       const resultOverlay = page.locator('.result-overlay');
+    > 411 |       await expect(resultOverlay).toBeVisible({ timeout: 10000 });
+          |                                   ^
+      412 |
+      413 |       // 6. Screenshot
+      414 |       const safeName = ef.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js:411:35
+
+    Error Context: test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › e2e\test_scope1_form_engine.spec.js:70:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) 
+    [chromium] › e2e\test_scope1_form_engine.spec.js:190:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More 
+

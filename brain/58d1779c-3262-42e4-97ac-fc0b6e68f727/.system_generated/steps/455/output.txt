@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[INFO] Backing up ghg_app.db to backups\ghg_app_20260920_173146.db...
+[SUCCESS] Backup created: backups\ghg_app_20260920_173146.db (2232.60 MB)
+

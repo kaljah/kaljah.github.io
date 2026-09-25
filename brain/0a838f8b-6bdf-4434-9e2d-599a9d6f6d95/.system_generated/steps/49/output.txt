@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+new/server/tests/test_all_process_types_matrix.py:58:        """Verify additional process types not in PROCESS_TYPES table (indirect steam, cogen, fccu, stoichiometry)."""
+new/server/tests/test_all_process_types_matrix.py:59:        extras = ["indirect_steam", "cogen_allocation", "stoichiometry", "fccu"]
+

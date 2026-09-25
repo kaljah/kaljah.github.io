@@ -1,0 +1,205 @@
+
+The command exited with code 1.
+Output:
+<truncated 92 lines>
+
+self = <test_clean_scope1.TestCleanScope1Combustion object at 0x0000017961D38770>
+
+    def test_combustion_tier3_gas_composition_carbon_balance(self):
+        calc = CombustionCalculator()
+        qty = 20000.0
+        comps = {"c1": 0.88, "c2": 0.06, "c3": 0.03, "ic4": 0.01, "nc4": 0.01, "co2": 0.01}
+        eff = 0.995
+    
+        ref = ref_calculate_combustion(
+            qty, fuel_unit="m3", combustion_efficiency=eff, gas_composition=comps
+        )
+    
+        res = calc.calculate(
+            fuel_quantity=qty,
+            ef_co2=0.0,
+            ef_ch4=0.0,
+            ef_n2o=0.0,
+            uncertainties={},
+            hhv=None,
+            ef_unit="kg/m3",
+            fuel_unit="m3",
+            fuel_type="gases",
+            combustion_efficiency=eff,
+            **comps,
+        )
+    
+>       assert abs(res["co2"]["value"] - ref["co2"]) < 1e-2
+                   ^^^^^^^^^^
+E       KeyError: 'co2'
+
+validation\calculation\test_clean_scope1.py:121: KeyError
+______ TestCleanScope1Combustion.test_combustion_zero_quantity_boundary _______
+
+self = <test_clean_scope1.TestCleanScope1Combustion object at 0x0000017961D38A10>
+
+    def test_combustion_zero_quantity_boundary(self):
+        calc = CombustionCalculator()
+        res = calc.calculate(
+            fuel_quantity=0.0, ef_co2=1.93, ef_ch4=0.0001, ef_n2o=0.00003,
+            uncertainties={}, hhv=None, ef_unit="kg/m3", fuel_unit="m3", fuel_type="gases"
+        )
+>       assert res["co2"]["value"] == 0.0
+               ^^^^^^^^^^
+E       KeyError: 'co2'
+
+validation\calculation\test_clean_scope1.py:131: KeyError
+________ TestCleanScope1Flaring.test_flaring_elevated_dual_efficiency _________
+
+self = <test_clean_scope1.TestCleanScope1Flaring object at 0x0000017961D38D10>
+
+    def test_flaring_elevated_dual_efficiency(self):
+        calc = FlaringCalculator()
+        vol = 50000.0  # m3
+        ch4_frac = 0.88
+        comps = {"co2": 0.02}
+    
+        ref = ref_calculate_flaring(vol, ch4_fraction=ch4_frac, flare_type="elevated", gas_composition=comps)
+    
+        res = calc.calculate(
+            gas_volume=vol,
+            ch4_fraction=ch4_frac,
+            flare_type="elevated",
+            uncertainties={},
+            fuel_unit="m3",
+            **comps,
+        )
+    
+>       assert abs(res["co2"]["value"] - ref["co2"]) < 1e-2
+                   ^^^^^^^^^^
+E       KeyError: 'co2'
+
+validation\calculation\test_clean_scope1.py:156: KeyError
+________ TestCleanScope1Flaring.test_flaring_enclosed_high_efficiency _________
+
+self = <test_clean_scope1.TestCleanScope1Flaring object at 0x0000017961D38FB0>
+
+    def test_flaring_enclosed_high_efficiency(self):
+        calc = FlaringCalculator()
+        vol = 25000.0
+        ch4_frac = 0.92
+    
+        ref = ref_calculate_flaring(vol, ch4_fraction=ch4_frac, flare_type="enclosed")
+    
+        res = calc.calculate(
+            gas_volume=vol,
+            ch4_fraction=ch4_frac,
+            flare_type="enclosed",
+            uncertainties={},
+            fuel_unit="m3",
+        )
+    
+>       assert abs(res["co2"]["value"] - ref["co2"]) < 1e-2
+                   ^^^^^^^^^^
+E       KeyError: 'co2'
+
+validation\calculation\test_clean_scope1.py:175: KeyError
+___ TestCleanScope1VentingAndMidstream.test_pneumatic_devices_intermittent ____
+
+self = <test_clean_scope1.TestCleanScope1VentingAndMidstream object at 0x0000017961D39220>
+
+    def test_pneumatic_devices_intermittent(self):
+        calc = PneumaticDeviceCalculator()
+        count = 10
+        hrs = 8760
+        ch4_f = 0.90
+    
+        ref = ref_calculate_pneumatic_devices(count, hours=hrs, device_type="intermittent", ch4_fraction=ch4_f)
+    
+>       res = calc.calculate(
+            device_count=count,
+            hours=hrs,
+            device_type="intermittent",
+            gas_ch4_mole_pct=ch4_f * 100.0,
+            uncertainties={},
+        )
+E       TypeError: PneumaticDeviceCalculator.calculate() got an unexpected keyword argument 'device_count'
+
+validation\calculation\test_clean_scope1.py:191: TypeError
+________ TestCleanScope1VentingAndMidstream.test_blowdown_depressuring ________
+
+self = <test_clean_scope1.TestCleanScope1VentingAndMidstream object at 0x0000017961CB2960>
+
+    def test_blowdown_depressuring(self):
+        calc = BlowdownCalculator()
+        vol_m3 = 50.0
+        p_init = 600.0
+        events = 2
+        ch4_f = 0.88
+    
+        ref = ref_calculate_blowdown(vol_m3, initial_press=p_init, final_press=0.0, events=events, ch4_fraction=ch4_f)
+    
+>       res = calc.calculate(
+            vessel_volume=vol_m3,
+            initial_pressure=p_init,
+            final_pressure=0.0,
+            press_unit="psig",
+            events=events,
+            gas_ch4_mole_pct=ch4_f * 100.0,
+            uncertainties={},
+        )
+E       TypeError: BlowdownCalculator.calculate() got an unexpected keyword argument 'vessel_volume'
+
+validation\calculation\test_clean_scope1.py:211: TypeError
+_____ TestCleanScope1VentingAndMidstream.test_acid_gas_removal_sweetening _____
+
+self = <test_clean_scope1.TestCleanScope1VentingAndMidstream object at 0x0000017961D38AD0>
+
+    def test_acid_gas_removal_sweetening(self):
+        calc = AGRCalculator()
+        feed_vol = 100000.0
+        inlet = 0.04
+        outlet = 0.0001
+    
+        ref = ref_calculate_agr(feed_vol, co2_inlet_fraction=inlet, co2_outlet_fraction=outlet)
+    
+>       res = calc.calculate(
+            gas_throughput=feed_vol,
+            co2_inlet=inlet,
+            co2_outlet=outlet,
+            control_efficiency=0.0,
+            uncertainties={},
+        )
+E       TypeError: AGRCalculator.calculate() got an unexpected keyword argument 'gas_throughput'
+
+validation\calculation\test_clean_scope1.py:232: TypeError
+___ TestCleanScope1VentingAndMidstream.test_component_fugitives_valve_leaks ___
+
+self = <test_clean_scope1.TestCleanScope1VentingAndMidstream object at 0x0000017961D38C20>
+
+    def test_component_fugitives_valve_leaks(self):
+        calc = ComponentFugitiveCalculator()
+        valves = 150
+        hrs = 8760
+        ch4_f = 0.90
+    
+        ref = ref_calculate_component_fugitives(valves, hours=hrs, component_type="valve", ch4_fraction=ch4_f)
+    
+>       res = calc.calculate(
+            component_counts={"valves": valves},
+            hours=hrs,
+            gas_ch4_mole_pct=ch4_f * 100.0,
+            stream_type="gas",
+            uncertainties={},
+        )
+E       TypeError: ComponentFugitiveCalculator.calculate() got an unexpected keyword argument 'hours'
+
+validation\calculation\test_clean_scope1.py:251: TypeError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_standard_natural_gas
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_thermodynamic_normalization
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_tier3_gas_composition_carbon_balance
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_zero_quantity_boundary
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_elevated_dual_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_enclosed_high_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_pneumatic_devices_intermittent
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_blowdown_depressuring
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_acid_gas_removal_sweetening
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_component_fugitives_valve_leaks
+============================= 10 failed in 2.21s ==============================
+

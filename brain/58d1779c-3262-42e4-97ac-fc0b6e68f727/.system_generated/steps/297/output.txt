@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -463,9 +463,13 @@
+     try:
+         from sqlalchemy import text
+         db.session.execute(text("SELECT 1"))
++        wal_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ghg_app.db-wal")
++        wal_mb = round(os.path.getsize(wal_path) / (1024 * 1024), 2) if os.path.exists(wal_path) else 0.0
+         return jsonify({
+             "status": "ready",
+             "database": "connected",
++            "wal_size_mb": wal_mb,
++            "wal_warning": wal_mb > 100.0,
+             "version": app.config.get("APP_VERSION", "1.0.0")
+         }), 200
+     except Exception as e:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

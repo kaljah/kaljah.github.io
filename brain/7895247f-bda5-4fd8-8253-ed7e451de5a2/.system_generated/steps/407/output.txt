@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 17:08:20,718] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Added equity_share_pct to facilities
+Added gross_gas_mmsm3 to production_data
+Added injected_gas_mmsm3 to production_data
+Added gas_without_injected_mmsm3 to production_data
+Added crude_oil_mmboe to production_data
+Added condensate_mmboe to production_data
+Added lpg_mmboe to production_data
+Added ngl_mmboe to production_data
+Added total_production_mmboe to production_data
+Added total_production_no_injected_mmboe to production_data
+Added saleable_production_mmboe to production_data
+Added fuel_gas_export_mmsm3 to production_data
+Migration complete!
+

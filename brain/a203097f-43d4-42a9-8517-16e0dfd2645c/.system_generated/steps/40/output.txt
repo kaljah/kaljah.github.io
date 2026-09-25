@@ -1,0 +1,24 @@
+{"name":"00-current-architecture.md", "sizeBytes":"13403"}
+{"name":"00-repository-audit.md", "sizeBytes":"18494"}
+{"name":"01-calculation-inventory.md", "sizeBytes":"36909"}
+{"name":"01-testing-inventory.md", "sizeBytes":"10421"}
+{"name":"02-calculation-inventory.md", "sizeBytes":"13658"}
+{"name":"02-test-inventory.md", "sizeBytes":"8848"}
+{"name":"03-security-audit.md", "sizeBytes":"9193"}
+{"name":"04-database-audit.md", "sizeBytes":"8465"}
+{"name":"05-performance-audit.md", "sizeBytes":"5385"}
+{"name":"06-accessibility-audit.md", "sizeBytes":"4003"}
+{"name":"07-browser-audit.md", "sizeBytes":"4168"}
+{"name":"08-production-readiness.md", "sizeBytes":"7300"}
+{"name":"09-calculation-validation.md", "sizeBytes":"10198"}
+{"name":"10-human-review.md", "sizeBytes":"6452"}
+{"name":"CALCULATION_VALIDATION_REPORT.md", "sizeBytes":"9901"}
+{"name":"FINAL_VALIDATION_REPORT.md", "sizeBytes":"11920"}
+{"name":"FINAL_VALIDATION_REPORT.pdf", "sizeBytes":"21896"}
+{"name":"HUMAN_REVIEW_REQUIRED.md", "sizeBytes":"10946"}
+{"name":"calculation-inventory.md", "sizeBytes":"36909"}
+{"name":"methodology-matrix.md", "sizeBytes":"9524"}
+{"name":"repository-audit.md", "sizeBytes":"16830"}
+{"name":"unit-and-dimensional-analysis.md", "sizeBytes":"8332"}
+
+Summary: This directory contains 0 subdirectories and 22 files.

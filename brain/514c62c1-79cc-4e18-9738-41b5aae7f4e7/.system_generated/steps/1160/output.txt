@@ -1,0 +1,80 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 1844 lines>
+[2026-09-19 21:19:42,956] INFO in app: GET /api/dashboard/years 200 [0.037s] [ReqID: 2e2529c5-cb60-476a-86ab-711f05102d0d]
+127.0.0.1 - - [19/Sep/2026 21:19:42] "GET /api/dashboard/years HTTP/1.1" 200 -
+[2026-09-19 21:19:43,309] INFO in app: GET /api/dashboard/intensity-stats 200 [0.001s] [ReqID: 4d877080-7c53-45a9-aa59-07337e26068d]
+127.0.0.1 - - [19/Sep/2026 21:19:43] "GET /api/dashboard/intensity-stats HTTP/1.1" 200 -
+[2026-09-19 21:19:43,313] INFO in app: GET /api/facilities 200 [0.010s] [ReqID: 406c8ad0-3972-4ffc-a5b5-0f2e1dab27ee]
+[2026-09-19 21:19:43,314] INFO in app: GET /api/satellite/sentinel5p/layer-config 200 [0.003s] [ReqID: 0b360ff8-5f30-4145-83ea-6f397ab9e1e9]
+127.0.0.1 - - [19/Sep/2026 21:19:43] "GET /api/facilities HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 21:19:43] "GET /api/satellite/sentinel5p/layer-config HTTP/1.1" 200 -
+[2026-09-19 21:19:43,344] INFO in app: GET /api/dashboard/years 200 [0.039s] [ReqID: 5f12cd3d-aeda-422b-b119-765edaf56e62]
+127.0.0.1 - - [19/Sep/2026 21:19:43] "GET /api/dashboard/years HTTP/1.1" 200 -
+[2026-09-19 21:19:57,267] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 1bfe708c-297f-4e9a-9fef-0ab66866e747]
+127.0.0.1 - - [19/Sep/2026 21:19:57] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 21:19:59,056] INFO in app: POST /api/satellite/sentinel5p/poll-new-passes 200 [18.561s] [ReqID: f29ea3c6-4653-4dce-bdc1-632f077a51ad]
+127.0.0.1 - - [19/Sep/2026 21:19:59] "POST /api/satellite/sentinel5p/poll-new-passes HTTP/1.1" 200 -
+[2026-09-19 21:20:03,148] INFO in app: POST /api/satellite/sentinel5p/poll-new-passes 200 [14.960s] [ReqID: 41e069ef-be29-443c-921b-8693527b6ddf]
+127.0.0.1 - - [19/Sep/2026 21:20:03] "POST /api/satellite/sentinel5p/poll-new-passes HTTP/1.1" 200 -
+[2026-09-19 21:20:26,912] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: ad41fbc2-74e5-45b7-8cd0-8c2200ab8658]
+127.0.0.1 - - [19/Sep/2026 21:20:26] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 21:20:33,729] INFO in app: GET /api/facilities 200 [0.001s] [ReqID: 769e03e0-c48a-48ff-9823-2c19768e00c3]
+127.0.0.1 - - [19/Sep/2026 21:20:33] "GET /api/facilities HTTP/1.1" 200 -
+[2026-09-19 21:20:33,748] INFO in app: GET /api/filters/available 200 [0.014s] [ReqID: 407dd1f4-ce08-4c5e-8b3d-7c624fcd5ada]
+127.0.0.1 - - [19/Sep/2026 21:20:33] "GET /api/filters/available HTTP/1.1" 200 -
+[2026-09-19 21:20:33,768] INFO in app: GET /api/dashboard/batch-all 200 [0.032s] [ReqID: 60f3b69f-fecf-4948-8afd-e23bde0e58d2]
+127.0.0.1 - - [19/Sep/2026 21:20:33] "GET /api/dashboard/batch-all?facilityId=all&activity=all&division=all HTTP/1.1" 200 -
+[2026-09-19 21:20:33,843] INFO in app: GET /api/dashboard/sbti-trajectory 200 [0.041s] [ReqID: f9a07ed5-cd1c-420f-a9b9-fede019e5309]
+127.0.0.1 - - [19/Sep/2026 21:20:33] "GET /api/dashboard/sbti-trajectory HTTP/1.1" 200 -
+[2026-09-19 21:20:33,947] INFO in app: GET /api/facilities 200 [0.004s] [ReqID: e02b67ea-eaaf-43a8-8df8-b493cd2ef1f2]
+127.0.0.1 - - [19/Sep/2026 21:20:33] "GET /api/facilities HTTP/1.1" 200 -
+[2026-09-19 21:20:33,958] INFO in app: GET /api/filters/available 200 [0.016s] [ReqID: 85adea09-901d-4dc8-853a-958d1dddc8be]
+127.0.0.1 - - [19/Sep/2026 21:20:33] "GET /api/filters/available HTTP/1.1" 200 -
+[2026-09-19 21:20:33,978] INFO in app: GET /api/dashboard/batch-all 200 [0.034s] [ReqID: fcebd729-dd0f-4890-9065-02d1728639ec]
+127.0.0.1 - - [19/Sep/2026 21:20:33] "GET /api/dashboard/batch-all?facilityId=all&activity=all&division=all HTTP/1.1" 200 -
+[2026-09-19 21:20:34,043] INFO in app: GET /api/dashboard/sbti-trajectory 200 [0.040s] [ReqID: 891e5343-36f5-47b9-870d-e19713246648]
+127.0.0.1 - - [19/Sep/2026 21:20:34] "GET /api/dashboard/sbti-trajectory HTTP/1.1" 200 -
+[2026-09-19 21:20:41,068] INFO in app: GET /api/notifications 200 [0.011s] [ReqID: d31383c3-f68b-4cb8-9fb9-076b2883aa7e]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 21:20:41,114] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 4fc73e17-6429-4e8d-b302-5eea05a3d10a]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 21:20:41,211] INFO in emissions: [Emissions] Fetch requested by user_id: 4
+[2026-09-19 21:20:41,216] INFO in emissions: [Emissions] Scope 1 count: 24231
+[2026-09-19 21:20:41,219] INFO in emissions: [Emissions] Scope 2 count: 15079
+[2026-09-19 21:20:41,250] INFO in app: GET /api/dashboard/intensity-stats 200 [0.001s] [ReqID: 82b0be77-15b1-4b85-a0ce-27375b985e52]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/dashboard/intensity-stats HTTP/1.1" 200 -
+[2026-09-19 21:20:41,253] INFO in app: GET /api/facilities 200 [0.010s] [ReqID: 866caa81-3d65-412f-b463-0cac9fb54f49]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/facilities HTTP/1.1" 200 -
+[2026-09-19 21:20:41,260] INFO in app: GET /api/dashboard/mitigation 200 [0.015s] [ReqID: 15c721ee-794b-4959-a799-5561da23d291]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/dashboard/mitigation HTTP/1.1" 200 -
+[2026-09-19 21:20:41,265] INFO in app: GET /api/dashboard/goals/2026 200 [0.002s] [ReqID: 62c5c27c-1e4f-4519-a1db-b83462ad324c]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/dashboard/goals/2026 HTTP/1.1" 200 -
+[2026-09-19 21:20:41,280] INFO in app: GET /api/dashboard/uncertainty 200 [0.006s] [ReqID: 5c70f756-4ae6-4570-8bdd-a4646ab093a2]
+[2026-09-19 21:20:41,281] INFO in app: GET /api/dashboard/base-year 200 [0.003s] [ReqID: ecafcfc3-504a-4f9a-8968-502d357cb748]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/dashboard/uncertainty HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/dashboard/base-year HTTP/1.1" 200 -
+[2026-09-19 21:20:41,289] INFO in app: GET /api/dashboard/exclusions 200 [0.006s] [ReqID: 73a2b323-9557-4630-8d71-64a8287ec09d]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/dashboard/exclusions HTTP/1.1" 200 -
+[2026-09-19 21:20:41,292] INFO in app: GET /api/auth/settings 200 [0.005s] [ReqID: 42945cf7-f805-4e79-ab78-40b9b73634a8]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 21:20:41,985] INFO in app: GET /api/emissions 200 [0.774s] [ReqID: 517a3f7f-316b-4dc6-ad96-aa2404f6b726]
+127.0.0.1 - - [19/Sep/2026 21:20:41] "GET /api/emissions?limit=5000 HTTP/1.1" 200 -
+[2026-09-19 21:20:44,423] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: d910ed38-cdfd-41a7-ac00-b647d9faa5d3]
+127.0.0.1 - - [19/Sep/2026 21:20:44] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 21:20:45,177] INFO in app: GET /api/notifications 200 [0.010s] [ReqID: c3286d73-663f-479a-9397-a698a2900665]
+127.0.0.1 - - [19/Sep/2026 21:20:45] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 21:20:45,193] INFO in app: GET /api/notifications 200 [0.009s] [ReqID: a235ee2e-3d9f-494b-9b86-43e758be75a9]
+127.0.0.1 - - [19/Sep/2026 21:20:45] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 21:20:45,254] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: e0cc23b9-17f9-475f-8b06-a23591267b71]
+127.0.0.1 - - [19/Sep/2026 21:20:45] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 21:20:48,803] INFO in app: GET /api/notifications 200 [0.009s] [ReqID: c4de8d32-012f-40fb-8e5d-31fc5b8ebc17]
+127.0.0.1 - - [19/Sep/2026 21:20:48] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 21:20:48,823] INFO in app: GET /api/notifications/stream 200 [0.000s] [ReqID: 5fe2521f-b73c-4db4-8635-8481695dcd39]
+127.0.0.1 - - [19/Sep/2026 21:20:48] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 21:21:17,388] INFO in app: GET /api/dashboard/batch-all 200 [0.089s] [ReqID: ecf649de-7f38-443b-9398-3ae07cb08ddc]
+127.0.0.1 - - [19/Sep/2026 21:21:17] "GET /api/dashboard/batch-all?facilityId=all&activity=all&division=all&includePending=true HTTP/1.1" 200 -
+[2026-09-19 21:21:17,452] INFO in app: GET /api/dashboard/sbti-trajectory 200 [0.040s] [ReqID: 36355f5b-37d2-4759-9a17-b6143e1ac855]
+127.0.0.1 - - [19/Sep/2026 21:21:17] "GET /api/dashboard/sbti-trajectory HTTP/1.1" 200 -
+

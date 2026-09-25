@@ -1,0 +1,114 @@
+
+The command exited with code 0.
+Output:
+<truncated 20 lines>
+upserts
+  new\server\background_processor.py:346:            batch_scope1_map = {}
+  new\server\background_processor.py:347:            batch_scope2_map = {}
+  new\server\background_processor.py:456:                        processed,
+  new\server\background_processor.py:457:                        batch_keys=batch_scope2_map,
+> new\server\background_processor.py:458:                        overwrite_duplicates=overwrite_duplicates,
+  new\server\background_processor.py:459:                    )
+  new\server\background_processor.py:460:                elif str(scope) == "3_eeio":
+  new\server\background_processor.py:467:                        processed,
+  new\server\background_processor.py:468:                        batch_keys=batch_scope3_map,
+> new\server\background_processor.py:469:                        overwrite_duplicates=overwrite_duplicates,
+  new\server\background_processor.py:470:                    )
+  new\server\background_processor.py:471:                elif str(scope) == "3":
+  new\server\background_processor.py:478:                        processed,
+  new\server\background_processor.py:479:                        batch_keys=batch_scope3_map,
+> new\server\background_processor.py:480:                        overwrite_duplicates=overwrite_duplicates,
+  new\server\background_processor.py:481:                    )
+  new\server\background_processor.py:482:                elif str(scope) == "sources":
+  new\server\background_processor.py:498:                elif str(scope) == "facilities":
+  new\server\background_processor.py:499:                    emission_obj, row_errors = _process_row_facilities(
+> new\server\background_processor.py:500:                        mapped_data, user_id, overwrite_duplicates
+  new\server\background_processor.py:501:                    )
+  new\server\background_processor.py:502:                elif str(scope) == "1":
+  new\server\background_processor.py:515:                        row_idx=processed,
+  new\server\background_processor.py:516:                        batch_keys=batch_scope1_map,
+> new\server\background_processor.py:517:                        overwrite_duplicates=overwrite_duplicates,
+  new\server\background_processor.py:518:                    )
+  new\server\background_processor.py:519:                else:
+  new\server\background_processor.py:876:    row_idx,
+  new\server\background_processor.py:877:    batch_keys=None,
+> new\server\background_processor.py:878:    overwrite_duplicates=False,
+  new\server\background_processor.py:879:):
+  new\server\background_processor.py:880:    from models import Scope2Emission
+  new\server\background_processor.py:1025:        if key in batch_keys:
+  new\server\background_processor.py:1026:            existing_id = batch_keys[key]
+> new\server\background_processor.py:1027:            if not overwrite_duplicates:
+  new\server\background_processor.py:1028:                errors.append(
+> new\server\background_processor.py:1029:                    f"Duplicate record: Scope 2 emission for 
+'{facility.name}' "
+> new\server\background_processor.py:1030:                    f"({year}-{month:02d}, source '{source_type}') already 
+exists. "
+> new\server\background_processor.py:1031:                    f"Enable 'Overwrite Duplicates' to replace it."
+  new\server\background_processor.py:1032:                )
+  new\server\background_processor.py:1033:                return None, errors
+  new\server\background_processor.py:1086:    row_idx,
+  new\server\background_processor.py:1087:    batch_keys=None,
+> new\server\background_processor.py:1088:    overwrite_duplicates=False,
+  new\server\background_processor.py:1089:):
+  new\server\background_processor.py:1090:    from models import Scope3Emission
+  new\server\background_processor.py:1131:        if key in batch_keys:
+  new\server\background_processor.py:1132:            existing_id = batch_keys[key]
+> new\server\background_processor.py:1133:            if not overwrite_duplicates:
+  new\server\background_processor.py:1134:                return None, [
+> new\server\background_processor.py:1135:                    f"Duplicate record: Scope 3 emission for facility 
+'{facility.name}' "
+> new\server\background_processor.py:1136:                    f"({year}-{month:02d}, Category 1) already exists. "
+> new\server\background_processor.py:1137:                    f"Enable 'Overwrite Duplicates' to replace it."
+  new\server\background_processor.py:1138:                ]
+  new\server\background_processor.py:1139:            else:
+  new\server\background_processor.py:1187:    row_idx,
+  new\server\background_processor.py:1188:    batch_keys=None,
+> new\server\background_processor.py:1189:    overwrite_duplicates=False,
+  new\server\background_processor.py:1190:):
+  new\server\background_processor.py:1191:    from models import Scope3Emission
+  new\server\background_processor.py:1260:        if key in batch_keys:
+  new\server\background_processor.py:1261:            existing_id = batch_keys[key]
+> new\server\background_processor.py:1262:            if not overwrite_duplicates:
+  new\server\background_processor.py:1263:                return None, [
+> new\server\background_processor.py:1264:                    f"Duplicate record: Scope 3 emission for facility 
+'{facility.name}' "
+> new\server\background_processor.py:1265:                    f"({year}-{month:02d}, {cat_str}) already exists. "
+> new\server\background_processor.py:1266:                    f"Enable 'Overwrite Duplicates' to replace it."
+  new\server\background_processor.py:1267:                ]
+  new\server\background_processor.py:1268:            else:
+  new\server\background_processor.py:1398:
+  new\server\background_processor.py:1399:    # Upsert: respect the (facility_id, month, year) UniqueConstraint
+> new\server\background_processor.py:1400:    # In-batch duplicate tracking prevents bulk_save_objects collision
+  new\server\background_processor.py:1401:    key = (facility.id, year, month)
+  new\server\background_processor.py:1402:    existing = None
+  new\server\background_processor.py:1548:
+  new\server\background_processor.py:1549:
+> new\server\background_processor.py:1550:def _process_row_facilities(row, user_id, overwrite_duplicates):
+  new\server\background_processor.py:1551:    from models import Facility
+  new\server\background_processor.py:1552:
+  new\server\background_processor.py:1560:    existing = Facility.query.filter_by(name=name).first()
+  new\server\background_processor.py:1561:    if existing:
+> new\server\background_processor.py:1562:        if not overwrite_duplicates:
+> new\server\background_processor.py:1563:            errors.append(f"Region '{name}' already exists. Choose 
+'Overwrite' to update it.")
+  new\server\background_processor.py:1564:            return None, errors
+  new\server\background_processor.py:1565:        
+  new\server\background_processor.py:1638:    row_idx=None,
+  new\server\background_processor.py:1639:    batch_keys=None,
+> new\server\background_processor.py:1640:    overwrite_duplicates=False,
+  new\server\background_processor.py:1641:):
+  new\server\background_processor.py:1642:    """
+  new\server\background_processor.py:1863:            if key in batch_keys:
+  new\server\background_processor.py:1864:                existing_id = batch_keys[key]
+> new\server\background_processor.py:1865:                if not overwrite_duplicates:
+  new\server\background_processor.py:1866:                    return None, [
+> new\server\background_processor.py:1867:                        f"Duplicate record: Scope 1 emission for facility 
+'{facility.name}' "
+> new\server\background_processor.py:1868:                        f"({year}-{month:02d}, process '{process_type}', 
+fuel '{fuel}') already exists. "
+> new\server\background_processor.py:1869:                        f"Enable 'Overwrite Duplicates' to replace it."
+  new\server\background_processor.py:1870:                    ]
+  new\server\background_processor.py:1871:                else:
+
+
+

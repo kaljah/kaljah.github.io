@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -626,7 +626,7 @@
+ @login_required
+ def get_cbam_exports():
+     user = get_current_user()
+-    if user and user.role == 'it_admin':
++    if is_it_role(user):
+         return jsonify({'error': 'IT administrators are not authorized to view operational CBAM data.'}), 403
+     query = CbamProductExport.query
+     allowed_fids = get_allowed_facility_ids(user)
+@@ -682,7 +682,7 @@
+ @login_required
+ def save_cbam_export():
+     user = get_current_user()
+-    if user and user.role == 'it_admin':
++    if is_it_role(user):
+         return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
+     try:
+         data = request.get_json() or {}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\process_categories.py:41:    "flaring": {
+> new\server\process_categories.py:42:        "display_name": "Flaring",
+  new\server\process_categories.py:43:        "segments": ["upstream", "midstream", "downstream"],
+  new\server\process_categories.py:44:        "category": "combustion",
+  new\server\process_categories.py:45:        "calculation_method": "flaring_dual_efficiency",
+  new\server\process_categories.py:46:        "api_section": "Section 5.2",
+  new\server\process_categories.py:47:        "required_inputs": ["volume", "gas_composition", "flare_type"],
+  new\server\process_categories.py:48:        "equations": ["API_5_3", "API_5_4"],
+  new\server\process_categories.py:49:        "description": "Gas flaring with dual-efficiency model",
+  new\server\process_categories.py:50:    },
+  new\server\process_categories.py:51:    "mobile_combustion": {
+  new\server\process_categories.py:52:        "display_name": "Mobile Combustion",
+
+
+

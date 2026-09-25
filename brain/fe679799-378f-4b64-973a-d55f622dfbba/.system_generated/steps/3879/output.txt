@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -194,6 +194,7 @@
+         press_unit="psig",
+         z_factor=1.0,
+         gwp_dict=None,
++        density=None,
+         **comps,
+     ):
+         """
+@@ -228,13 +228,13 @@
+ 
+         # Convert EFs to kg per activity unit (unit-aware normalisation)
+         kg_per_unit_co2 = convert_factor_to_kg_per_unit(
+-            ef_co2, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
++            ef_co2, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, density=density
+         )
+         kg_per_unit_ch4 = convert_factor_to_kg_per_unit(
+-            ef_ch4, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
++            ef_ch4, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, density=density
+         )
+         kg_per_unit_n2o = convert_factor_to_kg_per_unit(
+-            ef_n2o, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type
++            ef_n2o, ef_unit, fuel_unit, hhv=hhv, fuel_type=fuel_type, density=density
+         )
+ 
+         co2_kg = raw_quantity * kg_per_unit_co2
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

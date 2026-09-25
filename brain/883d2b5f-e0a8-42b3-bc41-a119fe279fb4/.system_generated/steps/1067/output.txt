@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1446,4 +1446,23 @@
+   - Frontend production build passed: **`npm run build` completed in 9.59s** (0 errors, 3,200 modules).
+ - **Status:** Complete, verified, and in full synchronization with the repository.
+ 
++### [2026-09-16T01:20:00Z] - ADVERSARIAL STRESS-TEST & DETERMINISTIC VERIFICATION AUDIT (CSV UPLOADERS & METROLOGICAL ENGINES)
++- **Action:** Executed adversarial stress-testing, numerical boundary auditing, and metrological verification across all CSV uploaders, process type classifiers, and thermodynamic calculation engines.
++- **Files Modified & Hardened:**
++  - `new/server/calculations/base.py`: Enhanced `BaseCalculator.validate_inputs` to explicitly reject IEEE-754 `NaN` and `Infinity` (`math.isnan(val)` / `math.isinf(val)`) across all derived calculation engines (Combustion, Flaring, Vented, Tanks, Unloading, Blowdown, etc.), raising explicit `ValueError` instead of propagating corrupt float states.
++  - `new/server/calculations/dispatcher.py`: Added explicit `math.isnan(quantity)` and `math.isinf(quantity)` guards on common numeric quantities before routing to Tier 1, 2, or 3 calculators, imported `math`, and ensured deterministic exceptions for non-finite or negative quantities.
++  - `new/server/background_processor.py`:
++    - Upgraded `_clean_float` to sanitize NaN/Inf, invisible Unicode characters (`\u200b`, `\ufeff`, `\u00a0`), unit suffixes (`"120 kW" -> 120.0`), case-insensitive null variants (`"N/A"`, `"NULL"`, `"NaN"`, `"--"`), European comma decimals (`"1234,56" -> 1234.56`), and thousands separators.
++    - Implemented resilient multi-encoding decoding (`utf-8-sig`, `utf-8`, `windows-1252`, `iso-8859-1`) with universal newline normalization (`\r\n` and legacy `\r` to `\n`) and automatic delimiter sniffing (`csv.Sniffer` for `;`, `\t`, `|`, `,`).
++    - Hardened row extraction loop to discard whitespace-only and comma-only empty lines (`not any(str(c).strip() for c in raw_row if c is not None)`).
++    - Hardened `_build_mapping` to support standard enterprise facility headers (`facility`, `facility name`, `plant`, `site`) and pass `scope` to disambiguate Scope 2 `"Region"` column collisions.
++  - `new/server/routes/scope3.py`: Sanitized raw `float()` parsing in `bulk_import_scope3()` using resilient `_clean_float`.
++  - `new/server/routes/data.py`: Sanitized raw `float()` parsing in `bulk_import_production()` using resilient `_clean_float`.
++  - `new/server/tests/test_csv_engine_matrix.py`: Created 53-test adversarial verification suite covering delimiter sniffing (semicolon, TSV, pipe), encodings (UTF-8 BOM, Windows-1252), row terminators (CRLF, legacy CR), whitespace padding, empty files, missing signatures, NaN/Inf defenses, singularity clamping (Z-factor = 0, absolute zero temp), stoichiometric mass balance (flaring 98%), GWP cross-consistency (AR4, AR5, AR6), and 10,000-row floating point summation stability.
++- **Verification:**
++  - Automated CSV & Metrology test suite passed: **53 passed** in 2.77s (`python -m pytest new/server/tests/test_csv_engine_matrix.py -v`).
++  - Full backend pytest suite passed: **214 passed, 52 warnings** in 21.21s (`python -m pytest new/server/tests/`).
++  - Codebase knowledge graph synchronized: **`graphify update .`** (2,201 nodes, 4,663 edges, 207 communities).
++- **Status:** Complete, verified, and in full synchronization with the repository.
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

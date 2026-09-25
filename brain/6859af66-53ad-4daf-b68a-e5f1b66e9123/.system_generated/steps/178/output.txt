@@ -1,0 +1,5 @@
+Using prompt: The exact same corporate advertising poster composition, scene, lighting, and layout as the reference image, but with French typography. At the top left, an emerald green pill badge 'PLATEFORME ÉNERGÉTIQUE SOUVERAINE' and bold headline 'Vos Gisements Sont Plus Propres Que Les Forfaits UE. Prouvez-le Grâce à la Physique Réelle.' Top right shows 'NeoCarbon'. In the center, the modern computer monitor displays the 3D gas processing plant, flare telemetry, methane intensity gauge at 0.08%, and penalty counter '38 512 940 € Économisés'. Floating glass badges say 'Physique API 2021 Natif', 'OGMP 2.0 Gold Standard', and 'Dossiers Douaniers XML en 1 Clic'. Same professional engineer at desk with blueprints and refinery background. Ultra-sharp 8k resolution, cinematic commercial photography.
+
+Generated image is saved at C:\Users\samsung\.gemini\antigravity\brain\6859af66-53ad-4daf-b68a-e5f1b66e9123\neocarbon_oilgas_showcase_fr_1790345081572.jpg.
+
+ Do not output the path of this image to show to the user since the user can already see it. However, you can embed this image in artifacts for the USER's review.

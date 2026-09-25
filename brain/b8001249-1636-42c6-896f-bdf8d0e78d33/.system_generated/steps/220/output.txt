@@ -1,0 +1,44 @@
+
+The command exited with code 0.
+Output:
+[Agent4/superuser] ✅ Login as test_superuser@ghg-test.com
+[Agent4/superuser] 
+## Auth Checks
+[Agent4/superuser] ✅ GET /auth/me → 200
+[Agent4/superuser] 
+## RBAC: Admin-only endpoints (should all be 403)
+[Agent4/superuser] ✅ Correctly denied GET /auth/users (admin-only) → 403
+[Agent4/superuser] 🐛 BUG [🔴 Critical] RBAC: Role 'superuser' should be DENIED POST /auth/users (admin-only) but got 405
+[Agent4/superuser] ✅ Correctly denied DELETE /auth/users/1 (admin-only) → 403
+[Agent4/superuser] 
+## Emission Workflow: Pending Status
+[Agent4/superuser] ✅ POST /emissions (superuser→Pending) → 201
+[Agent4/superuser] ✅ Superuser emission status = None (Pending)
+[Agent4/superuser] 
+## Data Ownership: Cannot delete others' records
+[Agent4/superuser] 🐛 BUG [🔴 Critical] RBAC: Role 'superuser' should be DENIED DELETE /emissions/1 (not own) but got 200
+[Agent4/superuser] 
+## Facility Access
+[Agent4/superuser] ✅ GET /facilities → 200
+[Agent4/superuser] 
+## Dashboard
+[Agent4/superuser] ✅ GET /dashboard/summary → 200
+[Agent4/superuser] 
+## Bulk CSV Upload (superuser)
+[Agent4/superuser] 
+## Scope 2
+[Agent4/superuser] ✅ POST /scope2 (superuser) → 201
+[Agent4/superuser] 
+## Scope 3
+[Agent4/superuser] ✅ POST /scope3 (superuser) → 201
+[Agent4/superuser] 
+## Analytics
+[Agent4/superuser] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/scope-breakdown
+[Agent4/superuser] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/trends
+[Agent4/superuser] 🐛 BUG [🟠 High] API: Unexpected status on GET /qaqc/anomalies
+[Agent4/superuser] 
+## Reports
+[Agent4/superuser] 🐛 BUG [🟠 High] API: Unexpected status on GET /reports/list
+[Agent4/superuser] ✅ GET /notifications → 200
+[Agent4] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_04_report.md | Bugs: 6
+

@@ -1,0 +1,6 @@
+{
+  "summary":  "Full root cause analysis and fix plan for regions not appearing in dropdowns after bulk upload. Documents 3 affected files, why a one-line fix isn't enough, and a more robust server-side solution option.",
+  "updatedAt":  "2026-09-20T17:15:05.657453800Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

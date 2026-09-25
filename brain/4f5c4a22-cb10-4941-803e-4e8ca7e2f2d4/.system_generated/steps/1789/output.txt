@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\legacy_engine.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -406,6 +406,9 @@
+         except (ValueError, TypeError):
+             hhv = 0
+ 
++    if hhv and not payload.get("hhv"):
++        payload["hhv"] = hhv
++
+     calc_inputs = payload.get("calc_inputs") or {}
+     inputs = calc_inputs.get(process) or {}  # Extract specific inputs
+ 
+@@ -412,5 +412,7 @@
+     # This allows keys like 'comp_duration' or 'unload_diam' to be read directly from the CSV row
+     inputs = {**payload, **inputs}
++    if hhv and not inputs.get("hhv"):
++        inputs["hhv"] = hhv
+ 
+     is_specific = payload.get("factor_source") == "specific" or payload.get(
+         "isSpecific"
+@@ -424,7 +424,7 @@
+     # Try to use the new API 2021 compliant calculators first
+     uncertainties = factor_data.get("uncertainty", {})
+     api_res = api2021_dispatcher.dispatch(
+-        process, payload, factor_data, uncertainties, gwp_dict=gwp_dict
++        process, inputs, factor_data, uncertainties, gwp_dict=gwp_dict
+     )
+ 
+     def get_val(r):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

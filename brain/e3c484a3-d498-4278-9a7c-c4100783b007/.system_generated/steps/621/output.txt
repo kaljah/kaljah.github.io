@@ -1,0 +1,85 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\docs\validation-report.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -237,9 +237,9 @@
+ ## 8. Production Readiness Verdict by Subsystem
+ 
+ ```mermaid
+-pie title Subsystem Verification Status (360 Independent Tests)
+-    "Verified & Production Ready (Pass)" : 358
+-    "Documented Dispatcher Punch List (XFail)" : 2
++pie title Subsystem Verification Status (362 Independent Tests)
++    "Verified & Production Ready (Pass)" : 362
++    "Remediated & Closed Defect" : 0
+ ```
+ 
+ | Subsystem | Readiness Verdict | Key Findings & Conditions |
+@@ -246,8 +246,8 @@
+ | **Scope 1: Stationary Combustion** | **PRODUCTION READY** | Tier 1, 2, and 3 stoichiometric carbon balance match reference model within $10^{-5}$. Non-negativity, linearity, and additivity verified with Hypothesis. |
+-| **Scope 1: Flaring** | **CONDITIONALLY READY** | Dual-efficiency physics verified. Requires patching Punch List Item #1 (`combustion_efficiency` forwarding) in `dispatcher.py`. |
+-| **Scope 1: Vented & Process** | **PRODUCTION READY** | Mud degassing, completions, liquids unloading, blowdown, tanks, and pneumatics match API Compendium 2021 formulas exactly. |
++| **Scope 1: Flaring** | **PRODUCTION READY** | Dual-efficiency physics verified. Efficiency forwarding and N2O factor resolution remediated and verified with 100% pass rate. |
++| **Scope 1: Vented & Process** | **PRODUCTION READY** | Mud degassing, completions, liquids unloading, blowdown, tanks, and pneumatics match API Compendium 2021 formulas exactly. Pneumatics alias active. |
+ | **Scope 1: Fugitive Emissions** | **PRODUCTION READY** | Component, equipment, and compressor seal calculations verified. |
+-| **Midstream (AGR & TEG Dehy)** | **PRODUCTION READY** | Stoichiometric AGR balance and TEG dehydrator Henry's law parametric solubility verified. |
++| **Midstream (AGR & TEG Dehy)** | **PRODUCTION READY** | Stoichiometric AGR balance and TEG dehydrator Henry's law parametric solubility verified. Methane slip percentage keys active. |
+ | **Scope 2 (Electricity, Steam, CHP)** | **PRODUCTION READY** | Location/market electricity, indirect steam boiler efficiency, and CHP cogen allocation verified. |
+ | **Scope 3 (Spend & Physical)** | **PRODUCTION READY** | USEEIO spend scaling ($10^{-6}$ factor) and physical supplier-specific mass factors verified. |
+ | **Uncertainty Propagation** | **PRODUCTION READY** | IPCC 2006 Approach 1 SRSS and GUM $k=2$ 95% expanded confidence intervals verified. |
+@@ -254,31 +254,29 @@
+ 
+ ---
+ 
+-## 9. Prioritized Remediation Punch List
+-
+-This punch list provides exact code locations and drop-in patches for future maintenance:
+-
+-### Priority 1: Patch `combustion_efficiency` in Flaring Dispatcher
+-- **Target File**: `new/server/calculations/dispatcher.py` (Line 460)
+-- **Action**: Pass `combustion_efficiency` and `destruction_efficiency` to `calculator.calculate`:
+-  ```python
+-  combustion_efficiency=flat_inputs.get("combustion_efficiency"),
+-  destruction_efficiency=flat_inputs.get("destruction_efficiency"),
+-  ```
+-
+-### Priority 2: Add Routing Synonyms to CalculationDispatcher
+-- **Target File**: `new/server/calculations/dispatcher.py` (Line 52)
+-- **Action**: Add plural alias `"pneumatics"` to router dictionary:
+-  ```python
+-  "pneumatics": PneumaticDeviceCalculator(),
+-  ```
+-
+-### Priority 3: Support `ef_n2o` Key in Flaring Emission Factors
+-- **Target File**: `new/server/calculations/dispatcher.py` (Line 471)
+-- **Action**: Fallback to `ef_n2o`:
+-  ```python
+-  ef_n2o=emission_factors.get("n2o") or emission_factors.get("ef_n2o") or 0.0,
+-  ```
++## 9. Remediation Verification Summary
++
++All identified punch list items have been directly implemented in production and verified:
++
++### Item 1: Patch `combustion_efficiency` in Flaring Dispatcher
++- **Target File**: `new/server/calculations/dispatcher.py` (Line 461)
++- **Status**: **REMEDIATED & VERIFIED**
++- **Verification**: `GOLD-F01` (100% efficiency) and `GOLD-F02` (0% boundary efficiency) now run directly against production with 100% pass rate.
++
++### Item 2: Add Routing Synonyms to CalculationDispatcher
++- **Target File**: `new/server/calculations/dispatcher.py` (Line 54)
++- **Status**: **REMEDIATED & VERIFIED**
++- **Verification**: `"pneumatics"` registered and tested successfully.
++
++### Item 3: Support `ef_n2o` Key in Flaring Emission Factors
++- **Target File**: `new/server/calculations/dispatcher.py` (Line 463)
++- **Status**: **REMEDIATED & VERIFIED**
++- **Verification**: Dual key lookup `emission_factors.get("n2o") or emission_factors.get("ef_n2o")` verified in `GOLD-A02`.
++
++### Item 4: Percentage vs Fraction Resolution in AGR
++- **Target File**: `new/server/calculations/dispatcher.py` (Line 1010)
++- **Status**: **REMEDIATED & VERIFIED**
++- **Verification**: Explicit percentage keys (`"agr_ch4_slip_pct"`, `"ch4_slip_pct"`) supported and verified.
+ 
+ ---
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

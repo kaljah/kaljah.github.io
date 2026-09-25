@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\ManageData.jsx:764:            const res = await api.get('/data/production');
+new\client\src\pages\ManageData.jsx:999:            await api.post('/data/production', {
+new\client\src\pages\ManageData.jsx:1169:                    await api.delete(`/data/production/${id}`);
+new\client\src\utils\ModernReportGenerator.js:215:      api.get("/production").catch(() => ({ data: [] })),
+
+
+

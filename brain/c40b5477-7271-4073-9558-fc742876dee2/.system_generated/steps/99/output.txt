@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+393817f Merge branch 'main' into fix/audit-remediation
+152f365 g
+9d4851b Disable strict CSRF referrer check and exempt auth routes for cross-origin SPA login
+5e3e6c9 Configure GitHub Pages deployment, SPA routing, and cross-origin authentication
+0b21e68 fix: remediate 54 audit findings across calculations, security, audit logging, and UI reporting
+

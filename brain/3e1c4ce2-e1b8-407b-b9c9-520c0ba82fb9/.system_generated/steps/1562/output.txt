@@ -1,0 +1,134 @@
+
+The command exited with code 1.
+Output:
+<truncated 251 lines>
+    Usage:
+
+        npx playwright show-trace test-results\test_carbon_intensity_deep-016c4-ic-Embedded-Emissions-Table-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:204:3 › Carbon Intensity Page Deep Audit › 5. Regional Bar Charts Rendering 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .sidebar').first()
+
+
+      38 |
+      39 |   // Ensure App layout is loaded
+    > 40 |   await expect(page.locator('.app-container, .sidebar').first()).toBeVisible({ timeout: 15000 });
+         |                                                                  ^
+      41 |
+      42 |   // Click Carbon Intensity in sidebar
+      43 |   const ciLink = page.locator('a[href="/carbon-intensity"], a[title="Carbon Intensity"]').first();
+        at setupCarbonIntensity (C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:40:66)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:212:5
+
+    Error Context: test-results\test_carbon_intensity_deep-11ee4-gional-Bar-Charts-Rendering-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .sidebar').first()
+
+
+      38 |
+      39 |   // Ensure App layout is loaded
+    > 40 |   await expect(page.locator('.app-container, .sidebar').first()).toBeVisible({ timeout: 15000 });
+         |                                                                  ^
+      41 |
+      42 |   // Click Carbon Intensity in sidebar
+      43 |   const ciLink = page.locator('a[href="/carbon-intensity"], a[title="Carbon Intensity"]').first();
+        at setupCarbonIntensity (C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:40:66)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:212:5
+
+    Error Context: test-results\test_carbon_intensity_deep-11ee4-gional-Bar-Charts-Rendering-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_carbon_intensity_deep-11ee4-gional-Bar-Charts-Rendering-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_carbon_intensity_deep-11ee4-gional-Bar-Charts-Rendering-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:221:3 › Carbon Intensity Page Deep Audit › 6. Historical Trends View Switching (Chart vs Heatmap) 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .sidebar').first()
+
+
+      38 |
+      39 |   // Ensure App layout is loaded
+    > 40 |   await expect(page.locator('.app-container, .sidebar').first()).toBeVisible({ timeout: 15000 });
+         |                                                                  ^
+      41 |
+      42 |   // Click Carbon Intensity in sidebar
+      43 |   const ciLink = page.locator('a[href="/carbon-intensity"], a[title="Carbon Intensity"]').first();
+        at setupCarbonIntensity (C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:40:66)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:229:5
+
+    Error Context: test-results\test_carbon_intensity_deep-0aee9-Switching-Chart-vs-Heatmap--chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-container, .sidebar').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.app-container, .sidebar').first() with timeout 15000ms
+      - waiting for locator('.app-container, .sidebar').first()
+
+
+      38 |
+      39 |   // Navigate to Carbon Intensity via NavLink or direct URL
+    > 40 |   const ciLink = page.locator('a[href="/carbon-intensity"], a[title="Carbon Intensity"]').first();
+         |                                                                  ^
+      41 |   if (await ciLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      42 |     await ciLink.click();
+      43 |   } else {
+        at setupCarbonIntensity (C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:40:66)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_carbon_intensity_deep_audit.spec.js:229:5
+
+    Error: apiRequestContext._wrapApiCall: ENOENT: no such file or directory, copyfile 'C:\Users\samsung\Desktop\H2\new\client\test-results\.playwright-artifacts-11\traces\8ac94acb029b7a26e3c2-bda2c8b5e23523bc570c-retry1-recording1.network' -> 'C:\Users\samsung\Desktop\H2\new\client\test-results\.playwright-artifacts-11\traces\8ac94acb029b7a26e3c2-bda2c8b5e23523bc570c-retry1-recording1-pwnetcopy-1.network'
+
+    Error: browserContext._wrapApiCall: ENOENT: no such file or directory, open 'C:\Users\samsung\Desktop\H2\new\client\test-results\.playwright-artifacts-11\traces\8ac94acb029b7a26e3c2-bda2c8b5e23523bc570c-retry1.trace'
+
+    Error: ENOENT: no such file or directory, open 'C:\Users\samsung\Desktop\H2\new\client\test-results\.playwright-artifacts-11\6600859cb0264d72d7440a241a710d58.zip'
+
+  6 failed
+    [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:47:3 › Carbon Intensity Page Deep Audit › 1. Core Layout & KPI Cards Verification 
+    [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:107:3 › Carbon Intensity Page Deep Audit › 2. Dual GWP Horizon Dynamic Toggle (100-Yr vs 20-Yr) 
+    [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:141:3 › Carbon Intensity Page Deep Audit › 3. Cascading Filters Interaction 
+    [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:166:3 › Carbon Intensity Page Deep Audit › 4. EU CBAM Product Specific Embedded Emissions Table 
+    [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:204:3 › Carbon Intensity Page Deep Audit › 5. Regional Bar Charts Rendering 
+    [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:221:3 › Carbon Intensity Page Deep Audit › 6. Historical Trends View Switching (Chart vs Heatmap) 
+

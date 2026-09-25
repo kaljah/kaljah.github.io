@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\00831633-e548-4e2d-9163-99f846b6739b\\implementation_plan.md","LineNumber":32,"LineContent":"- Update profile rendering logic to fetch and display the new user attributes from the login session/localStorage."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\00831633-e548-4e2d-9163-99f846b6739b\\implementation_plan.md.resolved","LineNumber":32,"LineContent":"- Update profile rendering logic to fetch and display the new user attributes from the login session/localStorage."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\00831633-e548-4e2d-9163-99f846b6739b\\implementation_plan.md.resolved.1","LineNumber":32,"LineContent":"- Update profile rendering logic to fetch and display the new user attributes from the login session/localStorage."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":36,"LineContent":"- Automatic user profile initialization from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":59,"LineContent":"localStorage.setItem('ghg_user', JSON.stringify(data.user));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":60,"LineContent":"localStorage.setItem('ghg_user_name', data.user.fullName);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":86,"LineContent":"- Retrieves user object from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":174,"LineContent":"    Browser-\u003e\u003eBrowser: Store in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":216,"LineContent":"4. Logs in → stores user object in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":232,"LineContent":"3. localStorage cleared"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.3","LineNumber":373,"LineContent":"- Session cleared from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":36,"LineContent":"- Automatic user profile initialization from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":59,"LineContent":"localStorage.setItem('ghg_user', JSON.stringify(data.user));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":60,"LineContent":"localStorage.setItem('ghg_user_name', data.user.fullName);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":86,"LineContent":"- Retrieves user object from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":174,"LineContent":"    Browser-\u003e\u003eBrowser: Store in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":216,"LineContent":"4. Logs in → stores user object in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":232,"LineContent":"3. localStorage cleared"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.2","LineNumber":373,"LineContent":"- Session cleared from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":36,"LineContent":"- Automatic user profile initialization from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":59,"LineContent":"localStorage.setItem('ghg_user', JSON.stringify(data.user));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":60,"LineContent":"localStorage.setItem('ghg_user_name', data.user.fullName);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":86,"LineContent":"- Retrieves user object from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":174,"LineContent":"    Browser-\u003e\u003eBrowser: Store in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":216,"LineContent":"4. Logs in → stores user object in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":232,"LineContent":"3. localStorage cleared"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.1","LineNumber":373,"LineContent":"- Session cleared from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.0","LineNumber":36,"LineContent":"- Automatic user profile initialization from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.0","LineNumber":59,"LineContent":"localStorage.setItem('ghg_user', JSON.stringify(data.user));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.0","LineNumber":60,"LineContent":"localStorage.setItem('ghg_user_name', data.user.fullName);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.0","LineNumber":86,"LineContent":"- Retrieves user object from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.0","LineNumber":174,"LineContent":"    Browser-\u003e\u003eBrowser: Store in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.0","LineNumber":216,"LineContent":"4. Logs in → stores user object in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved.0","LineNumber":232,"LineContent":"3. localStorage cleared"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":36,"LineContent":"- Automatic user profile initialization from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":59,"LineContent":"localStorage.setItem('ghg_user', JSON.stringify(data.user));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":60,"LineContent":"localStorage.setItem('ghg_user_name', data.user.fullName);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":86,"LineContent":"- Retrieves user object from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":174,"LineContent":"    Browser-\u003e\u003eBrowser: Store in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":216,"LineContent":"4. Logs in → stores user object in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":232,"LineContent":"3. localStorage cleared"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md.resolved","LineNumber":373,"LineContent":"- Session cleared from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":36,"LineContent":"- Automatic user profile initialization from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":59,"LineContent":"localStorage.setItem('ghg_user', JSON.stringify(data.user));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":60,"LineContent":"localStorage.setItem('ghg_user_name', data.user.fullName);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":86,"LineContent":"- Retrieves user object from localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":174,"LineContent":"    Browser-\u003e\u003eBrowser: Store in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":216,"LineContent":"4. Logs in → stores user object in localStorage"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":232,"LineContent":"3. localStorage cleared"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\158aa171-b847-455c-a02c-71cca6b3610d\\walkthrough.md","LineNumber":373,"LineContent":"- Session cleared from localStorage"}
+(...261 more results not shown)

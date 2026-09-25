@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 15:30:30,327] INFO in app: Updated account: a
+[2026-09-23 15:30:30,443] INFO in app: Updated account: a@a
+[2026-09-23 15:30:30,579] INFO in app: Updated account: z
+[2026-09-23 15:30:30,704] INFO in app: Updated account: z@z
+Count: 528
+Sum co2e: 5101536795.452592
+Sum ch4: 14313410.40341192
+

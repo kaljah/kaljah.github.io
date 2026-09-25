@@ -1,0 +1,72 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\calculations\vented.py:1:"""
+  new\server\calculations\vented.py:2:API Compendium 2021 - Section 6: Vented and Process Emissions
+> new\server\calculations\vented.py:3:Implementation of equations for mud degassing, completions, liquids unloading, 
+  new\server\calculations\vented.py:4:blowdowns (with thermodynamic T & P corrections), tanks, and pneumatics.
+  new\server\calculations\vented.py:5:"""
+  new\server\calculations\vented.py:6:
+  new\server\calculations\vented.py:7:from .base import BaseCalculator
+  new\server\calculations\vented.py:8:from .units import (
+  new\server\calculations\vented.py:9:    CONVERSIONS,
+  new\server\calculations\vented.py:10:    calculate_co2e,
+  new\server\calculations\vented.py:11:    convert,
+  new\server\calculations\vented.py:12:    to_psia,
+  new\server\calculations\vented.py:13:    to_kelvin,
+  new\server\calculations\vented.py:120:    return ch4_res, co2_res, n2o_res
+  new\server\calculations\vented.py:121:
+  new\server\calculations\vented.py:122:
+> new\server\calculations\vented.py:123:class MudDegassingCalculator(BaseCalculator):
+  new\server\calculations\vented.py:124:    def __init__(self):
+> new\server\calculations\vented.py:125:        super().__init__("Drilling Mud Degassing", "Section 6.2")
+  new\server\calculations\vented.py:126:
+  new\server\calculations\vented.py:127:    def calculate(
+> new\server\calculations\vented.py:128:        self, mud_volume, mud_type, uncertainties, ef_ch4=None, gwp_dict=None
+  new\server\calculations\vented.py:129:    ):
+  new\server\calculations\vented.py:130:        """
+> new\server\calculations\vented.py:131:        API Section 6.2 - CH4 from mud degassing
+  new\server\calculations\vented.py:132:        """
+> new\server\calculations\vented.py:133:        self.validate_inputs({"volume": mud_volume}, ["volume"])
+  new\server\calculations\vented.py:134:
+> new\server\calculations\vented.py:135:        # Default factors (kg CH4 / m3 mud)
+  new\server\calculations\vented.py:136:        factors = {"water_based": 0.15, "oil_based": 0.35, "synthetic": 0.25}
+  new\server\calculations\vented.py:137:
+  new\server\calculations\vented.py:138:        # Use provided EF if available (and non-zero), otherwise default based 
+on type
+  new\server\calculations\vented.py:139:        if ef_ch4 and ef_ch4 > 0:
+  new\server\calculations\vented.py:140:            ef = ef_ch4
+  new\server\calculations\vented.py:141:        else:
+> new\server\calculations\vented.py:142:            ef = factors.get(mud_type, 0.25)
+  new\server\calculations\vented.py:143:
+> new\server\calculations\vented.py:144:        ch4_kg = float(mud_volume) * ef
+  new\server\calculations\vented.py:145:        ch4_tonnes = ch4_kg / 1000.0
+  new\server\calculations\vented.py:146:
+  new\server\calculations\vented.py:147:        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+  new\server\calculations\vented.py:148:        ch4_res = propagate_uncertainty(
+  new\server\calculations\vented.py:149:            ch4_tonnes,
+  new\server\calculations\vented.py:150:            resolve_ef_uncertainty("vented", "ch4", _tier, 
+uncertainties.get("ch4")),
+  new\server\calculations\vented.py:151:            tier=_tier,
+  new\server\calculations\vented.py:152:            process_category="vented",
+  new\server\calculations\vented.py:153:            gas="ch4",
+  new\server\calculations\vented.py:154:        )
+  new\server\calculations\vented.py:157:        return self.format_result(
+  new\server\calculations\vented.py:158:            ch4=ch4_res,
+  new\server\calculations\vented.py:159:            total_co2e=total_co2e,
+> new\server\calculations\vented.py:160:            inputs={"mud_volume": mud_volume, "mud_type": mud_type, 
+"ef_ch4_used": ef},
+  new\server\calculations\vented.py:161:        )
+  new\server\calculations\vented.py:162:
+  new\server\calculations\vented.py:163:
+  new\server\calculations\vented.py:164:class CompletionFlowbackCalculator(BaseCalculator):
+  new\server\calculations\vented.py:165:    def __init__(self):
+  new\server\calculations\vented.py:166:        super().__init__("Well Completion Flowback", "Section 6.3")
+  new\server\calculations\vented.py:167:
+  new\server\calculations\vented.py:168:    def calculate(
+  new\server\calculations\vented.py:169:        self,
+  new\server\calculations\vented.py:170:        flowback_volume=None,
+
+
+

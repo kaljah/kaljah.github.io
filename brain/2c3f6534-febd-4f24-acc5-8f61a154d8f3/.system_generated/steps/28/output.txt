@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+Traversal: BFS depth=2 | Start: ['Backend', 'Frontend', 'Backend Architecture', 'Application Launch', 'Architecture & Reimagined UI Layout', 'Structure Refined'] | 41 nodes found
+
+[!] TRUNCATED: showing 32 of 41 nodes (~2000-token budget). The answer may be among the 9 cut nodes — raise the token budget (CLI: --budget) or narrow the query (e.g. context_filter=['call'], or get_node for a specific symbol).
+
+NODE Backend [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L12 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE Frontend [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L22 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE Backend Architecture [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L9 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Application Launch [src=brain/224ec251-a8e0-4226-b81c-7484bb759378/walkthrough.md loc=L97 community=PVGIS Data Analyzer - Walkthrough]
+NODE Architecture & Reimagined UI Layout [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L19 community=Client Application & Routing]
+NODE Structure Refined [src=brain/2745d8f3-d209-424a-8e1e-2c6339d71e05/implementation_plan.md loc=L32 community=Modern "Glassy" PDF Report Overhaul]
+NODE Modern "Glassy" PDF Report Overhaul [src=brain/2745d8f3-d209-424a-8e1e-2c6339d71e05/implementation_plan.md loc=L1 community=Modern "Glassy" PDF Report Overhaul]
+NODE Changes Implemented [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L7 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE 🧪 Verification Results [src=brain/224ec251-a8e0-4226-b81c-7484bb759378/walkthrough.md loc=L95 community=PVGIS Data Analyzer - Walkthrough]
+NODE Unified QA/QC & Data Health Page Implementation Plan [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L1 community=Client Application & Routing]
+NODE Proposed Changes [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L10 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE [MODIFY] [backend/emissions/models.py](file:///c:/Users/samsung/Desktop/cement/backend/emissions/models.py) [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L13 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE [MODIFY] [backend/emissions/serializers.py](file:///c:/Users/samsung/Desktop/cement/backend/emissions/serializers.py) [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L19 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE [MODIFY] [src/components/emissions/EmissionList.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/EmissionList.tsx) [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L33 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE [MODIFY] [src/components/emissions/ProtocolCalculator.tsx](file:///c:/Users/samsung/Desktop/cement/frontend/src/components/emissions/ProtocolCalculator.tsx) [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L24 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE [server.js](file:///c:/Users/samsung/Desktop/ghg%20old/server.js) [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L11 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Visual Structure [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L26 community=Client Application & Routing]
+NODE Authentication and User-Specific Database Implementation Walkthrough [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L1 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE PVGIS Data Analyzer - Walkthrough [src=brain/224ec251-a8e0-4226-b81c-7484bb759378/walkthrough.md loc=L1 community=PVGIS Data Analyzer - Walkthrough]
+NODE Implementation Plan - Activity Log Dashboard Replica [src=brain/14e49943-7195-4d0c-b4c2-a7b9c4663ea6/implementation_plan.md loc=L1 community=Implementation Plan - Activity Log Dashboard Replica]
+NODE Frontend - Dashboard Updates [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L67 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Frontend - Emissions Calculator Updates [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L92 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Frontend - Shared Components [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L31 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Technical Implementation [src=brain/2745d8f3-d209-424a-8e1e-2c6339d71e05/implementation_plan.md loc=L59 community=Modern "Glassy" PDF Report Overhaul]
+NODE Verification Plan [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L97 community=Client Application & Routing]
+NODE Database Cleanup [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L136 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Frontend - Authentication Flow [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L52 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Frontend - Other Protected Pages [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L126 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Proposed Changes [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L51 community=Client Application & Routing]
+NODE Complete Analysis Results [src=brain/224ec251-a8e0-4226-b81c-7484bb759378/walkthrough.md loc=L116 community=PVGIS Data Analyzer - Walkthrough]
+NODE Interface Verification [src=brain/224ec251-a8e0-4226-b81c-7484bb759378/walkthrough.md loc=L105 community=PVGIS Data Analyzer - Walkthrough]
+NODE Sample Data Testing [src=brain/224ec251-a8e0-4226-b81c-7484bb759378/walkthrough.md loc=L133 community=PVGIS Data Analyzer - Walkthrough]
+... (truncated — 9 more nodes cut by ~2000-token budget. Narrow with context_filter=['call'] or use get_node for a specific symbol)
+

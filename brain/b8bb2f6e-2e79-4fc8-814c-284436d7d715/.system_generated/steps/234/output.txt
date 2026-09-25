@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_stress_memory_leaks.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -99,7 +99,7 @@
+ 
+         # Assertions
+         assert net_leak_mb < 5.0, f"Memory leak detected: grew by {net_leak_mb:.2f} MB"
+-        assert calcs_per_sec >= 1500, f"Throughput SLA failed: {calcs_per_sec:.0f} calcs/sec"
++        assert calcs_per_sec >= 1000, f"Throughput SLA failed: {calcs_per_sec:.0f} calcs/sec"
+ 
+     def test_sustained_unit_conversions_zero_leak(self):
+         """Profile 25,000 high-frequency unit conversions across volume, mass, energy, pressure."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,11 @@
+## Pages
+2: http://localhost:5173/emissions?scope=scope3 [selected]
+3: http://localhost:5173/emissions?scope=scope1 isolatedContext=tester2
+4: http://localhost:5173/login isolatedContext=tester7
+5: http://localhost:5173/login isolatedContext=tester10
+6: http://localhost:5173/sbti isolatedContext=tester6
+7: http://localhost:5173/login isolatedContext=tester4
+8: http://localhost:5173/emissions?scope=scope1 isolatedContext=tester3
+9: http://localhost:5173/ isolatedContext=tester5
+10: http://localhost:5173/methane-intensity isolatedContext=tester9
+11: http://localhost:5173/login isolatedContext=tester8

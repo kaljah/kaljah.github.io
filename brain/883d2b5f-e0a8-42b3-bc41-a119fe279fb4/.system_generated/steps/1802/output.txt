@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -197,7 +197,7 @@
+         if resolved_ef is not None:
+             emission_factor = float(resolved_ef)
+ 
+-        if co2e == 0 and emission_factor > 0:
++        if emission_factor > 0 and (electricity_kwh > 0 or co2e == 0):
+             co2e = (electricity_kwh * emission_factor) / 1000.0
+ 
+     elif source_type == "indirect_steam":
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

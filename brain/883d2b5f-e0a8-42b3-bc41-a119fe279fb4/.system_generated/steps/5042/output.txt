@@ -1,0 +1,67 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+STARTING FULL API HEALTH & RESILIENCE AUDIT
+Target Base URL: http://127.0.0.1:5000
+================================================================================
+
+[Step 1] Checking Core Health Endpoint...
+GET /api/health -> Status: 200 (6.0ms), Body: {"status":"ok","version":"1.0.0"}
+
+[Step 2] Fetching CSRF Token...
+CSRF Token obtained: YES
+
+[Step 3] Authenticating Admin Session...
+POST /api/auth/login -> Status: 200, User: admin@ghg.com
+
+[Step 4] Enumerating all registered API endpoints...
+Discovered 166 API route rules in Flask.
+
+================================================================================
+API HEALTH AUDIT RESULTS SUMMARY
+================================================================================
+Total API Endpoints / Methods Tested: 171
+Healthy (Status < 500):               156 / 171 (91.2%)
+Failed (500 Server Crash):            15
+Latency Profile:                      Avg: 92.3ms | Min: 4.7ms | Max: 6933.0ms
+
+HTTP Status Code Distribution:
+  HTTP 200: 76 endpoints
+  HTTP 400: 74 endpoints
+  HTTP 403: 2 endpoints
+  HTTP 404: 4 endpoints
+  HTTP 500: 15 endpoints
+
+CRITICAL FAILURES (500 Internal Server Errors):
+  [FAIL] DELETE /api/auth/users/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/auth/users/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659E240>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/base-years/<int:rec_id> -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/base-years/%3Cint:rec_id%3E (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C06587E60>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/custom-factors/<int:factor_id> -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/custom-factors/%3Cint:factor_id%3E (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659F530>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/data/cbam-exports/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/data/cbam-exports/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659E570>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/data/ogmp-surveys/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/data/ogmp-surveys/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659F200>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/data/production/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/data/production/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659F440>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/emissions/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/emissions/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C04F17C50>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/facilities/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/facilities/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659E6C0>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/goals/2024 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/goals/2024 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659ECC0>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/mitigation/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/mitigation/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659DDC0>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/notifications/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/notifications/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659E300>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/notifications/all -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/notifications/all (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659FF80>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/scope2/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/scope2/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659FC50>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/scope3/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/scope3/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C04E62840>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+  [FAIL] DELETE /api/sources/1 -> Status: 500
+         Detail: HTTPConnectionPool(host='99999927.0.0.1', port=5000): Max retries exceeded with url: /api/sources/999999 (Caused by NameResolutionError("<urllib3.connection.HTTPConnection object at 0x0000021C0659F3B0>: Failed to resolve '99999927.0.0.1' ([Errno 11001] getaddrinfo failed)"))
+

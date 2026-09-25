@@ -1,0 +1,43 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\CustomDropdown.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -35,7 +35,7 @@
+   top: calc(100% + 4px);
+   left: 0;
+   right: 0;
+-  background: var(--bg-card);
++  background: var(--bg-card, #ffffff);
+   border: 1px solid var(--border-color);
+   border-radius: 8px;
+   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+@@ -43,6 +43,28 @@
+   overflow-y: auto;
+ }
+ 
++.dropdown-options.dropdown-portal {
++  background: var(--bg-card, #ffffff);
++  backdrop-filter: blur(16px);
++  -webkit-backdrop-filter: blur(16px);
++  border: 1px solid var(--border-color, #e2e8f0);
++  border-radius: 10px;
++  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08);
++  overflow-y: auto;
++  animation: dropdownFadeIn 0.15s ease-out;
++}
++
++@keyframes dropdownFadeIn {
++  from {
++    opacity: 0;
++    transform: translateY(-4px);
++  }
++  to {
++    opacity: 1;
++    transform: translateY(0);
++  }
++}
++
+ .dropdown-option {
+   padding: 10px 14px;
+   cursor: pointer;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

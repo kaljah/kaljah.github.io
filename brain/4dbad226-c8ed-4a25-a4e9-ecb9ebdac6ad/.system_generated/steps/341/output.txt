@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+Total records in DB for 2026: 23
+(1, '1', 'combustion', 'Natural Gas', 3531470.0, 191.12739416400004, 0.0036020994000000002, 0.00036020994, 191.32370858130005, 'Verified', 13)
+(2, '2', 'combustion', 'Natural Gas', 100000.0, 0.0, 0.0036020994000000002, 0.00036020994, 0.1963144173, 'Verified', 13)
+(3, '3', 'flaring', 'Natural Gas (Flaring - Elevated)', 50000.0, 96.0, 0.6, 0.0005, 112.93249999999999, 'Verified', 13)
+(4, '4', 'flaring', None, 50000.0, 80.573856, 0.5970800000000005, 0.0, 97.29209600000002, 'Verified', 13)
+(5, '5', 'venting', 'Natural Gas (Venting/Blowdown)', 353147.0, 19.069937999999997, 236.60849000000002, 0.0, 6644.107658, 'Verified', 13)
+(6, '6', 'venting', None, 2.83168, 0.26069995903370974, 3.23164285596381, 0.0, 90.7466999260204, 'Verified', 13)
+(7, '7', 'pneumatic', 'Pneumatic Controller - High Bleed', 10.0, 0.0, 83.04, 0.0, 2325.1200000000003, 'Verified', 13)
+(8, '8', 'pneumatic', None, 5.0, 0.0, 1.5021284476039352, 0.0, 42.059596532910184, 'Verified', 13)
+(9, '9', 'tank_flashing', 'Tank - Flash Emissions (Oil)', 10000.0, 0.0, 0.0, 0.0, 0.0, 'Verified', 13)
+(10, '10', 'tank_flashing', None, 10000.0, 0.0, 7.6851921650688, 0.0, 215.1853806219264, 'Verified', 13)
+(11, '11', 'tank_working', 'Tank - Working Losses (Oil)', 10000.0, 0.0, 0.5, 0.0, 14.0, 'Verified', 13)
+(12, '12', 'tank_breathing', 'Tank - Breathing Losses (Oil)', 10000.0, 0.0, 0.01, 0.0, 0.28, 'Verified', 13)
+(13, '13', 'drilling', None, 1000.0, 0.0, 0.15, 0.0, 4.2, 'Verified', 13)
+(14, '14', 'drilling', None, 1000.0, 0.0, 0.35, 0.0, 9.799999999999999, 'Verified', 13)
+(15, '15', 'completions', None, 28.3168, 0.0015197352385847881, 2.283831000000001e-05, 3.53005408543116e-09, 0.0021601433829174276, 'Verified', 13)
+(16, '16', 'unloading', None, 1.0, 0.0, 0.05947866204081713, 0.0, 1.6654025371428796, 'Verified', 13)
+(17, '18', 'agr', None, 100.0, 260.8533749631744, 0.6532413340308479, 0.0, 279.14413231603817, 'Verified', 13)
+(18, '20', 'dehydrator', None, 50.0, 0.0, 3.918292523544391, 0.0, 109.71219065924295, 'Verified', 13)
+(19, '21', 'mobile', 'Motor Gasoline', 5000.0, 43.8875, 0.001875, 0.00037499999999999995, 44.03937500000001, 'Verified', 13)
+(20, '22', 'fugitive', 'Fugitive - Valve (Gas/Vapor)', 50.0, 0.0, 0.00022499999999999997, 0.0, 0.006299999999999999, 'Verified', 13)
+(21, '23', 'fugitive', 'Fugitive - Valve (Gas/Vapor)', 10.0, 0.0, 4.4999999999999996e-05, 0.0, 0.0012599999999999998, 'Verified', 13)
+(22, '24', 'loading', 'Loading - Crude Oil (Tank Truck)', 1000.0, 0.0, 0.00016, 0.0, 0.0044800000000000005, 'Verified', 13)
+(23, '25', 'separation', 'Separator Venting - Gas Well', 1000.0, 0.0, 0.0, 0.0, 0.0, 'Verified', 13)
+

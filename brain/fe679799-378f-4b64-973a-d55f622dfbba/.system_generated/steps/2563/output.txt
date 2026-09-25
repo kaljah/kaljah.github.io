@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3189,8 +3189,6 @@
+             request=request,
+             entity="Emission",
+             details=log_details,
+-        )
+-        db.session.commit()
+         if record.status in ("Pending", "Pending Approval"):
+             admins = User.query.filter_by(role="admin", status="active").all()
+             for admin in admins:
+@@ -3199,7 +3199,7 @@
+                     title="New Scope 1 Emission Pending Review",
+                     message=f"A new Scope 1 emission record ({record.process_type}, {facility_name}) was submitted by {user.fullName} and is awaiting your approval.",
+                 )
+-            db.session.commit()
++        db.session.commit()
+     except Exception as e:
+         db.session.rollback()
+         print(f"Audit Log Error: {e}")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

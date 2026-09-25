@@ -1,0 +1,55 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -255,15 +255,24 @@
+                     pass
+             missing_facility_count = missing_fac_q.count()
+ 
++        # Facility names lookup for sample records
++        fac_map = {}
++        try:
++            for f in Facility.query.with_entities(Facility.id, Facility.name).all():
++                fac_map[f[0]] = f[1]
++        except Exception:
++            pass
++
+         # Fuel check applies strictly to combustion processes or unspecified process types
++        proc_norm = func.lower(func.replace(Emission.process_type, ' ', '_'))
+         comb_q = q_s1_all.filter(
+             or_(
+                 Emission.process_type.is_(None),
+-                ~Emission.process_type.in_(NON_COMBUSTION_PROCESSES),
++                ~proc_norm.in_(NON_COMBUSTION_PROCESSES),
+             )
+         )
+         comb_count = comb_q.count()
+-        missing_fuel_count = comb_q.filter(
++        missing_fuel_q = comb_q.filter(
+             or_(
+                 Emission.fuel_type.is_(None),
+                 Emission.fuel_type == "",
+@@ -270,10 +270,15 @@
+-        ).count()
+-        missing_amount_count = q_s1_all.filter(
++        )
++        missing_fuel_count = missing_fuel_q.count()
++
++        missing_amount_q = q_s1_all.filter(
+             or_(Emission.quantity.is_(None), Emission.quantity <= 0)
+-        ).count()
+-        missing_co2e_count = q_s1_all.filter(
++        )
++        missing_amount_count = missing_amount_q.count()
++
++        missing_co2e_q = q_s1_all.filter(
+             or_(Emission.co2e_total.is_(None), Emission.co2e_total < 0)
+-        ).count()
++        )
++        missing_co2e_count = missing_co2e_q.count()
+ 
+         # Facilities coverage (scoped to allowed facilities and reporting year)
+         if allowed_fids is not None:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.

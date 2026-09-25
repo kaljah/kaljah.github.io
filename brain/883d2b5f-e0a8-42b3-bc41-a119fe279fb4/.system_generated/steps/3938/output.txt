@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -746,9 +746,12 @@
+         .all()
+     )
+     years4 = db.session.query(ProductionData.year).distinct().all()
+-    return sorted(
+-        list(set([y[0] for y in years1 + years2 + years3 + years4])), reverse=True
+-    )
++    valid_years = {
++        int(y[0])
++        for y in years1 + years2 + years3 + years4
++        if y[0] is not None and str(y[0]).isdigit()
++    }
++    return sorted(list(valid_years), reverse=True)
+ 
+ 
+ @dashboard_bp.route("/summary", methods=["GET"])
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

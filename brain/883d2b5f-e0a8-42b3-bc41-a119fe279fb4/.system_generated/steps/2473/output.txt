@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\process_categories.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -345,10 +345,14 @@
+     "pneumatics", "pneumatic", "pneumatic_devices", "pneumatic_device",
+     "vented", "venting", "blowdown", "blowdowns", "unloading", "liquids_unloading",
+     "tank", "tanks", "tank_flashing", "tank_working", "tank_breathing", "storage_tanks",
+-    "fugitive", "fugitives", "equipment_fugitive", "component_fugitive", "wellhead_fugitive", "separator_fugitive",
++    "fugitive", "fugitives", "equipment_fugitive", "component_fugitive", "fugitive_component",
++    "wellhead_fugitive", "separator_fugitive", "gathering_boosting", "gas_processing",
++    "transmission_storage", "refinery_fugitive", "distribution_fugitive", "lng_operations",
+     "compressor_seal", "compressor_fugitive",
+-    "drilling", "mud_degassing", "completions", "well_completions",
++    "drilling", "mud_degassing", "completions", "well_completions", "completion_flowback",
+     "dehydrator", "dehydrators", "agr", "acid_gas_removal",
++    "chemical_production", "nitric_acid_production", "adipic_acid_production",
++    "indirect_steam", "cogen_allocation", "stoichiometry",
+ }
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

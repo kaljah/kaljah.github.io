@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":385,"LineContent":".drawer-toggle-tab {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":405,"LineContent":".drawer-toggle-tab:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":1373,"LineContent":"/* Real Database Verified OGMP Surveys Section */"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":142,"LineContent":"  // Copernicus Sentinel-5P Satellite States \u0026 Real Database Surveys"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":188,"LineContent":"      // Derive distinct regions and activities directly from the database facilities"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":295,"LineContent":"  // Fetch real satellite observation and authentic database OGMP surveys for selected facility"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":300,"LineContent":"    // 1. Fetch real OGMP survey records from database (/api/data/ogmp-surveys)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":419,"LineContent":"  // Export \u0026 reconcile survey into OGMP 2.0 Level 5 database ledger"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":453,"LineContent":"        // Refresh real surveys list from database"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":660,"LineContent":"        deltaText: \"Top-down observation confirms bottom-up accounting within acceptable scientific uncertainty.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":984,"LineContent":"          className=\"drawer-toggle-tab\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1519,"LineContent":"          {/* REAL DATABASE VERIFIED OGMP SURVEYS SECTION (IF RECORDED) */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1524,"LineContent":"                \u003cspan\u003eVerified OGMP Surveys in Database ({existingSurveys.length})\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1544,"LineContent":"          {/* BOTTOM-UP REPORTED ENGINEERING INVENTORY METRICS (REAL DATABASE VALUES) */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1610,"LineContent":"                \u003cspan className=\"stat-card-sub\"\u003eDatabase Ref\u003c/span\u003e"}

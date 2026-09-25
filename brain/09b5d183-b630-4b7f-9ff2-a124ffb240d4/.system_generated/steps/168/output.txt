@@ -1,0 +1,43 @@
+
+The command exited with code 0.
+Output:
+TestCSVBufferIngestionMatrix.test_csv_delimiters_semicolon __________
+
+self = <test_csv_engine_matrix.TestCSVBufferIngestionMatrix object at 0x000002C3B56400E0>
+app = <Flask 'app'>, test_user = <User 24>, test_facility = <Facility 10>
+
+    def test_csv_delimiters_semicolon(self, app, test_user, test_facility):
+        """Validates European semicolon-separated CSV parsing."""
+        csv_content = (
+            "Facility;Date;Process;Fuel;Quantity;Unit\n"
+            f"{test_facility.name};2024-01;Combustion;Diesel;1500;m3\n"
+        )
+>       status = self._execute_sync_thread(
+            app, csv_content.encode("utf-8"), "test_semicolon.csv", test_user.id
+        )
+
+new\server\tests\test_csv_engine_matrix.py:240: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+new\server\tests\test_csv_engine_matrix.py:215: in _execute_sync_thread
+    _process_file_thread(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+app = <Flask 'app'>, job_id = 'test-job-efcd6fbf6e50'
+file_path = 'C:\\Users\\samsung\\AppData\\Local\\Temp\\tmpj9f6wszm.csv'
+original_filename = 'test_semicolon.csv', user_id = 24
+global_factor_type = 'auto', provided_mapping = None, scope = 1
+overwrite_duplicates = True
+
+    def _process_file_thread(
+        app,
+        job_id,
+        file_path,
+        original_filename,
+        user_id,
+        global_factor_type,
+        provided_mapping,
+        scope=1,
+        overwrite_duplicates=False,
+    ):
+     
+

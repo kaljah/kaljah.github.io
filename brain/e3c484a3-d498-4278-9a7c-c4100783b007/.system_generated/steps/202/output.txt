@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Exported expected results for 25 cases to C:\Users\samsung\Desktop\H2\validation\expected_results\expected_results.json
+

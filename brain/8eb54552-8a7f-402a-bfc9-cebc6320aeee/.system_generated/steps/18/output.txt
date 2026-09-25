@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+"Carbon tech\nDashboard\nCarbon Intensity\nMethane Intensity\nSBTi Net-Zero\nCalculations\nEmissions Map\nManage Data\nReports\nReference Data\nUncertainty\nAudit Trail\nQA/QC & Diagnostics\nSettings\nA\nAdministrator\nSustainability Lead\nCorporate ESG\nAll Years\nAll Supply Chains\nAll Activities\nAll Divisions\nAll Regions\nGWP-100\nGWP-20\n+ Set Target\nGHG Emissions Dashboard\nLive Content • Updated 10:28 PM\nEMISSIONS OVERVIEW\nAll Regions\nExport Executive Brief (PDF)\nGROSS OPERATIONAL EMISSIONS (SCOPE 1+2)\n10.2K\ntCO₂e"
+```

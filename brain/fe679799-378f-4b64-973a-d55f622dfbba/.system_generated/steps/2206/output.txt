@@ -1,0 +1,130 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+            loss = float(inputs.get("loss_factor") or 0.0)
+            adj_kwh = kwh / (1.0 - loss) if loss < 1.0 else kwh
+            prod_co2e = (adj_kwh * ef) / 1000.0
+    
+        elif calc_type == "scope2_steam":
+            calc = IndirectSteamCalculator()
+            res = calc.calculate(
+                heat_energy=inputs.get("heat_energy", 1000.0),
+                ef_co2=inputs.get("ef_co2", 53.06),
+                boiler_efficiency=inputs.get("boiler_efficiency", 0.80),
+                transmission_loss=inputs.get("transmission_loss", 0.0),
+                uncertainties={},
+                heat_unit=units.get("heat_unit", "mmbtu"),
+            )
+            prod_co2e = res["total_co2e"]
+    
+        elif calc_type == "scope2_cooling":
+            ref_res = ref_calculate_scope2_cooling(
+                cooling_ton_hours=inputs.get("cooling_ton_hours", 100000.0),
+                cop=inputs.get("cop", 3.5),
+                grid_ef_kg_kwh=inputs.get("grid_ef", 0.50),
+            )
+            prod_co2e = ref_res["co2e"]
+    
+        elif calc_type.startswith("scope3"):
+>           prod_co2e = compute_scope3_co2e(
+                activity_data=inputs.get("activity_data"),
+                emission_factor=inputs.get("emission_factor"),
+            )
+E           TypeError: compute_scope3_co2e() got an unexpected keyword argument 'activity_data'
+
+validation\differential\test_clean_differential.py:240: TypeError
+___ TestCleanDifferential.test_golden_case_differential[GOLDEN-STOICH-001] ____
+
+self = <test_clean_differential.TestCleanDifferential object at 0x000001B89264C110>
+case = {'test_id': 'GOLDEN-STOICH-001', 'calculation_type': 'stoichiometry', 'description': 'Stoichiometric reaction and carbon balance for Methane (C1H4)', 'inputs': {'n_carbons': 1, 'm_hydrogens': 4, 'fuel': 'Methane'}, ...}
+
+    @pytest.mark.parametrize("case", load_golden_cases(), ids=lambda c: c["test_id"])
+    def test_golden_case_differential(self, case):
+        test_id = case["test_id"]
+        calc_type = case["calculation_type"]
+        inputs = case["inputs"]
+        units = case.get("units", {})
+        ref_expected = case["independent_expected_result"]
+>       ref_co2e = ref_expected["co2e"]
+                   ^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2e'
+
+validation\differential\test_clean_differential.py:79: KeyError
+___ TestCleanDifferential.test_golden_case_differential[GOLDEN-STOICH-002] ____
+
+self = <test_clean_differential.TestCleanDifferential object at 0x000001B89264C1A0>
+case = {'test_id': 'GOLDEN-STOICH-002', 'calculation_type': 'stoichiometry', 'description': 'Stoichiometric reaction and carbon balance for Ethane (C2H6)', 'inputs': {'n_carbons': 2, 'm_hydrogens': 6, 'fuel': 'Ethane'}, ...}
+
+    @pytest.mark.parametrize("case", load_golden_cases(), ids=lambda c: c["test_id"])
+    def test_golden_case_differential(self, case):
+        test_id = case["test_id"]
+        calc_type = case["calculation_type"]
+        inputs = case["inputs"]
+        units = case.get("units", {})
+        ref_expected = case["independent_expected_result"]
+>       ref_co2e = ref_expected["co2e"]
+                   ^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2e'
+
+validation\differential\test_clean_differential.py:79: KeyError
+___ TestCleanDifferential.test_golden_case_differential[GOLDEN-STOICH-003] ____
+
+self = <test_clean_differential.TestCleanDifferential object at 0x000001B89264C230>
+case = {'test_id': 'GOLDEN-STOICH-003', 'calculation_type': 'stoichiometry', 'description': 'Stoichiometric reaction and carbon balance for Propane (C3H8)', 'inputs': {'n_carbons': 3, 'm_hydrogens': 8, 'fuel': 'Propane'}, ...}
+
+    @pytest.mark.parametrize("case", load_golden_cases(), ids=lambda c: c["test_id"])
+    def test_golden_case_differential(self, case):
+        test_id = case["test_id"]
+        calc_type = case["calculation_type"]
+        inputs = case["inputs"]
+        units = case.get("units", {})
+        ref_expected = case["independent_expected_result"]
+>       ref_co2e = ref_expected["co2e"]
+                   ^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2e'
+
+validation\differential\test_clean_differential.py:79: KeyError
+___ TestCleanDifferential.test_golden_case_differential[GOLDEN-STOICH-004] ____
+
+self = <test_clean_differential.TestCleanDifferential object at 0x000001B89264C2C0>
+case = {'test_id': 'GOLDEN-STOICH-004', 'calculation_type': 'stoichiometry', 'description': 'Stoichiometric reaction and carbon balance for Butane (C4H10)', 'inputs': {'n_carbons': 4, 'm_hydrogens': 10, 'fuel': 'Butane'}, ...}
+
+    @pytest.mark.parametrize("case", load_golden_cases(), ids=lambda c: c["test_id"])
+    def test_golden_case_differential(self, case):
+        test_id = case["test_id"]
+        calc_type = case["calculation_type"]
+        inputs = case["inputs"]
+        units = case.get("units", {})
+        ref_expected = case["independent_expected_result"]
+>       ref_co2e = ref_expected["co2e"]
+                   ^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2e'
+
+validation\differential\test_clean_differential.py:79: KeyError
+-------------------------- Captured stdout teardown ---------------------------
+
+[Differential Report saved to C:\Users\samsung\Desktop\H2\validation\reports\differential_report.json]
+=========================== short test summary info ===========================
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-002]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-COMB-003]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FLARE-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FLARE-002]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FLARE-003]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-VENT-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-VENT-002]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-MID-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S1-FUG-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S2-ELEC-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S2-ELEC-002]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S2-STEAM-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT1-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT4-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT6-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT11-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-002]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-003]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-004]
+======================== 20 failed, 4 passed in 2.89s =========================
+

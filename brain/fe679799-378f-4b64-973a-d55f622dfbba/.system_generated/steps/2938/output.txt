@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 5
+    print(f'{obj.__name__} -> {getattr(obj, " __tablename__\,
+                                            ^
+SyntaxError: unterminated string literal (detected at line 5)
+

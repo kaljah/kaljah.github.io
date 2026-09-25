@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+app.py:13:from extensions import db, limiter, csrf  # SEC-08 FIX: import limiter, csrf
+app.py:47:limiter.init_app(app)  # SEC-08 FIX: activate flask-limiter
+
+
+

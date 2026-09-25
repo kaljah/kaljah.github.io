@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1452,7 +1452,7 @@
+                                 <>
+                                     <select value={filterActivity} onChange={(e) => { setFilterActivity(e.target.value); setFilterDivision(''); }} className="component-select" style={{ width: 'auto' }}>
+                                         <option value="">All Activities</option>
+-                                        {Object.keys(HIERARCHY).map(a => <option key={a} value={a}>{ACTIVITY_LABELS[a]}</option>)}
++                                        {activityFilterOptions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
+                                     </select>
+ 
+                                     <select value={filterDivision} onChange={(e) => setFilterDivision(e.target.value)} className="component-select" style={{ width: 'auto' }} disabled={!filterActivity}>
+@@ -1459,4 +1459,4 @@
+-                                        {filterActivity && HIERARCHY[filterActivity] && HIERARCHY[filterActivity].map(d => <option key={d} value={d}>{d}</option>)}
++                                        {divisionFilterOptions.map(d => <option key={d} value={d}>{d}</option>)}
+                                     </select>
+ 
+                                     <select value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,57 @@
+
+The command exited with code 0.
+Output:
+[Agent3/admin] ✅ Login as test_admin@ghg-test.com
+[Agent3/admin] 
+## Auth & Profile Tests
+[Agent3/admin] ✅ GET /auth/me → 200
+[Agent3/admin] ✅ PUT /auth/profile → 200
+[Agent3/admin] ✅ GET /auth/settings → 200
+[Agent3/admin] 
+## User Management
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /auth/users (admin can list users)
+[Agent3/admin] 
+## Facilities
+[Agent3/admin] ✅ GET /facilities → 200
+[Agent3/admin] 🐛 BUG [🔴 Critical] Backend: Server Error 500 on POST /facilities (create)
+[Agent3/admin] 
+## Scope 1 Emissions (admin)
+[Agent3/admin] ✅ POST /emissions Scope1 (admin→Verified) → 201
+[Agent3/admin] ✅ Admin emission status = None
+[Agent3/admin] ✅ PUT /emissions/{id} admin edit verified record → 200
+[Agent3/admin] ✅ DELETE /emissions/{id} admin delete verified record → 200
+[Agent3/admin] 
+## Scope 2 Emissions
+[Agent3/admin] ✅ POST /scope2 → 201
+[Agent3/admin] 
+## Scope 3 Emissions
+[Agent3/admin] ✅ POST /scope3 → 201
+[Agent3/admin] 
+## Bulk Upload
+[Agent3/admin] 
+## Dashboard & Analytics
+[Agent3/admin] ✅ GET /dashboard/summary → 200
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/scope-breakdown
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/trends
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/facility-breakdown
+[Agent3/admin] 
+## Reports
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /reports/list
+[Agent3/admin] 
+## Audit Trail
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /audit/logs
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /audit/logs with huge limit
+[Agent3/admin] 
+## QA/QC
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /qaqc/anomalies
+[Agent3/admin] 🐛 BUG [🟠 High] API: Unexpected status on GET /qaqc/summary
+[Agent3/admin] 
+## Notifications
+[Agent3/admin] ✅ GET /notifications → 200
+[Agent3/admin] 
+## Security Edge Cases
+[Agent3/admin] 
+## Session Management
+[Agent3/admin] ✅ Post-logout /auth/me correctly returns 401
+[Agent3] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_03_report.md | Bugs: 10
+

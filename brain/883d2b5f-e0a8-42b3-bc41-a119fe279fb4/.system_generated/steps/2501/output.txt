@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -739,13 +739,15 @@
+                     gwp_dict=gwp_dict,
+                 )
+ 
+-            elif process_type in ["pneumatic_devices", "pneumatic"]:
+-                count = self._require_float(
+-                    flat_inputs, ["pneu_count", "amount", "quantity"], "device count"
++            elif process_type in ["pneumatic_devices", "pneumatic_device", "pneumatic"]:
++                count = self._require_float(
++                    flat_inputs,
++                    ["pneu_count", "device_count", "count", "amount", "quantity"],
++                    "device count",
+                 )
+                 hours = self._require_float(
+                     flat_inputs,
+-                    ["pneu_hours", "hours_operating"],
++                    ["pneu_hours", "hours_operating", "hours", "operating_hours"],
+                     "annual operating hours",
+                 )
+                 bleed_rate = self._require_float(
+@@ -757,7 +757,7 @@
+                     bleed_rate *= 35.3147  # convert m3/hr to scf/hr
+                 ch4_content = self._require_fraction(
+                     flat_inputs,
+-                    ["pneu_ch4_content", "ch4_content", "c1"],
++                    ["pneu_ch4_content", "ch4_content", "c1", "gas_content"],
+                     "gas CH4 content %",
+                 )
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

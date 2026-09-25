@@ -1,0 +1,20 @@
+Task: 61c0dec1-b153-4cd4-a922-7011f7950aa6/task-780
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\61c0dec1-b153-4cd4-a922-7011f7950aa6\.system_generated\tasks\task-780.log
+Log output:
+<truncated 58 lines>
+ab_escaping PASSED [ 92%]
+new\server\tests\test_audit_remediation.py::test_facility_boundary_type_and_detail_roundtrip PASSED [ 94%]
+new\server\tests\test_audit_remediation.py::test_custom_factor_description_and_source_roundtrip PASSED [ 96%]
+new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_calculation PASSED [ 98%]
+new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_dispatcher PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 52 passed, 1 warning in 4.33s ========================
+
+Last progress: 3s ago

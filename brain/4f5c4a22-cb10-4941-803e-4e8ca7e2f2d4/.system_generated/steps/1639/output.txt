@@ -1,0 +1,21 @@
+You have 2 background task(s) currently running:
+{
+  "taskId":  "4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/task-1281",
+  "toolName":  "run_command",
+  "toolSummary":  "Start Flask with unbuffered stdout",
+  "description":  "python -u app.py",
+  "startTime":  "2026-09-22T13:29:00.503461200Z",
+  "stepIndex":  1281,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/.system_generated/tasks/task-1281.log",
+  "isDaemon":  true
+}
+{
+  "taskId":  "4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/task-1524",
+  "toolName":  "run_command",
+  "toolSummary":  "Start Flask server",
+  "description":  "python -u app.py",
+  "startTime":  "2026-09-22T14:42:47.432555Z",
+  "stepIndex":  1524,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/.system_generated/tasks/task-1524.log",
+  "isDaemon":  true
+}

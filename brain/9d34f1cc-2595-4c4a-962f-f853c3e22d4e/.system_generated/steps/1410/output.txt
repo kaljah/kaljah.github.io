@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -469,11 +469,9 @@
+             ["blowdown_volume", "pressure", "events"],
+         )
+ 
+-        # API Eq. 6-4: Differential depressurization from operating to atmospheric pressure
++        # API Eq. 6-4: Vessel depressurization to standard atmospheric pressure
+         p_initial_psia = to_psia(pressure, press_unit)
+-        p_final_psia = STD_PRESSURE_PSIA  # depressurized to atmospheric
+-        delta_p = max(0.0, p_initial_psia - p_final_psia)
+-        p_factor = delta_p / STD_PRESSURE_PSIA
++        p_factor = p_initial_psia / STD_PRESSURE_PSIA
+ 
+         t_abs_k = to_kelvin(operating_temperature, temp_unit)
+         t_factor = STD_TEMP_K / max(1.0, t_abs_k)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

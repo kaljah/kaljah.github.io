@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\layout\TopBar.css:110:.top-profile-dropdown {
+new\client\src\components\layout\TopBar.css:129:.top-profile-dropdown {
+
+
+

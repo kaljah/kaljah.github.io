@@ -1,0 +1,24 @@
+
+The command exited with code 0.
+Output:
+Logging in as Admin (admin@ghg.com)...
+
+--> Auditing Methane Intensity (/methane-intensity)...
+Waiting for intensity data computation to finish...
+Found 11 interactive buttons on Methane Intensity
+
+--> Auditing Uncertainty Assessment (/uncertainty)...
+Waiting for uncertainty quantification to finish...
+Found 3 interactive buttons on Uncertainty Assessment
+
+--> Auditing Methane Explorer Map (/methane-explorer)...
+Waiting for satellite map telemetry to load...
+Found 26 interactive buttons on Methane Explorer
+
+============================================================
+TARGETED VIEWS AUDIT SUMMARY
+============================================================
+Total Button Interactions: 26
+Total Console Errors: 0
+[SUCCESS] All buttons in targeted views clicked cleanly with 0 console errors!
+

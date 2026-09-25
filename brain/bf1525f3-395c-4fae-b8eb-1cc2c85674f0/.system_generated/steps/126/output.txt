@@ -1,0 +1,9 @@
+
+The command exited with code 1.
+Output:
+npm error Missing script: "test"
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run
+npm error A complete log of this run can be found in: C:\Users\samsung\AppData\Local\npm-cache\_logs\2026-09-19T19_13_58_268Z-debug-0.log
+

@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+new/server/routes\audit.py []
+new/server/routes\auth.py []
+new/server/routes\custom_factors.py []
+new/server/routes\dashboard.py []
+new/server/routes\data.py ["@data_bp.route('/production', methods=['GET'])", "@data_bp.route('/production/', methods=['GET'])", "@data_bp.route('/production', methods=['POST'])", "@data_bp.route('/production/', methods=['POST'])", "@data_bp.route('/production/<int:record_id>', methods=['DELETE'])", "@data_bp.route('/production/bulk-import', methods=['POST'])"]
+new/server/routes\emissions.py []
+new/server/routes\emission_factors_routes.py []
+new/server/routes\facilities.py []
+new/server/routes\managedata.py ['@managedata_bp.route("/production/years", methods=["GET"])']
+new/server/routes\notifications.py []
+new/server/routes\qaqc.py []
+new/server/routes\reports.py []
+new/server/routes\satellite.py []
+new/server/routes\scope2.py []
+new/server/routes\scope3.py []
+new/server/routes\__init__.py []
+

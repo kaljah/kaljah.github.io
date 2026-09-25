@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\audit.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -120,11 +120,11 @@
+     return query
+ 
+ 
+-def _serialize_log(log, is_it_admin=False):
++def _serialize_log(log, is_it_user=False):
+     old_val = None
+     new_val = None
+-    # IT Admin separation of duties: redact operational emission / data diffs
+-    if not is_it_admin:
++    # IT Admin / Manager separation of duties: redact operational emission / data diffs
++    if not is_it_user:
+         if log.old_values:
+             try:
+                 old_val = json.loads(log.old_values)
+@@ -158,7 +158,7 @@
+ @audit_access_required
+ def get_audit_logs():
+     user = get_current_user()
+-    is_it_admin = bool(user and user.role == "it_admin")
++    is_it_user = is_it_role(user)
+     query = _build_audit_query(current_user=user)
+ 
+     total_count = query.count()
+@@ -181,7 +181,7 @@
+         .all()
+     )
+ 
+-    result = [_serialize_log(log, is_it_admin=is_it_admin) for log in logs]
++    result = [_serialize_log(log, is_it_user=is_it_user) for log in logs]
+     pages = max(1, math.ceil(total_count / limit))
+ 
+     response = jsonify(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

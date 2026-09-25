@@ -1,0 +1,113 @@
+
+The command exited with code 1.
+Output:
+<truncated 721 lines>
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [chromium] › e2e\test_qfull_e2e_ui.spec.js:297:3 › QFULL Full UI Pipeline › QFULL PIPELINE: Combustion T1 form entry → API POST → result visible 
+
+    TimeoutError: locator.waitFor: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for locator('input[placeholder="Email Address"]') to be visible
+
+
+      58 |   // Wait for login form (email input has placeholder "Email Address")
+      59 |   const emailInput = page.locator('input[placeholder="Email Address"]');
+    > 60 |   await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+         |                    ^
+      61 |   await emailInput.fill(email);
+      62 |   await page.locator('input[type="password"]').fill(password);
+      63 |   await page.locator('button[type="submit"]:has-text("Sign In")').click();
+        at loginUI (C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:60:20)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:332:5
+
+    Error Context: test-results\test_qfull_e2e_ui-QFULL-Fu-15148-→-API-POST-→-result-visible-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.waitFor: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for locator('input[placeholder="Email Address"]') to be visible
+
+
+      58 |   // Wait for login form (email input has placeholder "Email Address")
+      59 |   const emailInput = page.locator('input[placeholder="Email Address"]');
+    > 60 |   await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+         |                    ^
+      61 |   await emailInput.fill(email);
+      62 |   await page.locator('input[type="password"]').fill(password);
+      63 |   await page.locator('button[type="submit"]:has-text("Sign In")').click();
+        at loginUI (C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:60:20)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:332:5
+
+    Error Context: test-results\test_qfull_e2e_ui-QFULL-Fu-15148-→-API-POST-→-result-visible-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_qfull_e2e_ui-QFULL-Fu-15148-→-API-POST-→-result-visible-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_qfull_e2e_ui-QFULL-Fu-15148-→-API-POST-→-result-visible-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [chromium] › e2e\test_qfull_e2e_ui.spec.js:414:3 › QFULL Full UI Pipeline › Manage Data table renders emission records after login 
+
+    TimeoutError: locator.waitFor: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for locator('input[placeholder="Email Address"]') to be visible
+
+
+      58 |   // Wait for login form (email input has placeholder "Email Address")
+      59 |   const emailInput = page.locator('input[placeholder="Email Address"]');
+    > 60 |   await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+         |                    ^
+      61 |   await emailInput.fill(email);
+      62 |   await page.locator('input[type="password"]').fill(password);
+      63 |   await page.locator('button[type="submit"]:has-text("Sign In")').click();
+        at loginUI (C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:60:20)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:415:5
+
+    Error Context: test-results\test_qfull_e2e_ui-QFULL-Fu-454f2-mission-records-after-login-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.waitFor: Timeout 10000ms exceeded.
+    Call log:
+      - waiting for locator('input[placeholder="Email Address"]') to be visible
+
+
+      58 |   // Wait for login form (email input has placeholder "Email Address")
+      59 |   const emailInput = page.locator('input[placeholder="Email Address"]');
+    > 60 |   await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+         |                    ^
+      61 |   await emailInput.fill(email);
+      62 |   await page.locator('input[type="password"]').fill(password);
+      63 |   await page.locator('button[type="submit"]:has-text("Sign In")').click();
+        at loginUI (C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:60:20)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_qfull_e2e_ui.spec.js:415:5
+
+    Error Context: test-results\test_qfull_e2e_ui-QFULL-Fu-454f2-mission-records-after-login-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_qfull_e2e_ui-QFULL-Fu-454f2-mission-records-after-login-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_qfull_e2e_ui-QFULL-Fu-454f2-mission-records-after-login-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11 failed
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:54:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:48:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:152:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:191:3 › Dashboard Page Deep Audit › 4. Mode Toggles: GWP Horizon, Compare Regions, Pending Preview 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:253:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree 
+    [chromium] › e2e\test_qfull_e2e_ui.spec.js:75:3 › QFULL Auth and Navigation › Login page renders with correct form elements 
+    [chromium] › e2e\test_qfull_e2e_ui.spec.js:101:3 › QFULL Auth and Navigation › Admin login with credentials "a"/"a" succeeds and redirects to dashboard 
+    [chromium] › e2e\test_qfull_e2e_ui.spec.js:118:3 › QFULL Auth and Navigation › Invalid credentials show error message on login form 
+    [chromium] › e2e\test_qfull_e2e_ui.spec.js:273:3 › QFULL Full UI Pipeline › Navigate to Manage Data after login 
+    [chromium] › e2e\test_qfull_e2e_ui.spec.js:297:3 › QFULL Full UI Pipeline › QFULL PIPELINE: Combustion T1 form entry → API POST → result visible 
+    [chromium] › e2e\test_qfull_e2e_ui.spec.js:414:3 › QFULL Full UI Pipeline › Manage Data table renders emission records after login 
+  38 passed (4.7m)
+

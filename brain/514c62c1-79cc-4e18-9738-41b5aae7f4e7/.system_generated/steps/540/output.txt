@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+src\pages\DashboardEnhanced.jsx:114:  const [gwpHorizon, setGwpHorizon] = useState("100"); // "100" (Standard 100-yr) 
+or "20" (Near-term 20-yr)
+src\pages\DashboardEnhanced.jsx:162:    gwpHorizon,
+src\pages\DashboardEnhanced.jsx:191:      if (gwpHorizon && gwpHorizon !== "100") {
+src\pages\DashboardEnhanced.jsx:192:        filterParams.append("gwp_horizon", gwpHorizon);
+src\pages\DashboardEnhanced.jsx:656:        {/* Dual GWP Horizon Toggle */}
+src\pages\DashboardEnhanced.jsx:677:              background: gwpHorizon === "100" ? "var(--accent-color, #ff6600)" : 
+"transparent",
+src\pages\DashboardEnhanced.jsx:678:              color: gwpHorizon === "100" ? "#fff" : "var(--text-secondary)",
+src\pages\DashboardEnhanced.jsx:681:            onClick={() => setGwpHorizon("100")}
+src\pages\DashboardEnhanced.jsx:683:            GWP-100
+src\pages\DashboardEnhanced.jsx:694:              background: gwpHorizon === "20" ? "#ef4444" : "transparent",
+src\pages\DashboardEnhanced.jsx:695:              color: gwpHorizon === "20" ? "#fff" : "var(--text-secondary)",
+src\pages\DashboardEnhanced.jsx:698:            onClick={() => setGwpHorizon("20")}
+src\pages\DashboardEnhanced.jsx:700:            GWP-20
+src\pages\DashboardEnhanced.jsx:744:    gwpHorizon,
+
+
+

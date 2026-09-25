@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Tables: ['alembic_version', 'users', 'goals', 'base_year', 'mitigation_records', 'scope3_data', 'reporting_metadata', 'methane_source_types', 'system_settings', 'facilities', 'custom_factors', 'activity_log', 'base_year_recalculations', 'notifications', 'sbti_targets']
+Dev accounts: []
+

@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+880: "co2e": round(em_result["totalCo2e"], 2),
+  875: "facility": facility.name,
+  876: "process": process_type,
+  877: "fuel": fuel,
+  878: "amount": amount,
+  879: "unit": unit,
+  880: "co2e": round(em_result["totalCo2e"], 2),
+  881: }
+  882: 
+  883: if duplicate:
+  884: duplicates.append(preview_data)
+  885: # If confirm=True and they chose to overwrite, we'd update.
+  886: # For simplicity, if we are confirming and hit a duplicate, we can delete the old one and insert new.
+  887: if confirm:
+  888: db.session.delete(duplicate)
+  889: new_emissions.append(emission_obj)
+

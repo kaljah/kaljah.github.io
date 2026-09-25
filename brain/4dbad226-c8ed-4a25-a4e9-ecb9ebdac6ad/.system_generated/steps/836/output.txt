@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+=== 1. Checking Tank Flash Factor ===
+Tank - Flash Emissions (Oil): {'code': 'TankFlashOil', 'type': 'equipment', 'ch4': 0.193, 'co2': 0.012, 'n2o': 0, 'uncertainty': {'co2': 0.15, 'ch4': 0.4, 'n2o': 0}, 'unit': 'kg/bbl', 'segment': 'Upstream', 'process_category': 'storage_tanks', 'description': 'API Table 5-16 / 6-4 � Default crude oil flash emission factor', 'source': 'API Compendium 2021 Section 6, Table 6-4'}
+
+=== 2. Checking Chemical Factors ===
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\test_factors.py", line 16, in <module>
+    print(f"{chem}: co2={f.get('co2')}, ch4={f.get('ch4')}, unit={f.get('unit')}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2082' in position 44: character maps to <undefined>
+

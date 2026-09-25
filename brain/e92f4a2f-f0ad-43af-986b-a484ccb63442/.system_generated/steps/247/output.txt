@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":326,"LineContent":"                all_facilities = Facility.query.all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":328,"LineContent":"                all_facilities = Facility.query.filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":332,"LineContent":"            fac_name_map = {f.name.lower(): f for f in all_facilities}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":333,"LineContent":"            fac_id_map = {str(f.id): f for f in all_facilities}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":493,"LineContent":"                elif str(scope) == \"facilities\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":494,"LineContent":"                    emission_obj, row_errors = _process_row_facilities("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":605,"LineContent":"                    for fac in all_facilities:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1545,"LineContent":"def _process_row_facilities(row, user_id, overwrite_duplicates):"}

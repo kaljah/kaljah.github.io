@@ -1,0 +1,6 @@
+{
+  "summary":  "Exhaustive implementation plan to fix all audit findings in severity order (Critical → High → Medium → Low). Covers 8 phases: (1) Critical fixes — unbounded log deletion, hard-coded dev credentials removal, CI pipeline; (2) High security — rate limiting defaults, CSRF double-submit cookie, WAL checkpoint; (3) Testing infrastructure — in-memory test DB, Vitest+RTL, Playwright E2E; (4) Calculation fix — N2O flaring default inconsistency; (5) PostgreSQL migration plan + backup/restore + Alembic downgrade paths; (6) Medium fixes — deprecation warnings, custom factor bounds; (7) Production smoke tests; (8) Full CI/CD integration. Every fix includes exact file paths, working code snippets, test cases, and a time estimate. Total estimated effort: ~30 hours.",
+  "updatedAt":  "2026-09-20T15:01:28.234461300Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1040,"LineContent":"def test_bulk_import_scope2_and_3_rbac(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":334,"LineContent":"def test_bulk_import_scope2(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":377,"LineContent":"def test_bulk_import_scope3(logged_client, app):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":422,"LineContent":"def test_bulk_import_scope1(logged_client, app):"}

@@ -1,0 +1,95 @@
+
+The command exited with code 0.
+Output:
+Natural Gas
+Landfill Gas
+Coke Oven Gas
+Blast Furnace Gas
+Propane (Gas)
+Refinery Fuel Gas
+Marine Diesel Oil
+Diesel (No. 2 Fuel Oil)
+Residual Fuel Oil (No. 6)
+Kerosene
+Motor Gasoline
+Jet Fuel
+Propane (Liquid/LPG)
+Ethane
+Crude Oil
+Anthracite Coal
+Bituminous Coal
+Sub-Bituminous Coal
+Lignite Coal
+Petroleum Coke
+Natural Gas (Flaring - Elevated)
+Natural Gas (Flaring - Ground)
+Natural Gas (Flaring)
+Natural Gas (Flaring - Enclosed)
+Associated Gas (Flaring)
+Sour Gas (Flaring)
+Refinery Gas (Flaring)
+Natural Gas (Venting/Blowdown)
+Asphalt
+Acrylonitrile
+Carbon Black
+Ethylene
+Ethylene Dichloride
+Ethylene Oxide
+Methanol
+Nitric Acid - With NSCR
+Nitric Acid - Without NSCR
+Adipic Acid - Thermal Abatement
+Adipic Acid - Catalytic Abatement
+Adipic Acid - Uncontrolled
+Pneumatic Controller - High Bleed (>6 scfh)
+Pneumatic Controller - Low Bleed (<6 scfh)
+Pneumatic Controller - Intermittent
+Pneumatic Controller - Continuous Vent (T&S)
+Tank - Crude Oil (Small, ≤10 bbl/d)
+Tank - Crude Oil (Large, >10 bbl/d)
+Tank - Production Condensate (Small, ≤10 bbl/d)
+Tank - Production Condensate (Large, >10 bbl/d)
+Tank - Gas-Well Condensate (Small, ≤10 bbl/d)
+Tank - Gas-Well Condensate (Large, >10 bbl/d)
+Drilling - Mud Degassing (Water Based)
+Drilling - Mud Degassing (Oil Based)
+Dehydrator - Glycol (Uncontrolled)
+Wellhead - Oil (Heavy Crude)
+Wellhead - Oil (Light Crude)
+Wellhead - Gas
+Separator - Heavy Crude
+Separator - Light Crude
+Separator - Gas Production
+Compressor - Small Reciprocating
+Compressor - Large Reciprocating
+Compressor - Gas Production Small Recip
+Compressor - Gas Production Large Recip
+Gathering - AGRU
+Gathering - Compressor
+Gathering - Dehydrator
+Gathering - Separator
+Gathering - Tank
+Component - Connector (Non-Compressor)
+Component - Block Valve
+Component - Control Valve
+Component - Pressure Relief Valve
+Component - Pressure Regulator
+Component - Compressor Seal
+Processing - Reciprocating Compressor
+Processing - Centrifugal Compressor
+LNG - Storage Station
+LNG - Import Terminal
+LNG - Export Terminal
+Refinery - Fuel Gas System (50-99k bbl/day)
+Refinery - Fuel Gas System (100-199k bbl/day)
+Offshore - Oil Production (Facility)
+Offshore - Gas Production (Facility)
+Pneumatic Controller - High Bleed
+Pneumatic Controller - Low Bleed
+Fugitive - Valve (Gas/Vapor)
+Fugitive - Connector (Gas/Vapor)
+Fugitive - Flange (Gas/Vapor)
+UnloadPlunger
+UnloadNonPlunger
+Natural Gas - 4-Stroke Lean Burn Engine
+Natural Gas - 4-Stroke Rich Burn Engine

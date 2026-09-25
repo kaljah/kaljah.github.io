@@ -1,0 +1,248 @@
+
+The command exited with code 0.
+Output:
+warning: in the working copy of 'new/client/src/components/layout/TopBar.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'new/client/src/components/layout/TopBar.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'new/client/src/pages/MethaneExplorer.jsx', LF will be replaced by CRLF the next time Git touches it
+diff --git a/new/client/src/components/layout/TopBar.css b/new/client/src/components/layout/TopBar.css
+index 5add669..95df684 100644
+--- a/new/client/src/components/layout/TopBar.css
++++ b/new/client/src/components/layout/TopBar.css
+@@ -4,7 +4,7 @@
+   align-items: center;
+   justify-content: space-between;
+   padding: 8px 24px;
+-  z-index: 500;
++  z-index: 1100;
+   position: sticky;
+   top: 0;
+   background: var(--bg-card, rgba(255, 255, 255, 0.88));
+@@ -38,6 +38,13 @@
+   align-items: center;
+   flex: 1;
+   min-width: 0;
++  overflow-x: auto;
++  -webkit-overflow-scrolling: touch;
++  scrollbar-width: none;
++}
++
++.top-bar-injected-left::-webkit-scrollbar {
++  display: none;
+ }
+ 
+ .top-actions {
+@@ -98,19 +105,29 @@
+   color: var(--text-primary);
+ }
+ 
+-/* Dropdown Styles */
++/* User Tab & Dropdown Styles (Always On Top) */
++.user-profile-tab-wrapper {
++  position: relative;
++  z-index: 1102;
++}
++
++.user-profile-tab-btn {
++  position: relative;
++  z-index: 1102;
++}
++
+ .notification-dropdown,
+ .top-profile-dropdown {
+   position: absolute;
+   top: 45px;
+   right: 0;
+-  background: rgba(255, 255, 255, 0.9);
+-  backdrop-filter: blur(12px);
+-  -webkit-backdrop-filter: blur(12px);
+-  border: 1px solid rgba(255, 255, 255, 0.5);
++  background: rgba(255, 255, 255, 0.96);
++  backdrop-filter: blur(16px);
++  -webkit-backdrop-filter: blur(16px);
++  border: 1px solid rgba(255, 255, 255, 0.6);
+   border-radius: 12px;
+-  box-shadow: var(--shadow-hover);
+-  z-index: 1000;
++  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.15), var(--shadow-hover);
++  z-index: 2000;
+   overflow: hidden;
+   animation: fadeInScale 0.2s ease-out;
+ }
+@@ -191,3 +208,75 @@
+   gap: 12px;
+   margin-left: 15px;
+ }
++
++/* Mobile Hamburger Button */
++.mobile-hamburger-btn {
++  display: none;
++  background: transparent;
++  border: none;
++  color: var(--text-primary);
++  padding: 8px;
++  border-radius: 8px;
++  cursor: pointer;
++  align-items: center;
++  justify-content: center;
++  transition: all 0.2s ease;
++  flex-shrink: 0;
++}
++
++.mobile-hamburger-btn:hover {
++  background: rgba(0, 0, 0, 0.05);
++}
++
++@media (max-width: 900px) {
++  .top-bar {
++    min-height: 56px;
++    padding: 6px 12px;
++    gap: 8px;
++    z-index: 1030;
++  }
++
++  .mobile-hamburger-btn {
++    display: flex;
++  }
++
++  .top-bar-left-section {
++    gap: 8px;
++    min-width: 0;
++  }
++
++  .breadcrumbs {
++    padding-right: 8px;
++    font-size: 0.82rem;
++  }
++
++  .top-bar-injected-left {
++    overflow-x: auto;
++    -webkit-overflow-scrolling: touch;
++    scrollbar-width: none;
++  }
++
++  .top-bar-injected-left::-webkit-scrollbar {
++    display: none;
++  }
++
++  .user-name-top {
++    display: none;
++  }
++
++  .top-actions {
++    gap: 6px;
++  }
++}
++
++@media (max-width: 480px) {
++  .breadcrumbs span {
++    display: none;
++  }
++
++  .breadcrumbs {
++    border-right: none;
++    padding-right: 2px;
++  }
++}
++
+diff --git a/new/client/src/components/layout/TopBar.jsx b/new/client/src/components/layout/TopBar.jsx
+index 7ca7376..a363581 100644
+--- a/new/client/src/components/layout/TopBar.jsx
++++ b/new/client/src/components/layout/TopBar.jsx
+@@ -1,5 +1,5 @@
+ import React, { useState, useRef, useEffect } from "react";
+-import { User, Building } from "lucide-react";
++import { User, Building, Menu } from "lucide-react";
+ import { useAuth } from "../../context/AuthContext";
+ import { useLayout } from "../../context/LayoutContext";
+ import NotificationCenter from "../NotificationCenter";
+@@ -7,7 +7,7 @@ import "./TopBar.css";
+ 
+ const TopBar = () => {
+   const { user, logout } = useAuth();
+-  const { topBarLeft, topBarRight } = useLayout();
++  const { topBarLeft, topBarRight, toggleMobileNav } = useLayout();
+   const [isProfileOpen, setIsProfileOpen] = useState(false);
+   const profileRef = useRef(null);
+ 
+@@ -24,6 +24,18 @@ const TopBar = () => {
+   return (
+     <header className="top-bar">
+       <div className="top-bar-left-section">
++        <button
++          className="mobile-hamburger-btn"
++          onClick={(e) => {
++            e.stopPropagation();
++            toggleMobileNav();
++          }}
++          aria-label="Open navigation menu"
++          type="button"
++        >
++          <Menu size={22} />
++        </button>
++
+         <div className="breadcrumbs">
+           <Building size={16} style={{ color: "var(--accent-color, #ff6600)" }} />
+           <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>Corporate ESG</span>
+@@ -39,11 +51,12 @@ const TopBar = () => {
+ 
+         <NotificationCenter />
+ 
+-        <div style={{ position: "relative" }} ref={profileRef}>
++        <div style={{ position: "relative" }} ref={profileRef} className="user-profile-tab-wrapper">
+           <button
+-            className="icon-button"
++            className="icon-button user-profile-tab-btn"
+             onClick={() => setIsProfileOpen(!isProfileOpen)}
+             title="User Profile"
++            aria-label="User Profile"
+           >
+             <User size={18} />
+           </button>
+diff --git a/new/client/src/pages/MethaneExplorer.jsx b/new/client/src/pages/MethaneExplorer.jsx
+index 9e278da..88c963c 100644
+--- a/new/client/src/pages/MethaneExplorer.jsx
++++ b/new/client/src/pages/MethaneExplorer.jsx
+@@ -42,7 +42,6 @@ import {
+   Check,
+   BarChart3,
+   Target,
+-  Globe,
+   RotateCcw,
+   Calendar,
+   Building,
+@@ -85,21 +84,6 @@ const BASE_MAPS = {
+       '&copy; <a href="https://www.google.com/maps">Google Maps</a>',
+     icon: Layers,
+   },
+-  light: {
+-    name: "Positron Light",
+-    url: "https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
+-    attribution:
+-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+-    subdomains: "abcd",
+-    icon: Globe,
+-  },
+-  satellite: {
+-    name: "Satellite Hybrid",
+-    url: "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+-    attribution:
+-      '&copy; <a href="https://www.google.com/maps">Google Satellite</a>',
+-    icon: Satellite,
+-  },
+ };
+ 
+ const EmissionsMap = () => {
+@@ -854,9 +838,9 @@ const EmissionsMap = () => {
+           {/* Dynamic Light Basemap Layer */}
+           <TileLayer
+             key={mapBaseLayer}
+-            url={BASE_MAPS[mapBaseLayer].url}
+-            attribution={BASE_MAPS[mapBaseLayer].attribution}
+-            subdomains={BASE_MAPS[mapBaseLayer].subdomains || "abc"}
++            url={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).url}
++            attribution={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).attribution}
++            subdomains={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).subdomains || "abc"}
+           />
+ 
+           {/* Sentinel-5P Methane Column WMS / Tile Overlay */}
+

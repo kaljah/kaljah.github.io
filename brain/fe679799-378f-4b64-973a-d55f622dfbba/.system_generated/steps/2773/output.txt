@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3174,6 +3174,8 @@
+ 
+     db.session.add(record)
+     try:
++        db.session.flush()
++        record_id_val = record.id
+         db.session.commit()
+     except Exception as e:
+         db.session.rollback()
+@@ -3180,5 +3180,4 @@
+ 
+-    record_id_val = record.id
+     facility = db.session.get(Facility, data.get("facility_id"))
+     facility_name = facility.name if facility else "Unknown"
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

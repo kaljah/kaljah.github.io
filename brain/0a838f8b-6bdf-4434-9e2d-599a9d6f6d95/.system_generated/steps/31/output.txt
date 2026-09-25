@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+commit bba488e6ec0f5018d727f82405a0f4ffec0cbbe8
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Thu Sep 24 00:43:38 2026 +0200
+
+    u
+
+ graphify-out/.graphify_labels.json                 |    171 +-
+ graphify-out/.graphify_labels.json.sig             |      2 +-
+ graphify-out/2026-09-22/.graphify_labels.json      |     99 +-
+ graphify-out/2026-09-22/GRAPH_REPORT.md            |    453 +-
+ graphify-out/2026-09-22/graph.json                 |   5004 +-
+ graphify-out/2026-09-22/manifest.json              |     57 +-
+ graphify-out/2026-09-23/.graphify_analysis.json    |   1536 +
+ graphify-out/2026-09-23/.graphify_labels.json      |    451 +
+ graphify-out/2026-09-23/.graphify_semantic_marker  |      1 +
+ graphify-out/2026-09-23/GRAPH_REPORT.md            |   1603 +
+ graphify-out/2026-09-23/graph.json                 | 177045 ++++++++++++++++++
+ graphify-out/2026-09-23/manifest.json              |  10022 +
+ graphify-out/GRAPH_REPORT.md                       |    617 +-
+ graphify-out/graph.html                            |      8 +-
+ graphify-out/graph.json                            |  11437 +-
+ graphify-out/manifest.json                         |    394 +-
+ new/client/src/components/EmissionResult.css       |      2 +-
+ new/client/src/components/Scope1Form.jsx           |     72 +-
+ new/client/src/components/Scope2Form.jsx           |      2 +-
+ new/client/src/components/Scope3Form.jsx           |     55 +-
+ .../src/components/scope1/AdipicAcidForm.jsx       |     81 +
+ .../src/components/scope1/AsphaltBlowingForm.jsx   |     79 +
+ .../components/scope1/ChemicalProductionForm.jsx   |     84 +
+ .../src/components/scope1/NitricAcidForm.jsx       |     80 +
+ new/client/src/utils/EmissionFactors.js            |    144 +-
+ new/client/stats.html                              |      2 +-
+ new/server/app.py                                  |    108 +-
+ new/server/background_processor.py                 |     14 +-
+ new/server/calculations/constants.py               |     34 +-
+ new/server/calculations/dispatcher.py              |     14 +-
+ new/server/calculations/legacy_engine.py           |     10 +-
+ new/server/calculations/vented.py                  |     10 +-
+ new/server/config.py                               |     19 +-
+ new/server/emission_factors.py                     |     12 +
+ new/server/emission_factors_api2021.py             |     21 +-
+ new/server/extensions.py                           |      2 +-
+ new/server/process_categories.py                   |     10 +
+ new/server/routes/audit.py                         |     28 +-
+ new/server/routes/auth.py                          |    116 +-
+ new/server/routes/dashboard.py                     |     63 +-
+ new/server/routes/data.py                          |     50 +-
+ new/server/routes/emissions.py                     |    120 +-
+ new/server/routes/facilities.py                    |     15 +-
+ new/server/routes/satellite.py                     |      7 -
+ new/server/routes/scope2.py                        |     14 +-
+ new/server/routes/scope3.py                        |     14 +-
+ new/server/tests/conftest.py                       |      8 +-
+ new/server/tests/test_audit_remediation.py         |      6 +-
+ .../tests/test_battery_gwp_horizons_regulatory.py  |      5 +-
+ new/server/tests/test_sbti.py                      |     10 +-
+ new/server/tests/test_uncertainty.py               |     18 +-
+ new/server/utils.py                                |      7 +-
+ validation/differential/test_clean_differential.py |    146 +-
+ validation/golden_data/golden_cases.json           |     26 +-
+ validation/reference_model/__init__.py             |     45 +
+ validation/reports/differential_report.json        |    282 +-
+ 56 files changed, 202065 insertions(+), 8670 deletions(-)
+

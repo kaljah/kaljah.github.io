@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qaqc_diagnostics.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -124,4 +124,30 @@
+         status_lower = (rec.get("status") or "").lower()
+         assert "rejected" in status_lower, f"Record {rec['id']} with status {rec.get('status')} must be rejected"
+ 
++
++def test_qaqc_diagnostics_action_urls_and_samples(client, admin_user):
++    """Verify that all diagnostic action URLs route to /manage-data and provide sample records when affected_count > 0."""
++    client.post(
++        "/api/auth/login",
++        json={"email": "qa_admin@test.com", "password": "AdminPass123!"},
++    )
++
++    res = client.get("/api/qaqc/dashboard")
++    assert res.status_code == 200
++    data = res.get_json()
++    diag = data["diagnostics"]
++
++    all_items = diag.get("issues", []) + diag.get("warnings", []) + diag.get("suggestions", [])
++    for item in all_items:
++        action_url = item.get("action_url")
++        if action_url:
++            assert "/reference-data" not in action_url, f"Finding {item.get('id')} should not link to /reference-data"
++            assert "/manage-data" in action_url, f"Finding {item.get('id')} action_url should route to /manage-data"
++
++        if item.get("affected_count", 0) > 0:
++            sample_records = item.get("sample_records", [])
++            assert len(sample_records) > 0, f"Finding {item.get('id')} with affected_count {item.get('affected_count')} must provide sample_records"
++            assert "id" in sample_records[0], f"Sample records for {item.get('id')} must include an id"
++
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

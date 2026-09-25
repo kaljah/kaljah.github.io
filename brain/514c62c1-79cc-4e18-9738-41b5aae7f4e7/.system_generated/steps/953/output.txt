@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":16,"LineContent":"const QADashboard = React.lazy(() =\u003e import(\"./pages/QADashboard\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":118,"LineContent":"              \u003cQADashboard /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":2,"LineContent":"import QADashboard from \"./QADashboard\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.jsx","LineNumber":9,"LineContent":"  return \u003cQADashboard {...props} /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":14,"LineContent":"import './QADashboard.css';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":18,"LineContent":"export default function QADashboard() {"}

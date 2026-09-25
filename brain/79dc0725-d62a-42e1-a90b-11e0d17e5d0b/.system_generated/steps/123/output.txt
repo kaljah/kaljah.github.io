@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:69:  const [currentRegion, setCurrentRegion] = useState("all");
+new\client\src\pages\DashboardEnhanced.jsx:135:          regions: Array.isArray(filterRes.data?.regions)
+new\client\src\pages\DashboardEnhanced.jsx:147:          if (opDefaults.defaultFacilityId) 
+setCurrentRegion(opDefaults.defaultFacilityId);
+new\client\src\pages\DashboardEnhanced.jsx:165:    currentRegion,
+new\client\src\pages\DashboardEnhanced.jsx:181:        facilityId: currentRegion,
+new\client\src\pages\DashboardEnhanced.jsx:469:    const filtered = availableFilters.regions.filter(
+new\client\src\pages\DashboardEnhanced.jsx:483:    const filtered = availableFilters.regions.filter(
+new\client\src\pages\DashboardEnhanced.jsx:498:    const filtered = availableFilters.regions.filter(
+new\client\src\pages\DashboardEnhanced.jsx:527:    setCurrentRegion("all");
+new\client\src\pages\DashboardEnhanced.jsx:533:    setCurrentRegion("all");
+new\client\src\pages\DashboardEnhanced.jsx:538:    setCurrentRegion("all");
+new\client\src\pages\DashboardEnhanced.jsx:658:            value={currentRegion}
+new\client\src\pages\DashboardEnhanced.jsx:659:            onChange={setCurrentRegion}
+new\client\src\pages\DashboardEnhanced.jsx:748:    currentRegion,
+new\client\src\pages\DashboardEnhanced.jsx:789:        regionId: currentRegion !== "all" ? currentRegion : undefined,
+new\client\src\pages\DashboardEnhanced.jsx:1037:                {currentRegion !== "all"
+new\client\src\pages\DashboardEnhanced.jsx:1038:                  ? facilities.find((f) => f.id.toString() === 
+currentRegion)
+
+
+

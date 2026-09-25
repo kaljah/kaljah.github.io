@@ -1,0 +1,60 @@
+
+The command exited with code 1.
+Output:
+
+> client@0.0.0 build
+> vite build
+
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 4 modules transformed.
+✗ Build failed in 1.09s
+error during build:
+[vite:esbuild] Transform failed with 4 errors:
+C:/Users/samsung/Desktop/H2/new/client/src/App.jsx:229:12: ERROR: Unexpected closing "LayoutProvider" tag does not match opening "AuthProvider" tag
+C:/Users/samsung/Desktop/H2/new/client/src/App.jsx:230:10: ERROR: Unexpected closing "AuthProvider" tag does not match opening "LayoutProvider" tag
+C:/Users/samsung/Desktop/H2/new/client/src/App.jsx:232:6: ERROR: Unexpected closing "ErrorBoundary" tag does not match opening "LayoutProvider" tag
+C:/Users/samsung/Desktop/H2/new/client/src/App.jsx:237:0: ERROR: Unexpected end of file before a closing "AuthProvider" tag
+file: C:/Users/samsung/Desktop/H2/new/client/src/App.jsx:229:12
+
+Unexpected closing "LayoutProvider" tag does not match opening "AuthProvider" tag
+227 |                <AppRoutes />
+228 |              </ToastProvider>
+229 |            </LayoutProvider>
+    |              ^
+230 |          </AuthProvider>
+231 |        </BrowserRouter>
+
+Unexpected closing "AuthProvider" tag does not match opening "LayoutProvider" tag
+228 |              </ToastProvider>
+229 |            </LayoutProvider>
+230 |          </AuthProvider>
+    |            ^
+231 |        </BrowserRouter>
+232 |      </ErrorBoundary>
+
+Unexpected closing "ErrorBoundary" tag does not match opening "LayoutProvider" tag
+230 |          </AuthProvider>
+231 |        </BrowserRouter>
+232 |      </ErrorBoundary>
+    |        ^
+233 |    );
+234 |  };
+
+Unexpected end of file before a closing "AuthProvider" tag
+235 |  
+236 |  export default App;
+237 |  
+    |  ^
+
+    at failureErrorWithLog (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:736:50
+    at responseCallbacks.<computed> (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\samsung\Desktop\H2\new\client\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:510:3)
+    at Readable.push (node:internal/streams/readable:390:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+

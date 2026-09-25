@@ -1,0 +1,180 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\EmissionFactors.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1163,13 +1163,13 @@
+   // --- STORAGE TANKS (API Section 4.4) ---
+   "Tank - Flash Emissions (Oil)": {
+     code: "TankFlashOil",
+-    ch4: 0.15,
+-    co2: 0.01,
++    ch4: 0.193,
++    co2: 0.012,
+     n2o: 0,
+     unit: "kg/bbl",
+     usage: ["tank_flashing"],
+-    description: "API 4.4 - Flash emissions from oil storage tank",
+-    uncertainty: { ch4: 0.4, co2: 0.1 },
++    description: "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
++    uncertainty: { ch4: 0.4, co2: 0.15 },
+   },
+   "Tank - Working Losses (Oil)": {
+     code: "TankWorkOil",
+@@ -1190,6 +1190,134 @@
+     description: "API 4.4 - Standing storage breathing losses",
+     uncertainty: { ch4: 0.4 },
+   },
++
++  // --- CHEMICAL PRODUCTION (API Section 6, Table 6-167) ---
++  "Acrylonitrile": {
++    code: "ACN_Prod",
++    co2: 1.00,
++    ch4: 0,
++    n2o: 0,
++    unit: "tonne CO₂/tonne product",
++    usage: ["chemical_production"],
++    description: "API Section 6 Table 6-167 — Acrylonitrile process CO₂",
++    uncertainty: { co2: 0.15 },
++  },
++  "Carbon Black": {
++    code: "CB_Prod",
++    co2: 2.63,
++    ch4: 0,
++    n2o: 0,
++    unit: "tonne CO₂/tonne product",
++    usage: ["chemical_production"],
++    description: "API Section 6 Table 6-167 — Carbon Black process CO₂",
++    uncertainty: { co2: 0.15 },
++  },
++  "Ethylene": {
++    code: "ETH_Prod",
++    co2: 0.77,
++    ch4: 0,
++    n2o: 0,
++    unit: "tonne CO₂/tonne product",
++    usage: ["chemical_production"],
++    description: "API Section 6 Table 6-167 — Ethylene process CO₂",
++    uncertainty: { co2: 0.10 },
++  },
++  "Ethylene Dichloride": {
++    code: "EDC_Prod",
++    co2: 0.041,
++    ch4: 0,
++    n2o: 0,
++    unit: "tonne CO₂/tonne product",
++    usage: ["chemical_production"],
++    description: "API Section 6 Table 6-167 — EDC process CO₂",
++    uncertainty: { co2: 0.15 },
++  },
++  "Ethylene Oxide": {
++    code: "ETO_Prod",
++    co2: 0.46,
++    ch4: 0,
++    n2o: 0,
++    unit: "tonne CO₂/tonne product",
++    usage: ["chemical_production"],
++    description: "API Section 6 Table 6-167 — Ethylene Oxide process CO₂",
++    uncertainty: { co2: 0.10 },
++  },
++  "Methanol": {
++    code: "MEOH_Prod",
++    co2: 0.67,
++    ch4: 0.0023,
++    n2o: 0,
++    unit: "tonne CO₂/tonne product",
++    usage: ["chemical_production"],
++    description: "API Section 6 Table 6-167 — Methanol process CO₂ + CH₄",
++    uncertainty: { co2: 0.10, ch4: 0.20 },
++  },
++
++  // --- NITRIC ACID N₂O (API Section 6, pg 407) ---
++  "Nitric Acid - With NSCR": {
++    code: "HNO3_NSCR",
++    co2: 0,
++    ch4: 0,
++    n2o: 2.0,
++    unit: "kg N₂O/tonne product",
++    usage: ["nitric_acid_production"],
++    description: "API Section 6 pg 407 — Nitric acid with NSCR abatement",
++    uncertainty: { n2o: 0.10 },
++  },
++  "Nitric Acid - Without NSCR": {
++    code: "HNO3_NoNSCR",
++    co2: 0,
++    ch4: 0,
++    n2o: 9.0,
++    unit: "kg N₂O/tonne product",
++    usage: ["nitric_acid_production"],
++    description: "API Section 6 pg 407 — Nitric acid without NSCR abatement",
++    uncertainty: { n2o: 0.20 },
++  },
++
++  // --- ADIPIC ACID N₂O (API Section 6, pg 407) ---
++  "Adipic Acid - Thermal Abatement": {
++    code: "AA_Thermal",
++    co2: 0,
++    ch4: 0,
++    n2o: 13.0,
++    unit: "kg N₂O/tonne product",
++    usage: ["adipic_acid_production"],
++    description: "API Section 6 pg 407 — Adipic acid with thermal abatement",
++    uncertainty: { n2o: 0.10 },
++  },
++  "Adipic Acid - Catalytic Abatement": {
++    code: "AA_Catalytic",
++    co2: 0,
++    ch4: 0,
++    n2o: 53.0,
++    unit: "kg N₂O/tonne product",
++    usage: ["adipic_acid_production"],
++    description: "API Section 6 pg 407 — Adipic acid with catalytic abatement",
++    uncertainty: { n2o: 0.15 },
++  },
++  "Adipic Acid - Uncontrolled": {
++    code: "AA_Uncontrolled",
++    co2: 0,
++    ch4: 0,
++    n2o: 300.0,
++    unit: "kg N₂O/tonne product",
++    usage: ["adipic_acid_production"],
++    description: "API Section 6 pg 407 — Adipic acid uncontrolled",
++    uncertainty: { n2o: 0.30 },
++  },
++
++  // --- ASPHALT BLOWING (API Section 6, Table 6-52) ---
++  "Asphalt": {
++    code: "ASPH_Blow",
++    co2: 10.4326,
++    ch4: 0.02268,
++    n2o: 0,
++    unit: "kg/ton",
++    usage: ["asphalt_blowing"],
++    description: "API Section 6 Table 6-52 — Asphalt blowing process emissions",
++    uncertainty: { co2: 0.30, ch4: 0.30 },
++  },
+ };
+ export const PROCESS_TYPES = {
+   combustion: "Stationary Combustion",
+@@ -1207,6 +1207,10 @@
+   fugitive: "Fugitive Emissions",
+   loading: "Loading Losses",
+   separation: "Wastewater / Separation",
++  chemical_production: "Chemical Production (Process CO₂)",
++  nitric_acid_production: "Nitric Acid Production (Process N₂O)",
++  adipic_acid_production: "Adipic Acid Production (Process N₂O)",
++  asphalt_blowing: "Asphalt Blowing",
+   indirect_steam: "Indirect Steam / Heat (Section 8)",
+   cogen_allocation: "Cogeneration Allocation (Section 8)",
+ };
+@@ -1264,6 +1264,10 @@
+       "fugitive",
+       "loading",
+       "separation",
++      "chemical_production",
++      "nitric_acid_production",
++      "adipic_acid_production",
++      "asphalt_blowing",
+     ],
+   },
+ ];
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+negative quantity: 400 {'code': 400, 'error': 'CSRF token missing or invalid. Refresh the page and try again.'}
+

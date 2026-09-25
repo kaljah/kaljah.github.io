@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\seed_admin.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -13,12 +13,15 @@
+     with app.app_context():
+         db.create_all()
+ 
+-        # Remove legacy insecure/trivial test accounts if present
+-        trivial_emails = ["a@a", "z@z", "a", "z"]
+-        purged = User.query.filter(User.email.in_(trivial_emails)).delete(synchronize_session=False)
+-        if purged > 0:
+-            db.session.commit()
+-            print(f"[SECURITY] Purged {purged} legacy trivial accounts from database.")
++        # Remove legacy insecure/trivial test accounts if present (if not referenced by FKs)
++        try:
++            trivial_emails = ["a@a", "z@z", "a", "z"]
++            purged = User.query.filter(User.email.in_(trivial_emails)).delete(synchronize_session=False)
++            if purged > 0:
++                db.session.commit()
++                print(f"[SECURITY] Purged {purged} legacy trivial accounts from database.")
++        except Exception:
++            db.session.rollback()
+ 
+         force_reset = "--force-reset-password" in sys.argv
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

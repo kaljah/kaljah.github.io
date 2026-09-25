@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":7504,"LineContent":" from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":7504,"LineContent":" from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_routes_reports.py.txt","LineNumber":6,"LineContent":" from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":12,"LineContent":"    SimpleDocTemplate,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":48,"LineContent":"    doc = SimpleDocTemplate("}

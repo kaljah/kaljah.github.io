@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2355,7 +2355,8 @@
+                                                 setEditingFactorId(null);
+                                                 setFactorForm({
+                                                     factor_name: '', parent_fuel: '', unit: 'scf',
+-                                                    co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: ''
++                                                    co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '',
++                                                    source: '', description: ''
+                                                 });
+                                             }}
+                                         >
+@@ -2374,6 +2374,7 @@
+                                                 <th>CO2</th>
+                                                 <th>CH4</th>
+                                                 <th>N2O</th>
++                                                <th>Certification / Description</th>
+                                                 <th>CO₂ Unc.</th>
+                                                 <th>CH₄ Unc.</th>
+                                                 <th>N₂O Unc.</th>
+@@ -2382,7 +2382,7 @@
+                                         <tbody>
+                                             {filteredFactors.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(f => (
+                                                 <tr key={f.id}>
+-                                                    <td>{f.factor_name}</td>
++                                                    <td><strong>{f.factor_name || f.name}</strong></td>
+                                                     <td>{f.unit}</td>
+                                                     <td>{f.co2_factor}</td>
+                                                     <td>{f.ch4_factor}</td>
+@@ -2389,3 +2389,8 @@
++                                                    <td style={{ maxWidth: '240px' }}>
++                                                        {f.source && <span style={{ display: 'inline-block', fontSize: '0.75rem', background: '#dbeafe', color: '#1d4ed8', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginBottom: '2px' }}>{f.source}</span>}
++                                                        {f.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={f.description}>{f.description}</div>}
++                                                        {!f.source && !f.description && <span style={{ color: 'var(--text-secondary)' }}>—</span>}
++                                                    </td>
+                                                     <td style={{ color: f.co2_uncertainty ? '#10b981' : 'inherit' }}>{f.co2_uncertainty ? `±${f.co2_uncertainty}%` : '—'}</td>
+                                                     <td style={{ color: f.ch4_uncertainty ? '#3b82f6' : 'inherit' }}>{f.ch4_uncertainty ? `±${f.ch4_uncertainty}%` : '—'}</td>
+                                                     <td style={{ color: f.n2o_uncertainty ? '#8b5cf6' : 'inherit' }}>{f.n2o_uncertainty ? `±${f.n2o_uncertainty}%` : '—'}</td>
+@@ -2396,7 +2396,7 @@
+                                             ))}
+                                             {filteredFactors.length === 0 && (
+                                                 <tr>
+-                                                    <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
++                                                    <td colSpan="10" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                                         No custom emission factors found.
+                                                     </td>
+                                                 </tr>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

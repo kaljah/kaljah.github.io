@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+/api/reports/master-annual-report HTTPError: 401 UNAUTHORIZED
+/api/dashboard/flaring-summary HTTPError: 401 UNAUTHORIZED
+

@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 9
+    page.fill('input[type=" email\],
+              ^
+SyntaxError: unterminated string literal (detected at line 9)
+

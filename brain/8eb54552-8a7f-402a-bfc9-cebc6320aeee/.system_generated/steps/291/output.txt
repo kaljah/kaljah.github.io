@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+["Select All","Complexe Sidérurgique DRI/EAF (Tosyali) - Industrial Zone","Complexe Ammoniac & Engrais Azotés (Fertial) - Arzew Port","Cimenterie Industrielle de Chlef (GICA) - Chlef Plant","Centre de Traitement Gazier Hassi Messaoud (Sonatrach) - HMD Field"]
+```

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+(2535, 1, 'Propane (Liquid)', 45000.0, 'gal', 0.0, 0.0, 0.0, 0.0, 'server_default')
+

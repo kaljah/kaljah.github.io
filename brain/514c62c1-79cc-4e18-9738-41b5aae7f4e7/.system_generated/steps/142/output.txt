@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\Sidebar.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -45,6 +45,30 @@
+   overflow: hidden;
+ }
+ 
++.sidebar-brand-group {
++  display: flex;
++  align-items: center;
++  gap: 10px;
++}
++
++.mobile-sidebar-close {
++  display: none;
++  background: transparent;
++  border: none;
++  color: var(--text-secondary);
++  padding: 6px;
++  border-radius: 8px;
++  cursor: pointer;
++  align-items: center;
++  justify-content: center;
++  transition: all 0.15s ease;
++}
++
++.mobile-sidebar-close:hover {
++  background: var(--bg-hover);
++  color: var(--text-primary);
++}
++
+ .logo-box {
+   width: 36px;
+   height: 36px;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

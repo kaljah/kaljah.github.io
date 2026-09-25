@@ -1,0 +1,21 @@
+Task: 4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/task-534
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\.system_generated\tasks\task-534.log
+Log output:
+<truncated 8 lines>
+tCO2e
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Steel & Iron (Acier DRI)	Complexe Sidérurgique DRI/EAF (Tosyali)	Metallurgy	Industrial Zone	-	-	combustion	Natural Gas	Default	1,765,735.00 scf	2.706	0.00005	0.00001	2.709	±6%	±11%	±11%	±11%	±22%	±22%	
+
+========================================
+[TIER 1 TEST] Testing Region: Center (GICA)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Cement & Clinker
+[TIER 1 DB VERIFIED] Row ID=837, Facility=3, CO2=122.47775999999999, CH4=0.004968, Total CO2e=122.88761999999998 tCO2e
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Cement & Clinker	Cimenterie Industrielle de Chlef (GICA)	Building Materials	Chlef Plant	-	-	combustion	Diesel (No. 2 Fuel Oil)	Default	3,170,064.00 gal	122.478	0.00497	0.00099	122.888	±5%	±13%	±16%	±10%	±27%	±32%	
+
+========================================
+[TIER 1 TEST] Testing Region: South (Sonatrach)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Upstream & Midstream Gas
+
+Last progress: 8s ago

@@ -1,0 +1,7 @@
+
+The command exited with code 1.
+Output:
+fatal: ambiguous argument 'a@a\|\z@z\': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+

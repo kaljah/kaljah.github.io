@@ -1,0 +1,33 @@
+
+The command exited with code 1.
+Output:
+=================================================================
+AGENT 05 - Regular User API Tester
+=================================================================
+[CSRF] Token obtained: IjkwYTgzNmZkYWUyZWQ5...
+python : Traceback (most recent call last):
+At line:1 char:1
++ python "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_05_test.py", line 95, in <module>
+    log(1, "POST /api/auth/login", "PASS", r.status_code, 200, body, notes="Login successful")
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_05_test.py", line 39, in log
+    print(f"[{test_id:02d}] {status_icon} {name} | HTTP {response_code} | {notes}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 5: character maps to <undefined>
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_05_test.py", line 105, in <module>
+    log(1, "POST /api/auth/login", "ERROR", 0, 200, str(e),
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_05_test.py", line 39, in log
+    print(f"[{test_id:02d}] {status_icon} {name} | HTTP {response_code} | {notes}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u274c' in position 5: character maps to <undefined>
+

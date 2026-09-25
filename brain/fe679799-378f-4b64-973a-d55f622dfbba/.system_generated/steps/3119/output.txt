@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1254,8 +1254,14 @@
+         process_type="combustion",
+         gwp_dict=None,
+     ):
+-        """Standard Quantity * EF fallback with unit handling and tier-aware uncertainty."""
+-        quantity = float(inputs.get("quantity") or inputs.get("amount") or 0)
++        raw_q = inputs.get("amount") if inputs.get("amount") not in [None, ""] else inputs.get("quantity")
++        if isinstance(raw_q, str):
++            s = raw_q.strip()
++            if "," in s and "." not in s:
++                raw_q = s.replace(",", ".")
++            else:
++                raw_q = s.replace(",", "")
++        quantity = float(raw_q or 0)
+         unit = str(inputs.get("unit") or "m3").lower()
+         f_unit = str(emission_factors.get("unit") or "kg/m3").lower()
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

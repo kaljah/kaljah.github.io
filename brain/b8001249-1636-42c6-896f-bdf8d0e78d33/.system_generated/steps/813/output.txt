@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 00:27:45,389] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Updated test_superuser and test_user location to West
+

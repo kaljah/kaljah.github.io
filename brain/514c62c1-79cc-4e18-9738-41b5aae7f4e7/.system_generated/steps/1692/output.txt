@@ -1,0 +1,43 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -345,6 +345,37 @@
+     paddingTop: "16px",
+     borderTop: "1px solid var(--border-color)",
+   },
++  drawerSection: {
++    background: "var(--bg-card)",
++    border: "1px solid var(--border-color)",
++    borderRadius: "14px",
++    padding: "16px 18px",
++    marginBottom: "16px",
++  },
++  sectionHeader: {
++    display: "flex",
++    alignItems: "center",
++    gap: "8px",
++    marginBottom: "14px",
++  },
++  sectionIconBadge: (color) => ({
++    width: "26px",
++    height: "26px",
++    borderRadius: "8px",
++    background: `${color}18`,
++    color: color,
++    display: "flex",
++    alignItems: "center",
++    justifyContent: "center",
++    flexShrink: 0,
++  }),
++  sectionTitle: {
++    fontSize: "0.82rem",
++    fontWeight: 700,
++    color: "var(--text-primary)",
++    textTransform: "uppercase",
++    letterSpacing: "0.5px",
++  },
+ 
+   /* empty / loading */
+   emptyCell: {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

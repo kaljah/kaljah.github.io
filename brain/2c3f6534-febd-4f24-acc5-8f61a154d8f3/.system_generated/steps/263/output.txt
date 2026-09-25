@@ -1,0 +1,10 @@
+You have 1 background task(s) currently running:
+{
+  "taskId":  "2c3f6534-febd-4f24-acc5-8f61a154d8f3/task-241",
+  "toolName":  "run_command",
+  "toolSummary":  "Run graphify update .",
+  "description":  "graphify update .",
+  "startTime":  "2026-09-20T14:03:51.506740600Z",
+  "stepIndex":  241,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/2c3f6534-febd-4f24-acc5-8f61a154d8f3/.system_generated/tasks/task-241.log"
+}

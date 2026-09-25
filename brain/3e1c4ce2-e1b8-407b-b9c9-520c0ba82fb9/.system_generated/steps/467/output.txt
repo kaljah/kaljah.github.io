@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+Notifications status: 200
+Count for user a: 6
+  11 info 'New Sentinel-5P Overpass � TFT' is_read: False
+  12 info 'New Sentinel-5P Overpass � ADR' is_read: False
+  10 info 'New Sentinel-5P Overpass � ADR' is_read: False
+  7 audit 'Scope 1 Bulk Upload Pending Review' is_read: False
+  4 audit 'Scope 1 Bulk Upload Pending Review' is_read: False
+  1 audit 'Scope 1 Bulk Upload Pending Review' is_read: False
+

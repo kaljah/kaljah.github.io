@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -910,7 +910,7 @@
+                         const record = yData.data.find(
+                           (r) => r.facility_id === facData.facility_id,
+                         );
+-                        const val = record
++                        const rawVal = record
+                           ? gwpHorizon === "20"
+                             ? record.co2_intensity_gwp20 || record.co2_intensity
+                             : record.co2_intensity
+@@ -917,3 +917,5 @@
++                        const numVal = Number(rawVal);
++                        const val = isFinite(numVal) ? numVal : 0;
+                         return (
+                           <div
+                             key={yData.year}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,129 @@
+
+The command exited with code 0.
+Output:
+<truncated 97 lines>
+> new\server\routes\data.py:146:            existing.saleable_production_mmboe = saleable_production_mmboe
+  new\server\routes\data.py:147:            existing.fuel_gas_export_mmsm3 = fuel_gas_export_mmsm3
+  new\server\routes\data.py:148:            existing.activity = activity
+  new\server\routes\data.py:149:            existing.division = division
+  new\server\routes\data.py:150:            existing.field = field
+  new\server\routes\data.py:151:            rec_id = existing.id
+  new\server\routes\data.py:153:            action = 'UPDATE'
+  new\server\routes\data.py:154:        else:
+> new\server\routes\data.py:155:            prod = ProductionData(
+  new\server\routes\data.py:156:                facility_id=fid,
+  new\server\routes\data.py:157:                year=year,
+  new\server\routes\data.py:158:                month=month,
+  new\server\routes\data.py:159:                oil_amount=oil_amount,
+  new\server\routes\data.py:160:                gas_amount=gas_amount,
+  new\server\routes\data.py:168:                lpg_mmboe=lpg_mmboe,
+  new\server\routes\data.py:169:                ngl_mmboe=ngl_mmboe,
+> new\server\routes\data.py:170:                total_production_mmboe=total_production_mmboe,
+> new\server\routes\data.py:171:                total_production_no_injected_mmboe=total_production_no_injected_mmboe,
+> new\server\routes\data.py:172:                saleable_production_mmboe=saleable_production_mmboe,
+  new\server\routes\data.py:173:                fuel_gas_export_mmsm3=fuel_gas_export_mmsm3,
+  new\server\routes\data.py:174:                activity=activity,
+  new\server\routes\data.py:175:                division=division,
+  new\server\routes\data.py:176:                field=field
+  new\server\routes\data.py:177:            )
+  new\server\routes\data.py:182:            action = 'CREATE'
+  new\server\routes\data.py:183:
+> new\server\routes\data.py:184:        log_details = f"{action.title()} Production Data for {year}-{month}: 
+{oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas"
+  new\server\routes\data.py:185:        log_activity_and_notify(
+  new\server\routes\data.py:186:            action=action,
+  new\server\routes\data.py:187:            record_id=str(rec_id),
+  new\server\routes\data.py:188:            user=user,
+  new\server\routes\data.py:189:            request=request,
+> new\server\routes\data.py:190:            entity='ProductionData',
+  new\server\routes\data.py:191:            details=log_details
+  new\server\routes\data.py:192:        )
+  new\server\routes\data.py:193:        db.session.commit()
+  new\server\routes\data.py:194:
+  new\server\routes\data.py:195:    try:
+  new\server\routes\data.py:208:        from flask import current_app
+  new\server\routes\data.py:209:        if current_app:
+> new\server\routes\data.py:210:            current_app.logger.error(f"Production save error: 
+{traceback.format_exc()}")
+> new\server\routes\data.py:211:        return jsonify({'error': 'Failed to save production data'}), 500
+  new\server\routes\data.py:212:
+  new\server\routes\data.py:213:    from routes.dashboard import clear_dashboard_cache
+  new\server\routes\data.py:214:    clear_dashboard_cache()
+> new\server\routes\data.py:215:    return jsonify({'message': 'Production data saved', 'id': saved_rec_id}), 201
+  new\server\routes\data.py:216:
+> new\server\routes\data.py:217:@data_bp.route('/production/<int:record_id>', methods=['DELETE'])
+  new\server\routes\data.py:218:@login_required
+> new\server\routes\data.py:219:def delete_production(record_id):
+  new\server\routes\data.py:220:    user = get_current_user()
+  new\server\routes\data.py:221:    if user and (user.role in ['auditor'] or is_it_role(user)):
+> new\server\routes\data.py:222:        return jsonify({'error': 'Read-only or IT administrative role cannot delete 
+operational production data.'}), 403
+> new\server\routes\data.py:223:    prod = db.session.get(ProductionData, record_id)
+  new\server\routes\data.py:224:    if not prod:
+> new\server\routes\data.py:225:        return jsonify({'error': 'Production record not found'}), 404
+  new\server\routes\data.py:226:    
+  new\server\routes\data.py:227:    if not require_facility_access(user, prod.facility_id):
+  new\server\routes\data.py:228:        return jsonify({'error': 'Access to this facility is denied'}), 403
+  new\server\routes\data.py:229:
+  new\server\routes\data.py:230:    try:
+  new\server\routes\data.py:234:            user=user,
+  new\server\routes\data.py:235:            request=request,
+> new\server\routes\data.py:236:            entity='ProductionData',
+> new\server\routes\data.py:237:            details=f"Deleted Production Data for facility {prod.facility_id} 
+({prod.year}-{prod.month})"
+  new\server\routes\data.py:238:        )
+  new\server\routes\data.py:239:        db.session.delete(prod)
+  new\server\routes\data.py:240:        db.session.commit()
+  new\server\routes\data.py:241:        from routes.dashboard import clear_dashboard_cache
+  new\server\routes\data.py:242:        clear_dashboard_cache()
+  new\server\routes\data.py:243:    except Exception as e:
+  new\server\routes\data.py:244:        db.session.rollback()
+> new\server\routes\data.py:245:        return jsonify({'error': 'Failed to delete production record'}), 500
+  new\server\routes\data.py:246:
+> new\server\routes\data.py:247:    return jsonify({'message': 'Production record deleted'})
+  new\server\routes\data.py:248:
+  new\server\routes\data.py:249:
+> new\server\routes\data.py:250:@data_bp.route('/production/bulk-import', methods=['POST'])
+  new\server\routes\data.py:251:@login_required
+> new\server\routes\data.py:252:def bulk_import_production():
+  new\server\routes\data.py:253:    user = get_current_user()
+  new\server\routes\data.py:254:    if user and (user.role in ['auditor'] or is_it_role(user)):
+> new\server\routes\data.py:255:        return jsonify({'error': 'Read-only or IT administrative role cannot modify 
+operational production data.'}), 403
+  new\server\routes\data.py:256:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\data.py:257:    data = request.get_json() or {}
+  new\server\routes\data.py:258:    records = data.get('records', [])
+  new\server\routes\data.py:259:    if not records:
+  new\server\routes\data.py:260:        return jsonify({'error': 'No records provided'}), 400
+  new\server\routes\data.py:302:            continue
+  new\server\routes\data.py:303:
+> new\server\routes\data.py:304:        existing = ProductionData.query.filter_by(
+  new\server\routes\data.py:305:            facility_id=facility.id,
+  new\server\routes\data.py:306:            year=year,
+  new\server\routes\data.py:307:            month=month
+  new\server\routes\data.py:308:        ).first()
+  new\server\routes\data.py:309:
+  new\server\routes\data.py:321:            if rec.get('field'): existing.field = rec.get('field')
+  new\server\routes\data.py:322:        else:
+> new\server\routes\data.py:323:            prod = ProductionData(
+  new\server\routes\data.py:324:                facility_id=facility.id,
+  new\server\routes\data.py:325:                year=year,
+  new\server\routes\data.py:326:                month=month,
+  new\server\routes\data.py:327:                oil_amount=oil_amount,
+  new\server\routes\data.py:328:                gas_amount=gas_amount,
+  new\server\routes\data.py:341:    except Exception as e:
+  new\server\routes\data.py:342:        db.session.rollback()
+> new\server\routes\data.py:343:        return jsonify({'error': f'Failed to import production records: {str(e)}'}), 
+500
+  new\server\routes\data.py:344:
+  new\server\routes\data.py:345:    from routes.dashboard import clear_dashboard_cache
+  new\server\routes\data.py:346:    clear_dashboard_cache()
+> new\server\routes\data.py:347:    return jsonify({'message': f'{imported_count} production records imported'}), 201
+  new\server\routes\data.py:348:
+  new\server\routes\data.py:349:
+  new\server\routes\data.py:350:
+  new\server\routes\data.py:351:
+  new\server\routes\data.py:352:
+
+
+

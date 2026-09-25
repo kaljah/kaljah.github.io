@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":255,"LineContent":"    def test_login_rate_limit(self, client):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":338,"LineContent":"@limiter.limit(lambda: os.environ.get(\"LOGIN_RATE_LIMIT\", \"20 per 15 minutes\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_rate_limiting.py","LineNumber":24,"LineContent":"def test_login_rate_limit_exceeded(rate_limit_client):"}

@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Login status: 200
+Post status: 201
+Post response: {'id': 2535, 'co2_emissions': None, 'ch4_emissions': None, 'n2o_emissions': None, 'co2e_total': None, 'calc_method': None}
+

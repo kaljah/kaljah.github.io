@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:14:  formatCompactNumber,
+new\client\src\pages\DashboardEnhanced.jsx:15:  formatNumber,
+new\client\src\pages\DashboardEnhanced.jsx:992:                  {formatCompactNumber(stats.totalEmissions)}
+new\client\src\pages\DashboardEnhanced.jsx:1028:                  {formatCompactNumber(stats.netEmissions)}
+new\client\src\pages\DashboardEnhanced.jsx:1035:                  {formatCompactNumber(stats.mitigation)}
+new\client\src\pages\DashboardEnhanced.jsx:1045:                  {formatCompactNumber(stats.methaneEmissions)}
+new\client\src\pages\DashboardEnhanced.jsx:1061:                  {!hasProductionData && stats.totalEmissions > 0 ? 
+"Pending" : formatCompactNumber(intensity, 2)}
+new\client\src\pages\DashboardEnhanced.jsx:1081:                {formatCompactNumber(stats.scope1)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1087:                {formatCompactNumber(stats.scope2)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1093:                {formatCompactNumber(stats.scope3)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1363:                                  
+{formatCompactNumber(reg.total_emissions)}{" "}
+new\client\src\pages\DashboardEnhanced.jsx:1433:                          {formatCompactNumber(stats.scope1)}
+new\client\src\pages\DashboardEnhanced.jsx:1439:                          {formatCompactNumber(stats.combustion)}
+new\client\src\pages\DashboardEnhanced.jsx:1445:                          {formatCompactNumber(stats.flaring)}
+new\client\src\pages\DashboardEnhanced.jsx:1451:                          {formatCompactNumber(stats.venting)}
+new\client\src\pages\DashboardEnhanced.jsx:1457:                          {formatCompactNumber(stats.other)}
+new\client\src\pages\DashboardEnhanced.jsx:1463:                          {formatCompactNumber(stats.scope2)}
+new\client\src\pages\DashboardEnhanced.jsx:1469:                          {formatCompactNumber(stats.scope3)}
+new\client\src\pages\DashboardEnhanced.jsx:1475:                          {formatCompactNumber(
+new\client\src\pages\DashboardEnhanced.jsx:1488:                          {formatCompactNumber(
+new\client\src\pages\DashboardEnhanced.jsx:1514:                                {formatCompactNumber(actData.total)}
+new\client\src\pages\DashboardEnhanced.jsx:1535:                                        
+{formatCompactNumber(divData.total)}
+new\client\src\pages\DashboardEnhanced.jsx:1545:                                            {formatCompactNumber(
+
+
+

@@ -1,0 +1,77 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -24,11 +24,57 @@
+ import concurrent.futures
+ 
+ # Global cache for dashboard queries (5 minutes TTL)
+-DASHBOARD_CACHE = TTLCache(maxsize=100, ttl=300)
++DASHBOARD_CACHE = TTLCache(maxsize=200, ttl=300)
+ CACHE_LOCK = threading.Lock()
++_LOCAL_CACHE_EPOCH = 0.0
++_LAST_EPOCH_CHECK = 0.0
++
++
++def _get_global_cache_epoch():
++    """Fetches the latest global cache epoch timestamp from DB to sync multi-worker Gunicorn processes."""
++    global _LOCAL_CACHE_EPOCH, _LAST_EPOCH_CHECK
++    import time
++
++    now = time.time()
++    # Check at most once every 1.0s to avoid database query overhead
++    if now - _LAST_EPOCH_CHECK > 1.0:
++        _LAST_EPOCH_CHECK = now
++        try:
++            from models import SystemSetting
++
++            setting = SystemSetting.query.filter_by(
++                key="_dashboard_cache_epoch"
++            ).first()
++            if setting and setting.value:
++                epoch_val = float(setting.value)
++                if epoch_val > _LOCAL_CACHE_EPOCH:
++                    with CACHE_LOCK:
++                        DASHBOARD_CACHE.clear()
++                    _LOCAL_CACHE_EPOCH = epoch_val
++        except Exception:
++            pass
++    return _LOCAL_CACHE_EPOCH
+ 
+ 
+ def clear_dashboard_cache():
++    """Updates global epoch in shared DB state and invalidates local worker heap."""
++    import time
++
++    now = time.time()
++    try:
++        from models import SystemSetting
++
++        setting = SystemSetting.query.filter_by(
++            key="_dashboard_cache_epoch"
++        ).first()
++        if not setting:
++            setting = SystemSetting(key="_dashboard_cache_epoch", value=str(now))
++            db.session.add(setting)
++        else:
++            setting.value = str(now)
++        db.session.commit()
++    except Exception:
++        db.session.rollback()
+     with CACHE_LOCK:
+         DASHBOARD_CACHE.clear()
+ 
+@@ -35,5 +35,6 @@
+ def make_cache_key(namespace):
+     def cache_key_builder(*args, **kwargs):
++        epoch = _get_global_cache_epoch()
+         # Convert any list values to tuples so they are hashable for the cache key
+         hashable_kwargs = {
+             k: tuple(v) if isinstance(v, list) else v for k, v in kwargs.items()
+@@ -40,4 +40,4 @@
+-        return keys.hashkey(namespace, *args, **hashable_kwargs)
++        return keys.hashkey(namespace, epoch, *args, **hashable_kwargs)
+ 
+     return cache_key_builder
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

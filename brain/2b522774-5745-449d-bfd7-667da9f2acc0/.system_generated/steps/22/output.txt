@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+<truncated 13 lines>
+d-----          9/5/2026   4:46 PM                migrations                                                           
+d-----         9/24/2026   4:57 PM                routes                                                               
+d-----         9/20/2026   5:30 PM                scripts                                                              
+d-----         9/17/2026   1:04 PM                services                                                             
+d-----         6/26/2026   1:49 PM                static                                                               
+d-----         9/24/2026   9:03 PM                tests                                                                
+d-----         7/25/2026   3:43 AM                utils                                                                
+d-----         9/24/2026   5:00 PM                __pycache__                                                          
+-a----         9/24/2026  12:25 PM             35 .env                                                                 
+-a----         9/20/2026   5:04 PM           1740 .env.example                                                         
+-a----         9/19/2026   4:15 PM              7 .python-version                                                      
+-a----         8/14/2026   6:26 PM         621431 10k_scope2_test.csv                                                  
+-a----         8/14/2026   6:26 PM         514415 10k_scope3_test.csv                                                  
+-a----         8/16/2026  12:04 AM            839 add_columns.py                                                       
+-a----         8/11/2026  12:55 PM           1610 add_indexes.py                                                       
+-a----         9/24/2026   4:58 PM          18579 app.py                                                               
+-a----         9/23/2026   5:04 PM          73214 background_processor.py                                              
+-a----         8/11/2026   2:01 PM           1353 benchmark_db.py                                                      
+-a----         9/22/2026  10:14 AM          17449 bulk_tier1_all_fuels.csv                                             
+-a----         9/22/2026  10:14 AM         205610 bulk_tier3_360_per_region.csv                                        
+-a----         8/16/2026  12:02 AM            728 check_anomalies.py                                                   
+-a----         9/23/2026   4:15 PM           4770 config.py                                                            
+-a----         8/16/2026  12:04 AM           1260 create_anomalies.py                                                  
+-a----         9/23/2026   5:22 PM              0 database.db                                                          
+-a----         9/12/2026   4:33 PM           1646 electricity_factors.py                                               
+-a----         9/24/2026   4:55 PM          13680 emission_factors.py                                                  
+-a----         9/22/2026  10:01 PM          49231 emission_factors_api2021.py                                          
+-a----         7/10/2026  10:12 PM         136525 exhaustive_test_upload.csv                                           
+-a----         9/23/2026   4:19 PM           1403 extensions.py                                                        
+-a----         8/15/2026   6:26 PM            317 fix_dashboard.py                                                     
+-a----         8/11/2026  12:55 PM           4402 generate_10k_csv.py                                                  
+-a----         8/14/2026   6:26 PM           1753 generate_10k_scope2.py                                               
+-a----         8/14/2026   6:26 PM           1618 generate_10k_scope3.py                                               
+-a----         8/15/2026   4:36 AM          16673 generate_1k_comprehensive.py                                         
+-a----         8/14/2026   7:33 PM           4183 generate_1k_csv.py                                                   
+-a----         8/14/2026   7:26 PM           7726 generate_1m_csv.py                                                   
+-a----         8/11/2026  12:56 PM           6696 generate_1m_excel.py                                                 
+-a----         9/24/2026   8:20 PM          84719 generate_berkine_master_report.py                                    
+-a----         9/22/2026  10:14 AM          13156 generate_bulk_test_csvs.py                                           
+-a----         9/24/2026   8:45 PM          41754 generate_elm_master_report.py                                        
+-a----         8/11/2026  12:55 PM          17274 generate_scenarios.py                                                
+-a----         8/15/2026   5:06 AM           1988 generate_test_csvs.py                                                
+-a----         9/24/2026   8:53 PM        2301952 ghg_app.db                                                           
+-a----         9/22/2026   5:55 PM        8282112 ghg_app.db.bak_before_scope_deletion                                 
+-a----         8/15/2026   4:33 AM              0 ghg_emissions.db                                                     
+-a----         8/11/2026  12:56 PM            742 list_all_factors.py                                                  
+-a----         8/11/2026   1:58 PM           1014 locustfile.py                                                        
+-a----         8/11/2026  12:56 PM           6633 migrate_ogmp.py                                                      
+-a----         9/24/2026   4:51 PM          31752 models.py                                                            
+-a----         8/15/2026   6:43 PM           2753 patch_bg.py                                                          
+-a----         9/24/2026   4:55 PM          16313 process_categories.py                                                
+-a----         9/20/2026  10:19 AM            106 pytest.ini                                                           
+-a----         9/20/2026   5:35 PM            325 requirements.txt                                                     
+-a----         9/20/2026   6:52 PM          18233 restore_full_data.py                                                 
+-a----         9/20/2026   6:50 PM           4704 seed_admin.py                                                        
+-a----         9/24/2026   5:11 PM          22731 seed_berkine_data.py                                                 
+-a----         9/24/2026   8:18 PM          24866 seed_berkine_full_exact.py                                           
+-a----         9/12/2026  11:49 PM            872 status.py                                                            
+-a----          9/5/2026   6:02 PM           8705 test_csv_uploader.py                                                 
+-a----         9/12/2026   4:31 PM          46333 test_emission_calculations.py                                        
+-a----         8/11/2026   2:00 PM            657 test_performance.py                                                  
+-a----         8/15/2026   4:49 AM           5234 test_runner.py                                                       
+-a----         8/15/2026   5:07 AM            425 test_scope2.csv                                                      
+-a----         8/15/2026   5:07 AM            346 test_scope3.csv                                                      
+-a----         9/24/2026   9:02 PM         922130 trace.log                                                            
+-a----         8/15/2026   5:06 AM           2595 upload_test_s2_s3.py                                                 
+-a----         9/24/2026  12:13 AM           4652 utils.py                                                             
+
+
+

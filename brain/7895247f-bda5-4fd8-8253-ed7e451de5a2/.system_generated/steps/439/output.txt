@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:192:class ProductionData(db.Model):
+  new\server\models.py:193:    __tablename__ = "production_data"
+  new\server\models.py:194:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:195:    facility_id = db.Column(
+  new\server\models.py:196:        db.Integer, db.ForeignKey("facilities.id"), nullable=False, index=True
+  new\server\models.py:197:    )
+  new\server\models.py:198:    month = db.Column(db.Integer, nullable=False)
+  new\server\models.py:199:    year = db.Column(db.Integer, nullable=False, index=True)
+  new\server\models.py:200:    oil_amount = db.Column(db.Float, default=0)
+  new\server\models.py:201:    gas_amount = db.Column(db.Float, default=0)
+  new\server\models.py:202:    unit = db.Column(db.String(20), default="bbl")  # Legacy
+  new\server\models.py:203:    oil_unit = db.Column(db.String(20), default="bbl")
+  new\server\models.py:204:    gas_unit = db.Column(db.String(20), default="mscf")
+  new\server\models.py:205:
+  new\server\models.py:206:    # Granular Production Metrics (API Compendium / Berkine standard)
+  new\server\models.py:207:    gross_gas_mmsm3 = db.Column(db.Float, default=0.0)
+  new\server\models.py:208:    injected_gas_mmsm3 = db.Column(db.Float, default=0.0)
+  new\server\models.py:209:    gas_without_injected_mmsm3 = db.Column(db.Float, default=0.0)
+  new\server\models.py:210:    crude_oil_mmboe = db.Column(db.Float, default=0.0)
+  new\server\models.py:211:    condensate_mmboe = db.Column(db.Float, default=0.0)
+  new\server\models.py:212:    lpg_mmboe = db.Column(db.Float, default=0.0)
+  new\server\models.py:213:    ngl_mmboe = db.Column(db.Float, default=0.0)
+  new\server\models.py:214:    total_production_mmboe = db.Column(db.Float, default=0.0)
+  new\server\models.py:215:    total_production_no_injected_mmboe = db.Column(db.Float, default=0.0)
+  new\server\models.py:216:    saleable_production_mmboe = db.Column(db.Float, default=0.0)
+  new\server\models.py:217:    fuel_gas_export_mmsm3 = db.Column(db.Float, default=0.0)
+
+
+

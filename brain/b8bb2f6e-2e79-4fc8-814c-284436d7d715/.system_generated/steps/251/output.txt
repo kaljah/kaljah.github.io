@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 10 items
+
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b01_flaring_stoichiometric_split PASSED [ 10%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b02_flare_type_destruction_efficiency_mapping PASSED [ 20%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b03_fugitive_screening_fallback_hours PASSED [ 30%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b08_gwp_ar5_constants_alignment PASSED [ 40%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b09_top_down_survey_aggregation PASSED [ 50%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b12_liquids_unloading_pressure_units PASSED [ 60%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b13_agr_linear_control_efficiency PASSED [ 70%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b14_case_insensitive_units PASSED [ 80%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_l01_tier3_specific_factor_preservation PASSED [ 90%]
+validation/regression/test_regression_archive.py::TestRegressionArchive::test_reg_b15_client_constants_gwp20_n2o_alignment PASSED [100%]
+
+============================= 10 passed in 0.56s ==============================
+

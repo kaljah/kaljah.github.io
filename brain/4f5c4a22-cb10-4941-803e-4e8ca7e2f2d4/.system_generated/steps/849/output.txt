@@ -1,0 +1,99 @@
+
+The command exited with code 1.
+Output:
+
+Running 1 test using 1 worker
+
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+  x  1 [chromium] › e2e\test_scope1_form_engine.spec.js:210:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (5.0m)
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+  x  2 [chromium] › e2e\test_scope1_form_engine.spec.js:210:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (retry #1) (5.0m)
+
+
+  1) [chromium] › e2e\test_scope1_form_engine.spec.js:210:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More 
+
+    Test timeout of 300000ms exceeded.
+
+    Error: locator.fill: Test timeout of 300000ms exceeded.
+    Call log:
+      - waiting for locator('div:has-text("Meter Calibration Tolerance") input.mole-input, input[placeholder="2.0"]').first()
+        - locator resolved to <input disabled type="text" class="mole-input readonly" value="Upstream & Midstream Gas"/>
+        - fill("2.5")
+      - attempting fill action
+        2 × waiting for element to be visible, enabled and editable
+          - element is not enabled
+        - retrying fill action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and editable
+          - element is not enabled
+        - retrying fill action
+          - waiting 100ms
+        578 × waiting for element to be visible, enabled and editable
+            - element is not enabled
+          - retrying fill action
+            - waiting 500ms
+
+
+      470 |       const meterUnc = page.locator('div:has-text("Meter Calibration Tolerance") input.mole-input, input[placeholder="2.0"]').first();
+      471 |       if (await meterUnc.isVisible().catch(() => false)) {
+    > 472 |         await meterUnc.fill('2.5');
+          |                        ^
+      473 |       }
+      474 |
+      475 |       const gcUnc = page.locator('div:has-text("GC Analytical Precision") input.mole-input, input[placeholder="Opt."]').first();
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js:472:24
+
+    Error Context: test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Test timeout of 300000ms exceeded.
+
+    Error: locator.fill: Test timeout of 300000ms exceeded.
+    Call log:
+      - waiting for locator('div:has-text("Meter Calibration Tolerance") input.mole-input, input[placeholder="2.0"]').first()
+        - locator resolved to <input disabled type="text" class="mole-input readonly" value="Upstream & Midstream Gas"/>
+        - fill("2.5")
+      - attempting fill action
+        2 × waiting for element to be visible, enabled and editable
+          - element is not enabled
+        - retrying fill action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and editable
+          - element is not enabled
+        - retrying fill action
+          - waiting 100ms
+        571 × waiting for element to be visible, enabled and editable
+            - element is not enabled
+          - retrying fill action
+            - waiting 500ms
+
+
+      470 |       const meterUnc = page.locator('div:has-text("Meter Calibration Tolerance") input.mole-input, input[placeholder="2.0"]').first();
+      471 |       if (await meterUnc.isVisible().catch(() => false)) {
+    > 472 |         await meterUnc.fill('2.5');
+          |                        ^
+      473 |       }
+      474 |
+      475 |       const gcUnc = page.locator('div:has-text("GC Analytical Precision") input.mole-input, input[placeholder="Opt."]').first();
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js:472:24
+
+    Error Context: test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_scope1_form_engine.spec.js:210:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More 
+

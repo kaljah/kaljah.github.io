@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_cases.json","LineNumber":762,"LineContent":"    \"test_id\": \"GOLDEN-STOICH-001\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_cases.json","LineNumber":794,"LineContent":"    \"test_id\": \"GOLDEN-STOICH-002\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_cases.json","LineNumber":826,"LineContent":"    \"test_id\": \"GOLDEN-STOICH-003\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_data\\golden_cases.json","LineNumber":858,"LineContent":"    \"test_id\": \"GOLDEN-STOICH-004\","}

@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -291,6 +291,32 @@
+     }
+   };
+ 
++  const handleMasterReportDownload = async () => {
++    try {
++      setLoading(true);
++      toast.info("Downloading Groupement Berkine 2025 Master Report (PDF)...");
++      const response = await api.get("/reports/master-annual-report", {
++        responseType: "blob",
++      });
++      const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
++      const link = document.createElement("a");
++      link.href = url;
++      link.download = "Groupement_Berkine_2025_Annual_GHG_Report.pdf";
++      document.body.appendChild(link);
++      link.click();
++      setTimeout(() => {
++        link.remove();
++        window.URL.revokeObjectURL(url);
++      }, 1000);
++      toast.success("Groupement Berkine Master Report downloaded successfully!");
++    } catch (error) {
++      console.error("Master report download failed:", error);
++      toast.error("Failed to download Master Report.");
++    } finally {
++      setLoading(false);
++    }
++  };
++
+   const handleISOReport = async () => {
+     setLoading(true);
+     toast.info("Generating ISO 14064-1 Report...");
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

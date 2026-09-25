@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":35,"LineContent":"def get_all_emission_factors():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":49,"LineContent":"def get_segments():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":61,"LineContent":"def get_factors_for_segment(segment):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":91,"LineContent":"def get_all_process_types():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":103,"LineContent":"def get_process_types_for_seg(segment):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":153,"LineContent":"def get_factors_for_process_category(process_category):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":184,"LineContent":"def get_factors_by_seg_and_proc():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":231,"LineContent":"def search_emission_factors():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":292,"LineContent":"def get_factors_with_uncertainties():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":334,"LineContent":"def get_emission_factors_stats():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":377,"LineContent":"def get_database_version():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":33,"LineContent":"def _escape_like(val: str) -\u003e str:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":40,"LineContent":"def get_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":92,"LineContent":"    def apply_filters(q, model, filter_model=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":416,"LineContent":"def resolve_gwp_standard(user=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":426,"LineContent":"def resolve_gwp_dict(user=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":435,"LineContent":"def add_bulk_upload():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":950,"LineContent":"def get_csv_template():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1616,"LineContent":"    def _row(**kw):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2007,"LineContent":"def get_excel_template():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2029,"LineContent":"    def hdr_style(cell, bg=GREEN_DARK, fg=WHITE, sz=11, bold=True, wrap=True):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2036,"LineContent":"    def sub_hdr(cell, bg=GREEN_MID):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2039,"LineContent":"    def info_cell(cell, bg=BLUE_HINT, fg=\"1A237E\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2044,"LineContent":"    def req_cell(cell, bg=YELLOW_HINT):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2054,"LineContent":"    def add_comment(cell, text, author=\"GHG Platform\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2645,"LineContent":"        for col_def in t3_params:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2843,"LineContent":"def upload_start():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2915,"LineContent":"def upload_status(job_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2924,"LineContent":"def upload_errors(job_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2939,"LineContent":"def add_emission():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3256,"LineContent":"def delete_emission(id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3313,"LineContent":"def update_emission(id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3574,"LineContent":"def bulk_delete_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3616,"LineContent":"def import_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3924,"LineContent":"def _safe_excel_value(val):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3933,"LineContent":"def export_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4371,"LineContent":"def approve_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4426,"LineContent":"def reject_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4477,"LineContent":"def approve_batch_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4501,"LineContent":"    def apply_approval(model, target_ids=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4563,"LineContent":"def reject_batch_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4587,"LineContent":"    def apply_rejection(model, scope_label, target_ids=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4651,"LineContent":"def trigger_erp_sync():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4680,"LineContent":"def get_pending_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4693,"LineContent":"    def q_scope1():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4715,"LineContent":"    def q_scope2():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4737,"LineContent":"    def q_scope3():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4761,"LineContent":"    def count_pending(model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":14,"LineContent":"def get_custom_factors():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":47,"LineContent":"def _parse_non_negative_float(val, field_name, default=0.0):"}
+(...154 more results not shown)

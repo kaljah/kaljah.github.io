@@ -1,0 +1,16 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":277,"LineContent":"                if flat_inputs.get(\"c1\") in [None, \"\", \"-\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":382,"LineContent":"                    \"c1\": safe_frac(\"c1\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":391,"LineContent":"                    \"c10\": safe_frac(\"c10\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":430,"LineContent":"                    [\"c1\", \"ch4_content\", \"flare_ch4_content\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":447,"LineContent":"                    \"c1\": ch4_content,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":456,"LineContent":"                    \"c10\": safe_frac(\"c10\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":536,"LineContent":"                    [\"ch4_content\", \"c1\", \"comp_ch4_content\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":593,"LineContent":"                    [\"ch4_content\", \"c1\", \"unload_ch4_content\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":663,"LineContent":"                    flat_inputs, [\"ch4_content\", \"c1\"], \"gas CH4 content %\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":734,"LineContent":"                    [\"tank_ch4_content\", \"ch4_content\", \"c1\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":787,"LineContent":"                    [\"pneu_ch4_content\", \"ch4_content\", \"c1\", \"gas_content\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":833,"LineContent":"                        flat_inputs, [\"ch4_fraction\", \"ch4_content\", \"c1\"], 1.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":944,"LineContent":"                    flat_inputs, [\"ch4_content\", \"ch4_fraction\", \"c1\"], 0.85"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":976,"LineContent":"                    flat_inputs, [\"ch4_content\", \"ch4_fraction\", \"c1\"], 0.85"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1014,"LineContent":"                    flat_inputs, [\"agr_ch4_in\", \"ch4_in\", \"c1\", \"ch4_mole_pct\"], 0.85"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1113,"LineContent":"                    flat_inputs, [\"dehy_ch4_content\", \"ch4_content\", \"c1\", \"gas_ch4_mole_pct\"], 0.85"}

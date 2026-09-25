@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Generated 123 Tier 1 rows in: c:\Users\samsung\Desktop\H2\new\server\bulk_tier1_all_fuels.csv
+Region West (Complexe Sid�rurgique DRI/EAF (Tosyali)): Exactly 360 distinct Tier 3 scenarios generated.
+Region Center (Cimenterie Industrielle de Chlef (GICA)): Exactly 360 distinct Tier 3 scenarios generated.
+Region South (Centre de Traitement Gazier Hassi Messaoud (Sonatrach)): Exactly 360 distinct Tier 3 scenarios generated.
+Generated 1080 Total Tier 3 rows (360 per region) in: c:\Users\samsung\Desktop\H2\new\server\bulk_tier3_360_per_region.csv
+

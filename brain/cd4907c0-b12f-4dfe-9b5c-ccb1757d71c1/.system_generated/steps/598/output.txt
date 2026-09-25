@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -6,9 +6,46 @@
+ from functools import wraps
+ from flask import request, jsonify, session, current_app
+ from . import auth_bp
+-from models import User, Notification
++from models import User, Notification, Facility
+ from extensions import db, limiter
+-from utils import log_activity_and_notify
++from utils import log_activity_and_notify, is_unrestricted_location
++
++
++def get_user_operational_defaults(user):
++    """
++    Computes default region, division, activity, and facility for a user.
++    For regional users and superusers tied to a location/region,
++    resolves the matching facility attributes.
++    """
++    defaults = {
++        "region": None,
++        "division": None,
++        "activity": None,
++        "facility_id": None,
++        "facility_name": None,
++    }
++    if not user:
++        return defaults
++
++    user_loc = str(user.location).strip() if user.location else ""
++    if user_loc and not is_unrestricted_location(user_loc):
++        defaults["region"] = user_loc
++        fac = Facility.query.filter(
++            db.or_(
++                Facility.region.ilike(user_loc),
++                Facility.location.ilike(user_loc),
++                Facility.name.ilike(user_loc),
++            )
++        ).first()
++        if fac:
++            defaults["region"] = fac.region or fac.location or user_loc
++            defaults["division"] = fac.division
++            defaults["activity"] = fac.activity
++            defaults["facility_id"] = str(fac.id)
++            defaults["facility_name"] = fac.name
++
++    return defaults
++
+ 
+ 
+ def validate_password_complexity(password: str):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

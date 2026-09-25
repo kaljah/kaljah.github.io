@@ -1,0 +1,1 @@
+A1: Both: some agents test the UI via browser, others hammer the API directly

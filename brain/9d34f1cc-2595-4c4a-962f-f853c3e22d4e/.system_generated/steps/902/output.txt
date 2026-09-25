@@ -1,0 +1,44 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\reports.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -923,13 +923,21 @@
+ 
+             # Loss rate %
+             ch4_vol_m3 = (bu_ch4 * 1000.0) / 0.6785 if bu_ch4 > 0 else 0.0
+-            loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0) if gas_m3 > 0 else 0.0
+             target_rate = (
+                 0.20 if "upstream" in (f.segment or "Upstream").lower() else 0.05
+             )
+-            comp_status = (
+-                "Compliant" if loss_rate_pct <= target_rate else "Non-Compliant"
+-            )
++            if gas_m3 > 0:
++                loss_rate_pct = (ch4_vol_m3 / gas_m3 * 100.0)
++                comp_status = (
++                    "Compliant" if loss_rate_pct <= target_rate else "Non-Compliant"
++                )
++            else:
++                if bu_ch4 > 0:
++                    loss_rate_pct = None
++                    comp_status = "Non-Compliant (Missing Production Data)"
++                else:
++                    loss_rate_pct = 0.0
++                    comp_status = "N/A (No Activity)"
+ 
+             # Canonical OGMP Level calculation
+             curr_lvl = compute_facility_ogmp_level(
+@@ -959,7 +959,11 @@
+             ws1.cell(row=row_curr, column=9, value=round(gas_m3, 2))
+             ws1.cell(row=row_curr, column=10, value=round(bu_ch4, 2))
+             ws1.cell(row=row_curr, column=11, value=round(td_ch4, 2))
+-            ws1.cell(row=row_curr, column=12, value=round(loss_rate_pct, 4))
++            ws1.cell(
++                row=row_curr,
++                column=12,
++                value=round(loss_rate_pct, 4) if loss_rate_pct is not None else "N/A",
++            )
+             ws1.cell(row=row_curr, column=13, value=target_rate)
+             ws1.cell(row=row_curr, column=14, value=comp_status)
+             ws1.cell(row=row_curr, column=15, value=pathway)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

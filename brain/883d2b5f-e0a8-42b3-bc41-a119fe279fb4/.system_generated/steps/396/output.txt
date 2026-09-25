@@ -1,0 +1,121 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -279,6 +279,63 @@
+             skipped_rows = []  # Store raw row data for error CSV
+             anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
+             batch_prod_map = {}  # In-batch duplicate tracking for production upserts
++            batch_scope1_map = {}
++            batch_scope2_map = {}
++            batch_scope3_map = {}
++
++            from models import Emission, Scope2Emission, Scope3Emission
++
++            if str(scope) == "1":
++                for e in Emission.query.with_entities(
++                    Emission.id,
++                    Emission.facility_id,
++                    Emission.year,
++                    Emission.month,
++                    Emission.process_type,
++                    Emission.fuel_type,
++                    Emission.equipment_id,
++                ).all():
++                    k = (
++                        e.facility_id,
++                        e.year,
++                        e.month,
++                        (e.process_type or "").strip().lower(),
++                        (e.fuel_type or "").strip().lower(),
++                        (e.equipment_id or "").strip().lower(),
++                    )
++                    batch_scope1_map[k] = e.id
++
++            elif str(scope) == "2":
++                for e in Scope2Emission.query.with_entities(
++                    Scope2Emission.id,
++                    Scope2Emission.facility_id,
++                    Scope2Emission.year,
++                    Scope2Emission.month,
++                    Scope2Emission.source_type,
++                ).all():
++                    k = (
++                        e.facility_id,
++                        e.year,
++                        e.month,
++                        (e.source_type or "electricity").strip().lower(),
++                    )
++                    batch_scope2_map[k] = e.id
++
++            elif str(scope) in ["3", "3_eeio"]:
++                for e in Scope3Emission.query.with_entities(
++                    Scope3Emission.id,
++                    Scope3Emission.facility_id,
++                    Scope3Emission.year,
++                    Scope3Emission.month,
++                    Scope3Emission.category,
++                ).all():
++                    k = (
++                        e.facility_id,
++                        e.year,
++                        e.month,
++                        (e.category or "").strip().lower(),
++                    )
++                    batch_scope3_map[k] = e.id
+ 
+             # Initialize anomaly detector
+             from calculations.anomaly import AnomalyDetector
+@@ -316,15 +316,37 @@
+                 # Process Row based on scope
+                 if str(scope) == "2":
+                     emission_obj, row_errors = _process_row_scope2(
+-                        mapped_data, user_id, fac_name_map, fac_id_map, GRID_FACTORS, job_id, processed
++                        mapped_data,
++                        user_id,
++                        fac_name_map,
++                        fac_id_map,
++                        GRID_FACTORS,
++                        job_id,
++                        processed,
++                        batch_keys=batch_scope2_map,
++                        overwrite_duplicates=overwrite_duplicates,
+                     )
+                 elif str(scope) == "3_eeio":
+                     emission_obj, row_errors = _process_row_scope3_eeio(
+-                        mapped_data, user_id, fac_name_map, fac_id_map, job_id, processed
++                        mapped_data,
++                        user_id,
++                        fac_name_map,
++                        fac_id_map,
++                        job_id,
++                        processed,
++                        batch_keys=batch_scope3_map,
++                        overwrite_duplicates=overwrite_duplicates,
+                     )
+                 elif str(scope) == "3":
+                     emission_obj, row_errors = _process_row_scope3(
+-                        mapped_data, user_id, fac_name_map, fac_id_map, job_id, processed
++                        mapped_data,
++                        user_id,
++                        fac_name_map,
++                        fac_id_map,
++                        job_id,
++                        processed,
++                        batch_keys=batch_scope3_map,
++                        overwrite_duplicates=overwrite_duplicates,
+                     )
+                 elif str(scope) == "sources":
+                     emission_obj, row_errors = _process_row_sources(
+@@ -358,7 +358,9 @@
+                         gwp_dict=gwp_dict,
+                         gwp_std=gwp_std,
+                         job_id=job_id,
+-                        row_idx=processed
++                        row_idx=processed,
++                        batch_keys=batch_scope1_map,
++                        overwrite_duplicates=overwrite_duplicates,
+                     )
+                 else:
+                     emission_obj = None
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

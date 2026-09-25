@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":35,"LineContent":"        if user.role not in [\"admin\", \"superuser\", \"it_admin\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":58,"LineContent":"    if current_user and current_user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":158,"LineContent":"    is_it_admin = bool(user and user.role == \"it_admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":203,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":246,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":291,"LineContent":"    is_it_admin = bool(user and user.role == \"it_admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":260,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":461,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":710,"LineContent":"    if user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":17,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":31,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":68,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":123,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":159,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":245,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":317,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":388,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":418,"LineContent":"        if not user or user.role not in [\"admin\", \"superuser\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":438,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":476,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":478,"LineContent":"    if not user or user.role not in [\"admin\", \"superuser\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":537,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":553,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":625,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":747,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":772,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":774,"LineContent":"    if not user or user.role not in [\"admin\", \"superuser\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":811,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":813,"LineContent":"    if not user or user.role not in [\"admin\", \"superuser\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":833,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":892,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":894,"LineContent":"    if not user or user.role not in [\"admin\", \"superuser\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":951,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":953,"LineContent":"    if not user or user.role not in [\"admin\", \"superuser\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":987,"LineContent":"    if user and user.role == \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":1031,"LineContent":"    if not user or user.role not in [\"admin\", \"superuser\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":119,"LineContent":"        if user.role != \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":142,"LineContent":"        if user.role != \"admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":168,"LineContent":"        if user.role not in [\"superuser\", \"admin\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":232,"LineContent":"                    \"role\": user.role,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":291,"LineContent":"                    \"role\": user.role,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":420,"LineContent":"            \"role\": user.role,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":710,"LineContent":"    if user and user.role == \"it_admin\" and has_operational_keys:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":713,"LineContent":"    is_admin = user and user.role in [\"admin\", \"superuser\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":871,"LineContent":"        user.role = new_role"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":915,"LineContent":"                \"role\": user.role,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":25,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":63,"LineContent":"    if user and user.role in ['viewer', 'auditor', 'it_admin']:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":160,"LineContent":"    if user and user.role in ['viewer', 'auditor', 'it_admin']:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":193,"LineContent":"    if user and user.role in ['viewer', 'auditor', 'it_admin']:"}
+(...88 more results not shown)

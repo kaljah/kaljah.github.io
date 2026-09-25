@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\Scope1Form.jsx:1265:  const getProcessOptions = () => {
+new\client\src\components\Scope1Form.jsx:1484:                options={getProcessOptions()}
+
+
+

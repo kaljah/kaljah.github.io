@@ -1,0 +1,44 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\dispatcher.py:28:class CalculationDispatcher:
+new\server\calculations\dispatcher.py:33:    def __init__(self):
+new\server\calculations\dispatcher.py:84:    def _require(self, key, inputs, description):
+new\server\calculations\dispatcher.py:100:    def _normalize_volume(self, value, unit, target_unit="m3"):
+new\server\calculations\dispatcher.py:131:    def _require_float(self, flat_inputs, keys, desc):
+new\server\calculations\dispatcher.py:146:    def _parse_fraction_value(self, val, key_name="", is_percent=False):
+new\server\calculations\dispatcher.py:166:    def _require_fraction(self, flat_inputs, keys, desc, is_percent=False):
+new\server\calculations\dispatcher.py:181:    def _optional_fraction(self, flat_inputs, keys, default=0.0, 
+is_percent=False):
+new\server\calculations\dispatcher.py:193:    def dispatch(
+new\server\calculations\dispatcher.py:264:        if process_type in [
+new\server\calculations\dispatcher.py:304:            if process_type in [
+new\server\calculations\dispatcher.py:351:            if process_type in [
+new\server\calculations\dispatcher.py:376:                def safe_frac(key):
+new\server\calculations\dispatcher.py:426:            elif process_type == "flaring":
+new\server\calculations\dispatcher.py:441:                def safe_frac(key):
+new\server\calculations\dispatcher.py:466:                def _get_eff(keys):
+new\server\calculations\dispatcher.py:504:            elif process_type in ["drilling", "mud_degassing"]:
+new\server\calculations\dispatcher.py:530:            elif process_type == "completions":
+new\server\calculations\dispatcher.py:585:            elif process_type in ["liquids_unloading", "unloading"]:
+new\server\calculations\dispatcher.py:655:            elif process_type in ["venting", "blowdown"]:
+new\server\calculations\dispatcher.py:711:            elif process_type in [
+new\server\calculations\dispatcher.py:779:            elif process_type in ["pneumatic_devices", "pneumatic_device", 
+"pneumatic"]:
+new\server\calculations\dispatcher.py:817:            elif process_type == "fugitive":
+new\server\calculations\dispatcher.py:861:                    def _wrap_unc(val, gas):
+new\server\calculations\dispatcher.py:900:            elif process_type in ["compressor_seal", "compressor_fugitive"]:
+new\server\calculations\dispatcher.py:926:            elif process_type in ["fugitive_component", 
+"component_fugitive"]:
+new\server\calculations\dispatcher.py:966:            elif process_type in [
+new\server\calculations\dispatcher.py:1001:            elif process_type in ["agr", "acid_gas_removal"]:
+new\server\calculations\dispatcher.py:1055:            elif process_type in ["cogen_allocation", "cogen"]:
+new\server\calculations\dispatcher.py:1078:            elif process_type in [
+new\server\calculations\dispatcher.py:1103:            elif process_type == "dehydrator":
+new\server\calculations\dispatcher.py:1190:            elif process_type == "indirect_steam":
+new\server\calculations\dispatcher.py:1238:    def _generic_calculation(
+new\server\calculations\dispatcher.py:1367:        def wrap(val, gas):
+
+
+

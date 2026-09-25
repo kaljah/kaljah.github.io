@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":6,"LineContent":"  CH4_20: 72,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":14,"LineContent":"  CH4_20: 82.5,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":22,"LineContent":"  CH4_20: 82.5,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":40,"LineContent":"      CH4: std.CH4_20 || 82.5,"}

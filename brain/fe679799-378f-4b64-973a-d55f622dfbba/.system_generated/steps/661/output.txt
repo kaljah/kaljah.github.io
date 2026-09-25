@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 11:25:48,067] INFO in app: Updated account: a
+[2026-09-23 11:25:48,152] INFO in app: Updated account: a@a
+[2026-09-23 11:25:48,235] INFO in app: Updated account: z
+[2026-09-23 11:25:48,324] INFO in app: Updated account: z@z
+[2026-09-23 11:25:48,352] INFO in app: GET /api/dashboard/sbti-trajectory 200 [0.013s] [ReqID: fa63cea5-9ec4-459a-a77f-96d83adfde55]
+[2026-09-23 11:25:48,386] INFO in app: GET /api/dashboard/intensity-trend 200 [0.033s] [ReqID: 3f7c6197-83e3-423b-8a6c-336acbbd5396]
+[2026-09-23 11:25:48,415] INFO in app: GET /api/dashboard/ogmp-metrics 200 [0.027s] [ReqID: c72f6fd5-8a74-4674-a41e-8608f65663a8]
+[2026-09-23 11:25:48,423] INFO in app: GET /api/dashboard/uncertainty 200 [0.007s] [ReqID: 342f8903-c538-467c-a0cc-1c12f580b1b1]
+[2026-09-23 11:25:48,430] INFO in app: GET /api/dashboard/mitigation 200 [0.005s] [ReqID: 413bb722-d1ed-4910-a653-20ae071adb60]
+[2026-09-23 11:25:48,437] INFO in app: GET /api/dashboard/base-year 200 [0.005s] [ReqID: a4bab630-b288-4e7d-9dbf-f4eda58cf2ed]
+[2026-09-23 11:25:48,442] INFO in app: GET /api/dashboard/years 200 [0.004s] [ReqID: ffe911ad-346c-4aee-bc4c-be183eb1f2a8]
+/api/dashboard/sbti-trajectory -> Status: 200
+/api/dashboard/intensity-trend -> Status: 200
+/api/dashboard/ogmp-metrics -> Status: 200
+/api/dashboard/uncertainty -> Status: 200
+/api/dashboard/mitigation -> Status: 200
+/api/dashboard/base-year -> Status: 200
+/api/dashboard/years -> Status: 200
+

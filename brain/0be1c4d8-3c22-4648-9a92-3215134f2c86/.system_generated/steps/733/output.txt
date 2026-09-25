@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 24 items
+
+tests/test_all_bulk_imports.py::test_bulk_import_facilities PASSED       [  4%]
+tests/test_all_bulk_imports.py::test_bulk_import_custom_factors PASSED   [  8%]
+tests/test_all_bulk_imports.py::test_bulk_import_production PASSED       [ 12%]
+tests/test_all_bulk_imports.py::test_bulk_import_sources PASSED          [ 16%]
+tests/test_all_bulk_imports.py::test_bulk_import_mitigation PASSED       [ 20%]
+tests/test_all_bulk_imports.py::test_bulk_import_scope2 PASSED           [ 25%]
+tests/test_all_bulk_imports.py::test_bulk_import_scope3 PASSED           [ 29%]
+tests/test_all_bulk_imports.py::test_bulk_import_scope1 PASSED           [ 33%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_get_emissions_requires_auth PASSED [ 37%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_delete_emission_requires_auth PASSED [ 41%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_bulk_delete_requires_auth PASSED [ 45%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_import_requires_auth PASSED [ 50%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_export_requires_auth PASSED [ 54%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_emission_factors_requires_auth PASSED [ 58%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_audit_post_removed PASSED [ 62%]
+tests/test_api_security.py::TestUnauthenticatedAccess::test_health_does_not_expose_db PASSED [ 66%]
+tests/test_api_security.py::TestIDOR::test_user_cannot_delete_other_users_emission PASSED [ 70%]
+tests/test_api_security.py::TestIDOR::test_user_can_delete_own_emission PASSED [ 75%]
+tests/test_api_security.py::TestInputLimits::test_limit_all_capped_at_5000 PASSED [ 79%]
+tests/test_api_security.py::TestInputLimits::test_large_payload_rejected PASSED [ 83%]
+tests/test_api_security.py::TestInputLimits::test_wildcard_search_does_not_crash PASSED [ 87%]
+tests/test_api_security.py::TestRateLimiting::test_login_rate_limit PASSED [ 91%]
+tests/test_api_security.py::TestCalculationIntegrity::test_calculation_error_returns_422_not_zero PASSED [ 95%]
+tests/test_audit_remediation.py::test_fugitive_screening_count_and_fraction PASSED [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+tests/test_api_security.py::TestIDOR::test_user_cannot_delete_other_users_emission
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py:151: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    if not Facility.query.get(1):
+
+tests/test_api_security.py::TestIDOR::test_user_can_delete_own_emission
+  C:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py:187: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    if not Facility.query.get(1):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 24 passed, 3 warnings in 8.06s ========================
+

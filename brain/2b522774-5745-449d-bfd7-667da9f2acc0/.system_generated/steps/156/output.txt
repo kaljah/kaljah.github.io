@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\DashboardEnhanced.jsx:360:      // Prior Year Weighted Intensity Calculation for YoY Trend
+  new\client\src\pages\DashboardEnhanced.jsx:361:      let pyIntensity = 0;
+  new\client\src\pages\DashboardEnhanced.jsx:362:      let pyHasProd = false;
+  new\client\src\pages\DashboardEnhanced.jsx:363:      const intensityPyData = batch.intensity_stats_py || [];
+  new\client\src\pages\DashboardEnhanced.jsx:364:      if (intensityPyData && intensityPyData.length > 0) {
+  new\client\src\pages\DashboardEnhanced.jsx:365:        let totalEmissionsForPy = 0;
+> new\client\src\pages\DashboardEnhanced.jsx:383:      // YoY Variance Calculation
+  new\client\src\pages\DashboardEnhanced.jsx:384:      if (currentYear !== "all") {
+  new\client\src\pages\DashboardEnhanced.jsx:385:        const cy = parseInt(currentYear);
+  new\client\src\pages\DashboardEnhanced.jsx:386:        const py = cy - 1;
+  new\client\src\pages\DashboardEnhanced.jsx:387:
+  new\client\src\pages\DashboardEnhanced.jsx:388:        // BUG FIX: Calculate aggregate emissions dynamically from 
+summaryData to support Compare Mode
+> new\client\src\pages\DashboardEnhanced.jsx:1266:                {flaringData.yoy_change_pct !== 0 && (
+> new\client\src\pages\DashboardEnhanced.jsx:1267:                  <span className="flaring-badge yoy">
+> new\client\src\pages\DashboardEnhanced.jsx:1268:                    {flaringData.yoy_change_pct > 0 ? 
+`+${flaringData.yoy_change_pct}% YoY` : `${flaringData.yoy_change_pct}% YoY`}
+  new\client\src\pages\DashboardEnhanced.jsx:1269:                  </span>
+  new\client\src\pages\DashboardEnhanced.jsx:1270:                )}
+  new\client\src\pages\DashboardEnhanced.jsx:1271:              </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1272:            </div>
+  new\client\src\pages\DashboardEnhanced.jsx:1273:
+
+
+

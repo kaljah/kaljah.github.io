@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":102,"LineContent":"    { id: \"comp_rate\", label: \"Comp Rate\", required: false },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":789,"LineContent":"            \"comp_rate\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":180,"LineContent":"      { id: \"comp_rate\", label: \"Comp Rate\", required: false },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":469,"LineContent":"            \"comp_rate\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":647,"LineContent":"        const hasRateDur = formData.comp_duration \u0026\u0026 formData.comp_rate;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":871,"LineContent":"        const rateMcfHr = parseFloat(formData.comp_rate || 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":163,"LineContent":"  { key: \"completions\",            label: \"Well Completions\",         IconComp: Icon.Layers,    tier1Fields: [\"quantity\",\"unit\"],       tier3Extra: [\"comp_method\",\"comp_rate\",\"comp_duration\",\"ch4_content\",\"comp_flare_eff\"] },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":294,"LineContent":"      { key: \"comp_rate\",         label: \"Completion Rate\",    required: false, hint: \"Gas flow rate during completion\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CompletionsForm.jsx","LineNumber":80,"LineContent":"                value={data.comp_rate || \"\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CompletionsForm.jsx","LineNumber":88,"LineContent":"                  onChange(\"comp_rate\", e.target.value);"}

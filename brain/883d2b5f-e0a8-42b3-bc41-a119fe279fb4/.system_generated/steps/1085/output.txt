@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":824,"LineContent":"def _process_row_scope2("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":999,"LineContent":"def _process_row_scope3_eeio("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1100,"LineContent":"def _process_row_scope3("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1208,"LineContent":"def _process_row_sources(row, user_id, fac_name_map, fac_id_map):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1250,"LineContent":"def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_map=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1344,"LineContent":"def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1418,"LineContent":"def _process_row_custom_factors(row, user_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1448,"LineContent":"def _process_row_facilities(row, user_id, overwrite_duplicates):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1524,"LineContent":"def _process_row("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":6,"LineContent":"eeio_processor = \"\"\"def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":68,"LineContent":"def _process_row_scope3(\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":70,"LineContent":"content = content.replace(\"def _process_row_scope3(\", eeio_processor)"}

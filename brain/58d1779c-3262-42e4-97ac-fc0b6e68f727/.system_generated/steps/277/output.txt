@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -306,6 +306,7 @@
+ 
+ 
+ @auth_bp.route("/login", methods=["POST"])
++@csrf.exempt
+ @limiter.limit("20 per 15 minutes")  # SEC-01 FIX: rely cleanly on Flask-Limiter
+ def login():
+     data = request.get_json()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

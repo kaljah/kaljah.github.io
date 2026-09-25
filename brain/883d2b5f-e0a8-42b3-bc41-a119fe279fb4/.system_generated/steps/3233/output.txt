@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+
+new\server\app.py:55:# WAL checkpoint counter - runs PRAGMA wal_checkpoint(TRUNCATE) every 500 commits
+new\server\app.py:56:# to prevent the SQLite WAL file from growing unboundedly.
+new\server\app.py:57:_wal_commit_counter = 0
+new\server\app.py:58:_WAL_CHECKPOINT_INTERVAL = 500
+new\server\app.py:66:        cursor.execute("PRAGMA journal_mode = WAL")
+new\server\app.py:68:        cursor.execute("PRAGMA busy_timeout = 5000")
+new\server\app.py:93:    global _wal_commit_counter
+new\server\app.py:97:    # Periodic WAL checkpoint to truncate the WAL file
+new\server\app.py:98:    _wal_commit_counter += 1
+new\server\app.py:99:    if _wal_commit_counter % _WAL_CHECKPOINT_INTERVAL == 0:
+new\server\app.py:103:                conn.connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+new\server\app.py:105:        except Exception as _wal_err:
+new\server\app.py:106:            app.logger.warning(f"WAL checkpoint failed: {_wal_err}")
+
+
+

@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_calculations_page.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -191,7 +191,7 @@
+ 
+     rec_id = data["record"]["id"]
+     with app.app_context():
+-        rec = Scope2Emission.query.get(rec_id)
++        rec = db.session.get(Scope2Emission, rec_id)
+         assert rec is not None
+         assert rec.status == "Draft"
+         # Verify co2e was calculated from grid factors rather than saved as 0.0
+@@ -248,7 +248,7 @@
+     assert s3_data["record"]["status"] == "Draft"
+ 
+     with app.app_context():
+-        s3_rec = Scope3Emission.query.get(s3_data["record"]["id"])
++        s3_rec = db.session.get(Scope3Emission, s3_data["record"]["id"])
+         assert s3_rec is not None
+         assert s3_rec.status == "Draft"
+         assert pytest.approx(s3_rec.co2e, 0.01) == 3.50
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,20 @@
+Task: 9d34f1cc-2595-4c4a-962f-f853c3e22d4e/task-527
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\.system_generated\tasks\task-527.log
+Log output:
+<truncated 78 lines>
+ 3742.899018767832 � 0.037429
+
+tests\test_battery_stoichiometry_indirect_energy.py:175: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_battery_stoichiometry_indirect_energy.py::TestCogenAllocationBattery::test_wri_efficiency_method_allocation
+FAILED tests/test_battery_stoichiometry_indirect_energy.py::TestCogenAllocationBattery::test_energy_content_method_allocation
+=================== 2 failed, 19 passed, 1 warning in 1.66s ===================
+
+Last progress: 4s ago

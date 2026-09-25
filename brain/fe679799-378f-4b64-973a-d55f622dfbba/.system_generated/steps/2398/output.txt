@@ -1,0 +1,19 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":121,"LineContent":"    \"\"\"SMOKE-10: Insecure hard-coded dev accounts (a@a, a) do not exist.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":123,"LineContent":"    for email in [\"a@a\", \"a\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_sbti.py","LineNumber":18,"LineContent":"        user = User.query.filter_by(email=\"a@a\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_sbti.py","LineNumber":20,"LineContent":"            user = User(email=\"a@a\", fullName=\"Admin User\", orgName=\"AdminOrg\", sector=\"Energy\", role=\"admin\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_sbti.py","LineNumber":51,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_sbti.py","LineNumber":93,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":4,"LineContent":"  - Hard-coded dev accounts (a@a, a) are not auto-created"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":34,"LineContent":"    SECURITY REGRESSION (CRIT-02): The 'a@a' dev shortcut account must not be"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":39,"LineContent":"        user = User.query.filter_by(email=\"a@a\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":41,"LineContent":"            \"SECURITY FAILURE: Account 'a@a' exists in the database. \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_security_hardening.py","LineNumber":42,"LineContent":"            \"Hard-coded dev credential 'a@a'/'a' must never be auto-seeded.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":24,"LineContent":"        user = User.query.filter_by(email=\"a@a\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":27,"LineContent":"                email=\"a@a\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":86,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":107,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":121,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":139,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":161,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":178,"LineContent":"    client.post(\"/api/auth/login\", json={\"email\": \"a@a\", \"password\": \"a\"})"}

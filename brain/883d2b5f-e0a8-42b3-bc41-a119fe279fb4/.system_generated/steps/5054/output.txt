@@ -1,0 +1,60 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_all_apis_health.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -13,27 +13,34 @@
+ 
+ BASE_URL = "http://127.0.0.1:5000"
+ 
+-def substitute_url_params(rule_str):
+-    """Replace route parameter placeholders with realistic test values."""
+-    substitutions = {
+-        "<int:emission_id>": "1",
+-        "<int:facility_id>": "1",
+-        "<int:source_id>": "1",
+-        "<int:record_id>": "1",
+-        "<int:id>": "1",
+-        "<id>": "1",
+-        "<int:year>": "2024",
+-        "<job_id>": "job_sample_123",
+-        "<segment>": "Transmission and Processing",
+-        "<process_category>": "Flaring",
+-        "<path:filename>": "swagger-ui.css",
+-        "<path:path>": "",
+-        "<string:mitigation_id>": "1",
++import re
++
++def resolve_rule(rule_str, is_delete=False):
++    """Replace route parameter placeholders cleanly without modifying host."""
++    test_id_val = "999999" if is_delete else "1"
++    replacements = {
++        "emission_id": test_id_val,
++        "facility_id": test_id_val,
++        "factor_id": test_id_val,
++        "filename": "swagger-ui.css",
++        "id": test_id_val,
++        "job_id": "test_job_123",
++        "mitigation_id": test_id_val,
++        "path": "",
++        "process_category": "Flaring",
++        "rec_id": test_id_val,
++        "record_id": test_id_val,
++        "segment": "Transmission and Processing",
++        "source_id": test_id_val,
++        "year": "2024",
+     }
+-    url = rule_str
+-    for param, val in substitutions.items():
+-        url = url.replace(param, val)
+-    return url
++    def replacer(match):
++        arg_name = match.group(1)
++        return str(replacements.get(arg_name, "1"))
++
++    resolved = re.sub(r'<(?:\w+:)?(\w+)>', replacer, rule_str)
++    resolved = re.sub(r'/{2,}', '/', resolved)
++    return resolved
+ 
+ def get_sample_payload(endpoint, method):
+     """Provide realistic sample payloads for POST/PUT endpoints."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

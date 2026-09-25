@@ -1,0 +1,62 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 14 items / 13 deselected / 1 selected
+
+new\server\tests\test_ui_calculation_parity.py::TestScope1UINumericalParity::test_flaring_sour_gas_ui_parity FAILED [100%]
+
+================================== FAILURES ===================================
+_________ TestScope1UINumericalParity.test_flaring_sour_gas_ui_parity _________
+
+self = <test_ui_calculation_parity.TestScope1UINumericalParity object at 0x000001CEF52CAB70>
+client = <FlaskClient <Flask 'app'>>, auth_admin = <User 30>, test_facility = 23
+
+    def test_flaring_sour_gas_ui_parity(self, client, auth_admin, test_facility):
+        """Flaring calculation with 98% destruction efficiency and uncombusted methane."""
+        payload = {
+            "year": 2025,
+            "month": 2,
+            "facility_id": test_facility,
+            "process_type": "flaring",
+            "fuel": "Field Gas",
+            "amount": 25000,
+            "unit": "m3",
+            "status": "Verified",
+            "calc_inputs": {
+                "flaring": {
+                    "flare_volume": 25000,
+                    "flare_combustion_efficiency": 0.98,
+                }
+            },
+        }
+        res = client.post("/api/emissions", json=payload)
+        assert res.status_code in [200, 201]
+        data = res.get_json()
+        em = data["emissions"]
+    
+        # Flaring produces substantial CO2 and uncombusted CH4
+>       assert em["co2"] > 0
+E       assert 0.0 > 0
+
+new\server\tests\test_ui_calculation_parity.py:228: AssertionError
+----------------------------- Captured log setup ------------------------------
+INFO     app:app.py:153 POST /api/auth/login 200 [0.081s] [ReqID: 1c62e0d3-2f8b-4e36-85e7-08896624b6dd]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 POST /api/emissions 201 [0.018s] [ReqID: 8b3afe2d-a2f5-4286-9439-d56f2943995a]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope1UINumericalParity::test_flaring_sour_gas_ui_parity
+================= 1 failed, 13 deselected, 1 warning in 2.65s =================
+

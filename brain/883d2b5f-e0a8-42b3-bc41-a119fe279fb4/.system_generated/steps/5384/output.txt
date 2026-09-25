@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -154,6 +154,7 @@
+     currentSegment,
+     isCompareMode,
+     includePending,
++    gwpHorizon,
+   ]);
+ 
+   const loadDashboardData = async () => {
+@@ -181,6 +181,9 @@
+       if (includePending) {
+         filterParams.append("includePending", "true");
+       }
++      if (gwpHorizon && gwpHorizon !== "100") {
++        filterParams.append("gwp_horizon", gwpHorizon);
++      }
+ 
+       // Part 3: Optimized Batch Dashboard API Call
+       const batchRes = await api.get(`/dashboard/batch-all?${filterParams}`);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

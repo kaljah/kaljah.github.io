@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+[graphify] fail-closed: kept node(s) from 1 source file(s) that left the scan corpus but still exist on disk (ignore rules or filters changed?). Run a full re-extraction to purge them if the exclusion is intentional.
+[graphify extract] incremental scan of C:\Users\samsung\Desktop\H2
+[graphify extract] --code-only: skipping 1642 non-code file(s) (1192 docs, 2 papers, 448 images) — no LLM extraction
+[graphify extract] 572 code, 0 docs, 0 papers, 0 images changed; 19 unchanged; 0 deleted
+[graphify extract] 1190 file(s) not classified (no supported extension or shebang), skipped: .checksum, .dockerignore, .env.example, .gitignore, .python-version, 00831633-e548-4e2d-9163-99f846b6739b.pb (+1184 more)
+[graphify extract] 1 file(s) skipped as potentially sensitive (rename or move if wrongly flagged): .env.production
+[graphify extract] AST extraction on 572 code files...
+  AST extraction: 100/343 uncached files (29%) [8 workers]
+  AST extraction: 200/343 uncached files (58%) [8 workers]
+  AST extraction: 300/343 uncached files (87%) [8 workers]
+  AST extraction: 343/343 uncached files (100%) [8 workers]
+  warning: 231 source file(s) produced zero nodes and are absent from the graph: init-options.json, integration.json, gemini.manifest.json, speckit.manifest.json, .constitution-template.json (+226 more). A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+  warning: 26 file(s) had syntax errors and may be partially extracted: BatchReviewWizard.jsx (first error at line 490), BulkImportModal.jsx (first error at line 1603), CalculationDetails.jsx (first error at line 45), ColumnMappingWizard.jsx (first error at line 1361), Scope1Form.jsx (first error at line 1498) (+21 more) (#2551)
+[graphify] Replaced 3254 node(s) from re-extracted source file(s).
+[graphify] Deduplicated 44 node(s) (39 exact, 5 fuzzy).
+[graphify] 1 source file(s) deleted or excluded since last run — no matching nodes or edges in graph, already clean.
+[graphify] backed up semantic+curated graph (6 files) -> 2026-09-24/
+[graphify extract] wrote C:\Users\samsung\Desktop\H2\graphify-out\graph.json: 5776 nodes, 9724 edges, 466 communities
+[graphify extract] wrote C:\Users\samsung\Desktop\H2\graphify-out\.graphify_analysis.json
+[graphify extract] incremental summary: 19 files cached/unchanged, 572 re-extracted, 0 deleted
+[graphify extract] next: run `graphify cluster-only C:\Users\samsung\Desktop\H2` to generate GRAPH_REPORT.md and name communities
+

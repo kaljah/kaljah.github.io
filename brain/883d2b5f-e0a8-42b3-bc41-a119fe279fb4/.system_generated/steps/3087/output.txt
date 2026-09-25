@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+new\server\tests\test_tier_scope_kpi_numerical.py:5:  1. Scope 1: Tier 1, Tier 2, Tier 3 calculations across all 
+emission sources
+new\server\tests\test_tier_scope_kpi_numerical.py:7:  3. Scope 3: Tier 1 (Spend-based EEIO), Tier 2 (Average-data), 
+Tier 3 (Supplier-specific), Category 11
+new\server\tests\test_tier_scope_kpi_numerical.py:52:# 1. SCOPE 1: TIER 1, TIER 2, TIER 3 NUMERICAL VERIFICATION
+new\server\tests\test_tier_scope_kpi_numerical.py:56:    """Verifies Scope 1 calculations across Tier 1 (default), 
+Tier 2 (regional/custom), and Tier 3 (measured/composition)."""
+new\server\tests\test_tier_scope_kpi_numerical.py:112:    def 
+test_scope1_tier3_gas_composition_stoichiometric_balance(self):
+new\server\tests\test_tier_scope_kpi_numerical.py:113:        """Tier 3: Detailed chromatographic gas composition 
+(C1-C10) with carbon mass balance.
+new\server\tests\test_tier_scope_kpi_numerical.py:175:    def test_scope1_tier1_and_tier3_pneumatic_bleed(self):
+new\server\tests\test_tier_scope_kpi_numerical.py:176:        """Tier 1 default pneumatic bleed vs Tier 3 measured 
+bleed rates.
+new\server\tests\test_tier_scope_kpi_numerical.py:178:        Tier 3: 5 low-bleed devices measured at 2.1 scf/hr with 
+Coriolis calibration.
+new\server\tests\test_tier_scope_kpi_numerical.py:194:        # Tier 3
+new\server\tests\test_tier_scope_kpi_numerical.py:322:# 3. SCOPE 3: TIER 1 (EEIO), TIER 2 (AVERAGE), TIER 3 (SUPPLIER) 
+& CAT 11
+new\server\tests\test_tier_scope_kpi_numerical.py:326:    """Verifies Scope 3 across Tier 1 (Spend-based USEEIO), Tier 
+2 (Average-data), Tier 3 (Supplier-specific) and Category 11."""
+new\server\tests\test_tier_scope_kpi_numerical.py:360:    def test_scope3_tier3_supplier_specific_pcf(self):
+new\server\tests\test_tier_scope_kpi_numerical.py:361:        """Tier 3 Supplier-Specific: Category 1 Product Carbon 
+Footprint (EPD/LCA).
+new\server\tests\test_tier_scope_kpi_numerical.py:365:        Tier 3 measured uncertainty: 5% EF, 2% AD -> combined 
+~5.4%.
+new\server\tests\test_tier_scope_kpi_numerical.py:466:        AND the bottom-up inventory must be source-level 
+measured / Tier 3 (Level 4).
+
+
+

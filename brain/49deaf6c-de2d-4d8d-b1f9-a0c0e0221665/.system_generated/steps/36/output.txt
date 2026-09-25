@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\server\background_processor.py:564:                                emission_obj.qa_flag = flag_msg
+new\server\background_processor.py:1070:        emission.qa_flag = f"Outlier detected: usage {amount} exceeds 
+10,000,000 threshold"
+new\server\background_processor.py:1172:        emission.qa_flag = f"Outlier detected: activity data {spend_usd} 
+exceeds 10,000,000 threshold"
+new\server\background_processor.py:1300:        emission.qa_flag = f"Outlier detected: activity data {amt} exceeds 
+10,000,000 threshold"
+new\server\create_anomalies.py:15:            e1.qa_flag = "Anomaly: Quantity exceeds threshold (10,000,000)"
+new\server\create_anomalies.py:21:            e2.qa_flag = "Anomaly: Quantity exceeds threshold (10,000,000)"
+new\server\create_anomalies.py:27:            e3.qa_flag = "Anomaly: Quantity exceeds threshold (10,000,000)"
+new\server\routes\emissions.py:4543:        emission.qa_flag = f"Rejected: {reason}"
+new\server\routes\qaqc.py:755:            record.qa_flag = f"[{resolution}] {record.qa_flag}"[:255]
+new\server\routes\qaqc.py:757:            record.qa_flag = f"[{resolution}] Manually reviewed"
+new\server\routes\qaqc.py:843:                record.qa_flag = f"[{resolution}] {record.qa_flag}"[:255]
+new\server\routes\qaqc.py:845:                record.qa_flag = f"[{resolution}] Manually reviewed"
+
+
+

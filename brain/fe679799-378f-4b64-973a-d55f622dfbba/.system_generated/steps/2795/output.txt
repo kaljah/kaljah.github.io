@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 16:21:28,011] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+[2026-09-23 16:21:28,031] INFO in app: GET /health 404 [0.001s] [ReqID: 58d90dab-3fcf-41e5-a8f7-12827914f598]
+[2026-09-23 16:21:28,033] INFO in app: GET /health 404 [0.001s] [ReqID: f68336f9-99b6-41d4-90ae-350c8f6567ca]
+[2026-09-23 16:21:28,036] INFO in app: GET /health 404 [0.001s] [ReqID: fa1d7ce5-934c-4897-a088-2bd5e3e9c86c]
+[2026-09-23 16:21:28,038] INFO in app: GET /health 404 [0.001s] [ReqID: 2be1965a-f7e5-488b-9e01-49c5064ad9f6]
+[2026-09-23 16:21:28,041] INFO in app: GET /health 404 [0.000s] [ReqID: 8e4cd626-9e25-494c-badf-2686bd9cbee9]
+Statuses: [404, 404, 404, 404, 404]
+

@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 16 items
+
+tests/test_security_hardening.py::test_dev_account_a_at_a_does_not_exist PASSED [  6%]
+tests/test_security_hardening.py::test_dev_account_bare_a_does_not_exist PASSED [ 12%]
+tests/test_security_hardening.py::test_init_admin_route_removed PASSED   [ 18%]
+tests/test_security_hardening.py::test_csrf_token_endpoint_returns_token PASSED [ 25%]
+tests/test_security_hardening.py::test_csrf_token_endpoint_sets_readable_cookie PASSED [ 31%]
+tests/test_security_hardening.py::test_seed_admin_disabled_by_default PASSED [ 37%]
+tests/test_log_handler.py::test_no_import_debug_log_file_exists PASSED   [ 43%]
+tests/test_log_handler.py::test_trace_log_uses_rotating_handler PASSED   [ 50%]
+tests/test_audit.py::test_audit_rbac_unauthenticated PASSED              [ 56%]
+tests/test_audit.py::test_audit_rbac_regular_user_forbidden PASSED       [ 62%]
+tests/test_audit.py::test_audit_admin_and_it_admin_authorized PASSED     [ 68%]
+tests/test_audit.py::test_audit_search_and_filtering PASSED              [ 75%]
+tests/test_audit.py::test_audit_entity_id_fallback PASSED                [ 81%]
+tests/test_audit.py::test_audit_stats_endpoint PASSED                    [ 87%]
+tests/test_audit.py::test_audit_export_csv_and_formula_injection_defense PASSED [ 93%]
+tests/test_audit.py::test_audit_pagination_limits PASSED                 [100%]
+
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 16 passed, 1 warning in 2.29s ========================
+

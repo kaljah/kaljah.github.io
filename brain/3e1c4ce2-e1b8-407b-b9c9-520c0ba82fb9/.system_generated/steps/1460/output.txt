@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 20:09:40,730] INFO in app: Updated account: a
+[2026-09-21 20:09:40,820] INFO in app: Updated account: a@a
+[2026-09-21 20:09:40,909] INFO in app: Updated account: z
+[2026-09-21 20:09:41,009] INFO in app: Updated account: z@z
+[2026-09-21 20:09:41,126] INFO in app: POST /api/auth/login 200 [0.104s] [ReqID: a842fddd-1fd7-4a05-add5-523b164e51f5]
+[2026-09-21 20:09:41,163] INFO in app: GET /api/dashboard/intensity-stats 200 [0.033s] [ReqID: e752958d-4246-40c5-9151-aeebc49b7003]
+[2026-09-21 20:09:41,178] INFO in app: GET /api/dashboard/intensity-trend 200 [0.012s] [ReqID: 5e274198-55f8-4e1a-b908-cd8066e69f02]
+[2026-09-21 20:09:41,185] INFO in app: GET /api/data/cbam-exports 200 [0.005s] [ReqID: 688c4a36-3e19-4da2-b34c-957964e18e8c]
+Login status: 200
+Intensity stats 2024 status: 200
+Number of facilities in stats: 10
+Sample facility: Complexe Sid�rurgique DRI/EAF (Tosyali)
+  total_boe: 1221480.7999999998
+  co2_intensity: 0.0
+  co2_intensity_gwp20: 0.0
+  scope1_intensity: 0.0
+  scope1_intensity_gwp20: 0.0
+  scope2_intensity: 0.0
+  methane_loss_rate_pct: 0.0
+  wec_status: Compliant
+Trend status: 200
+Trend years returned: 5
+CBAM status: 200
+CBAM 2024 exports count: 4
+  CBAM export: Liquefied Natural Gas (LNG) 2711 11 00 55000.0 total_emb: 17600.0
+  CBAM export: Grey Portland Clinker 2523 10 00 40000.0 total_emb: 33080.0
+  CBAM export: Anhydrous Ammonia 2814 10 00 15000.0 total_emb: 29025.0
+  CBAM export: Direct Reduced Iron (DRI) 7203 10 00 25000.0 total_emb: 34250.0
+

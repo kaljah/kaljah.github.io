@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:451:    // Generate Charts with High Res
+new\client\src\utils\ModernReportGenerator.js:452:    const charts = await generateReportCharts(fullData, compData, 
+isComparison);
+
+
+

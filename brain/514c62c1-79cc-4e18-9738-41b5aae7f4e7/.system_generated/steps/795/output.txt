@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\layout\Sidebar.jsx:477:          className={`account-dropdown ${isAccountMenuOpen ? 
+"visible" : ""}`}
+new\client\src\components\layout\Sidebar.jsx:480:          <div className="dropdown-header">
+new\client\src\components\layout\Sidebar.jsx:488:          <div className="dropdown-divider"></div>
+new\client\src\components\layout\Sidebar.jsx:492:              className="dropdown-item"
+new\client\src\components\layout\Sidebar.jsx:514:              className="dropdown-item"
+new\client\src\components\layout\Sidebar.jsx:535:          <div className="dropdown-divider"></div>
+new\client\src\components\layout\Sidebar.jsx:538:            className="dropdown-item logout-item"
+new\client\src\components\layout\TopBar.jsx:63:            <div className="top-profile-dropdown">
+new\client\src\components\CustomDropdown.jsx:113:    <div className={`custom-dropdown ${isOpen ? "open" : ""}`} 
+ref={wrapperRef}>
+new\client\src\components\CustomDropdown.jsx:114:      <div className="dropdown-selected" onClick={handleToggle}>
+new\client\src\components\CustomDropdown.jsx:133:            className="dropdown-options dropdown-portal"
+new\client\src\components\CustomDropdown.jsx:151:                    className="dropdown-header"
+new\client\src\components\CustomDropdown.jsx:169:                  className={`dropdown-option ${value === 
+option.value ? "selected" : ""}`}
+new\client\src\components\MultiSelectDropdown.jsx:41:      className="custom-dropdown"
+new\client\src\components\MultiSelectDropdown.jsx:46:        className="dropdown-selected"
+new\client\src\components\MultiSelectDropdown.jsx:88:          className="dropdown-options"
+new\client\src\components\MultiSelectDropdown.jsx:105:            className="dropdown-option"
+new\client\src\components\MultiSelectDropdown.jsx:121:              className="dropdown-option"
+new\client\src\pages\AuditTrail.jsx:484:            <div className="export-dropdown-wrapper" ref={exportMenuRef}>
+new\client\src\pages\AuditTrail.jsx:581:          <div className="filter-dropdowns-row">
+
+
+

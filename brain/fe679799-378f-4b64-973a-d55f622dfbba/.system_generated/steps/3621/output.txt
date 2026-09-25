@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":36,"LineContent":"        api.get(\"/custom-factors\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":753,"LineContent":"            const res = await api.get('/custom-factors');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":945,"LineContent":"                await api.put(`/custom-factors/${editingFactorId}`, factorForm);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":948,"LineContent":"                await api.post('/custom-factors', factorForm);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":965,"LineContent":"                    await api.delete(`/custom-factors/${id}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.jsx","LineNumber":245,"LineContent":"      await api.post(\"/custom-factors\", {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":179,"LineContent":"      const res = await api.get(\"/custom-factors\");"}

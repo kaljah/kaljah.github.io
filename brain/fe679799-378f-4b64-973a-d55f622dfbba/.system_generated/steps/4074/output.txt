@@ -1,0 +1,21 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-4072
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-4072.log
+Log output:
+<truncated 160 lines>
+yword argument for Facility
+
+..\..\..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py:2139: TypeError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_tier2_api_e2e.py::test_tier2_sonatrach_preset_e2e - TypeErro...
+ERROR tests/test_tier2_api_e2e.py::test_tier2_ianor_diesel_preset_e2e - TypeE...
+ERROR tests/test_tier2_api_e2e.py::test_tier2_quick_add_custom_factor_and_submit
+======================== 1 warning, 3 errors in 1.96s =========================
+
+Last progress: 3s ago

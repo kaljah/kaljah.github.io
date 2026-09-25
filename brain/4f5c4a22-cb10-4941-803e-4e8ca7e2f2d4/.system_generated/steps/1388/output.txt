@@ -1,0 +1,102 @@
+
+The command exited with code 0.
+Output:
+<truncated 29 lines>
+new\client\src\components\Scope1Form.jsx:1004:        user_uncertainty:
+new\client\src\components\Scope1Form.jsx:1005:          sourceType === "specific" ? userUncertainty : undefined,
+new\client\src\components\Scope1Form.jsx:1006:        meter_uncertainty_pct:
+new\client\src\components\Scope1Form.jsx:1007:          sourceType === "specific" ? meterUncertaintyPct : undefined,
+new\client\src\components\Scope1Form.jsx:1008:        gc_uncertainty_pct:
+new\client\src\components\Scope1Form.jsx:1009:          sourceType === "specific" ? gcUncertaintyPct : undefined,
+new\client\src\components\Scope1Form.jsx:1034:      setUncertainty({ co2: null, ch4: null, n2o: null });
+new\client\src\components\Scope1Form.jsx:1045:      setUserUncertainty({ co2: "", ch4: "", n2o: "" });
+new\client\src\components\Scope1Form.jsx:1046:      setMeterUncertaintyPct("2.0");
+new\client\src\components\Scope1Form.jsx:1047:      setGcUncertaintyPct("");
+new\client\src\components\Scope1Form.jsx:1140:      uncertainty: {
+new\client\src\components\Scope1Form.jsx:1141:        co2: entry.uncertainty_co2,
+new\client\src\components\Scope1Form.jsx:1142:        ch4: entry.uncertainty_ch4,
+new\client\src\components\Scope1Form.jsx:1143:        n2o: entry.uncertainty_n2o,
+new\client\src\components\Scope1Form.jsx:1164:          name: "4. Quality Assurance & Uncertainty Profile",
+new\client\src\components\Scope1Form.jsx:1165:          desc: `Standard combined uncertainty (1s): CO� 
+${entry.uncertainty_co2 != null ? '�' + (entry.uncertainty_co2 * 100).toFixed(0) + '%' : '-'}, CH4 
+${entry.uncertainty_ch4 != null ? '�' + (entry.uncertainty_ch4 * 100).toFixed(0) + '%' : '-'}, N�O 
+${entry.uncertainty_n2o != null ? '�' + (entry.uncertainty_n2o * 100).toFixed(0) + '%' : '-'}. Verification Status: 
+${entry.status || 'Verified'}.`,
+new\client\src\components\Scope1Form.jsx:1723:        {/* 4. COMPLIANCE & UNCERTAINTY */}
+new\client\src\components\Scope1Form.jsx:1725:          <h4 className="section-title">4. COMPLIANCE & UNCERTAINTY</h4>
+new\client\src\components\Scope1Form.jsx:1775:                        value={meterUncertaintyPct}
+new\client\src\components\Scope1Form.jsx:1776:                        onChange={(e) => 
+setMeterUncertaintyPct(e.target.value)}
+new\client\src\components\Scope1Form.jsx:1831:                        value={gcUncertaintyPct}
+new\client\src\components\Scope1Form.jsx:1832:                        onChange={(e) => 
+setGcUncertaintyPct(e.target.value)}
+new\client\src\components\Scope1Form.jsx:1852:                Emission Factor / Direct Measurement Uncertainty 
+Override (�%)
+new\client\src\components\Scope1Form.jsx:1897:                        value={userUncertainty.co2}
+new\client\src\components\Scope1Form.jsx:1899:                          setUserUncertainty({
+new\client\src\components\Scope1Form.jsx:1900:                            ...userUncertainty,
+new\client\src\components\Scope1Form.jsx:1920:                        color: uncertainty.co2 != null ? "#10b981" : 
+"#9ca3af",
+new\client\src\components\Scope1Form.jsx:1923:                      {uncertainty.co2 != null
+new\client\src\components\Scope1Form.jsx:1924:                        ? `�${(uncertainty.co2 * 100).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:1971:                        value={userUncertainty.ch4}
+new\client\src\components\Scope1Form.jsx:1973:                          setUserUncertainty({
+new\client\src\components\Scope1Form.jsx:1974:                            ...userUncertainty,
+new\client\src\components\Scope1Form.jsx:1994:                        color: uncertainty.ch4 != null ? "#3b82f6" : 
+"#9ca3af",
+new\client\src\components\Scope1Form.jsx:1997:                      {uncertainty.ch4 != null
+new\client\src\components\Scope1Form.jsx:1998:                        ? `�${(uncertainty.ch4 * 100).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:2045:                        value={userUncertainty.n2o}
+new\client\src\components\Scope1Form.jsx:2047:                          setUserUncertainty({
+new\client\src\components\Scope1Form.jsx:2048:                            ...userUncertainty,
+new\client\src\components\Scope1Form.jsx:2068:                        color: uncertainty.n2o != null ? "#8b5cf6" : 
+"#9ca3af",
+new\client\src\components\Scope1Form.jsx:2071:                      {uncertainty.n2o != null
+new\client\src\components\Scope1Form.jsx:2072:                        ? `�${(uncertainty.n2o * 100).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:2087:                  : "Enter specific uncertainties if known, otherwise 
+leave blank to omit (-)"}
+new\client\src\components\Scope1Form.jsx:2343:                  title="Standard Combined Uncertainty (1s)"
+new\client\src\components\Scope1Form.jsx:2349:                  title="Standard Combined Uncertainty (1s)"
+new\client\src\components\Scope1Form.jsx:2355:                  title="Standard Combined Uncertainty (1s)"
+new\client\src\components\Scope1Form.jsx:2361:                  title="Expanded Uncertainty (95% Confidence Interval, 
+k=2)"
+new\client\src\components\Scope1Form.jsx:2367:                  title="Expanded Uncertainty (95% Confidence Interval, 
+k=2)"
+new\client\src\components\Scope1Form.jsx:2373:                  title="Expanded Uncertainty (95% Confidence Interval, 
+k=2)"
+new\client\src\components\Scope1Form.jsx:2492:                            entry.uncertainty_co2 != null
+new\client\src\components\Scope1Form.jsx:2496:                        title="Standard Combined Uncertainty (1s)"
+new\client\src\components\Scope1Form.jsx:2498:                        {entry.uncertainty_co2 != null
+new\client\src\components\Scope1Form.jsx:2499:                          ? `�${(entry.uncertainty_co2 * 
+100).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:2507:                            entry.uncertainty_ch4 != null
+new\client\src\components\Scope1Form.jsx:2511:                        title="Standard Combined Uncertainty (1s)"
+new\client\src\components\Scope1Form.jsx:2513:                        {entry.uncertainty_ch4 != null
+new\client\src\components\Scope1Form.jsx:2514:                          ? `�${(entry.uncertainty_ch4 * 
+100).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:2522:                            entry.uncertainty_n2o != null
+new\client\src\components\Scope1Form.jsx:2526:                        title="Standard Combined Uncertainty (1s)"
+new\client\src\components\Scope1Form.jsx:2528:                        {entry.uncertainty_n2o != null
+new\client\src\components\Scope1Form.jsx:2529:                          ? `�${(entry.uncertainty_n2o * 
+100).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:2537:                            entry.uncertainty_co2 != null
+new\client\src\components\Scope1Form.jsx:2541:                        title="Expanded Uncertainty (95% Confidence 
+Interval, k=2)"
+new\client\src\components\Scope1Form.jsx:2543:                        {entry.uncertainty_co2 != null
+new\client\src\components\Scope1Form.jsx:2544:                          ? `�${(entry.uncertainty_co2 * 
+200).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:2552:                            entry.uncertainty_ch4 != null
+new\client\src\components\Scope1Form.jsx:2556:                        title="Expanded Uncertainty (95% Confidence 
+Interval, k=2)"
+new\client\src\components\Scope1Form.jsx:2558:                        {entry.uncertainty_ch4 != null
+new\client\src\components\Scope1Form.jsx:2559:                          ? `�${(entry.uncertainty_ch4 * 
+200).toFixed(0)}%`
+new\client\src\components\Scope1Form.jsx:2567:                            entry.uncertainty_n2o != null
+new\client\src\components\Scope1Form.jsx:2571:                        title="Expanded Uncertainty (95% Confidence 
+Interval, k=2)"
+new\client\src\components\Scope1Form.jsx:2573:                        {entry.uncertainty_n2o != null
+new\client\src\components\Scope1Form.jsx:2574:                          ? `�${(entry.uncertainty_n2o * 
+200).toFixed(0)}%`
+
+
+

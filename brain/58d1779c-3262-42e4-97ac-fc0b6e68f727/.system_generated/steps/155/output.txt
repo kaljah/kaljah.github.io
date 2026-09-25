@@ -1,0 +1,45 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -405,21 +405,26 @@
+     ensure_admin_seeded()
+ 
+ 
+-@app.route("/api/auth/init-admin")
+-def init_admin_route():
+-    ensure_admin_seeded()
+-    from models import User
+-    users = User.query.all()
+-    return jsonify({
+-        "status": "ok",
+-        "message": "Admin accounts seeded and ready",
+-        "users": [u.email for u in users]
+-    })
+-
+-
+ @app.route("/api/csrf-token")
+ def get_csrf_token():
+-    return jsonify({"csrf_token": generate_csrf()})
++    """
++    Issues a CSRF token for the double-submit cookie pattern.
++    Sets a non-HttpOnly cookie readable by the SPA via document.cookie.
++    The client must send the same value as X-CSRFToken header on mutating requests.
++    """
++    token = generate_csrf()
++    resp = jsonify({"csrf_token": token})
++    resp.set_cookie(
++        "csrf_token",
++        token,
++        httponly=False,          # Must be False — JavaScript reads this cookie
++        secure=app.config.get("SESSION_COOKIE_SECURE", False),
++        samesite=app.config.get("SESSION_COOKIE_SAMESITE", "Lax"),
++        max_age=86400,
++    )
++    return resp
++
++
+ 
+ 
+ @app.route("/")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1337,9 +1337,8 @@
+         return None, [f"Region '{fac_raw}' not found. Check that the region name matches exactly a region in the system."]
+ 
+     # 3. Quantity
+-    try:
+-        amount = float(row.get("quantity") or 0)
+-    except:
++    amount = _clean_float(row.get("quantity"), default=None)
++    if amount is None:
+         return None, [f"Invalid quantity: {row.get('quantity')}"]
+ 
+     process_type = str(row.get("process") or "").strip()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

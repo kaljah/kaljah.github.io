@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+Select-String : Cannot find path 'C:\Users\samsung\Desktop\H2\new\server\routes\methane.py' because it does not exist.
+At line:1 char:1
++ Select-String -Path "new/server/routes/methane.py" -Pattern "gwp|co2e ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\samsun...utes\methane.py:String) [Select-String], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

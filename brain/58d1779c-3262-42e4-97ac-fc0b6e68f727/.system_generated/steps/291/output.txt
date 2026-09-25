@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+WAL size before: 222.51 MB
+Checkpoint result: [(0, 0, 0)]
+WAL size after: 0.00 MB
+

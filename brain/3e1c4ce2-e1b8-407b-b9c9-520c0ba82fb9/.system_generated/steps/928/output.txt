@@ -1,0 +1,51 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -46,7 +46,7 @@
+     # Diesel alias
+     diesel = _lookup_api_factor("diesel")
+     assert diesel is not None
+-    assert "Diesel" in diesel.get("source", "") or diesel.get("code") == "DF"
++    assert "Diesel" in diesel.get("source", "") or diesel.get("code") == "DSL"
+ 
+     # Non-existent fuel returns empty dict safely
+     assert _lookup_api_factor("Unobtainium Fuel") == {}
+@@ -68,8 +68,8 @@
+         c1=c1, c2=c2, c3=c3
+     )
+ 
+-    co2_tonnes = res["co2"]["value"]
+-    ch4_tonnes = res["ch4"]["value"]
++    co2_tonnes = res["results"]["co2"]["value"]
++    ch4_tonnes = res["results"]["ch4"]["value"]
+ 
+     # Carbon in fuel (moles C / mole gas): 0.90*1 + 0.06*2 + 0.04*3 = 1.14
+     total_carbon_moles_in = vol * 1.14
+@@ -96,7 +96,7 @@
+         operating_temperature=15.556, temp_unit="C", operating_pressure=146.96, press_unit="psig"
+     )
+     # Higher actual pressure means more standard volume -> higher emissions
+-    assert res_high_p["co2"]["value"] > res_ambient["co2"]["value"]
++    assert res_high_p["results"]["co2"]["value"] > res_ambient["results"]["co2"]["value"]
+ 
+ 
+ def test_flaring_destruction_efficiency_boundary():
+@@ -106,7 +106,7 @@
+         gas_volume=10000.0, ch4_fraction=0.85, flare_type="elevated", uncertainties={},
+         combustion_efficiency=1.0, destruction_efficiency=1.0, c1=0.85
+     )
+-    assert res_100["ch4"]["value"] == 0.0
++    assert res_100["results"]["ch4"]["value"] == 0.0
+ 
+     # At 0% combustion efficiency, CO2 from combustion must be 0
+     res_0 = calc.calculate(
+@@ -113,6 +113,6 @@
+         combustion_efficiency=0.0, destruction_efficiency=0.0, c1=0.85
+     )
+-    assert res_0["co2"]["value"] == 0.0
++    assert res_0["results"]["co2"]["value"] == 0.0
+ 
+ 
+ def test_gwp_horizon_consistency():
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

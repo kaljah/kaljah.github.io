@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -249,7 +249,7 @@
+             recent_s3 = 0
+         recent_records_count = recent_s1 + recent_s2 + recent_s3
+ 
+-        # Field-level gap checks on Scope 1
++        # Field-level gap checks across scopes
+         if allowed_fids is not None:
+             missing_facility_count = 0
+         else:
+@@ -256,9 +256,14 @@
+-            if year_arg and year_arg not in ["all", ""]:
+-                try:
+-                    missing_fac_q = missing_fac_q.filter(Emission.year == int(year_arg))
+-                except ValueError:
+-                    pass
+-            missing_facility_count = missing_fac_q.count()
++            missing_fac_s2 = Scope2Emission.query.filter(Scope2Emission.facility_id.is_(None))
++            missing_fac_s3 = Scope3Emission.query.filter(Scope3Emission.facility_id.is_(None))
++            if year_arg and year_arg not in ["all", ""]:
++                try:
++                    yr = int(year_arg)
++                    missing_fac_q = missing_fac_q.filter(Emission.year == yr)
++                    missing_fac_s2 = missing_fac_s2.filter(Scope2Emission.year == yr)
++                    missing_fac_s3 = missing_fac_s3.filter(Scope3Emission.year == yr)
++                except ValueError:
++                    pass
++            missing_facility_count = missing_fac_q.count() + missing_fac_s2.count() + missing_fac_s3.count()
+ 
+         # Facility names lookup for sample records
+         fac_map = {}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

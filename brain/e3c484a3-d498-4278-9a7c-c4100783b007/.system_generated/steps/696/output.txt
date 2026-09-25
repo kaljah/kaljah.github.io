@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_battery_midstream_process_equipment.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -292,11 +292,11 @@
+             process_type="tank_flashing",
+             gwp_dict=GWP_AR5,
+         )
+-        ref = IndependentTankFlashing.calculate(
+-            throughput_bbl=throughput_bbl,
+-            gor=gor,
+-            ch4_content=0.75,
+-            control_eff=ctrl,
++        ref = IndependentStorageTanks.calculate(
++            throughput=throughput_bbl,
++            gas_oil_ratio=gor,
++            ch4_content=0.75,
++            control_efficiency=ctrl,
+             process_type="tank_flashing",
+             gwp_standard="AR5",
+         )
+@@ -318,8 +318,8 @@
+             ef_ch4=ef_kg_bbl,
+             gwp_dict=GWP_AR5,
+         )
+-        ref = IndependentTankFlashing.calculate(
+-            throughput_bbl=throughput_bbl,
++        ref = IndependentStorageTanks.calculate(
++            throughput=throughput_bbl,
+             process_type="working_loss",
+             ef_ch4=ef_kg_bbl,
+             gwp_standard="AR5",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

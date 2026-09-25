@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:1779:  let comparisonChart = null;
+new\client\src\utils\ModernReportGenerator.js:1781:    comparisonChart = await createChartImage(
+new\client\src\utils\ModernReportGenerator.js:1809:  const scopeSplit = await createChartImage(
+new\client\src\utils\ModernReportGenerator.js:1829:  const sourceBreakdown = await createChartImage(
+new\client\src\utils\ModernReportGenerator.js:1869:  const trendChart = await createChartImage(
+new\client\src\utils\ModernReportGenerator.js:1888:  return { scopeSplit, sourceBreakdown, comparisonChart, trendChart 
+};
+
+
+

@@ -1,0 +1,21 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=418_0 RootWebArea "Carbon Tech" url="http://localhost:5173/login"
+  uid=418_2 heading "Welcome Back" level="2"
+  uid=418_3 StaticText "Sign in to your GHG Reporting Platform"
+  uid=418_4 form
+    uid=418_5 textbox "Email Address" required
+    uid=418_6 textbox "Password" required
+    uid=418_7 button "Forgot password?"
+    uid=418_8 button "Sign In"
+  uid=418_9 StaticText "API Compliant"
+  uid=418_10 StaticText "ISO 14064 Ready"
+  uid=418_11 StaticText "SOC2 Secured"
+  uid=418_12 StaticText "© "
+  uid=418_13 StaticText "2026"
+  uid=418_14 StaticText " Carbon Tech. All rights reserved."
+
+</current_snapshot>

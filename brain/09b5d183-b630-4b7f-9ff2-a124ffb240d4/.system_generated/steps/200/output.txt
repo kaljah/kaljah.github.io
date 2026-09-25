@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":370,"LineContent":"                    \"default_division\": user_defaults[\"division\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":517,"LineContent":"            \"default_division\": user_defaults[\"division\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py","LineNumber":56,"LineContent":"    assert u[\"default_division\"] in [\"Production\", \"Exploration \u0026 Production\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py","LineNumber":66,"LineContent":"    assert data_me[\"default_division\"] in [\"Production\", \"Exploration \u0026 Production\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py","LineNumber":109,"LineContent":"    assert u[\"default_division\"] == \"Raffinage\""}

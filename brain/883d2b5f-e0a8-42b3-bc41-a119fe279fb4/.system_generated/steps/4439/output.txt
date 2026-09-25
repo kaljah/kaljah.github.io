@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -290,7 +290,12 @@
+     if "notes" in data:
+         emission.notes = data["notes"]
+ 
+-    db.session.commit()
++    try:
++        db.session.commit()
++    except Exception as e:
++        db.session.rollback()
++        return jsonify({"error": f"Failed to update Scope 3 emission: {str(e)}"}), 500
++
+     from routes.dashboard import clear_dashboard_cache
+ 
+     clear_dashboard_cache()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

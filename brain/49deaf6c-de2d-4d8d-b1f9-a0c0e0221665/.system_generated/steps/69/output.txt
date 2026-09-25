@@ -1,0 +1,65 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\emissions.py:4518:
+  new\server\routes\emissions.py:4519:    req_data = request.get_json(silent=True) or {}
+  new\server\routes\emissions.py:4520:    scope = str(req_data.get("scope") or request.args.get("scope") or "1")
+> new\server\routes\emissions.py:4521:    reason = req_data.get("reason", "Rejected by reviewer")
+  new\server\routes\emissions.py:4522:
+  new\server\routes\emissions.py:4523:    if scope == "2":
+  new\server\routes\emissions.py:4524:        emission = db.session.get(Scope2Emission, emission_id)
+  new\server\routes\emissions.py:4538:    if allowed_fids is not None and emission.facility_id not in allowed_fids:
+  new\server\routes\emissions.py:4539:        return jsonify({"error": "Access to record facility is denied"}), 403
+  new\server\routes\emissions.py:4540:
+> new\server\routes\emissions.py:4541:    emission.status = "Rejected"
+  new\server\routes\emissions.py:4542:    if hasattr(emission, "qa_flag"):
+> new\server\routes\emissions.py:4543:        emission.qa_flag = f"Rejected: {reason}"
+  new\server\routes\emissions.py:4544:    emission.approved_by = user.id
+  new\server\routes\emissions.py:4545:    emission.approved_at = datetime.datetime.now(datetime.timezone.utc)
+  new\server\routes\emissions.py:4546:    rec_id = getattr(emission, "record_id", f"{label}-{emission.id}")
+  new\server\routes\emissions.py:4547:    log_activity_and_notify(
+  new\server\routes\emissions.py:4548:        action="UPDATE",
+  new\server\routes\emissions.py:4549:        record_id=rec_id,
+> new\server\routes\emissions.py:4550:        details=f"{label} emission rejected by {user.fullName}: {reason}",
+  new\server\routes\emissions.py:4551:        user=user,
+  new\server\routes\emissions.py:4552:        entity=f"scope{scope}_emission",
+  new\server\routes\emissions.py:4553:        entity_id=emission.id,
+  new\server\routes\emissions.py:4556:    from routes.dashboard import clear_dashboard_cache
+  new\server\routes\emissions.py:4557:
+  new\server\routes\emissions.py:4558:    clear_dashboard_cache()
+> new\server\routes\emissions.py:4559:    return jsonify({"success": True, "id": emission_id, "scope": scope, 
+"status": "Rejected", "reason": reason})
+  new\server\routes\emissions.py:4560:
+  new\server\routes\emissions.py:4561:
+  new\server\routes\emissions.py:4562:@emissions_bp.route("/approve/batch", methods=["POST"])
+  new\server\routes\emissions.py:4659:    data = request.get_json(silent=True) or {}
+  new\server\routes\emissions.py:4660:    ids = data.get("ids", [])
+  new\server\routes\emissions.py:4661:    scope = str(data.get("scope", "1"))
+> new\server\routes\emissions.py:4662:    reason = data.get("reason", "Batch rejected by reviewer")
+  new\server\routes\emissions.py:4663:    reject_all = data.get("reject_all", False)
+  new\server\routes\emissions.py:4664:    by_scope = data.get("by_scope", {})
+  new\server\routes\emissions.py:4665:
+  new\server\routes\emissions.py:4679:            q = q.filter(model.id.in_(target_ids))
+  new\server\routes\emissions.py:4680:        now_utc = datetime.datetime.now(datetime.timezone.utc)
+  new\server\routes\emissions.py:4681:        update_vals = {
+> new\server\routes\emissions.py:4682:            "status": "Rejected",
+  new\server\routes\emissions.py:4683:            "approved_by": user.id,
+  new\server\routes\emissions.py:4684:            "approved_at": now_utc,
+  new\server\routes\emissions.py:4685:        }
+  new\server\routes\emissions.py:4686:        if hasattr(model, "qa_flag"):
+> new\server\routes\emissions.py:4687:            update_vals["qa_flag"] = f"Rejected: {reason}"
+  new\server\routes\emissions.py:4688:        return q.update(update_vals, synchronize_session=False)
+  new\server\routes\emissions.py:4689:
+  new\server\routes\emissions.py:4690:    if scope == "all" and reject_all:
+  new\server\routes\emissions.py:4721:    log_activity_and_notify(
+  new\server\routes\emissions.py:4722:        action="DELETE",
+  new\server\routes\emissions.py:4723:        record_id="batch_reject",
+> new\server\routes\emissions.py:4724:        details=f"{deleted_count} pending records rejected by {user.fullName}: 
+{reason}",
+  new\server\routes\emissions.py:4725:        user=user,
+  new\server\routes\emissions.py:4726:        entity="batch_emissions",
+  new\server\routes\emissions.py:4727:        entity_id="batch",
+
+
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Breakdown of missing amount: [(None, 'Rejected', 36), (None, 'Verified', 9), ('Combustion', 'Draft', 43), ('Combustion', 'Verified', 4), ('Venting', 'Verified', 2), ('combustion', 'Pending', 1), ('combustion', 'Verified', 173), ('fugitive_component', 'Verified', 14)]
+

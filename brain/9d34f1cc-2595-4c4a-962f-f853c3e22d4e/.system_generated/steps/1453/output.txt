@@ -1,0 +1,88 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1101,31 +1101,57 @@
+                 "nitric_acid_production",
+                 "adipic_acid_production",
+             ]:
+-                raw_amt = self._require_float(
+-                    flat_inputs,
+-                    ["production_amount", "amount", "quantity", "fuel_mass"],
+-                    "production amount",
+-                )
+-                ef_n2o = (
+-                    emission_factors.get("n2o")
+-                    or emission_factors.get("ef_n2o")
+-                    or flat_inputs.get("ef_n2o")
+-                    or flat_inputs.get("n2o")
+-                )
+-                abatement_eff = self._optional_fraction(
+-                    flat_inputs,
+-                    ["abatement_efficiency", "abatement_eff", "control_efficiency", "eta_abatement"],
+-                    0.0,
+-                )
+-                return calculator.calculate(
+-                    production_amount=raw_amt,
+-                    ef_n2o=ef_n2o,
+-                    abatement_efficiency=abatement_eff,
+-                    mass_unit=unit,
+-                    uncertainties=uncertainties,
+-                    gwp_dict=gwp_dict,
+-                    process_type=process_type,
+-                )
++                if flat_inputs.get("carbon_content") is not None or flat_inputs.get("c_content") is not None:
++                    stoich_calc = StoichiometricCalculator()
++                    raw_amt = self._require_float(
++                        flat_inputs,
++                        ["quantity", "amount", "fuel_mass", "production_amount"],
++                        "mass / production amount",
++                    )
++                    carbon_content = self._optional_fraction(
++                        flat_inputs,
++                        ["carbon_content", "c_content"],
++                        0.85,
++                    )
++                    oxidation_factor = self._optional_fraction(
++                        flat_inputs,
++                        ["oxidation_factor", "ox_factor"],
++                        1.0,
++                    )
++                    return stoich_calc.calculate(
++                        fuel_mass=raw_amt,
++                        carbon_content=carbon_content,
++                        oxidation_factor=oxidation_factor,
++                        uncertainties=uncertainties,
++                        mass_unit=unit,
++                        gwp_dict=gwp_dict,
++                    )
++                else:
++                    raw_amt = self._require_float(
++                        flat_inputs,
++                        ["production_amount", "amount", "quantity", "fuel_mass"],
++                        "production amount",
++                    )
++                    ef_n2o = (
++                        emission_factors.get("n2o")
++                        or emission_factors.get("ef_n2o")
++                        or flat_inputs.get("ef_n2o")
++                        or flat_inputs.get("n2o")
++                    )
++                    abatement_eff = self._optional_fraction(
++                        flat_inputs,
++                        ["abatement_efficiency", "abatement_eff", "control_efficiency", "eta_abatement"],
++                        0.0,
++                    )
++                    return calculator.calculate(
++                        production_amount=raw_amt,
++                        ef_n2o=ef_n2o,
++                        abatement_efficiency=abatement_eff,
++                        mass_unit=unit,
++                        uncertainties=uncertainties,
++                        gwp_dict=gwp_dict,
++                        process_type=process_type,
++                    )
+ 
+             elif process_type in [
+                 "stoichiometry",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

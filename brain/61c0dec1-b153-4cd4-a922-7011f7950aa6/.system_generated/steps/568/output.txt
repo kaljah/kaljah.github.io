@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\scope1\DehydratorForm.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -142,6 +142,22 @@
+           </div>
+ 
+           <div className="input-group">
++            <label>Stripping Gas Rate (scf/hr)</label>
++            <input
++              type="number"
++              className="mole-input"
++              value={
++                data.dehy_stripping_rate !== undefined &&
++                data.dehy_stripping_rate !== null
++                  ? data.dehy_stripping_rate
++                  : ""
++              }
++              onChange={(e) => onChange("dehy_stripping_rate", e.target.value)}
++              placeholder="0 (Optional stripping gas)"
++            />
++          </div>
++
++          <div className="input-group">
+             <label>Control Device</label>
+             <CustomDropdown
+               options={[
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

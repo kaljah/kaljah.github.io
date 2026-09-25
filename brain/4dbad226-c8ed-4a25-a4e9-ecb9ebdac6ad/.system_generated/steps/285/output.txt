@@ -1,0 +1,23 @@
+
+The command exited with code 1.
+Output:
+At line:6 char:32
++     matches = re.findall(r'\"([^\"]+)\":\s*\{[^}]*usage:\s*\[[^\]]*\" ...
++                                ~
+Missing type name after '['.
+At line:6 char:47
++     matches = re.findall(r'\"([^\"]+)\":\s*\{[^}]*usage:\s*\[[^\]]*\" ...
++                                               ~
+Missing type name after '['.
+At line:7 char:54
++     print(f'{p}: {matches[:5]} (total {len(matches)})')
++                                                      ~~
+The string is missing the terminator: '.
+At line:8 char:2
++ "
++  ~
+Missing closing ')' in expression.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingTypename
+ 
+

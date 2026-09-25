@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+scope2 cols: ['id', 'facility_id', 'year', 'month', 'source_type', 'electricity_kwh', 'steam_ton', 'heat_mmbtu', 'cooling_ton', 'emission_factor', 'co2e', 'uncertainty', 'uncertainty_pct', 'qa_flag', 'location', 'grid_region', 'activity', 'division', 'region', 'field', 'created_by', 'status', 'created_at', 'approved_by', 'approved_at']
+scope3 cols: ['id', 'facility_id', 'year', 'month', 'category', 'sub_category', 'activity_data', 'unit', 'emission_factor', 'co2e', 'uncertainty', 'uncertainty_pct', 'qa_flag', 'calculation_method', 'data_quality', 'notes', 'created_by', 'status', 'created_at', 'approved_by', 'approved_at']
+

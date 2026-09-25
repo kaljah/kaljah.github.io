@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1716,6 +1716,7 @@
+     ];
+   });
+ 
++  let totalProductionBoe = 0;
+   let intensityMetrics = { avgCo2: "N/A", avgCh4: "N/A", totalProd: "0" };
+   if (productionData.length > 0) {
+     let weightedCo2Sum = 0,
+@@ -1728,6 +1728,7 @@
+         totalBoeSum += boe;
+       }
+     });
++    totalProductionBoe = totalBoeSum;
+     intensityMetrics = {
+       avgCo2: totalBoeSum > 0 ? (weightedCo2Sum / totalBoeSum).toFixed(4) : "0",
+       avgCh4: totalBoeSum > 0 ? (weightedCh4Sum / totalBoeSum).toFixed(4) : "0",
+@@ -1755,6 +1755,7 @@
+     scope1Total,
+     scope2Total,
+     scope3Total,
++    totalProductionBoe,
+     processBreakdown,
+     facilityBreakdown,
+     intensityMetrics,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

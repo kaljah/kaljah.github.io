@@ -1,0 +1,18 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":609,"LineContent":"        if (!formData.hhv || parseFloat(formData.hhv) \u003c= 0) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":948,"LineContent":"          if (sourceType !== \"specific\" || !formData.hhv) return {};"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":949,"LineContent":"          const rawHHV = parseFloat(formData.hhv);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":950,"LineContent":"          const hhvUnit = formData.hhv_unit || \"BTU/scf\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":957,"LineContent":"          let hhvBtu = rawHHV;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":958,"LineContent":"          switch (hhvUnit) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":961,"LineContent":"              hhvBtu = rawHHV; // already correct for scf/ft3 gas"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":965,"LineContent":"              hhvBtu = (rawHHV * 947.817) / 35.3147;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":969,"LineContent":"              hhvBtu = (rawHHV * 3.96567) / 35.3147;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":972,"LineContent":"              hhvBtu = rawHHV; // already correct for liquid-gal fuels"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":975,"LineContent":"              hhvBtu = rawHHV; // already correct for mass-based fuels"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":979,"LineContent":"              hhvBtu = (rawHHV * 947.817) / 2.20462;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":982,"LineContent":"              hhvBtu = rawHHV;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":986,"LineContent":"            hhv: hhvBtu, // always in BTU/unit after conversion"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":987,"LineContent":"            hhv_unit: \"BTU/unit\", // signal to backend that conversion is done"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":988,"LineContent":"            hhv_original: rawHHV, // preserve original for audit trail"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":989,"LineContent":"            hhv_original_unit: hhvUnit,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2195,"LineContent":"              {formData.hhv ? `${formData.hhv} HHV` : \"1.0 HHV\"}"}

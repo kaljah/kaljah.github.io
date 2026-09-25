@@ -1,0 +1,75 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -26,23 +26,45 @@
+ 
+ def _clean_float(val, default=0.0):
+     """
+-    Robustly parses numbers with currency signs, thousands separators,
+-    European comma decimals, scientific notation, or whitespace.
+-    """
++    Robustly parses numbers with currency signs, trailing engineering units,
++    thousands separators, European comma decimals, scientific notation,
++    zero-width spaces, or adversarial nulls/NaNs.
++    Guarantees no NaN or Infinite values leak to calculation engines.
++    """
++    import math
++    import re
++
+     if val is None:
+         return default
+     if isinstance(val, (int, float)):
++        if math.isnan(val) or math.isinf(val):
++            return default
+         return float(val)
++
+     s = str(val).strip()
+-    if not s or s in ["-", "N/A", "null", "None"]:
+-        return default
+-    import re
+-
+-    # Remove currency symbols and whitespace
+-    s = re.sub(r"[\$\€\£\¥\s]", "", s)
++    # Strip invisible formatting artifacts
++    s = s.replace("\u200b", "").replace("\ufeff", "").replace("\u00a0", " ").strip()
+     if not s:
+         return default
+ 
++    # Check for adversarial null representations
++    s_lower = s.lower()
++    if s_lower in ["-", "n/a", "null", "none", "nan", "nil", "n/d", "na", "#n/a", "--"]:
++        return default
++
++    # Remove currency symbols
++    s = re.sub(r"[\$\€\£\¥]", "", s).strip()
++
++    # Extract numeric portion if concatenated with units (e.g. "120 kW", "50 m3", "100.5tCO2e")
++    unit_match = re.match(r"^([-+]?[0-9.,\s]+(?:[eE][-+]?[0-9]+)?)\s*[a-zA-Z%_/³^0-9]*$", s)
++    if unit_match:
++        s = unit_match.group(1).strip()
++
++    # Clean internal whitespace
++    s = s.replace(" ", "")
++    if not s or s in ["-", "+"]:
++        return default
++
+     # Handle both comma and dot present
+     if "," in s and "." in s:
+         if s.rfind(".") > s.rfind(","):
+@@ -57,8 +57,12 @@
+         else:
+             # European decimal format: 1234,56 -> 1234.56
+             s = s.replace(",", ".")
+-    try:
+-        return float(s)
++
++    try:
++        res = float(s)
++        if math.isnan(res) or math.isinf(res):
++            return default
++        return res
+     except (ValueError, TypeError):
+         return default
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

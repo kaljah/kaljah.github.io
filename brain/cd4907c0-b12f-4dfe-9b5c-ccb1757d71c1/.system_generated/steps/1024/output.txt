@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1525,52 +1525,6 @@
+         iconColor="#f59e0b"
+         iconBg="rgba(245, 158, 11, 0.12)"
+         width="540px"
+-        footer={
+-          <>
+-            <button
+-              id="um-reset-pwd-cancel"
+-              type="button"
+-              style={S.btnSecondary}
+-              onClick={() => setResetTarget(null)}
+-              onMouseEnter={(e) =>
+-                (e.currentTarget.style.background = "var(--bg-hover)")
+-              }
+-              onMouseLeave={(e) =>
+-                (e.currentTarget.style.background = "transparent")
+-              }
+-            >
+-              Cancel
+-            </button>
+-            <button
+-              id="um-reset-pwd-submit"
+-              type="submit"
+-              form="um-reset-pwd-form"
+-              disabled={resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10}
+-              style={{
+-                ...S.btnPrimary,
+-                background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
+-                boxShadow: "0 4px 12px rgba(245,158,11,.3)",
+-                opacity:
+-                  resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
+-                    ? 0.6
+-                    : 1,
+-                cursor:
+-                  resetLoading || resetPwd !== resetPwdConfirm || resetPwd.length < 10
+-                    ? "not-allowed"
+-                    : "pointer",
+-              }}
+-            >
+-              {resetLoading ? (
+-                "Resetting…"
+-              ) : (
+-                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+-                  <KeyRound size={16} />
+-                  Reset Password
+-                </span>
+-              )}
+-            </button>
+-          </>
+-        }
+       >
+         {resetTarget && (
+           <form id="um-reset-pwd-form" onSubmit={handleResetPasswordSubmit}>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

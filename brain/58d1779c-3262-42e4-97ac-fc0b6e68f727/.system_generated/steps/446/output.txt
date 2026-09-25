@@ -1,0 +1,8 @@
+Task: 58d1779c-3262-42e4-97ac-fc0b6e68f727/task-430
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\58d1779c-3262-42e4-97ac-fc0b6e68f727\.system_generated\tasks\task-430.log
+Log output:
+[INFO] Starting safe online backup from ghg_app.db to backups\ghg_app_20260920_172952.db...
+<string>:3: SyntaxWarning: invalid escape sequence '\g'
+
+Last progress: 30s ago

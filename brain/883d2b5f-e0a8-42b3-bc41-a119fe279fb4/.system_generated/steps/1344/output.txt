@@ -1,0 +1,80 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_all_bulk_imports.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -546,4 +546,74 @@
+         # Cleanup
+         Emission.query.filter_by(year=2025, month=1).delete()
+         db.session.commit()
++
++
++def test_vented_fuel_key_deduplication_normalization(logged_client, app):
++    """Verifies that non-combustion sources (e.g. pneumatics) normalize fuel_k to empty string,
++    preventing duplicate leaks with different fuel labels from bypassing deduplication."""
++    client = logged_client
++    with app.app_context():
++        fac = Facility.query.filter_by(name="Test Facility A").first()
++        if not fac:
++            fac = Facility(name="Test Facility A")
++            db.session.add(fac)
++            db.session.commit()
++        Emission.query.filter_by(year=2025, month=2).delete()
++        db.session.commit()
++
++    # Upload 1: pneumatics row with empty fuel
++    csv_data1 = (
++        "facility_name,date,process,fuel,quantity,unit\n"
++        "Test Facility A,2025-02,pneumatics,,500,count\n"
++    )
++    mapping = {
++        "facility_name": "facility_name",
++        "date": "date",
++        "process": "process",
++        "fuel": "fuel",
++        "quantity": "quantity",
++        "unit": "unit"
++    }
++
++    res1 = client.post("/api/emissions/upload/start", data={
++        "scope": "1",
++        "global_factor_type": "default",
++        "mapping": json.dumps(mapping),
++        "file": (io.BytesIO(csv_data1.encode("utf-8")), "pneumatics1.csv")
++    }, content_type="multipart/form-data")
++    assert res1.status_code == 200
++    job1 = wait_for_job(client, res1.get_json()["job_id"])
++    assert job1["status"] == "completed"
++
++    with app.app_context():
++        count1 = Emission.query.filter_by(year=2025, month=2).count()
++        assert count1 == 1
++
++    # Upload 2: same facility, date, process ("pneumatics"), but with fuel="Natural Gas"
++    # Because pneumatics is a non-combustion process, fuel_k is normalized to "",
++    # so without overwrite, this should be detected as a duplicate and skipped.
++    csv_data2 = (
++        "facility_name,date,process,fuel,quantity,unit\n"
++        "Test Facility A,2025-02,pneumatics,Natural Gas,500,count\n"
++    )
++    res2 = client.post("/api/emissions/upload/start", data={
++        "scope": "1",
++        "global_factor_type": "default",
++        "overwrite_duplicates": "false",
++        "mapping": json.dumps(mapping),
++        "file": (io.BytesIO(csv_data2.encode("utf-8")), "pneumatics2.csv")
++    }, content_type="multipart/form-data")
++    assert res2.status_code == 200
++    job2 = wait_for_job(client, res2.get_json()["job_id"])
++    assert job2["status"] == "completed"
++    assert job2["skipped_count"] == 1
++    assert "Duplicate record" in job2["skipped_preview"][0]["reason"]
++
++    with app.app_context():
++        count2 = Emission.query.filter_by(year=2025, month=2).count()
++        assert count2 == 1
++        # Cleanup
++        Emission.query.filter_by(year=2025, month=2).delete()
++        db.session.commit()
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

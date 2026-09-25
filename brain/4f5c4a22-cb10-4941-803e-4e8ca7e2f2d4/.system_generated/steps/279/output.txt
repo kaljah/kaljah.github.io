@@ -1,0 +1,10 @@
+
+The command exited with code 1.
+Output:
+Error: Cannot find package 'sqlite3' imported from C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js
+    at eval (<anonymous>:1:1)
+Error: No tests found.
+Make sure that arguments are regular expressions matching test files.
+You may need to escape symbols like "$" or "*" and quote the arguments.
+
+

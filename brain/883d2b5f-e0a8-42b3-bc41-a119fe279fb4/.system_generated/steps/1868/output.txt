@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -718,7 +718,7 @@
+             se_ind = round(total_indirect_tco2e / quantity_tonnes, 4) if quantity_tonnes > 0 else 0.0
+ 
+         if record_id:
+-            record = CbamProductExport.query.get(record_id)
++            record = db.session.get(CbamProductExport, record_id)
+             if not record:
+                 return jsonify({'error': 'Record not found'}), 404
+             if not require_facility_access(user, record.facility_id):
+@@ -776,7 +776,7 @@
+     if user and user.role == 'it_admin':
+         return jsonify({'error': 'IT administrators are not authorized to modify operational CBAM data.'}), 403
+     try:
+-        record = CbamProductExport.query.get(record_id)
++        record = db.session.get(CbamProductExport, record_id)
+         if not record:
+             return jsonify({'error': 'Record not found'}), 404
+         if not require_facility_access(user, record.facility_id):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

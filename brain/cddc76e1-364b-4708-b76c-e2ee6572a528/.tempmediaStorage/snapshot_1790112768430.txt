@@ -1,0 +1,181 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=578_0 RootWebArea "Carbon Tech" url="http://localhost:5173/sbti"
+  uid=582_0 complementary
+    uid=582_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=582_2 StaticText "Carbon tech"
+    uid=582_3 navigation
+      uid=582_4 link "Dashboard" url="http://localhost:5173/"
+        uid=582_5 StaticText "Dashboard"
+      uid=582_6 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=582_7 StaticText "Carbon Intensity"
+      uid=582_8 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=582_9 StaticText "Methane Intensity"
+      uid=582_10 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=582_11 StaticText "SBTi Net-Zero"
+      uid=582_12 link "Calculations" url="http://localhost:5173/emissions"
+        uid=582_13 StaticText "Calculations"
+      uid=582_14 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=582_15 StaticText "Emissions Map"
+      uid=582_16 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=582_17 StaticText "Manage Data"
+      uid=582_18 link "Reports" url="http://localhost:5173/reports"
+        uid=582_19 StaticText "Reports"
+      uid=582_20 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=582_21 StaticText "Reference Data"
+      uid=582_22 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=582_23 StaticText "Uncertainty"
+      uid=582_24 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=582_25 StaticText "Audit Trail"
+      uid=582_26 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=582_27 StaticText "QA/QC & Diagnostics"
+    uid=582_28 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=582_29 StaticText "Settings"
+    uid=582_30 StaticText "A"
+    uid=582_31 StaticText "Administrator"
+    uid=582_32 StaticText "Sustainability Lead"
+  uid=582_33 main
+    uid=582_34 StaticText "Corporate ESG"
+    uid=582_35 button "Notifications"
+    uid=582_36 button "User Profile" description="User Profile" focusable focused
+    uid=631_0 StaticText "Administrator"
+    uid=631_1 StaticText "Sustainability Lead"
+    uid=631_2 button "Sign Out"
+    uid=582_37 StaticText "Administrator"
+    uid=631_3 heading "SBTi & Net-Zero Trajectory Dashboard" level="1"
+    uid=631_4 StaticText "Track corporate decarbonization against Science Based Targets initiative (SBTi) 1.5°C & Well-Below 2°C pathways per Corporate Net-Zero Standard v1.2."
+    uid=631_5 button "All Scopes (1+2+3)" description="Track across all scopes (Scope 1, 2, and 3)"
+    uid=631_6 button "Scope 1+2 (Operational)" description="Track operational emissions (Scope 1 and 2 only)"
+    uid=631_7 button "Configure Target"
+    uid=631_8 button "Export Pathway CSV"
+    uid=631_9 StaticText "BASE YEAR BASELINE"
+    uid=631_10 StaticText "10,453"
+    uid=631_11 StaticText "tCO2e"
+    uid=631_12 StaticText "Base Year: "
+    uid=631_13 StaticText "2026"
+    uid=631_14 StaticText "CURRENT YEAR TARGET"
+    uid=631_15 StaticText "10,453"
+    uid=631_16 StaticText "tCO2e"
+    uid=631_17 StaticText "Actual: "
+    uid=631_18 StaticText "10,453"
+    uid=631_19 StaticText " tCO2e ("
+    uid=631_20 StaticText "2026"
+    uid=631_21 StaticText ")"
+    uid=631_22 StaticText "PATHWAY STATUS"
+    uid=631_23 StaticText "BEHIND TARGET"
+    uid=631_24 StaticText "Reduction: 0% vs Baseline"
+    uid=631_25 StaticText "NET-ZERO GOAL ("
+    uid=631_26 StaticText "2050"
+    uid=631_27 StaticText ")"
+    uid=631_28 StaticText "1,045"
+    uid=631_29 StaticText "tCO2e"
+    uid=631_30 StaticText "Residual Floor: 1,045 tCO2e (10% Cap)"
+    uid=631_31 heading "SBTi Decarbonization Pathway (1.5C)" level="3"
+    uid=631_32 StaticText "Linear reduction trajectory from base year "
+    uid=631_33 StaticText "2026"
+    uid=631_34 StaticText " to target year "
+    uid=631_35 StaticText "2050"
+    uid=631_36 StaticText " (Residual emissions capped at 10% per NZ-C1)"
+    uid=631_37 image "1.5°C Benchmark (-4.2%/yr) legend icon"
+    uid=631_38 StaticText "1.5°C Benchmark (-4.2%/yr)"
+    uid=631_39 image "Actual Emissions (Scope 1+2+3) legend icon"
+    uid=631_40 StaticText "Actual Emissions (Scope 1+2+3)"
+    uid=631_41 image "Business As Usual (+1.5%/yr) legend icon"
+    uid=631_42 StaticText "Business As Usual (+1.5%/yr)"
+    uid=631_43 image "Corporate Target (4.2%/yr) legend icon"
+    uid=631_44 StaticText "Corporate Target (4.2%/yr)"
+    uid=631_45 image "Well-Below 2°C (-2.5%/yr) legend icon"
+    uid=631_46 StaticText "Well-Below 2°C (-2.5%/yr)"
+    uid=631_47 application
+      uid=631_48 group
+      uid=631_49 group
+      uid=631_50 group
+      uid=631_51 group
+      uid=631_52 group
+      uid=631_53 group
+      uid=631_54 group
+      uid=631_55 group
+      uid=631_56 group
+      uid=631_57 group
+      uid=631_58 group
+      uid=631_59 group
+        uid=631_60 StaticText "2026"
+        uid=631_61 StaticText "2028"
+        uid=631_62 StaticText "2030"
+        uid=631_63 StaticText "2032"
+        uid=631_64 StaticText "2034"
+        uid=631_65 StaticText "2036"
+        uid=631_66 StaticText "2038"
+        uid=631_67 StaticText "2040"
+        uid=631_68 StaticText "2042"
+        uid=631_69 StaticText "2044"
+        uid=631_70 StaticText "2046"
+        uid=631_71 StaticText "2048"
+        uid=631_72 StaticText "2050"
+        uid=631_73 StaticText "0"
+        uid=631_74 StaticText "4.0k"
+        uid=631_75 StaticText "8.0k"
+        uid=631_76 StaticText "12.0k"
+        uid=631_77 StaticText "16.0k"
+    uid=631_78 heading "Emissions Composition by Scope" level="3"
+    uid=631_79 StaticText "Verified Scope 1, Scope 2, and Scope 3 breakdown"
+    uid=631_80 image "Scope 1 (Direct) legend icon"
+    uid=631_81 StaticText "Scope 1 (Direct)"
+    uid=631_82 image "Scope 2 (Indirect) legend icon"
+    uid=631_83 StaticText "Scope 2 (Indirect)"
+    uid=631_84 image "Scope 3 (Value Chain) legend icon"
+    uid=631_85 StaticText "Scope 3 (Value Chain)"
+    uid=631_86 application
+      uid=631_87 group
+      uid=631_88 group
+      uid=631_89 group
+      uid=631_90 group
+      uid=631_91 group
+      uid=631_92 group
+      uid=631_93 group
+      uid=631_94 group
+      uid=631_95 group
+      uid=631_96 group
+      uid=631_97 group
+      uid=631_98 group
+        uid=631_99 StaticText "2026"
+        uid=631_100 StaticText "0"
+        uid=631_101 StaticText "3.0k"
+        uid=631_102 StaticText "6.0k"
+        uid=631_103 StaticText "9.0k"
+        uid=631_104 StaticText "12.0k"
+    uid=631_105 heading "Annual Pathway Milestones & Verification Data" level="3"
+    uid=631_106 StaticText "Yearly comparison of targets, actual emissions, and progress towards net-zero alignment ("
+    uid=631_107 StaticText "All Scopes View"
+    uid=631_108 StaticText ")"
+    uid=631_109 StaticText "YEAR"
+    uid=631_110 StaticText "SBTI TARGET"
+    uid=631_111 StaticText "BAU PROJECTION"
+    uid=631_112 StaticText "ACTUAL EMISSIONS"
+    uid=631_113 StaticText "SCOPE 1"
+    uid=631_114 StaticText "SCOPE 2"
+    uid=631_115 StaticText "SCOPE 3"
+    uid=631_116 StaticText "SCOPE 1+2"
+    uid=631_117 StaticText "VARIANCE VS TARGET"
+    uid=631_118 StaticText "COMPLIANCE STATUS"
+    uid=631_119 StaticText "2026"
+    uid=631_120 StaticText "10,452.8"
+    uid=631_121 StaticText " tCO2e"
+    uid=631_122 StaticText "10,452.8"
+    uid=631_123 StaticText " tCO2e"
+    uid=631_124 StaticText "10,452.8 tCO2e"
+    uid=631_125 StaticText "10,183.7"
+    uid=631_126 StaticText "52.2"
+    uid=631_127 StaticText "216.9"
+    uid=631_128 StaticText "10,235.9"
+    uid=631_129 StaticText "0.0"
+    uid=631_130 StaticText " tCO2e"
+    uid=631_131 StaticText "ACHIEVED"
+    uid=631_132 StaticText "2027"
+    
+<truncated 10015 bytes>
+
+[Snapshot truncated because it exceeded 8KB. Only showing first 8KB. Full snapshot saved to: C:/Users/samsung/.gemini/antigravity/brain/cddc76e1-364b-4708-b76c-e2ee6572a528/.tempmediaStorage/snapshot_full_1790112768428.txt]

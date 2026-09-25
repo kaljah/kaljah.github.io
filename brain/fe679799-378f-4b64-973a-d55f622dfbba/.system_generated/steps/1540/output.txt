@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_uncertainty_audit_qaqc_backend.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -6,7 +6,7 @@
+ 
+ sys.stdout.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
+ 
+-BASE_URL = "http://127.0.0.1:5000"
++BASE_URL = "http://127.0.0.1:5000/api"
+ 
+ def safe_print(*args, **kwargs):
+     text = " ".join(str(a) for a in args)
+@@ -17,24 +17,22 @@
+ 
+ def get_authenticated_session(email, password):
+     session = requests.Session()
+-    # Get CSRF token
+-    csrf_res = session.get(f"{BASE_URL}/auth/csrf-token")
+-    csrf_token = None
+-    if csrf_res.status_code == 200:
+-        csrf_token = csrf_res.json().get("csrf_token")
+-    
+-    headers = {"Content-Type": "application/json"}
+-    if csrf_token:
+-        headers["X-CSRF-Token"] = csrf_token
+-        session.headers.update({"X-CSRF-Token": csrf_token})
+-        
+     login_res = session.post(
+         f"{BASE_URL}/auth/login",
+-        json={"email": email, "password": password},
+-        headers=headers
++        json={"email": email, "password": password}
+     )
+     if login_res.status_code != 200:
+         raise Exception(f"Login failed for {email}: {login_res.status_code} {login_res.text}")
++    
++    # Get CSRF token
++    csrf_res = session.get(f"{BASE_URL}/csrf-token")
++    if csrf_res.status_code == 200:
++        csrf_token = csrf_res.json().get("csrf_token")
++        if csrf_token:
++            session.headers.update({
++                "X-CSRFToken": csrf_token,
++                "X-CSRF-Token": csrf_token
++            })
+     return session
+ 
+ def run_backend_tests():
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

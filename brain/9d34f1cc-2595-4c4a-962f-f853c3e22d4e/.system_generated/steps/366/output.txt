@@ -1,0 +1,72 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -309,12 +309,13 @@
+         depth_unit="ft",
+         diameter_unit="in",
+         press_unit="psig",
+-        hhv=1020.0,
+-        gwp_dict=None,
+-    ):
+-        """
+-        API Equation 6-3 - Volume per unloading event with temperature correction:
+-        V_std = (pi/4) * D^2 * Depth * (P_tubing_abs / P_std) * (T_std / T_well_abs)
++        z_factor=1.0,
++        hhv=1020.0,
++        gwp_dict=None,
++    ):
++        """
++        API Equation 6-3 - Volume per unloading event with temperature and compressibility correction:
++        V_std = (pi/4) * D^2 * Depth * (P_tubing_abs / P_std) * (T_std / T_well_abs) * (1 / Z)
+         """
+         self.validate_inputs(
+             {
+@@ -354,21 +354,33 @@
+         # Volume at tubing conditions (m3)
+         v_tubing = (math.pi / 4.0) * (d_m**2) * depth_m
+ 
+-        # Pressure and temperature correction (API Eq. 6-3 & §4.2.1)
+-        p_abs = to_psia(pressure, press_unit)
+-        p_factor = p_abs / STD_PRESSURE_PSIA
+-
+-        t_abs_k = to_kelvin(operating_temperature, temp_unit)
+-        t_factor = STD_TEMP_K / max(1.0, t_abs_k)
+-
+-        v_std = v_tubing * p_factor * t_factor
++        # Pressure, temperature, and compressibility correction (API Eq. 6-3 & §4.2.1)
++        p_abs = to_psia(pressure, press_unit)
++        p_factor = p_abs / STD_PRESSURE_PSIA
++
++        t_abs_k = to_kelvin(operating_temperature, temp_unit)
++        t_factor = STD_TEMP_K / max(1.0, t_abs_k)
++
++        z = float(z_factor) if z_factor and float(z_factor) > 0 else 1.0
++
++        v_std = v_tubing * p_factor * t_factor * (1.0 / z)
+         total_v_std = v_std * float(events)
+ 
+-        ch4_vol = total_v_std * float(ch4_content)
+-        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
+-        ch4_tonnes = ch4_mass_kg / 1000.0
+-
+-        co2_vol = total_v_std * float(co2_content or 0.0)
++        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
++        if c_ch4 > 1.0:
++            c_ch4 /= 100.0
++        c_ch4 = max(0.0, min(1.0, c_ch4))
++
++        c_co2 = float(co2_content or 0.0)
++        if c_co2 > 1.0:
++            c_co2 /= 100.0
++        c_co2 = max(0.0, min(1.0, c_co2))
++
++        ch4_vol = total_v_std * c_ch4
++        ch4_mass_kg = ch4_vol * CONVERSIONS["density_ch4"]
++        ch4_tonnes = ch4_mass_kg / 1000.0
++
++        co2_vol = total_v_std * c_co2
+         co2_mass_kg = co2_vol * CONVERSIONS["density_co2"]
+         co2_tonnes = co2_mass_kg / 1000.0
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

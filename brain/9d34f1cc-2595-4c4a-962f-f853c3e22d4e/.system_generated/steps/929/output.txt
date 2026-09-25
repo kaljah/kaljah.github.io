@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\qaqc.py:283:        missing_amount_q = q_s1_all.filter(
+new\server\routes\qaqc.py:286:        missing_amount_count = missing_amount_q.count()
+new\server\routes\qaqc.py:288:        missing_co2e_q = q_s1_all.filter(
+new\server\routes\qaqc.py:291:        missing_co2e_count = missing_co2e_q.count()
+new\server\routes\qaqc.py:399:                for r in missing_co2e_q.limit(10).all():
+new\server\routes\qaqc.py:453:                for r in missing_amount_q.limit(10).all():
+
+
+

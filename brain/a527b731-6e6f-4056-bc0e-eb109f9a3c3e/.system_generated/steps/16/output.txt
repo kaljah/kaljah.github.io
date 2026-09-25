@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+              <Settings />
+            </PrivateRoute>
+          }
+        />
+      </Route>
+    </Routes>
+  );
+};
+
+const App = () => {
+  useEffect(() => {
+    fetchCsrfToken();
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <LayoutProvider>
+            <ToastProvider>
+              <AppRoutes />
+            </ToastProvider>
+          </LayoutProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
+  );
+};
+
+export default App;
+

@@ -1,0 +1,94 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+[02/20] Elena Rostova (Combustion Efficiency Specialist): 1000 entries validated in 0.17s | Success: 72.00% | Total CO2e: 1173407.15 t
+[FAIL] Tester 3 Entry T03_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 3 Entry T03_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 3 Entry T03_0009 (tank_breathing): 'float' object has no attribute 'get'
+[03/20] Karim Benali (Flaring Operations Auditor): 1000 entries validated in 0.16s | Success: 72.00% | Total CO2e: 23093991.13 t
+[FAIL] Tester 4 Entry T04_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 4 Entry T04_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 4 Entry T04_0009 (tank_breathing): 'float' object has no attribute 'get'
+[04/20] Sarah Jenkins (Pipeline & Transmission Lead): 1000 entries validated in 0.10s | Success: 72.00% | Total CO2e: 26707252951.94 t
+[FAIL] Tester 5 Entry T05_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 5 Entry T05_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 5 Entry T05_0009 (tank_breathing): 'float' object has no attribute 'get'
+[05/20] Ahmed Belkacem (Pneumatic Instrumentation Auditor): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 1679087.99 t
+[FAIL] Tester 6 Entry T06_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 6 Entry T06_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 6 Entry T06_0009 (tank_breathing): 'float' object has no attribute 'get'
+[06/20] Fatima Zohra (Pneumatic Pumping Systems Lead): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 18742668.42 t
+[FAIL] Tester 7 Entry T07_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 7 Entry T07_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 7 Entry T07_0009 (tank_breathing): 'float' object has no attribute 'get'
+[07/20] Marcus Vance (Storage Terminal Environmental Lead): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 21942314182.26 t
+[FAIL] Tester 8 Entry T08_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 8 Entry T08_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 8 Entry T08_0009 (tank_breathing): 'float' object has no attribute 'get'
+[08/20] Nadia Ould-Ali (Crude Flashing & VRU Specialist): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 2107657.74 t
+[FAIL] Tester 9 Entry T09_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 9 Entry T09_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 9 Entry T09_0009 (tank_breathing): 'float' object has no attribute 'get'
+[09/20] David Thorne (Well Completion & Fracturing Engineer): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 25955780.09 t
+[FAIL] Tester 10 Entry T10_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 10 Entry T10_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 10 Entry T10_0009 (tank_breathing): 'float' object has no attribute 'get'
+[10/20] Lydia Boucher (Production Optimization Engineer): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 29293449717.02 t
+[FAIL] Tester 11 Entry T11_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 11 Entry T11_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 11 Entry T11_0009 (tank_breathing): 'float' object has no attribute 'get'
+[11/20] Tariq Khelifi (Gas Sweetening & AGR Specialist): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 2259496.18 t
+[FAIL] Tester 12 Entry T12_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 12 Entry T12_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 12 Entry T12_0009 (tank_breathing): 'float' object has no attribute 'get'
+[12/20] Rachel Adams (Dehydration Process Chemist): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 34946501.95 t
+[FAIL] Tester 13 Entry T13_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 13 Entry T13_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 13 Entry T13_0009 (tank_breathing): 'float' object has no attribute 'get'
+[13/20] Omar Mahfoud (LDAR & Fugitive Component Inspector): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 38212945577.43 t
+[FAIL] Tester 14 Entry T14_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 14 Entry T14_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 14 Entry T14_0009 (tank_breathing): 'float' object has no attribute 'get'
+[14/20] Claire Dupuis (Rotating Equipment Specialist): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 1690458.78 t
+[FAIL] Tester 15 Entry T15_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 15 Entry T15_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 15 Entry T15_0009 (tank_breathing): 'float' object has no attribute 'get'
+[15/20] Yassine Zerrouki (Fleet & Transport Logistics Manager): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 35343234.48 t
+[FAIL] Tester 16 Entry T16_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 16 Entry T16_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 16 Entry T16_0009 (tank_breathing): 'float' object has no attribute 'get'
+[16/20] Chloe Martin (Off-Road Heavy Equipment Specialist): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 38554547009.45 t
+[FAIL] Tester 17 Entry T17_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 17 Entry T17_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 17 Entry T17_0009 (tank_breathing): 'float' object has no attribute 'get'
+[17/20] Sofiane Brahimi (Cogeneration & Utility Systems Engineer): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 2319261.07 t
+[FAIL] Tester 18 Entry T18_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 18 Entry T18_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 18 Entry T18_0009 (tank_breathing): 'float' object has no attribute 'get'
+[18/20] Laura Chen (Petrochemical Process Stoichiometrist): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 25511302.66 t
+[FAIL] Tester 19 Entry T19_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 19 Entry T19_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 19 Entry T19_0009 (tank_breathing): 'float' object has no attribute 'get'
+[19/20] Djamel Senoussi (Direct Reduction Metallurgy Auditor): 1000 entries validated in 0.09s | Success: 72.00% | Total CO2e: 29973449556.35 t
+[FAIL] Tester 20 Entry T20_0001 (stationary_combustion): name 'n2_mol' is not defined
+[FAIL] Tester 20 Entry T20_0004 (drilling): 'float' object has no attribute 'get'
+[FAIL] Tester 20 Entry T20_0009 (tank_breathing): 'float' object has no attribute 'get'
+[20/20] Lucia Morales (Refinery Asphalt & Bitumen Chemist): 1000 entries validated in 0.08s | Success: 72.00% | Total CO2e: 3023952.59 t
+================================================================================
+ALL 20,000 CALCULATIONS PROCESSED IN 1.91 SECONDS
+Overall Passed: 14400 / 20000 (72.00%) | Failed: 6000
+================================================================================
+
+Starting Database Parity & Ingestion Audit...
+Database Ingestion: Successfully inserted 0 verified tester records.
+Database Count: 24 -> 24 (Delta: +0)
+Database Total CO2e: 10,183.73 t -> 10,183.73 t (Delta: +0.00 t)
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\scratch\run_20_beta_testers_20k.py", line 443, in <module>
+    run_full_suite()
+  File "C:\Users\samsung\Desktop\H2\scratch\run_20_beta_testers_20k.py", line 373, in run_full_suite
+    assert len(sample_q) == 10, "Failed to retrieve inserted beta records"
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: Failed to retrieve inserted beta records
+

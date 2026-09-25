@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\facilities.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -47,6 +47,8 @@
+                 "activity": f.activity,
+                 "region": f.region,
+                 "boundary_notes": f.boundary_notes,
++                "boundary_type": f.boundary_type or "Operational Control",
++                "boundary_detail": f.boundary_detail or "",
+                 "segment": f.segment,
+                 "operator_status": f.operator_status or "operated",
+                 "country": f.country or "Algeria",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

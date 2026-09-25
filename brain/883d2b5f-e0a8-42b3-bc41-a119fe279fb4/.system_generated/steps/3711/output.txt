@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+625:     """Pure query logic for /categorical-breakdown � returns a plain Python list."""
+894: @dashboard_bp.route("/categorical-breakdown", methods=["GET"])
+
+

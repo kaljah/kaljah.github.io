@@ -1,0 +1,28 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 25 items / 24 deselected / 1 selected
+
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A02-FLARE-ELEV-NORM] FAILED [100%]
+
+================================== FAILURES ===================================
+______ TestGoldenDatasetCases.test_golden_case[GOLD-A02-FLARE-ELEV-NORM] ______
+tests\test_golden_dataset_validation.py:139: in test_golden_case
+    assert pytest.approx(res["results"]["co2"]["value"], rel=tol) == expected["co2"]
+E   assert 80.573856 � 8.1e-04 == 91.590976
+E     
+E     comparison failed
+E     Obtained: 91.590976
+E     Expected: 80.573856 � 8.1e-04
+=========================== short test summary info ===========================
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A02-FLARE-ELEV-NORM]
+====================== 1 failed, 24 deselected in 0.79s =======================
+

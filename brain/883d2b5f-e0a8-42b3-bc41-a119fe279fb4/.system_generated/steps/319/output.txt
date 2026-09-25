@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":680,"LineContent":"def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS, job_id, row_idx):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":819,"LineContent":"def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":887,"LineContent":"def _process_row_scope3(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":960,"LineContent":"def _process_row_sources(row, user_id, fac_name_map, fac_id_map):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1002,"LineContent":"def _process_row_production(row, user_id, fac_name_map, fac_id_map, batch_prod_map=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1096,"LineContent":"def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1170,"LineContent":"def _process_row_custom_factors(row, user_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1200,"LineContent":"def _process_row_facilities(row, user_id, overwrite_duplicates):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1276,"LineContent":"def _process_row("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":6,"LineContent":"eeio_processor = \"\"\"def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":68,"LineContent":"def _process_row_scope3(\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":70,"LineContent":"content = content.replace(\"def _process_row_scope3(\", eeio_processor)"}

@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+c1: 63.0 expected: 63.0
+c4: 9.5 expected: 9.5
+c6: 4.079999999999999 expected: 4.08
+c11: 4320.0 expected: 4320.0
+

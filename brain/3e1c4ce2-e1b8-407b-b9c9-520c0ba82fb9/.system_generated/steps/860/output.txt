@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -35,6 +35,34 @@
+     return val.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+ 
+ 
++def _lookup_api_factor(fuel_name: str) -> dict:
++    """Look up an emission factor from API_FACTORS supporting exact, normalized, and alias matches."""
++    if not fuel_name:
++        return {}
++    if fuel_name in API_FACTORS:
++        return API_FACTORS[fuel_name]
++    norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
++    for k, v in API_FACTORS.items():
++        if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
++            return v
++    aliases = {
++        "natural gas": "Natural Gas",
++        "gas": "Natural Gas",
++        "diesel": "Diesel (No. 2 Fuel Oil)",
++        "crude oil": "Crude Oil",
++        "fuel gas": "Refinery Fuel Gas",
++        "lpg": "Propane (Liquid/LPG)",
++        "propane": "Propane (Gas)",
++        "gasoline": "Motor Gasoline",
++        "kerosene": "Kerosene",
++        "coal": "Bituminous Coal",
++    }
++    canonical = aliases.get(norm)
++    if canonical and canonical in API_FACTORS:
++        return API_FACTORS[canonical]
++    return {}
++
++
+ @emissions_bp.route("/", methods=["GET"])
+ @login_required  # SEC-01 FIX: was missing, route was unauthenticated
+ def get_emissions():
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

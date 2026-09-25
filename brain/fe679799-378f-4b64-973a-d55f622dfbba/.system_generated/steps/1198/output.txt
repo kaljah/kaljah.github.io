@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+E5D1D6FF6E79B05404A37734159DD1EA Carbon Tech http://localhost:5173/login
+9F58A9815FA34C0D4DD011F31AA78FEF Omnibox Popup chrome://omnibox-popup.top-chrome/
+16AAE5971566C4C74C89102B5A7EBB6F Omnibox Popup chrome://omnibox-popup.top-chrome/omnibox_popup_aim.html
+

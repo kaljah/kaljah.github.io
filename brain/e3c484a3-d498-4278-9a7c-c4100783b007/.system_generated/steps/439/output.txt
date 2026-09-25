@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\check_anomalies.py","LineNumber":3,"LineContent":"from models import Emission, Scope2Emission, Scope3Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\check_anomalies.py","LineNumber":7,"LineContent":"    e2 = Scope2Emission.query.filter(Scope2Emission.qa_flag.isnot(None)).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\check_anomalies.py","LineNumber":16,"LineContent":"    print(f\"Total Scope 2: {Scope2Emission.query.count()}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":83,"LineContent":"        \"Scope2Emission\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":232,"LineContent":"from routes.scope2 import scope2_bp"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":249,"LineContent":"app.register_blueprint(scope2_bp, url_prefix=\"/api/scope2\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":339,"LineContent":"            \"CREATE INDEX IF NOT EXISTS ix_scope2_emissions_year ON scope2_emissions(year);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":340,"LineContent":"            \"CREATE INDEX IF NOT EXISTS ix_scope2_emissions_status ON scope2_emissions(status);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_columns.py","LineNumber":7,"LineContent":"        tables = ['emissions', 'scope2_emissions', 'scope3_emissions']"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":344,"LineContent":"            batch_scope2_map = {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":347,"LineContent":"            from models import Emission, Scope2Emission, Scope3Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":372,"LineContent":"                for e in Scope2Emission.query.with_entities("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":373,"LineContent":"                    Scope2Emission.id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":374,"LineContent":"                    Scope2Emission.facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":375,"LineContent":"                    Scope2Emission.year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":376,"LineContent":"                    Scope2Emission.month,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":377,"LineContent":"                    Scope2Emission.source_type,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":385,"LineContent":"                    batch_scope2_map[k] = e.id"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":444,"LineContent":"                    emission_obj, row_errors = _process_row_scope2("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":452,"LineContent":"                        batch_keys=batch_scope2_map,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":550,"LineContent":"                                anomaly = anomaly_detector.check_scope2(fac_id, getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":864,"LineContent":"def _process_row_scope2("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":875,"LineContent":"    from models import Scope2Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1031,"LineContent":"                existing_obj = db.session.get(Scope2Emission, existing_id) if existing_id else None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1044,"LineContent":"    emission = Scope2Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\create_anomalies.py","LineNumber":3,"LineContent":"from models import Emission, Scope2Emission, Scope3Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\create_anomalies.py","LineNumber":10,"LineContent":"        e2 = Scope2Emission.query.first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":177,"LineContent":"    def check_scope2("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":190,"LineContent":"            from models import Scope2Emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":194,"LineContent":"            q = db.session.query(Scope2Emission.co2e).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":195,"LineContent":"                Scope2Emission.facility_id == facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":196,"LineContent":"                Scope2Emission.source_type == source_type,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":197,"LineContent":"                Scope2Emission.status == \"Verified\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":198,"LineContent":"                Scope2Emission.co2e.isnot(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":203,"LineContent":"                        Scope2Emission.year \u003c year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":204,"LineContent":"                        and_(Scope2Emission.year == year, Scope2Emission.month \u003c month),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":208,"LineContent":"                q = q.filter(Scope2Emission.year \u003c year)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":210,"LineContent":"            historical_raw = q.order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc()).limit(12).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":214,"LineContent":"                q_fb = db.session.query(Scope2Emission.co2e).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":215,"LineContent":"                    Scope2Emission.facility_id == facility_id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":216,"LineContent":"                    Scope2Emission.source_type == source_type,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":217,"LineContent":"                    Scope2Emission.qa_flag.is_(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":218,"LineContent":"                    Scope2Emission.co2e.isnot(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":223,"LineContent":"                            Scope2Emission.year \u003c year,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":224,"LineContent":"                            and_(Scope2Emission.year == year, Scope2Emission.month \u003c month),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":228,"LineContent":"                    q_fb = q_fb.filter(Scope2Emission.year \u003c year)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":229,"LineContent":"                historical_raw_fb = q_fb.order_by(Scope2Emission.year.desc(), Scope2Emission.month.desc()).limit(12).all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":15,"LineContent":"        \"CREATE INDEX IF NOT EXISTS ix_scope2_emissions_activity ON scope2_emissions(activity);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":16,"LineContent":"        \"CREATE INDEX IF NOT EXISTS ix_scope2_emissions_division ON scope2_emissions(division);\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\add_indexes.py","LineNumber":17,"LineContent":"        \"CREATE INDEX IF NOT EXISTS ix_scope2_emissions_status ON scope2_emissions(status);\","}
+(...343 more results not shown)

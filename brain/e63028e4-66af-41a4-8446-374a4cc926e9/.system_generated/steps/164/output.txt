@@ -1,0 +1,16 @@
+Task: e63028e4-66af-41a4-8446-374a4cc926e9/task-160
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\e63028e4-66af-41a4-8446-374a4cc926e9\.system_generated\tasks\task-160.log
+Log output:
+<truncated 3071 lines>
+n_case_differential[GOLDEN-S3-CAT1-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT4-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT6-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-S3-CAT11-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-001]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-002]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-003]
+FAILED validation/differential/test_clean_differential.py::TestCleanDifferential::test_golden_case_differential[GOLDEN-STOICH-004]
+22 failed, 86 passed in 7.41s
+
+Last progress: 5s ago

@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -465,6 +465,10 @@
+     gwpHorizon === "20"
+       ? stats.totalCo2EmissionsGwp20
+       : stats.totalCo2Emissions;
++  const currentDisplayScope1Intensity =
++    gwpHorizon === "20" ? stats.avgScope1IntensityGwp20 : stats.avgScope1Intensity;
++  const currentDisplayTotalScope1 =
++    gwpHorizon === "20" ? stats.totalScope1Gwp20 : stats.totalScope1;
+ 
+   if (loading && regionalData.length === 0)
+     return (
+@@ -570,17 +570,17 @@
+                 <span
+                   className="total-value scope1"
+                   style={
+-                    stats.avgScope1Intensity === null
+-                      ? { fontSize: "1.25rem", color: "#f59e0b" }
+-                      : undefined
+-                  }
+-                >
+-                  {stats.avgScope1Intensity === null
+-                    ? "Pending Production"
+-                    : (stats.avgScope1Intensity ?? 0).toFixed(2)}
+-                </span>
+-                <span className="kpi-unit">
+-                  {stats.avgScope1Intensity === null ? "" : "kg CO₂e / BOE"}
++                    currentDisplayScope1Intensity === null
++                      ? { fontSize: "1.25rem", color: "#f59e0b" }
++                      : undefined
++                  }
++                >
++                  {currentDisplayScope1Intensity === null
++                    ? "Pending Production"
++                    : (currentDisplayScope1Intensity ?? 0).toFixed(2)}
++                </span>
++                <span className="kpi-unit">
++                  {currentDisplayScope1Intensity === null ? "" : "kg CO₂e / BOE"}
+                 </span>
+               </div>
+               <div className="kpi-footer">
+@@ -592,7 +592,7 @@
+                   </strong>
+                 </span>
+                 <span>
+-                  Total S1: <strong>{formatNumber(stats.totalScope1)} t</strong>
++                  Total S1: <strong>{formatNumber(currentDisplayTotalScope1)} t</strong>
+                 </span>
+               </div>
+             </div>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

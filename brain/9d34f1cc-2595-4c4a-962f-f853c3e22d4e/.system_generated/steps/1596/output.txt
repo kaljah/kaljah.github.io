@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+<truncated 3 lines>
+Regions: ['El Merk', 'South', 'Region-AGT05', 'Region-AGT03', None, 'Region-AGT07', 'North Africa', 'West', 'Region-AGT01', 'Southern Fields', 'Region-AGT02', 'Region-AGT09', 'Region-AGT10', 'Testing Basin', 'Region-AGT06', 'HBNS', 'Region-AGT08', 'Center', 'In-Salah Basin', 'Region-AGT04']
+Emissions count: 744
+

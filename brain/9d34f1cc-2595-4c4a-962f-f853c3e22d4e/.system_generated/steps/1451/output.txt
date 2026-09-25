@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+calculations\dispatcher.py:18:from .stoichiometry import StoichiometricCalculator, NitricAcidCalculator
+calculations\dispatcher.py:81:            "nitric_acid_production": NitricAcidCalculator(),
+calculations\dispatcher.py:82:            "adipic_acid_production": NitricAcidCalculator(),
+calculations\stoichiometry.py:87:class NitricAcidCalculator(BaseCalculator):
+
+
+

@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\GRAPH_REPORT.md","LineNumber":234,"LineContent":"Nodes (13): Permits superuser, admin, and it_admin roles, superuser_required(), create_custom_factor(), delete_custom_factor(), get_custom_factors(), import_custom_factors(), route, Get all custom emission factors (+5 more)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":360,"LineContent":"def init_admin_route():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":7536,"LineContent":"      \"label\": \"Permits superuser, admin, and it_admin roles\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":7544,"LineContent":"      \"norm_label\": \"permits superuser, admin, and it_admin roles\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":13029,"LineContent":"      \"label\": \"Returns None if user is admin/it_admin/superuser (allowed all). Returns a list\\u2026\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":13037,"LineContent":"      \"norm_label\": \"returns none if user is admin/it_admin/superuser (allowed all). returns a list...\""}

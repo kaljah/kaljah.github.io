@@ -1,0 +1,22 @@
+Task: 0a838f8b-6bdf-4434-9e2d-599a9d6f6d95/task-85
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\0a838f8b-6bdf-4434-9e2d-599a9d6f6d95\.system_generated\tasks\task-85.log
+Log output:
+<truncated 6 lines>
+0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 32 items
+
+new\server\tests\test_dispatcher.py ............                         [ 37%]
+new\server\tests\test_uncertainty.py ........                            [ 62%]
+new\server\tests\test_battery_statistical_anomaly_detection.py ......... [ 90%]
+...                                                                      [100%]
+
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 32 passed, 1 warning in 4.88s ========================
+
+Last progress: 6s ago

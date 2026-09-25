@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 340
+    print(f'Critical: {output[" bugs_by_severity\][\critical\]}')
+                              ^
+SyntaxError: unterminated string literal (detected at line 340)
+

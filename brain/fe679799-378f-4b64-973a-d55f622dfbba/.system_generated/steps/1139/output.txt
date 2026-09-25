@@ -1,0 +1,18 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+STARTING COMPREHENSIVE MANAGE DATA BACKEND TEST SUITE
+================================================================================
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_manage_data_backend.py", line 522, in <module>
+    success = run_tests()
+              ^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_manage_data_backend.py", line 30, in run_tests
+    admin2_session = get_session("admin@ghg.com", "admin123")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_manage_data_backend.py", line 12, in get_session
+    raise Exception(f"Failed to login {email}: {resp.status_code} {resp.text}")
+Exception: Failed to login admin@ghg.com: 401 {"error":"Invalid credentials"}
+
+

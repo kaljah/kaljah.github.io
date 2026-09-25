@@ -1,0 +1,99 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  new\client\src\pages\ManageData.jsx:2706:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2707:                                        <label>Gross Gas (MMSm�)</label>
+> new\client\src\pages\ManageData.jsx:2708:                                        <input type="number" step="any" 
+value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} 
+className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2709:                                    </div>
+  new\client\src\pages\ManageData.jsx:2710:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2711:                                        <label>Gas w/o Injection 
+(MMSm�)</label>
+> new\client\src\pages\ManageData.jsx:2712:                                        <input type="number" step="any" 
+value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: 
+e.target.value })} className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2713:                                    </div>
+  new\client\src\pages\ManageData.jsx:2714:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2715:                                        <label>Injected Gas (MMSm�)</label>
+> new\client\src\pages\ManageData.jsx:2716:                                        <input type="number" step="any" 
+value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} 
+className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2717:                                    </div>
+  new\client\src\pages\ManageData.jsx:2718:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2719:                                        <label>Crude Oil (MMBOE)</label>
+> new\client\src\pages\ManageData.jsx:2720:                                        <input type="number" step="any" 
+value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} 
+className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2721:                                    </div>
+  new\client\src\pages\ManageData.jsx:2722:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2723:                                        <label>Condensate (MMBOE)</label>
+> new\client\src\pages\ManageData.jsx:2724:                                        <input type="number" step="any" 
+value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} 
+className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2725:                                    </div>
+  new\client\src\pages\ManageData.jsx:2726:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2727:                                        <label>LPG (MMBOE)</label>
+> new\client\src\pages\ManageData.jsx:2728:                                        <input type="number" step="any" 
+value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} 
+className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2729:                                    </div>
+  new\client\src\pages\ManageData.jsx:2730:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2731:                                        <label>Total Production 
+(MMBOE)</label>
+> new\client\src\pages\ManageData.jsx:2732:                                        <input type="number" step="any" 
+value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: 
+e.target.value })} className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2733:                                    </div>
+  new\client\src\pages\ManageData.jsx:2734:                                    <div className="input-group">
+  new\client\src\pages\ManageData.jsx:2735:                                        <label>Total Saleable 
+(MMBOE)</label>
+> new\client\src\pages\ManageData.jsx:2736:                                        <input type="number" step="any" 
+value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: 
+e.target.value })} className="mole-input" placeholder="0.0" />
+  new\client\src\pages\ManageData.jsx:2737:                                    </div>
+  new\client\src\pages\ManageData.jsx:2738:                                </div>
+  new\client\src\pages\ManageData.jsx:2739:                                <div style={{ display: 'flex', gap: '12px', 
+marginTop: '20px' }}>
+> new\client\src\pages\ManageData.jsx:2740:                                    <button className="action-btn" 
+onClick={handleSaveProduction}>Save Record</button>
+  new\client\src\pages\ManageData.jsx:2741:                                </div>
+  new\client\src\pages\ManageData.jsx:2742:                                <div style={{ display: 'flex', gap: '12px', 
+marginTop: '10px' }}>
+  new\client\src\pages\ManageData.jsx:2743:                                    <button className="action-btn" 
+onClick={() => exportToCSV(productionData, 'production_data.csv')} style={{ background: 'var(--text-secondary)' 
+}}>Export CSV</button>
+  new\client\src\pages\ManageData.jsx:2744:                                </div>
+  new\client\src\pages\ManageData.jsx:2745:
+  new\client\src\pages\ManageData.jsx:2746:
+  new\client\src\pages\ManageData.jsx:2747:                                <div className="table-container" style={{ 
+marginTop: '40px' }}>
+  new\client\src\pages\ManageData.jsx:2748:                                    <table className="data-table">
+  new\client\src\pages\ManageData.jsx:2749:                                        <thead>
+  new\client\src\pages\ManageData.jsx:2750:                                            <tr>
+  new\client\src\pages\ManageData.jsx:2751:                                                <th>Activity</th>
+  new\client\src\pages\ManageData.jsx:2752:                                                <th>Division</th>
+  new\client\src\pages\ManageData.jsx:2753:                                                <th>Region</th>
+  new\client\src\pages\ManageData.jsx:2754:                                                <th>Year</th>
+  new\client\src\pages\ManageData.jsx:2755:                                                <th>Month</th>
+  new\client\src\pages\ManageData.jsx:2756:                                                <th style={{ textAlign: 
+'right' }}>Oil (bbl)</th>
+  new\client\src\pages\ManageData.jsx:2757:                                                <th style={{ textAlign: 
+'right' }}>Gas (mcf)</th>
+  new\client\src\pages\ManageData.jsx:2758:                                                <th style={{ textAlign: 
+'right' }}>Gross Gas (MMSm�)</th>
+  new\client\src\pages\ManageData.jsx:2759:                                                <th style={{ textAlign: 
+'right' }}>Total (MMBOE)</th>
+  new\client\src\pages\ManageData.jsx:2760:                                                <th style={{ textAlign: 
+'right' }}>Saleable (MMBOE)</th>
+  new\client\src\pages\ManageData.jsx:2761:                                                <th style={{ textAlign: 
+'center' }}>Actions</th>
+  new\client\src\pages\ManageData.jsx:2762:                                            </tr>
+  new\client\src\pages\ManageData.jsx:2763:                                        </thead>
+  new\client\src\pages\ManageData.jsx:2764:                                        <tbody>
+  new\client\src\pages\ManageData.jsx:2765:                                            
+{filteredProduction.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE).map(d => (
+
+
+

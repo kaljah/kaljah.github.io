@@ -1,0 +1,15 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2967,7 +2967,8 @@
+     # Custom Factor Override
+     custom_factor_id = data.get("custom_factor_id")
+     if custom_factor_id:
+-        cf = CustomFactor.query.get(custom_factor_id)
++        cf = db.session.get(CustomFactor, custom_factor_id)
++
+         if cf:
+             # Map CustomFactor to factor_data structure
+             # API_FACTORS usually has: { 'co2': val, 'ch4': val, 'n2o': val, 'unit': '...', 'hhv': ... }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

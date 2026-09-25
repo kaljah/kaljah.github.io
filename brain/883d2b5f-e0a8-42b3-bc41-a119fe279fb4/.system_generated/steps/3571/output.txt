@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+============================================================
+PILLAR 1: Large Dataset & Table Virtualization Stress Test
+============================================================
+[SYNTHESIZING] Generating 10,000 multi-scope emission records...
+[GENERATED] 10,000 records in 7.87 ms.
+
+--- Benchmark 1: Full-Dataset Sorting (10,000 records) ---
+   Numeric Sort (CO2e Descending): 5.29 ms
+   String Sort (Facility Name): 2.29 ms
+   Composite Multi-Key Sort: 4.31 ms
+
+--- Benchmark 2: Multi-Criteria Filtering (10,000 records) ---
+   Multi-Criteria Filter matched 36 rows in 0.81 ms
+
+--- Benchmark 3: Pagination Chunking & Page Rendering ---
+   Page Size   25: 400 pages (10000 rows) traversed in 262.82 ms
+   Page Size   50: 200 pages (10000 rows) traversed in 114.53 ms
+   Page Size  100: 100 pages (10000 rows) traversed in 52.69 ms
+   Page Size  500:  20 pages (10000 rows) traversed in 10.97 ms
+   Page Size 1000:  10 pages (10000 rows) traversed in 5.74 ms
+
+--- Benchmark 4: Table Footer Total Accumulation ---
+   Summed 5 numerical columns across 10,000 rows in 0.65 ms:
+     Total Activity: 25,995,000.00 m3
+     Total CO2:      50,690,250.000 tonnes
+     Total CH4:      1,075,617.91000 tonnes
+     Total CO2e:     81,014,211.730 tCO2e (81.01M)
+
+[MEMORY] Net Heap Allocation: 4.42 MB
+>>> [PILLAR 1: PASSED] Large Dataset & Table Virtualization 100% Verified.
+

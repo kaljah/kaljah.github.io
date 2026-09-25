@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\calculation\test_clean_uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -30,12 +30,12 @@
+     """Independent validation of analytical uncertainty calculations."""
+ 
+     def test_tier_resolution_logic(self):
+-        assert resolve_tier("default") == Tier.TIER_1
+-        assert resolve_tier("custom") == Tier.TIER_2
+-        assert resolve_tier("specific") == Tier.TIER_3
+-        assert resolve_tier("site_specific") == Tier.TIER_3
+-        assert resolve_tier("engineering") == Tier.TIER_3
+-        assert resolve_tier("cems") == Tier.TIER_3
++        assert resolve_tier("default") == Tier.T1
++        assert resolve_tier("custom") == Tier.T2
++        assert resolve_tier("specific") == Tier.T3
++        assert resolve_tier("site_specific") == Tier.T3
++        assert resolve_tier("engineering") == Tier.T3
++        assert resolve_tier("cems") == Tier.T3
+ 
+     def test_analytical_gaussian_propagation(self):
+         val = 100.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

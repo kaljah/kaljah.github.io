@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+GOLDEN-S1-MID-001 {'co2': 7.42539, 'ch4': 0.0576725, 'n2o': 0.0, 'co2e': 9.04022}
+

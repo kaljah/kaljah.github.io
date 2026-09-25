@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Admin login: 200
+{"message":"Login successful","user":{"default_activity":null,"default_division":null,"default_facility_id":null,"default_facility_name":null,"default_region":null,"department":"Sustainability & IT","email":"a","fullName":"Administrator","id":1,"jobTitle":"Sustainability Lead","location":"Global","orgName":"GHG Operations","phone":null,"role":"admin","sector":"Oil & Gas","status":"active"}}
+
+

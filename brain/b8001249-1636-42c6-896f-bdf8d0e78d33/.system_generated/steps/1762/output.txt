@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 12:24:43,225] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Endpoint: auth.login View: <function login at 0x000001BCC3AF4720>
+Limiter routes: no _route_limits
+

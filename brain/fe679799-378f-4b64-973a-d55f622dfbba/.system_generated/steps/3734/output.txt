@@ -1,0 +1,34 @@
+The search for "Algerie loi hydrocarbures "pouvoir calorifique supérieur" composition chimique gaz naturel" returned the following summary:
+En Algérie, la réglementation relative aux hydrocarbures, notamment la **Loi n° 19-13 du 11 décembre 2019** (qui complète et modifie le cadre instauré par la loi n° 05-07), encadre les activités de production, de transport et de commercialisation du gaz naturel[1][2][3].
+
+Voici des précisions sur les points techniques soulevés :
+
+### 1. Pouvoir Calorifique Supérieur (PCS)
+Le **Pouvoir Calorifique Supérieur (PCS)** est une caractéristique technique essentielle utilisée dans le secteur énergétique algérien pour définir la qualité et la valeur énergétique du gaz[4][5].
+*   **Définition :** Il représente la quantité totale de chaleur dégagée par la combustion complète d'une unité de volume de gaz naturel (dans des conditions normales de température et de pression), incluant la chaleur latente récupérée par la condensation de l'eau formée lors de la combustion[6][7].
+*   **Cadre réglementaire :** Les textes réglementaires (tels que les décrets exécutifs pris en application de la Loi sur les hydrocarbures) mentionnent le PCS comme paramètre de contrôle de la qualité du gaz distribué sur le marché national[4]. Par exemple, des arrêtés techniques fixent souvent des spécifications de référence pour le gaz naturel, où le PCS figure aux côtés d'autres indicateurs comme l'indice de Wobbe, la teneur en soufre et la pression[4].
+
+### 2. Composition chimique du gaz naturel
+Le gaz naturel en Algérie, produit et commercialisé principalement par la **SONATRACH**, est un mélange d'hydrocarbures dont la composition doit répondre à des normes techniques pour son transport et son utilisation (industrielle ou domestique)[1][8][5].
+*   **Composants principaux :** Il est majoritairement composé de **méthane ($CH_4$)**, accompagné d'autres alcanes (éthane, propane, butane) et parfois de traces d'autres gaz (dioxyde de carbone, azote, hydrogène sulfuré)[4][9].
+*   **Normes :** Les exploitants et distributeurs (comme Sonelgaz) se réfèrent généralement à des normes internationales, telles que la norme **ISO 6976**, pour déterminer la composition, la qualité et les propriétés calorifiques du gaz[5][10]. Cette conformité est cruciale pour la sécurité des réseaux de transport haute pression et pour la facturation[5][11].
+
+### Résumé de l'encadrement
+Si vous recherchez des valeurs précises ou des obligations spécifiques, il convient de consulter :
+*   **Le Journal Officiel de la République Algérienne (JORA) :** Pour les décrets exécutifs spécifiques aux spécifications techniques du gaz[4][12].
+*   **Les normes de l'ARH (Autorité de Régulation des Hydrocarbures) :** Cette autorité veille au respect des spécifications techniques des produits pétroliers et du gaz naturel mis sur le marché[13][12].
+
+Sources:
+[1] [joradp.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQELsRAEPs3AMCx8p3JtVCmCUmMe49-EV3CESeclJCLPcyFjr1u2_6opzNbat2HLOsW7S9sJG4b2ypi6Bcv01Qvz1mSDJ4OQMK6gnvxTPn7AE2bEH9cpf4bv0KvlydUsiiPuEPaDrsHaJKR7Zw19)
+[2] [oilmines.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGJsrWv4rZhUnXbKtwpTaFP3dbEwNelUauOlQRUfrwIG3ae06UddN6kyoRX_PDoxMVjRazubnrYFn5X-z2u1d2ABx9u0xL8hymTPMtxXE3I3qu7hB7gX2z-5E77aOIu6UmUxueIs2h1mFrIXnjBycP2Xqcx09m6OIoam7d11Py0B9t4rG45f9aRJTbXSTFBcX8i_gv3ndhkemJRwuofNQ==)
+[3] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHgy9-z86p8K0l-4kLFlZiG2CDJcbvEN0ix7EkoryJPhLV2tQva7Bi_t7WxI8HPIF3HQxZ_uuwDGuyUkkNGomcSF0daSihvnTvPNX8jozjsz8y2jZ07REUb23p7QRnbFj7rFX8TxigBvAdrcTlncZqzEJAuOk1W9HP7Gel2HRk=)
+[4] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHgy9-z86p8K0l-4kLFlZiG2CDJcbvEN0ix7EkoryJPhLV2tQva7Bi_t7WxI8HPIF3HQxZ_uuwDGuyUkkNGomcSF0daSihvnTvPNX8jozjsz8y2jZ07REUb23p7QRnbFj7rFX8TxigBvAdrcTlncZqzEJAuOk1W9HP7Gel2HRk=)
+[5] [univ-ghardaia.edu.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFFHYyQJDbdUYZqG8RratUDxtN6POVafIa_kFW6j9tGcuBzG5Q63trladKPocCoCw5kHyFsIqgHuM-qXIHEzTBC5btGqwRJjZgGBvXcITmPYQFSsFFvcSA_CcI24rdJ5qIlPPmMVNH_RPtDWjAeza9dlM6cTkuWOQHPxs8dlYXGxsLKGzeiHARNwaNPBM1E-KmrwA==)
+[6] [univ-ghardaia.edu.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFFHYyQJDbdUYZqG8RratUDxtN6POVafIa_kFW6j9tGcuBzG5Q63trladKPocCoCw5kHyFsIqgHuM-qXIHEzTBC5btGqwRJjZgGBvXcITmPYQFSsFFvcSA_CcI24rdJ5qIlPPmMVNH_RPtDWjAeza9dlM6cTkuWOQHPxs8dlYXGxsLKGzeiHARNwaNPBM1E-KmrwA==)
+[7] [univ-batna2.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQH-dEsEPN9vy9Fl6F9e_yBHjUoO-yeSCQb3m0pyznZ7HNXJfP6veCutgfHltGp1qPA2TOJuJ5OXKZgGQH2TamJeH6ffCauXvWmpMCpFSgeC9bgzF75VrcbY6e1SEFJd0EkOz_xHDOuvMNeoSMcfSz5DG5m6tgeeO39R86T3hes2WXKq-2YNKL0_lrFZDN0Qq0rw5lT_B2VVUhBPTeS72fGkuLDz1fco5a-5eaP_uViO3KHM2vYDzA3rUvrhkVP6JNkikone)
+[8] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGxBiJ5W2MUMOw5-M-kZmOFnrjxcwW6JGHvx6HmPwadj4URVO96lR5pcLYq1gMxNKnCKr2od9Vs30QBPFh-hFoCjLOeOZmMsYkFOOlGjZMOha5dC5OAU-D5UU_-4IJagCkp)
+[9] [selectra.info](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEBXgSMT91dqJ9pqnkglJcOAmD6feCxU76i-iSGXOSL5SG06hG61K6L64Qteonh-WjcIJ8UjkJLqOzuCYNLZs5TSGeo31KHBJBOgw2Uh5o4ZKpj7OMd07lX2n9A03PI0iUa0mUf4ugYXAhMhJ-E7AYxyeWwwOWTWQqWcYuS53bEuD8LQw==)
+[10] [univ-ghardaia.edu.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFFHYyQJDbdUYZqG8RratUDxtN6POVafIa_kFW6j9tGcuBzG5Q63trladKPocCoCw5kHyFsIqgHuM-qXIHEzTBC5btGqwRJjZgGBvXcITmPYQFSsFFvcSA_CcI24rdJ5qIlPPmMVNH_RPtDWjAeza9dlM6cTkuWOQHPxs8dlYXGxsLKGzeiHARNwaNPBM1E-KmrwA==)
+[11] [sonelgaz.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF0X5CQVaO1ie3GK0toG4RdFyGY0KRgJrWKPqTNgOJ_Rr6uI8C3p4qja0NCmEH3DNkC0w0Gw0QRJRy-MvtK49NmsiaLQAcJrv12C9VaDsHj5FlQrGbdD9uJgV6jVEpe3yfkw5Dr8GMsvv2uvfJ8AI6kwgIIQVR7QLm4WDRcpyIXsVcLLiJB)
+[12] [arh.gov.dz](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFGCyZfT190qm1GeluzpFe7NYwfejQYEsTI6Hn2r7Yb8DTVPPRCl1XCRGa72n0lAcf_f1bn-QW-t2jeth3r0dWqnOmmMDToPf_z_h8-W_tGcY0y0hPZRWuRQtMJrcAUirY_WOGkgjh7Ks1L1D7ykmf-7sR1rbsZ4GQYbof5AXk=)
+[13] [scribd.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFJLb583A6ojdR0lwsQ28zPhQ9OYKmsDP5mv6xtDUhQuo-BScqjGG36sMd6gD3WbkOS-QAOWFpoZLww0qEOfZwEA5nkZ8dSqBHeNQ1XU2x6f5W7VFwo752smLDVpRz4Kj7Aonev-6WqXR8wU9XJzW4zAfhTI52eLPc4AWl-)

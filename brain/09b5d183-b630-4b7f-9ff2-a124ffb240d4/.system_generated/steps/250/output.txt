@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+test_concurrent_multi_scope_writes_and_reads _
+
+self = <test_stress_concurrency.TestConcurrencyAndLockResilience object at 0x000002C3B5B0C530>
+test_env = {'facility_id': 18, 'admin_id': 42}
+
+    def test_concurrent_multi_scope_writes_and_reads(self, test_env):
+        """Execute 50 concurrent requests mixing Scope 1, Scope 2, Scope 3 writes and Dashboard reads."""
+        num_threads = 30
+        facility_id = test_env["facility_id"]
+    
+        def worker_task(task_id):
+            with app.test_client() as client:
+                # Login
+                login_res = client.post(
+                    "/api/auth/login",
+                    json={"email": "concurrency_admin@test.com", "password": "StressPass2026!"},
+                )
+                if login_res.status_code != 200:
+                    return {"task_id": task_id, "type": "login", "status": login_res.status_code, "latency": 0}
+    
+                start = time.perf_counter()
+                task_type = task_id % 4
+    
+                if task_type == 0:
+                    # Scope 1 Write
+                    payload = {
+                        "year": 2025,
+                        "month": (task_id % 12) + 1,
+                        "facility_id": facility_id,
+                        "process_type": "combustion",
+                        "fuel": "Natural Gas",
+                        "amount": 1000 + task_id * 10,
+                        "unit": "m3",
+                        "status": "Verified",
+                 
+

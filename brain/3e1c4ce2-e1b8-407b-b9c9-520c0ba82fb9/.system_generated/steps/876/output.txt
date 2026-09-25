@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 6
+    c.execute(" UPDATE emissions SET unit = tonnes WHERE record_id = REC-2026-0009 \)
+              ^
+SyntaxError: unterminated string literal (detected at line 6)
+

@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":930,"LineContent":"@dashboard_bp.route(\"/goals/\u003cint:year\u003e\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":744,"LineContent":"@managedata_bp.route(\"/goals\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":745,"LineContent":"@managedata_bp.route(\"/goals/\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":769,"LineContent":"@managedata_bp.route(\"/goals\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":770,"LineContent":"@managedata_bp.route(\"/goals/\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":809,"LineContent":"@managedata_bp.route(\"/goals/\u003cint:year\u003e\", methods=[\"DELETE\"])"}

@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\UserManagement.jsx:26:  const s = document.createElement("style");
+new\client\src\pages\UserManagement.jsx:84:const S = {
+new\client\src\pages\UserManagement.jsx:258:  regionPill: (color, bg, border) => ({
+new\client\src\pages\UserManagement.jsx:1090:                          style={S.regionPill(meta.color, meta.bg, 
+meta.border)}
+new\client\src\pages\UserManagement.jsx:1100:                            style={S.regionPill(
+new\client\src\pages\UserManagement.jsx:1111:                            style={S.regionPill(
+new\client\src\pages\UserManagement.jsx:1122:                            style={S.regionPill(
+new\client\src\pages\UserManagement.jsx:1590:                  style={S.roleBadge(
+
+
+

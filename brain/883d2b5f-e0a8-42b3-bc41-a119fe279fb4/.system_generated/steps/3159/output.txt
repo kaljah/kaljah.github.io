@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+
+new\server\tests\test_tier_scope_kpi_numerical.py:27:    ComponentFugitiveCalculator,
+
+
+

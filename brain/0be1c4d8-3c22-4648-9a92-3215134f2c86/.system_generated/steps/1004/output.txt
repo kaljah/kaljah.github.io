@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope2ImportWizard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -265,6 +265,7 @@
+ 
+ // ─── Main Wizard ──────────────────────────────────────────────────────────────
+ export default function Scope2ImportWizard({ onClose, onUploadSuccess }) {
++  const toast = useToast();
+   const fileInputRef = useRef(null);
+ 
+   const [step, setStep] = useState(1);
+@@ -339,9 +339,8 @@
+     form.append("file", file);
+     form.append("scope", "2");
+     form.append("column_mapping", JSON.stringify(mapping));
+-    // Re-using the same backend endpoint for scope 1 which supports dynamic scope through form.append("scope", "2")
+     try {
+-      const res = await api.post("/emissions/bulk-upload", form, {
++      const res = await api.post("/emissions/upload/start", form, {
+         headers: { "Content-Type": "multipart/form-data" },
+       });
+       setJobId(res.data.job_id);
+@@ -348,5 +348,5 @@
+     } catch (err) {
+-      alert("Upload error: " + (err.response?.data?.error || err.message));
++      toast.error("Upload error: " + (err.response?.data?.error || err.message));
+     } finally { setIsSubmitting(false); }
+   };
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

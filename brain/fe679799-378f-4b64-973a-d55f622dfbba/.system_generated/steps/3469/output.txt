@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Status: 201 Response: {'calculation_method': 'server_default', 'emissions': {'ch4': 0.0, 'co2': 0.0, 'n2o': 0.0, 'totalCo2e': 0.0, 'uncertainty': {}}, 'id': 636, 'message': 'Record added', 'record': {'amount': 50.0, 'facility_name': 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'fuel': None, 'month': 1, 'process_type': 'flaring', 'unit': 'mscf', 'year': 2025}}
+

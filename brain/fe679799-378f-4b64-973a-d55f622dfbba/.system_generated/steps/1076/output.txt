@@ -1,0 +1,23 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":947,"LineContent":"                # If records are pending approval, notify all admins"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":1133,"LineContent":"            \"Measured gas pressure at operating conditions (gauge or absolute depending on press_unit).\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4416,"LineContent":"    \"\"\"Approve a single pending emission record (Scope 1, 2, or 3).\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4443,"LineContent":"        return jsonify({\"error\": \"Record is not pending approval\"}), 400"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4471,"LineContent":"    \"\"\"Reject a single pending emission record (Scope 1, 2, or 3).\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4522,"LineContent":"    \"\"\"Approve multiple pending emission records in one request."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4543,"LineContent":"    pending_statuses = [\"Pending\", \"Draft\", \"Pending Approval\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4546,"LineContent":"        q = model.query.filter(model.status.in_(pending_statuses))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4589,"LineContent":"        details=f\"{approved_count} pending records approved by {user.fullName}\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4608,"LineContent":"    \"\"\"Reject (delete) multiple pending emission records."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4629,"LineContent":"    pending_statuses = [\"Pending\", \"Draft\", \"Pending Approval\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4632,"LineContent":"        q = model.query.filter(model.status.in_(pending_statuses))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4681,"LineContent":"        details=f\"{deleted_count} pending records rejected by {user.fullName}: {reason}\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4722,"LineContent":"@emissions_bp.route(\"/pending\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4724,"LineContent":"def get_pending_emissions():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4725,"LineContent":"    \"\"\"Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4733,"LineContent":"    pending_statuses = [\"Pending\", \"Draft\", \"Pending Approval\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4738,"LineContent":"        q = Emission.query.filter(Emission.status.in_(pending_statuses))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4760,"LineContent":"        q = Scope2Emission.query.filter(Scope2Emission.status.in_(pending_statuses))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4782,"LineContent":"        q = Scope3Emission.query.filter(Scope3Emission.status.in_(pending_statuses))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4805,"LineContent":"    def count_pending(model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4806,"LineContent":"        q = model.query.filter(model.status.in_(pending_statuses))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4815,"LineContent":"        \"total_pending\": count_pending(Emission) + count_pending(Scope2Emission) + count_pending(Scope3Emission),"}

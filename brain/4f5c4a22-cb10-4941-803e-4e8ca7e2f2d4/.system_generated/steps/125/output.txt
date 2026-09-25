@@ -1,0 +1,145 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\implementation_plan.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -17,7 +17,7 @@
+ 
+ ## 2. Test Execution Matrix & Scope
+ 
+-### Phase 1: Comprehensive Dashboard Verification
++### Phase 1: Initial Dashboard & Intensity Baseline Audit
+ 1. **Filter Permutations & Cascades**:
+    - **Years**: All Years, 2026, 2025, 2024, 2023, 2022.
+    - **Supply Chains (Segments)**: All Supply Chains, Upstream, Midstream, Downstream.
+@@ -24,5 +24,5 @@
+    - **Divisions**: All Divisions, Metallurgy, Petrochemicals, Building Materials, Exploration & Production, DP, AST, LSH, RAF, PEC.
+-   - **Regions & Facilities**: All Regions, West, Center, South, and individual facility filters (43 facilities).
++   - **Regions (Database Truth)**: All Regions, West, Center, South, and individual facility filters (43 facilities).
+ 2. **Buttons & Mode Toggles**:
+    - GWP Horizon Toggle: 100-Year (AR5 standard) vs 20-Year (near-term climate forcing).
+    - Compare Regions Mode Toggle (grouped multi-region benchmarking).
+@@ -29,6 +29,5 @@
+    - Detailed Breakdown Accordion Toggle (expand/collapse and tree drill-down).
+    - Categorical Breakdown Accordion Toggle.
+-   - PDF Export trigger & download validation.
+    - Notification Center panel toggle and unread counter inspection.
+ 3. **Tri-Layer Parity Verification**:
+    - **Layer 1 (UI DOM)**: Extract text values from Hero cards (Gross, Net, Total CH4), Scope Pills (Scope 1, Scope 2, Scope 3), and Breakdown Table.
+@@ -35,38 +35,26 @@
+    - **Layer 3 (Database SQL)**: Compute ground truth directly from `emissions`, `scope2_emissions`, `scope3_emissions`, and `production_data` tables.
+-4. **Visual Verification**:
+-   - Capture full-page and component screenshots across representative filter slices.
+-
+----
+-
+-### Phase 2: Carbon Intensity & Methane Intensity Pages
+-1. **Carbon Intensity (`/carbon-intensity`)**:
+-   - Test across all available years (2022-2026), supply chains, activities, and regions.
+-   - Verify 4 KPI cards: Overall GHG Intensity (kg CO2e/boe), Scope 1 Direct Intensity, Flaring Carbon Intensity, Scope 3 Value Chain.
+-   - Verify dual GWP horizon toggle (100-yr vs 20-yr) dynamic recalculation.
+-   - Verify Historical Trends switching: 5-Year Bar/Line Chart vs Heatmap Matrix.
+-   - Compare UI values with backend `/api/carbon-intensity` endpoint and SQL table aggregations.
+-   - Capture screenshots of KPI cards, trend charts, and product embodiment breakdowns.
+-2. **Methane Intensity (`/methane-intensity`)**:
+-   - Test across all years, supply chains, activities, and regions.
+-   - Verify KPI cards: Methane Intensity (% loss), Upstream Loss Rate, Midstream Loss Rate, Flaring Loss Rate, Total CH4 Volume.
+-   - Verify OGMP 2.0 Gold Standard compliance level badges and survey reconciliation metrics.
+-   - Test baseline year switching (2022-2026) and threshold adjustments.
+-   - Compare UI numbers with `/api/methane-intensity` and direct DB calculation (`ch4_emissions / gas_production`).
+-   - Capture screenshots of intensity gauges, regional breakdown bars, and OGMP roadmap tables.
+-
+----
+-
+-### Phase 3: Scope 1 Emissions Engine (Manual Entry Page `/emissions`)
++4. **Carbon & Methane Intensity Pages**:
++   - Carbon Intensity (`/carbon-intensity`): Test across all database regions (`West`, `Center`, `South`), years, and supply chains; verify 4 KPI cards, dual GWP toggle, historical trends (chart vs heatmap), and CBAM table.
++   - Methane Intensity (`/methane-intensity`): Test across all database regions, years, and supply chains; verify KPI cards, OGMP Gold Standard status, targets, baseline years, and threshold adjustments.
++   - Compare UI numbers with `/api/carbon-intensity` and `/api/methane-intensity` and direct DB calculation.
++   - Capture screenshots for all initial views.
++
++---
++
++### Phase 2: Scope 1 Emissions Engine (Manual Entry Page `/emissions`)
+ 1. **Tier 1 (Catalog Default Factors)**:
+-   - For every Region (West, Center, South):
++   - Test for **every region in the database**: `West`, `Center`, `South` (linking to corresponding facilities).
+    - Test process types: Stationary Combustion, Mobile Combustion, Flaring, Venting.
+    - Exercise different fuels: Natural Gas, Diesel, Fuel Oil, LPG, Propane, Crude Oil, Kerosene, etc.
+-   - Test varied quantities (e.g. 500, 15000, 250000) and units (`scf`, `m3`, `gal`, `bbl`, `l`, `MMBtu`).
++   - Test varied quantities and units (`scf`, `m3`, `gal`, `bbl`, `l`, `MMBtu`).
+    - Test custom and default HHV inputs.
+-   - Submit via React form DOM -> capture response -> verify DB record insertion -> verify backend computation parity (`compute_emissions`).
++   - **Input Uncertainty Parameters**: Fill in Meter Uncertainty %, GC Uncertainty %, and User Uncertainties (CO2, CH4, N2O) to ensure all inputs are tested.
++   - Submit via React form DOM -> capture response in UI result panel.
++   - Compare UI vs Backend API (`/api/emissions`) vs SQLite database record (`emissions` table).
++   - **Verify Scope 1 Records Table Below Form**: Inspect the table below the form and assert that every column (Quantity, Unit, CO2, CH4, N2O, Total CO2e, Status) displays the exact expected values.
+ 2. **Tier 3 (Engineering Formulas - Rigorous Zero-Default Mode)**:
+    Exercise **every single engineering formula** supported by `dispatcher.py`:
+-   - **Combustion (Tier 3)**: HHV, Combustion Efficiency, full C1–C10 + CO2 + N2 gas composition.
++   - **Combustion (Tier 3)**: HHV, Combustion Efficiency, full C1–C10 + CO2 + N2 gas composition, operating temp & pressure.
+    - **Flaring (Tier 3)**: Flare gas volume, CH4 mole fraction, flare type (elevated, ground, non-assisted), combustion & destruction efficiency.
+    - **Mud Degassing / Drilling**: Mud volume (m3, bbl, gal), mud type (water-based, oil-based, synthetic).
+    - **Well Completion Flowback**: Metered flowback volume or flowback rate + duration + choke size + WHP + GOR, flare efficiency.
+@@ -80,12 +80,13 @@
+    - **Glycol Dehydrators**: Gas throughput, TEG pump rate, operating hours, contactor pressure & temperature, flash tank control efficiency.
+    - **Stoichiometry / Chemical Processes**: Mass throughput, carbon content fraction, mass unit.
+    - **Cogeneration Heat & Power Allocation**: Total emissions, heat output, power output, allocation method.
+-3. **Tri-Layer Verification**:
+-   - Compare UI calculated display (`CO2`, `CH4`, `N2O`, `Total CO2e`) against API POST response and the inserted row in SQLite `emissions` table.
+-
+----
+-
+-### Phase 4: Bulk CSV Uploader Testing (`/manage-data`)
++   - Fill ALL input parameters, including meter, GC, and user uncertainties.
++   - Check UI result card, check backend API, check database row, check the Scope 1 table below the form.
++   - Capture screenshots for each engineering formula.
++
++---
++
++### Phase 3: Bulk CSV Uploader Testing (`/manage-data`)
+ 1. **Tier 1 Bulk CSV Ingestion**:
+    - Generate test CSV containing all standard catalog fuel types across various units and default factors.
+    - Upload file through the UI file uploader DOM.
+@@ -92,21 +92,24 @@
+    - Verify Batch Review Wizard DOM, preview counts, and commit approvals.
+-   - Confirm records created in database with status `Pending` (or `Verified` for admin).
+-2. **Tier 3 Bulk CSV Ingestion (30 Scenarios per Engineering Formula)**:
+-   - Generate automated test CSV with **30 distinct scenarios each** for all 12+ engineering formulas:
+-     - 30 Combustion scenarios (varying HHV, efficiencies 90-99.9%, gas compositions, units: scf, m3, MMBtu).
+-     - 30 Flaring scenarios (varying flare types, gas volumes, CH4 fractions, destruction efficiencies).
+-     - 30 Storage Tank scenarios (varying liquid throughputs, bbl/m3/gal, GORs 10-1500, control efficiencies).
+-     - 30 Liquids Unloading scenarios (depths 1000-15000 ft, casing diameters, pressures 50-2500 psig, events).
+-     - 30 Blowdown/Venting scenarios (volumes 10-5000 m3, pressures 15-3000 psig, event counts, temps).
+-     - 30 Pneumatic Device scenarios (low-bleed, high-bleed, intermittent, hours 1000-8760, bleed units).
+-     - 30 Compressor Seal scenarios (reciprocating, centrifugal dry, centrifugal wet, varied unit counts).
+-     - 30 AGR scenarios (throughputs 1-500 MMSCF, inlet CO2 1-30%, outlet CO2, control types: vent, flare, SRU).
+-     - 30 Dehydrator scenarios (throughputs, pump rates 1-50 gpm, contactor pressures 200-1500 psig, temps).
+-     - 30 Well Completion scenarios (rates, durations, choke sizes, metered vs unmetered).
+-     - 30 Mud Degassing scenarios (water-based, oil-based, synthetic, volumes 50-10000 m3).
+-     - 30 Fugitive screening & equipment scenarios (PPM 100-50000, component counts).
+-     - **Total: ~360 Tier 3 records** across unique physical scenarios and unit variations.
+-   - Upload CSV via UI DOM -> verify background ingestion -> verify zero math failures -> verify DB row integrity.
++   - Confirm records created in database with status `Pending` / `Verified`.
++2. **Tier 3 Bulk CSV Ingestion (360 Scenarios for EACH Region in DB)**:
++   - Generate automated test CSV with **360 distinct scenarios for EACH database region** (`West`, `Center`, `South`):
++     - Region 1 (West): 360 scenarios across all 12+ engineering formulas.
++     - Region 2 (Center): 360 scenarios across all 12+ engineering formulas.
++     - Region 3 (South): 360 scenarios across all 12+ engineering formulas.
++     - **Total: 1,080 Tier 3 records** across unique physical scenarios, parameters, and unit variations.
++   - Upload CSV via UI DOM -> verify background ingestion -> verify zero math failures -> approve records -> verify DB row integrity.
++   - Retain all test records in the database as instructed.
++
++---
++
++### Phase 4: Post-Calculation KPI Recalculation & Integrity Re-Audit
++1. Re-visit Dashboard (`/`), Carbon Intensity (`/carbon-intensity`), and Methane Intensity (`/methane-intensity`).
++2. Verify that the newly calculated and approved emissions from Phase 2 & Phase 3 are dynamically aggregated into the KPIs:
++   - Gross & Net emissions, Scope 1 total, Total CH4.
++   - Carbon Intensity (kg CO2e/boe) and Scope 1 Direct Intensity.
++   - Methane Intensity (% loss) and venting/flaring rates.
++3. Compare new UI numbers with fresh SQL sums.
++4. Capture final comparison screenshots.
+ 
+ ---
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

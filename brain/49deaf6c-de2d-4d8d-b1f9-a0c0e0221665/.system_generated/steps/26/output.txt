@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+
+new\server\models.py:150:    uncertainty = db.Column(db.Float, nullable=True)  # CO� uncertainty
+new\server\models.py:151:    uncertainty_ch4 = db.Column(db.Float, nullable=True)  # CH4 uncertainty
+new\server\models.py:152:    uncertainty_n2o = db.Column(db.Float, nullable=True)  # N�O uncertainty
+new\server\models.py:153:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+new\server\models.py:154:    qa_flag = db.Column(db.String(255), nullable=True)
+new\server\models.py:276:    uncertainty = db.Column(db.Float)  # legacy fallback
+new\server\models.py:277:    co2_uncertainty = db.Column(db.Float)
+new\server\models.py:278:    ch4_uncertainty = db.Column(db.Float)
+new\server\models.py:279:    n2o_uncertainty = db.Column(db.Float)
+new\server\models.py:280:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+new\server\models.py:286:class ActivityLog(db.Model):
+new\server\models.py:367:    uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+new\server\models.py:368:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+new\server\models.py:369:    qa_flag = db.Column(db.String(255), nullable=True)
+new\server\models.py:405:    uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+new\server\models.py:406:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+new\server\models.py:407:    qa_flag = db.Column(db.String(255), nullable=True)
+new\server\models.py:471:class Notification(db.Model):
+
+
+

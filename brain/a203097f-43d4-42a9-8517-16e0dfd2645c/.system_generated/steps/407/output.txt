@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\mutation\test_clean_mutations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -198,21 +198,19 @@
+     def test_kill_negative_activity_boundary_mutation(self):
+         """Mutant: Accepting negative activity data producing negative (carbon credit) emissions without validation error."""
+         calc = CombustionCalculator()
+-        res = calc.calculate(
+-            fuel_quantity=-500.0,
+-            ef_co2=1.93,
+-            ef_ch4=0.0,
+-            ef_n2o=0.0,
+-            uncertainties={},
+-            hhv=None,
+-            ef_unit="kg/m3",
+-            fuel_unit="m3",
+-            fuel_type="gases",
+-        )
+-        # Production calculator returns negative emissions if no guard rails exist:
+-        # A negative emission without explicit carbon removal certification is a critical defect.
+-        is_negative = res["total_co2e"] < 0
+-        assert res is not None
++        # Production calculator must strictly reject negative activity data
++        with pytest.raises(ValueError, match="cannot be negative"):
++            calc.calculate(
++                fuel_quantity=-500.0,
++                ef_co2=1.93,
++                ef_ch4=0.0,
++                ef_n2o=0.0,
++                uncertainties={},
++                hhv=None,
++                ef_unit="kg/m3",
++                fuel_unit="m3",
++                fuel_type="gases",
++            )
+ 
+     def test_kill_zero_efficiency_division_by_zero_mutation(self):
+         """Mutant: Zero net efficiency in steam calculator should be caught and raise ValueError."""
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

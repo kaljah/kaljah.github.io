@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+POST /api/auth/users: 405
+{"code":405,"error":"The method is not allowed for the requested URL.","request_id":"c44b998c-f896-459f-96e9-7a401d007573"}
+
+
+POST /api/auth/register: 400
+{"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+

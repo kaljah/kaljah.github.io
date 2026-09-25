@@ -1,0 +1,62 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 16 items / 15 deselected / 1 selected
+
+new\server\tests\test_battery_midstream_process_equipment.py F           [100%]
+
+================================== FAILURES ===================================
+_ TestWellCompletionFlowbackBattery.test_rate_duration_with_flaring_partition _
+
+self = <test_battery_midstream_process_equipment.TestWellCompletionFlowbackBattery object at 0x0000021E1DAACCB0>
+
+    def test_rate_duration_with_flaring_partition(self):
+        calc = CompletionFlowbackCalculator()
+        rate_mscfd = 450.0   # Mscf/day
+        hours = 72.0         # 3 days flowback
+        ctrl_eff = 0.95      # 95% routed to flare
+        res = calc.calculate(
+            calculation_method="rate_duration",
+            flowback_rate=rate_mscfd,
+            flowback_duration_hours=hours,
+            ch4_content=0.85,
+            co2_content=0.03,
+            control_efficiency=ctrl_eff,
+            hhv=1050.0,
+            gwp_dict=GWP_AR5,
+        )
+        ref = IndependentCompletions.calculate(
+            method="rate_duration",
+            flowback_rate=rate_mscfd,
+            duration_hours=hours,
+            ch4_content=0.85,
+            co2_content=0.03,
+            control_efficiency=ctrl_eff,
+            hhv=1050.0,
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(_val(res["results"]["ch4"]), rel=1e-4) == ref["ch4"]
+E       assert 36.50965815898411 � 0.00365097 == 1.5212357566243382
+E         
+E         comparison failed
+E         Obtained: 1.5212357566243382
+E         Expected: 36.50965815898411 � 0.00365097
+
+new\server\tests\test_battery_midstream_process_equipment.py:114: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestWellCompletionFlowbackBattery::test_rate_duration_with_flaring_partition
+================= 1 failed, 15 deselected, 1 warning in 2.04s =================
+

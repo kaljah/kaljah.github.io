@@ -1,0 +1,19 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-321
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-321.log
+Log output:
+<truncated 43 lines>
+gs, **kwargs)
+    |            ^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\samsung\Desktop\H2\validation\property\test_clean_properties.py", line 35, in test_zero_property_invariance
+    |     def test_zero_property_invariance(self, zero_qty):
+    |                ^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\samsung\anaconda3\Lib\site-packages\hypothesis\core.py", line 1050, in test
+    |     raise DeadlineExceeded(
+    | hypothesis.errors.DeadlineExceeded: Test took 1071.32ms, which exceeds the deadline of 200.00ms. If you expect test cases to take this long, you can use @settings(deadline=...) to either set a higher deadline, or to disable it with deadline=None.
+    +------------------------------------
+=========================== short test summary info ===========================
+FAILED validation/property/test_clean_properties.py::TestCleanMathematicalProperties::test_zero_property_invariance
+========================= 1 failed, 4 passed in 3.21s =========================
+
+Last progress: 1s ago

@@ -1,0 +1,130 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 43 items / 39 deselected / 4 selected
+
+new\server\tests\test_audit_remediation.py::test_stoichiometry_short_ton PASSED [ 25%]
+new\server\tests\test_audit_remediation.py::test_qaqc_fuel_completeness_non_combustion FAILED [ 50%]
+new\server\tests\test_audit_remediation.py::test_compressor_seal_and_storage_tank_uncertainty_mapping FAILED [ 75%]
+new\server\tests\test_audit_remediation.py::test_stoichiometry_dispatcher_gwp_propagation FAILED [100%]
+
+================================== FAILURES ===================================
+_________________ test_qaqc_fuel_completeness_non_combustion __________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_qaqc_fuel_completeness_non_combustion(client, test_users):
+        """Verify non-combustion records (pneumatics, fugitives) without fuel do not depress QA/QC fuel_completeness."""
+        with app.app_context():
+            # Clear out test emissions
+            Emission.query.filter(Emission.record_id.like("qaqc-test-%")).delete()
+            db.session.commit()
+    
+            # Insert 3 non-combustion records without fuel
+            for i in range(3):
+                em = Emission(
+                    record_id=f"qaqc-test-nc-{i}",
+                    year=2024,
+                    month=i + 1,
+                    facility_id=1,
+                    process_type="pneumatics",
+                    fuel_type=None,
+                    quantity=100.0,
+                    unit="count",
+                    co2_emissions=0.0,
+                    ch4_emissions=1.0,
+                    n2o_emissions=0.0,
+                    co2e_total=28.0,
+                    status="Verified",
+                    created_by=test_users["admin"],
+                )
+                db.session.add(em)
+            db.session.commit()
+    
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        res = client.get("/api/qaqc/dashboard?year=2024")
+        assert res.status_code == 200
+        data = res.get_json()
+        metrics = data.get("diagnostics", {}).get("dimension_completeness", {})
+        # Since all records in this set are non-combustion, fuel_source completeness should be 100.0%
+>       assert metrics.get("fuel_source") == 100.0
+E       AssertionError: assert 76.2 == 100.0
+E        +  where 76.2 = <built-in method get of dict object at 0x000001CD9E3EE9C0>('fuel_source')
+E        +    where <built-in method get of dict object at 0x000001CD9E3EE9C0> = {'activity_amount': 83.8, 'calculation': 100.0, 'facility': 100.0, 'fuel_source': 76.2}.get
+
+new\server\tests\test_audit_remediation.py:1279: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/qaqc/dashboard 200 [0.148s] [ReqID: 824de20c-77e1-48a9-8152-45fde3f57428]
+__________ test_compressor_seal_and_storage_tank_uncertainty_mapping __________
+
+    def test_compressor_seal_and_storage_tank_uncertainty_mapping():
+        """Verify compressor_seal and storage_tanks map to proper categories and propagate uncertainty."""
+        from calculations.dispatcher import CalculationDispatcher
+        from calculations.uncertainty import PROCESS_CATEGORY, resolve_ef_uncertainty, Tier
+    
+        assert PROCESS_CATEGORY["compressor_seal"] == "fugitive"
+        assert PROCESS_CATEGORY["storage_tanks"] == "vented"
+    
+        # Fugitive CH4 Tier 1 uncertainty should be 0.60 (60%), NOT 0.15 (combustion)
+        u_seal = resolve_ef_uncertainty("compressor_seal", "ch4", Tier.T1)
+        assert u_seal == 0.60
+    
+        dispatcher = CalculationDispatcher()
+        # Test compressor seal dispatch
+        seal_res = dispatcher.dispatch(
+            process_type="compressor_seal",
+            inputs={"compressor_count": 2, "seal_type": "reciprocating"},
+            emission_factors={},
+            uncertainties={"_factor_source": "default"},
+        )
+        assert seal_res is not None
+>       assert seal_res["total_co2e"] > 0
+E       assert 0.0 > 0
+
+new\server\tests\test_audit_remediation.py:1327: AssertionError
+________________ test_stoichiometry_dispatcher_gwp_propagation ________________
+
+    def test_stoichiometry_dispatcher_gwp_propagation():
+        """Verify stoichiometry calculator accepts gwp_dict and calculates deterministically."""
+        from calculations.dispatcher import CalculationDispatcher
+    
+        dispatcher = CalculationDispatcher()
+        res = dispatcher.dispatch(
+            process_type="stoichiometry",
+            inputs={"quantity": 1000, "carbon_content": 0.85, "unit": "kg"},
+            emission_factors={},
+            uncertainties={"_factor_source": "default"},
+            gwp_dict={"CO2": 1, "CH4": 28, "N2O": 265},
+        )
+        assert res is not None
+        # 1000 kg * 0.85 * (44.01/12.011) / 1000 = ~3.114 tonnes CO2
+>       assert pytest.approx(res["results"]["co2"]["value"], 0.01) == 3.114
+E       assert 0.0 � 1.0e-12 == 3.114
+E         
+E         comparison failed
+E         Obtained: 3.114
+E         Expected: 0.0 � 1.0e-12
+
+new\server\tests\test_audit_remediation.py:1346: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_qaqc_fuel_completeness_non_combustion
+FAILED new\server\tests\test_audit_remediation.py::test_compressor_seal_and_storage_tank_uncertainty_mapping
+FAILED new\server\tests\test_audit_remediation.py::test_stoichiometry_dispatcher_gwp_propagation
+============ 3 failed, 1 passed, 39 deselected, 1 warning in 2.70s ============
+

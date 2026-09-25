@@ -1,0 +1,13 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\cb28655a-ac03-43b1-88b1-4d58ef17df46\scratch\agent_03_tests.py", line 67, in <module>
+    record(1, "Login admin", "POST", f"{BASE_URL}/auth/login",
+  File "C:\Users\samsung\.gemini\antigravity\brain\cb28655a-ac03-43b1-88b1-4d58ef17df46\scratch\agent_03_tests.py", line 45, in record
+    print(f"[T{test_num:02d}] {name} \u2192 HTTP {status} {'\U0001f41b BUG' if is_bug else '\u2705'}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 18: character maps to <undefined>
+

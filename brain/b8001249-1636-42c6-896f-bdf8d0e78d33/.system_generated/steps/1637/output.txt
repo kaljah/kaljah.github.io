@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+dir : Cannot find path 'C:\b' because it does not exist.
+At line:1 char:1
++ dir /b c:\Users\samsung\Desktop\H2\new\client\src
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\b:String) [Get-ChildItem], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+

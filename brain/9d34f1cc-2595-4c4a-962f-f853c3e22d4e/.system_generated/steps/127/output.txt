@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[(1, 'a', 'admin', 'active'), (2, 'a@a', 'admin', 'active'), (3, 'z', 'it_manager', 'active'), (4, 'z@z', 'it_manager', 'active'), (5, 'admin@ghg.com', 'admin', 'active'), (6, 'itadmin@ghg.com', 'it_admin', 'active'), (7, 'it@ghg.com', 'it', 'active'), (8, 'test_admin@ghg-test.com', 'admin', 'active'), (9, 'test_superuser@ghg-test.com', 'superuser', 'active'), (10, 'test_user@ghg-test.com', 'user', 'active'), (11, 'test_itadmin@ghg-test.com', 'it_admin', 'active'), (12, 'test_viewer@ghg-test.com', 'user', 'active'), (13, 'it_created_user_865957@ghg-test.com', 'user', 'active'), (14, 'it_su_865957@ghg-test.com', 'superuser', 'active'), (15, 'test_itmanager@ghg-test.com', 'it_manager', 'active')]
+

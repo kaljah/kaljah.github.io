@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\server\emission_factors_api2021.py:122:    "Diesel (No. 2 Fuel Oil)": {
+new\server\generate_10k_csv.py:43:            "fuels": ["Natural Gas", "Diesel (No. 2 Fuel Oil)", "Propane (Gas)"],
+new\server\generate_1k_comprehensive.py:45:    "Natural Gas", "Diesel (No. 2 Fuel Oil)", "Crude Oil",
+new\server\generate_1k_csv.py:35:            "fuels": ["Natural Gas", "Diesel (No. 2 Fuel Oil)", "Propane (Gas)"],
+new\server\generate_1m_csv.py:79:            "fuels": ["Natural Gas", "Diesel (No. 2 Fuel Oil)", "Propane (Gas)"],
+new\server\generate_bulk_test_csvs.py:38:    ("Diesel (No. 2 Fuel Oil)", ["gal", "L", "bbl", "m3"]),
+
+
+

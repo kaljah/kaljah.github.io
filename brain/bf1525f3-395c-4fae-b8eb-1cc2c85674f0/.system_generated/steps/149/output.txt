@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneExplorer.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -838,9 +838,9 @@
+           {/* Dynamic Light Basemap Layer */}
+           <TileLayer
+             key={mapBaseLayer}
+-            url={BASE_MAPS[mapBaseLayer].url}
+-            attribution={BASE_MAPS[mapBaseLayer].attribution}
+-            subdomains={BASE_MAPS[mapBaseLayer].subdomains || "abc"}
++            url={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).url}
++            attribution={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).attribution}
++            subdomains={(BASE_MAPS[mapBaseLayer] || BASE_MAPS.streets).subdomains || "abc"}
+           />
+ 
+           {/* Sentinel-5P Methane Column WMS / Tile Overlay */}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

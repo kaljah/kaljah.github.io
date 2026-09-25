@@ -1,0 +1,84 @@
+
+The command exited with code 0.
+Output:
+
+new\server\app.py:75:    if isinstance(dbapi_conn, sqlite3.Connection):
+new\server\app.py:124:            if isinstance(driver_conn, sqlite3.Connection):
+new\server\app.py:208:    if isinstance(error, HTTPException):
+new\server\background_processor.py:39:    if isinstance(val, (int, float)):
+new\server\background_processor.py:1813:                    if isinstance(api_res["results"]["co2"], dict)
+new\server\background_processor.py:1818:                    if isinstance(api_res["results"]["ch4"], dict)
+new\server\background_processor.py:1823:                    if isinstance(api_res["results"]["n2o"], dict)
+new\server\background_processor.py:1830:                "co2": unc_raw.get("co2", None) if isinstance(unc_raw, dict) 
+else None,
+new\server\background_processor.py:1831:                "ch4": unc_raw.get("ch4", None) if isinstance(unc_raw, dict) 
+else None,
+new\server\background_processor.py:1832:                "n2o": unc_raw.get("n2o", None) if isinstance(unc_raw, dict) 
+else None,
+new\server\background_processor.py:1889:                            unc.get("co2", None) if isinstance(unc, dict) else 
+(unc or None)
+new\server\background_processor.py:1892:                            unc.get("ch4", None) if isinstance(unc, dict) else 
+(unc or None)
+new\server\background_processor.py:1895:                            unc.get("n2o", None) if isinstance(unc, dict) else 
+(unc or None)
+new\server\background_processor.py:1929:                unc.get("co2", None) if isinstance(unc, dict) else (unc or 
+None)
+new\server\background_processor.py:1932:                unc.get("ch4", None) if isinstance(unc, dict) else (unc or 
+None)
+new\server\background_processor.py:1935:                unc.get("n2o", None) if isinstance(unc, dict) else (unc or 
+None)
+new\server\test_emission_calculations.py:75:    if isinstance(result_gas, dict):
+new\server\utils.py:98:    old_val_str = json.dumps(old_values, default=str) if isinstance(old_values, dict) else 
+(str(old_values) if old_values is not None else None)
+new\server\utils.py:99:    new_val_str = json.dumps(new_values, default=str) if isinstance(new_values, dict) else 
+(str(new_values) if new_values is not None else None)
+new\server\routes\audit.py:347:            if isinstance(item["old_values"], (dict, list))
+new\server\routes\audit.py:352:            if isinstance(item["new_values"], (dict, list))
+new\server\routes\auth.py:101:    if not url_str or not isinstance(url_str, str):
+new\server\routes\auth.py:788:            if isinstance(prefs, dict):
+new\server\routes\auth.py:881:        if "wec_fee_rates" in data and isinstance(data["wec_fee_rates"], dict):
+new\server\routes\custom_factors.py:70:    if not isinstance(data, dict):
+new\server\routes\dashboard.py:98:            k: tuple(v) if isinstance(v, list) else v for k, v in kwargs.items()
+new\server\routes\dashboard.py:2308:            if isinstance(val, str) and val:
+new\server\routes\data.py:269:        if isinstance(f_val, str) and not str(f_val).isdigit():
+new\server\routes\emissions.py:843:                    if isinstance(api_res["results"]["co2"], dict)
+new\server\routes\emissions.py:848:                    if isinstance(api_res["results"]["ch4"], dict)
+new\server\routes\emissions.py:853:                    if isinstance(api_res["results"]["n2o"], dict)
+new\server\routes\emissions.py:888:                if isinstance(uncertainty, dict)
+new\server\routes\emissions.py:893:                if isinstance(uncertainty, dict)
+new\server\routes\emissions.py:898:                if isinstance(uncertainty, dict)
+new\server\routes\emissions.py:2987:    if not isinstance(data, dict):
+new\server\routes\emissions.py:3138:                if isinstance(api_res["results"]["co2"], dict)
+new\server\routes\emissions.py:3143:                if isinstance(api_res["results"]["ch4"], dict)
+new\server\routes\emissions.py:3148:                if isinstance(api_res["results"]["n2o"], dict)
+new\server\routes\emissions.py:3183:            if isinstance(uncertainty, dict)
+new\server\routes\emissions.py:3188:            if isinstance(uncertainty, dict)
+new\server\routes\emissions.py:3193:            if isinstance(uncertainty, dict)
+new\server\routes\emissions.py:3575:                if isinstance(u_dict, dict)
+new\server\routes\emissions.py:3580:                if isinstance(u_dict, dict)
+new\server\routes\emissions.py:3585:                if isinstance(u_dict, dict)
+new\server\routes\emissions.py:3591:            if user_unc and isinstance(user_unc, dict):
+new\server\routes\emissions.py:3735:            if isinstance(f_val, str) and not f_val.isdigit():
+new\server\routes\emissions.py:3951:                    if isinstance(factor_data.get("uncertainty"), dict)
+new\server\routes\emissions.py:4013:    if isinstance(val, str) and val and val[0] in ("=", "-", "+", "@", "\t", "\r"):
+new\server\routes\emissions.py:4417:            val_cell = ws2.cell(row=s_idx, column=2, value=round(val, 2) if 
+isinstance(val, float) else val)
+new\server\routes\emissions.py:4418:            if isinstance(val, (int, float)):
+new\server\routes\emissions.py:4419:                val_cell.number_format = "#,##0.00" if isinstance(val, float) else 
+"#,##0"
+new\server\routes\emissions.py:4579:    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or 
+by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
+new\server\routes\emissions.py:4666:    has_by_scope = isinstance(by_scope, dict) and any(bool(by_scope.get(k) or 
+by_scope.get(int(k))) for k in ["1", "2", "3"] if k in by_scope or (k.isdigit() and int(k) in by_scope))
+new\server\routes\managedata.py:175:        if isinstance(f_val, str) and not str(f_val).isdigit():
+new\server\routes\managedata.py:413:    if isinstance(item, MitigationProject) and item.facility_id:
+new\server\routes\managedata.py:417:    elif isinstance(item, MitigationRecord):
+new\server\routes\managedata.py:648:        if isinstance(f_val, str) and not str(f_val).isdigit():
+new\server\routes\reports.py:38:    if isinstance(val, str) and val:
+new\server\routes\satellite.py:44:                    if isinstance(user.preferences, str)
+new\server\routes\satellite.py:258:    if isinstance(is_continuous, str):
+new\server\routes\scope2.py:577:            if isinstance(f_val, str) and not str(f_val).isdigit():
+new\server\routes\scope3.py:401:            if isinstance(f_val, str) and not str(f_val).isdigit():
+
+
+

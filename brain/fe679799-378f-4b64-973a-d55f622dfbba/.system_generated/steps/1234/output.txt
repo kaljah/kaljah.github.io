@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_verify_manage_data_frontend.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -44,7 +44,7 @@
+ 
+         # Step 1: Ensure Logged In as Admin
+         print("\n[Step 1] Navigating to /login...", flush=True)
+-        page.goto(f"{BASE_URL}/login", wait_until="networkidle")
++        page.goto(f"{BASE_URL}/login", wait_until="domcontentloaded")
+         time.sleep(1)
+ 
+         # Check if already logged in or need to submit login
+@@ -58,7 +58,7 @@
+ 
+         # Step 2: Navigate to /manage-data
+         print("\n[Step 2] Navigating to /manage-data...", flush=True)
+-        page.goto(f"{BASE_URL}/manage-data", wait_until="networkidle")
++        page.goto(f"{BASE_URL}/manage-data", wait_until="domcontentloaded")
+         page.wait_for_timeout(2000)
+ 
+         # Wait for loading spinner to clear
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

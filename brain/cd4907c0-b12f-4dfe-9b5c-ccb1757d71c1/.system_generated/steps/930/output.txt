@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -386,8 +386,8 @@
+     user = User.query.filter(db.func.lower(User.email) == email_input).first()
+ 
+     if user:
+-        # Find IT Admins or Admins to notify
+-        it_admins = User.query.filter(User.role == "it_admin", User.status == "active").all()
++        # Find IT Admins or IT Managers to notify
++        it_admins = User.query.filter(User.role.in_(["it_admin", "it_manager"]), User.status == "active").all()
+ 
+         notification_title = f"Password Reset Request: {user.fullName or user.email}"
+         notification_msg = (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

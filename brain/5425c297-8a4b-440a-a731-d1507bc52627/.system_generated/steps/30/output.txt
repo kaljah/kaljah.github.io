@@ -1,0 +1,57 @@
+
+The command exited with code 0.
+Output:
+tests/test_audit_remediation.py:def test_users():
+tests/test_audit_remediation.py:def test_dispatcher_kg_per_tonne_factor():
+tests/test_audit_remediation.py:def test_dispatcher_fraction_boundary():
+tests/test_audit_remediation.py:def test_stoichiometry_short_ton():
+tests/test_audit_remediation.py:def test_base_calculator_uncertainty_k_factor():
+tests/test_audit_remediation.py:def test_profile_location_immutability(client, test_users):
+tests/test_audit_remediation.py:def test_audit_sod_for_it_admin(client, test_users):
+tests/test_audit_remediation.py:def test_scope3_server_side_calculation(client, test_users):
+tests/test_audit_remediation.py:def test_production_upsert_and_delete_audit(client, test_users):
+tests/test_audit_remediation.py:def test_scope2_rbac_and_creator_ownership(client, test_users):
+tests/test_audit_remediation.py:def test_scope2_case_insensitive_recalc_and_steam_amount(client, test_users):
+tests/test_audit_remediation.py:def test_bulk_anomaly_flag_persistence(client, test_users):
+tests/test_audit_remediation.py:def test_fugitive_screening_count_and_fraction():
+tests/test_audit_remediation.py:def test_agr_zero_removal_boundary():
+tests/test_audit_remediation.py:def test_dispatcher_generic_volume_and_mass_conversions():
+tests/test_audit_remediation.py:def test_dispatcher_mmbtu_liquid_fuel_hhv():
+tests/test_audit_remediation.py:def test_dispatcher_gram_factor_numerator():
+tests/test_audit_remediation.py:def test_combustion_factor_prefix_tco2_and_gram():
+tests/test_audit_remediation.py:def test_sentinel5p_column_mass_flux():
+tests/test_audit_remediation.py:def test_uncertainty_combine_sum_negative_sinks():
+tests/test_audit_remediation.py:def test_anomaly_iqr_quantile_interpolation():
+tests/test_audit_remediation.py:def test_scope3_tonne_factor_handling(client, test_users):
+tests/test_audit_remediation.py:def test_dashboard_sbti_zero_actuals(client, test_users):
+tests/test_audit_remediation.py:def test_unit_conversions_mscf_mcf_bidirectional():
+tests/test_audit_remediation.py:def test_dehydrator_stoichiometric_co2_combustion():
+tests/test_audit_remediation.py:def test_dashboard_intensity_mmscf_scaling(client, test_users):
+tests/test_audit_remediation.py:def test_dashboard_ogmp_target_status_segment_specific(client, test_users):
+tests/test_audit_remediation.py:def test_ogmp_survey_zero_top_down_no_false_discrepancy(client, test_users):
+tests/test_audit_remediation.py:def test_notifications_stream_heartbeat_init(client, test_users):
+tests/test_audit_remediation.py:def test_scope2_steam_recalculation_enthalpy(client, test_users):
+tests/test_audit_remediation.py:def test_scope3_eeio_per_thousand_scaling_defect(client, test_users):
+tests/test_audit_remediation.py:def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):
+tests/test_audit_remediation.py:def test_update_emission_preserves_calc_payload(client, test_users):
+tests/test_audit_remediation.py:def test_bulk_import_scope2_and_3_rbac(client, test_users):
+tests/test_audit_remediation.py:def test_qaqc_maker_checker_and_it_admin_blocked(client, test_users):
+tests/test_audit_remediation.py:def test_base_year_recalculation_rbac_and_singleton(client, test_users):
+tests/test_audit_remediation.py:def test_cbam_export_existing_record_facility_check(client, test_users):
+tests/test_audit_remediation.py:def test_background_processor_upload_jobs_lock():
+tests/test_audit_remediation.py:def test_delete_mitigation_record_admin_required(client, test_users):
+tests/test_audit_remediation.py:def test_auth_update_user_role_whitelist(client, test_users):
+tests/test_audit_remediation.py:def test_qaqc_fuel_completeness_non_combustion(client, test_users):
+tests/test_audit_remediation.py:def test_scope2_authoritative_calculation_overrides_injected_co2e(client, test_users):
+tests/test_audit_remediation.py:def test_compressor_seal_and_storage_tank_uncertainty_mapping():
+tests/test_audit_remediation.py:def test_stoichiometry_dispatcher_gwp_propagation():
+tests/test_audit_remediation.py:def test_compute_scope3_co2e_units():
+tests/test_audit_remediation.py:def test_scope3_bulk_import_and_create_authoritative_calculation(client, test_users):
+tests/test_audit_remediation.py:def test_background_processor_scope3_units(client, test_users):
+tests/test_audit_remediation.py:def test_qaqc_dashboard_regional_facility_scoping(client, test_users):
+tests/test_audit_remediation.py:def test_csv_formula_injection_whitespace_and_tab_escaping():
+tests/test_audit_remediation.py:def test_facility_boundary_type_and_detail_roundtrip(client, test_users):
+tests/test_audit_remediation.py:def test_custom_factor_description_and_source_roundtrip(client, test_users):
+tests/test_audit_remediation.py:def test_dehydrator_stripping_gas_calculation():
+tests/test_audit_remediation.py:def test_dehydrator_stripping_gas_dispatcher():
+

@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:113:@dashboard_bp.route("/batch-all", methods=["GET"])
+new\server\routes\dashboard.py:333:@dashboard_bp.route("/intensity-trend", methods=["GET"])
+new\server\routes\dashboard.py:824:@dashboard_bp.route("/summary", methods=["GET"])
+new\server\routes\dashboard.py:855:@dashboard_bp.route("/years", methods=["GET"])
+new\server\routes\dashboard.py:870:@dashboard_bp.route("/mitigation", methods=["GET"])
+new\server\routes\dashboard.py:895:@dashboard_bp.route("/scope3/summary", methods=["GET"])
+new\server\routes\dashboard.py:922:@dashboard_bp.route("/goals/<int:year>", methods=["GET"])
+new\server\routes\dashboard.py:943:@dashboard_bp.route("/base-year", methods=["GET"])
+new\server\routes\dashboard.py:966:@dashboard_bp.route("/categorical-breakdown", methods=["GET"])
+new\server\routes\dashboard.py:995:@dashboard_bp.route("/base-year-recalculation", methods=["POST"])
+new\server\routes\dashboard.py:1066:@dashboard_bp.route("/ogmp-metrics", methods=["GET"])
+new\server\routes\dashboard.py:1232:@dashboard_bp.route("/intensity-stats", methods=["GET"])
+new\server\routes\dashboard.py:2210:@dashboard_bp.route("/uncertainty", methods=["GET"])
+new\server\routes\dashboard.py:2586:@dashboard_bp.route("/exclusions", methods=["GET"])
+new\server\routes\dashboard.py:2618:@dashboard_bp.route("/sbti-trajectory", methods=["GET"])
+
+
+

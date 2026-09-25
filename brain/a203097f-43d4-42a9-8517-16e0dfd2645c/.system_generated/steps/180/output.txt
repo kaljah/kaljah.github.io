@@ -1,0 +1,64 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 11 items
+
+validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_standard_natural_gas PASSED [  9%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_thermodynamic_normalization PASSED [ 18%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_tier3_gas_composition_carbon_balance FAILED [ 27%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_zero_quantity_boundary PASSED [ 36%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_elevated_dual_efficiency PASSED [ 45%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_enclosed_high_efficiency PASSED [ 54%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_pneumatic_devices_intermittent PASSED [ 63%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_blowdown_depressuring PASSED [ 72%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_acid_gas_removal_sweetening PASSED [ 81%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_component_fugitives_valve_leaks PASSED [ 90%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1DispatcherRouting::test_dispatcher_combustion_routing PASSED [100%]
+
+================================== FAILURES ===================================
+_ TestCleanScope1Combustion.test_combustion_tier3_gas_composition_carbon_balance _
+
+self = <test_clean_scope1.TestCleanScope1Combustion object at 0x000001B7AEFD9400>
+
+    def test_combustion_tier3_gas_composition_carbon_balance(self):
+        calc = CombustionCalculator()
+        qty = 20000.0
+        # When passing C1-C10 to combustion calculator, C4 accounts for butanes (iC4+nC4), C5 for pentanes
+        comps = {"c1": 0.88, "c2": 0.06, "c3": 0.03, "c4": 0.02, "co2_comp": 0.01}
+        eff = 0.995
+    
+        ref = ref_calculate_combustion(
+            qty, fuel_unit="m3", combustion_efficiency=eff, gas_composition=comps
+        )
+    
+        res = calc.calculate(
+            fuel_quantity=qty,
+            ef_co2=0.0,
+            ef_ch4=0.0,
+            ef_n2o=0.0,
+            uncertainties={},
+            hhv=None,
+            ef_unit="kg/m3",
+            fuel_unit="m3",
+            fuel_type="gases",
+            combustion_efficiency=eff,
+            **comps,
+        )
+    
+>       assert abs(res["results"]["co2"]["value"] - ref["co2"]) < 1e-2
+E       assert 2.9627120000000033 < 0.01
+E        +  where 2.9627120000000033 = abs((43.701863 - 40.739151))
+
+validation\calculation\test_clean_scope1.py:118: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_tier3_gas_composition_carbon_balance
+======================== 1 failed, 10 passed in 2.18s =========================
+

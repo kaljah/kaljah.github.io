@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope3.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -415,21 +415,16 @@
+             sub_cat = rec.get("sub_category")
+             amt = _clean_float(rec.get("amount"), default=0.0)
+             ef = _clean_float(rec.get("emission_factor"), default=0.0)
+-            ef_unit = str(rec.get("ef_unit") or "kg").lower()
+-
+-            # co2e stored in the DB is always in TONNES CO2e.
+-            # If a pre-calculated co2e value is provided in the CSV, use it directly (already in tonnes).
+-            if rec.get("co2e"):
++            ef_unit = str(rec.get("ef_unit") or rec.get("factor_unit") or "kg").strip()
++            calc_method = str(rec.get("calculation_method") or "")
++
++            # Authoritatively calculate co2e when activity amount and EF are present
++            if amt > 0 and ef > 0:
++                co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)
++            elif rec.get("co2e") and user.role in ["admin", "superuser"]:
+                 co2e = _clean_float(rec.get("co2e"), default=0.0)
+-            elif "t" in ef_unit or "tonne" in ef_unit:
+-                # EF is in t CO2e/unit (e.g. 0.43 tCO2e/bbl for crude) -> result already in tonnes
+-                co2e = amt * ef
+-            elif any(k in ef_unit for k in ["1000", "1,000", "1k"]):
+-                co2e = (amt * ef) / 1000000.0
+-            else:
+-                # EF is in kg CO2e/unit (default, most common for Scope 3 activity factors)
+-                # Divide by 1000 to convert kg -> tonnes
+-                co2e = (amt * ef) / 1000.0
++            else:
++                co2e = 0.0
+ 
+             emission = Scope3Emission(
+                 facility_id=facility.id,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

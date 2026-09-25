@@ -1,0 +1,45 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:400:    """Pure query logic for /summary - returns a plain Python list with dual 
+GWP-100 and GWP-20 support."""
+new\server\routes\dashboard.py:593:    """Pure query logic for /mitigation - returns a plain Python list."""
+new\server\routes\dashboard.py:658:    """Pure query logic for /scope3/summary - returns a plain Python dict with 
+total and by_year."""
+new\server\routes\dashboard.py:708:    """Pure query logic for /categorical-breakdown - returns a plain Python list."""
+new\server\routes\dashboard.py:824:    """Pure query logic for /years - returns a plain Python list."""
+new\server\routes\dashboard.py:1108:    Returns compliance deadlines, current L1-L5 levels, and reconciliation status.
+new\server\routes\dashboard.py:1318:    Returns a list of {year, data} dicts compatible with the frontend.
+new\server\routes\dashboard.py:1668:    Pure query logic for /intensity-stats - returns a plain Python list.
+new\server\routes\dashboard.py:2344:    Pure query logic for /uncertainty - returns a plain Python dict.
+new\server\routes\dashboard.py:2435:        Returns the 1s relative standard uncertainty for a single emission record.
+new\server\routes\dashboard.py:2872:    Returns flaring breakdown by operational stream: Routine, Non-Routine, Safety, 
+and Grand Total.
+new\server\routes\emissions.py:456:    """Returns the organization-wide GWP standard (AR4, AR5, AR6) per D-09."""
+new\server\routes\emissions.py:466:    """Returns active GWP dictionary using global org-wide standard per D-09."""
+new\server\routes\emissions.py:992:    Returns a comprehensive CSV template with all fields needed for
+new\server\routes\emissions.py:2001:        # but since _row returns a list matched to headers, we need to extract 
+process_type value.
+new\server\routes\emissions.py:3428:        # EXTRA-03 FIX: removed second data = request.get_json() (double-read, 
+second returns None)
+new\server\routes\emission_factors_routes.py:39:    Returns:
+new\server\routes\emission_factors_routes.py:53:    Returns:
+new\server\routes\emission_factors_routes.py:68:    Returns:
+new\server\routes\emission_factors_routes.py:95:    Returns:
+new\server\routes\emission_factors_routes.py:110:    Returns:
+new\server\routes\emission_factors_routes.py:129:    # get_process_types_for_segment returns a dict, not a list
+new\server\routes\emission_factors_routes.py:160:    Returns:
+new\server\routes\emission_factors_routes.py:192:    Returns:
+new\server\routes\emission_factors_routes.py:240:    Returns:
+new\server\routes\emission_factors_routes.py:300:    Returns:
+new\server\routes\emission_factors_routes.py:338:    Returns:
+new\server\routes\emission_factors_routes.py:381:    Returns:
+new\server\routes\qaqc.py:19:    """Returns True if the user has QA/QC viewing rights (admin or superuser roles)."""
+new\server\routes\qaqc.py:27:    Returns aggregated uncertainty (IPCC SRSS) and flagged anomaly records.
+new\server\routes\satellite.py:106:    Returns layer metadata, color scale intervals, and connection status for the 
+frontend map.
+new\server\routes\satellite.py:368:    Returns a list of newly-detected facilities and the notification count.
+
+
+

@@ -1,0 +1,106 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 10 items
+
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_1_flaring_efficiency_inversion FAILED [ 10%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_2_distorted_volume_conversion_factor FAILED [ 20%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_3_wrong_gwp_selection PASSED [ 30%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_4_inverted_stoichiometric_ratio PASSED [ 40%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_5_distorted_combustion_emission_factor PASSED [ 50%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_6_omitted_native_co2_stream FAILED [ 60%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_7_swapped_gas_densities PASSED [ 70%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_8_omitted_transmission_losses FAILED [ 80%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_9_eeio_spend_scaling_defect FAILED [ 90%]
+validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_10_missing_agr_methane_slip PASSED [100%]
+
+================================== FAILURES ===================================
+_____ TestCalculationMutations.test_mutant_1_flaring_efficiency_inversion _____
+
+self = <test_calculation_mutations.TestCalculationMutations object at 0x000002A8F53249E0>
+
+    def test_mutant_1_flaring_efficiency_inversion(self):
+        """Mutant: Flaring unburnt CH4 calculated with (1 + eff) instead of (1 - eff)."""
+>       clean_res = IndependentFlaringModel.calculate(
+            volume=50_000.0,
+            unit="m3",
+            flare_type="elevated",
+            ch4_fraction=0.88,
+            combustion_efficiency=0.98,
+        )
+E       TypeError: IndependentFlaringModel.calculate() got an unexpected keyword argument 'volume'
+
+validation\mutation\test_calculation_mutations.py:39: TypeError
+__ TestCalculationMutations.test_mutant_2_distorted_volume_conversion_factor __
+
+self = <test_calculation_mutations.TestCalculationMutations object at 0x000002A8F5326150>
+
+    def test_mutant_2_distorted_volume_conversion_factor(self):
+        """Mutant: scf to m3 factor mutated from 0.0283168 to 0.0383168 (+35% error)."""
+        scf_qty = 1_000_000.0
+>       clean_m3 = IndependentUnitConverter.convert_volume(scf_qty, "scf", "m3")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: type object 'IndependentUnitConverter' has no attribute 'convert_volume'
+
+validation\mutation\test_calculation_mutations.py:56: AttributeError
+______ TestCalculationMutations.test_mutant_6_omitted_native_co2_stream _______
+
+self = <test_calculation_mutations.TestCalculationMutations object at 0x000002A8F5326E10>
+
+    def test_mutant_6_omitted_native_co2_stream(self):
+        """Mutant: Flaring calculation completely drops native CO2 from gas stream."""
+>       clean_res = IndependentFlaringModel.calculate(
+            volume=100_000.0,
+            unit="m3",
+            flare_type="elevated",
+            ch4_fraction=0.85,
+            co2_fraction=0.05,  # 5% native CO2
+            combustion_efficiency=0.98,
+        )
+E       TypeError: IndependentFlaringModel.calculate() got an unexpected keyword argument 'volume'
+
+validation\mutation\test_calculation_mutations.py:105: TypeError
+_____ TestCalculationMutations.test_mutant_8_omitted_transmission_losses ______
+
+self = <test_calculation_mutations.TestCalculationMutations object at 0x000002A8F5327710>
+
+    def test_mutant_8_omitted_transmission_losses(self):
+        """Mutant: Steam calculation omits transmission loss: eta_net = eta_boiler instead of eta_boiler * (1 - trans_loss)."""
+>       clean_res = IndependentScope2Model.calculate_steam(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            steam_tonnes=100.0,
+            boiler_efficiency=0.80,
+            transmission_loss=0.10,
+            fuel_ef=53.06,
+        )
+E       AttributeError: type object 'IndependentScope2Model' has no attribute 'calculate_steam'
+
+validation\mutation\test_calculation_mutations.py:129: AttributeError
+______ TestCalculationMutations.test_mutant_9_eeio_spend_scaling_defect _______
+
+self = <test_calculation_mutations.TestCalculationMutations object at 0x000002A8F5324680>
+
+    def test_mutant_9_eeio_spend_scaling_defect(self):
+        """Mutant: EEIO spend factor scaled by 1,000 instead of 1,000,000 (1000x error)."""
+        spend = 500_000.0
+        factor = 3200.0  # kg CO2e / $1,000
+>       clean_co2e = IndependentScope3Model.calculate_spend_eeio(spend, factor)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: type object 'IndependentScope3Model' has no attribute 'calculate_spend_eeio'
+
+validation\mutation\test_calculation_mutations.py:149: AttributeError
+=========================== short test summary info ===========================
+FAILED validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_1_flaring_efficiency_inversion
+FAILED validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_2_distorted_volume_conversion_factor
+FAILED validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_6_omitted_native_co2_stream
+FAILED validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_8_omitted_transmission_losses
+FAILED validation/mutation/test_calculation_mutations.py::TestCalculationMutations::test_mutant_9_eeio_spend_scaling_defect
+========================= 5 failed, 5 passed in 0.78s =========================
+

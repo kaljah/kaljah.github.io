@@ -1,0 +1,23 @@
+Task: 514c62c1-79cc-4e18-9738-41b5aae7f4e7/task-522
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\514c62c1-79cc-4e18-9738-41b5aae7f4e7\.system_generated\tasks\task-522.log
+Log output:
+<truncated 168 lines>
+1:19 PM [vite] http proxy error: /api/notifications/stream?last_id=15206
+Error: connect ECONNREFUSED 127.0.0.1:5000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+9:21:21 PM [vite] http proxy error: /api/notifications
+Error: connect ECONNREFUSED 127.0.0.1:5000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+9:21:21 PM [vite] http proxy error: /api/notifications/stream?last_id=15206
+Error: connect ECONNREFUSED 127.0.0.1:5000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+9:21:21 PM [vite] http proxy error: /api/notifications/stream?last_id=15206
+Error: connect ECONNREFUSED 127.0.0.1:5000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+9:26:39 PM [vite] (client) hmr update /src/components/layout/TopBar.jsx
+9:26:52 PM [vite] (client) page reload stats.html
+9:29:36 PM [vite] (client) hmr update /src/components/layout/Sidebar.css
+9:29:39 PM [vite] (client) hmr update /src/components/layout/Sidebar.jsx
+
+Last progress: 4m0s ago

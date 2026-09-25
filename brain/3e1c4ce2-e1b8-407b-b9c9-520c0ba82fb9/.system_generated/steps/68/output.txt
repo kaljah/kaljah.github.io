@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+At line:1 char:43
++ cd c:\Users\samsung\Desktop\H2\new\server && python -c "import sys; s ...
++                                           ~~
+The token '&&' is not a valid statement separator in this version.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+ 
+

@@ -1,0 +1,2 @@
+Successfully killed 10 subagent(s) and their descendants.
+Killed roles: Beta Tester 1 - Auth & RBAC, Beta Tester 2 - Dashboard & KPIs, Beta Tester 3 - Scope 1 Emissions, Beta Tester 4 - Scope 2 Emissions, Beta Tester 5 - Scope 3 Emissions, Beta Tester 6 - Carbon Intensity & CBAM, Beta Tester 7 - Methane & OGMP 2.0, Beta Tester 8 - SBTi & Mitigation, Beta Tester 9 - Data Ingestion & Factors, Beta Tester 10 - Reports, GIS, QA & Audit

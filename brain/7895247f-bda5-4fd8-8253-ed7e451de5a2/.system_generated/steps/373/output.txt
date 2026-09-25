@@ -1,0 +1,133 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1229,6 +1229,127 @@
+           </div>
+         </div>
+ 
++        {/* --- Operational Flaring & Decree 21-330 Regulatory Compliance Banner --- */}
++        {flaringData && (flaringData.total_flaring?.volume_knm3 > 0 || stats.flaring > 0) && (
++          <div className="card glass-panel flaring-kpi-banner">
++            <div className="flaring-banner-header">
++              <div className="flaring-banner-title-group">
++                <div className="flaring-banner-icon">
++                  <Flame size={22} />
++                </div>
++                <div>
++                  <h3 className="flaring-banner-title">
++                    Operational Flaring &amp; Regulatory Compliance
++                  </h3>
++                  <p className="flaring-banner-sub">
++                    Executive Decree 21-330 Article 9 (1.00% Gas Production Threshold)
++                  </p>
++                </div>
++              </div>
++
++              <div className="flaring-banner-badges">
++                <span
++                  className={`flaring-badge ${flaringData.is_compliant ? "compliant" : "non-compliant"}`}
++                >
++                  {flaringData.is_compliant ? (
++                    <CheckCircle2 size={13} />
++                  ) : (
++                    <AlertTriangle size={13} />
++                  )}
++                  {flaringData.compliance_status || (flaringData.is_compliant ? "COMPLIANT (≤ 1.00%)" : "EXCEEDS 1.00% LIMIT")}
++                </span>
++
++                <span className="flaring-badge dre">
++                  {flaringData.dre_method || "VISR Camera"}: {flaringData.measured_dre_pct ?? 98.0}% DRE
++                </span>
++
++                {flaringData.yoy_change_pct !== 0 && (
++                  <span className="flaring-badge yoy">
++                    {flaringData.yoy_change_pct > 0 ? `+${flaringData.yoy_change_pct}% YoY` : `${flaringData.yoy_change_pct}% YoY`}
++                  </span>
++                )}
++              </div>
++            </div>
++
++            <div className="flaring-streams-grid">
++              <div className="flaring-stream-item total-stream">
++                <div className="stream-label">Total Flared Volume</div>
++                <div className="stream-value">
++                  {formatCompactNumber(flaringData.total_flaring?.volume_knm3 ?? (stats.flaring / 2.5))}
++                  <span className="stream-unit">kNm³</span>
++                </div>
++                <div className="stream-sublabel">
++                  <strong>{formatCompactNumber(flaringData.total_flaring?.tco2e ?? stats.flaring)}</strong> tCO₂e • 100% Stream
++                </div>
++              </div>
++
++              <div className="flaring-stream-item routine-stream">
++                <div className="stream-label">Routine Flaring</div>
++                <div className="stream-value">
++                  {formatCompactNumber(flaringData.routine_flaring?.volume_knm3 ?? 0)}
++                  <span className="stream-unit">kNm³</span>
++                </div>
++                <div className="stream-sublabel">
++                  <strong>{flaringData.routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.routine_flaring?.tco2e ?? 0)} tCO₂e
++                </div>
++              </div>
++
++              <div className="flaring-stream-item non-routine-stream">
++                <div className="stream-label">Non-Routine Flaring</div>
++                <div className="stream-value">
++                  {formatCompactNumber(flaringData.non_routine_flaring?.volume_knm3 ?? 0)}
++                  <span className="stream-unit">kNm³</span>
++                </div>
++                <div className="stream-sublabel">
++                  <strong>{flaringData.non_routine_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.non_routine_flaring?.tco2e ?? 0)} tCO₂e
++                </div>
++              </div>
++
++              <div className="flaring-stream-item safety-stream">
++                <div className="stream-label">Safety &amp; Purge Flaring</div>
++                <div className="stream-value">
++                  {formatCompactNumber(flaringData.safety_flaring?.volume_knm3 ?? 0)}
++                  <span className="stream-unit">kNm³</span>
++                </div>
++                <div className="stream-sublabel">
++                  <strong>{flaringData.safety_flaring?.percentage ?? 0}%</strong> of total • {formatCompactNumber(flaringData.safety_flaring?.tco2e ?? 0)} tCO₂e
++                </div>
++              </div>
++            </div>
++
++            {flaringData.gas_production_m3 > 0 && (
++              <div className="flaring-intensity-bar-card">
++                <div className="flaring-intensity-meta">
++                  <span>
++                    <strong>Decree 21-330 Flaring Intensity:</strong>{" "}
++                    <span style={{ color: flaringData.is_compliant ? "#15803d" : "#b91c1c", fontWeight: 700 }}>
++                      {flaringData.flaring_intensity_pct}%
++                    </span>{" "}
++                    of Gross Gas Produced ({formatCompactNumber(flaringData.gas_production_m3 / 1e6, 2)} MMSm³)
++                  </span>
++                  <span style={{ fontSize: "0.78rem", color: "#64748b" }}>
++                    Statutory Limit: <strong>1.00%</strong> (Executive Decree 21-330 Art. 9)
++                  </span>
++                </div>
++                <div className="flaring-progress-track">
++                  <div
++                    className="flaring-progress-fill"
++                    style={{
++                      width: `${Math.min(100, (flaringData.flaring_intensity_pct / 1.00) * 100)}%`,
++                      backgroundColor: flaringData.is_compliant ? "#10b981" : "#ef4444",
++                    }}
++                  />
++                  <div
++                    className="flaring-progress-marker"
++                    style={{ left: "100%" }}
++                    title="1.00% Statutory Ceiling"
++                  />
++                </div>
++              </div>
++            )}
++          </div>
++        )}
++
+         {/* --- Primary Analytics Grid: Trend Line (2fr) + Donuts (1fr) --- */}
+         <div className="charts-section">
+           {/* Trend Chart */}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,13 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-487
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-487.log
+Log output:
+
+Running 7 tests using 1 worker
+
+[AUDIT] Backend Ground Truth: Scope 1 = 254895 tCO2e, CH4 = 238.7 tCH4
+[AUDIT] UI Hero Card: Gross = 254.9K, Net = 254.9K, CH4 = 238.7
+[AUDIT] Scope Pills: S1 = 254.9K tCO₂e, S2 = 0 tCO₂e, S3 = 0 tCO₂e
+  ok 1 [chromium] › e2e\test_dashboard_deep_audit.spec.js:46:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification (6.1s)
+
+Last progress: 3s ago

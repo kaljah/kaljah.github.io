@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -510,7 +510,7 @@
+ def me():
+     user_id = session.get("user_id")
+     if not user_id:
+-        return jsonify({"authenticated": False, "user": None}), 200
++        return jsonify({"error": "Not authenticated", "authenticated": False, "user": None}), 401
+ 
+     user = db.session.get(User, user_id)
+     if not user:
+@@ -517,4 +517,4 @@
+-        return jsonify({"authenticated": False, "user": None}), 200
++        return jsonify({"error": "Not authenticated", "authenticated": False, "user": None}), 401
+ 
+     user_defaults = get_user_operational_defaults(user)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

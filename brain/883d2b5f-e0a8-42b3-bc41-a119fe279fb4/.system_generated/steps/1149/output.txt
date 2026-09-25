@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":379,"LineContent":"    factor_source values: 'default' | 'custom' | 'specific' | 'site_specific'"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":386,"LineContent":"        \"site_specific\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":252,"LineContent":"                \"site_specific\" if method != \"metered_volume\" else \"default\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":36,"LineContent":"        factor_source in (\"specific\", \"site_specific\", \"site-specific\", \"engineering\", \"cems\", \"direct_measurement\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":37,"LineContent":"        or calc_method in (\"direct_measurement\", \"tier3\", \"engineering\", \"specific\", \"cems\", \"site_specific\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":131,"LineContent":"            uncertainties={\"_factor_source\": \"site_specific\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":200,"LineContent":"            uncertainties={\"_factor_source\": \"site_specific\"},"}

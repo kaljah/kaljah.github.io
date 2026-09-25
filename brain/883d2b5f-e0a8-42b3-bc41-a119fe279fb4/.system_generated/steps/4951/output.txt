@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_targeted_pages.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -179,10 +179,10 @@
+     print(f"Total Console Errors: {len(all_errors)}", flush=True)
+ 
+     if len(all_errors) > 0:
+-        print("❌ FAIL: Console errors occurred!", flush=True)
++        print("[FAIL] Console errors occurred!", flush=True)
+         sys.exit(1)
+     else:
+-        print("🎉 SUCCESS: All buttons in targeted views clicked cleanly with 0 console errors!", flush=True)
++        print("[SUCCESS] All buttons in targeted views clicked cleanly with 0 console errors!", flush=True)
+         sys.exit(0)
+ 
+ if __name__ == "__main__":
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

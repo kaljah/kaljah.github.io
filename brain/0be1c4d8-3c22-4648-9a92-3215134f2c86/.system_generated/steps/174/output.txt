@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+1028: const handleInspect = (entry) => {
+2456: onClick={() => handleInspect(entry)}
+

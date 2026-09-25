@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":431,"LineContent":"@emissions_bp.route(\"/bulk-upload\", methods=[\"POST\"])"}

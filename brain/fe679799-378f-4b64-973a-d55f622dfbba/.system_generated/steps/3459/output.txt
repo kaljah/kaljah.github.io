@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+200 {'status': 'ok', 'version': '1.0.0'}
+

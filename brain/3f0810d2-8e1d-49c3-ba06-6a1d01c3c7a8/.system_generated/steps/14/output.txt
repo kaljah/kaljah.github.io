@@ -1,0 +1,68 @@
+
+The command exited with code 0.
+Output:
+# Agent 3 �?" ADMIN API Tester Report
+
+- �o. Login as test_admin@ghg-test.com
+- 
+## Auth & Profile Tests
+- �o. GET /auth/me �' 200
+- �o. PUT /auth/profile �' 200
+- �o. GET /auth/settings �' 200
+- 
+## User Management (Admin restricted - IT only)
+- �o. GET /auth/users (admin cannot list users; only IT) �' 403
+- �o. POST /auth/users (admin cannot create users; only IT) �' 403
+- 
+## Facilities
+- �o. GET /facilities �' 200
+- �o. POST /facilities (create) �' 201
+- �o. PUT /facilities/{id} �' 200
+- 
+## Scope 1 Emissions (admin)
+- �o. POST /emissions Scope1 (admin�'Verified) �' 201
+- �o. Admin emission status = None
+- �o. PUT /emissions/{id} admin edit verified record �' 200
+- �o. DELETE /emissions/{id} admin delete verified record �' 200
+- 
+## Scope 2 Emissions
+- �o. POST /scope2 �' 201
+- 
+## Scope 3 Emissions
+- �o. POST /scope3 �' 201
+- 
+## Bulk Upload
+- 
+## Dashboard & Analytics
+- �o. GET /dashboard/summary �' 200
+- �o. GET /dashboard/batch-all �' 200
+- �o. GET /dashboard/intensity-trend �' 200
+- �o. GET /dashboard/categorical-breakdown �' 200
+- 
+## Reports
+- �o. GET /reports/export �' 200
+- 
+## Audit Trail
+- �o. GET /audit/ �' 200
+- �o. GET /audit/stats �' 200
+- �o. GET /audit/filters �' 200
+- 
+## QA/QC
+- �o. GET /qaqc/dashboard �' 200
+- �o. GET /qaqc/export �' 200
+- 
+## Notifications
+- �o. GET /notifications �' 200
+- 
+## Security Edge Cases
+- 
+## Session Management
+- �o. Post-logout /auth/me correctly returns 401
+
+## Summary
+- �o. Passed: 27
+- �Y?> Bugs: 0
+
+## Bugs
+
+

@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Flask: {"status":"ok","version":"1.0.0"}
+
+Vite: 200
+

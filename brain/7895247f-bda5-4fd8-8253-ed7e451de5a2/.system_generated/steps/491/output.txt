@@ -1,0 +1,80 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -124,6 +124,13 @@
+       exclusionsRes,
+       settingsRes,
+       profileImg,
++      flaringRes,
++      granularIntensitiesRes,
++      capComplianceRes,
++      capEmissionsRes,
++      equityAllocRes,
++      allProdRes,
++      allCapRes,
+     ] = await Promise.all([
+       api.get("/emissions", { params }),
+       api.get("/facilities").catch(() => ({ data: [] })),
+@@ -164,8 +164,60 @@
+         .catch(() => ({ data: [] })),
+       api.get("/auth/settings").catch(() => ({ data: { gwp_standard: 'IPCC AR5' } })),
+       loadImage("/company_profile.jpg").catch(() => null),
++      api
++        .get("/dashboard/flaring-summary", {
++          params: {
++            year: subFetchYear,
++            ...(targetFacilityId && { facilityId: targetFacilityId }),
++          },
++        })
++        .catch(() => ({ data: null })),
++      api
++        .get("/dashboard/granular-intensities", {
++          params: {
++            year: subFetchYear,
++            ...(targetFacilityId && { facilityId: targetFacilityId }),
++          },
++        })
++        .catch(() => ({ data: null })),
++      api
++        .get("/cap/compliance", {
++          params: {
++            year: subFetchYear,
++            ...(targetFacilityId && { facility_id: targetFacilityId }),
++          },
++        })
++        .catch(() => ({ data: [] })),
++      api
++        .get("/cap/emissions", {
++          params: {
++            year: subFetchYear,
++            ...(targetFacilityId && { facility_id: targetFacilityId }),
++          },
++        })
++        .catch(() => ({ data: [] })),
++      api
++        .get("/equity/allocation", {
++          params: {
++            year: subFetchYear,
++            ...(targetFacilityId && { facility_id: targetFacilityId }),
++          },
++        })
++        .catch(() => ({ data: [] })),
++      api.get("/production").catch(() => ({ data: [] })),
++      api.get("/cap/emissions").catch(() => ({ data: [] })),
+     ]);
+ 
++    const flaringSummary = flaringRes?.data || null;
++    const granularIntensities = granularIntensitiesRes?.data || null;
++    const capCompliance = Array.isArray(capComplianceRes?.data) ? capComplianceRes.data : [];
++    const capEmissions = Array.isArray(capEmissionsRes?.data) ? capEmissionsRes.data : [];
++    const equityAllocations = Array.isArray(equityAllocRes?.data) ? equityAllocRes.data : [];
++    const allHistoricalProduction = Array.isArray(allProdRes?.data?.data || allProdRes?.data)
++      ? (allProdRes?.data?.data || allProdRes?.data)
++      : [];
++    const allHistoricalCap = Array.isArray(allCapRes?.data) ? allCapRes.data : [];
++
+     let reportData =
+       emissionsRes.data.emissions ||
+       emissionsRes.data.data ||
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

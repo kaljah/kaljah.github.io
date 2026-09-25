@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\playwright.config.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,4 +1,12 @@
+ import { defineConfig, devices } from '@playwright/test';
++import path from 'path';
++import os from 'os';
++
++const CHROMIUM_1208 = path.join(
++  os.homedir(),
++  'AppData', 'Local', 'ms-playwright',
++  'chromium-1208', 'chrome-win64', 'chrome.exe'
++);
+ 
+ export default defineConfig({
+   testDir: './e2e',
+@@ -5,8 +5,14 @@
+-  retries: 0,
++  retries: 1,
+   reporter: 'list',
++  timeout: 60000,
+   use: {
+     baseURL: 'http://127.0.0.1:5173',
+     trace: 'on-first-retry',
++    headless: true,
++    // Use the locally installed Chromium-1208 (avoids needing headless-shell-1243)
++    launchOptions: {
++      executablePath: CHROMIUM_1208,
++    },
+   },
+   projects: [
+     {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

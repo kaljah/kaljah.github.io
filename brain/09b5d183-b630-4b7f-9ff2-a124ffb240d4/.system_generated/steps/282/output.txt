@@ -1,0 +1,63 @@
+
+The command exited with code 0.
+Output:
+=====================================================================================
+STARTING PHYSICAL BROWSER INTERACTIVE AUDIT (ALL BUTTONS, DROPDOWNS & CHARTS)
+=====================================================================================
+Connected to Chrome Tab: Carbon Tech (http://localhost:5173/)
+
+[1/7] Testing GWP Horizon Toggle Buttons (GWP-100 / GWP-20)...
+ - Clicked GWP-20: {'found': True, 'text': 'GWP-20', 'bg': 'transparent'}
+   Stats under GWP-20: [{'label': 'GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)', 'val': '5.9B tCO₂e'}, {'label': 'NET EMISSIONS', 'val': '5.9B tCO₂e'}, {'label': 'TOTAL CH4 (METHANE)', 'val': '14.3M tCH₄'}, {'label': 'PERFORMANCE INTENSITY', 'val': '22.23K kg/BOE'}]
+ - Clicked GWP-100: {'found': True, 'text': 'GWP-100', 'bg': 'transparent'}
+   Stats under GWP-100: [{'label': 'GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)', 'val': '5.1B tCO₂e'}, {'label': 'NET EMISSIONS', 'val': '5.1B tCO₂e'}, {'label': 'TOTAL CH4 (METHANE)', 'val': '14.3M tCH₄'}, {'label': 'PERFORMANCE INTENSITY', 'val': '19.22K kg/BOE'}]
+
+[2/7] Testing Facility Comparison Mode Toggle...
+ - Compare Mode ON: Button: 'Standard View' | Lines: 0 | Legends: ['Centre de Traitement Gazier Hassi Messaoud (Sonatrach)', 'Complexe Ammoniac & Engrais Azotés (Fertial)', 'Complexe Sidérurgique DRI/EAF (Tosyali)']
+ - Compare Mode OFF: Button: 'Compare Regions' | Active: False
+
+[3/7] Testing All 5 Top-Bar Filter Dropdowns...
+
+ --- Dropdown [1/5]: Year ---
+   Found 8 options: ['All Years', '2026', '2025', '2024', '2023']
+   Selected Option: {'text': '2026'}
+
+ --- Dropdown [2/5]: Supply Chain ---
+   Found 4 options: ['All Supply Chains', 'Downstream', 'Midstream', 'Upstream']
+   Selected Option: {'text': 'Downstream'}
+
+ --- Dropdown [3/5]: Activity ---
+   Found 14 options: ['All Activities', 'E&P (Upstream)', 'LQS (Liquefaction)', 'RPC (Refining)', 'Association']
+   Selected Option: {'text': 'E&P (Upstream)'}
+
+ --- Dropdown [4/5]: Division ---
+   Found 12 options: ['All Divisions', 'AST', 'Building Materials', 'DP', 'Downstream']
+   Selected Option: {'text': 'AST'}
+
+ --- Dropdown [5/5]: Region ---
+   Found 146 options: ['All Regions', 'Complexe Sidérurgique DRI/EAF (Tosyali)\n- Industrial Zone', 'Complexe Ammoniac & Engrais Azotés (Fertial)\n- Arzew Port', 'Cimenterie Industrielle de Chlef (GICA)\n- Chlef Plant', 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)\n- HMD Field']
+   Selected Option: {'text': 'Complexe Sidérurgique DRI/EAF (Tosyali)\n- Industrial Zone'}
+
+[4/7] Testing Accordions & Hierarchical Drill-Downs...
+ - Toggled Categorical Overview Accordion: {'clicked': True, 'collapsedNow': False}
+ - Toggled Detailed Breakdown Accordion: {'clicked': True, 'collapsedNow': False}
+ - Testing Hierarchical Tree Drill-Down Rows (Activity -> Division -> Region)...
+   Activities Expanded: 11 | Divisions: 0 | Regions Rendered: 0
+
+[5/7] Testing All 4 Live Recharts Visualizations...
+ - [1/4] Emissions Trend Over Time (Multi-Year Line Chart): Dimensions: 689x360px | Elements: 3 | Pies: 0 | Legend: ['Forecast', 'Scope 1', 'Target Path', 'Total Emissions']
+ - [2/4] Emissions by Activity Breakdown (Donut Chart): Dimensions: 673x170px | Elements: 3 | Pies: 5 | Legend: ['Cement & Clinker', 'Chemicals & Fertilizers', 'E&P (Upstream)', 'Steel & Iron (Acier DRI)', 'Upstream & Midstream Gas']
+ - [3/4] Emissions by Process Source (Donut Chart): Dimensions: 673x170px | Elements: 3 | Pies: 4 | Legend: ['Combustion', 'Flaring', 'Other', 'Venting']
+ - [4/4] SBTi Net-Zero Trajectory Model (Target Curve Chart): Dimensions: 673x320px | Elements: 3 | Pies: 0 | Legend: ['Actual Verified Emissions', 'Business as Usual (+1.5%/yr)', 'SBTi 1.5°C Linear Target']
+
+[6/7] Auditing All 37 Dashboard Metric & KPI Cards...
+ - Total Cards Audited: 153 | Formatting / NaN Issues: 0
+
+[7/7] Testing Navigation Buttons & Asserting Zero Console Errors...
+ - Clicked SBTi Button: View Full SBTi Dashboard -> -> Navigated to: http://localhost:5173/sbti
+ - Clicked Manage Factors Button: Manage Custom Factors -> Navigated to: http://localhost:5173/manage-data
+ - Uncaught Browser Console Errors Detected: 0
+=====================================================================================
+BROWSER INTERACTIVE AUDIT COMPLETE. Report saved to: C:\Users\samsung\Desktop\H2\scratch\browser_dashboard_interactive_audit_report.json
+=====================================================================================
+

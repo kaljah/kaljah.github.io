@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Status: 200
+Response: {'message': 'Login successful', 'user': {'default_activity': 'Oil & Gas', 'default_division': 'Production', 'default_facility_id': '1', 'default_facility_name': 'RNS Facility', 'default_region': 'RNS', 'department': 'Sustainability & IT', 'email': 'a', 'fullName': 'Administrator', 'id': 1, 'jobTitle': 'Lead Administrator', 'location': 'RNS', 'orgName': 'GHG Operations', 'phone': None, 'role': 'admin', 'sector': 'Oil & Gas', 'status': 'active'}}
+

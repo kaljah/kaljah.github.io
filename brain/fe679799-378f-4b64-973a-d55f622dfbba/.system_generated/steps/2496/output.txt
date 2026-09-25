@@ -1,0 +1,65 @@
+
+The command exited with code 0.
+Output:
+_ TestConcurrentBulkIngestionPipeline.test_eight_concurrent_bulk_upload_jobs __
+
+self = <test_stress_bulk_pipeline.TestConcurrentBulkIngestionPipeline object at 0x00000259667B2D80>
+bulk_stress_env = {'facility_id': 17, 'user_id': 38}
+
+    def test_eight_concurrent_bulk_upload_jobs(self, bulk_stress_env):
+        """Submit and process 8 distinct CSV upload jobs concurrently in parallel background threads."""
+        facility_id = bulk_stress_env["facility_id"]
+        user_id = bulk_stress_env["user_id"]
+        num_jobs = 8
+        rows_per_job = 25
+    
+        temp_files = []
+        job_ids = []
+    
+        # Prepare 8 CSV files with distinct payloads
+        for job_idx in range(num_jobs):
+            csv_lines = [
+                "year,month,facility,process,fuel,quantity,unit,factor_source",
+            ]
+            for row_idx in range(rows_per_job):
+                p_type = "combustion" if row_idx % 2 == 0 else "flaring"
+                fuel = "Natural Gas" if p_type == "combustion" else "Field Gas"
+                qty = 100.0 + (job_idx * 50) + row_idx
+                csv_lines.append(f"2024,{(row_idx % 12) + 1},Bulk Pipeline Hub,{p_type},{fuel},{qty},m3,default")
+    
+            csv_content = "\n".join(csv_lines)
+            tf = tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=f"_job_{job_idx}.csv", encoding="utf-8")
+            tf.write(csv_content)
+            tf.flush()
+            tf.close()
+            temp_files.append(tf.name)
+            job_ids.append(f"stress_job_{job_idx}_{int(time.time()*1000)}")
+    
+        # Initialize job state entries under lock
+        with upload_jobs_lock:
+            for jid in job_ids:
+                upload_jobs[jid] = {
+                    "status": "processing",
+                    "progress": 0,
+                    "processed": 0,
+                    "total": rows_per_job,
+                    "errors": [],
+                    "skipped": [],
+                    "error_csv_path": None,
+                    "anomalies": [],
+                    "created_at": time.time(),
+                }
+    
+        # Launch background processing threads concurrently
+        t_start = time.perf_counter()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_jobs) as executor:
+            futures = []
+            for jid, filepath in zip(job_ids, temp_files):
+                f = executor.submit(
+                    _process_file_thread,
+                    app,
+                    jid,
+                    filepath,
+                    f"stress_data_{jid}.csv",
+
+

@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:213:                _query_intensity_stats,
+new\server\routes\dashboard.py:1219:    Delegates to _query_intensity_stats() for thread-safe reuse.
+new\server\routes\dashboard.py:1231:        _query_intensity_stats(
+new\server\routes\dashboard.py:1591:    cache=DASHBOARD_CACHE, key=make_cache_key("_query_intensity_stats"), 
+lock=CACHE_LOCK
+new\server\routes\dashboard.py:1593:def _query_intensity_stats(
+
+
+

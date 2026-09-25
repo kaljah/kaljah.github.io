@@ -1,0 +1,20 @@
+
+The command exited with code 1.
+Output:
+<frozen runpy>:128: RuntimeWarning: 'validation.golden_dataset.dataset_generator' found in sys.modules after import of package 'validation.golden_dataset', but prior to execution of 'validation.golden_dataset.dataset_generator'; this may result in unpredictable behaviour
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\samsung\Desktop\H2\validation\golden_dataset\dataset_generator.py", line 569, in <module>
+    cases = generate_golden_dataset()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\validation\golden_dataset\dataset_generator.py", line 126, in generate_golden_dataset
+    res_a3 = IndependentLiquidsUnloading.calculate(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\validation\reference_model\vented_processes.py", line 159, in calculate
+    diam_m = IndependentUnitConverter.convert(diameter, diameter_unit, "m")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\validation\reference_model\unit_conversions.py", line 305, in convert
+    raise ValueError(f"Independent reference converter: unsupported conversion from '{from_unit}' to '{to_unit}'")
+ValueError: Independent reference converter: unsupported conversion from 'in' to 'm'
+

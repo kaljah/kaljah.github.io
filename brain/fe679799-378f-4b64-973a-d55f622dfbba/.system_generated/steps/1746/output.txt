@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+POST /reports/generate with CSRF: 200 9488 application/pdf
+POST poll-new-passes with CSRF: 200 {'detections': [], 'message': 'Copernicus not configured', 'new_passes': 0}
+POST test-connection with CSRF: 200 {'connected': False, 'message': 'Copernicus CDSE rejected credentials: Invalid user credentials', 'success': False}
+

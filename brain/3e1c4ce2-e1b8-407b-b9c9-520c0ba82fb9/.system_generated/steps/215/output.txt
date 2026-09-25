@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_qfull_validation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -844,12 +844,20 @@
+         assert em['totalCo2e'] == 0.0
+ 
+ class TestNegativeRejected:
+-    def test_negative_quantity_zeroed(self):
+-        payload = {'process_type': 'combustion', 'quantity': -100.0, 'unit': 'm3', 'factor_source': 'default'}
+-        factor_data = {'co2': 1.0, 'ch4': 1.0, 'n2o': 1.0, 'unit': 'kg/m3'}
+-        em, _ = compute_emissions(payload, factor_data, GWP_AR5)
+-        # Expected behavior: absolute value or zeroed depending on impl, standard is zeroed or error.
+-        # Assuming the system handles or we expect negative is handled.
+-        # Just verifying it executes.
+-        pass
++    def test_negative_quantity_raises_value_error(self):
++        """
++        BOUNDARY: The dispatcher correctly rejects negative quantities.
++        Negative activity is physically impossible — dispatcher raises ValueError.
++        This validates the guard: dispatcher.py line 291:
++          raise ValueError(f"Quantity/Amount cannot be negative: {quantity}")
++        """
++        payload = {
++            'process_type': 'combustion',
++            'quantity': -100.0,
++            'unit': 'm3',
++            'factor_source': 'default'
++        }
++        factor_data = {'co2': 1.0, 'ch4': 1.0, 'n2o': 1.0, 'unit': 'kg/m3'}
++        with pytest.raises(ValueError, match="cannot be negative"):
++            compute_emissions(payload, factor_data, GWP_AR5)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/auth.py:226:def superuser_required(f):
+new/server/routes/auth.py-227-    """Permits superuser and admin roles for data management operations.
+new/server/routes/auth.py-228-    NOTE: it_admin is intentionally excluded — they manage accounts only, not data.
+new/server/routes/auth.py-229-    """
+new/server/routes/auth.py-230-
+new/server/routes/auth.py-231-    @wraps(f)
+new/server/routes/auth.py-232-    def decorated_function(*args, **kwargs):
+new/server/routes/auth.py-233-        if request.method == "OPTIONS":
+new/server/routes/auth.py-234-            return ("", 204)
+new/server/routes/auth.py-235-        user_id = session.get("user_id")
+new/server/routes/auth.py-236-        if not user_id:
+new/server/routes/auth.py-237-            return jsonify({"error": "Not authenticated"}), 401
+new/server/routes/auth.py-238-        user = db.session.get(User, user_id)
+new/server/routes/auth.py-239-        if not user:
+new/server/routes/auth.py-240-            session.pop("user_id", None)
+new/server/routes/auth.py-241-            return jsonify({"error": "User not found"}), 401
+new/server/routes/auth.py-242-        if user.status != "active":
+new/server/routes/auth.py-243-            session.pop("user_id", None)
+new/server/routes/auth.py-244-            return jsonify({"error": "Account disabled"}), 403
+new/server/routes/auth.py-245-        if user.role not in ["superuser", "admin"]:
+new/server/routes/auth.py-246-            return jsonify({"error": "Super User or Admin privileges required"}), 403
+

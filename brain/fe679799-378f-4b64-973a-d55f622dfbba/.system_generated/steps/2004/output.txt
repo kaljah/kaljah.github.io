@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_topbar_popovers.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -32,13 +32,17 @@
+ evaluate('document.querySelector(".user-profile-tab-btn")?.click()')
+ 
+ # 2. TopBar Notification Center
+-notif_btn = evaluate('document.querySelector(".notif-bell-btn") !== null || document.querySelector(".notification-btn") !== null')
++notif_btn = evaluate('document.querySelector("button[title=\'Notifications\']") !== null')
+ print('Notification bell button exists:', notif_btn)
+ 
+-evaluate('document.querySelector(".notif-bell-btn, .notification-btn")?.click()')
+-notif_dropdown = evaluate('document.querySelector(".notification-dropdown, .notif-panel, .notifications-flyout") !== null')
++evaluate('document.querySelector("button[title=\'Notifications\']")?.click()')
++notif_dropdown = evaluate('document.querySelector("div[style*=\'z-index: 999999\']") !== null || document.body.innerText.includes("Notifications")')
++notif_header = evaluate('document.querySelector("span[style*=\'font-weight: 700\']")?.innerText')
+ print('Notification flyout opened:', notif_dropdown)
+ 
++# Close notification center
++evaluate('document.querySelector("button[title=\'Notifications\']")?.click()')
++
+ # 3. Sidebar Profile Toggle
+ sidebar_prof = evaluate('document.querySelector("#profile-toggle") !== null')
+ print('Sidebar profile toggle exists:', sidebar_prof)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

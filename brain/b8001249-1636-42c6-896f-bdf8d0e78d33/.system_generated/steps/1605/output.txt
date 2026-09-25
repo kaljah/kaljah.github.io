@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\components\layout\Sidebar.jsx:9:  const { logout, user } = useAuth();
+  new\client\src\components\layout\Sidebar.jsx:10:  const { isMobileNavOpen, closeMobileNav } = useLayout();
+  new\client\src\components\layout\Sidebar.jsx:11:  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+> new\client\src\components\layout\Sidebar.jsx:27:  const handleLogout = () => {
+  new\client\src\components\layout\Sidebar.jsx:28:    setIsAccountMenuOpen(false);
+  new\client\src\components\layout\Sidebar.jsx:29:    if (closeMobileNav) closeMobileNav();
+> new\client\src\components\layout\Sidebar.jsx:30:    logout();
+  new\client\src\components\layout\Sidebar.jsx:31:  };
+  new\client\src\components\layout\Sidebar.jsx:32:
+> new\client\src\components\layout\Sidebar.jsx:537:            id="logout-btn-drop"
+> new\client\src\components\layout\Sidebar.jsx:538:            className="dropdown-item logout-item"
+> new\client\src\components\layout\Sidebar.jsx:539:            onClick={handleLogout}
+  new\client\src\components\layout\Sidebar.jsx:540:          >
+  new\client\src\components\layout\Sidebar.jsx:541:            <svg
+> new\client\src\components\layout\TopBar.jsx:9:  const { user, logout } = useAuth();
+  new\client\src\components\layout\TopBar.jsx:10:  const { topBarLeft, topBarRight, toggleMobileNav } = useLayout();
+  new\client\src\components\layout\TopBar.jsx:11:  const [isProfileOpen, setIsProfileOpen] = useState(false);
+> new\client\src\components\layout\TopBar.jsx:73:              <button className="top-drop-item logout-btn-top" 
+onClick={logout} style={{ width: "100%", textAlign: "left", padding: "10px 14px" }}>
+  new\client\src\components\layout\TopBar.jsx:74:                Sign Out
+  new\client\src\components\layout\TopBar.jsx:75:              </button>
+
+
+

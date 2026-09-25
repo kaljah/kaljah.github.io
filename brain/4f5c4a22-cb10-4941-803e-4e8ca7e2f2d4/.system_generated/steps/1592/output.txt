@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+Name                LastWriteTime       
+----                -------------       
+emission_factors.py 9/22/2026 4:21:16 PM
+emissions.py        9/22/2026 4:21:27 PM
+
+
+

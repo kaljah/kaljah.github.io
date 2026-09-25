@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+All route arguments: ['emission_id', 'facility_id', 'factor_id', 'filename', 'id', 'job_id', 'mitigation_id', 'path', 'process_category', 'rec_id', 'record_id', 'segment', 'source_id', 'year']
+

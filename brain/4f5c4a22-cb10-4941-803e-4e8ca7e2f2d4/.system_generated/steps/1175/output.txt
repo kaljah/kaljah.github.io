@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -159,6 +159,29 @@
+         "description": "Liquids Unloading - Non-Plunger Lift (API Table 6-7)",
+         "uncertainty": {"co2": 0.0, "ch4": 0.50, "n2o": 0.0},
+     },
++    "Natural Gas - 4-Stroke Lean Burn Engine": {
++        "code": "NG_4SLB",
++        "hhv": 1020,
++        "co2": 53.06,
++        "ch4": 0.3,
++        "n2o": 0.0001,
++        "unit": "kg/MMBtu",
++        "usage": ["combustion"],
++        "description": "High CH4 Slip",
++        "uncertainty": {"co2": 0.05, "ch4": 0.3, "n2o": 0.3},
++        "baseUnit": "scf",
++    },
++    "Natural Gas - 4-Stroke Rich Burn Engine": {
++        "code": "NG_4SRB",
++        "hhv": 1020,
++        "co2": 53.06,
++        "ch4": 0.001,
++        "n2o": 0.0001,
++        "unit": "kg/MMBtu",
++        "usage": ["combustion"],
++        "uncertainty": {"co2": 0.05, "ch4": 0.3, "n2o": 0.3},
++        "baseUnit": "scf",
++    },
+ }
+ 
+ # Source of truth: ALL_EMISSION_FACTORS contains the full 120+ factors from Sections 5, 6, 7
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

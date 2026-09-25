@@ -1,0 +1,137 @@
+
+The command exited with code 1.
+Output:
+<truncated 102 lines>
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-03bbb-ctors-Default-Uncertainties-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-03bbb-ctors-Default-Uncertainties-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-03bbb-ctors-Default-Uncertainties-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:629:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 3. Scope 1 Table Audit: Column Validation, Uncertainty Percentages & Inspect Modal Details 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.calc-details-modal, .modal-content, .modal-backdrop').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.calc-details-modal, .modal-content, .modal-backdrop').first() with timeout 5000ms
+      - waiting for locator('.calc-details-modal, .modal-content, .modal-backdrop').first()
+
+
+      669 |
+      670 |       const modal = page.locator('.calc-details-modal, .modal-content, .modal-backdrop').first();
+    > 671 |       await expect(modal).toBeVisible({ timeout: 5000 });
+          |                           ^
+      672 |
+      673 |       const modalText = await modal.innerText();
+      674 |       expect(modalText).not.toContain('NaN');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:671:27
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.calc-details-modal, .modal-content, .modal-backdrop').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.calc-details-modal, .modal-content, .modal-backdrop').first() with timeout 5000ms
+      - waiting for locator('.calc-details-modal, .modal-content, .modal-backdrop').first()
+
+
+      669 |
+      670 |       const modal = page.locator('.calc-details-modal, .modal-content, .modal-backdrop').first();
+    > 671 |       await expect(modal).toBeVisible({ timeout: 5000 });
+          |                           ^
+      672 |
+      673 |       const modalText = await modal.innerText();
+      674 |       expect(modalText).not.toContain('NaN');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:671:27
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:689:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.kpi-hero-card, .metric-card').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.kpi-hero-card, .metric-card').first() with timeout 10000ms
+      - waiting for locator('.kpi-hero-card, .metric-card').first()
+
+
+      726 |     // Hero Gross Emissions Card
+      727 |     const heroCard = page.locator('.kpi-hero-card, .metric-card').first();
+    > 728 |     await expect(heroCard).toBeVisible({ timeout: 10000 });
+          |                            ^
+      729 |     const heroText = await heroCard.innerText();
+      730 |     expect(heroText).not.toContain('NaN');
+      731 |     expect(heroText).not.toContain('undefined');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:728:28
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.kpi-hero-card, .metric-card').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.kpi-hero-card, .metric-card').first() with timeout 10000ms
+      - waiting for locator('.kpi-hero-card, .metric-card').first()
+
+
+      726 |     // Hero Gross Emissions Card
+      727 |     const heroCard = page.locator('.kpi-hero-card, .metric-card').first();
+    > 728 |     await expect(heroCard).toBeVisible({ timeout: 10000 });
+          |                            ^
+      729 |     const heroText = await heroCard.innerText();
+      730 |     expect(heroText).not.toContain('NaN');
+      731 |     expect(heroText).not.toContain('undefined');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:728:28
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:507:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 2. Tier 1 Advanced Catalog Scenarios: Fuels, Units, Equipment Factors & Default Uncertainties 
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:629:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 3. Scope 1 Table Audit: Column Validation, Uncertainty Percentages & Inspect Modal Details 
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:689:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+  1 passed (2.0m)
+

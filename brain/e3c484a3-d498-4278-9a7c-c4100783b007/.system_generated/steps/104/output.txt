@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py","LineNumber":4,"LineContent":"from .legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":16,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":4,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":43,"LineContent":"def test_legacy_engine_dynamic_gwp():"}

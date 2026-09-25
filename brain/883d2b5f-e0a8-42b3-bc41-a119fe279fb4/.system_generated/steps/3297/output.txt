@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_stress_bulk_pipeline.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -144,9 +144,9 @@
+             for jid in job_ids:
+                 job = upload_jobs.get(jid, {})
+                 assert job.get("status") == "completed", f"Job {jid} failed: {job.get('errors')}"
+-                assert job.get("processed_rows") == rows_per_job
++                assert job.get("processed") == rows_per_job
+                 completed_count += 1
+-                total_ingested_rows += job.get("processed_rows", 0)
++                total_ingested_rows += job.get("processed", 0)
+ 
+         throughput_rows_sec = total_ingested_rows / total_elapsed
+         print(f"\n[BULK PIPELINE RESULTS] {num_jobs} concurrent jobs ({total_ingested_rows} rows) processed in {total_elapsed:.2f}s:")
+@@ -166,8 +166,8 @@
+                 "id": jid,
+                 "status": "processing",
+                 "progress": 50,
+-                "total_rows": 100,
+-                "processed_rows": 50,
++                "total": 100,
++                "processed": 50,
+             }
+ 
+         num_pollers = 30
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

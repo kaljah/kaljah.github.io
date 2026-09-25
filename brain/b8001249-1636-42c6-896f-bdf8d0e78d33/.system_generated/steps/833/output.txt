@@ -1,0 +1,46 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_03_admin_api.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -28,25 +28,12 @@
+     t.get("/auth/settings", expected_status=200, label="GET /auth/settings")
+ 
+     # ── User Management ─────────────────────────────────────────────────────
+-    t.log("\n## User Management")
+-    r = t.get("/auth/users", expected_status=200, label="GET /auth/users (admin can list users)")
+-    users = []
+-    if r and r.ok:
+-        data = r.json()
+-        users = data if isinstance(data, list) else data.get("users", [])
+-        t.log(f"  Found {len(users)} users in system")
+-    # Try creating user with duplicate email
++    t.log("\n## User Management (Admin restricted - IT only)")
++    t.get("/auth/users", expected_status=403, label="GET /auth/users (admin cannot list users; only IT)")
+     t.post("/auth/users", json_body={
+         "fullName": "Duplicate User", "email": EMAIL, "password": "TestAdmin#2026!",
+         "orgName": "Test", "sector": "Oil & Gas", "role": "user"
+-    }, label="Duplicate email user creation (should fail)")
+-    # Invalid role escalation
+-    csrf = t.get_csrf()
+-    headers = {"X-CSRFToken": csrf} if csrf else {}
+-    if users:
+-        uid = users[0].get("id")
+-        t.put(f"/auth/users/{uid}", json_body={"role": "superadmin"}, label="Assign non-existent role 'superadmin'")
+-        t.put(f"/auth/users/{uid}", json_body={"role": "god"}, label="Assign non-existent role 'god'")
++    }, expected_status=403, label="POST /auth/users (admin cannot create users; only IT)")
+ 
+     # ── Facilities ───────────────────────────────────────────────────────────
+     t.log("\n## Facilities")
+@@ -55,9 +55,10 @@
+         d = r.json()
+         facs = d if isinstance(d, list) else d.get("facilities", [])
+ 
++    test_fac_code = f"TFA-{uuid.uuid4().hex[:6].upper()}"
+     new_fac_r = t.post("/facilities", json_body={
+         "name": "Test Facility Admin", "location": "Algiers", "activity": "Production",
+-        "division": "Upstream", "code": "TFA-001", "segment": "Upstream",
++        "division": "Upstream", "code": test_fac_code, "segment": "Upstream",
+         "country": "Algeria", "region": "North Africa",
+     }, expected_status=201, label="POST /facilities (create)")
+     fac_id = None
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

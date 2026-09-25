@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+Re-extracting code files in . (no LLM needed)...
+  AST extraction: 100/463 uncached files (21%) [8 workers]
+  AST extraction: 200/463 uncached files (43%) [8 workers]
+  AST extraction: 300/463 uncached files (64%) [8 workers]
+  AST extraction: 400/463 uncached files (86%) [8 workers]
+  AST extraction: 463/463 uncached files (100%) [8 workers]
+  warning: 227 source file(s) produced zero nodes and are absent from the graph: init-options.json, integration.json, gemini.manifest.json, speckit.manifest.json, .constitution-template.json (+222 more). A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+  warning: 25 file(s) had syntax errors and may be partially extracted: BatchReviewWizard.jsx (first error at line 485), BulkImportModal.jsx (first error at line 1603), CalculationDetails.jsx (first error at line 45), ColumnMappingWizard.jsx (first error at line 1361), Scope1Form.jsx (first error at line 1446) (+20 more) (#2551)
+[graphify watch] community set changed since labeling (230 saved labels, 371 communities now; renamed 45 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.
+Nothing to update or rebuild failed — check output above.
+[graphify watch] Rebuild failed: Invalid control character at: line 110484 column 57 (char 4083821)
+

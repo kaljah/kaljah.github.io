@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors_api2021.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -657,6 +657,20 @@
+         "source": "API Compendium 2021 Section 6, Table 6-42",
+     },
+     # ========== STORAGE TANKS (TANK FLASHING) ==========
++    "Tank - Flash Emissions (Oil)": {
++        "code": "TankFlashOil",
++        "type": "tank",
++        "ch4": 0.193,  # kg CH₄/bbl (API Table 6-4 / Table 5-16)
++        "co2": 0.012,  # kg CO₂/bbl
++        "n2o": 0,
++        "uncertainty": {"co2": 0.15, "ch4": 0.40, "n2o": 0},
++        "unit": "kg/bbl",
++        "segment": "Upstream",
++        "process_category": "storage_tanks",
++        "type": "equipment",
++        "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
++        "source": "API Compendium 2021 Section 6, Table 6-4",
++    },
+     "Tank - Crude Oil (Small, ≤10 bbl/d)": {
+         "code": "TankCrudeSmall",
+         "type": "tank",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

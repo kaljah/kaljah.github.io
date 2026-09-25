@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+[2026-09-22 13:07:32,729] INFO in app: Updated account: a
+[2026-09-22 13:07:32,842] INFO in app: Updated account: a@a
+[2026-09-22 13:07:32,952] INFO in app: Updated account: z
+[2026-09-22 13:07:33,055] INFO in app: Updated account: z@z
+Valid counts by facility: {'Complexe Sid�rurgique DRI/EAF (Tosyali)': 360, 'Cimenterie Industrielle de Chlef (GICA)': 360, 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)': 360}
+Error counts: {}
+

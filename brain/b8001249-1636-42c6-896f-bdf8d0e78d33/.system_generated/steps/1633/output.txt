@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+[Agent10] ## Login
+[Agent10] ✅ User logged in via UI
+[Agent10] ## Dashboard (user)
+[Agent10] 🐛 BUG [🟠 High] Dashboard: Dashboard blank for user role
+[Agent10] ## RBAC: Direct URL attacks
+[Agent10]   User Management: http://localhost:5173/ — body: carbon tech
+dashboard
+carbon intensity
+methane intensity
+sbti net-zero
+calculations
+emissions map
+manage data
+reports
+reference data
+uncertainty
+settings
+t
+test user
+test agent
+corporate esg
+all years
+[Agent10]   Audit Trail: http://localhost:5173/audit — body: 
+[Agent10] ## ManageData: Create Scope 3
+[Agent10] ✅ ManageData page loads for user
+[Agent10] ## Data Isolation: Edit someone else's record via URL
+[Agent10] 🐛 BUG [🟠 High] DataIsolation: User may be able to view/edit emission #1 (not their own)
+[Agent10] ## Reports (user)
+[Agent10] 🐛 BUG [🟡 Medium] Reports: Reports page empty for user
+[Agent10] ## Settings: Own Profile
+[Agent10] ✅ Settings page loads for user
+[Agent10] ## Password Change (user)
+[Agent10] 🐛 BUG [🟡 Medium] Settings: No password change form found on Settings page
+[Agent10] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_10_report.md
+

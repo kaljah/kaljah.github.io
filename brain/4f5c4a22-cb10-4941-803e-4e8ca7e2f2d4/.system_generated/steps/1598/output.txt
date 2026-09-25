@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+ProcessId CommandLine                                    CreationDate        
+--------- -----------                                    ------------        
+    31344 "C:\Users\samsung\anaconda3\python.exe" app.py 9/22/2026 4:43:27 PM
+
+
+

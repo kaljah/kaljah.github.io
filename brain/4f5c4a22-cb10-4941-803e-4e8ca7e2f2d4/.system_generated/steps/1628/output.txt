@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\legacy_engine.py:188:    def calculate_default_kg(self, amount, unit, hhv, factor_data, gas):
+  new\server\calculations\legacy_engine.py:189:        if not factor_data:
+  new\server\calculations\legacy_engine.py:190:            return 0
+  new\server\calculations\legacy_engine.py:191:
+  new\server\calculations\legacy_engine.py:192:        # Simple Factor
+  new\server\calculations\legacy_engine.py:193:        if "type" in factor_data:  # Equipment factor
+  new\server\calculations\legacy_engine.py:194:            # Check for 'factor' (legacy), then 'total', then requested 
+gas, then 'co2'
+  new\server\calculations\legacy_engine.py:195:            v = amount * (
+  new\server\calculations\legacy_engine.py:196:                factor_data.get("factor")
+  new\server\calculations\legacy_engine.py:197:                or factor_data.get("total")
+  new\server\calculations\legacy_engine.py:198:                or factor_data.get(gas)
+  new\server\calculations\legacy_engine.py:199:                or factor_data.get("co2")
+  new\server\calculations\legacy_engine.py:200:                or 0
+  new\server\calculations\legacy_engine.py:201:            )
+  new\server\calculations\legacy_engine.py:202:            if "tonnes" in str(factor_data.get("unit", "")).lower():
+  new\server\calculations\legacy_engine.py:203:                v *= 1000
+  new\server\calculations\legacy_engine.py:204:            return v
+  new\server\calculations\legacy_engine.py:205:
+  new\server\calculations\legacy_engine.py:206:        f_unit = self._normalize_unit(factor_data.get("unit", ""))
+  new\server\calculations\legacy_engine.py:207:
+  new\server\calculations\legacy_engine.py:208:        # Volume based factor (e.g. kg/m3)
+  new\server\calculations\legacy_engine.py:209:        if f_unit == "kg/m3":
+  new\server\calculations\legacy_engine.py:210:            vol = amount
+  new\server\calculations\legacy_engine.py:211:            u = self._normalize_unit(unit)
+  new\server\calculations\legacy_engine.py:212:            if u == "scf":
+  new\server\calculations\legacy_engine.py:213:                vol *= 0.0283168
+  new\server\calculations\legacy_engine.py:214:            elif u in ["mcf", "mscf"]:
+  new\server\calculations\legacy_engine.py:215:                vol *= 28.3168
+  new\server\calculations\legacy_engine.py:216:            elif u == "l":
+  new\server\calculations\legacy_engine.py:217:                vol *= 0.001
+  new\server\calculations\legacy_engine.py:218:            elif u == "gal":
+
+
+

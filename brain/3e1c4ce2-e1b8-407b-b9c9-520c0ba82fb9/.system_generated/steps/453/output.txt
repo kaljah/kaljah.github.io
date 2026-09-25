@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Year all: count=4, total_emissions=254895.0
+Year 2026: count=4, total_emissions=254895.0
+Year 2025: count=1, total_emissions=0.0
+Year 2024: count=0, total_emissions=0
+

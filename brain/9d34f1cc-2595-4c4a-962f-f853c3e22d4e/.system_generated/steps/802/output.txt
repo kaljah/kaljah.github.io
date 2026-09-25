@@ -1,0 +1,65 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -320,42 +320,10 @@
+     is_production = _env_name in ["production", "prod", "staging"]
+ 
+     accounts = []
+-    if not is_production:
+-        accounts.extend([
+-            {
+-                "email": "a",
+-                "password": "a",
+-                "role": "admin",
+-                "fullName": "Administrator",
+-                "jobTitle": "Sustainability Lead",
+-            },
+-            {
+-                "email": "a@a",
+-                "password": "a",
+-                "role": "admin",
+-                "fullName": "Administrator",
+-                "jobTitle": "Sustainability Lead",
+-            },
+-            {
+-                "email": "z",
+-                "password": "z",
+-                "role": "it_manager",
+-                "fullName": "IT Manager",
+-                "jobTitle": "IT Operations Manager",
+-            },
+-            {
+-                "email": "z@z",
+-                "password": "z",
+-                "role": "it_manager",
+-                "fullName": "IT Manager",
+-                "jobTitle": "IT Operations Manager",
+-            },
+-        ])
+-
+-    admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
+-    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
+-    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
+-    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip()
++    admin_email = os.environ.get("ADMIN_EMAIL", "").strip() or "admin@ghg.com"
++    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip() or "admin123"
++    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip() or "itadmin@ghg.com"
++    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip() or "itadmin123"
+ 
+     if admin_email and admin_password:
+         accounts.append({
+@@ -393,10 +393,9 @@
+                 db.session.add(user)
+                 app.logger.info(f"Seeded {u['role']} account: {u['email']}")
+             else:
+-                user.set_password(u["password"])
++                # Do NOT overwrite existing user passwords on startup
+                 user.status = "active"
+-                user.role = u["role"]
+-                app.logger.info(f"Updated account: {u['email']}")
++                app.logger.info(f"Verified existing account: {u['email']}")
+         db.session.commit()
+     except Exception as e:
+         app.logger.error(f"Failed to seed admin accounts: {e}")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

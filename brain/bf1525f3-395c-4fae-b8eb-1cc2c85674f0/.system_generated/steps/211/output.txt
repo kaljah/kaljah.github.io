@@ -1,0 +1,70 @@
+
+The command exited with code 0.
+Output:
+warning: in the working copy of 'new/client/src/components/layout/TopBar.jsx', LF will be replaced by CRLF the next time Git touches it
+diff --git a/new/client/src/components/layout/TopBar.jsx b/new/client/src/components/layout/TopBar.jsx
+index 7ca7376..c103cb4 100644
+--- a/new/client/src/components/layout/TopBar.jsx
++++ b/new/client/src/components/layout/TopBar.jsx
+@@ -1,5 +1,5 @@
+ import React, { useState, useRef, useEffect } from "react";
+-import { User, Building } from "lucide-react";
++import { User, Building, Menu } from "lucide-react";
+ import { useAuth } from "../../context/AuthContext";
+ import { useLayout } from "../../context/LayoutContext";
+ import NotificationCenter from "../NotificationCenter";
+@@ -7,7 +7,7 @@ import "./TopBar.css";
+ 
+ const TopBar = () => {
+   const { user, logout } = useAuth();
+-  const { topBarLeft, topBarRight } = useLayout();
++  const { topBarLeft, topBarRight, toggleMobileNav } = useLayout();
+   const [isProfileOpen, setIsProfileOpen] = useState(false);
+   const profileRef = useRef(null);
+ 
+@@ -24,6 +24,18 @@ const TopBar = () => {
+   return (
+     <header className="top-bar">
+       <div className="top-bar-left-section">
++        <button
++          className="mobile-hamburger-btn"
++          onClick={(e) => {
++            e.stopPropagation();
++            toggleMobileNav();
++          }}
++          aria-label="Open navigation menu"
++          type="button"
++        >
++          <Menu size={22} />
++        </button>
++
+         <div className="breadcrumbs">
+           <Building size={16} style={{ color: "var(--accent-color, #ff6600)" }} />
+           <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>Corporate ESG</span>
+@@ -39,11 +51,12 @@ const TopBar = () => {
+ 
+         <NotificationCenter />
+ 
+-        <div style={{ position: "relative" }} ref={profileRef}>
++        <div style={{ position: "relative" }} ref={profileRef} className="user-profile-tab-wrapper">
+           <button
+-            className="icon-button"
++            className="icon-button user-profile-tab-btn"
+             onClick={() => setIsProfileOpen(!isProfileOpen)}
+             title="User Profile"
++            aria-label="User Profile"
+           >
+             <User size={18} />
+           </button>
+@@ -53,8 +66,8 @@ const TopBar = () => {
+                 <div style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--text-primary)" }}>
+                   {user?.fullName || user?.email}
+                 </div>
+-                <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", textTransform: "uppercase", marginTop: "2px" }}>
+-                  Role: {user?.role}
++                <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
++                  {user?.jobTitle || "Sustainability Manager"}
+                 </div>
+               </div>
+               <button className="top-drop-item logout-btn-top" onClick={logout} style={{ width: "100%", textAlign: "left", padding: "10px 14px" }}>
+

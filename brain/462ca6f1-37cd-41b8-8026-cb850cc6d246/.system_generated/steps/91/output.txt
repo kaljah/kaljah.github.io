@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Drilling - Mud Degassing (Water Based) -> {'code': 'MudWater', 'type': 'equipment', 'ch4': 0.15, 'co2': 0, 'n2o': 0, 'uncertainty': {'co2': 0.1, 'ch4': 0.5, 'n2o': 0.1}, 'unit': 'kg CH₄/m³', 'segment': 'Upstream', 'process_category': 'drilling', 'description': 'Drilling mud degassing - water based', 'source': 'API Compendium 2021 Section 6.2'}
+Drilling - Mud Degassing (Oil Based) -> {'code': 'MudOil', 'type': 'equipment', 'ch4': 37.5, 'co2': 0, 'n2o': 0, 'uncertainty': {'co2': 0.1, 'ch4': 0.5, 'n2o': 0.1}, 'unit': 'kg CH₄/bbl mud', 'segment': 'Upstream', 'process_category': 'drilling', 'description': 'Drilling mud degassing - oil based (diesel)', 'source': 'API Compendium 2021 Section 6.2'}
+

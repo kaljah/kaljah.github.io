@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -940,8 +940,10 @@
+         "MMSm³",
+         grossGasMmsm3 > 0
+           ? grossGasMmsm3.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+-          : (fullData.totalProductionBoe ? (fullData.totalProductionBoe * 5.8 / 1000).toFixed(2) : "9,757.51"),
+-        grossGasMmsm3 > 0 ? (grossGasMmsm3 * 0.0083).toFixed(2) + " MMBOE" : "75.54 MMBOE",
++          : (fullData.totalProductionBoe ? (fullData.totalProductionBoe * 5.8 / 1000).toFixed(2) : "0.00"),
++        grossGasMmsm3 > 0
++          ? (grossGasMmsm3 * 0.0083).toFixed(2) + " MMBOE"
++          : (fullData.totalProductionBoe ? (fullData.totalProductionBoe / 1000000).toFixed(2) + " MMBOE" : "0.00 MMBOE"),
+       ],
+       [
+         "Injected Gas Volume",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

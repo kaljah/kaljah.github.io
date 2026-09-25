@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:119:          api.get("/facilities"),
+new\client\src\pages\DashboardEnhanced.jsx:120:          api.get("/filters/available"),
+new\client\src\pages\DashboardEnhanced.jsx:188:      const batchRes = await 
+api.get(`/dashboard/batch-all?${filterParams}`);
+new\client\src\pages\DashboardEnhanced.jsx:196:          const pRes = await api.get('/emissions/pending');
+new\client\src\pages\DashboardEnhanced.jsx:216:        const sbtiRes = await api.get('/dashboard/sbti-trajectory');
+
+
+

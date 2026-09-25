@@ -1,0 +1,228 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1330,62 +1330,14 @@
+                 </span>
+                 <span style={S.sectionTitle}>Access Governance & Scope</span>
+               </div>
+-              {editingUser && (
+-                <span
+-                  style={{
+-                    display: "inline-flex",
+-                    alignItems: "center",
+-                    gap: "4px",
+-                    padding: "3px 8px",
+-                    borderRadius: "6px",
+-                    background: "rgba(100, 116, 139, 0.1)",
+-                    color: "var(--text-secondary)",
+-                    fontSize: "0.72rem",
+-                    fontWeight: 600,
+-                  }}
+-                >
+-                  <Lock size={11} /> Locked by Policy
+-                </span>
+-              )}
+-            </div>
+-
+-            {editingUser && (
+-              <div
+-                style={{
+-                  display: "flex",
+-                  alignItems: "flex-start",
+-                  gap: "8px",
+-                  padding: "10px 12px",
+-                  borderRadius: "8px",
+-                  background: "rgba(100, 116, 139, 0.06)",
+-                  border: "1px dashed var(--border-color)",
+-                  marginBottom: "14px",
+-                  fontSize: "0.76rem",
+-                  color: "var(--text-secondary)",
+-                  lineHeight: 1.4,
+-                }}
+-              >
+-                <Lock size={13} style={{ flexShrink: 0, marginTop: "2px", color: "var(--text-secondary)" }} />
+-                <span>
+-                  Role and regional assignments are fixed by administrative governance and locked against profile modification.
+-                </span>
+-              </div>
+-            )}
+-
+-            <div style={S.formRow}>
+-              <div style={S.formGroup}>
+-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "7px" }}>
+-                  <label style={{ ...S.label, marginBottom: 0 }}>System Role</label>
+-                  {editingUser && (
+-                    <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", display: "inline-flex", alignItems: "center", gap: "3px" }}>
+-                      <Lock size={10} /> Locked
+-                    </span>
+-                  )}
+-                </div>
++            </div>
++
++            <div style={S.formRow}>
++              <div style={S.formGroup}>
++                <label style={S.label}>System Role</label>
+                 <select
+                   id="um-modal-role"
+                   value={formData.role}
+-                  disabled={!!editingUser}
+                   onChange={(e) =>
+                     setFormData({
+                       ...formData,
+@@ -1394,13 +1394,8 @@
+                         : "",
+                     })
+                   }
+-                  style={{
+-                    ...inputStyle("role"),
+-                    cursor: editingUser ? "not-allowed" : "pointer",
+-                    opacity: editingUser ? 0.75 : 1,
+-                    background: editingUser ? "var(--bg-body)" : "var(--bg-card)",
+-                  }}
+-                  {...(!editingUser ? focusProps("role") : {})}
++                  style={inputStyle("role")}
++                  {...focusProps("role")}
+                 >
+                   <option value="user">Standard User</option>
+                   <option value="superuser">Super User</option>
+@@ -1407,4 +1407,4 @@
+-                  <option value="it_admin">IT Admin</option>
++                  <option value="it_manager">IT Manager</option>
+                   <option value="it">IT</option>
+                 </select>
+               </div>
+@@ -1411,17 +1411,9 @@
+               {(["user", "superuser"].includes(formData.role) || formData.location) && (
+                 <div style={S.formGroup}>
+-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "7px" }}>
+-                    <label style={{ ...S.label, marginBottom: 0 }}>Assigned Region</label>
+-                    {editingUser && (
+-                      <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", display: "inline-flex", alignItems: "center", gap: "3px" }}>
+-                        <Lock size={10} /> Locked
+-                      </span>
+-                    )}
+-                  </div>
++                  <label style={S.label}>Assigned Region</label>
+                   <select
+                     id="um-modal-region"
+                     value={formData.location}
+-                    disabled={!!editingUser}
+                     onChange={(e) =>
+                       setFormData({ ...formData, location: e.target.value })
+                     }
+@@ -1428,9 +1428,6 @@
+                       ...inputStyle("location"),
+-                      cursor: editingUser ? "not-allowed" : "pointer",
+-                      opacity: editingUser ? 0.75 : 1,
+-                      background: editingUser ? "var(--bg-body)" : "var(--bg-card)",
+                       borderColor:
+-                        !editingUser && !formData.location
++                        !formData.location
+                           ? "#ef4444"
+                           : focusedField === "location"
+                           ? "#ff6600"
+@@ -1437,5 +1437,5 @@
+                     }}
+-                    {...(!editingUser ? focusProps("location") : {})}
++                    {...focusProps("location")}
+                   >
+                     <option value="">— Select a Region —</option>
+                     {regions.map((r) => (
+@@ -1443,7 +1443,7 @@
+                       </option>
+                     ))}
+                   </select>
+-                  {!editingUser && !formData.location && (
++                  {!formData.location && (
+                     <p style={{ fontSize: "0.72rem", color: "#ef4444", marginTop: "4px" }}>
+                       ↑ Required — choose an assigned region
+                     </p>
+@@ -1450,6 +1450,24 @@
+                 </div>
+               )}
+             </div>
++
++            {editingUser && (
++              <div style={{ ...S.formGroup, marginTop: "14px" }}>
++                <label style={S.label}>Account Status</label>
++                <select
++                  id="um-modal-status"
++                  value={formData.status || "active"}
++                  onChange={(e) =>
++                    setFormData({ ...formData, status: e.target.value })
++                  }
++                  style={inputStyle("status")}
++                  {...focusProps("status")}
++                >
++                  <option value="active">Active (Full Access Granted)</option>
++                  <option value="disabled">Disabled (Account Suspended)</option>
++                </select>
++              </div>
++            )}
+           </div>
+ 
+           {/* Section 4: Initial Password (Register only) */}
+@@ -1495,6 +1495,61 @@
+               </div>
+             </div>
+           )}
++
++          {/* Action Buttons Right Under Form Fields */}
++          <div
++            style={{
++              display: "flex",
++              justifyContent: "flex-end",
++              alignItems: "center",
++              gap: "12px",
++              marginTop: "24px",
++              paddingTop: "16px",
++              borderTop: "1px solid var(--border-color)",
++            }}
++          >
++            <button
++              id="um-modal-cancel"
++              type="button"
++              style={S.btnSecondary}
++              onClick={() => setIsModalOpen(false)}
++              onMouseEnter={(e) =>
++                (e.currentTarget.style.background = "var(--bg-hover)")
++              }
++              onMouseLeave={(e) =>
++                (e.currentTarget.style.background = "transparent")
++              }
++            >
++              Cancel
++            </button>
++            <button
++              id="um-modal-submit"
++              type="submit"
++              style={S.btnPrimary}
++              onMouseEnter={(e) => {
++                e.currentTarget.style.transform = "translateY(-1px)";
++                e.currentTarget.style.boxShadow =
++                  "0 8px 20px rgba(255,102,0,.35)";
++              }}
++              onMouseLeave={(e) => {
++                e.currentTarget.style.transform = "none";
++                e.currentTarget.style.boxShadow =
++                  "0 4px 12px rgba(255,102,0,.25)";
++              }}
++            >
++              {editingUser ? (
++                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
++                  <UserCheck size={16} />
++                  Save Changes
++                </span>
++              ) : (
++                <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
++                  <UserPlus size={16} />
++                  Create User
++                </span>
++              )}
++            </button>
++          </div>
+         </form>
+       </Drawer>
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,31 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1244,"LineContent":"    from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1247,"LineContent":"        co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\units.py","LineNumber":503,"LineContent":"def compute_scope3_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":7,"LineContent":"from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":103,"LineContent":"        co2e_val = compute_scope3_co2e(activity_data, emission_factor, factor_unit, calc_method)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":277,"LineContent":"        emission.co2e = round(compute_scope3_co2e(act, ef, factor_unit, calc_method), 4)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":438,"LineContent":"                co2e = compute_scope3_co2e(amt, ef, ef_unit, calc_method)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":417,"LineContent":"    from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":440,"LineContent":"        from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":442,"LineContent":"        co2e = compute_scope3_co2e(activity_amt, ef_val, ef_unit)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1351,"LineContent":"def test_compute_scope3_co2e_units():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1352,"LineContent":"    \"\"\"Verify compute_scope3_co2e distinguishes numerator units from denominator units.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1353,"LineContent":"    from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1356,"LineContent":"    res_l = compute_scope3_co2e(1000, 2.68, \"kg CO2e / liter\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1360,"LineContent":"    res_t = compute_scope3_co2e(50, 1200, \"kg CO2e / tonne\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1364,"LineContent":"    res_mt = compute_scope3_co2e(10, 500, \"kg CO2e / metric ton\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1368,"LineContent":"    res_bbl = compute_scope3_co2e(100, 0.43, \"tCO2e / bbl\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1372,"LineContent":"    res_tonne = compute_scope3_co2e(10, 1.8, \"tonne CO2e / unit\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1376,"LineContent":"    res_flight = compute_scope3_co2e(4, 250, \"kg CO2e / flight\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1379,"LineContent":"    res_mmbtu = compute_scope3_co2e(100, 53.06, \"kg CO2e / MMBtu\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1383,"LineContent":"    res_eeio = compute_scope3_co2e(100000, 350, \"kg CO2e / $1000\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":35,"LineContent":"from calculations.units import convert, compute_scope3_co2e, calculate_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_golden_dataset_validation.py","LineNumber":18,"LineContent":"from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_golden_dataset_validation.py","LineNumber":74,"LineContent":"            res = compute_scope3_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_independent_differential.py","LineNumber":16,"LineContent":"from calculations.units import compute_scope3_co2e, CONVERSIONS, calculate_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_independent_differential.py","LineNumber":390,"LineContent":"        prod_eeio = compute_scope3_co2e(500_000.0, 3200.1, \"kg CO2e/$1000\", \"spend_eeio\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_independent_differential.py","LineNumber":395,"LineContent":"        prod_tonne = compute_scope3_co2e(125.0, 2.45, \"tCO2e/tonne\", \"supplier_specific\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_property_invariants.py","LineNumber":24,"LineContent":"from calculations.units import compute_scope3_co2e, calculate_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":480,"LineContent":"        from calculations.units import compute_scope3_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":483,"LineContent":"        cement_co2e = compute_scope3_co2e(50, 800, \"kg CO2e / tonne\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":487,"LineContent":"        eeio_co2e = compute_scope3_co2e(100000, 350, \"kg CO2e / $1000\")"}

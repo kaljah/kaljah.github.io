@@ -1,0 +1,57 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\ManageData.jsx:1347:        const matchesReg = matchesRegionCheck(fac, filterRegion);
+new\client\src\pages\ManageData.jsx:1368:        if (filterRegion && filterRegion !== 'all' && 
+!matchesRegionCheck(fac, filterRegion)) return false;
+new\client\src\pages\ManageData.jsx:1415:                                <span>Regions</span>
+new\client\src\pages\ManageData.jsx:1466:                                    <select value={filterRegion} 
+onChange={(e) => setFilterRegion(e.target.value)} className="component-select" style={{ width: 'auto' }}>
+new\client\src\pages\ManageData.jsx:1467:                                        <option value="">All Regions</option>
+new\client\src\pages\ManageData.jsx:1468:                                        {availableFilters.regions?.map(r => 
+<option key={r} value={r}>{r}</option>)}
+new\client\src\pages\ManageData.jsx:1478:                                    {(filterActivity || filterDivision || 
+filterRegion || filterYear) && (
+new\client\src\pages\ManageData.jsx:1479:                                        <button className="btn-ghost" 
+onClick={() => { setFilterActivity(''); setFilterDivision(''); setFilterRegion(''); setFilterYear(''); }} style={{ 
+color: 'var(--text-secondary)', padding: '6px 12px', fontSize: '0.85rem' }}>
+new\client\src\pages\ManageData.jsx:2140:                                    The pending review queue is restricted to 
+Regional Managers and Administrators under corporate Maker-Checker governance rules. Direct activity logs submitted by 
+operators are audited here before inclusion in official GHG inventories.
+new\client\src\pages\ManageData.jsx:2414:                        {/* Regions Tab - Admin and Superuser */}
+new\client\src\pages\ManageData.jsx:2417:                                <h2 style={{ marginBottom: '8px', fontWeight: 
+700 }}>Active Regions</h2>
+new\client\src\pages\ManageData.jsx:2418:                                <p style={{ color: 'var(--text-secondary)', 
+marginBottom: '32px' }}>Manage operational regions and their boundaries.</p>
+new\client\src\pages\ManageData.jsx:2421:                                {/* Add Region form */}
+new\client\src\pages\ManageData.jsx:2426:                                                <label>Region Name</label>
+new\client\src\pages\ManageData.jsx:2503:                                            <button className="action-btn" 
+onClick={handleAddFacility}>Add Region</button>
+new\client\src\pages\ManageData.jsx:2507:                                            <button className="action-btn" 
+onClick={() => exportToCSV(facilities, 'regions_export.csv')} style={{ background: 'var(--text-secondary)' }}>Export 
+CSV</button>
+new\client\src\pages\ManageData.jsx:2513:                                    <h3>Active Regions</h3>
+new\client\src\pages\ManageData.jsx:2517:                                                <th>Region Name</th>
+new\client\src\pages\ManageData.jsx:2553:                                                            No regions found.
+new\client\src\pages\ManageData.jsx:2619:                                            Region
+new\client\src\pages\ManageData.jsx:2626:                                                { value: '', label: 'Select 
+Region' },
+new\client\src\pages\ManageData.jsx:2633:                                            placeholder="Select Region"
+new\client\src\pages\ManageData.jsx:2688:                                                <th>Region</th>
+new\client\src\pages\ManageData.jsx:2781:                                            Region
+new\client\src\pages\ManageData.jsx:2788:                                                { value: '', label: 'Select 
+Region' },
+new\client\src\pages\ManageData.jsx:2795:                                            placeholder="Select Region"
+new\client\src\pages\ManageData.jsx:2837:                                                <th>Region</th>
+new\client\src\pages\ManageData.jsx:3332:                                            Region
+new\client\src\pages\ManageData.jsx:3339:                                                { value: '', label: 'Select 
+Region' },
+new\client\src\pages\ManageData.jsx:3346:                                            placeholder="Select Region"
+new\client\src\pages\ManageData.jsx:3397:                                                <th>Region</th>
+new\client\src\pages\ManageData.jsx:3411:                                                        {m.region || '-'}
+new\client\src\pages\ManageData.jsx:3501:                                        <label>Facility / Region *</label>
+new\client\src\pages\ManageData.jsx:3830:                                        <label>Facility / Region *</label>
+
+
+

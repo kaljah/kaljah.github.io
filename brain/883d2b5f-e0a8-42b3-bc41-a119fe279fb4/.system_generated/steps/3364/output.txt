@@ -1,0 +1,42 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":605,"LineContent":"def recalculate_all_emissions_gwp(standard):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":607,"LineContent":"    Recalculates co2e_total for all stored Emission records in the database"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":757,"LineContent":"        # If GWP standard was changed or set, recalculate existing emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":760,"LineContent":"                recalculate_all_emissions_gwp(_app_settings[\"gwp_standard\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":984,"LineContent":"            details=f\"Base year recalculated to {year_val} by {user.fullName}\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":19,"LineContent":"    calculate_co2e,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":793,"LineContent":"            em_result[\"totalCo2e\"] = calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2958,"LineContent":"    # Calculate Emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2960,"LineContent":"    # For now, using a simplified factor data placeholder or letting calculate handle it"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3021,"LineContent":"    # Call compute_emissions to calculate the actual emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3034,"LineContent":"    # Fallback: Calculate totalCo2e if it's missing or zero"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3039,"LineContent":"        em_result[\"totalCo2e\"] = calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3046,"LineContent":"        # Use uncertainties calculated by the new engine, or None if not provided"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3356,"LineContent":"    # Disallow direct client overwrite of calculated totals without recalculation"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3381,"LineContent":"    # Recalculate whenever physical activity or factor inputs are modified (L9)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3383,"LineContent":"    should_recalc = data.get(\"recalculate\") or any(k in data for k in recalc_keys)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3467,"LineContent":"            calculated_em, method = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3470,"LineContent":"            record.co2_emissions = calculated_em[\"co2\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3471,"LineContent":"            record.ch4_emissions = calculated_em[\"ch4\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3472,"LineContent":"            record.n2o_emissions = calculated_em[\"n2o\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3473,"LineContent":"            record.co_emissions = calculated_em.get(\"co\", 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3474,"LineContent":"            record.co2e_total = calculated_em[\"totalCo2e\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3817,"LineContent":"                em_result[\"totalCo2e\"] = calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":352,"LineContent":"                \"title\": \"Uncalculated Emission Values\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":353,"LineContent":"                \"description\": f\"{missing_co2e_count} record(s) have uncalculated or negative CO₂e totals.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":356,"LineContent":"                \"action\": \"Recalculate\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":420,"LineContent":"        # Calculate composite health score"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":125,"LineContent":"    # Calculate uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":265,"LineContent":"        # Recalculate co2e in tonnes: activity_data * emission_factor (if factor is kg/unit -\u003e /1000)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":415,"LineContent":"            # 2. Extract Data and Calculate"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":424,"LineContent":"            # Authoritatively calculate co2e when activity amount and EF are present"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":486,"LineContent":"@scope3_bp.route(\"/eeio-calculate\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":488,"LineContent":"def calculate_eeio():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":489,"LineContent":"    \"\"\"Calculate Scope 3 Category 1 emissions based on spend and NAICS code\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":503,"LineContent":"    # Calculate emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":19,"LineContent":"    \"\"\"Calculate tCO2e for indirect steam / heat entry.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":75,"LineContent":"    \"\"\"Calculate heat-allocated tCO2e for CHP / cogeneration entry.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":80,"LineContent":"        # Calculate facility emissions from fuel consumed (e.g. 53.06 kg CO2/MMBtu)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":218,"LineContent":"    # Calculate uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":590,"LineContent":"            # 2. Get Factor and Calculate"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":893,"LineContent":"                {\"message\": \"Base year recalculated successfully\", \"id\": recalc.id}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":948,"LineContent":"        # Calculate suggested base year baseline from verified emissions or BaseYearRecalculation"}

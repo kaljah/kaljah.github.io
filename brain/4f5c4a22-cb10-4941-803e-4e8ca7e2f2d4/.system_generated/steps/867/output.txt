@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+SUCCESS: ({'co2': 0.0, 'ch4': 0.0, 'n2o': 0.0, 'totalCo2e': 0.0, 'co': 0, 'ce': 0}, 'server_default')
+

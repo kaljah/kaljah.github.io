@@ -1,0 +1,77 @@
+
+The command exited with code 1.
+Output:
+python : [2026-09-23 22:12:40,079] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+At line:1 char:1
++ python "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([2026-09-23 22:...MIN is not set):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+============================================================
+Agent 02 - DB Account Seeder
+Started: 2026-09-23T20:12:40.083347+00:00
+============================================================
+
+[STEP 1] Existing users in DB:
+  id=1  email='a'  role='admin'  status='active'
+  id=2  email='a@a'  role='admin'  status='active'
+  id=3  email='z'  role='it_manager'  status='active'
+  id=4  email='z@z'  role='it_manager'  status='active'
+  id=5  email='admin@ghg.com'  role='admin'  status='active'
+  id=6  email='itadmin@ghg.com'  role='it_admin'  status='active'
+  id=7  email='it@ghg.com'  role='it'  status='active'
+
+[STEP 2] Seeding test accounts...
+
+  -- Test Admin (test_admin@ghg-test.com) role=admin --
+  CREATED: id=8  role=admin
+
+  -- Test Superuser (test_superuser@ghg-test.com) role=superuser --
+  CREATED: id=9  role=superuser
+
+  -- Test User (test_user@ghg-test.com) role=user --
+  CREATED: id=10  role=user
+
+  -- Test IT Admin (test_itadmin@ghg-test.com) role=it_admin --
+  CREATED: id=11  role=it_admin
+
+  -- Test Viewer (test_viewer@ghg-test.com) role=viewer --
+  BUG: role 'viewer' is not valid - using 'user' as fallback
+  CREATED: id=12  role=user
+
+[STEP 3] Verifying logins via HTTP...
+
+  Verifying test_admin@ghg-test.com...
+  Login OK: admin
+
+  Verifying test_superuser@ghg-test.com...
+  Login OK: superuser
+
+  Verifying test_user@ghg-test.com...
+  Login OK: user
+
+  Verifying test_itadmin@ghg-test.com...
+  Login OK: it_admin
+
+  Verifying test_viewer@ghg-test.com...
+  Login OK: user
+
+[STEP 4] Writing output files...
+  Credentials: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_credentials.json
+  Bugs: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_bugs.json
+  Report: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_report.md
+
+============================================================
+SUMMARY
+============================================================
+  LOGIN-OK  test_admin@ghg-test.com                     req_role=admin         actual_role=admin         status=created
+  LOGIN-OK  test_superuser@ghg-test.com                 req_role=superuser     actual_role=superuser     status=created
+  LOGIN-OK  test_user@ghg-test.com                      req_role=user          actual_role=user          status=created
+  LOGIN-OK  test_itadmin@ghg-test.com                   req_role=it_admin      actual_role=it_admin      status=created
+  LOGIN-OK  test_viewer@ghg-test.com                    req_role=viewer        actual_role=user          status=created
+
+All ready: True
+Bugs found: 1
+============================================================
+

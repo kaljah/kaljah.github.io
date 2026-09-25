@@ -1,0 +1,80 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_it_role_security.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -201,4 +201,74 @@
+     with app.app_context():
+         u = db.session.get(User, test_accounts["target_id"])
+         assert u.role == "it"
++
++
++def test_it_manager_full_management_capabilities(client):
++    """IT Manager role has full access to user management without limitation."""
++    with app.app_context():
++        mgr = User.query.filter_by(email="it_manager_tester@domain.com").first()
++        if not mgr:
++            mgr = User(
++                email="it_manager_tester@domain.com",
++                fullName="IT Manager Tester",
++                orgName="Energy Corp",
++                sector="Energy",
++                role="it_manager",
++                jobTitle="Head of IT",
++            )
++            mgr.set_password("SecureManagerPass123!")
++            db.session.add(mgr)
++            db.session.commit()
++        mgr_id = mgr.id
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = mgr_id
++
++    # 1. IT Manager can create user with any role
++    res_create = client.post(
++        "/api/auth/register",
++        json={
++            "fullName": "Managed User One",
++            "email": "managed_user_1@domain.com",
++            "orgName": "Energy Corp",
++            "sector": "Energy",
++            "password": "InitialUserPass123!",
++            "role": "user",
++            "location": "Ouargla",
++        },
++    )
++    assert res_create.status_code in [200, 201]
++    created_id = res_create.get_json()["user"]["id"]
++
++    # 2. IT Manager can modify role, region, and status
++    res_update = client.put(
++        f"/api/auth/users/{created_id}",
++        json={
++            "fullName": "Managed User One Updated",
++            "role": "superuser",
++            "location": "Hassi Messaoud",
++            "status": "disabled",
++        },
++    )
++    assert res_update.status_code == 200
++    u_data = res_update.get_json()["user"]
++    assert u_data["role"] == "superuser"
++    assert u_data["location"] == "Hassi Messaoud"
++    assert u_data["status"] == "disabled"
++
++    # 3. IT Manager can reset password
++    res_reset = client.post(
++        f"/api/auth/users/{created_id}/reset-password",
++        json={"newPassword": "NewManagedPass2026!"},
++    )
++    assert res_reset.status_code == 200
++
++    # 4. IT Manager can delete user
++    res_delete = client.delete(f"/api/auth/users/{created_id}")
++    assert res_delete.status_code == 200
++
++    # 5. IT Manager has zero operational data access
++    assert client.get("/api/facilities").status_code == 403
++    assert client.get("/api/emissions").status_code == 403
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

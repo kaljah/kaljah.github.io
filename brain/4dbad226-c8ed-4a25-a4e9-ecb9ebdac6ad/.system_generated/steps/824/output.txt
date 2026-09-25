@@ -1,0 +1,76 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1506,8 +1506,8 @@
+               />
+             </div>
+ 
+-            {/* Hoisted Emission Factor Selection — hidden for stoichiometry */}
+-            {processType !== "stoichiometry" && (
++            {/* Hoisted Emission Factor Selection — hidden for stoichiometry and dedicated downstream process forms */}
++            {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(processType) && (
+               <div className="input-group">
+                 <div
+                   style={{
+@@ -1537,6 +1537,8 @@
+                           return false;
+                         if (processType === "separation" && type === "specific")
+                           return false;
++                        if (["agr", "dehydrator"].includes(processType) && (type === "default" || type === "custom"))
++                          return false;
+                         return true;
+                       })
+                       .map((type) => (
+@@ -1551,8 +1551,6 @@
+                                 "completions",
+                                 "unloading",
+                                 "blowdown",
+-                                "agr",
+-                                "dehydrator",
+                               ].includes(processType)
+                             ) {
+                               toast.warning(
+@@ -1585,6 +1585,41 @@
+                       ))}
+                   </div>
+                 </div>
++                {["agr", "dehydrator"].includes(processType) && (
++                  <div
++                    style={{
++                      display: "flex",
++                      alignItems: "center",
++                      gap: "6px",
++                      marginTop: "6px",
++                      marginBottom: "6px",
++                      padding: "8px 12px",
++                      background: "#eff6ff",
++                      border: "1px solid #bfdbfe",
++                      borderRadius: "6px",
++                      fontSize: "0.75rem",
++                      color: "#1d4ed8",
++                    }}
++                  >
++                    <svg
++                      width="14"
++                      height="14"
++                      viewBox="0 0 24 24"
++                      fill="none"
++                      stroke="currentColor"
++                      strokeWidth="2"
++                      strokeLinecap="round"
++                      strokeLinejoin="round"
++                    >
++                      <circle cx="12" cy="12" r="10" />
++                      <line x1="12" y1="8" x2="12" y2="12" />
++                      <line x1="12" y1="16" x2="12.01" y2="16" />
++                    </svg>
++                    <span>
++                      <strong>OGMP 2.0 Level 4/5:</strong> Engineering model (Tier 3) required. No static Tier 1 factors exist for this process.
++                    </span>
++                  </div>
++                )}
+                 {sourceType === "default" && (
+                   <CustomDropdown
+                     options={fuelOptions}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,1 @@
+A1: (Recommended) Dual-Mode: Allow adjusting standard fuels inline with measured lab properties (HHV, density) OR selecting saved custom factors, with an inline "+ Create Factor" modal.

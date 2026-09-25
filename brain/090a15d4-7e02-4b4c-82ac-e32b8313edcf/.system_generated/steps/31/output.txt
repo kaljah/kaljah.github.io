@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                        
+--------                                                        
+C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py         
+C:\Users\samsung\Desktop\H2\validation\reference_model\scope2.py
+
+
+

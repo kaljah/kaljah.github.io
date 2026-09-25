@@ -1,0 +1,14 @@
+
+The command exited with code 1.
+Output:
+
+
+    Directory: C:\Program Files\Google\Chrome\Application
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/17/2026  11:12 AM        4507288 chrome.exe                                                           
+
+
+

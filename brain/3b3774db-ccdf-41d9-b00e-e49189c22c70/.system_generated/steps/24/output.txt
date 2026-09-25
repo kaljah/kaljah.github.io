@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_server_routes_reports.py.txt"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_client_src_pages_MethaneIntensity.jsx.txt"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_client_src_pages_CarbonIntensity.css.txt"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py"}

@@ -1,0 +1,18 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-2942
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-2942.log
+Log output:
+<truncated 163 lines>
+e3/<int:emission_id>                 ['DELETE']           scope3.delete_scope3_emission
+/api/scope3/<int:emission_id>                 ['PUT']              scope3.update_scope3_emission
+/api/scope3/bulk-import                       ['POST']             scope3.bulk_import_scope3
+/api/scope3/eeio-calculate                    ['POST']             scope3.calculate_eeio
+/api/sources                                  ['GET']              managedata.get_sources
+/api/sources                                  ['POST']             managedata.add_source
+/api/sources/                                 ['GET']              managedata.get_sources
+/api/sources/                                 ['POST']             managedata.add_source
+/api/sources/<int:source_id>                  ['DELETE']           managedata.delete_source
+/api/sources/bulk-import                      ['POST']             managedata.bulk_import_sources
+/static/<path:filename>                       ['GET']              static
+
+Last progress: 16s ago

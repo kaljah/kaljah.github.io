@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\utils\EmissionFactors.js:910:    description: "Average per event",
+  new\client\src\utils\EmissionFactors.js:911:    uncertainty: { ch4: 0.25 },
+  new\client\src\utils\EmissionFactors.js:912:  },
+> new\client\src\utils\EmissionFactors.js:913:  "Drilling - Mud Degassing (Water Based)": {
+> new\client\src\utils\EmissionFactors.js:914:    code: "MudWater",
+  new\client\src\utils\EmissionFactors.js:915:    ch4: 0.18,
+  new\client\src\utils\EmissionFactors.js:916:    co2: 0,
+  new\client\src\utils\EmissionFactors.js:917:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:918:    uncertainty: { ch4: 0.5 },
+> new\client\src\utils\EmissionFactors.js:919:    unit: "kg CH4/bbl mud",
+  new\client\src\utils\EmissionFactors.js:920:    baseUnit: "bbl",
+  new\client\src\utils\EmissionFactors.js:921:    usage: ["drilling"],
+> new\client\src\utils\EmissionFactors.js:922:    description: "Water Based Mud",
+  new\client\src\utils\EmissionFactors.js:923:  },
+> new\client\src\utils\EmissionFactors.js:924:  "Drilling - Mud Degassing (Oil Based)": {
+> new\client\src\utils\EmissionFactors.js:925:    code: "MudOil",
+  new\client\src\utils\EmissionFactors.js:926:    ch4: 37.5,
+  new\client\src\utils\EmissionFactors.js:927:    co2: 0,
+  new\client\src\utils\EmissionFactors.js:928:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:929:    uncertainty: { ch4: 0.5 },
+> new\client\src\utils\EmissionFactors.js:930:    unit: "kg CH4/bbl mud",
+  new\client\src\utils\EmissionFactors.js:931:    baseUnit: "bbl",
+  new\client\src\utils\EmissionFactors.js:932:    usage: ["drilling"],
+> new\client\src\utils\EmissionFactors.js:933:    description: "Oil Based Mud (Diesel)",
+  new\client\src\utils\EmissionFactors.js:934:  },
+  new\client\src\utils\EmissionFactors.js:935:
+  new\client\src\utils\EmissionFactors.js:936:  "Dehydrator - Glycol (Uncontrolled)": {
+  new\client\src\utils\EmissionFactors.js:937:    code: "DehyUncont",
+  new\client\src\utils\EmissionFactors.js:938:    // API Compendium 5.3: ~0.82 kg CH4 per MMscf throughput  0.00082 
+tonnes/MMscf
+  new\client\src\utils\EmissionFactors.js:939:    ch4: 0.00082,
+  new\client\src\utils\EmissionFactors.js:940:    co2: 0,
+  new\client\src\utils\EmissionFactors.js:941:    n2o: 0,
+  new\client\src\utils\EmissionFactors.js:942:    unit: "tonnes/MMscf",
+  new\client\src\utils\EmissionFactors.js:943:    baseUnit: "MMscf",
+
+
+

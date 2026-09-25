@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+LastWriteTime         Length
+-------------         ------
+9/23/2026 5:12:09 PM 6897672
+
+
+

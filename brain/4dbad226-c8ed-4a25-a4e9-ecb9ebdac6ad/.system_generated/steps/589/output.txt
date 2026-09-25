@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+{'code': 'TankCrudeLarge', 'type': 'equipment', 'ch4': 0.193, 'co2': 0, 'n2o': 0, 'uncertainty': {'co2': 0, 'ch4': 0.3, 'n2o': 0}, 'unit': 'kg CH₄/bbl', 'segment': 'Upstream', 'process_category': 'storage_tanks', 'description': 'Crude oil flashing, large tank (> 10 bbl/d)', 'source': 'API Compendium 2021 Section 6, Table 6-4'}
+

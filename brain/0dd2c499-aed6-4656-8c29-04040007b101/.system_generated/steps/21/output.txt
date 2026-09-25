@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"kpiCardsText":"Not found via .grid","headerSummary":["hero-card","kpi-card","kpi-card","kpi-card","kpi-card","card cbam-section","card","card","card","card","card trend-section"]}
+```

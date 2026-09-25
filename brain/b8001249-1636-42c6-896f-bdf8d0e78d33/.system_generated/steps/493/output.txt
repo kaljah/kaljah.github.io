@@ -1,0 +1,1 @@
+A1: Keep user management strictly separated: only IT roles (`it_admin`, `it_manager`) manage user accounts, while `admin` manages GHG data

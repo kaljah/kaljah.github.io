@@ -1,0 +1,101 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\components\Scope1Form.jsx:79:    co2: "",
+> new\client\src\components\Scope1Form.jsx:80:    co2Unit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:81:    ch4: "",
+  new\client\src\components\Scope1Form.jsx:82:    ch4Unit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:83:    n2o: "",
+> new\client\src\components\Scope1Form.jsx:91:    co2: null,
+  new\client\src\components\Scope1Form.jsx:92:    ch4: null,
+  new\client\src\components\Scope1Form.jsx:93:    n2o: null,
+  new\client\src\components\Scope1Form.jsx:94:  });
+> new\client\src\components\Scope1Form.jsx:96:    co2: "",
+  new\client\src\components\Scope1Form.jsx:97:    ch4: "",
+  new\client\src\components\Scope1Form.jsx:98:    n2o: "",
+  new\client\src\components\Scope1Form.jsx:99:  });
+> new\client\src\components\Scope1Form.jsx:115:  const [totalPages, setTotalPages] = useState(1);
+  new\client\src\components\Scope1Form.jsx:116:
+  new\client\src\components\Scope1Form.jsx:117:  const [showGasCalc, setShowGasCalc] = useState(false);
+  new\client\src\components\Scope1Form.jsx:118:  const [calculationResult, setCalculationResult] = useState(null);
+> new\client\src\components\Scope1Form.jsx:259:          uncertainty.co2 || 0,
+  new\client\src\components\Scope1Form.jsx:260:          uncertainty.ch4 || 0,
+  new\client\src\components\Scope1Form.jsx:261:          uncertainty.n2o || 0,
+  new\client\src\components\Scope1Form.jsx:262:        )
+> new\client\src\components\Scope1Form.jsx:317:            title={`Uncertainty: CO� 
+${formatUncertainty(uncertainty.co2)}, CH4 ${formatUncertainty(uncertainty.ch4)}, N�O 
+${formatUncertainty(uncertainty.n2o)}`}
+  new\client\src\components\Scope1Form.jsx:318:          >
+  new\client\src\components\Scope1Form.jsx:319:            {formatUncertainty(maxUncertainty)}
+  new\client\src\components\Scope1Form.jsx:320:          </span>
+> new\client\src\components\Scope1Form.jsx:385:        co2: f.co2 || 0,
+> new\client\src\components\Scope1Form.jsx:386:        co2Unit: f.unit || "kg/m3",
+  new\client\src\components\Scope1Form.jsx:387:        ch4: f.ch4 || 0,
+  new\client\src\components\Scope1Form.jsx:388:        ch4Unit: f.unit || "kg/m3",
+  new\client\src\components\Scope1Form.jsx:389:        n2o: f.n2o || 0,
+> new\client\src\components\Scope1Form.jsx:430:      setUncertainty({ co2: null, ch4: null, n2o: null });
+  new\client\src\components\Scope1Form.jsx:431:      return;
+  new\client\src\components\Scope1Form.jsx:432:    }
+  new\client\src\components\Scope1Form.jsx:433:    setUncertainty({
+> new\client\src\components\Scope1Form.jsx:434:      co2: f.uncertainty.co2 || null,
+  new\client\src\components\Scope1Form.jsx:435:      ch4: f.uncertainty.ch4 || null,
+  new\client\src\components\Scope1Form.jsx:436:      n2o: f.uncertainty.n2o || null,
+  new\client\src\components\Scope1Form.jsx:437:    });
+> new\client\src\components\Scope1Form.jsx:500:      "CO2 (t)",
+  new\client\src\components\Scope1Form.jsx:501:      "CH4 (t)",
+  new\client\src\components\Scope1Form.jsx:502:      "N2O (t)",
+> new\client\src\components\Scope1Form.jsx:503:      "Total (tCO2e)",
+  new\client\src\components\Scope1Form.jsx:504:      "Status",
+  new\client\src\components\Scope1Form.jsx:505:    ];
+  new\client\src\components\Scope1Form.jsx:506:    const rows = data.map((e) => [
+> new\client\src\components\Scope1Form.jsx:521:      e.co2_emissions || 0,
+  new\client\src\components\Scope1Form.jsx:522:      e.ch4_emissions || 0,
+  new\client\src\components\Scope1Form.jsx:523:      e.n2o_emissions || 0,
+> new\client\src\components\Scope1Form.jsx:524:      e.co2e_total || 0,
+  new\client\src\components\Scope1Form.jsx:525:      e.status || "",
+  new\client\src\components\Scope1Form.jsx:526:    ]);
+  new\client\src\components\Scope1Form.jsx:527:    const csv = [headers, ...rows]
+> new\client\src\components\Scope1Form.jsx:589:      const totalCount =
+> new\client\src\components\Scope1Form.jsx:590:        res.headers["x-total-count"] || (res.data && res.data.total) || 
+0;
+> new\client\src\components\Scope1Form.jsx:591:      if (totalCount) {
+> new\client\src\components\Scope1Form.jsx:592:        setTotalPages(Math.max(1, Math.ceil(parseInt(totalCount) / 
+RECORDS_PER_PAGE)));
+  new\client\src\components\Scope1Form.jsx:593:      } else {
+> new\client\src\components\Scope1Form.jsx:594:        setTotalPages(Math.max(1, Math.ceil(allEntries.length / 
+RECORDS_PER_PAGE)));
+  new\client\src\components\Scope1Form.jsx:595:      }
+  new\client\src\components\Scope1Form.jsx:596:    } catch (error) {
+  new\client\src\components\Scope1Form.jsx:597:      console.error("Failed to load entries:", error);
+> new\client\src\components\Scope1Form.jsx:766:          formData.agr_co2_in === undefined ||
+> new\client\src\components\Scope1Form.jsx:767:          formData.agr_co2_out === undefined ||
+> new\client\src\components\Scope1Form.jsx:768:          formData.agr_co2_in === "" ||
+> new\client\src\components\Scope1Form.jsx:769:          formData.agr_co2_out === ""
+  new\client\src\components\Scope1Form.jsx:770:        ) {
+  new\client\src\components\Scope1Form.jsx:771:          toast.warning(
+> new\client\src\components\Scope1Form.jsx:772:            "AGR throughput, inlet CO2 (%), and outlet CO2 (%) are 
+required",
+  new\client\src\components\Scope1Form.jsx:773:          );
+  new\client\src\components\Scope1Form.jsx:774:          return;
+  new\client\src\components\Scope1Form.jsx:775:        }
+> new\client\src\components\Scope1Form.jsx:1050:          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || 
+specFactors.co)
+  new\client\src\components\Scope1Form.jsx:1051:            ? specFactors
+  new\client\src\components\Scope1Form.jsx:1052:            : undefined,
+  new\client\src\components\Scope1Form.jsx:1053:        specificFactors:
+> new\client\src\components\Scope1Form.jsx:1055:          (specFactors.co2 || specFactors.ch4 || specFactors.n2o || 
+specFactors.co)
+  new\client\src\components\Scope1Form.jsx:1056:            ? specFactors
+  new\client\src\components\Scope1Form.jsx:1057:            : undefined,
+  new\client\src\components\Scope1Form.jsx:1058:        user_uncertainty:
+> new\client\src\components\Scope1Form.jsx:1091:      setUncertainty({ co2: null, ch4: null, n2o: null });
+  new\client\src\components\Scope1Form.jsx:1092:      setSpecFactors({
+> new\client\src\components\Scope1Form.jsx:1093:        co2: "",
+> new\client\src\components\Scope1Form.jsx:1094:        co2Unit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:1095:        ch4: "",
+  new\client\src\components\Scope1Form.jsx:1096:        ch4Unit: "kg/m3",
+  new\client\src\components\Scope1Form.jsx:1097:        n2o: "",
+
+
+

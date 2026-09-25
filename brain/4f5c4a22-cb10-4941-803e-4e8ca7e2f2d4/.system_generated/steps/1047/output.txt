@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1020,"LineContent":"      const res = await api.post(\"/emissions\", finalPayload);"}

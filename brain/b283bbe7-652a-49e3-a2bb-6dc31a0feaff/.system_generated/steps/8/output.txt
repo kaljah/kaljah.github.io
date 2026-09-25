@@ -1,0 +1,35 @@
+
+The command exited with code 1.
+Output:
+============================================================
+Agent 02 � Account Seeder
+Started: 2026-09-23T20:07:28.891968+00:00
+============================================================
+
+[STEP 1] Establishing admin session...
+  No CSRF endpoint found � proceeding without token
+
+Trying admin login: a
+  Status 200: {"message":"Login successful","user":{"default_activity":null,"default_division":null,"default_facility_id":null,"default_facility_name":null,"default_region":null,"department":"Sustainability & IT","
+python : Traceback (most recent call last):
+At line:1 char:1
++ python "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_seed.py", line 393, in <module>
+    credentials_out, bugs, all_ready = main()
+                                       ^^^^^^
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_seed.py", line 236, in main
+    session, csrf, admin_creds = create_admin_session()
+                                 ^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_seed.py", line 99, in create_admin_session
+    note("  \u2713 Admin login successful")
+  File "c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_seed.py", line 47, in note
+    print(msg)
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2713' in position 2: character maps to <undefined>
+

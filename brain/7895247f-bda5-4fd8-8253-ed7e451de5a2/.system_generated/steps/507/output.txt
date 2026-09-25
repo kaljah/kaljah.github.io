@@ -1,0 +1,42 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -827,13 +827,29 @@
+     }))].join(" and ");
+     
+     curY = addTextBlock(`The consolidation approach used for organizational boundaries is: ${uniqueBoundaries}.`, curY);
+-    curY += 5;
+-    curY = addTextBlock(`This inventory includes ${reportFacilities.length} facilities within the specified boundaries:`, curY);
+-    
+-    // Explicitly list the facilities with their respective consolidation boundaries
+-    const facilityList = reportFacilities.map(f => `- ${f.name} [${f.boundary_type || "Operational Control"}${f.boundary_detail ? ': ' + f.boundary_detail : ''}]`).join("\n");
+-    curY = addTextBlock(facilityList, curY);
+-    
++    curY += 4;
++    curY = addTextBlock(`This inventory consolidates ${reportFacilities.length} facilities within the specified operational and equity boundaries:`, curY);
++    curY += 4;
++
++    const facRows = reportFacilities.map((f) => [
++      f.name || "Unknown",
++      f.code || "-",
++      f.segment || "Upstream",
++      f.boundary_type || "Operational Control",
++      f.boundary_type === "Equity Share" ? `${f.equity_share_pct || 100}%` : "100%",
++      f.operator_status || "operated",
++      f.country || "Algeria",
++    ]);
++
++    autoTable(doc, {
++      startY: curY,
++      head: [["Facility / Asset", "Code", "Segment", "Boundary Type", "Equity %", "Status", "Country"]],
++      body: facRows,
++      ...cleanTableTheme,
++      margin: { left: margin, right: margin },
++    });
++    curY = doc.lastAutoTable.finalY + 10;
++
+     drawFooter();
+ 
+     /**
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

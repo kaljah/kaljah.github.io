@@ -1,0 +1,55 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_tier_scope_kpi_numerical.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -460,6 +460,49 @@
+         assert loss_rate_pct <= up_target  # Upstream is compliant
+         assert loss_rate_pct > mid_target  # Midstream is non-compliant
+ 
++    def test_ogmp_facility_level_5_requires_level_4_bottom_up(self):
++        """OGMP 2.0 Gold Standard Requirement:
++        Level 5 reconciliation requires both top-down and bottom-up within threshold,
++        AND the bottom-up inventory must be source-level measured / Tier 3 (Level 4).
++        If bottom-up is Level 2 or 3 (desk factors), facility level is capped at Level 4.
++        """
++        from services.ogmp import compute_facility_ogmp_level
++
++        class DummyFacility:
++            id = 9999
++            reconciliation_threshold = 20.0
++
++        fac = DummyFacility()
++        # Case 1: Reconciled within 5% variance, but bottom-up is Level 3 (generic equipment factors) -> Cap at Level 4
++        lvl_cap = compute_facility_ogmp_level(
++            fac,
++            top_down_tch4=100.0,
++            bottom_up_tch4=105.0,
++            reconciled_survey=True,
++            bottom_up_level=3,
++        )
++        assert lvl_cap == 4
++
++        # Case 2: Reconciled within 5% variance, bottom-up is Level 4 (source-level measured) -> Level 5 awarded
++        lvl_gold = compute_facility_ogmp_level(
++            fac,
++            top_down_tch4=100.0,
++            bottom_up_tch4=105.0,
++            reconciled_survey=True,
++            bottom_up_level=4,
++        )
++        assert lvl_gold == 5
++
++        # Case 3: Unreconciled survey (> 20% variance) with Level 4 bottom-up -> Level 4
++        lvl_unrec = compute_facility_ogmp_level(
++            fac,
++            top_down_tch4=100.0,
++            bottom_up_tch4=150.0,
++            reconciled_survey=False,
++            bottom_up_level=4,
++        )
++        assert lvl_unrec == 4
++
+     def test_flaring_rate_percentage_equation(self):
+         """Flaring Rate (%):
+         Flaring Rate (%) = [Flared Gas Volume (m3) / Produced Gas Volume (m3)] × 100%.
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

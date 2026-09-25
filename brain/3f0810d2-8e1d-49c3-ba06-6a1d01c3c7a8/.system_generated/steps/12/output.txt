@@ -1,0 +1,266 @@
+
+The command exited with code 0.
+Output:
+<truncated 276 lines>
+
+- **Steps**: GET http://localhost:5000/api/qaqc/anomalies
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED PUT /emissions/1 (viewer write DENIED) but got 404
+- **Expected**: 403 or 401
+- **Actual**: 404: {"error":"Not found"}
+
+- **Steps**: PUT http://localhost:5000/api/emissions/1
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED DELETE /emissions/1 (viewer DENIED) but got 404
+- **Expected**: 403 or 401
+- **Actual**: 404: {"error":"Record not found"}
+
+- **Steps**: DELETE http://localhost:5000/api/emissions/1
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED POST /auth/users (viewer DENIED) but got 405
+- **Expected**: 403 or 401
+- **Actual**: 405: {"code":405,"error":"The method is not allowed for the requested URL.","request_id":"8cfef260-7cb4-4b50-8397-28259547dc21"}
+
+- **Steps**: POST http://localhost:5000/api/auth/users
+
+### �Y"� Critical | RBAC: Role 'viewer' should be DENIED CSV upload (viewer DENIED) but got 405
+- **Expected**: 403 or 401
+- **Actual**: 405: {"code":405,"error":"The method is not allowed for the requested URL.","request_id":"39cd1b0a-6840-4451-9f3b-a850bfc3b0bc"}
+
+- **Steps**: POST http://localhost:5000/api/emissions/upload
+
+
+========== agent_08_report.md ==========
+# Agent 8 �?" Admin Playwright UI Report
+
+## Summary
+- �o. Passed: 13
+- �Y?> Bugs: 8
+
+
+## Bugs
+
+### �YY� High | Dashboard: Dashboard content didn't appear after login
+- **Expected**: Dashboard visible
+- **Actual**: Timeout
+
+### �YY� High | Navigation: QA/QC page appears blank
+- **Expected**: Content renders
+- **Actual**: Body: ''
+
+### �YY� High | Navigation: Audit Trail page appears blank
+- **Expected**: Content renders
+- **Actual**: Body: ''
+
+### �YY� Medium | ManageData: Could not open new emission form
+- **Expected**: Form opens
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/manage-data", waiting until "networkidle"
+
+
+### �YY� Medium | Reports: Reports generate failed: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/reports", waiting until "networkidle"
+
+- **Expected**: Success
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/reports", waiting until "networkidle"
+
+
+### �YY� Medium | UserMgmt: User Management page error: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/user-management", waiting until "networkidle"
+
+- **Expected**: Page loads
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/user-management", waiting until "networkidle"
+
+
+### �YY� Medium | Settings: Settings page error: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/settings", waiting until "networkidle"
+
+- **Expected**: Page loads
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/settings", waiting until "networkidle"
+
+
+### �YY� Medium | Session: Logout flow error: Locator.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("button:has-text(\"Logout\"), a:has-text(\"Logout\"), button:has-text(\"Sign out\")").first
+    - locator resolved to <button id="logout-btn-drop" class="dropdown-item logout-item">�?�</button>
+  - attempting click action
+    2 �- waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+    - waiting 20ms
+    2 �- waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+      - waiting 100ms
+    9 �- waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+      - waiting 500ms
+
+- **Expected**: Logout works
+- **Actual**: Locator.click: Timeout 5000ms exceeded.
+Call log:
+  - waiting for locator("button:has-text(\"Logout\"), a:has-text(\"Logout\"), button:has-text(\"Sign out\")").first
+    - locator resolved to <button id="logout-btn-drop" class="dropdown-item logout-item">�?�</button>
+  - attempting click action
+    2 �- waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+    - waiting 20ms
+    2 �- waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+      - waiting 100ms
+    9 �- waiting for element to be visible, enabled and stable
+      - element is not visible
+    - retrying click action
+      - waiting 500ms
+
+
+
+========== agent_09_report.md ==========
+# Agent 9 �?" Superuser Selenium UI Report
+
+## Summary
+- �o. Passed: 4
+- �Y?> Bugs: 4
+
+
+## Bugs
+
+### �YY� Medium | ManageData: ManageData page empty for superuser
+- **Expected**: Content
+- **Actual**: T
+Corporate ESG
+1
+Test
+Something went wrong
+We're sorry, but an unexpected error occurred. Please try reloading the page or contact support if the problem persists.
+Error Details (Development Only)
+Re
+
+### �YY� Medium | QADashboard: QA/QC page appears empty
+- **Expected**: QA content
+- **Actual**: 
+
+### �YY� Medium | AuditTrail: Audit Trail page empty for superuser
+- **Expected**: Logs visible
+- **Actual**: 
+
+### �YY� Medium | Session: Logout button not found
+- **Expected**: Logout button in UI
+- **Actual**: Not found
+
+
+========== agent_10_report.md ==========
+# Agent 10 �?" User Playwright UI Report
+
+## Summary
+- �o. Passed: 1
+- �Y?> Bugs: 5
+
+
+## Bugs
+
+### �YY� Medium | Dashboard: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/", waiting until "networkidle"
+
+- **Expected**: Dashboard loads
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/", waiting until "networkidle"
+
+
+### �YY� Medium | ManageData: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/manage-data", waiting until "networkidle"
+
+- **Expected**: Page loads
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/manage-data", waiting until "networkidle"
+
+
+### �YY� High | DataIsolation: User may be able to view/edit emission #1 (not their own)
+- **Expected**: 403 or no edit form shown
+- **Actual**: Edit form appears accessible: carbon tech
+dashboard
+carbon intensity
+methane intensity
+sbti net-zero
+calculations
+emissions map
+manage data
+reports
+reference data
+uncertainty
+settings
+t
+test user
+test agent
+corporate esg
+dashboard
+/
+manage data
+test
+management
+emission factors
+production data
+emission sources
+emission goals & ba
+
+### �YY� Medium | Reports: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/reports", waiting until "networkidle"
+
+- **Expected**: Page loads
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/reports", waiting until "networkidle"
+
+
+### �YY� Medium | Settings: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/settings", waiting until "networkidle"
+
+- **Expected**: Page loads
+- **Actual**: Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/settings", waiting until "networkidle"
+
+
+
+========== agent_11_report.md ==========
+# Agent 11 �?" IT Admin Selenium UI Report
+
+## Summary
+- �o. Passed: 12
+- �Y?> Bugs: 3
+
+
+## Bugs
+
+### �YY� High | Navigation: QA/QC page blank for it_admin
+- **Expected**: Content
+- **Actual**: Empty
+
+### �YY� High | Navigation: ERP Sync page blank for it_admin
+- **Expected**: Content
+- **Actual**: Empty
+
+### �Y"� Critical | RBAC UI: it_admin can access User Management page
+- **Expected**: 403/redirect
+- **Actual**: URL=http://localhost:5173/user-management, content accessible
+
+

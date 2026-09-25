@@ -1,0 +1,72 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\pages\ManageData.jsx:347:            if (pendingSearch.trim()) {
+> new\client\src\pages\ManageData.jsx:348:                const q = pendingSearch.toLowerCase().trim();
+> new\client\src\pages\ManageData.jsx:349:                const facilityName = facilities.find(f => f.id === 
+item.facility_id)?.name?.toLowerCase() || '';
+> new\client\src\pages\ManageData.jsx:350:                const matchId = String(item.id).toLowerCase().includes(q);
+> new\client\src\pages\ManageData.jsx:351:                const matchDate = item.date.toLowerCase().includes(q);
+> new\client\src\pages\ManageData.jsx:352:                const matchDesc = item.desc.toLowerCase().includes(q);
+> new\client\src\pages\ManageData.jsx:353:                const matchFacility = facilityName.includes(q) || 
+String(item.facility_id).toLowerCase().includes(q);
+> new\client\src\pages\ManageData.jsx:354:                const matchQa = (item.qa_flag || 
+'').toLowerCase().includes(q);
+  new\client\src\pages\ManageData.jsx:355:                if (!matchId && !matchDate && !matchDesc && !matchFacility 
+&& !matchQa) return false;
+  new\client\src\pages\ManageData.jsx:1303:    // --- Pre-calculate Filtered Data for Pagination ---
+> new\client\src\pages\ManageData.jsx:1304:    const getFilteredFactors = () => customFactors.filter(f => 
+f.factor_name.toLowerCase().includes(searchTerm.toLowerCase()));
+  new\client\src\pages\ManageData.jsx:1305:    
+  new\client\src\pages\ManageData.jsx:1306:    const getFilteredFacilities = () => facilities.filter(f => {
+> new\client\src\pages\ManageData.jsx:1307:        const matchesSearch = 
+f.name.toLowerCase().includes(searchTerm.toLowerCase()) || (f.location?.toLowerCase() || 
+'').includes(searchTerm.toLowerCase()) || (f.field?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+  new\client\src\pages\ManageData.jsx:1308:        const matchesAct = filterActivity ? matchesActivity(f.activity, 
+filterActivity) : true;
+  new\client\src\pages\ManageData.jsx:1315:        const fac = facilities.find(f => f.id === d.facilityId);
+> new\client\src\pages\ManageData.jsx:1316:        const facName = fac ? fac.name.toLowerCase() : 
+String(d.facilityId).toLowerCase();
+> new\client\src\pages\ManageData.jsx:1317:        const matchesSearch = facName.includes(searchTerm.toLowerCase()) || 
+d.year.toString().includes(searchTerm) || (d.activity?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+  new\client\src\pages\ManageData.jsx:1318:        const matchesAct = filterActivity ? (matchesActivity(d.activity, 
+filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
+  new\client\src\pages\ManageData.jsx:1326:        const fac = facilities.find(f => f.id === s.facility_id);
+> new\client\src\pages\ManageData.jsx:1327:        const matchesSearch = 
+s.name.toLowerCase().includes(searchTerm.toLowerCase()) || (s.equipment_id?.toLowerCase() || 
+'').includes(searchTerm.toLowerCase()) || (s.type?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+  new\client\src\pages\ManageData.jsx:1328:        const matchesAct = filterActivity ? (fac && 
+matchesActivity(fac.activity, filterActivity)) : true;
+  new\client\src\pages\ManageData.jsx:1335:        const fac = facilities.find(f => f.id === m.facility_id);
+> new\client\src\pages\ManageData.jsx:1336:        const matchesSearch = (m.name?.toLowerCase() || 
+'').includes(searchTerm.toLowerCase()) || 
+> new\client\src\pages\ManageData.jsx:1337:                              (m.mitigation_type?.toLowerCase() || 
+m.type?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+> new\client\src\pages\ManageData.jsx:1338:                              (m.notes?.toLowerCase() || 
+'').includes(searchTerm.toLowerCase()) || 
+  new\client\src\pages\ManageData.jsx:1339:                              m.year?.toString().includes(searchTerm);
+  new\client\src\pages\ManageData.jsx:1357:
+> new\client\src\pages\ManageData.jsx:1358:        const matchesSearch = 
+sType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+> new\client\src\pages\ManageData.jsx:1359:            fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+> new\client\src\pages\ManageData.jsx:1360:            rStatus.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  new\client\src\pages\ManageData.jsx:1361:            yr.includes(searchTerm);
+  new\client\src\pages\ManageData.jsx:1376:        const yr = String(b.year);
+> new\client\src\pages\ManageData.jsx:1377:        const reason = (b.reason || '').toLowerCase();
+> new\client\src\pages\ManageData.jsx:1378:        return yr.includes(searchTerm) || 
+reason.includes(searchTerm.toLowerCase());
+  new\client\src\pages\ManageData.jsx:1379:    });
+  new\client\src\pages\ManageData.jsx:1386:        if (filterYear && filterYear !== 'all' && item.year?.toString() !== 
+filterYear.toString()) return false;
+> new\client\src\pages\ManageData.jsx:1387:        if (searchTerm && 
+!item.product_name?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+  new\client\src\pages\ManageData.jsx:1388:        return true;
+  new\client\src\pages\ManageData.jsx:3487:                                                    <td>
+> new\client\src\pages\ManageData.jsx:3488:                                                        <span 
+className={`status-badge ${m.status?.toLowerCase() || 'active'}`}>
+  new\client\src\pages\ManageData.jsx:3489:                                                            {m.status || 
+'Active'}
+
+
+

@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+f7b4cd8 6
+9a69efc y
+e750f77 j
+

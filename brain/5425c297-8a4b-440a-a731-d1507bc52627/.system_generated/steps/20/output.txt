@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+background_processor.py:            anomaly_rows = []  # Store anomaly-flagged rows for reviewer warning
+background_processor.py:            # --- Maker-Checker: Notify reviewers for bulk Scope 1/2/3 uploads ---
+background_processor.py:                    # Build reviewer list: all active admins (Maker-Checker: only admin approves)
+background_processor.py:                    reviewers = User.query.filter_by(
+background_processor.py:                    for reviewer in reviewers:
+background_processor.py:                            user_id=reviewer.id,
+background_processor.py:        status="Pending",  # Maker-Checker: awaits reviewer approval
+background_processor.py:        status="Pending",  # Maker-Checker: awaits reviewer approval
+background_processor.py:            status="Pending",  # Maker-Checker: awaits reviewer approval
+routes/emissions.py:    reason = req_data.get("reason", "Rejected by reviewer")
+routes/emissions.py:    reason = data.get("reason", "Batch rejected by reviewer")
+routes/emissions.py:    """Get all pending emissions across Scope 1, 2, 3 for the reviewer dashboard.
+tests/test_audit_remediation.py:    """Verify viewer/auditor blocked from mutate on Scope 2, and creator ownership enforced."""
+tests/test_audit_remediation.py:        viewer = User.query.filter_by(email="audit_viewer@test.com").first()
+tests/test_audit_remediation.py:        if not viewer:
+tests/test_audit_remediation.py:            viewer = User(
+tests/test_audit_remediation.py:                email="audit_viewer@test.com",
+tests/test_audit_remediation.py:                fullName="Audit Viewer",
+tests/test_audit_remediation.py:            viewer.set_password("AuditViewer123!")
+tests/test_audit_remediation.py:            db.session.add(viewer)
+tests/test_audit_remediation.py:        viewer_id = viewer.id
+tests/test_audit_remediation.py:    # 1. Viewer cannot create Scope 2 emission
+tests/test_audit_remediation.py:        sess["user_id"] = viewer_id
+tests/test_audit_remediation.py:    # 3. Viewer cannot update Scope 2 emission
+tests/test_audit_remediation.py:        sess["user_id"] = viewer_id
+

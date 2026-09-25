@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+197 Diesel combustion qty: 999999999.0 None co2: None ch4: None n2o: None co2e: 5000000.0 ef_co2: None
+201 Diesel combustion qty: 999999999.0 None co2: None ch4: None n2o: None co2e: 5000000.0 ef_co2: None
+207 Diesel combustion qty: 999999999.0 None co2: None ch4: None n2o: None co2e: 5000000.0 ef_co2: None
+218 Diesel combustion qty: 999999999.0 None co2: None ch4: None n2o: None co2e: 5000000.0 ef_co2: None
+227 Diesel combustion qty: 999999999.0 None co2: None ch4: None n2o: None co2e: 5000000.0 ef_co2: None
+

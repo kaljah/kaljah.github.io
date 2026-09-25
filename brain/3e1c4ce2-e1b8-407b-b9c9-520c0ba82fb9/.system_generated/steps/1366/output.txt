@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 19:56:56,515] INFO in app: Updated account: a
+[2026-09-21 19:56:56,610] INFO in app: Updated account: a@a
+[2026-09-21 19:56:56,704] INFO in app: Updated account: z
+[2026-09-21 19:56:56,800] INFO in app: Updated account: z@z
+CBAM exports: 0
+OGMP surveys: 0
+

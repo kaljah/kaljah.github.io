@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+[Agent5/user] ✅ Login as test_user@ghg-test.com
+[Agent5/user] 
+## Auth
+[Agent5/user] ✅ GET /auth/me → 200
+[Agent5/user] 
+## RBAC: Forbidden Endpoints (user)
+[Agent5/user] ✅ Correctly denied GET /auth/users (admin-only) → 403
+[Agent5/user] ✅ Correctly denied DELETE /auth/users (admin-only) → 403
+[Agent5/user] ✅ Correctly denied POST /facilities (user may not create) → 403
+[Agent5/user] 
+## Emission Workflow: User Creates Record
+[Agent5/user] 🐛 BUG [🟠 High] API: Unexpected status on POST /emissions (user)
+[Agent5/user] 
+## Data Isolation
+[Agent5/user] ✅ Correctly denied PUT /emissions/1 (not own) (should be 403) → 404
+[Agent5/user] ✅ Correctly denied DELETE /emissions/1 (not own) → 404
+[Agent5/user] 
+## Boundary & Edge Cases
+[Agent5/user] 
+## Dashboard
+[Agent5/user] ✅ GET /dashboard/summary → 200
+[Agent5/user] ✅ GET /dashboard/intensity-trend → 200
+[Agent5/user] 
+## Scope 2 & 3 (user)
+[Agent5/user] ✅ POST /scope2 → 201
+[Agent5/user] ✅ POST /scope3 → 201
+[Agent5/user] ✅ GET /notifications → 200
+[Agent5] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_05_report.md | Bugs: 1
+

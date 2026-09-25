@@ -1,0 +1,92 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+[2026-09-23 11:30:59,186] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: 02ff0466-d286-4ba7-a0b1-86e52c6b7dcc]
+[2026-09-23 11:30:59,190] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: c85093ea-8c72-44c2-9129-90923ef1ae25]
+[2026-09-23 11:30:59,194] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: a8845e5b-2526-4c1d-a35a-d0d17a235099]
+[2026-09-23 11:30:59,199] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: 9361346e-8016-4e4a-8cc7-391efd84e7ae]
+[2026-09-23 11:30:59,204] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: 64730b26-cfa7-4089-b318-7feecb63b622]
+[2026-09-23 11:30:59,209] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: 72b3ed63-000e-4dda-999e-9f641cbdd39d]
+[2026-09-23 11:30:59,214] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: c94300a5-9045-4099-8a82-5a6d9274bed9]
+[2026-09-23 11:30:59,218] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: dd2001d7-0d13-4946-af6d-25897b943a20]
+[2026-09-23 11:30:59,223] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: 8e67ac78-6d8c-45e2-8435-0c213e428aa7]
+[2026-09-23 11:30:59,231] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: 836a4b2b-0575-4a43-a86d-63c9bb424346]
+[2026-09-23 11:30:59,235] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: b3c651c9-de16-4d93-a17c-48f13b4e47b5]
+[2026-09-23 11:30:59,242] INFO in app: GET /api/dashboard/batch-all 200 [0.001s] [ReqID: 7157d1e5-166e-422d-817d-2723566e6dd8]
+[2026-09-23 11:31:04,572] INFO in app: GET /api/dashboard/sbti-trajectory 200 [0.006s] [ReqID: 410f773b-c55b-4ee4-af3d-c9c663f67608]
+[2026-09-23 11:31:04,588] INFO in app: GET /api/dashboard/intensity-trend 200 [0.015s] [ReqID: 919735fa-199e-46d8-bdc0-8658e3dc0513]
+[2026-09-23 11:31:04,617] INFO in app: GET /api/dashboard/ogmp-metrics 200 [0.026s] [ReqID: 421c1005-4480-4ad8-a866-96734c41ebc6]
+[2026-09-23 11:31:04,624] INFO in app: GET /api/dashboard/uncertainty 200 [0.004s] [ReqID: 51737924-d608-4d6e-ba4e-8bcc5a72cfdc]
+[2026-09-23 11:31:04,628] INFO in app: GET /api/dashboard/mitigation 200 [0.001s] [ReqID: 20bb9b65-5107-4196-a91d-0b6205fa546d]
+[2026-09-23 11:31:04,631] INFO in app: GET /api/dashboard/base-year 200 [0.002s] [ReqID: 124eb724-a396-4e11-b142-9c657b8ecaf1]
+[2026-09-23 11:31:04,636] INFO in app: GET /api/dashboard/years 200 [0.003s] [ReqID: 2fb68967-8af7-45b1-be40-130ef2da67fe]
+=====================================================================================
+STARTING 20 BETA TESTERS DASHBOARD & KPI AUDIT (20,000 UNIQUE QUERY CONFIGURATIONS)
+=====================================================================================
+[01/20] Dr. Tariq Mansouri (Chief Sustainability Officer (CSO)): 1000 configs audited in 1.61s | Success: 100.00% | Avg CI: 32746.0495 kg/BOE | Avg Loss: 118.06809%
+[02/20] Nadia Benali (VP Upstream Operations (Activit� E&P)): 1000 configs audited in 1.50s | Success: 100.00% | Avg CI: 3.9051 kg/BOE | Avg Loss: 0.02106%
+[03/20] Elena Rostova (Downstream Refining & Petrochemicals Director): 1000 configs audited in 1.49s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[04/20] Marcus Vance (Gas Transmission & Pipeline Lead): 1000 configs audited in 1.44s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[05/20] Sarah Jenkins (Lead Carbon Accounting Assurance Auditor): 1000 configs audited in 11.73s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[06/20] Ahmed Belkacem (OGMP 2.0 Technical Compliance Officer): 1000 configs audited in 1.52s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[07/20] Fatima Zohra (Corporate Energy Transition & Scope 2 Lead): 1000 configs audited in 1.69s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[08/20] David Thorne (Upstream Drilling & Wellhead Superintendent): 1000 configs audited in 0.67s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[09/20] Lydia Boucher (Production Optimization & Artificial Lift Engineer): 1000 configs audited in 0.68s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[10/20] Rachel Adams (Midstream Gas Processing Plant Superintendent): 1000 configs audited in 0.67s | Success: 100.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 11 Test DASH-T11-0001: HTTP status 429
+[FAIL] Tester 11 Test DASH-T11-0051: HTTP status 429
+[FAIL] Tester 11 Test DASH-T11-0101: HTTP status 429
+[11/20] Omar Mahfoud (LDAR Program Director & Fugitive Inspector): 1000 configs audited in 0.74s | Success: 98.00% | Avg CI: 0.1985 kg/BOE | Avg Loss: 0.00084%
+[FAIL] Tester 12 Test DASH-T12-0001: HTTP status 429
+[FAIL] Tester 12 Test DASH-T12-0051: HTTP status 429
+[FAIL] Tester 12 Test DASH-T12-0101: HTTP status 429
+[12/20] Claire Dupuis (Rotating Equipment Reliability Lead): 1000 configs audited in 0.41s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 13 Test DASH-T13-0001: HTTP status 429
+[FAIL] Tester 13 Test DASH-T13-0051: HTTP status 429
+[FAIL] Tester 13 Test DASH-T13-0101: HTTP status 429
+[13/20] Yassine Zerrouki (Fleet & Transport Logistics Manager): 1000 configs audited in 0.40s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 14 Test DASH-T14-0001: HTTP status 429
+[FAIL] Tester 14 Test DASH-T14-0051: HTTP status 429
+[FAIL] Tester 14 Test DASH-T14-0101: HTTP status 429
+[14/20] Chloe Martin (Quarry & Off-Road Decarbonization Specialist): 1000 configs audited in 0.43s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 15 Test DASH-T15-0001: HTTP status 429
+[FAIL] Tester 15 Test DASH-T15-0051: HTTP status 429
+[FAIL] Tester 15 Test DASH-T15-0101: HTTP status 429
+[15/20] Sofiane Brahimi (Decarbonization & MACC Portfolio Director): 1000 configs audited in 0.74s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 16 Test DASH-T16-0001: HTTP status 429
+[FAIL] Tester 16 Test DASH-T16-0051: HTTP status 429
+[FAIL] Tester 16 Test DASH-T16-0101: HTTP status 429
+[16/20] Laura Chen (Petrochemical Process Stoichiometrist): 1000 configs audited in 0.42s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 17 Test DASH-T17-0001: HTTP status 429
+[FAIL] Tester 17 Test DASH-T17-0051: HTTP status 429
+[FAIL] Tester 17 Test DASH-T17-0101: HTTP status 429
+[17/20] Djamel Senoussi (Direct Reduction Metallurgy Auditor): 1000 configs audited in 0.40s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 18 Test DASH-T18-0001: HTTP status 429
+[FAIL] Tester 18 Test DASH-T18-0051: HTTP status 429
+[FAIL] Tester 18 Test DASH-T18-0101: HTTP status 429
+[18/20] Lucia Morales (Refinery Asphalt & Bitumen Quality Engineer): 1000 configs audited in 0.39s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 19 Test DASH-T19-0001: HTTP status 429
+[FAIL] Tester 19 Test DASH-T19-0051: HTTP status 429
+[FAIL] Tester 19 Test DASH-T19-0101: HTTP status 429
+[19/20] Karim Hadj-Ali (Chief Risk & Quantitative Uncertainty Analyst): 1000 configs audited in 0.71s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+[FAIL] Tester 20 Test DASH-T20-0001: HTTP status 429
+[FAIL] Tester 20 Test DASH-T20-0051: HTTP status 429
+[FAIL] Tester 20 Test DASH-T20-0101: HTTP status 429
+[20/20] Amira Zerhouni (Executive Corporate Performance Controller): 1000 configs audited in 0.68s | Success: 98.00% | Avg CI: 0.0 kg/BOE | Avg Loss: 0.0%
+=====================================================================================
+ALL 20,000 DASHBOARD CONFIGURATIONS AUDITED IN 28.33 SECONDS
+Overall Passed: 19800 / 20000 (99.00%) | Failed: 200
+=====================================================================================
+
+Verifying Auxiliary Dashboard Endpoints...
+ - /api/dashboard/sbti-trajectory -> 200 OK
+ - /api/dashboard/intensity-trend -> 200 OK
+ - /api/dashboard/ogmp-metrics -> 200 OK
+ - /api/dashboard/uncertainty -> 200 OK
+ - /api/dashboard/mitigation -> 200 OK
+ - /api/dashboard/base-year -> 200 OK
+ - /api/dashboard/years -> 200 OK
+
+Dashboard Audit Report written to: C:\Users\samsung\Desktop\H2\scratch\20_beta_testers_dashboard_audit_report.json
+

@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\app.py:11:from logging.handlers import RotatingFileHandler
+  new\server\app.py:12:
+> new\server\app.py:13:from extensions import db, limiter, csrf  # SEC-08 FIX: import limiter, csrf
+  new\server\app.py:14:
+  new\server\app.py:15:app = Flask(__name__)
+  new\server\app.py:16:app.url_map.strict_slashes = False
+  new\server\app.py:17:app.config.from_object(Config)
+  new\server\app.py:18:
+  new\server\app.py:45:# Database
+  new\server\app.py:46:db.init_app(app)
+> new\server\app.py:47:limiter.init_app(app)  # SEC-08 FIX: activate flask-limiter
+  new\server\app.py:48:migrate = Migrate(app, db)
+  new\server\app.py:49:
+  new\server\app.py:50:from sqlalchemy import event
+  new\server\app.py:51:from sqlalchemy.engine import Engine
+  new\server\app.py:52:import sqlite3
+
+
+

@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -46,7 +46,9 @@
+     sumXX += p.year * p.year;
+   });
+ 
+-  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
++  const denom = n * sumXX - sumX * sumX;
++  if (!denom || Math.abs(denom) < 1e-9) return [];
++  const slope = (n * sumXY - sumX * sumY) / denom;
+   const intercept = (sumY - slope * sumX) / n;
+ 
+   const lastYear = data[data.length - 1].year;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

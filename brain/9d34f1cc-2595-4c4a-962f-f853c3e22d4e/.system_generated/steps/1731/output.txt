@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Auth Me: 200 {'authenticated': True, 'bio': None, 'consolidationApproach': None, 'default_activity': 'Oil & Gas', 'default_division': 'Production', 'default_facility_id': '1', 'default_facility_name': 'RNS Facility', 'default_region': 'RNS', 'department': 'Sustainability & IT', 'email': 'a', 'fullName': 'Administrator', 'id': 1, 'jobTitle': 'Lead Administrator', 'location': 'RNS', 'orgName': 'GHG Operations', 'phone': None, 'profilePic': None, 'role': 'admin', 'sector': 'Oil & Gas', 'status': 'active'}
+Facilities: 200 1 [('RNS Facility', 'RNS')]
+Emissions count: 0
+

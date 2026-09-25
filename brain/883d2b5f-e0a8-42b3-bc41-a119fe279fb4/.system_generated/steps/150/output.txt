@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":91,"LineContent":"@event.listens_for(db.session, \"after_commit\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":92,"LineContent":"def receive_after_commit(session):"}

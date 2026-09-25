@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+CSRF token: ImY2ZTljNDVlMDFjMTdjOTAwOWJiZGRhYzk0ZDBhMmU0ZjMzYTI0MmMi.arEFHQ.zEdqVh6zMTtTKz45pc0M6WxkYX8
+Cookies after csrf: {'session': 'eyJjc3JmX3Rva2VuIjoiZjZlOWM0NWUwMWMxN2M5MDA5YmJkZGFjOTRkMGEyZTRmMzNhMjQyYyJ9.arEFHQ.TQYk7rAejmdZc5ncrmYXu6wE7n4'}
+Login status: 200
+Cookies after login: {'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyX2lkIjoxfQ.arEFHQ.bvQtYi3YWdnNW9DtYAli53CwWGo'}
+CSRF token 2: IjljMDkxZjMxNjk2NDI2N2UwZWU0ZmI4MzVhMjQyNjE1NGNmZGY5YTIi.arEFHQ.XfVJ2LBgH2fS9roMCz6twOra5A0
+Cookies after csrf2: {'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJjc3JmX3Rva2VuIjoiOWMwOTFmMzE2OTY0MjY3ZTBlZTRmYjgzNWEyNDI2MTU0Y2ZkZjlhMiIsInVzZXJfaWQiOjF9.arEFHQ.6D79VTgxna6TirQ_TjSpzSLwf64'}
+Fac id: 1
+Post with token 1: 400 {"code":400,"error":"The CSRF tokens do not match.","request_id":""}
+
+Post with token 2: 201 {"calculation_method":"server_default","emissions":{"ch4":0.0,"co2":0.0,"n2o":0.0,"totalCo2e":0.0,"uncertainty":{}},"id":830,"message":"Record added","record":{"amount":1000.0,"facility_name":"Complex
+

@@ -1,0 +1,49 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_08_admin_playwright.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -70,19 +70,35 @@
+ 
+         # Fill login form
+         try:
+-            page.fill('input[type="email"], input[name="email"], #email', EMAIL)
+-            page.fill('input[type="password"], input[name="password"], #password', PASSWORD)
+-            page.click('button[type="submit"], button:has-text("Login"), button:has-text("Sign in")')
+-            page.wait_for_url(f"{BASE_URL}/**", timeout=10000)
++            # Skip intro video if present
++            try:
++                skip_btn = page.locator('.skip-intro-btn, button:has-text("Skip Intro")')
++                if skip_btn.is_visible(timeout=3000):
++                    skip_btn.click()
++                    time.sleep(1)
++            except Exception:
++                pass
++
++            page.fill('input[placeholder*="Email"], input[type="text"], input[type="email"]', EMAIL)
++            page.fill('input[type="password"]', PASSWORD)
++            page.click('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")')
++            page.wait_for_url(lambda u: "/login" not in u, timeout=12000)
+             ok(f"Logged in as admin ({EMAIL})")
+-        except PWTimeout:
++        except Exception:
+             # Try fallback credentials
+             try:
+                 page.goto(f"{BASE_URL}/login", wait_until="networkidle")
+-                page.fill('input[type="email"], input[name="email"], #email', ALT_EMAIL)
+-                page.fill('input[type="password"], input[name="password"], #password', ALT_PASS)
++                try:
++                    skip_btn = page.locator('.skip-intro-btn, button:has-text("Skip Intro")')
++                    if skip_btn.is_visible(timeout=2000):
++                        skip_btn.click()
++                        time.sleep(1)
++                except Exception:
++                    pass
++                page.fill('input[placeholder*="Email"], input[type="text"], input[type="email"]', ALT_EMAIL)
++                page.fill('input[type="password"]', ALT_PASS)
+                 page.click('button[type="submit"]')
+-                page.wait_for_url(f"{BASE_URL}/**", timeout=10000)
++                page.wait_for_url(lambda u: "/login" not in u, timeout=12000)
+                 ok(f"Logged in with fallback (a/a)")
+             except Exception as e2:
+                 bug("🔴 Critical", "Auth UI", "Admin login via UI failed", "Successful login redirect", str(e2))
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

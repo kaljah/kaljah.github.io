@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":1018,"LineContent":"      doc.text(`Carbon Intensity: ${fullData.intensityMetrics ? fullData.intensityMetrics.avgCo2 : 'N/A'}`, margin + chartW, curY);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":1,"LineContent":"/* Carbon Intensity Dashboard Styles - Modernized Professional */"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1584,"LineContent":"                    : \"Carbon Intensity\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":98,"LineContent":"                  title=\"Carbon Intensity\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":113,"LineContent":"                  \u003cspan className=\"nav-label\"\u003eCarbon Intensity\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":475,"LineContent":"      \u003cLoadingSpinner message=\"Calculating Carbon Intensity...\" fullScreen /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":493,"LineContent":"                Carbon Intensity \u0026 Product Embodiment"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":611,"LineContent":"                \u003cspan className=\"kpi-label\"\u003eFlaring Carbon Intensity\u003c/span\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":867,"LineContent":"                Historical Carbon Intensity Trends"}

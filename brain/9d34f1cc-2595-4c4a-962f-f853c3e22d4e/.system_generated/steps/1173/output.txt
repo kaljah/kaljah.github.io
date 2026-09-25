@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -344,14 +344,14 @@
+             if (pendingScopeFilter !== 'all' && item.scope !== pendingScopeFilter) return false;
+             if (pendingQaFilter === 'flagged' && !item.qa_flag) return false;
+             if (pendingQaFilter === 'clean' && item.qa_flag) return false;
+-            if (pendingSearch.trim()) {
++            if (pendingSearch && pendingSearch.trim()) {
+                 const q = pendingSearch.toLowerCase().trim();
+-                const facilityName = facilities.find(f => f.id === item.facility_id)?.name?.toLowerCase() || '';
+-                const matchId = String(item.id).toLowerCase().includes(q);
+-                const matchDate = item.date.toLowerCase().includes(q);
+-                const matchDesc = item.desc.toLowerCase().includes(q);
+-                const matchFacility = facilityName.includes(q) || String(item.facility_id).toLowerCase().includes(q);
+-                const matchQa = (item.qa_flag || '').toLowerCase().includes(q);
++                const facilityName = (facilities.find(f => f && f.id === item.facility_id)?.name || '').toLowerCase();
++                const matchId = String(item.id || '').toLowerCase().includes(q);
++                const matchDate = String(item.date || '').toLowerCase().includes(q);
++                const matchDesc = String(item.desc || '').toLowerCase().includes(q);
++                const matchFacility = facilityName.includes(q) || String(item.facility_id || '').toLowerCase().includes(q);
++                const matchQa = String(item.qa_flag || '').toLowerCase().includes(q);
+                 if (!matchId && !matchDate && !matchDesc && !matchFacility && !matchQa) return false;
+             }
+             return true;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

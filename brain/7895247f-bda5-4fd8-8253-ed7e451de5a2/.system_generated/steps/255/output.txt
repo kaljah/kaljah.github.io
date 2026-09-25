@@ -1,0 +1,8 @@
+Task: 7895247f-bda5-4fd8-8253-ed7e451de5a2/task-253
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\7895247f-bda5-4fd8-8253-ed7e451de5a2\.system_generated\tasks\task-253.log
+Log output:
+[2026-09-24 17:00:46,027] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+App successfully initialized with blueprints: ['auth', 'emissions', 'facilities', 'data', 'reports', 'dashboard', 'custom_factors', 'scope2', 'scope3', 'managedata', 'factors', 'notifications', 'audit', 'satellite', 'qaqc_bp', 'cap', 'equity', 'swagger_ui']
+
+Last progress: 6s ago

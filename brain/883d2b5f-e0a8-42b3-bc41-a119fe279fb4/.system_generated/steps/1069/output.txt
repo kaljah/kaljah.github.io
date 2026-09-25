@@ -1,0 +1,99 @@
+
+The command exited with code 0.
+Output:
+On branch fix/audit-remediation
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   docker-compose.yml
+	modified:   graphify-out/.graphify_labels.json
+	modified:   graphify-out/.graphify_labels.json.sig
+	modified:   graphify-out/2026-09-13/.graphify_labels.json
+	modified:   graphify-out/2026-09-13/GRAPH_REPORT.md
+	modified:   graphify-out/2026-09-13/graph.json
+	modified:   graphify-out/2026-09-13/manifest.json
+	modified:   graphify-out/GRAPH_REPORT.md
+	modified:   graphify-out/graph.html
+	modified:   graphify-out/graph.json
+	modified:   graphify-out/manifest.json
+	modified:   new/client/src/App.jsx
+	modified:   new/client/src/api.js
+	modified:   new/client/src/components/BatchReviewWizard.jsx
+	modified:   new/client/src/components/BulkImportModal.jsx
+	modified:   new/client/src/components/CalculationDetails.css
+	modified:   new/client/src/components/CalculationDetails.jsx
+	modified:   new/client/src/components/ColumnMappingWizard.jsx
+	modified:   new/client/src/components/Scope1Form.jsx
+	modified:   new/client/src/components/Scope1ImportWizard.jsx
+	modified:   new/client/src/components/Scope2Form.jsx
+	modified:   new/client/src/components/Scope2ImportWizard.jsx
+	modified:   new/client/src/components/Scope3Form.jsx
+	modified:   new/client/src/components/Scope3ImportWizard.jsx
+	modified:   new/client/src/components/UploadProgress.css
+	modified:   new/client/src/components/UploadProgress.jsx
+	modified:   new/client/src/components/layout/Layout.jsx
+	modified:   new/client/src/components/layout/Sidebar.jsx
+	modified:   new/client/src/context/AuthContext.jsx
+	modified:   new/client/src/pages/AuditTrail.jsx
+	modified:   new/client/src/pages/CarbonIntensity.jsx
+	modified:   new/client/src/pages/DashboardEnhanced.jsx
+	modified:   new/client/src/pages/Diagnostics.jsx
+	modified:   new/client/src/pages/Login.jsx
+	modified:   new/client/src/pages/ManageData.jsx
+	modified:   new/client/src/pages/MethaneIntensity.jsx
+	modified:   new/client/src/pages/QADashboard.jsx
+	modified:   new/client/src/pages/Reports.jsx
+	modified:   new/client/src/pages/Settings.jsx
+	modified:   new/client/src/pages/UncertaintyAssessment.jsx
+	modified:   new/client/src/pages/UserManagement.jsx
+	modified:   new/client/stats.html
+	modified:   new/server/app.py
+	modified:   new/server/background_processor.py
+	modified:   new/server/calculations/anomaly.py
+	modified:   new/server/calculations/base.py
+	modified:   new/server/calculations/combustion.py
+	modified:   new/server/calculations/constants.py
+	modified:   new/server/calculations/dispatcher.py
+	modified:   new/server/calculations/fugitive.py
+	modified:   new/server/calculations/indirect.py
+	modified:   new/server/calculations/legacy_engine.py
+	modified:   new/server/calculations/midstream.py
+	modified:   new/server/calculations/stoichiometry.py
+	modified:   new/server/calculations/uncertainty.py
+	modified:   new/server/calculations/units.py
+	modified:   new/server/calculations/vented.py
+	modified:   new/server/config.py
+	modified:   new/server/routes/audit.py
+	modified:   new/server/routes/auth.py
+	modified:   new/server/routes/custom_factors.py
+	modified:   new/server/routes/dashboard.py
+	modified:   new/server/routes/data.py
+	modified:   new/server/routes/emissions.py
+	modified:   new/server/routes/facilities.py
+	modified:   new/server/routes/managedata.py
+	modified:   new/server/routes/notifications.py
+	modified:   new/server/routes/qaqc.py
+	modified:   new/server/routes/reports.py
+	modified:   new/server/routes/satellite.py
+	modified:   new/server/routes/scope2.py
+	modified:   new/server/routes/scope3.py
+	modified:   new/server/services/sentinel5p.py
+	modified:   new/server/tests/test_all_bulk_imports.py
+	modified:   new/server/tests/test_calculations_page.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.antigravity/
+	graphify-out/2026-09-14/
+	graphify-out/2026-09-15/
+	graphify-out/2026-09-16/
+	new/client/src/components/ConfirmModal.jsx
+	new/client/src/pages/QADashboard.css
+	new/server/tests/test_audit_remediation.py
+	new/server/tests/test_csv_engine_matrix.py
+	new/server/tests/test_numerical_invariants.py
+	new/server/tests/test_qaqc_diagnostics.py
+	new/server/tests/test_tier_scope_kpi_numerical.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+

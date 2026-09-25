@@ -1,0 +1,19 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":799,"LineContent":"  .sidebar, .top-bar, .card-header-actions, .compare-toggle-btn, .collapse-toggle-icon, button {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":960,"LineContent":".top-bar .custom-dropdown .dropdown-selected {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":967,"LineContent":".top-bar .action-button {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":227,"LineContent":"      \u003cheader className=\"top-bar\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1344,"LineContent":"            \u003cdiv className=\"sat-card-top-bar\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":1151,"LineContent":".sat-card-top-bar {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":410,"LineContent":"      \u003cheader className=\"top-bar\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":342,"LineContent":"        className=\"top-bar\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.jsx","LineNumber":25,"LineContent":"    \u003cheader className=\"top-bar\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.jsx","LineNumber":26,"LineContent":"      \u003cdiv className=\"top-bar-left-section\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.jsx","LineNumber":45,"LineContent":"          \u003cdiv className=\"top-bar-injected-left\"\u003e{topBarLeft}\u003c/div\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":1,"LineContent":".top-bar {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":17,"LineContent":".top-bar-left-section {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":36,"LineContent":".top-bar-injected-left {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":46,"LineContent":".top-bar-injected-left::-webkit-scrollbar {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":232,"LineContent":"  .top-bar {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":243,"LineContent":"  .top-bar-left-section {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":253,"LineContent":"  .top-bar-injected-left {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.css","LineNumber":259,"LineContent":"  .top-bar-injected-left::-webkit-scrollbar {"}

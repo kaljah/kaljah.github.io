@@ -1,0 +1,1 @@
+{"id":"2f0a4d49-8fc2-4969-ac20-8ec279ea17f0", "recipient":"3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9", "sender":"system", "priority":"MESSAGE_PRIORITY_LOW", "timestamp":"2026-09-21T07:44:54.126765600Z", "hideFromUser":true, "content":"Subagent \"f0d3e1ce-c2b7-44f0-89ca-c5b43b582bb0\" has been explicitly canceled by the user and will be idle until you send a message to it directly."}

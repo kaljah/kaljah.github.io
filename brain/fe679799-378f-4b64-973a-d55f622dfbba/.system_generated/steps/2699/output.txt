@@ -1,0 +1,92 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3173,18 +3173,22 @@
+     record.ogmp_level = ogmp_level_for(record)
+ 
+     db.session.add(record)
+-    db.session.flush()
+-
+-    # --- Audit Log ---
+-    try:
+-        # Fetch facility name for better description
+-        facility = db.session.get(Facility, data["facility_id"])
+-        facility_name = facility.name if facility else "Unknown"
+-
++    try:
++        db.session.commit()
++    except Exception as e:
++        db.session.rollback()
++        return jsonify({"error": f"Failed to record emission: {e}"}), 500
++
++    record_id_val = record.id
++    facility = db.session.get(Facility, data.get("facility_id"))
++    facility_name = facility.name if facility else "Unknown"
++
++    # --- Audit Log ---
++    try:
+         log_details = f"Added {record.process_type} emission: {record.quantity} {record.unit} of {record.fuel_type} for {facility_name} ({record.month}/{record.year})"
+         log_activity_and_notify(
+             action="CREATE",
+-            record_id=str(record.id),
++            record_id=str(record_id_val),
+             user=user,
+             request=request,
+             entity="Emission",
+@@ -3201,8 +3201,8 @@
+         db.session.commit()
+     except Exception as e:
+         db.session.rollback()
+-        print(f"Audit Log Error: {e}")
+-        # Not raising here to not block notifications, but we committed atomically if no error
++        from flask import current_app
++        current_app.logger.warning(f"Audit Log Error: {e}")
+ 
+     # --- Notification Logic: Check Goal ---
+     try:
+@@ -3254,9 +3254,9 @@
+                             Notification.create(
+                                 title=title, message=msg, type=n_type, user_id=user.id
+                             )
+-    except Exception as e:
+-        from flask import current_app
+-
++                            db.session.commit()
++    except Exception as e:
++        from flask import current_app
+         current_app.logger.warning(f"Notification check error: {e}")
+ 
+     # Return emission result with uncertainty
+@@ -3263,7 +3263,7 @@
+         jsonify(
+             {
+                 "message": "Record added",
+-                "id": record.id,
++                "id": record_id_val,
+                 "emissions": {
+                     "co2": em_result["co2"],
+                     "ch4": em_result["ch4"],
+@@ -3272,12 +3272,7 @@
+                 },
+                 "record": {
+                     "process_type": data["process_type"],
+-                    # BUG-04 FIX: safe facility name lookup
+-                    "facility_name": (
+-                        db.session.get(Facility, data["facility_id"]).name
+-                        if data.get("facility_id") and db.session.get(Facility, data["facility_id"])
+-                        else "Unknown"
+-                    ),
++                    "facility_name": facility_name,
+                     "month": data["month"],
+                     "year": data["year"],
+                     "fuel": data.get("fuel"),
+@@ -3288,6 +3288,7 @@
+         ),
+         201,
+     )
++    )
+ 
+ 
+ @emissions_bp.route("/<id>", methods=["DELETE"])
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

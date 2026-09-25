@@ -1,0 +1,11 @@
+You have 1 background task(s) currently running:
+{
+  "taskId":  "4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/task-871",
+  "toolName":  "run_command",
+  "toolSummary":  "Start Flask server",
+  "description":  "python app.py",
+  "startTime":  "2026-09-22T09:24:15.261939900Z",
+  "stepIndex":  871,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4/.system_generated/tasks/task-871.log",
+  "isDaemon":  true
+}

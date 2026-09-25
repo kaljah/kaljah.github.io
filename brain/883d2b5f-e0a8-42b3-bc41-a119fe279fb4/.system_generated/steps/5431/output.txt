@@ -1,0 +1,66 @@
+
+The command exited with code 1.
+Output:
+=====================================================================================
+           GHG ENTERPRISE PLATFORM - FULL-STACK API HEALTH & RESILIENCE AUDIT
+Target Server URL: http://127.0.0.1:5000
+=====================================================================================
+
+[Phase 1] Core Server Health Verification...
+  GET /api/health -> Status: 200 (5.2ms), Body: {"status":"ok","version":"1.0.0"}
+
+[Phase 2] CSRF Token Lifecycle Verification...
+  GET /api/csrf-token -> Status: 200, CSRF Token Issued: YES
+
+[Phase 3] Authenticating Enterprise Administrator Session...
+  POST /api/auth/login -> Status: 200, User: admin@ghg.com
+
+[Phase 4] Enumerating & Testing All Registered API Endpoints...
+  Discovered 169 distinct API route rules in Flask WSGI map.
+
+[Phase 5] Probing Unauthenticated Security Boundaries...
+  [Unauth Gate] GET  /api/emissions/           -> HTTP 401 (SECURE 401)
+  [Unauth Gate] GET  /api/facilities           -> HTTP 401 (SECURE 401)
+  [Unauth Gate] GET  /api/dashboard/summary    -> HTTP 401 (SECURE 401)
+  [Unauth Gate] GET  /api/audit/               -> HTTP 401 (SECURE 401)
+  [Unauth Gate] GET  /api/scope2               -> HTTP 401 (SECURE 401)
+  [Unauth Gate] GET  /api/scope3               -> HTTP 401 (SECURE 401)
+  [Unauth Gate] GET  /api/auth/users           -> HTTP 401 (SECURE 401)
+
+[Phase 6] Verifying Viewer Role RBAC Enforcement...
+  Viewer Login (audit_viewer@test.com) -> HTTP 200 (OK)
+  [Viewer RBAC] GET    /api/emissions/           -> HTTP 200 (Expected 200: PASS) [Read-only operational data access]
+  [Viewer RBAC] POST   /api/emissions/           -> HTTP 403 (Expected 403: PASS) [Mutation block on emissions creation]
+  [Viewer RBAC] POST   /api/emissions/erp/sync   -> HTTP 403 (Expected 403: PASS) [Mutation block on ERP synchronization]
+  [Viewer RBAC] DELETE /api/facilities/999999    -> HTTP 403 (Expected 403: PASS) [Mutation block on facility deletion]
+  [Viewer RBAC] GET    /api/auth/users           -> HTTP 403 (Expected 403: PASS) [Access block on user administration]
+
+[Phase 7] Verifying IT Admin Segregation of Duties...
+  IT Admin Login (itadmin@ghg.com) -> HTTP 200 (OK)
+  [IT Admin SoD] GET    /api/auth/users           -> HTTP 200 (Expected 200: PASS) [User directory administration]
+  [IT Admin SoD] GET    /api/reports/export       -> HTTP 403 (Expected 403: PASS) [Segregation: IT Admins blocked from operational reports]
+  [IT Admin SoD] GET    /api/reports/ogmp-export  -> HTTP 403 (Expected 403: PASS) [Segregation: IT Admins blocked from OGMP reporting]
+
+=====================================================================================
+                    FINAL API HEALTH AUDIT SCORECARD
+=====================================================================================
+Total API Endpoints / Methods Tested: 174
+Healthy Endpoints (Status < 500):     173 / 174 (99.4%)
+Failed Endpoints (500 Server Crash):  1
+Unauthenticated Security Gates:       7 / 7 passed (100.0%)
+Viewer Role RBAC Gates:               5 / 5 passed (100.0%)
+IT Admin Segregation of Duties:       3 / 3 passed (100.0%)
+Latency Profile:                      Avg: 79.9ms | Min: 4.5ms | Max: 6011.4ms
+
+HTTP Status Code Distribution:
+  HTTP 200 :  78 endpoints - OK (Successful execution)
+  HTTP 400 :  90 endpoints - Bad Request (Payload schema validated & handled)
+  HTTP 403 :   2 endpoints - Forbidden (Role-based restriction)
+  HTTP 404 :   3 endpoints - Not Found (Graceful missing entity response)
+  HTTP 500 :   1 endpoints - Internal Server Error (Crash)
+
+CRITICAL FAILURES (500 Internal Server Errors):
+  [FAIL] GET    /api/dashboard/batch-all -> Status: 500
+         Detail: {"error":"name 'allowed_fids' is not defined"}
+
+

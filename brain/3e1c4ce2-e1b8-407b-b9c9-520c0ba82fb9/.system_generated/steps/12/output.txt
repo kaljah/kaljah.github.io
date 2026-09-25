@@ -1,0 +1,18 @@
+{"name":"App.css", "sizeBytes":"190"}
+{"name":"App.jsx", "sizeBytes":"6851"}
+{"name":"__tests__", "isDir":true}
+{"name":"api.js", "sizeBytes":"2333"}
+{"name":"assets", "isDir":true}
+{"name":"components", "isDir":true}
+{"name":"constants.js", "sizeBytes":"1231"}
+{"name":"context", "isDir":true}
+{"name":"fix_wizards.py", "sizeBytes":"375"}
+{"name":"hooks", "isDir":true}
+{"name":"index.css", "sizeBytes":"10142"}
+{"name":"main.jsx", "sizeBytes":"164"}
+{"name":"pages", "isDir":true}
+{"name":"patch_app.py", "sizeBytes":"1069"}
+{"name":"test-setup.js", "sizeBytes":"36"}
+{"name":"utils", "isDir":true}
+
+Summary: This directory contains 7 subdirectories and 9 files.

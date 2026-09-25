@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -329,11 +329,11 @@
+                     Facility.id.in_(allowed_fac_ids)
+                 ).all()
+ 
+-            fac_name_map = {f.name.lower(): f for f in all_facilities}
+-            for f in all_facilities:
+-                if f.region and f.region.lower() not in fac_name_map:
+-                    fac_name_map[f.region.lower()] = f
+-            fac_id_map = {str(f.id): f for f in all_facilities}
++            fac_name_map = {fac.name.lower(): fac for fac in all_facilities}
++            for fac in all_facilities:
++                if fac.region and fac.region.lower() not in fac_name_map:
++                    fac_name_map[fac.region.lower()] = fac
++            fac_id_map = {str(fac.id): fac for fac in all_facilities}
+ 
+             custom_factors = CustomFactor.query.all()
+             cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

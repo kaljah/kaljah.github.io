@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -525,7 +525,7 @@
+     user = get_current_user()
+     if is_it_role(user):
+         return jsonify({'error': 'IT administrators are not authorized to modify operational OGMP data.'}), 403
+-    if user and user.role in ["viewer", "auditor"]:
++    if user and user.role in ["auditor"]:
+         return jsonify({'error': 'Forbidden: Read-only accounts cannot delete operational OGMP data.'}), 403
+     record = db.session.get(OgmpSurvey, record_id)
+     if not record:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

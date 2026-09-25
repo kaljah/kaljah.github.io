@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1338,"LineContent":"# Global dispatcher instance"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1339,"LineContent":"dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":1,"LineContent":"from .dispatcher import dispatcher as api2021_dispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":313,"LineContent":"    # Use midstream.DehydratorCalculator (3.0 scf/gal per API Table 6-5) via the dispatcher."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":428,"LineContent":"    api_res = api2021_dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":446,"LineContent":"        # If the dispatcher handled it, return the rich result structure"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":32,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":36,"LineContent":"dispatcher = CalculationDispatcher()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":104,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":149,"LineContent":"        result_m3 = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":191,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":243,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":311,"LineContent":"            \"c1\": self.ch4_frac * 100,  # dispatcher converts /100 for specific"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":317,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":397,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":457,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":519,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":603,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":648,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":677,"LineContent":"        result = dispatcher.dispatch(\"drilling\", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":715,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":755,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":850,"LineContent":"        result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":865,"LineContent":"            dispatcher.dispatch(\"combustion\", inputs, EF_NG, UNC_DEFAULT, gwp_dict=GWP)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":885,"LineContent":"        r_mmscf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":888,"LineContent":"        r_scf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":913,"LineContent":"        result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":936,"LineContent":"        r_mscf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":939,"LineContent":"        r_scf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":998,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3072,"LineContent":"    # NOTE: user_uncertainty is now handled inside dispatcher.py and propagated via SRSS"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":15,"LineContent":"from calculations.dispatcher import CalculationDispatcher"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":21,"LineContent":"def dispatcher():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":33,"LineContent":"    def test_tier1_every_canonical_process_type(self, dispatcher, process_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":50,"LineContent":"        res = dispatcher.dispatch(process_id, payload, factor_data, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":57,"LineContent":"    def test_tier1_utilities_and_aliases(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":68,"LineContent":"            res = dispatcher.dispatch(p, payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":80,"LineContent":"    def test_stationary_combustion_tier3(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":93,"LineContent":"        res = dispatcher.dispatch(\"stationary_combustion\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":98,"LineContent":"    def test_mobile_combustion_tier3(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":110,"LineContent":"        res = dispatcher.dispatch(\"mobile_combustion\", payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":113,"LineContent":"    def test_flaring_tier3(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":123,"LineContent":"        res = dispatcher.dispatch(\"flaring\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":127,"LineContent":"    def test_drilling_mud_degassing_tier3(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":136,"LineContent":"        res = dispatcher.dispatch(\"drilling\", payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":139,"LineContent":"    def test_well_completions_tier3(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":148,"LineContent":"        res = dispatcher.dispatch(\"completions\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":152,"LineContent":"    def test_liquids_unloading_tier3(self, dispatcher):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":163,"LineContent":"        res = dispatcher.dispatch(\"liquids_unloading\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":166,"LineContent":"    def test_blowdown_events_tier3(self, dispatcher):"}
+(...123 more results not shown)

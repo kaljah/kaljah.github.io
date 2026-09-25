@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\auth.py:422:            "profilePic": user.profilePic,
+new\server\routes\auth.py:428:@auth_bp.route("/profile", methods=["PUT"])
+new\server\routes\auth.py:430:def update_profile():
+new\server\routes\auth.py:441:    # Update allowed fields (location is immutable via /profile to prevent RBAC bypass; 
+managed via /users/<id>)
+new\server\routes\auth.py:457:    return jsonify({"message": "Profile updated successfully"})
+new\server\routes\auth.py:537:    user.profilePic = avatar_url
+
+
+

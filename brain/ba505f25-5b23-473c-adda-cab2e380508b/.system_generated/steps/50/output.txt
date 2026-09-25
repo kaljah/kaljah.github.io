@@ -1,0 +1,15 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":164,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":361,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":493,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":77,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":223,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":318,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":66,"LineContent":"    if user and (user.role in ['viewer', 'auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":176,"LineContent":"    if user and (user.role in ['viewer', 'auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":209,"LineContent":"    if user and (user.role in ['viewer', 'auditor'] or is_it_role(user)):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":528,"LineContent":"    if user and user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2983,"LineContent":"    if user.role in (\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3311,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3362,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":283,"LineContent":"    \"\"\"Verify viewer/auditor blocked from mutate on Scope 2, and creator ownership enforced.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":82,"LineContent":"            fullName=\"Metrology Auditor\","}

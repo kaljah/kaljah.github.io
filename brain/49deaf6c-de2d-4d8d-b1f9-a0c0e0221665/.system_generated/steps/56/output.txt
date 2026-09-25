@@ -1,0 +1,43 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:41:class Facility(db.Model):
+  new\server\models.py:42:    __tablename__ = "facilities"
+  new\server\models.py:43:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:44:    name = db.Column(db.String(120))
+  new\server\models.py:45:    location = db.Column(db.String(120))
+  new\server\models.py:46:    description = db.Column(db.Text)
+  new\server\models.py:47:    boundary_notes = db.Column(db.Text)
+  new\server\models.py:48:    boundary_type = db.Column(db.String(100), default="Operational Control")
+  new\server\models.py:49:    boundary_detail = db.Column(db.Text)
+  new\server\models.py:50:    activity = db.Column(db.String(100))
+  new\server\models.py:51:    division = db.Column(db.String(100))
+  new\server\models.py:52:    region = db.Column(db.String(100))
+  new\server\models.py:53:    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P�trochimie
+  new\server\models.py:54:    code = db.Column(db.String(50), unique=True)
+  new\server\models.py:55:    external_id = db.Column(db.String(50))
+  new\server\models.py:56:    segment = db.Column(db.String(20))  # Upstream, Midstream, Downstream
+  new\server\models.py:57:    operator_status = db.Column(
+  new\server\models.py:58:        db.String(20), default="operated"
+  new\server\models.py:59:    )  # operated, non_operated
+  new\server\models.py:60:    country = db.Column(db.String(100), default="Algeria")
+  new\server\models.py:61:    equity_share_pct = db.Column(db.Float, default=100.0)
+  new\server\models.py:62:    ogmp_membership_year = db.Column(db.Integer, default=2023)
+  new\server\models.py:63:    reconciliation_threshold = db.Column(
+  new\server\models.py:64:        db.Float, default=20.0
+  new\server\models.py:65:    )  # % threshold for variance flagging
+  new\server\models.py:66:    latitude = db.Column(db.Float)
+  new\server\models.py:67:    longitude = db.Column(db.Float)
+  new\server\models.py:68:    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+  new\server\models.py:69:    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+  new\server\models.py:70:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:71:
+  new\server\models.py:72:    # Cascading Deletes
+  new\server\models.py:73:    emissions = db.relationship(
+  new\server\models.py:74:        "Emission", backref="facility_parent", cascade="all, delete-orphan", lazy=True
+  new\server\models.py:75:    )
+  new\server\models.py:76:    production_data = db.relationship(
+
+
+

@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1006,7 +1006,7 @@
+                 )
+                 ch4_slip = self._optional_fraction(
+                     flat_inputs,
+-                    ["agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor"],
++                    ["agr_ch4_slip_pct", "ch4_slip_pct", "agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor", "ch4_slip"],
+                     0.001,
+                 )
+                 ctrl_eff = self._optional_fraction(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+English: (896, 1200)
+French: (896, 1200)
+

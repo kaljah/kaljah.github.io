@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1047,"LineContent":"    emission = Scope2Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1151,"LineContent":"    emission = Scope3Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1281,"LineContent":"    emission = Scope3Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1899,"LineContent":"        emission = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":423,"LineContent":"                em = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":356,"LineContent":"                        em = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":386,"LineContent":"                    s2 = Scope2Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":417,"LineContent":"                        s3 = Scope3Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":116,"LineContent":"class Emission(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":339,"LineContent":"class Scope2Emission(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":378,"LineContent":"class Scope3Emission(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\patch_bg.py","LineNumber":50,"LineContent":"    emission = Scope3Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\erp_integration.py","LineNumber":67,"LineContent":"            emission = Scope3Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":160,"LineContent":"def create_scope2_emission():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":256,"LineContent":"    emission = Scope2Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":354,"LineContent":"def update_scope2_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":483,"LineContent":"def delete_scope2_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":635,"LineContent":"            emission = Scope2Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":145,"LineContent":"    def test_user_cannot_delete_other_users_emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":159,"LineContent":"            em = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":183,"LineContent":"    def test_user_can_delete_own_emission(self, client, app, regular_user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":195,"LineContent":"            em = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":430,"LineContent":"            base_e = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":444,"LineContent":"        emission = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":670,"LineContent":"            e_zero = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":771,"LineContent":"        flare_e = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":826,"LineContent":"        em = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":913,"LineContent":"        rec = Scope2Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":970,"LineContent":"def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1071,"LineContent":"        em = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1254,"LineContent":"            em = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":72,"LineContent":"def create_scope3_emission():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":109,"LineContent":"    emission = Scope3Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":216,"LineContent":"def update_scope3_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":308,"LineContent":"def delete_scope3_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":444,"LineContent":"            emission = Scope3Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":862,"LineContent":"        emission_obj = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2978,"LineContent":"def add_emission():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3117,"LineContent":"    record = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3300,"LineContent":"def delete_emission(id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3357,"LineContent":"def update_emission(id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3871,"LineContent":"            record = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4415,"LineContent":"def approve_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4470,"LineContent":"def reject_emission(emission_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_carbon_intensity_validation.py","LineNumber":87,"LineContent":"            em1 = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_carbon_intensity_validation.py","LineNumber":109,"LineContent":"            em2 = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_carbon_intensity_validation.py","LineNumber":131,"LineContent":"            em3 = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":103,"LineContent":"        e1 = Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":122,"LineContent":"        e2 = Scope2Emission("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":137,"LineContent":"        e3 = Scope3Emission("}
+(...4 more results not shown)

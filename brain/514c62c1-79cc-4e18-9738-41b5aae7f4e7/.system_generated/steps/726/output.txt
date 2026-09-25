@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx
+  154:6  warning  React Hook useEffect has a missing dependency: 'loadDashboardData'. Either include it or remove the dependency array                                                                                          react-hooks/exhaustive-deps
+  609:6  warning  React Hook useMemo has missing dependencies: 'ACTIVITY_COLOR_MAP' and 'ACTIVITY_PALETTE'. Either include them or remove the dependency array                                                                  react-hooks/exhaustive-deps
+  737:6  warning  React Hook useEffect has missing dependencies: 'getActivityOptions', 'getDivisionOptions', 'getRegionOptions', 'getSegmentOptions', and 'getYearOptions'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 3 problems (0 errors, 3 warnings)
+
+

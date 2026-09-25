@@ -1,0 +1,17 @@
+Task: 514c62c1-79cc-4e18-9738-41b5aae7f4e7/task-852
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\514c62c1-79cc-4e18-9738-41b5aae7f4e7\.system_generated\tasks\task-852.log
+Log output:
+<truncated 430 lines>
+auth/me 200 [0.001s] [ReqID: 02d911b4-ae6c-43cc-8469-333bb5011bf9]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 20:32:34,625] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: 56524605-26a2-482a-8e93-17aaf6917cb5]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 20:32:34,683] INFO in app: GET /api/notifications 200 [0.016s] [ReqID: 9c1792ac-de49-4ad3-9b4a-308c0de6631a]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 20:32:34,706] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 29fc8f02-745e-49b6-8b00-0d927138c70c]
+127.0.0.1 - - [19/Sep/2026 20:32:34] "GET /api/notifications/stream?last_id=15206 HTTP/1.1" 200 -
+[2026-09-19 20:32:34,999] INFO in app: GET /api/qaqc/dashboard 200 [0.332s] [ReqID: 1fdf00ec-b39f-4b7d-964f-8b728b9ce238]
+127.0.0.1 - - [19/Sep/2026 20:32:35] "GET /api/qaqc/dashboard?limit=100&offset=0&status=all HTTP/1.1" 200 -
+
+Last progress: 34s ago

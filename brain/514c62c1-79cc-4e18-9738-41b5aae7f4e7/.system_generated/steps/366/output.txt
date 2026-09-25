@@ -1,0 +1,20 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":101,"LineContent":"  const [pendingCount, setPendingCount] = useState(0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":102,"LineContent":"  const [pendingCo2e, setPendingCo2e] = useState(0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":103,"LineContent":"  const [includePending, setIncludePending] = useState(false);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":157,"LineContent":"    includePending,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":184,"LineContent":"      if (includePending) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":185,"LineContent":"        filterParams.append(\"includePending\", \"true\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":195,"LineContent":"      if (batch.pending_stats) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":196,"LineContent":"        setPendingCount(batch.pending_stats.count || 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":197,"LineContent":"        setPendingCo2e(batch.pending_stats.totalCo2e || 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":200,"LineContent":"          const pRes = await api.get('/emissions/pending');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":201,"LineContent":"          setPendingCount(pRes.data.total_pending || 0);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":815,"LineContent":"        {pendingCount \u003e 0 \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":825,"LineContent":"                  {includePending ? \"Previewing Pending \u0026 Verified Emissions\" : \"Pending Records Awaiting Review\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":828,"LineContent":"                  There are \u003cstrong\u003e{pendingCount}\u003c/strong\u003e emission records {pendingCo2e \u003e 0 ? `(${pendingCo2e.toLocaleString()} tCO₂e) ` : \"\"}pending approval."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":829,"LineContent":"                  {!includePending \u0026\u0026 \" Official metrics display verified data only.\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":837,"LineContent":"                  checked={includePending} "}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":838,"LineContent":"                  onChange={(e) =\u003e setIncludePending(e.target.checked)} "}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":841,"LineContent":"                  Preview Pending Data"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":848,"LineContent":"                  onClick={() =\u003e navigate('/manage-data', { state: { tab: 'pending' } })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1116,"LineContent":"                  {!hasProductionData \u0026\u0026 stats.totalEmissions \u003e 0 ? \"Pending\" : formatCompactNumber(intensity, 2)}"}

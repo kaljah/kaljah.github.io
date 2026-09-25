@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+678: const res = await api.get('/data/production');
+882: await api.post('/data/production', {
+1012: await api.delete(`/data/production/${id}`);
+

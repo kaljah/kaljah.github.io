@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+CSRF1: IjlmMWEwYjY1ZDA2YTkyNTAyY2YyYW
+Login: 200 {'message': 'Login successful', 'user': {'default_activity': None, 'default_division': None, 'default_facility_id': None, 'default_facility_name': None, 'default_region': None, 'department': 'Testing', 'email': 'test_itadmin@ghg-test.com', 'fullName': 'Test IT Admin', 'id': 11, 'jobTitle': 'Test Agent', 'location': 'Global', 'orgName': 'GHG-TestOrg', 'phone': None, 'role': 'it_admin', 'sector': 'Oil & Gas', 'status': 'active'}}
+CSRF2: IjNmOTc4YzU3YmY2ZWFkMzM0NDMzN2
+T4 Register user: 201 {'message': 'User registered successfully', 'user': {'created_at': '2026-09-24T08:26:31.866106+00:00', 'department': 'Testing', 'email': 'it_created_user_865957@ghg-test.com', 'fullName': 'IT Created User', 'id': 13, 'jobTitle': 'Test', 'location': 'West', 'orgName': 'GHG-TestOrg', 'role': 'user', 'status': 'active'}}
+T5 Register admin: 403 {'error': 'IT administrators cannot create accounts with business admin role'}
+T6 Register superuser: 201 {'message': 'User registered successfully', 'user': {'created_at': '2026-09-24T08:26:36.122638+00:00', 'department': 'Testing', 'email': 'it_su_865957@ghg-test.com', 'fullName': 'IT Superuser Attempt', 'id': 14, 'jobTitle': 'Test', 'location': 'West', 'orgName': 'GHG-TestOrg', 'role': 'superuser', 'status': 'active'}}
+T16 Logout: 200 {'message': 'Logged out'}
+T17 /auth/me after logout: 401 {'authenticated': False, 'error': 'Not authenticated', 'user': None}
+T9 POST emissions (after logout): 401 {'error': 'Not authenticated'}
+

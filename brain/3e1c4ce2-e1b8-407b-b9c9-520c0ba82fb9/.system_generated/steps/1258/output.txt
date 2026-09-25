@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Production data: [(0, 0, 0)]
+Sample prod: []
+CBAM count: [(0,)]
+

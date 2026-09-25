@@ -1,0 +1,48 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 43 items / 39 deselected / 4 selected
+
+new\server\tests\test_audit_remediation.py::test_stoichiometry_short_ton PASSED [ 25%]
+new\server\tests\test_audit_remediation.py::test_qaqc_fuel_completeness_non_combustion FAILED [ 50%]
+new\server\tests\test_audit_remediation.py::test_compressor_seal_and_storage_tank_uncertainty_mapping FAILED [ 75%]
+new\server\tests\test_audit_remediation.py::test_stoichiometry_dispatcher_gwp_propagation FAILED [100%]
+
+================================== FAILURES ===================================
+_________________ test_qaqc_fuel_completeness_non_combustion __________________
+new\server\tests\test_audit_remediation.py:1279: in test_qaqc_fuel_completeness_non_combustion
+    assert metrics.get("fuel_completeness") == 100.0
+E   AssertionError: assert None == 100.0
+E    +  where None = <built-in method get of dict object at 0x0000024D05E7F080>('fuel_completeness')
+E    +    where <built-in method get of dict object at 0x0000024D05E7F080> = {}.get
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:153 GET /api/qaqc/dashboard 200 [0.111s] [ReqID: 1d72f71a-1ba7-4de1-bcc2-3d315af5567b]
+__________ test_compressor_seal_and_storage_tank_uncertainty_mapping __________
+new\server\tests\test_audit_remediation.py:1326: in test_compressor_seal_and_storage_tank_uncertainty_mapping
+    assert seal_res["status"] == "success"
+           ^^^^^^^^^^^^^^^^^^
+E   KeyError: 'status'
+________________ test_stoichiometry_dispatcher_gwp_propagation ________________
+new\server\tests\test_audit_remediation.py:1344: in test_stoichiometry_dispatcher_gwp_propagation
+    assert res["status"] == "success"
+           ^^^^^^^^^^^^^
+E   KeyError: 'status'
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_qaqc_fuel_completeness_non_combustion
+FAILED new\server\tests\test_audit_remediation.py::test_compressor_seal_and_storage_tank_uncertainty_mapping
+FAILED new\server\tests\test_audit_remediation.py::test_stoichiometry_dispatcher_gwp_propagation
+============ 3 failed, 1 passed, 39 deselected, 1 warning in 2.52s ============
+

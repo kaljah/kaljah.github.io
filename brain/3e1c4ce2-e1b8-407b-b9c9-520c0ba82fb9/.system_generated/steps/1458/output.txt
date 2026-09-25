@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 20:07:32,012] INFO in app: Updated account: a
+[2026-09-21 20:07:32,102] INFO in app: Updated account: a@a
+[2026-09-21 20:07:32,189] INFO in app: Updated account: z
+[2026-09-21 20:07:32,279] INFO in app: Updated account: z@z
+Production records: 180
+CBAM export records: 6
+  CBAM: 1 Direct Reduced Iron (DRI) 7203 10 00 25000.0 EU - Italy
+  CBAM: 1 Hot Rolled Bars & Wire Rod 7213 10 00 18500.0 EU - Spain
+  CBAM: 2 Anhydrous Ammonia 2814 10 00 15000.0 EU - France
+  CBAM: 2 Urea / Ammonium Nitrate Solutions 3102 10 10 22000.0 EU - Belgium
+  CBAM: 3 Grey Portland Clinker 2523 10 00 40000.0 EU - Italy
+  CBAM: 4 Liquefied Natural Gas (LNG) 2711 11 00 55000.0 EU - Spain
+

@@ -1,0 +1,66 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:284:    const fullData = await fetchAllReportData(
+new\client\src\utils\ModernReportGenerator.js:452:    const charts = await generateReportCharts(fullData, compData, 
+isComparison);
+new\client\src\utils\ModernReportGenerator.js:522:    doc.text(`${fullData.totalScale} t`, 30, overlayY + 12);
+new\client\src\utils\ModernReportGenerator.js:528:    doc.text(`${fullData.intensityMetrics.avgCo2}`, 100, overlayY + 
+12);
+new\client\src\utils\ModernReportGenerator.js:569:    if (fullData.scope2Total > 0)
+new\client\src\utils\ModernReportGenerator.js:572:    if (fullData.scope3Total > 0)
+new\client\src\utils\ModernReportGenerator.js:607:    let narrative = `The ${year === "all" ? "comprehensive" : 
+selectedYear} GHG Inventory consolidates emissions from ${reportFacilities.length} facilities. Represents a precise 
+accounting of direct and indirect greenhouse gas emissions in adherence to international standards. Total emissions 
+are calculated in metric tonnes of CO� equivalent (tCO�e) under ${resolvedGwp.label}. ${fullData.primaryDriver} has 
+been identified as the significant emission source over the reporting period.`;
+new\client\src\utils\ModernReportGenerator.js:609:      const diff = fullData.totalEmissions - compData.totalEmissions;
+new\client\src\utils\ModernReportGenerator.js:629:    doc.text(`${fullData.ch4Total.toFixed(1)} t`, margin + 5, curY + 
+22);
+new\client\src\utils\ModernReportGenerator.js:639:    doc.text(`${fullData.primaryDriver}`, margin + summTileW + 10, 
+curY + 22);
+new\client\src\utils\ModernReportGenerator.js:656:      ? fullData.totalEmissions <= specificGoal.target_amount
+new\client\src\utils\ModernReportGenerator.js:676:      ["Scope 1 & 2 Emissions Trajectory", 
+`${(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 0 })} tCO2e`, "15.9% reduction 
+achieved relative to 2021-2023 baseline average; on track for -30% by 2030."],
+new\client\src\utils\ModernReportGenerator.js:677:      ["Methane Abatement Performance", 
+`${fullData.ch4Total.toLocaleString(undefined, { maximumFractionDigits: 0 })} tCH4`, "65.9% reduction from baseline 
+following flare optimization and comprehensive OGI LDAR campaigns."],
+new\client\src\utils\ModernReportGenerator.js:943:          : (fullData.totalProductionBoe ? 
+(fullData.totalProductionBoe * 5.8 / 1000).toFixed(2) : "9,757.51"),
+new\client\src\utils\ModernReportGenerator.js:1019:          fullData.scope1Total.toLocaleString(undefined, { 
+minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+new\client\src\utils\ModernReportGenerator.js:1020:          fullData.totalEmissions > 0 ? ((fullData.scope1Total / 
+fullData.totalEmissions) * 100).toFixed(1) + "%" : "0.0%",
+new\client\src\utils\ModernReportGenerator.js:1024:          fullData.scope2Total.toLocaleString(undefined, { 
+minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+new\client\src\utils\ModernReportGenerator.js:1025:          fullData.totalEmissions > 0 ? ((fullData.scope2Total / 
+fullData.totalEmissions) * 100).toFixed(1) + "%" : "0.0%",
+new\client\src\utils\ModernReportGenerator.js:1029:          fullData.scope3Total.toLocaleString(undefined, { 
+minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+new\client\src\utils\ModernReportGenerator.js:1034:          { content: 
+fullData.totalEmissions.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { 
+fontStyle: "bold" } },
+new\client\src\utils\ModernReportGenerator.js:1052:    const sangeaCombustion = 
+fullData.processBreakdown?.["Combustion"] || fullData.scope1Total * 0.75;
+new\client\src\utils\ModernReportGenerator.js:1053:    const sangeaFlaring = fullData.processBreakdown?.["Flaring"] || 
+(flaringSummary?.total_flaring?.tco2e || fullData.scope1Total * 0.20);
+new\client\src\utils\ModernReportGenerator.js:1054:    const sangeaLeaks = fullData.processBreakdown?.["Fugitive"] || 
+2400.0;
+new\client\src\utils\ModernReportGenerator.js:1055:    const sangeaVenting = fullData.processBreakdown?.["Venting"] || 
+4100.0;
+new\client\src\utils\ModernReportGenerator.js:1062:      ["Scope 2 (Purchased Electricity)", 
+Number(fullData.scope2Total).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Purchased power imported from 
+national electricity grid"],
+new\client\src\utils\ModernReportGenerator.js:1065:        { content: 
+Number(fullData.totalEmissions).toLocaleString(undefined, { maximumFractionDigits: 1 }), styles: { fontStyle: "bold" } 
+},
+new\client\src\utils\ModernReportGenerator.js:1268:    const totCo2eAll = fullData.totalEmissions || 1909500.0;
+new\client\src\utils\ModernReportGenerator.js:1269:    const totCh4All = fullData.ch4Total || 1666.0;
+new\client\src\utils\ModernReportGenerator.js:1520:      `Total verified records: ${fullData.scope1Rows.length} | 
+Fiscal Year: ${selectedYear} | GWP Standard: ${resolvedGwp.label}`,
+new\client\src\utils\ModernReportGenerator.js:1542:      body: fullData.scope1Rows.map((r) => [
+
+
+

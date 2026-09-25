@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -861,12 +861,26 @@
+             <div className="stat-item border-left">
+               <div className="stat-label">Performance Intensity</div>
+               <div className="stat-value-row">
+-                <div className="stat-value" style={{ color: "#8b5cf6" }}>
+-                  {formatCompactNumber(intensity, 2)}
+-                </div>
+-                <span className="stat-unit">kg/BOE</span>
+-              </div>
+-              <div className="stat-sublabel">CO₂e Intensity (Scope 1+2)</div>
++                <div
++                  className="stat-value"
++                  style={{
++                    color: !hasProductionData && stats.totalEmissions > 0 ? "#f59e0b" : "#8b5cf6",
++                    fontSize: !hasProductionData && stats.totalEmissions > 0 ? "1.25rem" : undefined,
++                  }}
++                >
++                  {!hasProductionData && stats.totalEmissions > 0 ? "Pending" : formatCompactNumber(intensity, 2)}
++                </div>
++                <span className="stat-unit">
++                  {!hasProductionData && stats.totalEmissions > 0 ? "Production" : "kg/BOE"}
++                </span>
++              </div>
++              <div className="stat-sublabel">
++                {!hasProductionData && stats.totalEmissions > 0 ? (
++                  <span style={{ color: "#d97706", fontWeight: 600 }}>Production figures required</span>
++                ) : (
++                  "CO₂e Intensity (Scope 1+2)"
++                )}
++              </div>
+             </div>
+           </div>
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+[2026-09-22 22:07:11,123] INFO in app: Updated account: a
+[2026-09-22 22:07:11,235] INFO in app: Updated account: a@a
+[2026-09-22 22:07:11,341] INFO in app: Updated account: z
+[2026-09-22 22:07:11,447] INFO in app: Updated account: z@z
+Facility RNS: 13 RNS None GF
+Emissions with NULL region: 0
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\4dbad226-c8ed-4a25-a4e9-ecb9ebdac6ad\scratch\test_db_emission.py", line 19, in <module>
+    latest = Emission.query.order_by(Emission.created_at.desc()).first()
+                                     ^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Emission' has no attribute 'created_at'. Did you mean: 'created_by'?
+

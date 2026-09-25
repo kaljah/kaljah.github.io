@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Login trigger: clicked
+Current URL: http://localhost:5173/
+User: None
+

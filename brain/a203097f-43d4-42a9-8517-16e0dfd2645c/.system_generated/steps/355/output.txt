@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\mutation\test_clean_mutations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -88,8 +88,8 @@
+         legit_mw_c = REF_CONSTANTS["C_MOLAR_MASS"]  # 12.011
+ 
+         # Stoichiometry for Methane: CH4 + 2 O2 -> CO2 + 2 H2O
+-        legit_stoich = ref_molar_combustion_stoichiometry("CH4", 100.0)
+-        assert legit_stoich["mass_balance_error_kg"] < 1e-9
++        legit_stoich = ref_calculate_hydrocarbon_stoichiometry(1, 4)
++        assert legit_stoich["balance_error"] < 1e-9
+ 
+         # In mutant stoichiometry, CO2 molar mass is corrupted (14 + 31.998 = 45.998 vs 44.009)
+         mw_co2_mutant = mutant_mw_c + 2 * REF_CONSTANTS["O_MOLAR_MASS"]
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":131,"LineContent":"    assert \"uncertainty\" in data_draft[\"emissions\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":126,"LineContent":"def test_base_calculator_uncertainty_k_factor():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":127,"LineContent":"    \"\"\"Verify calculate_uncertainty applies k=2.0 coverage factor for 95% CI.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":129,"LineContent":"    res = calc.calculate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":131,"LineContent":"        relative_uncertainty=0.05,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":136,"LineContent":"    assert abs(res[\"abs_uncertainty_95\"] - 10.0) \u003c 1e-6"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":597,"LineContent":"def test_uncertainty_combine_sum_negative_sinks():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":598,"LineContent":"    \"\"\"Finding 8: Verify combine_uncertainties_sum returns non-negative relative uncertainty on net sinks.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":599,"LineContent":"    from calculations.uncertainty import combine_uncertainties_sum"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":970,"LineContent":"def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":971,"LineContent":"    \"\"\"Defect 4: Verify custom factor with general uncertainty 5.0 is divided by 100 to 0.05.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":982,"LineContent":"                uncertainty=5.0,  # 5%"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1007,"LineContent":"        # Propagated uncertainty with 5% EF uncertainty is ~0.0559 (5.59%), not \u003e 5.0 (500%)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1008,"LineContent":"        assert em.uncertainty is not None"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1009,"LineContent":"        assert 0.05 \u003c= em.uncertainty \u003c 0.06"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1010,"LineContent":"        assert pytest.approx(em.uncertainty, 0.01) == 0.056"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1308,"LineContent":"def test_compressor_seal_and_storage_tank_uncertainty_mapping():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1309,"LineContent":"    \"\"\"Verify compressor_seal and storage_tanks map to proper categories and propagate uncertainty.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1311,"LineContent":"    from calculations.uncertainty import PROCESS_CATEGORY, resolve_ef_uncertainty, Tier"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1316,"LineContent":"    # Fugitive CH4 Tier 1 uncertainty should be 0.60 (60%), NOT 0.15 (combustion)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1317,"LineContent":"    u_seal = resolve_ef_uncertainty(\"compressor_seal\", \"ch4\", Tier.T1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":161,"LineContent":"        \"name,co2_factor,ch4_factor,n2o_factor,co_factor,unit,hhv_factor,usage,parent_fuel,source,version,uncertainty\\n\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":177,"LineContent":"        \"uncertainty\": \"uncertainty\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":22,"LineContent":"from calculations.uncertainty import ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":26,"LineContent":"    propagate_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":283,"LineContent":"# 4. UNCERTAINTY QUANTIFICATION (ISO 14064-1 \u0026 GUM §6.2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":286,"LineContent":"class TestUncertaintyQuantification:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":288,"LineContent":"        \"\"\"SRSS uncertainty of independent sources must be less than or equal to linear sum.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":290,"LineContent":"            {\"value\": 100.0, \"relative_uncertainty\": 0.10},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":291,"LineContent":"            {\"value\": 200.0, \"relative_uncertainty\": 0.15},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":292,"LineContent":"            {\"value\": 300.0, \"relative_uncertainty\": 0.05},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":295,"LineContent":"        sigma_srss_abs = res[\"total_value\"] * res[\"relative_uncertainty_1sigma\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":296,"LineContent":"        linear_sum_abs = sum(s[\"value\"] * s[\"relative_uncertainty\"] for s in sources)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":301,"LineContent":"        res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":303,"LineContent":"            ef_uncertainty=0.20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":304,"LineContent":"            activity_uncertainty=0.10,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":311,"LineContent":"    def test_zero_emission_uncertainty_bounds(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":313,"LineContent":"        res = propagate_uncertainty(0.0, 0.10, 0.05)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":458,"LineContent":"        # Fugitive CH4 1-sigma uncertainty: sqrt((0.60/2)^2 + (0.20/2)^2) = sqrt(0.09 + 0.01) = 31.62%"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":459,"LineContent":"        assert pytest.approx(res[\"results\"][\"ch4\"][\"relative_uncertainty\"], rel=1e-3) == 0.3162"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":460,"LineContent":"        # 95% expanded uncertainty (k=2): 2 * 0.3162 = 63.25%"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":461,"LineContent":"        assert pytest.approx(res[\"results\"][\"ch4\"][\"relative_uncertainty_95pct\"], rel=1e-3) == 0.6325"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":490,"LineContent":"    def test_ipcc_uncertainty_srss_worked_example(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":491,"LineContent":"        \"\"\"IPCC 2006 Guidelines Vol. 1 Eq. 3.2: SRSS uncertainty aggregation.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":493,"LineContent":"            {\"value\": 1000.0, \"relative_uncertainty\": 0.05},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":494,"LineContent":"            {\"value\": 500.0, \"relative_uncertainty\": 0.25},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":495,"LineContent":"            {\"value\": 200.0, \"relative_uncertainty\": 0.60},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":500,"LineContent":"        assert pytest.approx(res[\"relative_uncertainty_1sigma\"], 1e-4) == 0.106086"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":502,"LineContent":"        assert pytest.approx(res[\"relative_uncertainty_95pct\"], 1e-4) == 0.212173"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":5,"LineContent":"- Response structure (tier1_uncertainty, diagnostics, flagged_records)"}
+(...67 more results not shown)

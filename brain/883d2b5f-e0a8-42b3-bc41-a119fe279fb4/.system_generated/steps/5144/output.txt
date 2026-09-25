@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+audit_viewer admin123: False
+audit_viewer Password123!: False
+audit_viewer viewer123: False
+itadmin admin123: True
+

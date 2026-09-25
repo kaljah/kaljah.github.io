@@ -1,0 +1,1 @@
+A1: (Recommended) Complete Integration (Bulk Upload + UI Management): Support both CSV/Excel batch upload (with updated templates) and interactive UI management screens in ManageData (for CAP records, Flaring types, Granular Production, and JV Partner equity shares), with pre-seeded Decree 06-138 & 21-330 regulatory thresholds.

@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_ui_calculation_parity.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -292,6 +292,32 @@
+         assert float(ui_format_number(em["co2"], 3).replace(",", "")) > 0
+         assert float(ui_format_number(em["ch4"], 5).replace(",", "")) > 0
+ 
++    def test_fugitive_components_ui_parity(self, client, auth_admin, test_facility):
++        """Fugitive Component Leaks: 150 valves with EPA leak factors and 5 decimal UI precision."""
++        payload = {
++            "year": 2025,
++            "month": 5,
++            "facility_id": test_facility,
++            "process_type": "fugitive_component",
++            "factor_source": "specific",
++            "component_type": "valves",
++            "count": 150,
++            "ef": 0.0268,
++            "unit": "kg/hr",
++            "ch4_content": 85.0,
++            "status": "Verified",
++        }
++        res = client.post("/api/emissions", json=payload)
++        assert res.status_code in [200, 201]
++        em = res.get_json()["emissions"]
++        assert em["ch4"] > 0
++        assert em["totalCo2e"] > 0
++
++        # Scope 1 Table renders CH4 with 5 decimal places
++        ui_ch4_str = ui_format_number(em["ch4"], 5)
++        assert len(ui_ch4_str.split(".")[1]) == 5
++        assert float(ui_ch4_str.replace(",", "")) > 0
++
+ 
+ # ==============================================================================
+ # 2. SCOPE 2 FORM & CALCULATION DETAILS PARITY
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

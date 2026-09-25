@@ -1,0 +1,83 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 15 items / 13 deselected / 2 selected
+
+tests/test_dispatcher.py::test_dispatcher_nitric_acid_production_n2o FAILED [ 50%]
+tests/test_dispatcher.py::test_dispatcher_solid_fuel_combustion_energy FAILED [100%]
+
+================================== FAILURES ===================================
+_________________ test_dispatcher_nitric_acid_production_n2o __________________
+
+    def test_dispatcher_nitric_acid_production_n2o():
+        """Verify nitric acid production produces N2O, zero CO2, and respects abatement."""
+        dispatcher = CalculationDispatcher()
+        payload = {
+            "process_type": "nitric_acid_production",
+            "factor_source": "specific",
+            "amount": 100.0,
+            "unit": "tonne",
+            "ef_n2o": 9.0,  # 9 kg N2O/tonne
+            "abatement_efficiency": 80.0,  # 80% reduction
+        }
+        res = dispatcher.dispatch("nitric_acid_production", payload, {}, {})
+        assert res is not None
+        # 100 t * 9 kg/t * (1 - 0.8) = 180 kg = 0.18 tonnes N2O
+        assert pytest.approx(res["results"]["n2o"]["value"], rel=1e-3) == 0.18
+        # No stoichiometric carbon in nitric acid -> co2 and ch4 must be 0
+>       assert res["results"]["co2"]["value"] == 0.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'float' object is not subscriptable
+
+tests\test_dispatcher.py:260: TypeError
+________________ test_dispatcher_solid_fuel_combustion_energy _________________
+
+    def test_dispatcher_solid_fuel_combustion_energy():
+        """Verify solid fuel (coal) combustion calculates proper MMBtu energy without 25000x undercount."""
+        dispatcher = CalculationDispatcher()
+        # 10 metric tonnes of Bituminous Coal
+        payload = {
+            "process_type": "stationary_combustion",
+            "factor_source": "default",
+            "amount": 10.0,
+            "unit": "tonne",
+            "fuel": "Bituminous Coal",
+            "fuel_type": "Bituminous Coal",
+        }
+        factor_data = {
+            "co2": 93.26,  # kg CO2/MMBtu
+            "ch4": 0.011,
+            "n2o": 0.0016,
+            "hhv": 24930,  # 24.93 MMBtu/short ton
+            "unit": "kg/MMBtu",
+            "type": "solids",
+        }
+        res = dispatcher.dispatch("stationary_combustion", payload, factor_data, {})
+        assert res is not None
+        # 10 tonnes = 11.0231 short tons.
+        # Energy = 11.0231 * 24.93 = ~274.8 MMBtu.
+        # CO2 = 274.8 * 93.26 kg = ~25,628 kg = ~25.6 metric tonnes CO2.
+        co2_val = res["results"]["co2"]["value"]
+>       assert 24.0 < co2_val < 27.0
+E       assert 24.0 < 0.023249718000000003
+
+tests\test_dispatcher.py:310: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_dispatcher.py::test_dispatcher_nitric_acid_production_n2o
+FAILED tests/test_dispatcher.py::test_dispatcher_solid_fuel_combustion_energy
+================= 2 failed, 13 deselected, 1 warning in 1.46s =================
+

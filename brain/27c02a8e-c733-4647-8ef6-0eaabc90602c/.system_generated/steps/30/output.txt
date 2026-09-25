@@ -1,0 +1,39 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:353:class Scope2Emission(db.Model):
+  new\server\models.py:354:    __tablename__ = "scope2_emissions"
+  new\server\models.py:355:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:356:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True)
+  new\server\models.py:357:    facility = db.relationship("Facility", overlaps="facility_parent,scope2_emissions")
+  new\server\models.py:358:    year = db.Column(db.Integer, index=True)
+  new\server\models.py:359:    month = db.Column(db.Integer)
+  new\server\models.py:360:    source_type = db.Column(db.String(50))  # electricity, steam, heat, cooling
+  new\server\models.py:361:    electricity_kwh = db.Column(db.Float, default=0)
+  new\server\models.py:362:    steam_ton = db.Column(db.Float, default=0)
+  new\server\models.py:363:    heat_mmbtu = db.Column(db.Float, default=0)
+  new\server\models.py:364:    cooling_ton = db.Column(db.Float, default=0)
+  new\server\models.py:365:    emission_factor = db.Column(db.Float)
+  new\server\models.py:366:    co2e = db.Column(db.Float)
+  new\server\models.py:367:    uncertainty = db.Column(db.Float, nullable=True)  # 1-sigma relative uncertainty
+  new\server\models.py:368:    uncertainty_pct = db.Column(db.Float, nullable=True)  # Overall combined uncertainty 
+percentage
+  new\server\models.py:369:    qa_flag = db.Column(db.String(255), nullable=True)
+  new\server\models.py:370:    location = db.Column(db.String(100))
+  new\server\models.py:371:    grid_region = db.Column(db.String(100))
+  new\server\models.py:372:
+  new\server\models.py:373:    # Matching Scope 1 Identity
+  new\server\models.py:374:    activity = db.Column(db.String(100), index=True)
+  new\server\models.py:375:    division = db.Column(db.String(100), index=True)
+  new\server\models.py:376:    region = db.Column(db.String(100))
+  new\server\models.py:377:    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P�trochimie
+  new\server\models.py:378:
+  new\server\models.py:379:    created_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+  new\server\models.py:380:    status = db.Column(db.String(20), default="Pending", index=True)
+  new\server\models.py:381:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:382:    # Maker-Checker Approval
+  new\server\models.py:383:    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
+
+

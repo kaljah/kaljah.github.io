@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":546,"LineContent":"                                co2e_val = getattr(emission_obj, 'co2e_total', 0) or 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1875,"LineContent":"                        existing_obj.co2e_total = total"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1915,"LineContent":"            co2e_total=total,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":125,"LineContent":"            q = db.session.query(Emission.co2e_total).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":129,"LineContent":"                Emission.co2e_total.isnot(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":146,"LineContent":"                q_fallback = db.session.query(Emission.co2e_total).filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\anomaly.py","LineNumber":150,"LineContent":"                    Emission.co2e_total.isnot(None),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":437,"LineContent":"                    co2e_total=total_co2e,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":142,"LineContent":"    co2e_total = db.Column(db.Float)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":186,"LineContent":"        db.Index(\"ix_emissions_status_yr_co2e\", \"status\", \"year\", \"co2e_total\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":307,"LineContent":"                            co2e_total=round(co2e, 2),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":463,"LineContent":"        assert s1.co2e_total \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":173,"LineContent":"            new_values='{\"quantity\": 1000, \"co2e_total\": 500}',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":437,"LineContent":"                co2e_total=100.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":451,"LineContent":"            co2e_total=5000000.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":457,"LineContent":"            emission.co2e_total,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":677,"LineContent":"                co2e_total=0.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":682,"LineContent":"            e_zero.co2e_total = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":779,"LineContent":"            co2e_total=50.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":832,"LineContent":"            co2e_total=10.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1075,"LineContent":"            co2e_total=100.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1266,"LineContent":"                co2e_total=28.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":137,"LineContent":"    def test_co2e_total(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1078,"LineContent":"        self.assertGreater(emission.co2e_total, 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1085,"LineContent":"        self.assertAlmostEqual(emission.co2e_total, expected_co2e, places=6)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":448,"LineContent":"        assert em.co2e_total \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":480,"LineContent":"        assert em.co2e_total \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":497,"LineContent":"        assert em_comb.co2e_total \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":168,"LineContent":"                co2e_total=1.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":204,"LineContent":"                co2e_total=1.0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":291,"LineContent":"            co2e = data.get(\"co2e_total\", 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":186,"LineContent":"        self.assertGreater(row1.co2e_total, 0, \"Calculated CO2e must be \u003e 0\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":192,"LineContent":"        self.assertGreater(row2.co2e_total, 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":364,"LineContent":"            assert em.co2e_total \u003e 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":350,"LineContent":"                        \"total_co2e\": e.co2e_total or 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":572,"LineContent":"                        \"total_co2e\": e.co2e_total or 0,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":1048,"LineContent":"            ws2.cell(row=row_curr, column=11, value=round(em.co2e_total or 0, 2))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":223,"LineContent":"            Emission.co2e_total.label(\"co2e_total\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":264,"LineContent":"            Scope2Emission.co2e.label(\"co2e_total\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":304,"LineContent":"            Scope3Emission.co2e.label(\"co2e_total\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":374,"LineContent":"            \"co2e_total\": r.co2e_total,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":841,"LineContent":"            co2e_total=em_result[\"totalCo2e\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3092,"LineContent":"        co2e_total=em_result[\"totalCo2e\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3173,"LineContent":"                    db.session.query(func.sum(Emission.co2e_total))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3353,"LineContent":"        \"co2e_total\": record.co2e_total,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3362,"LineContent":"    data.pop(\"co2e_total\", None)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3479,"LineContent":"            record.co2e_total = calculated_em[\"totalCo2e\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3549,"LineContent":"            \"co2e_total\": record.co2e_total,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3853,"LineContent":"                co2e_total=("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4045,"LineContent":"                    \"co2e_total\": float(r.co2e_total or 0),"}
+(...36 more results not shown)

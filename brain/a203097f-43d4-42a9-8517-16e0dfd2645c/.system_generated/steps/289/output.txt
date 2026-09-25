@@ -1,0 +1,19 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-287
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-287.log
+Log output:
+<truncated 5 lines>
+lts: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 4 items
+
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorAudit::test_combustion_factors_integrity PASSED [ 25%]
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorAudit::test_gas_specificity_co2_vs_ch4_vs_n2o PASSED [ 50%]
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorSelection::test_prevent_cross_fuel_selection PASSED [ 75%]
+validation/calculation/test_clean_emission_factors.py::TestCleanEmissionFactorSelection::test_custom_factor_isolation PASSED [100%]
+
+============================== 4 passed in 1.92s ==============================
+
+Last progress: 1s ago

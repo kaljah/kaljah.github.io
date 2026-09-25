@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 16
+    print(f'  Year {row[" year\]}:
+                        ^
+SyntaxError: unterminated string literal (detected at line 16)
+

@@ -1,0 +1,30 @@
+
+The command exited with code 1.
+Output:
+[10:24:36] ============================================================
+[10:24:36] Agent 8: Approval Workflow Tester
+[10:24:36] ============================================================
+[10:24:36] 
+--- SECTION 1: Create Pending Emission (maker) ---
+[10:24:40]   Login test_user@ghg-test.com: 200 - {"message":"Login successful","user":{"default_activity":"Chemicals & Fertilizers","default_division":"Petrochemicals","default_facility_id":"2","default_facility_name":"Complexe Ammoniac & Engrais Az
+python : Traceback (most recent call last):
+At line:1 char:1
++ python "C:\Users\samsung\.gemini\antigravity\brain\6ddbdc70-5409-40e0 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\samsung\.gemini\antigravity\brain\6ddbdc70-5409-40e0-a778-67afad877c26\scratch\agent_08_test.py", 
+line 116, in <module>
+    record_result("S1-T1: User login", login_ok, login_r.status_code, safe_json(login_r))
+  File "C:\Users\samsung\.gemini\antigravity\brain\6ddbdc70-5409-40e0-a778-67afad877c26\scratch\agent_08_test.py", 
+line 64, in record_result
+    log(f"  {icon} {test_name}: {'PASS' if passed else 'FAIL'} | {notes}")
+  File "C:\Users\samsung\.gemini\antigravity\brain\6ddbdc70-5409-40e0-a778-67afad877c26\scratch\agent_08_test.py", 
+line 11, in log
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 13: character maps to <undefined>
+

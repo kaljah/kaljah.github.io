@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"hasMenu":false,"menuHTML":null,"itemsCount":3,"items":[{"text":"Settings & Standards","classes":"dropdown-item"},{"text":"Audit Trail","classes":"dropdown-item"},{"text":"Sign Out","classes":"dropdown-item logout-item"}]}
+```

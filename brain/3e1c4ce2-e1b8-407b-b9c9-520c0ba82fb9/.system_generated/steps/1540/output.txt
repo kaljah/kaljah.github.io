@@ -1,0 +1,17 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-1536
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-1536.log
+Log output:
+
+Running 41 tests using 4 workers
+
+  ok  1 [chromium] › e2e\ghg-workflow.spec.js:4:3 › GHG Platform E2E Workflows › API health check probe is reachable and returns status ok (66ms)
+  ok  5 [chromium] › e2e\ghg-workflow.spec.js:13:3 › GHG Platform E2E Workflows › CSRF token endpoint responds with valid token and cookie (36ms)
+[AUDIT] Backend Ground Truth: Scope 1 = 256425.1 tCO2e, CH4 = 238.7 tCH4
+[QFULL E2E] Login page elements verified ✓
+  ok  4 [chromium] › e2e\test_qfull_e2e_ui.spec.js:75:3 › QFULL Auth and Navigation › Login page renders with correct form elements (4.1s)
+[AUDIT] UI Hero Card: Gross = 256.4K, Net = 256.4K, CH4 = 238.7
+[AUDIT] Scope Pills: S1 = 256.4K tCO₂e, S2 = 0 tCO₂e, S3 = 0 tCO₂e
+  ok  2 [chromium] › e2e\test_dashboard_deep_audit.spec.js:48:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification (14.9s)
+
+Last progress: 1s ago

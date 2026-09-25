@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":259,"LineContent":"app.register_blueprint(emissions_bp, url_prefix=\"/api/emissions\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":125,"LineContent":"            \"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":138,"LineContent":"            status_res = self.client.get(f\"/api/emissions/upload/status/{job_id}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":71,"LineContent":"        res = client.get(f\"/api/emissions/upload/status/{job_id}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":118,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":143,"LineContent":"    res_ov = client.post(\"/api/emissions/upload/start\", data=data_overwrite, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":187,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":234,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":278,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":322,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":364,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":409,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":452,"LineContent":"    res = client.post(\"/api/emissions/upload/start\", data=data, content_type=\"multipart/form-data\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":492,"LineContent":"    res1 = client.post(\"/api/emissions/upload/start\", data={"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":507,"LineContent":"    res2 = client.post(\"/api/emissions/upload/start\", data={"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":530,"LineContent":"    res3 = client.post(\"/api/emissions/upload/start\", data={"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":578,"LineContent":"    res1 = client.post(\"/api/emissions/upload/start\", data={"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_bulk_imports.py","LineNumber":599,"LineContent":"    res2 = client.post(\"/api/emissions/upload/start\", data={"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":101,"LineContent":"        res = client.get(\"/api/emissions/\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":105,"LineContent":"        res = client.delete(\"/api/emissions/1\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":109,"LineContent":"        res = client.post(\"/api/emissions/bulk-delete\", json={\"ids\": [1, 2]})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":113,"LineContent":"        res = client.post(\"/api/emissions/import\", json={\"records\": []})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":117,"LineContent":"        res = client.get(\"/api/emissions/export\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":177,"LineContent":"        res = client.delete(f\"/api/emissions/{em_id}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":212,"LineContent":"        res = client.delete(f\"/api/emissions/{em_id}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":222,"LineContent":"        res = client.get(\"/api/emissions/?limit=all\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":233,"LineContent":"            \"/api/emissions/import\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":245,"LineContent":"        res = client.get(\"/api/emissions/?search=%25%25%25%25%25\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":288,"LineContent":"        res = client.post(\"/api/emissions/\", json=payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1002,"LineContent":"    res = client.post(\"/api/emissions\", json=payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1028,"LineContent":"    res = client.post(\"/api/emissions\", json=payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1032,"LineContent":"    update_res = client.put(f\"/api/emissions/{em_id}\", json={\"quantity\": 1000.0})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":96,"LineContent":"    assert client.get(\"/api/emissions/\").status_code == 401"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":102,"LineContent":"    assert client.get(\"/api/emissions/\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":126,"LineContent":"    res_draft = client.post(\"/api/emissions\", json=draft_payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":156,"LineContent":"    res_submit = client.post(\"/api/emissions\", json=submit_payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":164,"LineContent":"    res_admin = client.post(\"/api/emissions\", json=submit_payload)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":160,"LineContent":"    assert client.get(\"/api/emissions\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":272,"LineContent":"    assert client.get(\"/api/emissions\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":77,"LineContent":"    resp = fresh_client.get(\"/api/emissions/\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":8,"LineContent":"  POST /api/emissions/ → Flask route → compute_emissions() → DB → GET /api/emissions/"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qfull_api_pipeline.py","LineNumber":171,"LineContent":"            \"/api/emissions/\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":187,"LineContent":"    assert client.get(\"/api/emissions/export?format=excel\").status_code == 401"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":201,"LineContent":"    assert client.get(\"/api/emissions/export?format=excel\").status_code == 403"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":213,"LineContent":"    res = client.get(\"/api/emissions/export?format=excel\u0026year=2024\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":258,"LineContent":"    res = client.get(\"/api/emissions/export?format=excel\u0026year=2024\u0026month=6\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":168,"LineContent":"                \"/api/emissions/\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":190,"LineContent":"            \"/api/emissions/\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":220,"LineContent":"                \"/api/emissions/\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":241,"LineContent":"        resp_empty = client.post(\"/api/emissions/\", data=\"\", content_type=\"application/json\")"}
+(...12 more results not shown)

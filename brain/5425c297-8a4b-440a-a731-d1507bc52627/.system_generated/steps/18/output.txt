@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+services/sentinel5p.py:        Retrieves a valid JWT access token from Copernicus CDSE with caching.
+tests/test_satellite.py:            "access_token": "mock_jwt_token_12345",
+

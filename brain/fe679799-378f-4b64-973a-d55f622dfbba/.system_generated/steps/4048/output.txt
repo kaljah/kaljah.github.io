@@ -1,0 +1,75 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:169:        uncertainty_year = int(year) if year and year != "all" else None
+new\server\routes\dashboard.py:244:            f_uncertainty = executor.submit(
+new\server\routes\dashboard.py:247:                _query_uncertainty,
+new\server\routes\dashboard.py:248:                year=uncertainty_year,
+new\server\routes\dashboard.py:328:            "uncertainty": f_uncertainty.result(),
+new\server\routes\dashboard.py:2258:@dashboard_bp.route("/uncertainty", methods=["GET"])
+new\server\routes\dashboard.py:2260:def get_uncertainty_analysis():
+new\server\routes\dashboard.py:2262:    Quantifies inventory uncertainty per ISO 14064-1 �4.6.5.
+new\server\routes\dashboard.py:2263:    Delegates to _query_uncertainty() for thread-safe reuse.
+new\server\routes\dashboard.py:2269:        export (str, optional): "csv" to download uncertainty breakdown as CSV.
+new\server\routes\dashboard.py:2291:    result = _query_uncertainty(
+new\server\routes\dashboard.py:2313:        writer.writerow(["Category", "Total Emissions (tCO2e)", "Uncertainty 
+(�%)", "Level"])
+new\server\routes\dashboard.py:2318:                _safe_csv(cat["uncertainty_pct"]),
+new\server\routes\dashboard.py:2322:        writer.writerow(["Overall Inventory Uncertainty", "", 
+_safe_csv(result["inventory_uncertainty_pct"]), ""])
+new\server\routes\dashboard.py:2330:            headers={"Content-Disposition": f"attachment; 
+filename=uncertainty_{result['year']}.csv"},
+new\server\routes\dashboard.py:2337:    cache=DASHBOARD_CACHE, key=make_cache_key("_query_uncertainty"), 
+lock=CACHE_LOCK
+new\server\routes\dashboard.py:2339:def _query_uncertainty(year=None, allowed_fids=None, facility_id=None, 
+scope="all"):
+new\server\routes\dashboard.py:2341:    Pure query logic for /uncertainty - returns a plain Python dict.
+new\server\routes\dashboard.py:2342:    Quantifies inventory uncertainty per ISO 14064-1 �4.6.5
+new\server\routes\dashboard.py:2346:    via calculations.uncertainty.srss_inventory().
+new\server\routes\dashboard.py:2352:    from calculations.uncertainty import srss_inventory, COVERAGE_FACTOR_95
+new\server\routes\dashboard.py:2367:    # 1. SCOPE 1 - aggregate directly in SQL by process/fuel/method/uncertainty
+new\server\routes\dashboard.py:2374:            Emission.uncertainty,
+new\server\routes\dashboard.py:2375:            Emission.uncertainty_ch4,
+new\server\routes\dashboard.py:2376:            Emission.uncertainty_n2o,
+new\server\routes\dashboard.py:2386:            Emission.uncertainty,
+new\server\routes\dashboard.py:2387:            Emission.uncertainty_ch4,
+new\server\routes\dashboard.py:2388:            Emission.uncertainty_n2o,
+new\server\routes\dashboard.py:2392:    # 2. SCOPE 2 - aggregate directly in SQL by source_type/uncertainty
+new\server\routes\dashboard.py:2397:            Scope2Emission.uncertainty,
+new\server\routes\dashboard.py:2407:            Scope2Emission.uncertainty,
+new\server\routes\dashboard.py:2411:    # 3. SCOPE 3 - aggregate directly in SQL by category/uncertainty
+new\server\routes\dashboard.py:2416:            Scope3Emission.uncertainty,
+new\server\routes\dashboard.py:2426:            Scope3Emission.uncertainty,
+new\server\routes\dashboard.py:2430:    def get_ef_uncertainty(em, scope=1):
+new\server\routes\dashboard.py:2432:        Returns the 1s relative standard uncertainty for a single emission record.
+new\server\routes\dashboard.py:2437:        u_co2 = getattr(em, "uncertainty", None)
+new\server\routes\dashboard.py:2438:        u_ch4 = getattr(em, "uncertainty_ch4", None)
+new\server\routes\dashboard.py:2439:        u_n2o = getattr(em, "uncertainty_n2o", None)
+new\server\routes\dashboard.py:2477:            return 0.05 if not is_fugitive else 0.15  # Tier 3: low uncertainty
+new\server\routes\dashboard.py:2482:            return 0.10 if not is_fugitive else 0.25  # Tier 2: moderate 
+uncertainty
+new\server\routes\dashboard.py:2487:            return 0.40 if is_fugitive else 0.20  # Tier 1: high uncertainty
+new\server\routes\dashboard.py:2498:        u = get_ef_uncertainty(em, scope=1)
+new\server\routes\dashboard.py:2516:            u = get_ef_uncertainty(em, scope=2)
+new\server\routes\dashboard.py:2534:            u = get_ef_uncertainty(em, scope=3)
+new\server\routes\dashboard.py:2558:            {"value": item["e"], "relative_uncertainty": item.get("u_eff", 
+item["u"])}
+new\server\routes\dashboard.py:2563:        # Use srss_inventory for per-group uncertainty (1s), then apply k=2
+new\server\routes\dashboard.py:2565:        u_group_1sigma = group_srss["relative_uncertainty_1sigma"]
+new\server\routes\dashboard.py:2566:        u_group_95 = group_srss["relative_uncertainty_95pct"]
+new\server\routes\dashboard.py:2584:                "uncertainty_decimal": u_group_95,
+new\server\routes\dashboard.py:2585:                "uncertainty_1sigma": u_group_1sigma,
+new\server\routes\dashboard.py:2586:                "uncertainty_pct": f"�{round(u_group_95 * 100, 1)}%",
+new\server\routes\dashboard.py:2595:                        "uncertainty": f"�{round(item['u'] * COVERAGE_FACTOR_95 * 
+100, 1)}%",
+new\server\routes\dashboard.py:2609:    # Overall inventory uncertainty using srss_inventory (proper 95% CI, k=2)
+new\server\routes\dashboard.py:2611:    inventory_uncertainty_95 = inventory_srss["relative_uncertainty_95pct"]
+new\server\routes\dashboard.py:2621:        "inventory_uncertainty_pct": f"�{round(inventory_uncertainty_95 * 100, 
+2)}%",
+new\server\routes\dashboard.py:2622:        "inventory_uncertainty_decimal": inventory_uncertainty_95,
+new\server\routes\dashboard.py:2623:        "inventory_uncertainty_1sigma": 
+inventory_srss["relative_uncertainty_1sigma"],
+
+
+

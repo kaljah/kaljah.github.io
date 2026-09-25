@@ -1,0 +1,21 @@
+Task: 0be1c4d8-3c22-4648-9a92-3215134f2c86/task-443
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\0be1c4d8-3c22-4648-9a92-3215134f2c86\.system_generated\tasks\task-443.log
+Log output:
+<truncated 139 lines>
+ datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------------------------------------------------------- benchmark: 1 tests ---------------------------------------------------------
+Name (time in us)                             Min       Max    Mean  StdDev  Median     IQR  Outliers  OPS (Kops/s)  Rounds  Iterations
+---------------------------------------------------------------------------------------------------------------------------------------
+test_benchmark_uncertainty_propagation     2.4000  149.2000  2.8522  2.1061  2.6000  0.2000  597;1313      350.6058   31546           1
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Legend:
+  Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
+  OPS: Operations Per Second, computed as 1 / Mean
+214 passed, 63 warnings in 15.39s
+
+Last progress: 2s ago

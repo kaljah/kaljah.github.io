@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+Select-String : Cannot find path 'C:\Users\samsung\Desktop\H2\validation\reference_model.py' because it does not exist.
+At line:1 char:1
++ Select-String -Path "validation\reference_model.py" -Pattern "class I ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\samsun...erence_model.py:String) [Select-String], ItemNotFound 
+   Exception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SelectStringCommand
+ 
+

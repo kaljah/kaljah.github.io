@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+{"status":"ok","version":"1.0.0"}
+HTTP/1.1 200 OK
+Vary: Origin
+Content-Type: text/html
+Cache-Control: no-cache
+Etag: W/"504-R7CYFS9CxL6w0/43DDKcuZWHKKU"
+Date: Tue, 22 Sep 2026 18:39:58 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+

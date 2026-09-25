@@ -1,0 +1,82 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 554 lines>
+127.0.0.1 - - [19/Sep/2026 21:45:05] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:45:07,592] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 8dc347f1-5b1d-410e-a99d-4e60092e7d38]
+127.0.0.1 - - [19/Sep/2026 21:45:07] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:45:52,584] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: f1507005-d162-45f1-b8ca-732289cd3647]
+127.0.0.1 - - [19/Sep/2026 21:45:52] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:45:54,758] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: bca40729-e32e-403e-b7d0-dae849708727]
+127.0.0.1 - - [19/Sep/2026 21:45:54] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:46:39,789] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 5156deab-8be7-4bcd-b67d-9abdfd282418]
+127.0.0.1 - - [19/Sep/2026 21:46:39] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:46:41,921] INFO in app: GET /api/notifications/stream 200 [0.000s] [ReqID: 762d5625-cdba-4db4-a3b7-0d70a4cc6b87]
+127.0.0.1 - - [19/Sep/2026 21:46:41] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:47:26,995] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 5aa8c883-2187-4506-97d1-fd02f59637ac]
+127.0.0.1 - - [19/Sep/2026 21:47:26] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:47:29,083] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: f4cc2323-dac6-4d2e-ab5b-f189ff6dd84b]
+127.0.0.1 - - [19/Sep/2026 21:47:29] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:48:14,200] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: aa702776-b7e6-4b4f-abbb-d61ea9bc5d5b]
+127.0.0.1 - - [19/Sep/2026 21:48:14] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:48:16,238] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 75441d9b-85ad-4ee5-bc97-e67892e96001]
+127.0.0.1 - - [19/Sep/2026 21:48:16] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:48:19,646] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 534198c3-db65-4268-b27c-41e007d72c95]
+127.0.0.1 - - [19/Sep/2026 21:48:19] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 21:48:19,652] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: c83caa42-ce8c-473d-847b-1e1aba2f14e5]
+127.0.0.1 - - [19/Sep/2026 21:48:19] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-19 21:48:19,672] INFO in app: GET /api/auth/settings 200 [0.002s] [ReqID: 886924b2-137c-41c1-8c05-e119bde0aa0b]
+127.0.0.1 - - [19/Sep/2026 21:48:19] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 21:48:19,726] INFO in app: GET /api/notifications 200 [0.008s] [ReqID: cdf61686-fa40-4aa4-a87c-b662a2eba732]
+127.0.0.1 - - [19/Sep/2026 21:48:19] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 21:48:19,765] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: 26b9a2a4-28e5-465e-97fb-c11ddd3f903c]
+127.0.0.1 - - [19/Sep/2026 21:48:19] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:48:20,014] INFO in app: GET /api/auth/users 200 [0.002s] [ReqID: a11937c3-32f5-4e5f-8917-265c45800a63]
+127.0.0.1 - - [19/Sep/2026 21:48:20] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-19 21:48:20,035] INFO in app: GET /api/facilities/all-regions 200 [0.001s] [ReqID: 1abb0a4b-c246-472d-aee2-8d0cb9c46d5f]
+127.0.0.1 - - [19/Sep/2026 21:48:20] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-19 21:49:01,362] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 337740aa-0ba5-4f87-8369-c4d6ee364417]
+127.0.0.1 - - [19/Sep/2026 21:49:01] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:49:06,919] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: b3610b5d-f9f5-47c8-979c-d3c99a2334ff]
+127.0.0.1 - - [19/Sep/2026 21:49:06] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:49:48,521] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 7e819595-f9f8-455e-90b8-f8d5ccf9da83]
+127.0.0.1 - - [19/Sep/2026 21:49:48] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:49:54,086] INFO in app: GET /api/notifications/stream 200 [0.000s] [ReqID: 77b5c9dd-4419-4f0f-a279-09a949a943c1]
+127.0.0.1 - - [19/Sep/2026 21:49:54] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:50:35,725] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 00912389-1a8a-43f1-8dcc-da5e05826f98]
+127.0.0.1 - - [19/Sep/2026 21:50:35] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:50:41,243] INFO in app: GET /api/notifications/stream 200 [0.000s] [ReqID: 0d95161f-65d9-4580-99ec-233d189d5e97]
+127.0.0.1 - - [19/Sep/2026 21:50:41] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:51:13,797] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 6578a512-987c-42ad-981f-c7b67b4bab8b]
+127.0.0.1 - - [19/Sep/2026 21:51:13] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 21:51:13,823] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: c8fd6eb4-9bf9-4dc9-8010-df287d9d3fb9]
+127.0.0.1 - - [19/Sep/2026 21:51:13] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 21:51:13,886] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: feb9de22-41a0-412e-bca9-1f93559d9e28]
+127.0.0.1 - - [19/Sep/2026 21:51:13] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 21:51:13,910] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: b946b9b1-5dbe-4179-afa3-3f3be2026d4d]
+127.0.0.1 - - [19/Sep/2026 21:51:13] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 21:51:25,143] INFO in app: GET /api/auth/me 200 [0.000s] [ReqID: 57c8af8a-da44-4ccc-9251-7346bfc75657]
+127.0.0.1 - - [19/Sep/2026 21:51:25] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 21:51:25,167] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: 7e4b0456-6575-4b98-a87a-a914370b425d]
+127.0.0.1 - - [19/Sep/2026 21:51:25] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 21:51:25,258] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: e87fdf77-9f48-4bc4-bdf6-6d649f889aa1]
+127.0.0.1 - - [19/Sep/2026 21:51:25] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 21:51:25,277] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: 406f1061-04ae-42b4-9734-80de1337c44f]
+127.0.0.1 - - [19/Sep/2026 21:51:25] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 21:51:59,381] INFO in app: GET /api/auth/me 200 [0.001s] [ReqID: 3942fc6e-7061-4abb-84d2-b16759b1089c]
+127.0.0.1 - - [19/Sep/2026 21:51:59] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-19 21:51:59,409] INFO in app: GET /api/auth/settings 200 [0.001s] [ReqID: 23eba1b3-1c55-45c4-9cb0-aa73aa394435]
+127.0.0.1 - - [19/Sep/2026 21:51:59] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-19 21:51:59,452] INFO in app: GET /api/auth/users 200 [0.002s] [ReqID: d5b36adc-4de2-4837-970c-79818c39b5ab]
+127.0.0.1 - - [19/Sep/2026 21:51:59] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-19 21:51:59,456] INFO in app: GET /api/notifications 200 [0.009s] [ReqID: 2e662fa4-d22b-490e-9fa2-41a4dad544a0]
+127.0.0.1 - - [19/Sep/2026 21:51:59] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-19 21:51:59,475] INFO in app: GET /api/facilities/all-regions 200 [0.002s] [ReqID: b7a03136-c9e4-4e6b-b343-d832118257bb]
+127.0.0.1 - - [19/Sep/2026 21:51:59] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-19 21:51:59,484] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: 06bacb32-d3ed-4c05-9d94-c44f5babb67e]
+127.0.0.1 - - [19/Sep/2026 21:51:59] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:52:46,675] INFO in app: GET /api/notifications/stream 200 [0.002s] [ReqID: 0f08d7ec-77b1-40f9-a179-205b91d78244]
+127.0.0.1 - - [19/Sep/2026 21:52:46] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+[2026-09-19 21:53:34,672] INFO in app: GET /api/notifications/stream 200 [0.001s] [ReqID: f9418732-c6b5-4e29-bac8-5fe30a011eac]
+127.0.0.1 - - [19/Sep/2026 21:53:34] "GET /api/notifications/stream?last_id=154 HTTP/1.1" 200 -
+

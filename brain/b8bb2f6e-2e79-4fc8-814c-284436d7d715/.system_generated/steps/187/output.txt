@@ -1,0 +1,17 @@
+Task: b8bb2f6e-2e79-4fc8-814c-284436d7d715/task-182
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8bb2f6e-2e79-4fc8-814c-284436d7d715\.system_generated\tasks\task-182.log
+Log output:
+<truncated 19 lines>
+Scope1::test_diff_teg_dehydrator PASSED [ 56%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_grid_electricity PASSED [ 62%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_indirect_steam PASSED [ 68%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_cogen_allocation PASSED [ 75%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope3_spend_and_physical PASSED [ 81%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_uncertainty_product_and_sum PASSED [ 87%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_boe_and_carbon_intensity PASSED [ 93%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_ogmp_survey_reconciliation PASSED [100%]
+
+============================= 16 passed in 1.87s ==============================
+
+Last progress: 1s ago

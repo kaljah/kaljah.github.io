@@ -1,0 +1,91 @@
+
+The command exited with code 0.
+Output:
+<truncated 45 lines>
+new/server/routes/emissions.py:4741:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/emissions.py:4772:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/facilities.py:22:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/facilities.py:130:    if user.role not in ["admin", "superuser"]:
+new/server/routes/facilities.py:138:    if user.role == "superuser" and not is_unrestricted_location(user.location):
+new/server/routes/facilities.py:227:    if user.role not in ["admin", "superuser"]:
+new/server/routes/facilities.py:358:    if user.role not in ["admin", "superuser"]:
+new/server/routes/facilities.py:413:    if user.role not in ["admin", "superuser"]:
+new/server/routes/facilities.py:425:    if user.role == "superuser" and not is_unrestricted_location(user.location):
+new/server/routes/managedata.py:31:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:68:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:123:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:159:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:245:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:317:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:388:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:418:        if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/managedata.py:438:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:476:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:478:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/managedata.py:537:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:553:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:627:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:749:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:774:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:776:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/managedata.py:815:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:817:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/managedata.py:839:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:898:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:900:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/managedata.py:957:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:959:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/managedata.py:993:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/managedata.py:1037:    if not user or user.role not in ["admin", "superuser"]:
+new/server/routes/notifications.py:159:    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+new/server/routes/notifications.py:178:    if user.role in ["admin", "superuser"]:
+new/server/routes/notifications.py:205:        if user.role not in ["admin", "superuser"]:
+new/server/routes/notifications.py:207:    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+new/server/routes/qaqc.py:19:    """Returns True if the user has QA/QC viewing rights (admin or superuser roles)."""
+new/server/routes/qaqc.py:20:    return user and user.role in ["admin", "superuser"]
+new/server/routes/reports.py:260:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/reports.py:492:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/reports.py:741:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/satellite.py:111:    if user.role == "it_admin":
+new/server/routes/satellite.py:134:    if user.role == "it_admin":
+new/server/routes/satellite.py:205:    if user.role == "it_admin":
+new/server/routes/satellite.py:290:    survey_status = "Verified" if (user and user.role in ["admin", "superuser"]) else "Pending"
+new/server/routes/satellite.py:364:    if user.role == "it_admin":
+new/server/routes/scope2.py:102:        if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/scope2.py:164:    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+new/server/routes/scope2.py:240:        initial_status = "Verified" if user and user.role in ["admin", "superuser"] else "Pending"
+new/server/routes/scope2.py:361:    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+new/server/routes/scope2.py:371:    # Enforce creator ownership for standard user role
+new/server/routes/scope2.py:372:    if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
+new/server/routes/scope2.py:376:    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
+new/server/routes/scope2.py:490:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/scope2.py:493:    if user.role in ["auditor"]:
+new/server/routes/scope2.py:500:    if user.role not in ["admin", "superuser"]:
+new/server/routes/scope2.py:545:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/scope2.py:566:    bulk_status = "Verified" if user.role in ["admin", "superuser"] else "Pending"
+new/server/routes/scope3.py:19:    if user and user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/scope3.py:77:    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+new/server/routes/scope3.py:94:        initial_status = "Verified" if user.role == "admin" else "Pending"
+new/server/routes/scope3.py:104:    elif co2e_input not in [None, ""] and user.role in ["admin", "superuser"]:
+new/server/routes/scope3.py:223:    if user.role in ["auditor", "it_admin", "it_manager", "it"]:
+new/server/routes/scope3.py:233:    # Enforce creator ownership for standard user role
+new/server/routes/scope3.py:234:    if user.role == "user" and emission.created_by is not None and emission.created_by != user.id:
+new/server/routes/scope3.py:238:    if user.role not in ["admin", "superuser"] and emission.status == "Verified":
+new/server/routes/scope3.py:281:        if emission.status == "Verified" and user.role != "admin":
+new/server/routes/scope3.py:315:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/scope3.py:318:    if user.role in ["auditor"]:
+new/server/routes/scope3.py:325:    if user.role not in ["admin", "superuser"]:
+new/server/routes/scope3.py:369:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/routes/scope3.py:389:    bulk_status = "Verified" if user.role == "admin" else "Pending"
+new/server/routes/scope3.py:441:            elif rec.get("co2e") and user.role in ["admin", "superuser"]:
+new/server/seed_admin.py:99:                    user.role = u_data["role"]
+new/server/tests/test_audit_bug_fixes.py:48:            user.role = "admin"
+new/server/tests/test_audit_remediation.py:1233:def test_auth_update_user_role_whitelist(client, test_users):
+new/server/tests/test_reports.py:77:            user.role = "user"
+new/server/utils.py:31:    if user.role in ["it_admin", "it_manager", "it"]:
+new/server/utils.py:35:    if user.role == "admin":
+new/server/utils.py:60:    if not user or user.role in ["it_admin", "it_manager", "it"]:
+new/server/utils.py:62:    if user.role == "admin":
+new/server/utils.py:117:        if user.role == "superuser":
+new/server/utils.py:126:        elif user.role == "user":
+

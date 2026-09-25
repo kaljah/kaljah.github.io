@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 13:12:11,594] INFO in app: Updated account: a
+[2026-09-21 13:12:11,696] INFO in app: Updated account: a@a
+[2026-09-21 13:12:11,789] INFO in app: Updated account: z
+[2026-09-21 13:12:11,885] INFO in app: Updated account: z@z
+Aligning 9 verified records for 2026:
+  ID 8 (Flaring): 24400.0 -> 24512.5 (diff: +112.50)
+  ID 1 (Stationary Combustion): 45350.0 -> 45906.5 (diff: +556.50)
+  ID 6 (Stationary Combustion): 18320.0 -> 18501.6 (diff: +181.60)
+  ID 3 (Steam Methane Reforming): 52250.0 -> 52621.5 (diff: +371.50)
+  ID 2 (Stoichiometry): 28150.0 -> 28458.0 (diff: +308.00)
+Successfully updated 5 records in SQLite.
+Dashboard cache cleared.
+

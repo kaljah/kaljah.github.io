@@ -1,0 +1,60 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -344,6 +344,29 @@
+       setIntensity(weightedIntensity);
+       setHasProductionData(hasProd);
+ 
++      // Prior Year Weighted Intensity Calculation for YoY Trend
++      let pyIntensity = 0;
++      let pyHasProd = false;
++      const intensityPyData = batch.intensity_stats_py || [];
++      if (intensityPyData && intensityPyData.length > 0) {
++        let totalEmissionsForPy = 0;
++        let totalBoeForPy = 0;
++        intensityPyData.forEach((d) => {
++          if (d.total_boe > 0) {
++            const intVal =
++              gwpHorizon === "20" && d.co2_intensity_gwp20 != null
++                ? d.co2_intensity_gwp20
++                : d.co2_intensity;
++            totalEmissionsForPy += intVal * d.total_boe;
++            totalBoeForPy += d.total_boe;
++          }
++        });
++        if (totalBoeForPy > 0) {
++          pyIntensity = totalEmissionsForPy / totalBoeForPy;
++          pyHasProd = true;
++        }
++      }
++
+       // YoY Variance Calculation
+       if (currentYear !== "all") {
+         const cy = parseInt(currentYear);
+@@ -358,14 +358,16 @@
+           if (row.year === py) pyEmissions += total;
+         });
+ 
+-        if (pyEmissions > 0) {
+-          setVariance({
+-            emissions: calculateTrend(cyEmissions, pyEmissions),
+-            intensity: "—", // Logic for intensity YoY if available
+-          });
+-        } else {
+-          setVariance({ emissions: "—", intensity: "—" });
+-        }
++        const emissionsVariance = pyEmissions > 0 ? calculateTrend(cyEmissions, pyEmissions) : "—";
++        const intensityVariance =
++          hasProd && pyHasProd && pyIntensity > 0
++            ? calculateTrend(weightedIntensity, pyIntensity)
++            : "—";
++
++        setVariance({
++          emissions: emissionsVariance,
++          intensity: intensityVariance,
++        });
+       } else {
+         setVariance({ emissions: "—", intensity: "—" });
+       }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

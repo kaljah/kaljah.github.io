@@ -1,0 +1,32 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-180
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-180.log
+Log output:
+<truncated 36 lines>
+     qty, fuel_unit="m3", combustion_efficiency=eff, gas_composition=comps
+        )
+    
+        res = calc.calculate(
+            fuel_quantity=qty,
+            ef_co2=0.0,
+            ef_ch4=0.0,
+            ef_n2o=0.0,
+            uncertainties={},
+            hhv=None,
+            ef_unit="kg/m3",
+            fuel_unit="m3",
+            fuel_type="gases",
+            combustion_efficiency=eff,
+            **comps,
+        )
+    
+>       assert abs(res["results"]["co2"]["value"] - ref["co2"]) < 1e-2
+E       assert 2.9627120000000033 < 0.01
+E        +  where 2.9627120000000033 = abs((43.701863 - 40.739151))
+
+validation\calculation\test_clean_scope1.py:118: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_tier3_gas_composition_carbon_balance
+======================== 1 failed, 10 passed in 2.18s =========================
+
+Last progress: 1s ago

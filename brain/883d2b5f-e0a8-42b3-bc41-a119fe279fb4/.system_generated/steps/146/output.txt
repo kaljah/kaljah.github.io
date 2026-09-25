@@ -1,0 +1,14 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3289,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3291,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3550,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3552,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3592,"LineContent":"        from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3594,"LineContent":"        clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4406,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4408,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4457,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4459,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4539,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4541,"LineContent":"    clear_dashboard_cache()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4631,"LineContent":"    from routes.dashboard import clear_dashboard_cache"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4633,"LineContent":"    clear_dashboard_cache()"}

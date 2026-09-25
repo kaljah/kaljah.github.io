@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -999,11 +999,25 @@
+             await api.post('/data/production', {
+                 ...prodForm,
+                 oil_amount: parseFloat(prodForm.oil_amount) || 0,
+-                gas_amount: parseFloat(prodForm.gas_amount) || 0
++                gas_amount: parseFloat(prodForm.gas_amount) || 0,
++                gross_gas_mmsm3: parseFloat(prodForm.gross_gas_mmsm3) || 0,
++                gas_without_injected_mmsm3: parseFloat(prodForm.gas_without_injected_mmsm3) || 0,
++                injected_gas_mmsm3: parseFloat(prodForm.injected_gas_mmsm3) || 0,
++                crude_oil_mmboe: parseFloat(prodForm.crude_oil_mmboe) || 0,
++                condensate_mmboe: parseFloat(prodForm.condensate_mmboe) || 0,
++                lpg_mmboe: parseFloat(prodForm.lpg_mmboe) || 0,
++                total_production_mmboe: parseFloat(prodForm.total_production_mmboe) || 0,
++                saleable_production_mmboe: parseFloat(prodForm.saleable_production_mmboe) || 0,
+             });
+             toast.success('Production record saved!');
+             fetchProduction();
+-            setProdForm(prev => ({ ...prev, oil_amount: '', gas_amount: '' }));
++            setProdForm(prev => ({
++                ...prev,
++                oil_amount: '', gas_amount: '',
++                gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
++                crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
++                total_production_mmboe: '', saleable_production_mmboe: ''
++            }));
+         } catch (err) { toast.error('Failed to save production'); }
+     };
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

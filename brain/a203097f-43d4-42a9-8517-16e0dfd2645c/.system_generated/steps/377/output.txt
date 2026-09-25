@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\mutation\test_clean_mutations.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -39,9 +39,11 @@
+     ref_calculate_scope2_steam,
+     ref_calculate_scope3,
+     ref_calculate_hydrocarbon_stoichiometry,
+-    REF_GWP,
+-    REF_CONSTANTS,
++    resolve_gwp,
++    STD_TEMP_K,
++    STD_PRESSURE_KPA,
+ )
++from validation.reference_model.ref_constants import MW_C, MW_O
+ 
+ 
+ class TestCleanMutations:
+@@ -68,7 +68,7 @@
+         """Mutant: CH4 GWP multiplier omitted (treating 1 kg CH4 = 1 kg CO2e).
+         Suite must catch and kill this critical climate undercount."""
+         ch4_mass_kg = 50.0  # 50 kg CH4
+-        true_gwp_ar5 = REF_GWP["AR5"]["CH4"]  # 28.0
++        true_gwp_ar5 = resolve_gwp("AR5", "100")["CH4"]  # 28.0
+ 
+         legitimate_co2e = ch4_mass_kg * true_gwp_ar5  # 1400 kg CO2e
+ 
+@@ -83,7 +83,7 @@
+         """Mutant: Carbon atomic weight mutated to 14.0 (Nitrogen) instead of 12.011.
+         Suite must catch mass balance violation in Tier 3 stoichiometry."""
+         mutant_mw_c = 14.00
+-        legit_mw_c = REF_CONSTANTS["C_MOLAR_MASS"]  # 12.011
++        legit_mw_c = MW_C  # 12.011
+ 
+         # Stoichiometry for Methane: CH4 + 2 O2 -> CO2 + 2 H2O
+         legit_stoich = ref_calculate_hydrocarbon_stoichiometry(1, 4)
+@@ -90,7 +90,7 @@
+ 
+         # In mutant stoichiometry, CO2 molar mass is corrupted (14 + 31.998 = 45.998 vs 44.009)
+-        mw_co2_mutant = mutant_mw_c + 2 * REF_CONSTANTS["O_MOLAR_MASS"]
+-        mw_co2_legit = legit_mw_c + 2 * REF_CONSTANTS["O_MOLAR_MASS"]
++        mw_co2_mutant = mutant_mw_c + 2 * MW_O
++        mw_co2_legit = legit_mw_c + 2 * MW_O
+ 
+         assert abs(mw_co2_mutant - mw_co2_legit) > 1.9, "Carbon atomic weight mutant survived!"
+ 
+@@ -97,7 +97,8 @@
+         """Mutant: Confusing Normal condition (0°C, 22.414 L/mol) with Standard ISO 13443 (15°C, 23.685 L/mol).
+         Suite must catch ~5.5% thermodynamic volume/density error."""
+-        v_std_iso_15c = REF_CONSTANTS["MOLAR_VOLUME_STD_M3"]  # 0.023685
+-        v_normal_0c = 0.022414  # m3/kmol at 0 C, 101.325 kPa
++        # Ideal gas molar volume at 15.56 C (288.706 K) vs 0 C (273.15 K)
++        v_std_iso_15c = (8.314462618 * STD_TEMP_K) / (STD_PRESSURE_KPA * 1000.0) * 1000.0  # ~23.685 L/mol
++        v_normal_0c = 22.414  # L/mol at 0 C, 101.325 kPa
+ 
+         deviation_pct = abs(v_std_iso_15c - v_normal_0c) / v_std_iso_15c * 100.0
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,199 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=919_0 RootWebArea "Carbon Tech" url="http://localhost:5173/"
+  uid=969_0 complementary
+    uid=969_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=969_2 StaticText "Carbon tech"
+    uid=969_3 navigation
+      uid=969_4 link "Dashboard" url="http://localhost:5173/"
+        uid=969_5 StaticText "Dashboard"
+      uid=969_6 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=969_7 StaticText "Carbon Intensity"
+      uid=969_8 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=969_9 StaticText "Methane Intensity"
+      uid=969_10 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=969_11 StaticText "SBTi Net-Zero"
+      uid=969_12 link "Calculations" url="http://localhost:5173/emissions"
+        uid=969_13 StaticText "Calculations"
+      uid=969_14 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=969_15 StaticText "Emissions Map"
+      uid=969_16 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=969_17 StaticText "Manage Data"
+      uid=969_18 link "Reports" url="http://localhost:5173/reports"
+        uid=969_19 StaticText "Reports"
+      uid=969_20 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=969_21 StaticText "Reference Data"
+      uid=969_22 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=969_23 StaticText "Uncertainty"
+      uid=969_24 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=969_25 StaticText "Audit Trail"
+      uid=969_26 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=969_27 StaticText "QA/QC & Diagnostics"
+    uid=969_28 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=969_29 StaticText "Settings"
+    uid=969_30 StaticText "A"
+    uid=969_31 StaticText "Administrator"
+    uid=969_32 StaticText "Sustainability Lead"
+  uid=969_33 main
+    uid=969_34 StaticText "Corporate ESG"
+    uid=969_35 StaticText "All Years"
+    uid=969_36 StaticText "All Supply Chains"
+    uid=969_37 StaticText "All Activities"
+    uid=969_38 StaticText "All Divisions"
+    uid=969_39 StaticText "All Regions"
+    uid=969_40 button "GWP-100"
+    uid=969_41 button "GWP-20"
+    uid=969_42 button "+ Set Target" description="Set emission targets in Manage Data"
+    uid=969_43 button "Notifications"
+    uid=969_44 button "User Profile" description="User Profile"
+    uid=969_45 StaticText "Administrator"
+    uid=970_0 heading "GHG Emissions Dashboard" level="1"
+    uid=970_1 StaticText "Live Content • Updated 11:41 PM"
+    uid=970_2 heading "EMISSIONS OVERVIEW" level="2"
+    uid=970_3 StaticText "All Regions"
+    uid=970_4 button "Export Executive Brief (PDF)" description="Export multi-page executive summary PDF"
+    uid=970_5 StaticText "GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)"
+    uid=970_6 StaticText "10.2K"
+    uid=970_7 StaticText "tCO₂e"
+    uid=970_8 StaticText "NET EMISSIONS"
+    uid=970_9 StaticText "10.2K"
+    uid=970_10 StaticText "tCO₂e"
+    uid=970_11 StaticText "Less"
+    uid=970_12 StaticText "0"
+    uid=970_13 StaticText "Mitigation"
+    uid=970_14 StaticText "TOTAL CH4 (METHANE)"
+    uid=970_15 StaticText "338.9"
+    uid=970_16 StaticText "tCH₄"
+    uid=970_17 StaticText "PERFORMANCE INTENSITY"
+    uid=970_18 StaticText "0.04"
+    uid=970_19 StaticText "kg/BOE"
+    uid=970_20 StaticText "CO₂e Intensity (Scope 1+2)"
+    uid=970_21 StaticText "Scope 1 (Direct)"
+    uid=970_22 StaticText "10.2K"
+    uid=970_23 StaticText " tCO₂e"
+    uid=970_24 StaticText "Scope 2 (Indirect)"
+    uid=970_25 StaticText "52.2"
+    uid=970_26 StaticText " tCO₂e"
+    uid=970_27 StaticText "Scope 3 (Supply Chain)"
+    uid=970_28 StaticText "216.9"
+    uid=970_29 StaticText " tCO₂e"
+    uid=970_30 heading "Emissions Trend & Projection" level="3"
+    uid=970_31 StaticText "Historical inventory trajectory with 5-year predictive forecast"
+    uid=970_32 button "Compare Regions"
+    uid=970_33 image "Forecast legend icon"
+    uid=970_34 StaticText "Forecast"
+    uid=970_35 image "Scope 1 legend icon"
+    uid=970_36 StaticText "Scope 1"
+    uid=970_37 image "Target Path legend icon"
+    uid=970_38 StaticText "Target Path"
+    uid=970_39 image "Total Emissions legend icon"
+    uid=970_40 StaticText "Total Emissions"
+    uid=970_41 application
+      uid=970_42 group
+      uid=970_43 group
+      uid=970_44 group
+      uid=970_45 group
+      uid=970_46 group
+      uid=970_47 group
+      uid=970_48 group
+      uid=970_49 group
+      uid=970_50 group
+      uid=970_51 group
+      uid=970_52 group
+      uid=970_53 group
+        uid=970_54 StaticText "2026"
+        uid=970_55 StaticText "0"
+        uid=970_56 StaticText "3.0k"
+        uid=970_57 StaticText "6.0k"
+        uid=970_58 StaticText "9.0k"
+        uid=970_59 StaticText "12.0k"
+    uid=970_60 heading "Emissions by Activity" level="3"
+    uid=970_61 image "E&P (Upstream) legend icon"
+    uid=970_62 StaticText "E&P (Upstream)"
+    uid=970_63 image "Steel & Iron (Acier DRI) legend icon"
+    uid=970_64 StaticText "Steel & Iron (Acier DRI)"
+    uid=970_65 application
+      uid=970_66 group
+      uid=970_67 group
+      uid=970_68 group
+        uid=970_69 group
+          uid=970_70 group
+            uid=970_71 graphics-symbol
+          uid=970_72 group
+            uid=970_73 graphics-symbol
+      uid=970_74 group
+      uid=970_75 group
+      uid=970_76 group
+      uid=970_77 group
+      uid=970_78 group
+      uid=970_79 group
+      uid=970_80 group
+      uid=970_81 group
+      uid=970_82 group
+    uid=970_83 heading "Emissions by Source" level="3"
+    uid=970_84 image "Combustion legend icon"
+    uid=970_85 StaticText "Combustion"
+    uid=970_86 image "Flaring legend icon"
+    uid=970_87 StaticText "Flaring"
+    uid=970_88 image "Other legend icon"
+    uid=970_89 StaticText "Other"
+    uid=970_90 image "Venting legend icon"
+    uid=970_91 StaticText "Venting"
+    uid=970_92 application
+      uid=970_93 group
+      uid=970_94 group
+      uid=970_95 group
+        uid=970_96 group
+          uid=970_97 group
+            uid=970_98 graphics-symbol
+          uid=970_99 group
+            uid=970_100 graphics-symbol
+          uid=970_101 group
+            uid=970_102 graphics-symbol
+          uid=970_103 group
+            uid=970_104 graphics-symbol
+      uid=970_105 group
+      uid=970_106 group
+      uid=970_107 group
+      uid=970_108 group
+      uid=970_109 group
+      uid=970_110 group
+      uid=970_111 group
+      uid=970_112 group
+      uid=970_113 group
+    uid=970_114 heading "SBTi Decarbonization Trajectory (1.5C)" level="3"
+    uid=970_115 StaticText "Progress monitoring against corporate Net-Zero targets from Base Year "
+    uid=970_116 StaticText "2026"
+    uid=970_117 StaticText " to Target Year "
+    uid=970_118 StaticText "2050"
+    uid=970_119 button "View Full SBTi Dashboard →"
+    uid=970_120 image "Actual Verified Emissions legend icon"
+    uid=970_121 StaticText "Actual Verified Emissions"
+    uid=970_122 image "Business as Usual (+1.5%/yr) legend icon"
+    uid=970_123 StaticText "Business as Usual (+1.5%/yr)"
+    uid=970_124 image "SBTi 1.5°C Linear Target legend icon"
+    uid=970_125 StaticText "SBTi 1.5°C Linear Target"
+    uid=970_126 application
+      uid=970_127 group
+      uid=970_128 group
+      uid=970_129 group
+      uid=970_130 group
+      uid=970_131 group
+      uid=970_132 group
+      uid=970_133 group
+      uid=970_134 group
+      uid=970_135 group
+      uid=970_136 group
+      uid=970_137 group
+      uid=970_138 group
+        uid=970_139 StaticText "2026"
+        uid=970_140 StaticText "2027"
+        uid=970_141 StaticText "2028"
+        uid=970_142 StaticText "2029"
+        uid=97
+<truncated 3791 bytes>
+
+[Snapshot truncated because it exceeded 8KB. Only showing first 8KB. Full snapshot saved to: C:/Users/samsung/.gemini/antigravity/brain/a2043260-764d-4cb7-a7d2-a257ab54dcf0/.tempmediaStorage/snapshot_full_1790113311488.txt]

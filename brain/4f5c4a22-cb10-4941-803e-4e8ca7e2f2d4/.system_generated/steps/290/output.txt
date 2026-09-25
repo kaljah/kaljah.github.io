@@ -1,0 +1,59 @@
+
+Encountered error in step execution: context canceled
+Output:
+
+Running 2 tests using 1 worker
+
+
+[TIER 1 TEST] Testing Region: West (Tosyali)...
+  x  1 [chromium] › e2e\test_scope1_form_engine.spec.js:55:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) (4.0s)
+
+[TIER 1 TEST] Testing Region: West (Tosyali)...
+  x  2 [chromium] › e2e\test_scope1_form_engine.spec.js:55:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) (retry #1) (4.4s)
+
+[ENGINEERING FORMULA TEST] Testing: Combustion (Tier 3)...
+  File "<string>", line 1
+    import sqlite3, json; conn = sqlite3.connect('c:/Users/samsung/Desktop/H2/new/server/ghg_app.db'); c = conn.cursor(); c.execute(SELECT
+                                                                                                                                   ^
+SyntaxError: '(' was never closed
+queryDb error: Error: Command failed: python -c "import sqlite3, json; conn = sqlite3.connect('c:/Users/samsung/Desktop/H2/new/server/ghg_app.db'); c = conn.cursor(); c.execute("SELECT * FROM emissions WHERE facility_id = ? ORDER BY id DESC LIMIT 1", [4]); row = c.fetchone(); cols = [d[0] for d in c.description] if c.description else []; print(json.dumps(dict(zip(cols, row)) if row else {}))"
+  File "<string>", line 1
+    import sqlite3, json; conn = sqlite3.connect('c:/Users/samsung/Desktop/H2/new/server/ghg_app.db'); c = conn.cursor(); c.execute(SELECT
+                                                                                                                                   ^
+SyntaxError: '(' was never closed
+
+    at genericNodeError (node:internal/errors:985:15)
+    at wrappedFn (node:internal/errors:539:14)
+    at checkExecSyncError (node:child_process:925:11)
+    at execSync (node:child_process:997:15)
+    at queryDb (file:///C:/Users/samsung/Desktop/H2/new/client/e2e/test_scope1_form_engine.spec.js:28:17)
+    at file:///C:/Users/samsung/Desktop/H2/new/client/e2e/test_scope1_form_engine.spec.js:347:27
+    at C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\worker\workerProcessEntry.js:1655:9
+    at C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\worker\workerProcessEntry.js:1135:11
+    at TimeoutManager.withRunnable (C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\worker\workerProcessEntry.js:403:14)
+    at TestInfoImpl._runWithTimeout (C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\worker\workerProcessEntry.js:1133:7)
+    at C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\worker\workerProcessEntry.js:1653:7
+    at WorkerMain._runTest (C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\worker\workerProcessEntry.js:1626:5)
+    at WorkerMain.runTestGroup (C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\worker\workerProcessEntry.js:1521:9)
+    at process.<anonymous> (C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright\lib\common\index.js:1941:25) {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    '',
+    '  File "<string>", line 1\r\n' +
+      "    import sqlite3, json; conn = sqlite3.connect('c:/Users/samsung/Desktop/H2/new/server/ghg_app.db'); c = conn.cursor(); c.execute(SELECT\r\n" +
+      '                                                                                                                                   ^\r\n' +
+      "SyntaxError: '(' was never closed\r\n"
+  ],
+  pid: 25056,
+  stdout: '',
+  stderr: '  File "<string>", line 1\r\n' +
+    "    import sqlite3, json; conn = sqlite3.connect('c:/Users/samsung/Desktop/H2/new/server/ghg_app.db'); c = conn.cursor(); c.execute(SELECT\r\n" +
+    '                                                                                                                                   ^\r\n' +
+    "SyntaxError: '(' was never closed\r\n"
+}
+  x  3 [chromium] › e2e\test_scope1_form_engine.spec.js:171:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (7.5s)
+
+[ENGINEERING FORMULA TEST] Testing: Combustion (Tier 3)...
+

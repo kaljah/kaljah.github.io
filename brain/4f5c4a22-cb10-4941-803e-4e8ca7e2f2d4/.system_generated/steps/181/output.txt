@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Status: 200
+Cookies: {'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyX2lkIjoxfQ.arI0cg.-PIazpNFYaGgcPrjU_6v85_LL0I'}
+

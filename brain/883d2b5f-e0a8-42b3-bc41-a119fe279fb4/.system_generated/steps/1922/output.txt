@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1954,8 +1954,8 @@
+         excess_ch4_tonnes = max(0.0, ed["total_ch4"] - allowed_ch4_tonnes)
+ 
+         # WEC Rate: $900/tonne in 2024, $1,200/tonne in 2025, $1,500/tonne in 2026+ (effective starting 2024)
+-        yr_str = str(year) if year and year != "all" else str(datetime.utcnow().year)
+-        yr_int = int(yr_str) if yr_str.isdigit() else datetime.utcnow().year
++        yr_str = str(year) if year and year != "all" else str(datetime.now(timezone.utc).year)
++        yr_int = int(yr_str) if yr_str.isdigit() else datetime.now(timezone.utc).year
+         wec_fee_map = _app_settings.get("wec_fee_rates", {})
+ 
+         if yr_int < 2024:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

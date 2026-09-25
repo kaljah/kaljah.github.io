@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Total .grid-row: 50
+First row: s1_528 | 10/2026 | Scope 1 | Downstream | N/A | Facility-AGT10-10 Sonatrach LPG Station | N/A | N/A | Fuel Combustion | N/A | server_custom_factor | - | m3 | 0.00 | Verified
+

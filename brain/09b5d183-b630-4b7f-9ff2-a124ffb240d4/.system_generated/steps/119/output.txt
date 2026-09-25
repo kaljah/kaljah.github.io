@@ -1,0 +1,77 @@
+
+The command exited with code 1.
+Output:
+======================================================================
+STARTING INDEPENDENT GHG VALIDATION SUITE EXECUTION
+======================================================================
+
+[RUNNING] Permanent Regression Archive (test_regression_archive.py)...
+[FAILED] in 6.37s | Summary: ============================== 1 error in 1.52s ===============================
+
+[RUNNING] Independent Differential Suite (test_independent_differential.py)...
+[FAILED] in 16.76s | Summary: ========================= 1 warning, 1 error in 1.78s =========================
+
+[RUNNING] Golden Dataset Validation Suite (test_golden_dataset_validation.py)...
+[PASSED] in 19.70s | Summary: ======================== 25 passed, 1 warning in 2.11s ========================
+
+[RUNNING] Exhaustive Unit Conversions (test_unit_conversions_exhaustive.py)...
+[PASSED] in 32.88s | Summary: ======================= 277 passed, 1 warning in 1.82s ========================
+
+[RUNNING] Property Invariants (Hypothesis) (test_property_invariants.py)...
+[PASSED] in 16.96s | Summary: ======================== 6 passed, 1 warning in 4.36s =========================
+
+[RUNNING] Emission Factor Selection (test_emission_factor_selection.py)...
+[PASSED] in 13.97s | Summary: ======================== 10 passed, 1 warning in 0.82s ========================
+
+[RUNNING] Boundary & Resilience Suite (test_boundary_and_negative.py)...
+[PASSED] in 14.72s | Summary: ======================== 13 passed, 1 warning in 1.21s ========================
+
+[RUNNING] Aggregation & Reconciliation (test_aggregation_reconciliation.py)...
+[PASSED] in 13.60s | Summary: ======================== 6 passed, 1 warning in 1.19s =========================
+
+[RUNNING] Battery: Midstream & Process Equipment (test_battery_midstream_process_equipment.py)...
+[FAILED] in 14.96s | Summary: =================== 1 failed, 15 passed, 1 warning in 1.43s ===================
+
+[RUNNING] Battery: Stoichiometry & Indirect Energy (test_battery_stoichiometry_indirect_energy.py)...
+[PASSED] in 15.13s | Summary: ======================== 21 passed, 1 warning in 1.42s ========================
+
+[RUNNING] Battery: Statistical Anomaly Detection (test_battery_statistical_anomaly_detection.py)...
+[PASSED] in 14.44s | Summary: ======================== 12 passed, 1 warning in 0.85s ========================
+
+[RUNNING] Battery: Compressor Seals & Fugitives (test_battery_compressor_fugitives_equipment.py)...
+[PASSED] in 13.52s | Summary: ======================== 6 passed, 1 warning in 1.08s =========================
+
+[RUNNING] Battery: GWP Horizons & Regulatory (test_battery_gwp_horizons_regulatory.py)...
+[FAILED] in 15.65s | Summary: =================== 3 failed, 7 passed, 1 warning in 2.21s ====================
+
+[RUNNING] Battery: Concurrency & Stress Invariants (test_battery_concurrency_stress_invariants.py)...
+[PASSED] in 16.73s | Summary: ======================== 5 passed, 1 warning in 1.58s =========================
+
+[RUNNING] Mutation Testing (10 Mutants) (test_calculation_mutations.py)...
+[FAILED] in 6.04s | Summary: ============================== 1 error in 1.47s ===============================
+
+======================================================================
+VALIDATION SUITE SUMMARY REPORT
+======================================================================
+Suite Name                          | Status   | Time (s) | Results
+----------------------------------------------------------------------
+Permanent Regression Archive        | FAILED   | 6.37     | ============================== 1 error in 1.52s ===============================
+Independent Differential Suite      | FAILED   | 16.76    | ========================= 1 warning, 1 error in 1.78s =========================
+Golden Dataset Validation Suite     | PASSED   | 19.70    | ======================== 25 passed, 1 warning in 2.11s ========================
+Exhaustive Unit Conversions         | PASSED   | 32.88    | ======================= 277 passed, 1 warning in 1.82s ========================
+Property Invariants (Hypothesis)    | PASSED   | 16.96    | ======================== 6 passed, 1 warning in 4.36s =========================
+Emission Factor Selection           | PASSED   | 13.97    | ======================== 10 passed, 1 warning in 0.82s ========================
+Boundary & Resilience Suite         | PASSED   | 14.72    | ======================== 13 passed, 1 warning in 1.21s ========================
+Aggregation & Reconciliation        | PASSED   | 13.60    | ======================== 6 passed, 1 warning in 1.19s =========================
+Battery: Midstream & Process Equipment | FAILED   | 14.96    | =================== 1 failed, 15 passed, 1 warning in 1.43s ===================
+Battery: Stoichiometry & Indirect Energy | PASSED   | 15.13    | ======================== 21 passed, 1 warning in 1.42s ========================
+Battery: Statistical Anomaly Detection | PASSED   | 14.44    | ======================== 12 passed, 1 warning in 0.85s ========================
+Battery: Compressor Seals & Fugitives | PASSED   | 13.52    | ======================== 6 passed, 1 warning in 1.08s =========================
+Battery: GWP Horizons & Regulatory  | FAILED   | 15.65    | =================== 3 failed, 7 passed, 1 warning in 2.21s ====================
+Battery: Concurrency & Stress Invariants | PASSED   | 16.73    | ======================== 5 passed, 1 warning in 1.58s =========================
+Mutation Testing (10 Mutants)       | FAILED   | 6.04     | ============================== 1 error in 1.47s ===============================
+----------------------------------------------------------------------
+Total Validation Wall-Clock Time: 231.43s
+Overall Validation Result: FAILURES DETECTED
+======================================================================
+

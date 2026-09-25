@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\vented.py:524:class TankFlashingCalculator(BaseCalculator):
+  new\server\calculations\vented.py:525:    def __init__(self):
+  new\server\calculations\vented.py:526:        super().__init__("Storage Tank Emissions", "Section 6.8")
+  new\server\calculations\vented.py:527:
+  new\server\calculations\vented.py:528:    def calculate(
+  new\server\calculations\vented.py:529:        self,
+  new\server\calculations\vented.py:530:        throughput,
+  new\server\calculations\vented.py:531:        gas_oil_ratio,
+  new\server\calculations\vented.py:532:        ch4_content,
+  new\server\calculations\vented.py:533:        control_efficiency,
+  new\server\calculations\vented.py:534:        uncertainties,
+  new\server\calculations\vented.py:535:        process_type="tank_flashing",
+  new\server\calculations\vented.py:536:        ef_ch4=0,
+  new\server\calculations\vented.py:537:        co2_content=0.0,
+  new\server\calculations\vented.py:538:        ef_co2=None,
+  new\server\calculations\vented.py:539:        ef_n2o=None,
+  new\server\calculations\vented.py:540:        hhv=1020.0,
+  new\server\calculations\vented.py:541:        gwp_dict=None,
+  new\server\calculations\vented.py:542:    ):
+  new\server\calculations\vented.py:543:        """
+  new\server\calculations\vented.py:544:        Calculates Tank Emissions (API Compendium Section 6.8 & EPA Subpart W 
+�98.233(j)).
+  new\server\calculations\vented.py:545:        If Flashing: Uses GOR method with flared combustion products when 
+control_efficiency > 0.
+  new\server\calculations\vented.py:546:        If Working/Breathing: Uses simple Factor * Throughput.
+  new\server\calculations\vented.py:547:        """
+  new\server\calculations\vented.py:548:        self.validate_inputs({"throughput": throughput}, ["throughput"])
+  new\server\calculations\vented.py:549:
+  new\server\calculations\vented.py:550:        is_flashing = process_type in ["tank_flashing", "tank", 
+"storage_tanks"] or (gas_oil_ratio and float(gas_oil_ratio) > 0 and not ef_ch4)
+  new\server\calculations\vented.py:551:
+  new\server\calculations\vented.py:552:        if is_flashing:
+  new\server\calculations\vented.py:553:            total_gas_scf = float(throughput) * float(gas_oil_ratio or 0.0)
+  new\server\calculations\vented.py:554:            total_gas_m3 = convert(total_gas_scf, "scf", "m3")
+
+
+

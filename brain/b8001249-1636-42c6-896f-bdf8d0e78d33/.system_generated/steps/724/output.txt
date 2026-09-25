@@ -1,0 +1,168 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+{'POST', 'OPTIONS'} /api/auth/upload-avatar
+{'HEAD', 'GET', 'OPTIONS'} /api/auth/settings
+{'PUT', 'POST', 'OPTIONS'} /api/auth/settings
+{'POST', 'OPTIONS'} /api/auth/users
+{'HEAD', 'GET', 'OPTIONS'} /api/auth/users
+{'PUT', 'OPTIONS'} /api/auth/users/<int:id>
+{'DELETE', 'OPTIONS'} /api/auth/users/<int:id>
+{'POST', 'OPTIONS'} /api/auth/users/<int:id>/reset-password
+{'HEAD', 'GET', 'OPTIONS'} /api/emissions/
+{'POST', 'OPTIONS'} /api/emissions/bulk-upload
+{'HEAD', 'GET', 'OPTIONS'} /api/emissions/template/csv
+{'HEAD', 'GET', 'OPTIONS'} /api/emissions/template/excel
+{'POST', 'OPTIONS'} /api/emissions/upload/start
+{'HEAD', 'GET', 'OPTIONS'} /api/emissions/upload/status/<job_id>
+{'HEAD', 'GET', 'OPTIONS'} /api/emissions/upload/errors/<job_id>
+{'POST', 'OPTIONS'} /api/emissions/
+{'DELETE', 'OPTIONS'} /api/emissions/<id>
+{'PUT', 'OPTIONS'} /api/emissions/<id>
+{'POST', 'OPTIONS'} /api/emissions/bulk-delete
+{'POST', 'OPTIONS'} /api/emissions/import
+{'HEAD', 'GET', 'OPTIONS'} /api/emissions/export
+{'POST', 'OPTIONS'} /api/emissions/approve/<int:emission_id>
+{'POST', 'OPTIONS'} /api/emissions/reject/<int:emission_id>
+{'POST', 'OPTIONS'} /api/emissions/approve/batch
+{'POST', 'OPTIONS'} /api/emissions/reject/batch
+{'POST', 'OPTIONS'} /api/emissions/erp/sync
+{'HEAD', 'GET', 'OPTIONS'} /api/emissions/pending
+{'HEAD', 'GET', 'OPTIONS'} /api/facilities/
+{'HEAD', 'GET', 'OPTIONS'} /api/facilities
+{'HEAD', 'GET', 'OPTIONS'} /api/facilities/all-regions
+{'POST', 'OPTIONS'} /api/facilities/
+{'POST', 'OPTIONS'} /api/facilities
+{'PUT', 'OPTIONS'} /api/facilities/<int:facility_id>
+{'DELETE', 'OPTIONS'} /api/facilities/<int:facility_id>
+{'POST', 'OPTIONS'} /api/facilities/import
+{'HEAD', 'GET', 'OPTIONS'} /api/data/production/
+{'HEAD', 'GET', 'OPTIONS'} /api/data/production
+{'POST', 'OPTIONS'} /api/data/production/
+{'POST', 'OPTIONS'} /api/data/production
+{'DELETE', 'OPTIONS'} /api/data/production/<int:record_id>
+{'POST', 'OPTIONS'} /api/data/production/bulk-import
+{'HEAD', 'GET', 'OPTIONS'} /api/data/methane-sources
+{'HEAD', 'GET', 'OPTIONS'} /api/data/ogmp-surveys/
+{'HEAD', 'GET', 'OPTIONS'} /api/data/ogmp-surveys
+{'POST', 'OPTIONS'} /api/data/ogmp-surveys/
+{'POST', 'OPTIONS'} /api/data/ogmp-surveys
+{'DELETE', 'OPTIONS'} /api/data/ogmp-surveys/<int:record_id>
+{'POST', 'OPTIONS'} /api/data/ogmp/level-upgrade
+{'HEAD', 'GET', 'OPTIONS'} /api/data/ogmp/level-logs
+{'HEAD', 'GET', 'OPTIONS'} /api/data/cbam-exports/
+{'HEAD', 'GET', 'OPTIONS'} /api/data/cbam-exports
+{'POST', 'OPTIONS'} /api/data/cbam-exports/
+{'POST', 'OPTIONS'} /api/data/cbam-exports
+{'DELETE', 'OPTIONS'} /api/data/cbam-exports/<int:record_id>
+{'POST', 'OPTIONS'} /api/reports/generate
+{'HEAD', 'GET', 'OPTIONS'} /api/reports/export
+{'HEAD', 'GET', 'OPTIONS'} /api/reports/ogmp-export
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/batch-all
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/intensity-trend
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/summary
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/years
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/mitigation
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/scope3/summary
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/goals/<int:year>
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/base-year
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/categorical-breakdown
+{'POST', 'OPTIONS'} /api/dashboard/base-year-recalculation
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/ogmp-metrics
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/intensity-stats
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/uncertainty
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/exclusions
+{'HEAD', 'GET', 'OPTIONS'} /api/dashboard/sbti-trajectory
+{'HEAD', 'GET', 'OPTIONS'} /api/custom-factors/
+{'HEAD', 'GET', 'OPTIONS'} /api/custom-factors
+{'POST', 'OPTIONS'} /api/custom-factors/
+{'POST', 'OPTIONS'} /api/custom-factors
+{'PUT', 'OPTIONS'} /api/custom-factors/<int:factor_id>
+{'DELETE', 'OPTIONS'} /api/custom-factors/<int:factor_id>
+{'POST', 'OPTIONS'} /api/custom-factors/import
+{'HEAD', 'GET', 'OPTIONS'} /api/scope2
+{'POST', 'OPTIONS'} /api/scope2
+{'PUT', 'OPTIONS'} /api/scope2/<int:emission_id>
+{'DELETE', 'OPTIONS'} /api/scope2/<int:emission_id>
+{'POST', 'OPTIONS'} /api/scope2/bulk-import
+{'HEAD', 'GET', 'OPTIONS'} /api/scope2/emission-factors
+{'HEAD', 'GET', 'OPTIONS'} /api/scope3
+{'POST', 'OPTIONS'} /api/scope3
+{'PUT', 'OPTIONS'} /api/scope3/<int:emission_id>
+{'DELETE', 'OPTIONS'} /api/scope3/<int:emission_id>
+{'POST', 'OPTIONS'} /api/scope3/bulk-import
+{'POST', 'OPTIONS'} /api/scope3/eeio-calculate
+{'HEAD', 'GET', 'OPTIONS'} /api/sources/
+{'HEAD', 'GET', 'OPTIONS'} /api/sources
+{'POST', 'OPTIONS'} /api/sources/
+{'POST', 'OPTIONS'} /api/sources
+{'DELETE', 'OPTIONS'} /api/sources/<int:source_id>
+{'POST', 'OPTIONS'} /api/sources/bulk-import
+{'HEAD', 'GET', 'OPTIONS'} /api/mitigation/
+{'HEAD', 'GET', 'OPTIONS'} /api/mitigation
+{'POST', 'OPTIONS'} /api/mitigation/
+{'POST', 'OPTIONS'} /api/mitigation
+{'DELETE', 'OPTIONS'} /api/mitigation/<string:mitigation_id>
+{'HEAD', 'GET', 'OPTIONS'} /api/reporting-metadata
+{'POST', 'OPTIONS'} /api/reporting-metadata
+{'HEAD', 'GET', 'OPTIONS'} /api/production/years
+{'HEAD', 'GET', 'OPTIONS'} /api/filters/available
+{'POST', 'OPTIONS'} /api/mitigation/bulk-import
+{'HEAD', 'GET', 'OPTIONS'} /api/goals/
+{'HEAD', 'GET', 'OPTIONS'} /api/goals
+{'POST', 'OPTIONS'} /api/goals/
+{'POST', 'OPTIONS'} /api/goals
+{'DELETE', 'OPTIONS'} /api/goals/<int:year>
+{'HEAD', 'GET', 'OPTIONS'} /api/base-years/
+{'HEAD', 'GET', 'OPTIONS'} /api/base-years
+{'POST', 'OPTIONS'} /api/base-years/
+{'POST', 'OPTIONS'} /api/base-years
+{'DELETE', 'OPTIONS'} /api/base-years/<int:rec_id>
+{'HEAD', 'GET', 'POST', 'OPTIONS'} /api/manage/sbti
+{'HEAD', 'GET', 'POST', 'OPTIONS'} /api/sbti
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/stats/
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/stats
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/segments
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/by-segment/<segment>
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/process-types
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/process-types/<segment>
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/by-process/<process_category>
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/by-segment-and-process
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/search
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/uncertainties
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/stats
+{'HEAD', 'GET', 'OPTIONS'} /api/emission-factors/version
+{'HEAD', 'GET', 'OPTIONS'} /api/notifications/
+{'HEAD', 'GET', 'OPTIONS'} /api/notifications/stream
+{'PUT', 'OPTIONS'} /api/notifications/<int:id>/read
+{'POST', 'OPTIONS'} /api/notifications/dismiss-all
+{'DELETE', 'OPTIONS'} /api/notifications/<int:id>
+{'DELETE', 'OPTIONS'} /api/notifications/all
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/stats/
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/stats
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/filters/
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/filters
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/export/
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/export
+{'HEAD', 'GET', 'OPTIONS'} /api/audit/verify-chain
+{'POST', 'OPTIONS'} /api/satellite/sentinel5p/test-connection
+{'HEAD', 'GET', 'OPTIONS'} /api/satellite/sentinel5p/layer-config
+{'HEAD', 'GET', 'POST', 'OPTIONS'} /api/satellite/sentinel5p/facility-timeseries
+{'HEAD', 'GET', 'POST', 'OPTIONS'} /api/satellite/sentinel5p/query
+{'POST', 'OPTIONS'} /api/satellite/sentinel5p/export-to-ogmp
+{'POST', 'OPTIONS'} /api/satellite/sentinel5p/poll-new-passes
+{'HEAD', 'GET', 'OPTIONS'} /api/qaqc/dashboard
+{'HEAD', 'GET', 'OPTIONS'} /api/qaqc/export
+{'POST', 'OPTIONS'} /api/qaqc/resolve/<int:record_id>
+{'POST', 'OPTIONS'} /api/qaqc/bulk-resolve
+{'HEAD', 'GET', 'OPTIONS'} /api/docs/dist/<path:filename>
+{'HEAD', 'GET', 'OPTIONS'} /api/docs/<path:path>
+{'HEAD', 'GET', 'OPTIONS'} /api/docs/
+{'HEAD', 'GET', 'OPTIONS'} /api/csrf-token
+{'HEAD', 'GET', 'OPTIONS'} /api/health
+{'HEAD', 'GET', 'OPTIONS'} /api/health/live
+{'HEAD', 'GET', 'OPTIONS'} /api/health/ready
+

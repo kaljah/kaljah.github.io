@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+Statuses in top 100 by co2e: {'Rejected', 'Pending'}
+Remaining after top 100: 8740 Rejected 100.0
+Remaining after top 100: 10281 Rejected 100.0
+Remaining after top 100: 11829 Rejected 100.0
+Remaining after top 100: 14870 Rejected 100.0
+Remaining after top 100: 16411 Rejected 100.0
+Remaining after top 100: 17952 Rejected 100.0
+Remaining after top 100: 19493 Rejected 100.0
+Remaining after top 100: 21034 Rejected 100.0
+Remaining after top 100: 22575 Rejected 100.0
+Remaining after top 100: 24116 Rejected 100.0
+

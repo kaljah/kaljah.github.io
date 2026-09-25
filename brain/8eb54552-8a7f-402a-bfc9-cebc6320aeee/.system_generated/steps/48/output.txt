@@ -1,0 +1,4 @@
+## Console messages
+Showing 1-2 of 2 (Page 1 of 1).
+msgid=2 [log] [Report] Fetching emissions with params: [object Object] | regionId:  (4 args)
+msgid=3 [log] [Report] Raw emissions fetched: 23 records for year 2026 (1 args)

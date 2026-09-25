@@ -1,0 +1,81 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\layout\TopBar.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -191,4 +191,75 @@
+   gap: 12px;
+   margin-left: 15px;
+ }
++
++/* Mobile Hamburger Button */
++.mobile-hamburger-btn {
++  display: none;
++  background: transparent;
++  border: none;
++  color: var(--text-primary);
++  padding: 8px;
++  border-radius: 8px;
++  cursor: pointer;
++  align-items: center;
++  justify-content: center;
++  transition: all 0.2s ease;
++  flex-shrink: 0;
++}
++
++.mobile-hamburger-btn:hover {
++  background: rgba(0, 0, 0, 0.05);
++}
++
++@media (max-width: 768px) {
++  .top-bar {
++    min-height: 56px;
++    padding: 6px 12px;
++    gap: 8px;
++  }
++
++  .mobile-hamburger-btn {
++    display: flex;
++  }
++
++  .top-bar-left-section {
++    gap: 8px;
++    min-width: 0;
++  }
++
++  .breadcrumbs {
++    padding-right: 8px;
++    font-size: 0.82rem;
++  }
++
++  .top-bar-injected-left {
++    overflow-x: auto;
++    -webkit-overflow-scrolling: touch;
++    scrollbar-width: none;
++  }
++
++  .top-bar-injected-left::-webkit-scrollbar {
++    display: none;
++  }
++
++  .user-name-top {
++    display: none;
++  }
++
++  .top-actions {
++    gap: 6px;
++  }
++}
++
++@media (max-width: 480px) {
++  .breadcrumbs span {
++    display: none;
++  }
++
++  .breadcrumbs {
++    border-right: none;
++    padding-right: 2px;
++  }
++}
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

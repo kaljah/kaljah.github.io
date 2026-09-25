@@ -1,0 +1,169 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+            pressure=p_psig,
+            events=events,
+            ch4_content=ch4,
+            uncertainties={},
+            operating_temperature=temp_f,
+            temp_unit="F",
+            press_unit="psig",
+            z_factor=z,
+            gwp_dict=GWP_AR5,
+        )
+        ref = IndependentBlowdown.calculate(
+            blowdown_volume=v_phys_m3,
+            pressure=p_psig,
+            events=events,
+            ch4_content=ch4,
+            temp=temp_f,
+            z_factor=z,
+            press_unit="psig",
+            temp_unit="F",
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(res["emissions"]["ch4"]["value"], rel=1e-4) == ref["ch4"]
+                             ^^^^^^^^^^^^^^^^
+E       KeyError: 'emissions'
+
+new\server\tests\test_battery_midstream_process_equipment.py:256: KeyError
+___________ TestBlowdownBattery.test_blowdown_with_flaring_recovery ___________
+
+self = <test_battery_midstream_process_equipment.TestBlowdownBattery object at 0x00000240EB167AA0>
+
+    def test_blowdown_with_flaring_recovery(self):
+        calc = BlowdownCalculator()
+        v_phys_m3 = 50.0
+        res = calc.calculate(
+            blowdown_volume=v_phys_m3,
+            pressure=500.0,
+            events=2,
+            ch4_content=0.85,
+            uncertainties={},
+            control_efficiency=0.98,
+            hhv=1020.0,
+            gwp_dict=GWP_AR5,
+        )
+        # 98% controlled should result in both CO2 and unburnt CH4 emissions
+>       assert res["emissions"]["co2"]["value"] > 0
+               ^^^^^^^^^^^^^^^^
+E       KeyError: 'emissions'
+
+new\server\tests\test_battery_midstream_process_equipment.py:273: KeyError
+______ TestTankFlashingBattery.test_flashing_gor_with_vapor_destruction _______
+
+self = <test_battery_midstream_process_equipment.TestTankFlashingBattery object at 0x00000240EB167D70>
+
+    def test_flashing_gor_with_vapor_destruction(self):
+        calc = TankFlashingCalculator()
+        throughput_bbl = 25000.0
+        gor = 42.0  # scf/bbl
+        ctrl = 0.95  # 95% flare combustor
+        res = calc.calculate(
+            throughput=throughput_bbl,
+            gas_oil_ratio=gor,
+            ch4_content=0.75,
+            control_efficiency=ctrl,
+            uncertainties={},
+            process_type="tank_flashing",
+            gwp_dict=GWP_AR5,
+        )
+        ref = IndependentStorageTanks.calculate(
+            throughput=throughput_bbl,
+            gas_oil_ratio=gor,
+            ch4_content=0.75,
+            control_efficiency=ctrl,
+            process_type="tank_flashing",
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(res["emissions"]["ch4"]["value"], rel=1e-4) == ref["ch4"]
+                             ^^^^^^^^^^^^^^^^
+E       KeyError: 'emissions'
+
+new\server\tests\test_battery_midstream_process_equipment.py:304: KeyError
+__________ TestTankFlashingBattery.test_working_breathing_direct_ef ___________
+
+self = <test_battery_midstream_process_equipment.TestTankFlashingBattery object at 0x00000240EB224080>
+
+    def test_working_breathing_direct_ef(self):
+        calc = TankFlashingCalculator()
+        throughput_bbl = 10000.0
+        ef_kg_bbl = 0.015  # kg CH4 / bbl
+        res = calc.calculate(
+            throughput=throughput_bbl,
+            gas_oil_ratio=0,
+            ch4_content=0,
+            control_efficiency=0,
+            uncertainties={},
+            process_type="working_loss",
+            ef_ch4=ef_kg_bbl,
+            gwp_dict=GWP_AR5,
+        )
+        ref = IndependentStorageTanks.calculate(
+            throughput=throughput_bbl,
+            process_type="working_loss",
+            ef_ch4=ef_kg_bbl,
+            gwp_standard="AR5",
+        )
+    
+>       assert pytest.approx(res["emissions"]["ch4"]["value"], rel=1e-5) == ref["ch4"]
+                             ^^^^^^^^^^^^^^^^
+E       KeyError: 'emissions'
+
+new\server\tests\test_battery_midstream_process_equipment.py:329: KeyError
+_________________ TestPneumaticsBattery.test_continuous_bleed _________________
+
+self = <test_battery_midstream_process_equipment.TestPneumaticsBattery object at 0x00000240EB167C20>
+
+    def test_continuous_bleed(self):
+        calc = PneumaticDeviceCalculator()
+        count = 12
+        hours = 8760
+        bleed_scfh = 6.0  # low bleed
+        res = calc.calculate(count=count, hours=hours, bleed_rate=bleed_scfh, ch4_content=0.85, gwp_dict=GWP_AR5)
+        ref = IndependentPneumatics.calculate(count=count, hours=hours, bleed_rate=bleed_scfh, ch4_content=0.85, gwp_standard="AR5")
+    
+>       assert pytest.approx(res["emissions"]["ch4"]["value"], rel=1e-4) == ref["ch4"]
+                             ^^^^^^^^^^^^^^^^
+E       KeyError: 'emissions'
+
+new\server\tests\test_battery_midstream_process_equipment.py:344: KeyError
+________ TestPneumaticsBattery.test_intermittent_actuation_epa_default ________
+
+self = <test_battery_midstream_process_equipment.TestPneumaticsBattery object at 0x00000240EB1676B0>
+
+    def test_intermittent_actuation_epa_default(self):
+        calc = PneumaticDeviceCalculator()
+        count = 4
+        actuations = 500  # 500 events per device
+        # When bleed_rate is None or 0, EPA Subpart W default 13.5 scf/actuation is used
+        res = calc.calculate(count=count, actuations=actuations, bleed_rate=None, ch4_content=0.88, gwp_dict=GWP_AR5)
+        ref = IndependentPneumatics.calculate(count=count, actuations=actuations, bleed_rate=13.5, ch4_content=0.88, gwp_standard="AR5")
+    
+>       assert pytest.approx(res["emissions"]["ch4"]["value"], rel=1e-4) == ref["ch4"]
+                             ^^^^^^^^^^^^^^^^
+E       KeyError: 'emissions'
+
+new\server\tests\test_battery_midstream_process_equipment.py:355: KeyError
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestMudDegassingBattery::test_mud_types_standard_factors[water_based-0.15]
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestMudDegassingBattery::test_mud_types_standard_factors[oil_based-0.35]
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestMudDegassingBattery::test_mud_types_standard_factors[synthetic-0.25]
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestMudDegassingBattery::test_mud_types_standard_factors[unknown_default-0.25]
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestMudDegassingBattery::test_mud_custom_ef_override
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestWellCompletionFlowbackBattery::test_metered_volume_uncontrolled
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestWellCompletionFlowbackBattery::test_rate_duration_with_flaring_partition
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestWellCompletionFlowbackBattery::test_gor_liquid_method
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestLiquidsUnloadingBattery::test_liquids_unloading_imperial_units
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestLiquidsUnloadingBattery::test_liquids_unloading_metric_units
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestBlowdownBattery::test_blowdown_with_z_factor_correction
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestBlowdownBattery::test_blowdown_with_flaring_recovery
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestTankFlashingBattery::test_flashing_gor_with_vapor_destruction
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestTankFlashingBattery::test_working_breathing_direct_ef
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestPneumaticsBattery::test_continuous_bleed
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestPneumaticsBattery::test_intermittent_actuation_epa_default
+============================= 16 failed in 0.98s ==============================
+

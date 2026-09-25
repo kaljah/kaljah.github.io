@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+get_batch_dashboard_data: ['/batch-all']
+get_intensity_trend: ['/intensity-trend']
+get_dashboard_summary: ['/summary']
+get_available_years: ['/years']
+get_mitigation: ['/mitigation']
+get_scope3_summary: ['/scope3/summary']
+get_goal: ['/goals/<int:year>']
+get_base_year: ['/base-year']
+get_categorical_breakdown: ['/categorical-breakdown']
+create_base_year_recalculation: ['/base-year-recalculation']
+get_ogmp_metrics: ['/ogmp-metrics']
+get_intensity_stats: ['/intensity-stats']
+get_uncertainty_analysis: ['/uncertainty']
+get_report_exclusions: ['/exclusions']
+get_sbti_trajectory: ['/sbti-trajectory']
+

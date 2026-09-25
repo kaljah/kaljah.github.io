@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":478,"LineContent":"        if (!window.confirm(`Approve all ${count} pending Scope ${scopeNum} records?`)) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":762,"LineContent":"        if (!confirm(`Delete emission goal for year ${year}?`)) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":801,"LineContent":"        if (!confirm('Delete this base year recalculation entry?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":854,"LineContent":"        if (!confirm('Delete this factor?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":948,"LineContent":"    if (!window.confirm('Delete this CBAM export record?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":989,"LineContent":"        if (!confirm('Delete this OGMP survey record?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1000,"LineContent":"        if (!window.confirm('Delete this region?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1011,"LineContent":"        if (!window.confirm('Delete this production record?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1022,"LineContent":"        if (!window.confirm('Delete this emission source?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1033,"LineContent":"        if (!window.confirm('Delete this mitigation project?')) return;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":562,"LineContent":"      !window.confirm(\"Are you sure you want to completely remove this user?\")"}

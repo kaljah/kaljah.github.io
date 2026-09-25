@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+Name: requests
+Version: 2.32.5
+Summary: Python HTTP for Humans.
+Home-page: https://requests.readthedocs.io
+Author: Kenneth Reitz
+Author-email: me@kennethreitz.org
+License: Apache-2.0
+Location: C:\Users\samsung\anaconda3\Lib\site-packages
+Requires: certifi, charset_normalizer, idna, urllib3
+Required-by: anaconda-catalogs, anaconda-client, anaconda-cloud-auth, anaconda-project, conda, conda-build, conda-repo-cli, conda_package_streaming, cookiecutter, datashader, folium, intake, jupyterlab_server, langchain-classic, langchain-community, langsmith, locust, pandasai, panel, pvlib, requests-file, requests-toolbelt, Sphinx, streamlit, tldextract, webdriver-manager
+---
+Name: playwright
+Version: 1.58.0
+Summary: A high-level API to automate web browsers
+Home-page: 
+Author: Microsoft Corporation
+Author-email: 
+License: 
+Location: C:\Users\samsung\anaconda3\Lib\site-packages
+Requires: greenlet, pyee
+Required-by: 
+

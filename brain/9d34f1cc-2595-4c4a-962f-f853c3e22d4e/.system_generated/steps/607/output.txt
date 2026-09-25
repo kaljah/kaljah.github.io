@@ -1,0 +1,100 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\stoichiometry.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -82,4 +82,94 @@
+             total_co2e=total_co2e,
+             inputs={"fuel_mass": fuel_mass, "carbon_content": carbon_content, "oxidation_factor": ox},
+         )
++
++
++class NitricAcidCalculator(BaseCalculator):
++    def __init__(self):
++        super().__init__("Nitric/Adipic Acid Production", "API Compendium Section 6 / IPCC")
++
++    def calculate(
++        self,
++        production_amount,
++        ef_n2o=None,
++        abatement_efficiency=0.0,
++        mass_unit="tonne",
++        uncertainties=None,
++        gwp_dict=None,
++        process_type="nitric_acid_production",
++    ):
++        """
++        API Compendium 2021 Section 6, pg 407 / IPCC 2006 Vol 3 Ch 3:
++        N2O emissions from catalytic oxidation of ammonia (nitric acid) or cyclohexanone oxidation (adipic acid).
++        N2O (kg) = Production (tonnes) * EF_N2O (kg/tonne) * (1 - Abatement_Efficiency)
++        """
++        self.validate_inputs(
++            {"production_amount": production_amount},
++            ["production_amount"],
++        )
++
++        norm_mass = float(production_amount)
++        u = str(mass_unit).strip().lower()
++        if u in ["lb", "lbs", "pound", "pounds"]:
++            norm_tonnes = norm_mass * CONVERSIONS["lb_to_kg"] / 1000.0
++        elif u in ["tonne", "tonnes", "metric_ton", "metric_tons", "mt", "t"]:
++            norm_tonnes = norm_mass
++        elif u in ["ton", "tons", "short_ton", "short_tons", "us_ton"]:
++            norm_tonnes = norm_mass * CONVERSIONS["short_ton_to_kg"] / 1000.0
++        elif u in ["kg", "kgs", "kilogram", "kilograms"]:
++            norm_tonnes = norm_mass / 1000.0
++        elif u in ["g", "gram", "grams"]:
++            norm_tonnes = norm_mass / 1_000_000.0
++        else:
++            try:
++                from .units import convert
++                norm_tonnes = convert(norm_mass, mass_unit, "tonne")
++            except Exception:
++                norm_tonnes = norm_mass
++
++        # Emission factor EF_N2O in kg N2O / tonne product
++        if ef_n2o is not None and float(ef_n2o) > 0:
++            ef = float(ef_n2o)
++        else:
++            # Default factors per API Compendium 2021 Section 6, pg 407
++            if "adipic" in str(process_type).lower():
++                ef = 300.0  # uncontrolled adipic acid default kg N2O/t
++            else:
++                ef = 9.0    # uncontrolled nitric acid default kg N2O/t
++
++        # Abatement efficiency
++        abatement_eff = float(abatement_efficiency or 0.0)
++        if abatement_eff > 1.0:
++            abatement_eff /= 100.0
++        abatement_eff = max(0.0, min(1.0, abatement_eff))
++
++        n2o_kg = norm_tonnes * ef * (1.0 - abatement_eff)
++        n2o_tonnes = n2o_kg / 1000.0
++
++        uncertainties = uncertainties or {}
++        _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
++        n2o_res = propagate_uncertainty(
++            n2o_tonnes,
++            resolve_ef_uncertainty(
++                "chemical_production", "n2o", _tier, uncertainties.get("n2o", 0.15)
++            ),
++            tier=_tier,
++            process_category="chemical_production",
++            gas="n2o",
++        )
++        total_co2e = calculate_co2e(co2=0.0, ch4=0.0, n2o=n2o_tonnes, gwp_dict=gwp_dict)
++
++        return self.format_result(
++            co2=0.0,
++            ch4=0.0,
++            n2o=n2o_res,
++            total_co2e=total_co2e,
++            inputs={
++                "production_amount": production_amount,
++                "ef_n2o": ef,
++                "abatement_efficiency": abatement_eff,
++                "unit": mass_unit,
++            },
++        )
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

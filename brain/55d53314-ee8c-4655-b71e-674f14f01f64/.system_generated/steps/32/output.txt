@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+new/server/models.py:177:    updated_by = db.Column(db.Integer, db.ForeignKey("users.id"))
+

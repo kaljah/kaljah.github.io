@@ -1,0 +1,62 @@
+
+The command exited with code 0.
+Output:
+[ {
+   "description": "",
+   "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/inspector.html?ws=127.0.0.1:9222/devtools/page/CFC08A23B5D51359B35B1D72BA4CC8AE",
+   "id": "CFC08A23B5D51359B35B1D72BA4CC8AE",
+   "title": "Chrome Web Store Payments",
+   "type": "background_page",
+   "url": "chrome-extension://nmmhkkegccagdldgiimedpiccmgmieda/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/CFC08A23B5D51359B35B1D72BA4CC8AE"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/inspector.html?ws=127.0.0.1:9222/devtools/page/3CA1728DEB069D7DAF498785E27749F1",
+   "id": "3CA1728DEB069D7DAF498785E27749F1",
+   "title": "Google Hangouts",
+   "type": "background_page",
+   "url": "chrome-extension://nkeimhogjdpnpccoofpliimaahmaaome/background.html",
+   "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/3CA1728DEB069D7DAF498785E27749F1"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/inspector.html?ws=127.0.0.1:9222/devtools/page/377C8B1D5008B4086DEACC86E23F70B6",
+   "faviconUrl": "http://localhost:5173/carbon_tech.svg",
+   "id": "377C8B1D5008B4086DEACC86E23F70B6",
+   "title": "Carbon Tech",
+   "type": "page",
+   "url": "http://localhost:5173/login",
+   "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/377C8B1D5008B4086DEACC86E23F70B6"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/inspector.html?ws=127.0.0.1:9222/devtools/page/5620D0075934764A9EFC2F8AAA8BFF87",
+   "id": "5620D0075934764A9EFC2F8AAA8BFF87",
+   "title": "Omnibox Popup",
+   "type": "browser_ui",
+   "url": "chrome://omnibox-popup.top-chrome/",
+   "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/5620D0075934764A9EFC2F8AAA8BFF87"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/inspector.html?ws=127.0.0.1:9222/devtools/page/D7066D0F9D96661FD410030D88956489",
+   "id": "D7066D0F9D96661FD410030D88956489",
+   "title": "Omnibox Popup",
+   "type": "browser_ui",
+   "url": "chrome://omnibox-popup.top-chrome/omnibox_popup_aim.html",
+   "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/D7066D0F9D96661FD410030D88956489"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/worker_app.html?ws=127.0.0.1:9222/devtools/page/F4A72CDE9811A0A19EECDB190399A285",
+   "id": "F4A72CDE9811A0A19EECDB190399A285",
+   "title": "Service Worker chrome-extension://fignfifoniblkonapihmkfakmlgkbkcf/service_worker.js",
+   "type": "service_worker",
+   "url": "chrome-extension://fignfifoniblkonapihmkfakmlgkbkcf/service_worker.js",
+   "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/F4A72CDE9811A0A19EECDB190399A285"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "https://chrome-devtools-frontend.appspot.com/serve_rev/@792bf6722e73a45aa9e47c163b9901bdc17f3230/worker_app.html?ws=127.0.0.1:9222/devtools/page/48E0A64C2AC8533D94FA1743694CD663",
+   "id": "48E0A64C2AC8533D94FA1743694CD663",
+   "title": "Service Worker chrome-extension://ghbmnnjooekpmoecnnnilnnbdlolhkhi/service_worker_bin_prod.js",
+   "type": "service_worker",
+   "url": "chrome-extension://ghbmnnjooekpmoecnnnilnnbdlolhkhi/service_worker_bin_prod.js",
+   "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/48E0A64C2AC8533D94FA1743694CD663"
+} ]
+

@@ -1,0 +1,17 @@
+Task: 09b5d183-b630-4b7f-9ff2-a124ffb240d4/task-59
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\09b5d183-b630-4b7f-9ff2-a124ffb240d4\.system_generated\tasks\task-59.log
+Log output:
+<truncated 10177 lines>
+\test_rate_limiting.py::test_login_rate_limit_exceeded
+FAILED new\server\tests\test_security_hardening.py::test_dev_account_a_at_a_does_not_exist
+FAILED new\server\tests\test_security_hardening.py::test_dev_account_bare_a_does_not_exist
+FAILED new\server\tests\test_security_hardening.py::test_init_admin_route_removed
+FAILED new\server\tests\test_stress_bulk_pipeline.py::TestConcurrentBulkIngestionPipeline::test_eight_concurrent_bulk_upload_jobs
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_session_and_token_isolation
+FAILED new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_calculation_loop_memory_profile
+FAILED new\server\tests\test_zero_trust_adversarial.py::test_lookup_api_factor_resilience
+32 failed, 1006 passed, 40 warnings in 105.89s (0:01:45)
+
+Last progress: 4s ago

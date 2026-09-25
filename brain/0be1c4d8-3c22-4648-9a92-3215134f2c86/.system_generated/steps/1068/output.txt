@@ -1,0 +1,97 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UncertaintyAssessment.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -178,24 +178,6 @@
+     );
+   }
+ 
+-  if (!data) {
+-    return (
+-      <div className="uncertainty-assessment">
+-        <div className="ua-methodology-box">
+-          <Info size={24} className="ua-methodology-icon" />
+-          <div>
+-            <h4>No Uncertainty Data Available</h4>
+-            <p>
+-              No verified emission records found for the selected filters.
+-              Ensure emissions have been submitted and verified before running
+-              the uncertainty assessment.
+-            </p>
+-          </div>
+-        </div>
+-      </div>
+-    );
+-  }
+-
+   return (
+     <div className="uncertainty-assessment">
+       {/* ── Page Header ── */}
+@@ -206,19 +206,21 @@
+             inventory, compliant with ISO 14064-1 §7.5 and IPCC 2006 GL Vol.1
+             §3.3.
+           </p>
+-          <div className="ua-inventory-badge">
+-            <div className="ua-inventory-label">Inventory Uncertainty</div>
+-            <div
+-              className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
+-            >
+-              {data.inventory_uncertainty_pct}
+-            </div>
+-            {data.confidence_level_pct && (
+-              <div className="ua-confidence-badge">
+-                {data.confidence_level_pct}% CI (k={data.coverage_factor})
+-              </div>
+-            )}
+-          </div>
++          {data && (
++            <div className="ua-inventory-badge">
++              <div className="ua-inventory-label">Inventory Uncertainty</div>
++              <div
++                className={`ua-inventory-value ${getUncertaintyLevel(data.inventory_uncertainty_decimal)}`}
++              >
++                {data.inventory_uncertainty_pct}
++              </div>
++              {data.confidence_level_pct && (
++                <div className="ua-confidence-badge">
++                  {data.confidence_level_pct}% CI (k={data.coverage_factor})
++                </div>
++              )}
++            </div>
++          )}
+         </div>
+ 
+         <div className="ua-controls">
+@@ -249,7 +249,7 @@
+           <button
+             className="ua-export-btn"
+             onClick={handleExport}
+-            disabled={exporting}
++            disabled={exporting || !data}
+             title="Export uncertainty assessment as CSV"
+           >
+             <Download size={16} />
+@@ -257,7 +257,21 @@
+         </div>
+       </div>
+ 
+-      {/* ── Tier Breakdown Cards ── */}
++      {!data ? (
++        <div className="ua-methodology-box" style={{ marginTop: "24px" }}>
++          <Info size={24} className="ua-methodology-icon" />
++          <div>
++            <h4>No Uncertainty Data Available</h4>
++            <p>
++              No verified emission records found for the selected filters.
++              Ensure emissions have been submitted and verified before running
++              the uncertainty assessment.
++            </p>
++          </div>
++        </div>
++      ) : (
++        <>
++          {/* ── Tier Breakdown Cards ── */}
+       <div className="ua-tier-grid">
+         {Object.entries(data.tier_breakdown || {}).map(([tier, pct]) => (
+           <div key={tier} className="ua-tier-card">
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

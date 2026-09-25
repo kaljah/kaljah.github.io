@@ -1,0 +1,82 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -48,6 +48,10 @@
+ from calculations.constants import GWP_AR4, GWP_AR5, GWP_AR6, get_active_gwp
+ 
+ 
++from app import app as flask_app
++from extensions import db
++
++
+ # ==============================================================================
+ # FIXTURES
+ # ==============================================================================
+@@ -54,14 +54,33 @@
++@pytest.fixture(scope="module")
++def app():
++    flask_app.config["TESTING"] = True
++    flask_app.config["WTF_CSRF_ENABLED"] = False
++    with flask_app.app_context():
++        db.create_all()
++        yield flask_app
++        db.session.remove()
++
++
++@pytest.fixture
++def db_session(app):
++    with app.app_context():
++        yield db.session
++        db.session.rollback()
++
++
+ @pytest.fixture
+ def test_user(db_session):
+-    u = User(
+-        email="adversarial_qa@ghg.com",
+-        fullName="Metrology Auditor",
+-        role="admin",
+-        location="Global",
+-    )
+-    u.set_password("SecureMetrology2026!")
+-    db_session.add(u)
+-    db_session.commit()
++    u = User.query.filter_by(email="adversarial_qa@ghg.com").first()
++    if not u:
++        u = User(
++            email="adversarial_qa@ghg.com",
++            fullName="Metrology Auditor",
++            role="admin",
++            location="Global",
++        )
++        u.set_password("SecureMetrology2026!")
++        db_session.add(u)
++        db_session.commit()
+     return u
+ 
+ 
+@@ -68,12 +68,14 @@
+ def test_facility(db_session, test_user):
+-    f = Facility(
+-        name="Hassi Messaoud Central Unit",
+-        location="Ouargla",
+-        segment="Upstream",
+-        created_by=test_user.id,
+-    )
+-    db_session.add(f)
+-    db_session.commit()
++    f = Facility.query.filter_by(name="Hassi Messaoud Central Unit").first()
++    if not f:
++        f = Facility(
++            name="Hassi Messaoud Central Unit",
++            location="Ouargla",
++            segment="Upstream",
++            created_by=test_user.id,
++        )
++        db_session.add(f)
++        db_session.commit()
+     return f
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

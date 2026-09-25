@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+1,234.568
+0.00037
+18.947
+

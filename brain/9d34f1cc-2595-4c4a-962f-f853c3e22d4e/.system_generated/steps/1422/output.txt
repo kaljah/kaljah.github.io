@@ -1,0 +1,86 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 52 items
+
+test_emission_calculations.py::TestTier1Combustion::test_ch4_tier1 PASSED [  1%]
+test_emission_calculations.py::TestTier1Combustion::test_co2_tier1 PASSED [  3%]
+test_emission_calculations.py::TestTier1Combustion::test_co2e_total PASSED [  5%]
+test_emission_calculations.py::TestTier1Combustion::test_n2o_tier1 PASSED [  7%]
+test_emission_calculations.py::TestTier1Combustion::test_structure PASSED [  9%]
+test_emission_calculations.py::TestTier1Combustion::test_unit_m3 PASSED  [ 11%]
+test_emission_calculations.py::TestTier1CombustionDiesel::test_ch4_diesel PASSED [ 13%]
+test_emission_calculations.py::TestTier1CombustionDiesel::test_co2_diesel PASSED [ 15%]
+test_emission_calculations.py::TestTier1CombustionDiesel::test_co2e_diesel PASSED [ 17%]
+test_emission_calculations.py::TestTier1CombustionDiesel::test_n2o_diesel PASSED [ 19%]
+test_emission_calculations.py::TestTier1Flaring::test_tier1_flaring_fallback_ch4 PASSED [ 21%]
+test_emission_calculations.py::TestTier1Flaring::test_tier1_flaring_fallback_co2 PASSED [ 23%]
+test_emission_calculations.py::TestTier3Flaring::test_tier3_flaring_ch4 PASSED [ 25%]
+test_emission_calculations.py::TestTier3Flaring::test_tier3_flaring_co2 PASSED [ 26%]
+test_emission_calculations.py::TestTier3Flaring::test_tier3_flaring_co2e PASSED [ 28%]
+test_emission_calculations.py::TestTier1Venting::test_venting_ch4 PASSED [ 30%]
+test_emission_calculations.py::TestTier1Venting::test_venting_co2e PASSED [ 32%]
+test_emission_calculations.py::TestTier3TankFlashing::test_tank_ch4 PASSED [ 34%]
+test_emission_calculations.py::TestTier3TankFlashing::test_tank_co2e PASSED [ 36%]
+test_emission_calculations.py::TestTier3PneumaticDevices::test_pneumatic_ch4 PASSED [ 38%]
+test_emission_calculations.py::TestTier3PneumaticDevices::test_pneumatic_co2e PASSED [ 40%]
+test_emission_calculations.py::TestTier3LiquidsUnloading::test_unloading_ch4 PASSED [ 42%]
+test_emission_calculations.py::TestTier3LiquidsUnloading::test_unloading_co2e PASSED [ 44%]
+test_emission_calculations.py::TestTier1DrillingMud::test_mud_ch4 PASSED [ 46%]
+test_emission_calculations.py::TestTier1DrillingMud::test_mud_co2e PASSED [ 48%]
+test_emission_calculations.py::TestTier1DrillingMud::test_oil_based_mud PASSED [ 50%]
+test_emission_calculations.py::TestTier3Completions::test_completions_ch4 FAILED [ 51%]
+test_emission_calculations.py::TestTier3Completions::test_completions_co2e PASSED [ 53%]
+test_emission_calculations.py::TestTier1FugitiveAverage::test_fugitive_average_ch4 PASSED [ 55%]
+test_emission_calculations.py::TestCO2ECalculation::test_ar4_gwp PASSED  [ 57%]
+test_emission_calculations.py::TestCO2ECalculation::test_ar6_gwp PASSED  [ 59%]
+test_emission_calculations.py::TestCO2ECalculation::test_mixed PASSED    [ 61%]
+test_emission_calculations.py::TestCO2ECalculation::test_pure_ch4_ar5 PASSED [ 63%]
+test_emission_calculations.py::TestCO2ECalculation::test_pure_co2 PASSED [ 65%]
+test_emission_calculations.py::TestCO2ECalculation::test_pure_n2o_ar5 PASSED [ 67%]
+test_emission_calculations.py::TestUnitConversions::test_bbl_to_m3 PASSED [ 69%]
+test_emission_calculations.py::TestUnitConversions::test_density_ch4 PASSED [ 71%]
+test_emission_calculations.py::TestUnitConversions::test_density_co2 PASSED [ 73%]
+test_emission_calculations.py::TestUnitConversions::test_m3_to_scf PASSED [ 75%]
+test_emission_calculations.py::TestUnitConversions::test_scf_m3_roundtrip PASSED [ 76%]
+test_emission_calculations.py::TestUnitConversions::test_scf_to_m3 PASSED [ 78%]
+test_emission_calculations.py::TestEdgeCases::test_combustion_mscf_unit PASSED [ 80%]
+test_emission_calculations.py::TestEdgeCases::test_mmscf_unit_combustion PASSED [ 82%]
+test_emission_calculations.py::TestEdgeCases::test_negative_quantity_raises PASSED [ 84%]
+test_emission_calculations.py::TestEdgeCases::test_tank_zero_gor_returns_zero PASSED [ 86%]
+test_emission_calculations.py::TestEdgeCases::test_zero_quantity_combustion PASSED [ 88%]
+test_emission_calculations.py::TestTier3CombustionGasComposition::test_tier3_combustion_co2 PASSED [ 90%]
+test_emission_calculations.py::TestProcessRowIntegration::test_combustion_process_row PASSED [ 92%]
+test_emission_calculations.py::TestProcessRowIntegration::test_flaring_process_row PASSED [ 94%]
+test_emission_calculations.py::TestProcessRowIntegration::test_missing_date_returns_error PASSED [ 96%]
+test_emission_calculations.py::TestProcessRowIntegration::test_missing_facility_returns_error PASSED [ 98%]
+test_emission_calculations.py::TestProcessRowIntegration::test_venting_process_row PASSED [100%]
+
+================================== FAILURES ===================================
+__________________ TestTier3Completions.test_completions_ch4 __________________
+
+self = <test_emission_calculations.TestTier3Completions testMethod=test_completions_ch4>
+
+    def test_completions_ch4(self):
+        ch4 = extract_val(self.result["results"]["ch4"])
+>       self.assertAlmostEqual(
+            ch4,
+            self.expected_ch4,
+            places=2,
+            msg=f"Completions CH4: got {ch4}, expected {self.expected_ch4}",
+        )
+E       AssertionError: 1357000.0 != 27.14 within 2 places (1356972.86 difference) : Completions CH4: got 1357000.0, expected 27.14
+
+test_emission_calculations.py:721: AssertionError
+=========================== short test summary info ===========================
+FAILED test_emission_calculations.py::TestTier3Completions::test_completions_ch4
+======================== 1 failed, 51 passed in 4.01s =========================
+

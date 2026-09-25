@@ -1,0 +1,12 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-3154
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-3154.log
+Log output:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Users\samsung\Desktop\H2\new/server\calculations\legacy_engine.py", line 396, in compute_emissions
+    amount = float(payload.get("quantity") or payload.get("amount") or 0)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: could not convert string to float: '1250,50'
+
+Last progress: 3s ago

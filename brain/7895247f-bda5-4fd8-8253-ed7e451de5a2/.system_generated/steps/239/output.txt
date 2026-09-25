@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -52,6 +52,17 @@
+         'gas': d.gas_amount,
+         'oilUnit': d.oil_unit,
+         'gasUnit': d.gas_unit,
++        'gross_gas_mmsm3': d.gross_gas_mmsm3 or 0.0,
++        'gas_without_injected_mmsm3': d.gas_without_injected_mmsm3 or 0.0,
++        'injected_gas_mmsm3': d.injected_gas_mmsm3 or 0.0,
++        'crude_oil_mmboe': d.crude_oil_mmboe or 0.0,
++        'condensate_mmboe': d.condensate_mmboe or 0.0,
++        'lpg_mmboe': d.lpg_mmboe or 0.0,
++        'ngl_mmboe': d.ngl_mmboe or 0.0,
++        'total_production_mmboe': d.total_production_mmboe or 0.0,
++        'total_production_no_injected_mmboe': d.total_production_no_injected_mmboe or 0.0,
++        'saleable_production_mmboe': d.saleable_production_mmboe or 0.0,
++        'fuel_gas_export_mmsm3': d.fuel_gas_export_mmsm3 or 0.0,
+         'activity': d.activity,
+         'division': d.division,
+         'field': d.field
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

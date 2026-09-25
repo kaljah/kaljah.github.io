@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   6:23 PM                accessibility                                                        
+d-----         9/20/2026   6:23 PM                api                                                                  
+d-----         9/20/2026   6:32 PM                calculation                                                          
+d-----         9/20/2026   6:23 PM                database                                                             
+d-----         9/20/2026   6:38 PM                differential                                                         
+d-----         9/20/2026   6:23 PM                e2e                                                                  
+d-----         9/20/2026  10:10 AM                expected_results                                                     
+d-----         9/20/2026   6:25 PM                golden_data                                                          
+d-----         9/20/2026  10:10 AM                golden_dataset                                                       
+d-----         9/20/2026   6:23 PM                integration                                                          
+d-----         9/20/2026   6:34 PM                mutation                                                             
+d-----         9/20/2026   6:23 PM                performance                                                          
+d-----         9/20/2026   6:33 PM                property                                                             
+d-----         9/20/2026   6:24 PM                reference_model                                                      
+d-----         9/20/2026  10:11 AM                regression                                                           
+d-----         9/20/2026   6:39 PM                reports                                                              
+d-----         9/20/2026  10:34 AM                scripts                                                              
+d-----         9/20/2026   6:23 PM                security                                                             
+d-----         9/20/2026  10:10 AM                test_cases                                                           
+d-----         9/20/2026   6:23 PM                unit                                                                 
+d-----         9/20/2026  10:09 AM                __pycache__                                                          
+-a----         9/20/2026  10:08 AM             67 __init__.py                                                          
+
+
+

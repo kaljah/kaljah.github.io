@@ -1,0 +1,95 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 8 items
+
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_astronomical_quantities_resilience FAILED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_microscopic_quantities_resilience FAILED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_nan_infinity_rejection_or_handling FAILED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_nan_and_inf_api_rejection PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_giant_one_megabyte_string_payload PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_formula_injection_sanitization PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_corrupted_and_empty_json_payloads PASSED
+new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceAPI::test_unicode_and_special_character_burst PASSED
+
+================================== FAILURES ===================================
+____ TestBoundaryResilienceEngine.test_astronomical_quantities_resilience _____
+
+self = <test_stress_boundary_resilience.TestBoundaryResilienceEngine object at 0x00000296A5FC2CC0>
+
+    def test_astronomical_quantities_resilience(self):
+        """Quantities of 10^18 and 10^24 must compute without float overflow or crash."""
+        factor = API_FACTORS.get("Natural Gas", {})
+        magnitudes = [1e18, 1e20, 1e24]
+        for mag in magnitudes:
+            payload = {
+                "process_type": "combustion",
+                "fuel": "Natural Gas",
+                "quantity": mag,
+                "unit": "m3",
+            }
+>           res, method = compute_emissions(payload, factor_data=factor)
+                          ^^^^^^^^^^^^^^^^^
+E           NameError: name 'compute_emissions' is not defined
+
+new\server\tests\test_stress_boundary_resilience.py:89: NameError
+_____ TestBoundaryResilienceEngine.test_microscopic_quantities_resilience _____
+
+self = <test_stress_boundary_resilience.TestBoundaryResilienceEngine object at 0x00000296A5C4E8D0>
+
+    def test_microscopic_quantities_resilience(self):
+        """Quantities of 10^-15 and 10^-20 must compute without underflow errors or ZeroDivision."""
+        factor = API_FACTORS.get("Diesel", {})
+        micros = [1e-12, 1e-15, 1e-20]
+        for micro in micros:
+            payload = {
+                "process_type": "combustion",
+                "fuel": "Diesel",
+                "quantity": micro,
+                "unit": "gal",
+            }
+>           res, method = compute_emissions(payload, factor_data=factor)
+                          ^^^^^^^^^^^^^^^^^
+E           NameError: name 'compute_emissions' is not defined
+
+new\server\tests\test_stress_boundary_resilience.py:112: NameError
+____ TestBoundaryResilienceEngine.test_nan_infinity_rejection_or_handling _____
+
+self = <test_stress_boundary_resilience.TestBoundaryResilienceEngine object at 0x00000296A2C68F20>
+
+    def test_nan_infinity_rejection_or_handling(self):
+        """Passing NaN or Infinity should not produce corrupt database writes."""
+        nan_val = float("nan")
+        inf_val = float("inf")
+    
+        # Check engine behavior
+        try:
+>           res, _ = compute_emissions({
+                     ^^^^^^^^^^^^^^^^^
+                "process_type": "combustion",
+                "fuel": "Natural Gas",
+                "quantity": nan_val,
+                "unit": "m3",
+            })
+E           NameError: name 'compute_emissions' is not defined
+
+new\server\tests\test_stress_boundary_resilience.py:136: NameError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_astronomical_quantities_resilience
+FAILED new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_microscopic_quantities_resilience
+FAILED new\server\tests\test_stress_boundary_resilience.py::TestBoundaryResilienceEngine::test_nan_infinity_rejection_or_handling
+=================== 3 failed, 5 passed, 1 warning in 2.55s ====================
+

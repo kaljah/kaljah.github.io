@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_test_csvs.py","LineNumber":3,"LineContent":"# Scope 2 Test CSV"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_scope2.py","LineNumber":26,"LineContent":"    print(f\"Generating {num_rows} unique rows for Scope 2 CSV...\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_10k_scope2.py","LineNumber":51,"LineContent":"    print(f\"Generated {num_rows} Scope 2 rows at {filepath}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":96,"LineContent":"    \"\"\"Get all Scope 2 emissions, scoped to the requesting user's allowed facilities.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":220,"LineContent":"        # Default Scope 2 uncertainty (5% EF, 2% AD -\u003e ~5.4% combined)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":287,"LineContent":"            details=f\"Created Scope 2 emission: {source_type} ({co2e:.2f} tCO2e, Status: {initial_status})\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":297,"LineContent":"                    title=\"New Scope 2 Emission Pending Review\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":298,"LineContent":"                    message=f\"A new Scope 2 emission record ({source_type}) was submitted by {user.fullName} and is awaiting your approval.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":308,"LineContent":"                \"message\": \"Scope 2 emission created\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":331,"LineContent":"                \"calculation_method\": f\"Scope 2 {source_type.replace('_', ' ').title()}\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":341,"LineContent":"    \"\"\"Update a Scope 2 emission record\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":459,"LineContent":"    return jsonify({\"message\": \"Scope 2 emission updated\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":465,"LineContent":"    \"\"\"Delete a Scope 2 emission record\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":491,"LineContent":"    log_details = f\"Deleted Scope 2 emission: {emission.source_type} ({emission.co2e:.2f} tCO2e, facility #{emission.facility_id})\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":507,"LineContent":"        current_app.logger.error(f\"Failed to delete Scope 2 emission: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":508,"LineContent":"        return jsonify({\"error\": \"Failed to delete Scope 2 record\"}), 500"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":514,"LineContent":"    return jsonify({\"message\": \"Scope 2 emission deleted\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":520,"LineContent":"    \"\"\"Import Scope 2 emissions from CSV data\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":605,"LineContent":"            # Default Scope 2 uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":645,"LineContent":"            f\"Bulk imported {imported_count} Scope 2 records\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":382,"LineContent":"    \"\"\"Verify all Scope 2 utility types: Grid Electricity (Location/Market) and Purchased Steam.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":172,"LineContent":"    # 1. Maker Mode: Regular user saves Scope 2 as Draft with authoritative calculation fallback"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":283,"LineContent":"    \"\"\"Verify viewer/auditor blocked from mutate on Scope 2, and creator ownership enforced.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":315,"LineContent":"    # 1. Viewer cannot create Scope 2 emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":332,"LineContent":"    # 2. Standard user creates Scope 2 emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":350,"LineContent":"    # 3. Viewer cannot update Scope 2 emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":356,"LineContent":"    # 4. Other standard user cannot update another user's Scope 2 emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":362,"LineContent":"    # 5. Record creator CAN update own Scope 2 emission"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":370,"LineContent":"    \"\"\"Verify case-insensitive recalculation and steam_ton mapping in Scope 2.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1041,"LineContent":"    \"\"\"Defect 6: Verify bulk import for Scope 2 \u0026 3 blocks it_admin and enforces allowed_fids.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1285,"LineContent":"    \"\"\"Verify Scope 2 recomputes co2e authoritatively even if client injects an arbitrary co2e.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":120,"LineContent":"    \"\"\"scope=1 should only return Scope 1 categories (no Scope 2/3 groups).\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":126,"LineContent":"    # No Scope 2 or Scope 3 categories should be present"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_uncertainty.py","LineNumber":128,"LineContent":"        assert \"Scope 2\" not in cat[\"category\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":8,"LineContent":"4. Bulk CSV Upload Pipeline for Scope 2 and Scope 3 (All Categories \u0026 Units)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":346,"LineContent":"    \"\"\"Executes the full asynchronous/synchronous file processing pipeline for all 3 Tiers, Scope 2, and Scope 3.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":459,"LineContent":"        \"\"\"Scope 2 Bulk CSV: Location-based electricity, Market-based renewable PPA, and Purchased Steam.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":6,"LineContent":"  2. Scope 2: Location-based, Market-based, Indirect Steam, CHP Cogeneration"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":214,"LineContent":"    \"\"\"Verifies Scope 2 Location-based, Market-based, Steam and Cogeneration equations.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":217,"LineContent":"        \"\"\"Scope 2 Location-Based Method:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":237,"LineContent":"        \"\"\"Scope 2 Market-Based Method:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":254,"LineContent":"        \"\"\"Scope 2 Indirect Steam \u0026 Heat:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":278,"LineContent":"        \"\"\"Scope 2 Cogeneration (CHP) Allocation Methods:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":419,"LineContent":"        Emissions: 150.0 tCO2e (Scope 1: 120.0, Scope 2: 30.0)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":422,"LineContent":"        Scope 2 Intensity = (30.0 * 1000) / 6780 = 4.425 kg CO2e / BOE."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":464,"LineContent":"        \"\"\"GHG Protocol Scope 2 / API Eq. 8-2: Steam net boiler efficiency and distribution loss.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":121,"LineContent":"        # Add verified Scope 2 record"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":234,"LineContent":"    # Verify rows contain Scope 1, Scope 2, Scope 3 (Scope is in column index 1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":237,"LineContent":"        if len(row) \u003e 1 and row[1] in (\"Scope 1\", \"Scope 2\", \"Scope 3\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_reports.py","LineNumber":240,"LineContent":"    assert \"Scope 2\" in scopes_found"}
+(...1 more results not shown)

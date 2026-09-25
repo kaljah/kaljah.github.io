@@ -1,0 +1,22 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\tests
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:33 PM           4429 test_production_smoke.py                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\tests\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026   5:33 PM          18543 test_production_smoke.cpython-312-pytest-9.1.1.pyc                   
+
+
+

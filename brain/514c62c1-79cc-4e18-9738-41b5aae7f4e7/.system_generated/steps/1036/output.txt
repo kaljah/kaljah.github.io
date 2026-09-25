@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Total: 110 Non-rejected: 10 Rejected: 100
+

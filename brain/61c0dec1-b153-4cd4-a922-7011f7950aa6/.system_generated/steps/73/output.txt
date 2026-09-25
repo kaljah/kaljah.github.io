@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_runner.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_memory_leaks.py"}

@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -363,6 +363,9 @@
+ }
+ 
+ .qa-status-filter-btn {
++  display: inline-flex;
++  align-items: center;
++  gap: 6px;
+   padding: 5px 12px;
+   border-radius: 6px;
+   border: 1px solid #e2e8f0;
+@@ -373,6 +373,19 @@
+   transition: all 0.15s ease;
+ }
+ 
++.qa-status-pill-count {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 1px 6px;
++  border-radius: 10px;
++  font-size: 0.7rem;
++  font-weight: 700;
++  background: #f1f5f9;
++  color: #475569;
++  line-height: 1.2;
++}
++
+ .qa-status-filter-btn:hover {
+   color: #0f172a;
+   border-color: #cbd5e1;
+@@ -383,6 +383,11 @@
+   border-color: #0f172a;
+ }
+ 
++.qa-status-filter-btn.active .qa-status-pill-count {
++  background: rgba(255, 255, 255, 0.25);
++  color: #ffffff;
++}
++
+ /* Bulk Selection Bar */
+ .qa-bulk-actions-bar {
+   display: flex;
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

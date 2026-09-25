@@ -1,0 +1,77 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -349,16 +349,6 @@
+   const [filterRegion, setFilterRegion] = useState("");
+   const [filterRole, setFilterRole] = useState("");
+   const [hoveredRow, setHoveredRow] = useState(null);
+-  const [showDebug, setShowDebug] = useState(false);
+-  const [debugInfo, setDebugInfo] = useState({
+-    usersStatus: null,
+-    usersCount: null,
+-    usersError: null,
+-    regionsStatus: null,
+-    regionsData: null,
+-    regionsError: null,
+-    lastFetch: null,
+-  });
+ 
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [editingUser, setEditingUser] = useState(null);
+@@ -385,11 +385,8 @@
+   const [deleteTargetUser, setDeleteTargetUser] = useState(null);
+   const [deleteLoading, setDeleteLoading] = useState(false);
+ 
+-
+-
+   const fetchData = async (silent = false, keepOptimistic = false) => {
+     if (!silent) setLoading(true);
+-    const dbg = { lastFetch: new Date().toISOString() };
+ 
+     // --- Users call (independent) ---
+     try {
+@@ -406,13 +406,7 @@
+       } else {
+         setUsers(serverUsers);
+       }
+-      dbg.usersStatus = usersRes.status;
+-      dbg.usersCount = usersRes.data?.length ?? 0;
+-      dbg.usersError = null;
+-    } catch (err) {
+-      dbg.usersStatus = err.response?.status ?? "NETWORK_ERR";
+-      dbg.usersCount = 0;
+-      dbg.usersError = err.response?.data?.error || err.message;
++    } catch (err) {
+       if (!silent) toast.error("Failed to load users");
+     }
+ 
+@@ -419,24 +419,12 @@
+     try {
+       const regionsRes = await api.get("/facilities/all-regions");
+       const data = regionsRes.data;
+-      dbg.regionsStatus = regionsRes.status;
+-      dbg.regionsData = Array.isArray(data) ? data : JSON.stringify(data);
+-      dbg.regionsError = null;
+       setRegions(Array.isArray(data) ? data : []);
+     } catch (err) {
+-      dbg.regionsStatus = err.response?.status ?? "NETWORK_ERR";
+-      dbg.regionsData = null;
+-      dbg.regionsError = err.response?.data?.error || err.message;
+       setRegions([]);
+-      // Show debug panel automatically on error so user sees it
+-      setShowDebug(true);
+-      if (!silent)
+-        toast.error(
+-          `Regions API failed (${dbg.regionsStatus}): ${dbg.regionsError}`,
+-        );
+-    }
+-
+-    setDebugInfo(dbg);
++      if (!silent) toast.error("Failed to load facility regions");
++    }
++
+     if (!silent) setLoading(false);
+   };
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

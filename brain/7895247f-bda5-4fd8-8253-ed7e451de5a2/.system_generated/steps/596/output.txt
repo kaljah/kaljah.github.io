@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:824:      const { generateModernPDF } = await 
+import("../utils/ModernReportGenerator");
+new\client\src\pages\Reports.jsx:300:        await import("../utils/ModernReportGenerator");
+new\client\src\pages\Reports.jsx:377:      const { generateModernPDF } = await 
+import("../utils/ModernReportGenerator");
+
+
+

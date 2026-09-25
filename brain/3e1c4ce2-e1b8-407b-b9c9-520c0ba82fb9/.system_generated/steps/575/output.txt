@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -749,6 +749,11 @@
+     output_map = {}
+     scope3_map = {}
+     is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
++    gwp100_map = get_active_gwp(horizon="100")
++    gwp20_map = get_active_gwp(horizon="20")
++    delta_ch4 = float(gwp20_map.get("CH4", 84.0)) - float(gwp100_map.get("CH4", 28.0))
++    delta_n2o = float(gwp20_map.get("N2O", 264.0)) - float(gwp100_map.get("N2O", 265.0))
++
+     for r in results:
+         key = (r.activity, r.division, r.region, r.field)
+         g100 = float(r.total_emissions or 0)
+@@ -755,5 +755,5 @@
+         n2o_t = float(r.n2o_total or 0)
+-        g_val = round(max(g100, g100 + (56.0 * ch4_t) - (1.0 * n2o_t)), 2) if is_20 else g100
++        g_val = round(max(g100, g100 + (delta_ch4 * ch4_t) + (delta_n2o * n2o_t)), 2) if is_20 else g100
+         output_map[key] = g_val
+     for r in scope2_results:
+         key = (r.activity, r.division, r.region, r.field)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

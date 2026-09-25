@@ -1,0 +1,26 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":179,"LineContent":"        gwp_dict=None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":189,"LineContent":"        # Support callers passing gwp_dict as 4th positional argument"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":190,"LineContent":"        if gwp_dict is None and isinstance(uncertainties, dict) and \"CH4\" in uncertainties:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":191,"LineContent":"            gwp_dict = uncertainties"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":194,"LineContent":"        if gwp_dict is None:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":195,"LineContent":"            gwp_dict = get_active_gwp(standard=gwp_standard)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":210,"LineContent":"                gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":303,"LineContent":"                        gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":311,"LineContent":"                gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":377,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":440,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":459,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":514,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":584,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":640,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":708,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":744,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":817,"LineContent":"                            0, ch4_tonnes, 0, gwp_dict=gwp_dict"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":827,"LineContent":"                        gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":853,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":878,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":933,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":994,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1042,"LineContent":"                    gwp_dict=gwp_dict,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1068,"LineContent":"        gwp_dict=None,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1203,"LineContent":"            co2_tonnes, ch4_tonnes, n2o_tonnes, gwp_dict=gwp_dict"}

@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+URL: http://localhost:5173/login
+Inputs: [{'type': 'text', 'placeholder': 'Email Address', 'val': ''}, {'type': 'password', 'placeholder': 'Password', 'val': ''}]
+Buttons: ['Forgot password?', 'Sign In']
+Error text: Email and password required
+Has video overlay: False
+

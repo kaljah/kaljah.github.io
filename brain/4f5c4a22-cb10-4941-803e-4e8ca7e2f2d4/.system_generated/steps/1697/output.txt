@@ -1,0 +1,14 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":38,"LineContent":"def _lookup_api_factor(fuel_name: str) -\u003e dict:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3001,"LineContent":"    factor_data = _lookup_api_factor(data.get(\"fuel\") or data.get(\"fuel_type\"))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3428,"LineContent":"        factor_data = _lookup_api_factor(data.get(\"fuel\") or data.get(\"fuel_type\") or record.fuel_type)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":23,"LineContent":"from routes.emissions import _lookup_api_factor"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":27,"LineContent":"def test_lookup_api_factor_resilience():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":28,"LineContent":"    \"\"\"Verify that _lookup_api_factor resolves fuels regardless of casing, underscores, or common aliases.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":30,"LineContent":"    ng = _lookup_api_factor(\"Natural Gas\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":35,"LineContent":"    ng_snake = _lookup_api_factor(\"natural_gas\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":39,"LineContent":"    ng_lower = _lookup_api_factor(\"natural gas\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":43,"LineContent":"    alias_gas = _lookup_api_factor(\"gas\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":47,"LineContent":"    diesel = _lookup_api_factor(\"diesel\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":52,"LineContent":"    assert _lookup_api_factor(\"Unobtainium Fuel\") == {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":53,"LineContent":"    assert _lookup_api_factor(None) == {}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_zero_trust_adversarial.py","LineNumber":54,"LineContent":"    assert _lookup_api_factor(\"\") == {}"}

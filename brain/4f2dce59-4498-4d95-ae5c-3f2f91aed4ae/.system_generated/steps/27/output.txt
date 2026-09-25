@@ -1,0 +1,34 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":47,"LineContent":"         \u003cRoute path=\"diagnostics\" element={\u003cAdminRoute\u003e\u003cDiagnostics /\u003e\u003c/AdminRoute\u003e} /\u003e{/* NEW-01 FIX */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":48,"LineContent":"         \u003cRoute path=\"audit-trail\" element={\u003cAdminRoute\u003e\u003cAuditTrail /\u003e\u003c/AdminRoute\u003e} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":49,"LineContent":"         \u003cRoute path=\"user-management\" element={\u003cITRoute\u003e\u003cUserManagement /\u003e\u003c/ITRoute\u003e} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal_utf8.patch","LineNumber":50,"LineContent":"+        \u003cRoute path=\"settings\" element={\u003cNonITRoute\u003e\u003cSettings /\u003e\u003c/NonITRoute\u003e} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":47,"LineContent":"         \u003cRoute path=\"diagnostics\" element={\u003cAdminRoute\u003e\u003cDiagnostics /\u003e\u003c/AdminRoute\u003e} /\u003e{/* NEW-01 FIX */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":48,"LineContent":"         \u003cRoute path=\"audit-trail\" element={\u003cAdminRoute\u003e\u003cAuditTrail /\u003e\u003c/AdminRoute\u003e} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":49,"LineContent":"         \u003cRoute path=\"user-management\" element={\u003cITRoute\u003e\u003cUserManagement /\u003e\u003c/ITRoute\u003e} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\cbam_removal.patch","LineNumber":50,"LineContent":"+        \u003cRoute path=\"settings\" element={\u003cNonITRoute\u003e\u003cSettings /\u003e\u003c/NonITRoute\u003e} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\5cbdeed4-f792-41df-8b3b-d02e016b1a27\\implementation_plan.md","LineNumber":86,"LineContent":"- Add `\u003cRoute path=\"qaqc\" element={\u003cAdminRoute\u003e\u003cQAQC /\u003e\u003c/AdminRoute\u003e} /\u003e`."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\patch_app.py","LineNumber":14,"LineContent":"          path=\"manage-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\patch_app.py","LineNumber":22,"LineContent":"          path=\"erp-sync\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\patch_app.py","LineNumber":30,"LineContent":"          path=\"manage-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":80,"LineContent":"      \u003cRoute path=\"/login\" element={\u003cLogin /\u003e} /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":83,"LineContent":"        path=\"/\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":99,"LineContent":"          path=\"dashboard\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":107,"LineContent":"          path=\"emissions\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":115,"LineContent":"          path=\"manage-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":123,"LineContent":"          path=\"qa-dashboard\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":131,"LineContent":"          path=\"reports\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":139,"LineContent":"          path=\"carbon-intensity\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":147,"LineContent":"          path=\"methane-intensity\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":155,"LineContent":"          path=\"methane-explorer\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":163,"LineContent":"          path=\"sbti\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":171,"LineContent":"          path=\"uncertainty\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":179,"LineContent":"          path=\"reference-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":188,"LineContent":"          path=\"diagnostics\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":193,"LineContent":"          path=\"audit-trail\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":201,"LineContent":"          path=\"user-management\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":209,"LineContent":"          path=\"settings\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":414,"LineContent":"                file_path=temp_path,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_csv_engine_matrix.py","LineNumber":218,"LineContent":"                file_path=temp_path,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":648,"LineContent":"                _update_job(job_id, error_csv_path=error_file)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\scripts\\backup.py","LineNumber":11,"LineContent":"def perform_backup(db_path=\"ghg_app.db\", backup_dir=\"backups\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":478,"LineContent":"        path=\"/\","}

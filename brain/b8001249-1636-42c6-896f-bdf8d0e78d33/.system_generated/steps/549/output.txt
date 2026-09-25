@@ -1,0 +1,56 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2980,7 +2980,7 @@
+     user = get_current_user()
+     if not user:
+         return jsonify({"error": "Unauthorized"}), 401
+-    if user.role in ("viewer", "auditor", "it_admin", "it_manager", "it"):
++    if user.role in ("auditor", "it_admin", "it_manager", "it"):
+         return jsonify({"error": "Forbidden: Read-only or administrative role cannot create emission records"}), 403
+ 
+     data = request.get_json(silent=True) or {}
+@@ -2987,9 +2987,40 @@
+     # Validation
+     required = ["year", "month", "facility_id", "process_type"]
+     for field in required:
+-        if field not in data:
++        if field not in data or data[field] is None:
+             return jsonify({"error": f"Missing field: {field}"}), 422
+ 
++    # Numeric & bounds validation
++    try:
++        yr = int(data["year"])
++        if yr < 1900 or yr > 2100:
++            return jsonify({"error": "Invalid year: must be between 1900 and 2100"}), 422
++    except (ValueError, TypeError):
++        return jsonify({"error": "Invalid year: must be an integer"}), 422
++
++    try:
++        mo = int(data["month"])
++        if mo < 1 or mo > 12:
++            return jsonify({"error": "Invalid month: must be between 1 and 12"}), 422
++    except (ValueError, TypeError):
++        return jsonify({"error": "Invalid month: must be an integer between 1 and 12"}), 422
++
++    if "quantity" in data and data["quantity"] is not None:
++        try:
++            q_val = float(data["quantity"])
++            import math
++            if math.isinf(q_val) or math.isnan(q_val):
++                return jsonify({"error": "Invalid quantity: value must be a finite number"}), 422
++            if q_val < 0:
++                return jsonify({"error": "Invalid quantity: cannot be negative"}), 422
++        except (ValueError, TypeError):
++            return jsonify({"error": "Invalid quantity: must be a valid number"}), 422
++
++    for str_field in ["fuel", "fuel_type", "source_type", "sub_type", "process_type"]:
++        val = data.get(str_field)
++        if val and len(str(val)) > 200:
++            return jsonify({"error": f"Invalid {str_field}: exceeds maximum length of 200 characters"}), 422
++
+     try:
+         fac_id = int(data["facility_id"])
+     except (ValueError, TypeError):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

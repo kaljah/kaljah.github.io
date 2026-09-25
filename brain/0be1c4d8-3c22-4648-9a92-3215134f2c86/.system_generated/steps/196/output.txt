@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+=== c:\Users\samsung\Desktop\H2\new\client\src\components\Scope2Form.jsx ===
+10: import CalculationDetails from "./CalculationDetails";
+42: // Result and Inspect Modals
+44: const [inspectRecord, setInspectRecord] = useState(null);
+219: const handleInspect = (entry) => {
+230: setInspectRecord({
+770: onClick={() => handleInspect(entry)}
+771: title="Inspect Calculation Details"
+865: {inspectRecord && (
+866: <CalculationDetails
+867: calculation={inspectRecord}
+868: onClose={() => setInspectRecord(null)}
+=== c:\Users\samsung\Desktop\H2\new\client\src\components\Scope3Form.jsx ===
+10: import CalculationDetails from "./CalculationDetails";
+28: // Result and Inspect Modals
+30: const [inspectRecord, setInspectRecord] = useState(null);
+311: const handleInspect = (entry) => {
+312: setInspectRecord({
+782: onClick={() => handleInspect(entry)}
+784: title="Inspect Calculation Details"
+864: {inspectRecord && (
+865: <CalculationDetails
+866: calculation={inspectRecord}
+867: onClose={() => setInspectRecord(null)}
+

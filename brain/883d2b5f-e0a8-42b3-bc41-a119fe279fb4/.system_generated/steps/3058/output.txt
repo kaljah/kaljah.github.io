@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\emissions.py:19:    calculate_co2e,
+new\server\routes\emissions.py:793:            em_result["totalCo2e"] = calculate_co2e(
+new\server\routes\emissions.py:2958:    # Calculate Emissions
+new\server\routes\emissions.py:2960:    # For now, using a simplified factor data placeholder or letting calculate 
+handle it
+new\server\routes\emissions.py:3021:    # Call compute_emissions to calculate the actual emissions
+new\server\routes\emissions.py:3034:    # Fallback: Calculate totalCo2e if it's missing or zero
+new\server\routes\emissions.py:3039:        em_result["totalCo2e"] = calculate_co2e(
+new\server\routes\emissions.py:3046:        # Use uncertainties calculated by the new engine, or None if not provided
+new\server\routes\emissions.py:3067:    # NOTE: user_uncertainty is now handled inside dispatcher.py and propagated 
+via SRSS
+new\server\routes\emissions.py:3356:    # Disallow direct client overwrite of calculated totals without recalculation
+new\server\routes\emissions.py:3381:    # Recalculate whenever physical activity or factor inputs are modified (L9)
+new\server\routes\emissions.py:3383:    should_recalc = data.get("recalculate") or any(k in data for k in recalc_keys)
+new\server\routes\emissions.py:3467:            calculated_em, method = compute_emissions(
+new\server\routes\emissions.py:3470:            record.co2_emissions = calculated_em["co2"]
+new\server\routes\emissions.py:3471:            record.ch4_emissions = calculated_em["ch4"]
+new\server\routes\emissions.py:3472:            record.n2o_emissions = calculated_em["n2o"]
+new\server\routes\emissions.py:3473:            record.co_emissions = calculated_em.get("co", 0)
+new\server\routes\emissions.py:3474:            record.co2e_total = calculated_em["totalCo2e"]
+new\server\routes\emissions.py:3817:                em_result["totalCo2e"] = calculate_co2e(
+
+
+

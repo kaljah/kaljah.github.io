@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+401 {"authenticated":false,"error":"Not authenticated","user":null}
+
+

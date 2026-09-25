@@ -1,0 +1,7 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+ImportError: cannot import name 'CogenerationCalculator' from 'calculations.indirect' (C:\Users\samsung\Desktop\H2\new\server\calculations\indirect.py). Did you mean: 'CogenAllocationCalculator'?
+

@@ -1,0 +1,1 @@
+A1: Make the software create all the 15 high resolution charts fetchjng the data from the software and do the same for the tables following rhe exact same structure of the report

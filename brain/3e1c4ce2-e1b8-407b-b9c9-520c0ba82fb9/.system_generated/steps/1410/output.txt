@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2024,6 +2024,7 @@
+             co2_int = (ed["total_co2e"] * 1000.0) / boe
+             co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe
+             scope1_int = ((ed["total_co2e"] - s2_val) * 1000.0) / boe
++            scope1_int_gwp20 = (s1_gwp20 * 1000.0) / boe
+             scope2_int = (s2_val * 1000.0) / boe
+             scope3_int = (s3_map.get(fid, 0) * 1000.0) / boe
+             ch4_int = (ed["total_ch4"] * 1000.0) / boe
+@@ -2030,6 +2030,6 @@
+             biogenic_int = (ed["total_biogenic"] * 1000.0) / boe
+         else:
+-            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = (
++            co2_int = co2_int_gwp20 = scope1_int = scope1_int_gwp20 = scope2_int = scope3_int = ch4_int = (
+                 flare_int
+             ) = biogenic_int = 0.0
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

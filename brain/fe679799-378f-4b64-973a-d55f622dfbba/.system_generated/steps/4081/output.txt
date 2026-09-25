@@ -1,0 +1,79 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 3 items
+
+tests/test_tier2_api_e2e.py::test_tier2_sonatrach_preset_e2e PASSED      [ 33%]
+tests/test_tier2_api_e2e.py::test_tier2_ianor_diesel_preset_e2e FAILED   [ 66%]
+tests/test_tier2_api_e2e.py::test_tier2_quick_add_custom_factor_and_submit PASSED [100%]
+
+================================== FAILURES ===================================
+_____________________ test_tier2_ianor_diesel_preset_e2e ______________________
+
+client = <FlaskClient <Flask 'app'>>, test_admin = <User 1>
+test_facility = <Facility 1>
+
+    def test_tier2_ianor_diesel_preset_e2e(client, test_admin, test_facility):
+        """End-to-end verification of Tier 2 liquid fuel preset (IANOR NA 8110 Diesel):
+        1. Authenticate as admin
+        2. Submit stationary combustion with IANOR NA 8110 (density=840 kg/m3)
+        3. Verify DB record and data_source_ref
+        """
+        client.post(
+            "/api/auth/login",
+            json={"email": "tier2_admin@example.com", "password": "AdminPass123!"},
+        )
+    
+        payload = {
+            "facility_id": test_facility.id,
+            "year": 2024,
+            "month": 7,
+            "process_type": "stationary_combustion",
+            "source_type": "custom",
+            "factor_source": "custom",
+            "fuel": "Diesel",
+            "fuel_type": "Diesel",
+            "quantity": 10.0,
+            "amount": 10.0,
+            "unit": "m3",
+            "hhv": 138000.0,
+            "fuel_density": 840.0,
+            "density": 840.0,
+            "data_source_ref": "IANOR NA 8110 (Gasoil)",
+            "status": "Verified",
+        }
+        res = client.post("/api/emissions/", json=payload)
+        assert res.status_code == 201
+        res_data = res.get_json()
+        record_id = res_data["id"]
+    
+        # 10 m3 * 264.172 gal/m3 * (138,000 / 1e6) * 73.96 / 1000 = 26.9626 tCO2
+>       assert abs(res_data["emissions"]["co2"] - 26.96) < 0.2
+E       assert 23.35561220744 < 0.2
+E        +  where 23.35561220744 = abs((3.60438779256 - 26.96))
+
+tests\test_tier2_api_e2e.py:160: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[2026-09-24 13:07:42,701] INFO in app: POST /api/auth/login 200 [0.147s] [ReqID: 5c61eabf-0f61-47cb-b09d-69cc056b9ba8]
+[2026-09-24 13:07:42,733] INFO in app: POST /api/emissions/ 201 [0.030s] [ReqID: c97b8d95-2145-435a-b475-a88e4b73fdf4]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:184 POST /api/auth/login 200 [0.147s] [ReqID: 5c61eabf-0f61-47cb-b09d-69cc056b9ba8]
+INFO     app:app.py:184 POST /api/emissions/ 201 [0.030s] [ReqID: c97b8d95-2145-435a-b475-a88e4b73fdf4]
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_tier2_api_e2e.py::test_tier2_ianor_diesel_preset_e2e - asse...
+=================== 1 failed, 2 passed, 1 warning in 2.20s ====================
+

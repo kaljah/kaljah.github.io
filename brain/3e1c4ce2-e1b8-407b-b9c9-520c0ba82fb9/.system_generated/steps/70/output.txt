@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+co2: 1.9 ch4: 4e-05 n2o: 2e-06 totalCo2e: 1.9016499999999998 method: Stationary Combustion
+

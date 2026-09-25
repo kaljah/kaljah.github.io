@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 20:10:46,627] INFO in app: Updated account: a
+[2026-09-21 20:10:46,736] INFO in app: Updated account: a@a
+[2026-09-21 20:10:46,841] INFO in app: Updated account: z
+[2026-09-21 20:10:46,945] INFO in app: Updated account: z@z
+[2026-09-21 20:10:47,056] INFO in app: POST /api/auth/login 200 [0.101s] [ReqID: 03d0d8a1-1814-4976-84cc-b981da82e4f6]
+[2026-09-21 20:10:47,094] INFO in app: GET /api/dashboard/intensity-stats 200 [0.035s] [ReqID: 1723037e-6943-472c-9c48-9a28dd3f97d3]
+[2026-09-21 20:10:47,114] INFO in app: GET /api/dashboard/intensity-trend 200 [0.015s] [ReqID: e595441c-04a4-4705-868b-a8a244764d94]
+2026 facilities count: 16
+Complexe Sid�rurgique DRI/EAF (Tosyali) BOE: 642348.0 CO2e: 74364.5 CO2 Int: 115.76980079333944 CO2 Int GWP20: 117.29031615261509 S1 Int: 115.76980079333944 S1 Int GWP20: 117.29031615261509
+Complexe Ammoniac & Engrais Azot�s (Fertial) BOE: 695772.0 CO2e: 66046.5 CO2 Int: 94.92549283385937 CO2 Int GWP20: 95.50254968581662 S1 Int: 94.92549283385937 S1 Int GWP20: 95.50254968581662
+Cimenterie Industrielle de Chlef (GICA) BOE: 296352.0 CO2e: 57001.6 CO2 Int: 192.3442392830148 CO2 Int GWP20: 192.94622610949142 S1 Int: 192.3442392830148 S1 Int GWP20: 192.94622610949142
+Centre de Traitement Gazier Hassi Messaoud (Sonatrach) BOE: 4680900.0 CO2e: 59012.5 CO2 Int: 12.607084107757055 CO2 Int GWP20: 15.119314661710355 S1 Int: 12.607084107757055 S1 Int GWP20: 15.119314661710355
+Year: 2022 Number of fac entries: 16
+Year: 2023 Number of fac entries: 16
+Year: 2024 Number of fac entries: 16
+Year: 2025 Number of fac entries: 16
+Year: 2026 Number of fac entries: 16
+

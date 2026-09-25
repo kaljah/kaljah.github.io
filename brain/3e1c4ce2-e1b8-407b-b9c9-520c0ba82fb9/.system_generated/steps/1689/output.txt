@@ -1,0 +1,24 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-1685
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-1685.log
+Log output:
+<truncated 11 lines>
+ard_deep_audit.spec.js:93:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population (10.0s)
+[AUDIT] Switched to 2026: Gross = 256.4K, Scope 3 = 0 tCO₂e (verified accurate)
+[AUDIT] Switched to 2024: Gross = 0 (verified accurate, 0 emissions)
+[AUDIT] Switched to All Years: Gross = 256.4K restored
+  ok 3 [chromium] › e2e\test_dashboard_deep_audit.spec.js:152:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation (11.8s)
+[AUDIT] GWP-20 Gross Emissions: 269.7K
+[AUDIT] GWP-100 Restored: 256.4K
+[AUDIT] Compare Regions view activated
+[AUDIT] Standard View restored
+  ok 4 [chromium] › e2e\test_dashboard_deep_audit.spec.js:191:3 › Dashboard Page Deep Audit › 4. Mode Toggles: GWP Horizon, Compare Regions, Pending Preview (11.3s)
+[AUDIT] Breakdown Table Sources:
+      Combustion: 64.4K
+      Flaring: 24.5K
+      Venting: 16.5K
+      Other: 151K
+      Total: 256.4K
+[AUDIT] Expanded Facility Row: Complexe Sidérurgique = 74.4K
+
+Last progress: 0s ago

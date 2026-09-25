@@ -1,0 +1,134 @@
+
+The command exited with code 1.
+Output:
+<truncated 7 lines>
+[AUDIT] Top Filters Verified: 5 dropdowns present
+[AUDIT] Year Options: 
+  x  2 [chromium] › e2e\test_dashboard_deep_audit.spec.js:93:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population (6.0s)
+[AUDIT] Top Filters Verified: 5 dropdowns present
+[AUDIT] Year Options: 
+  x  3 [chromium] › e2e\test_dashboard_deep_audit.spec.js:93:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population (retry #1) (7.9s)
+  x  4 [chromium] › e2e\test_dashboard_deep_audit.spec.js:151:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation (1.0m)
+  x  5 [chromium] › e2e\test_dashboard_deep_audit.spec.js:151:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation (retry #1) (1.0m)
+[AUDIT] GWP-20 Gross Emissions: 268.2K
+[AUDIT] GWP-100 Restored: 254.9K
+[AUDIT] Compare Regions view activated
+[AUDIT] Standard View restored
+  ok 6 [chromium] › e2e\test_dashboard_deep_audit.spec.js:188:3 › Dashboard Page Deep Audit › 4. Mode Toggles: GWP Horizon, Compare Regions, Pending Preview (11.8s)
+[AUDIT] Breakdown Table Sources:
+      Combustion: 63.7K
+      Flaring: 24.4K
+      Venting: 16.5K
+      Other: 150.3K
+      Total: 254.9K
+[AUDIT] Expanded Facility Row: Complexe Sidérurgique = 73.5K
+[AUDIT] Detailed Breakdown Accordion Collapsed
+[AUDIT] Detailed Breakdown Accordion Expanded
+  ok 7 [chromium] › e2e\test_dashboard_deep_audit.spec.js:250:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree (7.7s)
+[AUDIT] Notification Badge Visible: true
+[AUDIT] Notification Badge Count: 6
+[AUDIT] Notification Center Panel Opened
+[AUDIT] Notification Center Panel Closed via Escape
+  ok 8 [chromium] › e2e\test_dashboard_deep_audit.spec.js:313:3 › Dashboard Page Deep Audit › 6. Notification Center Panel, Real-time Counter & Actions (6.3s)
+[AUDIT] Target Action Button: "+ Set Target"
+[AUDIT] Manage Custom Factors button is visible and accessible
+  ok 9 [chromium] › e2e\test_dashboard_deep_audit.spec.js:345:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons (5.6s)
+
+
+  1) [chromium] › e2e\test_dashboard_deep_audit.spec.js:93:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population 
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected value: "All Years"
+    Received array: []
+
+      108 |     const yearTexts = await yearOptions.allInnerTexts();
+      109 |     console.log(`[AUDIT] Year Options: ${yearTexts.join(', ')}`);
+    > 110 |     expect(yearTexts).toContain('All Years');
+          |                       ^
+      111 |     expect(yearTexts).toContain('2026');
+      112 |     expect(yearTexts).toContain('2025');
+      113 |     expect(yearTexts).toContain('2024');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:110:23
+
+    Error Context: test-results\test_dashboard_deep_audit--c89e0-scading-Dropdown-Population-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected value: "All Years"
+    Received array: []
+
+      108 |     const yearTexts = await yearOptions.allInnerTexts();
+      109 |     console.log(`[AUDIT] Year Options: ${yearTexts.join(', ')}`);
+    > 110 |     expect(yearTexts).toContain('All Years');
+          |                       ^
+      111 |     expect(yearTexts).toContain('2026');
+      112 |     expect(yearTexts).toContain('2025');
+      113 |     expect(yearTexts).toContain('2024');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:110:23
+
+    Error Context: test-results\test_dashboard_deep_audit--c89e0-scading-Dropdown-Population-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--c89e0-scading-Dropdown-Population-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--c89e0-scading-Dropdown-Population-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_dashboard_deep_audit.spec.js:151:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.custom-dropdown-options .custom-dropdown-option:has-text("2026")')
+
+
+      157 |     await yearDropdown.click();
+      158 |     await page.waitForTimeout(400);
+    > 159 |     await page.locator('.custom-dropdown-options .custom-dropdown-option:has-text("2026")').click();
+          |                                                                                             ^
+      160 |     await page.waitForTimeout(1500);
+      161 |
+      162 |     // Assert 2026 metrics
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:159:93
+
+    Error Context: test-results\test_dashboard_deep_audit--1939a-witching-Data-Recalculation-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for locator('.custom-dropdown-options .custom-dropdown-option:has-text("2026")')
+
+
+      157 |     await yearDropdown.click();
+      158 |     await page.waitForTimeout(400);
+    > 159 |     await page.locator('.custom-dropdown-options .custom-dropdown-option:has-text("2026")').click();
+          |                                                                                             ^
+      160 |     await page.waitForTimeout(1500);
+      161 |
+      162 |     // Assert 2026 metrics
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js:159:93
+
+    Error Context: test-results\test_dashboard_deep_audit--1939a-witching-Data-Recalculation-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_deep_audit--1939a-witching-Data-Recalculation-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_deep_audit--1939a-witching-Data-Recalculation-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:93:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population 
+    [chromium] › e2e\test_dashboard_deep_audit.spec.js:151:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation 
+  5 passed (3.1m)
+

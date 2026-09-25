@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 20:02:36,819] INFO in app: Updated account: a
+[2026-09-21 20:02:36,932] INFO in app: Updated account: a@a
+[2026-09-21 20:02:37,042] INFO in app: Updated account: z
+[2026-09-21 20:02:37,135] INFO in app: Updated account: z@z
+--- Seeding Production Data ---
+Successfully seeded 0 monthly production records.
+--- Seeding EU CBAM Product Export Records ---
+Successfully seeded 6 CBAM product export records.
+Dashboard cache invalidated.
+

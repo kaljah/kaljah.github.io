@@ -1,0 +1,139 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -86,20 +86,27 @@
+     const batchData = await batchResp.json();
+     console.log(`[DASHBOARD API] Total Scope 1 (API): ${batchData.summary?.reduce((a, b) => a + (b.scope1_total || 0), 0)}`);
+ 
+-    // Test Years Switching: 2026, 2025, 2024, 2023, 2022
+-    const yearsToTest = ['2026', '2025', '2024', '2023', '2022', 'All Years'];
++    // Test Years Switching: 2026, 2024, 2023, 2022, All Years
++    const yearsToTest = ['2026', '2024', '2023', '2022', 'All Years'];
++    const filterWrappers = page.locator('.top-bar-injected-left .filter-wrapper');
++    const yearDropdown = filterWrappers.nth(0).locator('.dropdown-selected');
++
+     for (const yr of yearsToTest) {
+-      const yearFilter = page.locator('.filter-wrapper').nth(0);
+-      await yearFilter.locator('.custom-dropdown-trigger').click();
+-      await page.waitForTimeout(300);
+-      const yrOpt = page.locator(`.dropdown-item:has-text("${yr}")`).first();
+-      if (await yrOpt.isVisible()) {
+-        await yrOpt.click();
+-        await page.waitForTimeout(800);
+-        const yrGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+-        console.log(`[YEAR TEST] ${yr} -> Gross Emissions: ${yrGross}`);
+-        expect(yrGross).not.toContain('NaN');
+-        expect(yrGross).not.toContain('undefined');
++      if (await yearDropdown.isVisible()) {
++        await yearDropdown.click();
++        await page.waitForTimeout(300);
++        const yrOpt = page.locator(`.dropdown-portal .dropdown-option:has-text("${yr}")`).first();
++        if (await yrOpt.isVisible()) {
++          await yrOpt.click();
++          await page.waitForTimeout(800);
++          const yrGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
++          console.log(`[YEAR TEST] ${yr} -> Gross Emissions: ${yrGross}`);
++          expect(yrGross).not.toContain('NaN');
++          expect(yrGross).not.toContain('undefined');
++        } else {
++          await page.keyboard.press('Escape');
++          await page.waitForTimeout(200);
++        }
+       }
+     }
+     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_dashboard_year_switching.png'), fullPage: true });
+@@ -106,15 +106,20 @@
+     // Test Supply Chain Switching: Upstream, Midstream, Downstream
+     const segments = ['Upstream', 'Midstream', 'Downstream', 'All Supply Chains'];
++    const segDropdown = filterWrappers.nth(1).locator('.dropdown-selected');
+     for (const seg of segments) {
+-      const segFilter = page.locator('.filter-wrapper').nth(1);
+-      await segFilter.locator('.custom-dropdown-trigger').click();
+-      await page.waitForTimeout(300);
+-      const segOpt = page.locator(`.dropdown-item:has-text("${seg}")`).first();
+-      if (await segOpt.isVisible()) {
+-        await segOpt.click();
+-        await page.waitForTimeout(800);
+-        const segGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+-        console.log(`[SUPPLY CHAIN TEST] ${seg} -> Gross: ${segGross}`);
++      if (await segDropdown.isVisible()) {
++        await segDropdown.click();
++        await page.waitForTimeout(300);
++        const segOpt = page.locator(`.dropdown-portal .dropdown-option:has-text("${seg}")`).first();
++        if (await segOpt.isVisible()) {
++          await segOpt.click();
++          await page.waitForTimeout(800);
++          const segGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
++          console.log(`[SUPPLY CHAIN TEST] ${seg} -> Gross: ${segGross}`);
++        } else {
++          await page.keyboard.press('Escape');
++          await page.waitForTimeout(200);
++        }
+       }
+     }
+ 
+@@ -121,24 +121,41 @@
+-    const segFilterReset = page.locator('.filter-wrapper').nth(1);
+-    await segFilterReset.locator('.custom-dropdown-trigger').click();
+-    await page.locator('.dropdown-item:has-text("All Supply Chains")').first().click();
+-    await page.waitForTimeout(500);
+-
+-    // Test Region / Facility Dropdown (Dropdown 4): Test West, Center, South facilities
+-    const facFilter = page.locator('.filter-wrapper').nth(4);
+-    await facFilter.locator('.custom-dropdown-trigger').click();
+-    await page.waitForTimeout(300);
+-    const tosyaliWest = page.locator('.dropdown-item:has-text("Tosyali")').first();
+-    if (await tosyaliWest.isVisible()) {
+-      await tosyaliWest.click();
+-      await page.waitForTimeout(800);
+-      const tosyaliGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
+-      console.log(`[REGION/FACILITY TEST] West (Tosyali) -> Gross: ${tosyaliGross}`);
+-    }
+-
+-    // Reset to All Regions
+-    await facFilter.locator('.custom-dropdown-trigger').click();
+-    await page.locator('.dropdown-item:has-text("All Facilities"), .dropdown-item:has-text("All Regions")').first().click();
+-    await page.waitForTimeout(500);
++    if (await segDropdown.isVisible()) {
++      await segDropdown.click();
++      await page.waitForTimeout(300);
++      const allSegOpt = page.locator('.dropdown-portal .dropdown-option:has-text("All Supply Chains")').first();
++      if (await allSegOpt.isVisible()) {
++        await allSegOpt.click();
++        await page.waitForTimeout(500);
++      } else {
++        await page.keyboard.press('Escape');
++      }
++    }
++
++    // Test Region / Facility Dropdown (Dropdown index 4): Test West, Center, South facilities
++    const facDropdown = filterWrappers.nth(4).locator('.dropdown-selected');
++    if (await facDropdown.isVisible()) {
++      await facDropdown.click();
++      await page.waitForTimeout(300);
++      const tosyaliWest = page.locator('.dropdown-portal .dropdown-option:has-text("Tosyali")').first();
++      if (await tosyaliWest.isVisible()) {
++        await tosyaliWest.click();
++        await page.waitForTimeout(800);
++        const tosyaliGross = await page.locator('.stat-item:has-text("Gross Operational Emissions") .stat-value').innerText();
++        console.log(`[REGION/FACILITY TEST] West (Tosyali) -> Gross: ${tosyaliGross}`);
++      } else {
++        await page.keyboard.press('Escape');
++      }
++
++      // Reset to All Regions/Facilities
++      await facDropdown.click();
++      await page.waitForTimeout(300);
++      const allFacOpt = page.locator('.dropdown-portal .dropdown-option:has-text("All Facilities"), .dropdown-portal .dropdown-option:has-text("All Regions")').first();
++      if (await allFacOpt.isVisible()) {
++        await allFacOpt.click();
++        await page.waitForTimeout(500);
++      } else {
++        await page.keyboard.press('Escape');
++      }
++    }
+ 
+     // Test Dual GWP Toggle (100-Yr vs 20-Yr)
+     const gwpToggleBtn = page.locator('button:has-text("GWP-20"), button:has-text("GWP-100")').first();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

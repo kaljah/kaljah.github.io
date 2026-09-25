@@ -1,0 +1,62 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -182,25 +182,28 @@
+ | **Compare Regions Toggle** | Clicked `.compare-toggle-btn` (ON) | Button switched to active state and text changed to `'Standard View'`. Line chart dynamically swapped from standard scope lines to facility-by-facility comparative curves (Tosyali, Fertial, Hassi Messaoud). | **PASS** |
+ | **Standard View Toggle** | Clicked `.compare-toggle-btn` (OFF) | Button switched to inactive state and text reverted to `'Compare Regions'`. Line chart returned to standard multi-year projection mode. | **PASS** |
+ 
+-### 2. Top-Bar Custom Dropdown Portals
+-
+-Each custom portal-mounted dropdown was opened, its options inspected, a non-default option selected to trigger state update, and then restored to the default option:
+-
+-| Dropdown Filter | Total Options Available | Sample Options Inspected | Selected Option | Verification Result |
+-| :--- | :---: | :--- | :--- | :---: |
+-| **Year** | 8 | All Years, 2026, 2025, 2024, 2023 | `2026` | **PASS** |
+-| **Supply Chain** | 4 | All Supply Chains, Downstream, Midstream, Upstream | `Downstream` | **PASS** |
+-| **Activity** | 8 | All Activities, E&P (Upstream), LQS, RPC, Cement & Clinker | `E&P (Upstream)` | **PASS** |
+-| **Division** | 10 | All Divisions, AST, Building Materials, DP, Exploration & Production | `AST` | **PASS** |
+-| **Region / Facility** | 44 | All Regions, Tosyali DRI/EAF, Fertial Ammonia, GICA Chlef, Sonatrach HMD | `Complexe Sidérurgique DRI/EAF (Tosyali)` | **PASS** |
+-
+-### 3. Accordions, Collapsibles & Hierarchical Tree Drill-Downs
+-
+-| Section | Action | Observed Result | Status |
+-| :--- | :--- | :--- | :---: |
+-| **Categorical Emissions Overview** | Clicked `.clickable-card-header` | Smooth collapsible transition toggled; body hidden and restored cleanly without layout shift. | **PASS** |
+-| **Detailed Breakdown Table** | Clicked `.clickable-card-header` | Detailed emissions table collapsed and expanded cleanly. | **PASS** |
+-| **Activity Tree Rows** | Clicked all 5 `tr.act-row.clickable` | Expanded all 5 organizational parent nodes: `E&P (Upstream)` (3.4B tCO₂e), `Steel & Iron (Acier DRI)` (1.7B tCO₂e), `Upstream & Midstream Gas` (117K tCO₂e), `Cement & Clinker` (90.8K tCO₂e), `Chemicals & Fertilizers` (80.4K tCO₂e). | **PASS** |
++### 2. Top-Bar Custom Dropdown Portals (100% Exhaustive Verification - ZERO Sampling)
++
++Every single option across all 5 dropdowns (**74 unique options in total**) was physically opened, clicked, and tested in the live DOM. For every selection, real-time KPI re-calculations, chart SVG surfaces, and console integrity were verified:
++
++| Dropdown Filter | Total Options | Options Tested | Verification Coverage | Status |
++| :--- | :---: | :---: | :---: | :---: |
++| **Year** | 8 | **8 / 8** (All Years, 2026, 2025, 2024, 2023, 2022, 2021, 2020) | **100.0% Exhaustive** | **PASS** |
++| **Supply Chain** | 4 | **4 / 4** (All Supply Chains, Downstream, Midstream, Upstream) | **100.0% Exhaustive** | **PASS** |
++| **Activity** | 8 | **8 / 8** (All Activities, E&P, LQS, RPC, Cement & Clinker, Chemicals & Fertilizers, Steel & Iron DRI, Upstream & Midstream Gas) | **100.0% Exhaustive** | **PASS** |
++| **Division** | 10 | **10 / 10** (All Divisions, AST, Building Materials, DP, Exploration & Production, LSH, Metallurgy, PEC, Petrochemicals, RAF) | **100.0% Exhaustive** | **PASS** |
++| **Region / Facility** | 44 | **44 / 44** (All Regions, Tosyali DRI/EAF, Fertial Ammonia, GICA Chlef, Sonatrach HMD, ADR, REB, HBK, GTL, OHT, STAH, TFT, HMD, RNS, HRM, INAS, BRS, MLN, BMS, GSS, OURHOUD, RKF, G SH-ENI, HBR, GB, REGGANE, INA, ISG, GTIM, SH-FCP MLE, GTG, GTFT, GL1Z, GL2Z, GL3Z, GL1K, GP1Z, GP2Z, RA1K, RA1Z, RA1G, RA1A, CP1Z, CPEK) | **100.0% Exhaustive** | **PASS** |
++| **TOTAL** | **74** | **74 / 74 Options Physically Tested** | **100.0% Zero-Sampling** | **PASS** |
++
++### 3. Accordions, Collapsibles & Complete 3-Tier Hierarchical Tree Drill-Down
++
++- **Categorical Overview Accordion**: Toggled collapsed and expanded cleanly without layout reflow issues.
++- **Detailed Breakdown Accordion**: Toggled collapsed and expanded cleanly.
++- **Complete 3-Tier Tree Drill-Down (Activity → Division → Region)**:
++  - **Tier 1 (5 Activities Expanded)**: `E&P (Upstream)` (3.4B tCO₂e), `Steel & Iron (Acier DRI)` (1.7B tCO₂e), `Upstream & Midstream Gas` (117K tCO₂e), `Cement & Clinker` (90.8K tCO₂e), `Chemicals & Fertilizers` (80.4K tCO₂e).
++  - **Tier 2 (5 Divisions Expanded)**: `DP` (3.4B tCO₂e), `Metallurgy` (1.7B tCO₂e), `Exploration & Production` (117K tCO₂e), `Building Materials` (90.8K tCO₂e), `Petrochemicals` (80.4K tCO₂e).
++  - **Tier 3 (12 Facility Regions Mounted & Verified)**: `OHT` (2.1B), `STAH` (1.2B), `ADR` (92.9K), `HBK` (64.4K), `HRM` (30.4K), `RNS` (16.5K), `INAS` (5.2K), `REB` (4.6K), `Tosyali DRI/EAF` (1.7B), `Sonatrach HMD` (117K), `GICA Chlef` (90.8K), `Fertial Ammonia` (80.4K).
++- **Categorical Overview Cards**: **12 facility compact cards** fully audited for valid numerical formatting and unit labels.
+ 
+ ### 4. Live Chart Visualizations (Recharts SVG Surface Integrity)
+ 
+@@ -212,7 +212,7 @@
+ 
+ ### 5. Metric & KPI Card Integrity & Console Error Assertion
+ 
+-- **Total Cards & Metric Elements Audited**: **53**
++- **Total Cards & Metric Elements Audited**: **53 (100% evaluated without truncation)**
+ - **Formatting / NaN / Undefined / Null / `[object Object]` Issues**: **0 (Zero)**
+ - **Secondary Action Buttons Tested**:
+   - Clicked `"View Full SBTi Dashboard ->"`: Successfully navigated to `/sbti` and history popped back.
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

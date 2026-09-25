@@ -1,0 +1,68 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\managedata.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -340,7 +340,12 @@
+             facility_id=fid,
+         )
+         db.session.add(project)
+-        db.session.commit()
++        try:
++            db.session.commit()
++        except Exception as e:
++            db.session.rollback()
++            return jsonify({"error": f"Failed to add mitigation project: {str(e)}"}), 500
++
+         from routes.dashboard import clear_dashboard_cache
+         clear_dashboard_cache()
+         return (
+@@ -359,7 +359,12 @@
+             reference_id=data.get("reference_id"),
+         )
+         db.session.add(mitigation)
+-        db.session.commit()
++        try:
++            db.session.commit()
++        except Exception as e:
++            db.session.rollback()
++            return jsonify({"error": f"Failed to add mitigation record: {str(e)}"}), 500
++
+         from routes.dashboard import clear_dashboard_cache
+         clear_dashboard_cache()
+         return (
+@@ -377,10 +377,16 @@
+         return jsonify({"error": "IT administrators are not authorized to modify operational mitigation data."}), 403
+     # Determine type from ID prefix
+     if mitigation_id.startswith("proj_"):
+-        pid = int(mitigation_id.split("_")[1])
++        try:
++            pid = int(mitigation_id.split("_")[1])
++        except (IndexError, ValueError):
++            return jsonify({"error": "Invalid project ID format"}), 400
+         item = db.session.get(MitigationProject, pid)
+     elif mitigation_id.startswith("rec_"):
+-        rid = int(mitigation_id.split("_")[1])
++        try:
++            rid = int(mitigation_id.split("_")[1])
++        except (IndexError, ValueError):
++            return jsonify({"error": "Invalid record ID format"}), 400
+         item = db.session.get(MitigationRecord, rid)
+     else:
+         # Fallback for old IDs (assume record)
+@@ -399,8 +399,13 @@
+         if not user or user.role not in ["admin", "superuser"]:
+             return jsonify({"error": "Admin or Superuser privileges required to delete corporate mitigation records"}), 403
+ 
+-    db.session.delete(item)
+-    db.session.commit()
++    try:
++        db.session.delete(item)
++        db.session.commit()
++    except Exception as e:
++        db.session.rollback()
++        return jsonify({"error": f"Failed to delete mitigation item: {str(e)}"}), 500
++
+     from routes.dashboard import clear_dashboard_cache
+     clear_dashboard_cache()
+     return jsonify({"message": "Mitigation record deleted"})
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

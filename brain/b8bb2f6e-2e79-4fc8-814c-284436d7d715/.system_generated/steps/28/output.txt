@@ -1,0 +1,152 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 63 items / 3 errors
+
+<Dir H2>
+  <Dir new>
+    <Dir server>
+      <Module test_csv_uploader.py>
+        <UnitTestCase TestCSVUploaderE2E>
+          <TestCaseFunction test_upload_csv_end_to_end>
+      <Module test_emission_calculations.py>
+        <UnitTestCase TestTier1Combustion>
+          <TestCaseFunction test_ch4_tier1>
+          <TestCaseFunction test_co2_tier1>
+          <TestCaseFunction test_co2e_total>
+          <TestCaseFunction test_n2o_tier1>
+          <TestCaseFunction test_structure>
+          <TestCaseFunction test_unit_m3>
+        <UnitTestCase TestTier1CombustionDiesel>
+          <TestCaseFunction test_ch4_diesel>
+          <TestCaseFunction test_co2_diesel>
+          <TestCaseFunction test_co2e_diesel>
+          <TestCaseFunction test_n2o_diesel>
+        <UnitTestCase TestTier1Flaring>
+          <TestCaseFunction test_tier1_flaring_fallback_ch4>
+          <TestCaseFunction test_tier1_flaring_fallback_co2>
+        <UnitTestCase TestTier3Flaring>
+          <TestCaseFunction test_tier3_flaring_ch4>
+          <TestCaseFunction test_tier3_flaring_co2>
+          <TestCaseFunction test_tier3_flaring_co2e>
+        <UnitTestCase TestTier1Venting>
+          <TestCaseFunction test_venting_ch4>
+          <TestCaseFunction test_venting_co2e>
+        <UnitTestCase TestTier3TankFlashing>
+          <TestCaseFunction test_tank_ch4>
+          <TestCaseFunction test_tank_co2e>
+        <UnitTestCase TestTier3PneumaticDevices>
+          <TestCaseFunction test_pneumatic_ch4>
+          <TestCaseFunction test_pneumatic_co2e>
+        <UnitTestCase TestTier3LiquidsUnloading>
+          <TestCaseFunction test_unloading_ch4>
+          <TestCaseFunction test_unloading_co2e>
+        <UnitTestCase TestTier1DrillingMud>
+          <TestCaseFunction test_mud_ch4>
+          <TestCaseFunction test_mud_co2e>
+          <TestCaseFunction test_oil_based_mud>
+        <UnitTestCase TestTier3Completions>
+          <TestCaseFunction test_completions_ch4>
+          <TestCaseFunction test_completions_co2e>
+        <UnitTestCase TestTier1FugitiveAverage>
+          <TestCaseFunction test_fugitive_average_ch4>
+        <UnitTestCase TestCO2ECalculation>
+          <TestCaseFunction test_ar4_gwp>
+          <TestCaseFunction test_ar6_gwp>
+          <TestCaseFunction test_mixed>
+          <TestCaseFunction test_pure_ch4_ar5>
+          <TestCaseFunction test_pure_co2>
+          <TestCaseFunction test_pure_n2o_ar5>
+        <UnitTestCase TestUnitConversions>
+          <TestCaseFunction test_bbl_to_m3>
+          <TestCaseFunction test_density_ch4>
+          <TestCaseFunction test_density_co2>
+          <TestCaseFunction test_m3_to_scf>
+          <TestCaseFunction test_scf_m3_roundtrip>
+          <TestCaseFunction test_scf_to_m3>
+        <UnitTestCase TestEdgeCases>
+          <TestCaseFunction test_combustion_mscf_unit>
+          <TestCaseFunction test_mmscf_unit_combustion>
+          <TestCaseFunction test_negative_quantity_raises>
+          <TestCaseFunction test_tank_zero_gor_returns_zero>
+          <TestCaseFunction test_zero_quantity_combustion>
+        <UnitTestCase TestTier3CombustionGasComposition>
+          <TestCaseFunction test_tier3_combustion_co2>
+        <UnitTestCase TestProcessRowIntegration>
+          <TestCaseFunction test_combustion_process_row>
+          <TestCaseFunction test_flaring_process_row>
+          <TestCaseFunction test_missing_date_returns_error>
+          <TestCaseFunction test_missing_facility_returns_error>
+          <TestCaseFunction test_venting_process_row>
+      <Module test_performance.py>
+        <Function test_benchmark_uncertainty_propagation>
+  <Package validation>
+    <Package regression>
+      <Module test_regression_archive.py>
+        <Class TestRegressionArchive>
+          <Function test_reg_b01_flaring_stoichiometric_split>
+          <Function test_reg_b02_flare_type_destruction_efficiency_mapping>
+          <Function test_reg_b03_fugitive_screening_fallback_hours>
+          <Function test_reg_b08_gwp_ar5_constants_alignment>
+          <Function test_reg_b09_top_down_survey_aggregation>
+          <Function test_reg_b12_liquids_unloading_pressure_units>
+          <Function test_reg_b13_agr_linear_control_efficiency>
+          <Function test_reg_b14_case_insensitive_units>
+          <Function test_reg_l01_tier3_specific_factor_preservation>
+
+=================================== ERRORS ====================================
+_________________ ERROR collecting new/server/test_runner.py __________________
+ImportError while importing test module 'C:\Users\samsung\Desktop\H2\new\server\test_runner.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+new\server\test_runner.py:20: in <module>
+    from calculations.scope1 import compute_scope1_emissions
+E   ModuleNotFoundError: No module named 'calculations.scope1'
+______________________ ERROR collecting new/server/tests ______________________
+..\..\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1387: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1360: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:935: in _load_unlocked
+    ???
+..\..\anaconda3\Lib\site-packages\_pytest\assertion\rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+new\server\tests\conftest.py:10: in <module>
+    from extensions import limiter
+E   ImportError: cannot import name 'limiter' from 'extensions' (unknown location)
+_____ ERROR collecting validation/mutation/test_calculation_mutations.py ______
+ImportError while importing test module 'C:\Users\samsung\Desktop\H2\validation\mutation\test_calculation_mutations.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\anaconda3\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+validation\mutation\test_calculation_mutations.py:23: in <module>
+    from validation.reference_model import (
+E   ModuleNotFoundError: No module named 'validation'
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR new/server/test_runner.py
+ERROR new/server/tests - ImportError: cannot import name 'limiter' from 'exte...
+ERROR validation/mutation/test_calculation_mutations.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!
+==================== 63 tests collected, 3 errors in 6.67s ====================
+

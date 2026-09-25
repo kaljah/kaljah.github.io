@@ -1,0 +1,23 @@
+
+The command exited with code 1.
+Output:
+
+=== AUTH & PROFILE ===
+python : Traceback (most recent call last):
+At line:1 char:1
++ python "C:\Users\samsung\.gemini\antigravity\brain\63513843-2919-4b5b ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\samsung\.gemini\antigravity\brain\63513843-2919-4b5b-94b6-9589ba2d022a\scratch\agent03_test.py", line 
+84, in <module>
+    log(1, "POST /auth/login", "POST", f"{BASE}/auth/login", r.status_code, 200, body,
+  File "C:\Users\samsung\.gemini\antigravity\brain\63513843-2919-4b5b-94b6-9589ba2d022a\scratch\agent03_test.py", line 
+45, in log
+    print(f"[{icon}] Test {test_num:02d}: {name} \u2192 HTTP {status} (expected {expected})")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 1: character maps to <undefined>
+

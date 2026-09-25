@@ -1,0 +1,40 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -262,7 +262,7 @@
+ 
+     email_clean = str(data.get("email", "")).strip().lower()
+     if User.query.filter(db.func.lower(User.email) == email_clean).first():
+-        return jsonify({"error": "Email already registered"}), 400
++        return jsonify({"error": "Email already registered"}), 409
+ 
+     password = data.get("password")
+     valid, err_msg = validate_password_complexity(password)
+@@ -269,5 +269,16 @@
+         return jsonify({"error": err_msg}), 400
+ 
++    ROLE_RANK = {"user": 0, "it": 1, "superuser": 2, "admin": 3, "it_admin": 4, "it_manager": 4}
++    VALID_ROLES = set(ROLE_RANK.keys())
++    role_requested = str(data.get("role", "user")).strip().lower()
++    if role_requested not in VALID_ROLES:
++        return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(VALID_ROLES))}"}), 400
++
++    creator_id = session.get("user_id")
++    creator = db.session.get(User, creator_id) if creator_id else None
++    if creator and creator.role in ["it_admin", "it_manager", "it"] and role_requested == "admin":
++        return jsonify({"error": "IT administrators cannot create accounts with business admin role"}), 403
++
+     user = User(
+         fullName=data.get("fullName"),
+         orgName=data.get("orgName"),
+@@ -276,7 +276,7 @@
+         jobTitle=data.get("jobTitle"),
+         phone=data.get("phone"),
+         location=data.get("location"),
+-        role=data.get("role", "user"),  # Admins can explicitly set roles
++        role=role_requested,
+     )
+     user.set_password(password)
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

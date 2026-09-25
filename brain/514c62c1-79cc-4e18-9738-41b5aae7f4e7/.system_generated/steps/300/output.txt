@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Sum with NULL co2: 325011360.0 Sum with valid co2: 18852.895601737637
+

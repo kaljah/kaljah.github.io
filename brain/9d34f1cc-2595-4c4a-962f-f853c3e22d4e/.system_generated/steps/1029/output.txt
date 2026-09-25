@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1265,8 +1265,8 @@
+     );
+     curY += 4;
+ 
+-    const totCo2eAll = fullData.totalEmissions || 1909500.0;
+-    const totCh4All = fullData.ch4Total || 1666.0;
++    const totCo2eAll = fullData.totalEmissions ?? (Number(fullData.scope1Total || 0) + Number(fullData.scope2Total || 0));
++    const totCh4All = fullData.ch4Total ?? 0.0;
+ 
+     const jvRows = [
+       ["Sonatrach (National Operator)", "SH", "Algeria", "51.00%", (totCo2eAll * 0.51).toLocaleString(undefined, { maximumFractionDigits: 1 }), (totCh4All * 0.51).toFixed(1)],
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

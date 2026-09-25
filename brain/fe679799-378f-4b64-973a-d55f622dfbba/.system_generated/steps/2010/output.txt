@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+ERP sync response status (default): 501
+ERP sync response body: {'error': 'Mock ERP synchronization is disabled in production. Set ENABLE_MOCK_ERP=true to enable testing mode.'}
+ERP sync IT response status: 403
+ERP sync IT response body: {'error': 'Admin privileges required for ERP sync'}
+

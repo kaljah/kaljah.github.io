@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\services\\ogmp.py","LineNumber":59,"LineContent":"def compute_facility_ogmp_level("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":22,"LineContent":"from services.ogmp import compute_facility_ogmp_level, ogmp_level_for"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1062,"LineContent":"        highest_level = compute_facility_ogmp_level("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":28,"LineContent":"from services.ogmp import ogmp_level_for, compute_facility_ogmp_level, ogmp_level_label"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":903,"LineContent":"            curr_lvl = compute_facility_ogmp_level("}

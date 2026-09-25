@@ -1,0 +1,40 @@
+
+The command exited with code 0.
+Output:
+Traversal: BFS depth=2 | Start: ['Overview', 'Architecture & Reimagined UI Layout'] | 18 nodes found
+
+NODE Overview [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L3 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Architecture & Reimagined UI Layout [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L19 community=Client Application & Routing]
+NODE Authentication and User-Specific Database Implementation Walkthrough [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L1 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Unified QA/QC & Data Health Page Implementation Plan [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L1 community=Client Application & Routing]
+NODE Visual Structure [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L26 community=Client Application & Routing]
+NODE Changes Implemented [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L7 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Files Modified [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L249 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Testing Results [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L306 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE User Experience [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L209 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Next Steps [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L269 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE System Architecture [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L157 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Verification Plan [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L97 community=Client Application & Routing]
+NODE Proposed Changes [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L51 community=Client Application & Routing]
+NODE 158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L1 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Data Isolation [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L238 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE Summary [src=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md loc=L420 community=Authentication and User-Specific Database Implementation Walkthrough]
+NODE 5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L1 community=Client Application & Routing]
+NODE User Review Required [src=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md loc=L7 community=Client Application & Routing]
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> Overview at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L3
+EDGE Unified QA/QC & Data Health Page Implementation Plan --contains [EXTRACTED]--> Architecture & Reimagined UI Layout at=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md:L19
+EDGE Architecture & Reimagined UI Layout --contains [EXTRACTED]--> Visual Structure at=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md:L26
+EDGE 5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md --contains [EXTRACTED]--> Unified QA/QC & Data Health Page Implementation Plan at=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md:L1
+EDGE Unified QA/QC & Data Health Page Implementation Plan --contains [EXTRACTED]--> Proposed Changes at=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md:L51
+EDGE Unified QA/QC & Data Health Page Implementation Plan --contains [EXTRACTED]--> User Review Required at=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md:L7
+EDGE Unified QA/QC & Data Health Page Implementation Plan --contains [EXTRACTED]--> Verification Plan at=brain/5cbdeed4-f792-41df-8b3b-d02e016b1a27/implementation_plan.md:L97
+EDGE 158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md --contains [EXTRACTED]--> Authentication and User-Specific Database Implementation Walkthrough at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L1
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> Changes Implemented at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L7
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> Data Isolation at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L238
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> Files Modified at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L249
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> Next Steps at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L269
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> Summary at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L420
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> System Architecture at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L157
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> Testing Results at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L306
+EDGE Authentication and User-Specific Database Implementation Walkthrough --contains [EXTRACTED]--> User Experience at=brain/158aa171-b847-455c-a02c-71cca6b3610d/walkthrough.md:L209
+

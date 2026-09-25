@@ -1,0 +1,228 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -707,6 +707,26 @@
+     return hierarchy;
+   }, [categoricalData]);
+ 
++  const handleExportPDF = async () => {
++    try {
++      setExportingPDF(true);
++      toast.info("Generating executive brief PDF...");
++      const { generateModernPDF } = await import("../utils/ModernReportGenerator");
++      await generateModernPDF(api, {
++        year: currentYear !== "all" ? currentYear : undefined,
++        regionId: currentRegion !== "all" ? currentRegion : undefined,
++        scope: "all",
++      });
++      toast.success("Executive brief PDF generated successfully!");
++    } catch (err) {
++      console.error("PDF generation failed:", err);
++      toast.error("Failed to generate PDF report. Opening print dialog.");
++      window.print();
++    } finally {
++      setExportingPDF(false);
++    }
++  };
++
+   if (loading) {
+     return <LoadingSpinner message="Loading Dashboard Data..." fullScreen />;
+   }
+@@ -727,7 +727,7 @@
+           </div>
+         </div>
+ 
+-        {user?.role === 'admin' && pendingCount > 0 && (
++        {['admin', 'superuser'].includes(user?.role) && pendingCount > 0 && (
+           <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+               <div style={{ background: '#eab308', color: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+@@ -751,6 +751,147 @@
+           </div>
+         )}
+ 
++        {/* Zero-Data Quick Start Onboarding Card */}
++        {!loading && stats.totalEmissions === 0 && stats.netEmissions === 0 && stats.scope3 === 0 && trendData.length === 0 && (
++          <div
++            className="card glass-panel"
++            style={{
++              background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)",
++              border: "1px solid rgba(16, 185, 129, 0.2)",
++              borderRadius: "12px",
++              padding: "24px",
++              marginBottom: "24px",
++            }}
++          >
++            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
++              <div
++                style={{
++                  background: "#10b981",
++                  color: "#fff",
++                  borderRadius: "8px",
++                  width: "36px",
++                  height: "36px",
++                  display: "flex",
++                  alignItems: "center",
++                  justifyContent: "center",
++                  fontWeight: 700,
++                  fontSize: "1.2rem",
++                }}
++              >
++                ✦
++              </div>
++              <div>
++                <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--text-primary)" }}>
++                  Welcome to Antigravity GHG Inventory
++                </h3>
++                <p style={{ margin: "2px 0 0 0", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
++                  Your emissions workspace is initialized. Follow this 4-step workflow to establish your inventory:
++                </p>
++              </div>
++            </div>
++            <div
++              style={{
++                display: "grid",
++                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
++                gap: "14px",
++              }}
++            >
++              <div
++                style={{
++                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
++                  border: "1px solid var(--border-color)",
++                  borderRadius: "8px",
++                  padding: "14px",
++                }}
++              >
++                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#10b981", textTransform: "uppercase" }}>
++                  Step 1 • Facilities
++                </div>
++                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Set Boundaries</h4>
++                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
++                  Define production facilities, segments, and operational control.
++                </p>
++                <button
++                  className="btn-secondary-unified"
++                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
++                  onClick={() => navigate("/manage-data")}
++                >
++                  Manage Facilities →
++                </button>
++              </div>
++              <div
++                style={{
++                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
++                  border: "1px solid var(--border-color)",
++                  borderRadius: "8px",
++                  padding: "14px",
++                }}
++              >
++                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#3b82f6", textTransform: "uppercase" }}>
++                  Step 2 • Ingestion
++                </div>
++                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Log Activity Data</h4>
++                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
++                  Import Scope 1 fuel, Scope 2 electricity, or Scope 3 supply chain CSVs.
++                </p>
++                <button
++                  className="btn-secondary-unified"
++                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
++                  onClick={() => navigate("/emissions")}
++                >
++                  Enter Emissions →
++                </button>
++              </div>
++              <div
++                style={{
++                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
++                  border: "1px solid var(--border-color)",
++                  borderRadius: "8px",
++                  padding: "14px",
++                }}
++              >
++                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#f59e0b", textTransform: "uppercase" }}>
++                  Step 3 • Verification
++                </div>
++                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>QA/QC & Approvals</h4>
++                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
++                  Maker-checker dual approval and anomaly outlier resolution.
++                </p>
++                <button
++                  className="btn-secondary-unified"
++                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
++                  onClick={() => navigate("/qa-dashboard")}
++                >
++                  QA/QC Console →
++                </button>
++              </div>
++              <div
++                style={{
++                  background: "var(--bg-card, rgba(255, 255, 255, 0.05))",
++                  border: "1px solid var(--border-color)",
++                  borderRadius: "8px",
++                  padding: "14px",
++                }}
++              >
++                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#8b5cf6", textTransform: "uppercase" }}>
++                  Step 4 • Compliance
++                </div>
++                <h4 style={{ margin: "6px 0 4px 0", fontSize: "0.95rem" }}>Generate Reports</h4>
++                <p style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
++                  Export OGMP 2.0 Gold Standard and GHG Protocol disclosures.
++                </p>
++                <button
++                  className="btn-secondary-unified"
++                  style={{ fontSize: "0.75rem", padding: "4px 10px", width: "100%" }}
++                  onClick={() => navigate("/reports")}
++                >
++                  View Reports →
++                </button>
++              </div>
++            </div>
++          </div>
++        )}
++
+         {/* Hero Overview Card */}
+         <div className="card hero-card glass-panel">
+           <div className="hero-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+@@ -766,7 +766,8 @@
+                       : "All Regions"}
+               </div>
+               <button
+-                onClick={() => window.print()}
++                onClick={handleExportPDF}
++                disabled={exportingPDF}
+                 className="btn-secondary-unified"
+                 style={{
+                   display: 'flex',
+@@ -777,8 +777,9 @@
+                   border: '1px solid var(--border-color)',
+                   fontSize: '0.85rem',
+                   fontWeight: 600,
+-                  cursor: 'pointer',
+-                  color: 'var(--text-primary)'
++                  cursor: exportingPDF ? 'not-allowed' : 'pointer',
++                  color: 'var(--text-primary)',
++                  opacity: exportingPDF ? 0.7 : 1,
+                 }}
+                 title="Export multi-page executive summary PDF"
+               >
+@@ -785,7 +785,7 @@
+                   <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                   <path d="M6 14h12v8H6z" />
+                 </svg>
+-                Export Executive Brief (PDF)
++                {exportingPDF ? "Generating PDF..." : "Export Executive Brief (PDF)"}
+               </button>
+             </div>
+           </div>
+@@ -792,6 +792,6 @@
+           <div className="hero-stats-grid">
+             <div className="stat-item">
+-              <div className="stat-label">Gross Emissions</div>
++              <div className="stat-label">Gross Operational Emissions (Scope 1+2)</div>
+               <div className="stat-value-row">
+                 <div className="stat-value">
+                   {formatCompactNumber(stats.totalEmissions)}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

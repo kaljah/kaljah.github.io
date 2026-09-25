@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -66,16 +66,17 @@
+ }
+ 
+ async function closeAnyOverlay(page) {
+-  const overlay = page.locator('.result-overlay, .modal-overlay');
+-  if (await overlay.isVisible({ timeout: 800 }).catch(() => false)) {
+-    const closeBtn = page.locator('.result-overlay button.close-btn, .result-overlay button:has-text("Close"), .modal-overlay button:has-text("Close")').first();
+-    if (await closeBtn.isVisible({ timeout: 500 }).catch(() => false)) {
+-      await closeBtn.click();
+-    } else {
++  const closeBtn = page.locator('.result-overlay button.close-btn, .result-overlay button:has-text("Close")').first();
++  if (await closeBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
++    await closeBtn.click();
++    await page.waitForTimeout(600);
++  } else {
++    // If still open, try pressing Escape
++    const overlay = page.locator('.result-overlay');
++    if (await overlay.isVisible({ timeout: 500 }).catch(() => false)) {
+       await page.keyboard.press('Escape');
+-    }
+-    await overlay.waitFor({ state: 'detached', timeout: 3000 }).catch(() => {});
+-    await page.waitForTimeout(400);
++      await page.waitForTimeout(500);
++    }
+   }
+ }
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

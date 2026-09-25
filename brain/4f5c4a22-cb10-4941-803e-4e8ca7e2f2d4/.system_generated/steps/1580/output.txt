@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\legacy_engine.py:370:def compute_emissions(payload, factor_data=None, gwp_dict=None, 
+gwp_standard=None):
+  new\server\calculations\legacy_engine.py:371:    if factor_data is None:
+  new\server\calculations\legacy_engine.py:372:        factor_data = {}
+  new\server\calculations\legacy_engine.py:373:    if gwp_dict is None:
+  new\server\calculations\legacy_engine.py:374:        gwp_dict = get_active_gwp(standard=gwp_standard)
+  new\server\calculations\legacy_engine.py:375:
+  new\server\calculations\legacy_engine.py:376:    process = str(payload.get("process_type") or payload.get("process") 
+or "").lower()
+  new\server\calculations\legacy_engine.py:377:
+  new\server\calculations\legacy_engine.py:378:    # Normalize frontend names to expected internal keys
+  new\server\calculations\legacy_engine.py:379:    if process == "pneumatics":
+  new\server\calculations\legacy_engine.py:380:        process = "pneumatic"
+  new\server\calculations\legacy_engine.py:381:    elif process == "tanks":
+  new\server\calculations\legacy_engine.py:382:        process = "tank"
+  new\server\calculations\legacy_engine.py:383:    elif process == "mud degassing":
+  new\server\calculations\legacy_engine.py:384:        process = "drilling"
+  new\server\calculations\legacy_engine.py:385:    elif process == "well completions":
+  new\server\calculations\legacy_engine.py:386:        process = "completions"
+  new\server\calculations\legacy_engine.py:387:    elif process == "dehydrators":
+  new\server\calculations\legacy_engine.py:388:        process = "dehydrator"
+  new\server\calculations\legacy_engine.py:389:    elif process == "blowdowns":
+  new\server\calculations\legacy_engine.py:390:        process = "venting"
+  new\server\calculations\legacy_engine.py:391:    elif process == "liquid unloading":
+  new\server\calculations\legacy_engine.py:392:        process = "unloading"
+  new\server\calculations\legacy_engine.py:393:    elif process == "separation":
+  new\server\calculations\legacy_engine.py:394:        process = "tank"
+  new\server\calculations\legacy_engine.py:395:
+  new\server\calculations\legacy_engine.py:396:    amount = float(payload.get("quantity") or payload.get("amount") or 
+0)
+  new\server\calculations\legacy_engine.py:397:    unit = payload.get("unit") or "m3"
+  new\server\calculations\legacy_engine.py:398:
+  new\server\calculations\legacy_engine.py:399:    # Safely parse HHV - handle None, empty string, or '-' placeholders
+  new\server\calculations\legacy_engine.py:400:    hhv_val = payload.get("hhv") or factor_data.get("hhv") or 0
+
+
+

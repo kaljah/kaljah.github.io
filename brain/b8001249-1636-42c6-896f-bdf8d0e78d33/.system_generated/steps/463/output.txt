@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":12,"LineContent":"from utils import log_activity_and_notify, is_unrestricted_location"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":32,"LineContent":"    if user_loc and not is_unrestricted_location(user_loc):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":15,"LineContent":"def is_unrestricted_location(loc):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":37,"LineContent":"        user.role == \"superuser\" and is_unrestricted_location(user.location)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":43,"LineContent":"    if not user_region or is_unrestricted_location(user_region):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":4,"LineContent":"from utils import get_allowed_facility_ids, log_activity_and_notify, is_unrestricted_location"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":136,"LineContent":"    if user.role == \"superuser\" and not is_unrestricted_location(user.location):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":410,"LineContent":"    if user.role == \"superuser\" and not is_unrestricted_location(user.location):"}

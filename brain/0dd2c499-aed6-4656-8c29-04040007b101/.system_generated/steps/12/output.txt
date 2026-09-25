@@ -1,0 +1,4 @@
+## Console messages
+Showing 1-2 of 2 (Page 1 of 1).
+msgid=3 [debug] [vite] connecting... (1 args)
+msgid=4 [debug] [vite] connected. (1 args)

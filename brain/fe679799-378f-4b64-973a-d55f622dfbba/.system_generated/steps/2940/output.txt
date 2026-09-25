@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[('ActivityLog', 'activity_log'), ('BaseYear', 'base_year'), ('BaseYearRecalculation', 'base_year_recalculations'), ('CbamProductExport', 'cbam_product_exports'), ('CustomFactor', 'custom_factors'), ('Emission', 'emissions'), ('EmissionSource', 'emission_sources'), ('Facility', 'facilities'), ('Goal', 'goals'), ('LevelUpgradeLog', 'level_upgrade_logs'), ('MethaneSourceType', 'methane_source_types'), ('MitigationProject', 'mitigation_projects'), ('MitigationRecord', 'mitigation_records'), ('Notification', 'notifications'), ('OgmpSurvey', 'ogmp_surveys'), ('ProductionData', 'production_data'), ('ReportingMetadata', 'reporting_metadata'), ('SbtiTarget', 'sbti_targets'), ('Scope2Emission', 'scope2_emissions'), ('Scope3Data', 'scope3_data'), ('Scope3Emission', 'scope3_emissions'), ('SystemSetting', 'system_settings'), ('User', 'users')]
+

@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+Get-ChildItem : A positional parameter cannot be found that accepts argument 'reference_model.py'.
+At line:1 char:1
++ dir /s /b reference_model.py
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Get-ChildItem], ParameterBindingException
+    + FullyQualifiedErrorId : PositionalParameterNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+

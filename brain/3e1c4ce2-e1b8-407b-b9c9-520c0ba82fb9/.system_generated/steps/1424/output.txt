@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -51,6 +51,7 @@
+     avgCo2Intensity: 0,
+     avgCo2IntensityGwp20: 0,
+     avgScope1Intensity: 0,
++    avgScope1IntensityGwp20: 0,
+     avgScope2Intensity: 0,
+     avgScope3Intensity: 0,
+     avgFlaringIntensity: 0,
+@@ -57,5 +57,6 @@
+     totalCo2EmissionsGwp20: 0,
+     totalScope1: 0,
++    totalScope1Gwp20: 0,
+     totalScope2: 0,
+     totalScope3: 0,
+     totalFlaringEmissions: 0,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

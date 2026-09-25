@@ -1,0 +1,9 @@
+
+The command exited with code 1.
+Output:
+tests/test_aggregation_reconciliation.py::TestRollupAndGasReconciliation::test_gas_aggregation_commutativity
+tests/test_aggregation_reconciliation.py::TestRollupAndGasReconciliation::test_scope_inventory_aggregation
+tests/test_aggregation_reconciliation.py::TestOGMPSurveyReconciliation::test_ogmp_reconciled_within_threshold
+tests/test_aggregation_reconciliation.py::TestOGMPSurveyReconciliation::test_ogmp_unreconciled_exceeds_threshold
+tests/test_aggregation_reconciliation.py::TestIntensityMetrics::test_boe_calculation
+

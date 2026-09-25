@@ -1,0 +1,36 @@
+
+The command exited with code 0.
+Output:
+Safety backup created at: c:\Users\samsung\Desktop\H2\new\server\ghg_app.db.bak_before_scope_deletion
+Deleted emissions records:
+  - emissions: 2573 records deleted
+  - scope2_emissions: 0 records deleted
+  - scope3_emissions: 0 records deleted
+  - scope3_data: 0 records deleted
+
+Preserved tables status (non-emission data):
+  - activity_log: 202 records
+  - alembic_version: 1 records
+  - base_year: 0 records
+  - base_year_recalculations: 0 records
+  - cbam_product_exports: 6 records
+  - custom_factors: 0 records
+  - emission_sources: 0 records
+  - emissions: 0 records
+  - facilities: 43 records
+  - goals: 0 records
+  - level_upgrade_logs: 0 records
+  - methane_source_types: 0 records
+  - mitigation_projects: 0 records
+  - mitigation_records: 0 records
+  - notifications: 28 records
+  - ogmp_surveys: 0 records
+  - production_data: 864 records
+  - reporting_metadata: 0 records
+  - sbti_targets: 0 records
+  - scope2_emissions: 0 records
+  - scope3_data: 0 records
+  - scope3_emissions: 0 records
+  - system_settings: 1 records
+  - users: 7 records
+

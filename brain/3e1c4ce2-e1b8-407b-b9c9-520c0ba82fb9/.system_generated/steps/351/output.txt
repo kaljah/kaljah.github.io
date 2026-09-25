@@ -1,0 +1,122 @@
+
+The command exited with code 0.
+Output:
+<truncated 5 lines>
+[QFULL E2E] Logged in, current URL: http://127.0.0.1:5173/
+[QFULL E2E] Dashboard loaded successfully ✓
+  ok  2 [chromium] › e2e\test_qfull_e2e_ui.spec.js:101:3 › QFULL Auth and Navigation › Admin login with credentials "a"/"a" succeeds and redirects to dashboard (4.6s)
+[QFULL E2E] Invalid login correctly shows error ✓
+  ok  3 [chromium] › e2e\test_qfull_e2e_ui.spec.js:118:3 › QFULL Auth and Navigation › Invalid credentials show error message on login form (4.8s)
+[QFULL E2E] POST /api/emissions/ → 201
+[QFULL E2E] Response: {"calculation_method":"server_default","emissions":{"ch4":0,"co2":0,"n2o":0,"totalCo2e":0,"uncertainty":{}},"id":831,"message":"Record added","record":{"amount":1000,"facility_name":"Complexe Sidérurgique DRI/EAF (Tosyali)","fuel":"natural_gas","month":1,"process_type":"combustion","unit":"m3","year
+  ok  4 [chromium] › e2e\test_qfull_e2e_ui.spec.js:181:3 › QFULL API Pipeline (via Browser Request) › POST emission: Combustion Tier 1 Natural Gas 1000 m3 → backend returns correct CO2 (226ms)
+[QFULL E2E] GET /api/emissions/ returned 50 records ✓
+  ok  5 [chromium] › e2e\test_qfull_e2e_ui.spec.js:234:3 › QFULL API Pipeline (via Browser Request) › GET /api/emissions/ returns list with at least 1 emission after POST (218ms)
+[QFULL E2E] First emission keys: activity, amount, ch4_emissions, co2_emissions, co2e_total, division, equipment_id, facility_id, facility_name, factor_source, factor_type, field, fuel, group_name, id, month, n2o_emissions, process_type, region, scope, status, timestamp, uncertainty_ch4, uncertainty_co2, uncertainty_n2o, unit, year
+[QFULL E2E] Emission record structure validated ✓
+  ok  6 [chromium] › e2e\test_qfull_e2e_ui.spec.js:244:3 › QFULL API Pipeline (via Browser Request) › Emission list record has correct structure and non-null values (215ms)
+[QFULL E2E] Navigated to: http://127.0.0.1:5173/manage-data
+  ok  7 [chromium] › e2e\test_qfull_e2e_ui.spec.js:273:3 › QFULL Full UI Pipeline › Navigate to Manage Data after login (6.3s)
+[QFULL E2E] Form submitted
+[QFULL E2E] API requests captured: 0
+[QFULL E2E] API responses captured: 0
+  ok  8 [chromium] › e2e\test_qfull_e2e_ui.spec.js:297:3 › QFULL Full UI Pipeline › QFULL PIPELINE: Combustion T1 form entry → API POST → result visible (9.3s)
+[QFULL E2E] Manage Data URL: http://127.0.0.1:5173/manage-data
+[QFULL E2E] Table rows visible: 2
+[QFULL E2E] Data table is visible ✓
+  ok  9 [chromium] › e2e\test_qfull_e2e_ui.spec.js:414:3 › QFULL Full UI Pipeline › Manage Data table renders emission records after login (7.2s)
+[QFULL MATRIX] Combustion T1 - Natural Gas 1000 m³
+  Process: combustion | Tier: T1
+  CO2:    1.900000 t
+  CH4:    0.000040 t
+  N2O:    0.000002 t
+  CO2e:   1.901650 t
+  ok 10 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Combustion T1 - Natural Gas 1000 m³ (19ms)
+[QFULL MATRIX] Combustion T1 - Natural Gas 500 m³
+  Process: combustion | Tier: T1
+  CO2:    0.950000 t
+  CH4:    0.000020 t
+  N2O:    0.000001 t
+  CO2e:   0.950825 t
+  ok 11 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Combustion T1 - Natural Gas 500 m³ (16ms)
+[QFULL MATRIX] Combustion T1 - Diesel 1000 L
+  Process: combustion | Tier: T1
+  CO2:    2.680000 t
+  CH4:    0.000010 t
+  N2O:    0.000004 t
+  CO2e:   2.681340 t
+  ok 12 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Combustion T1 - Diesel 1000 L (13ms)
+[QFULL MATRIX] Mud Degassing - Water-based 200 m³
+  Process: drilling | Tier: T1
+  CO2:    0.000000 t
+  CH4:    0.030000 t
+  N2O:    0.000000 t
+  CO2e:   0.840000 t
+  ok 13 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Mud Degassing - Water-based 200 m³ (13ms)
+[QFULL MATRIX] Mud Degassing - Oil-based 100 m³
+  Process: drilling | Tier: T1
+  CO2:    0.000000 t
+  CH4:    0.035000 t
+  N2O:    0.000000 t
+  CO2e:   0.980000 t
+  ok 14 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Mud Degassing - Oil-based 100 m³ (29ms)
+[QFULL MATRIX] Flaring T3 - Elevated, 500 m³, C1=90%
+  Process: flaring | Tier: T3
+  CO2:    0.824051 t
+  CH4:    0.006107 t
+  N2O:    0.000000 t
+  CO2e:   0.995033 t
+  ok 15 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Flaring T3 - Elevated, 500 m³, C1=90% (23ms)
+[QFULL MATRIX] Tank Flashing T3 - 1000 bbl, GOR=100, CH4=85%
+  Process: tank | Tier: T3
+  CO2:    0.000000 t
+  CH4:    1.633103 t
+  N2O:    0.000000 t
+  CO2e:   45.726893 t
+  ok 16 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Tank Flashing T3 - 1000 bbl, GOR=100, CH4=85% (11ms)
+[QFULL MATRIX] AGR T3 - 10 MMscf, CO2=4%, CH4=85%, slip=0.1%
+  Process: agr | Tier: T3
+  CO2:    21.079061 t
+  CH4:    0.163310 t
+  N2O:    0.000000 t
+  CO2e:   25.651750 t
+  ok 17 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: AGR T3 - 10 MMscf, CO2=4%, CH4=85%, slip=0.1% (8ms)
+[QFULL MATRIX] Completions T3 - Metered 1000 m³, CH4=85%
+  Process: completions | Tier: T3
+  CO2:    0.000000 t
+  CH4:    0.576725 t
+  N2O:    0.000000 t
+  CO2e:   16.148300 t
+  ok 18 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Completions T3 - Metered 1000 m³, CH4=85% (9ms)
+[QFULL MATRIX] Blowdown T3 - 5 m³ vessel, 500 psig, 10 events, CH4=85%
+  Process: blowdown | Tier: T3
+  CO2:    0.000000 t
+  CH4:    1.009928 t
+  N2O:    0.000000 t
+  CO2e:   28.277985 t
+  ok 19 [chromium] › e2e\test_qfull_e2e_ui.spec.js:532:5 › QFULL Reference Accuracy Matrix › Reference formula: Blowdown T3 - 5 m³ vessel, 500 psig, 10 events, CH4=85% (10ms)
+[QFULL MATRIX] ✓ Combustion T1 - Natural Gas 1000 m³ → CO2e=1.9016 t
+[QFULL MATRIX] ✓ Combustion T1 - Natural Gas 500 m³ → CO2e=0.9508 t
+[QFULL MATRIX] ✓ Combustion T1 - Diesel 1000 L → CO2e=2.6813 t
+[QFULL MATRIX] ✓ Mud Degassing - Water-based 200 m³ → CO2e=0.8400 t
+[QFULL MATRIX] ✓ Mud Degassing - Oil-based 100 m³ → CO2e=0.9800 t
+[QFULL MATRIX] ✓ Flaring T3 - Elevated, 500 m³, C1=90% → CO2e=0.9950 t
+[QFULL MATRIX] ✓ Tank Flashing T3 - 1000 bbl, GOR=100, CH4=85% → CO2e=45.7269 t
+[QFULL MATRIX] ✓ AGR T3 - 10 MMscf, CO2=4%, CH4=85%, slip=0.1% → CO2e=25.6517 t
+[QFULL MATRIX] ✓ Completions T3 - Metered 1000 m³, CH4=85% → CO2e=16.1483 t
+[QFULL MATRIX] ✓ Blowdown T3 - 5 m³ vessel, 500 psig, 10 events, CH4=85% → CO2e=28.2780 t
+[QFULL MATRIX] 10/10 scenarios passed
+  ok 20 [chromium] › e2e\test_qfull_e2e_ui.spec.js:558:3 › QFULL Reference Accuracy Matrix › MATRIX SUMMARY: All scenarios are internally consistent (7ms)
+[QFULL GWP] AR5 CO2e=28 t, AR4 CO2e=25 t, ratio=1.1200
+  ok 21 [chromium] › e2e\test_qfull_e2e_ui.spec.js:585:3 › QFULL GWP and Unit Verification › AR5 GWP gives higher CO2e than AR4 for CH4-dominant emissions (7ms)
+[QFULL UNITS] 1000 m3 = 35314.667 scf, round-trip error = 1.38e-8
+  ok 22 [chromium] › e2e\test_qfull_e2e_ui.spec.js:599:3 › QFULL GWP and Unit Verification › Volume unit round-trip: m3 ↔ scf ↔ m3 is accurate to 1e-7 (16ms)
+[QFULL UNITS] 1 bbl / 1 gal = 42.000000 (expected 42.0)
+  ok 23 [chromium] › e2e\test_qfull_e2e_ui.spec.js:609:3 › QFULL GWP and Unit Verification › 1 barrel = 42 US gallons (exact via SI definitions) (7ms)
+[QFULL FLARE] Enclosed: 0.001527 t | Elevated: 0.006107 t | Pit: 0.015266 t
+  ok 24 [chromium] › e2e\test_qfull_e2e_ui.spec.js:616:3 › QFULL GWP and Unit Verification › Flaring: enclosed flare emits less CH4 than pit flare (same gas, same volume) (7ms)
+[QFULL TANK] GOR=100: 1.6331 t | GOR=200: 3.2662 t | ratio=2.000000
+  ok 25 [chromium] › e2e\test_qfull_e2e_ui.spec.js:632:3 › QFULL GWP and Unit Verification › Tank flashing: doubled GOR exactly doubles CH4 (linear scaling) (7ms)
+
+  25 passed (39.4s)
+

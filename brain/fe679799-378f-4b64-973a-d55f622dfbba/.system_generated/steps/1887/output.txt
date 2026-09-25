@@ -1,0 +1,172 @@
+
+The command exited with code 0.
+Output:
+===============================================================================================
+STARTING 100% EXHAUSTIVE BROWSER AUDIT FOR 5 REMAINING MODULES
+===============================================================================================
+Connected to Chrome Tab: Carbon Tech (http://localhost:5173/)
+
+[Auth] Logging into Chrome browser as a@a...
+  [Auth Result] URL: http://localhost:5173/ | Logged In: True
+
+################################################################################
+MODULE 1: AUDITING REPORTS & EXPORTS PAGE (/reports)
+################################################################################
+  [1.1 Header & Records] Title: 'Emission Database' | Subtitle: 'Complete history of all recorded emissions and compliance data.Total Records: 130 | Showing: 50' | Rendered Rows: 50
+
+[1.2] Testing Scope Filter Options (all, 1, 2, 3)...
+  - Scope 'all': 50 rendered rows
+  - Scope '1': 50 rendered rows
+  - Scope '2': 50 rendered rows
+  - Scope '3': 1 rendered rows
+
+[1.3] Testing Group By Aggregations (none, facility, process, month, scope)...
+  - Group By 'none': 50 group/row elements
+  - Group By 'facility': 50 group/row elements
+  - Group By 'process': 50 group/row elements
+  - Group By 'month': 50 group/row elements
+  - Group By 'scope': 50 group/row elements
+
+[1.4] Testing Quick Search Filter...
+  - Searched 'Combustion': 50 matching rows
+
+[1.5] Testing 'Reset Filters' Button...
+  - Reset Filters Triggered: True | Rows restored: 50
+
+[1.6] Testing Create New Report Section & ISO 14064-1 Config Modal...
+  - Report Controls Detected: 11 selectors
+    * Reporting Year *: current='2026', options=8
+    * Compare With: current='none', options=8
+    * GWP Metric Standard: current='AR5', options=4
+    * Inventory Scope: current='all', options=4
+    * Reporting Year: current='all', options=8
+    * Month: current='all', options=13
+    * Region (Grid): current='all', options=146
+    * Division: current='all', options=12
+    * Field: current='all', options=11
+    * Calc Method: current='all', options=4
+    * Group By: current='none', options=5
+  - MultiSelect Dropdown Opened: True
+  - ISO 14064-1 Config Modal Rendered: True
+
+[1.7] Testing Export Action Buttons (Excel, OGMP 2.0, PDF)...
+  - Detected Export Buttons: ['Reset Filters', 'OGMP 2.0 (Excel)', 'Excel Export', 'PDF Report']
+
+################################################################################
+MODULE 2: AUDITING METHANE EXPLORER & SATELLITE PLUME MAP (/methane-explorer)
+################################################################################
+  [2.1 Leaflet Map Mounted] Status: True
+  [2.1 Real-Time Telemetry HUD KPIs] (4 counters):
+    * MONITORED ASSETS: 139
+    * REGIONAL METHANE: 11.4M t
+    * MEAN LOSS INTENSITY: 53.791 kg/boe
+    * SUPER-EMITTERS: 2
+
+[2.2] Testing View Mode Switching (CH4 Flux vs Total GHG)...
+  - Mode Switched to: 'Total GHG'
+  - Mode Switched back to: 'CH₄ Flux'
+
+[2.3] Testing Severity Filter Pills (All, Super-Emitters, Moderate, Baseline)...
+  - Severity 'Super-Emitters': 2 filtered assets visible
+  - Severity 'Moderate': 4 filtered assets visible
+  - Severity 'Baseline': 133 filtered assets visible
+  - Severity 'All': 139 filtered assets visible
+
+[2.4] Testing Sentinel-5P Overlay Toggles & Opacity Slider...
+  - Satellite Layer Active: True | Opacity: 0.75
+
+[2.5] Testing Facility Card Click & Reconnaissance Dossier Drawer...
+  - Dossier Panel Mounted: True | Facility: 'ADR' | Coords: '27.8700°N, -0.2900°E'
+
+[2.6] Testing 'Copy Coordinates' Interaction...
+  - Coords Click Triggered: True | Text: 'Copied!'
+
+################################################################################
+MODULE 3: AUDITING REFERENCE DATA CATALOG (/reference-data)
+################################################################################
+
+[3.1] Testing Reference Search Input...
+  - Search 'Diesel': 5 table rows displayed
+
+[3.2] Testing All Categories with Zero Sampling...
+  - Category 'all': 11 section(s) visible
+  - Category 'hhv_defaults': 1 section(s) visible
+  - Category 'process_types': 1 section(s) visible
+  - Category 'scope2_defaults': 1 section(s) visible
+  - Category 'gwp': 1 section(s) visible
+  - Category 'conversions': 1 section(s) visible
+  - Category 'uncertainty': 1 section(s) visible
+  - Category 'custom': 1 section(s) visible
+  - Category 'gases': 1 section(s) visible
+  - Category 'liquids': 1 section(s) visible
+  - Category 'solids': 1 section(s) visible
+  - Category 'equipment': 1 section(s) visible
+
+[3.3] Testing Accordion Header Expand/Collapse...
+  - Accordion toggled successfully.
+
+################################################################################
+MODULE 4: AUDITING SYSTEM SETTINGS & PROTOCOLS (/settings)
+################################################################################
+
+[4.1] Testing IPCC GWP Standards Cards (AR5, AR6, AR4)...
+  - AR6 Card Selected: True
+  - AR4 Card Selected: True
+  - AR5 Card Restored (Default): True
+
+[4.2] Testing OGMP 2.0 Baseline & Thresholds Tab...
+  - OGMP Parameters Detected: 3 inputs
+    * global-threshold-slider: 20
+    * upstream-target-input: 0.2
+    * midstream-target-input: 0.05
+
+[4.3] Testing Facility Overrides Tab...
+  - Facility Override Rows Rendered: 145
+
+[4.4] Testing Copernicus Satellite (S5P) Tab & Test Connection...
+  - Satellite Tab Rendered | Test Connection Button Present: True
+  - Connection Test Feedback: 'Missing credentials. Provide Copernicus Email & Password or Client ID & Secret.'
+
+################################################################################
+MODULE 5: AUDITING USER MANAGEMENT PAGE (/user-management) AS IT MANAGER (z@z)
+################################################################################
+
+[Auth] Logging into Chrome browser as z@z...
+  [Auth Result] URL: http://localhost:5173/user-management | Logged In: True
+  [5.1 IT Console Header] Title: 'User Management'
+  [5.1 IT User Statistics]:
+    * TOTAL USERS: 7
+    * STANDARD USERS: 0
+    * ADMINS: 3
+    * IT ADMINS: 3
+    * REGIONS: 53
+
+[5.2] Testing Role Filter with Zero Sampling (all, user, superuser, admin, it_manager, it)...
+  - Role 'All Roles': 7 account(s) listed
+  - Role 'user': 1 account(s) listed
+  - Role 'superuser': 1 account(s) listed
+  - Role 'admin': 3 account(s) listed
+  - Role 'it_manager': 3 account(s) listed
+  - Role 'it': 1 account(s) listed
+
+[5.3] Testing Region Filter...
+  - Region Options Detected: 54
+
+[5.4] Testing '+ Add New User' Drawer Open & Cancel...
+  - Add User Drawer Mounted: True (7 form inputs)
+
+[5.5] Testing Reset Password Drawer Trigger on User Row...
+  - Reset Password Drawer Triggered: True | Password Field: False
+
+===============================================================================================
+CHECKING FOR UNCAUGHT CONSOLE ERRORS ACROSS ALL PAGES
+===============================================================================================
+Total Console Errors Recorded: 0
+
+[Auth] Logging into Chrome browser as a@a...
+  [Auth Result] URL: http://localhost:5173/ | Logged In: True
+
+===============================================================================================
+100% EXHAUSTIVE BROWSER AUDIT COMPLETE
+===============================================================================================
+

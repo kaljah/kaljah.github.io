@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+Name                           Length
+----                           ------
+neocarbon_computer_hero.jpg    545012
+neocarbon_computer_hero_fr.jpg 475876
+
+
+

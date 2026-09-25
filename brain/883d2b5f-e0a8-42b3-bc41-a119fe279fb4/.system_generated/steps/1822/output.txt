@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\stoichiometry.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -12,7 +12,9 @@
+     def __init__(self):
+         super().__init__("Stoichiometric Mass Balance", "Section 4.1")
+ 
+-    def calculate(self, fuel_mass, carbon_content, uncertainties, mass_unit="kg"):
++    def calculate(
++        self, fuel_mass, carbon_content, uncertainties, mass_unit="kg", gwp_dict=None
++    ):
+         """
+         API Equation 4-3/4-4: CO2 from carbon content
+         CO2 = Mass * Carbon_Content * (44.01 / 12.011)
+@@ -50,7 +50,7 @@
+             process_category="stoichiometric",
+             gas="co2",
+         )
+-        total_co2e = calculate_co2e(co2=co2_tonnes)
++        total_co2e = calculate_co2e(co2=co2_tonnes, gwp_dict=gwp_dict)
+ 
+         return self.format_result(
+             co2=co2_res,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

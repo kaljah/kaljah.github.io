@@ -1,0 +1,70 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -891,18 +891,46 @@
+         errors.append(f"Facility '{fac_input}' not found")
+         return None, errors
+ 
++    raw_source = str(row.get("source_type") or row.get("factor_type") or "electricity").strip().lower()
++    if raw_source in ["indirect_steam", "steam", "heat"]:
++        source_type = "indirect_steam"
++    elif raw_source in ["cogen_allocation", "cogen", "chp"]:
++        source_type = "cogen_allocation"
++    else:
++        source_type = "electricity"
++
+     grid_region = str(row.get("grid_region") or "").strip()
+     factor_info = GRID_FACTORS.get(grid_region)
++    if not factor_info and grid_region:
++        for k, v in GRID_FACTORS.items():
++            if k.lower() == grid_region.lower():
++                factor_info = v
++                grid_region = k
++                break
+     if not factor_info:
+-        errors.append(f"Grid Region '{grid_region}' not found")
+-        return None, errors
+-
+-    ef = factor_info["factor"]
+-    val = _clean_float(row.get("consumption"), default=0.0)
+-    unit = str(row.get("unit") or "kWh").strip()
+-
+-    # Default to electricity
+-    source_type = str(row.get("source_type") or "electricity").strip().lower()
++        grid_region = "Algerian National Grid"
++        factor_info = GRID_FACTORS.get("Algerian National Grid", {"factor": 0.522})
++
++    custom_ef = row.get("factor") or row.get("emission_factor")
++    if custom_ef not in [None, ""]:
++        ef = _clean_float(custom_ef, default=factor_info["factor"])
++    else:
++        ef = factor_info["factor"]
++
++    val = _clean_float(
++        row.get("consumption")
++        or row.get("electricitykwh")
++        or row.get("steammmbtu")
++        or row.get("steam")
++        or row.get("amount")
++        or row.get("quantity"),
++        default=0.0,
++    )
++    unit = str(
++        row.get("unit")
++        or row.get("heat_unit")
++        or ("mmbtu" if source_type == "indirect_steam" else "kWh")
++    ).strip()
+     
+     kwh = 0.0
+     heat_mmbtu = 0.0
+@@ -945,7 +945,7 @@
+             errors.append(f"Row {row_idx}: Net efficiency must be greater than 0 (got {net_eff:.4f})")
+             return None, errors
+ 
+-        boiler_ef = _clean_float(row.get("emission_factor") or row.get("ef_co2"), default=53.06)
++        boiler_ef = _clean_float(row.get("factor") or row.get("emission_factor") or row.get("ef_co2"), default=53.06)
+         co2_kg = (heat_mmbtu * boiler_ef) / net_eff
+         co2e = co2_kg / 1000.0
+         ef = boiler_ef
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1143,11 +1143,15 @@
+     });
+   };
+ 
+-  const handleDelete = async (id) => {
+-    if (!confirm("Delete this entry?")) return;
++  const handleDelete = (id) => {
++    setDeleteConfirmId(id);
++  };
++
++  const confirmDelete = async () => {
++    if (!deleteConfirmId) return;
+     try {
+       // Strip prefix (e.g. "s1_17" -> "17")
+-      const realId = id.toString().replace(/^[s]\d+_/, "");
++      const realId = deleteConfirmId.toString().replace(/^[s]\d+_/, "");
+       await api.delete(`/emissions/${realId}`);
+       toast.success("Entry deleted");
+       loadEntries();
+@@ -1154,5 +1154,7 @@
+       console.error("Failed to delete:", error);
+       toast.error("Failed to delete entry");
++    } finally {
++      setDeleteConfirmId(null);
+     }
+   };
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

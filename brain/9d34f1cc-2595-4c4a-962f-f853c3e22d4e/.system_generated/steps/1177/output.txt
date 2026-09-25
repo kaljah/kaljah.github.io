@@ -1,0 +1,150 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1301,10 +1301,19 @@
+     };
+ 
+     // --- Pre-calculate Filtered Data for Pagination ---
+-    const getFilteredFactors = () => customFactors.filter(f => f.factor_name.toLowerCase().includes(searchTerm.toLowerCase()));
++    const getFilteredFactors = () => customFactors.filter(f => {
++        if (!f) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
++        return (f.factor_name || '').toLowerCase().includes(sTerm);
++    });
+     
+     const getFilteredFacilities = () => facilities.filter(f => {
+-        const matchesSearch = f.name.toLowerCase().includes(searchTerm.toLowerCase()) || (f.location?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (f.field?.toLowerCase() || '').includes(searchTerm.toLowerCase());
++        if (!f) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
++        const matchesSearch = (f.name || '').toLowerCase().includes(sTerm) || 
++                              (f.location || '').toLowerCase().includes(sTerm) || 
++                              (f.field || '').toLowerCase().includes(sTerm) ||
++                              (f.code || '').toLowerCase().includes(sTerm);
+         const matchesAct = filterActivity ? matchesActivity(f.activity, filterActivity) : true;
+         const matchesDiv = filterDivision ? f.division === filterDivision : true;
+         const matchesReg = matchesRegionCheck(f, filterRegion);
+@@ -1311,13 +1311,17 @@
+     });
+ 
+     const getFilteredProduction = () => productionData.filter(d => {
+-        const fac = facilities.find(f => f.id === d.facilityId);
+-        const facName = fac ? fac.name.toLowerCase() : String(d.facilityId).toLowerCase();
+-        const matchesSearch = facName.includes(searchTerm.toLowerCase()) || d.year.toString().includes(searchTerm) || (d.activity?.toLowerCase() || '').includes(searchTerm.toLowerCase());
++        if (!d) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
++        const fac = facilities.find(f => f && f.id === d.facilityId);
++        const facName = (fac ? fac.name : String(d.facilityId || '')) || '';
++        const matchesSearch = facName.toLowerCase().includes(sTerm) || 
++                              (d.year ? d.year.toString().includes(searchTerm || '') : false) || 
++                              (d.activity || '').toLowerCase().includes(sTerm);
+         const matchesAct = filterActivity ? (matchesActivity(d.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
+         const matchesDiv = filterDivision ? (d.division === filterDivision || (fac && fac.division === filterDivision)) : true;
+         const matchesReg = matchesRegionCheck(fac, filterRegion);
+-        const matchesYear = filterYear ? d.year.toString() === filterYear.toString() : true;
++        const matchesYear = filterYear ? d.year?.toString() === filterYear.toString() : true;
+         return matchesSearch && matchesAct && matchesDiv && matchesReg && matchesYear;
+     });
+ 
+@@ -1324,5 +1324,9 @@
+-        const fac = facilities.find(f => f.id === s.facility_id);
+-        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || (s.equipment_id?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || (s.type?.toLowerCase() || '').includes(searchTerm.toLowerCase());
++        if (!s) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
++        const fac = facilities.find(f => f && f.id === s.facility_id);
++        const matchesSearch = (s.name || '').toLowerCase().includes(sTerm) || 
++                              (s.equipment_id || '').toLowerCase().includes(sTerm) || 
++                              (s.type || '').toLowerCase().includes(sTerm);
+         const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
+         const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
+         const matchesReg = matchesRegionCheck(fac, filterRegion);
+@@ -1329,11 +1329,13 @@
+     });
+ 
+     const getFilteredMitigations = () => mitigations.filter(m => {
+-        const fac = facilities.find(f => f.id === m.facility_id);
+-        const matchesSearch = (m.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+-                              (m.mitigation_type?.toLowerCase() || m.type?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+-                              (m.notes?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+-                              m.year?.toString().includes(searchTerm);
++        if (!m) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
++        const fac = facilities.find(f => f && f.id === m.facility_id);
++        const matchesSearch = (m.name || '').toLowerCase().includes(sTerm) || 
++                              (m.mitigation_type || m.type || '').toLowerCase().includes(sTerm) || 
++                              (m.notes || '').toLowerCase().includes(sTerm) || 
++                              (m.year ? m.year.toString().includes(searchTerm || '') : false);
+         const matchesAct = filterActivity ? (matchesActivity(m.activity, filterActivity) || (fac && matchesActivity(fac.activity, filterActivity))) : true;
+         const matchesDiv = filterDivision ? (m.division === filterDivision || fac?.division === filterDivision) : true;
+         const matchesReg = matchesRegionCheck(fac || { region: m.region, location: m.region }, filterRegion);
+@@ -1341,12 +1341,14 @@
+     });
+ 
+     const getFilteredOgmp = () => ogmpSurveys.filter(o => {
++        if (!o) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
+         const fid = o.facility_id || o.facilityId;
+-        const fac = facilities.find(f => f.id === fid);
+-        const sType = o.survey_type || o.surveyType || '';
+-        const fName = o.facility_name || o.facilityName || fac?.name || '';
+-        const rStatus = o.reconciliation_status || o.reconciliationStatus || '';
+-        const yr = (o.year || (o.survey_date || o.surveyDate ? new Date(o.survey_date || o.surveyDate).getFullYear() : '')).toString();
++        const fac = facilities.find(f => f && f.id === fid);
++        const sType = String(o.survey_type || o.surveyType || '');
++        const fName = String(o.facility_name || o.facilityName || fac?.name || '');
++        const rStatus = String(o.reconciliation_status || o.reconciliationStatus || '');
++        const yr = (o.year || (o.survey_date || o.surveyDate ? new Date(o.survey_date || o.surveyDate).getFullYear() : '') || '').toString();
+ 
+         // Only show O&G facilities in the OGMP tab
+         const isOilAndGas = !fac || !NON_OG_ACTIVITIES.includes(fac.activity);
+@@ -1353,7 +1353,7 @@
+-        const matchesSearch = sType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+-            fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+-            rStatus.toLowerCase().includes(searchTerm.toLowerCase()) ||
+-            yr.includes(searchTerm);
++        const matchesSearch = sType.toLowerCase().includes(sTerm) ||
++            fName.toLowerCase().includes(sTerm) ||
++            rStatus.toLowerCase().includes(sTerm) ||
++            yr.includes(searchTerm || '');
+         const matchesAct = filterActivity ? (fac && matchesActivity(fac.activity, filterActivity)) : true;
+         const matchesDiv = filterDivision ? (fac && fac.division === filterDivision) : true;
+         const matchesReg = matchesRegionCheck(fac, filterRegion);
+@@ -1361,19 +1361,24 @@
+     });
+ 
+     const getFilteredGoals = () => goals.filter(g => {
+-        const yr = String(g.year);
+-        const target = String(g.target_amount);
+-        return yr.includes(searchTerm) || target.includes(searchTerm);
++        if (!g) return false;
++        const yr = String(g.year || '');
++        const target = String(g.target_amount || '');
++        return yr.includes(searchTerm || '') || target.includes(searchTerm || '');
+     });
+ 
+     const getFilteredBaseYears = () => (baseYearsData.history || []).filter(b => {
+-        const yr = String(b.year);
+-        const reason = (b.reason || '').toLowerCase();
+-        return yr.includes(searchTerm) || reason.includes(searchTerm.toLowerCase());
++        if (!b) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
++        const yr = String(b.year || '');
++        const reason = String(b.reason || '').toLowerCase();
++        return yr.includes(searchTerm || '') || reason.includes(sTerm);
+     });
+ 
+     const getFilteredCbam = () => cbamExports.filter(item => {
+-        const fac = facilities.find(f => f.id === item.facility_id);
++        if (!item) return false;
++        const sTerm = (searchTerm || '').toLowerCase();
++        const fac = facilities.find(f => f && f.id === item.facility_id);
+         if (filterActivity && (!fac || !matchesActivity(fac.activity, filterActivity))) return false;
+         if (filterDivision && (!fac || fac.division !== filterDivision)) return false;
+         if (filterRegion && filterRegion !== 'all' && !matchesRegionCheck(fac, filterRegion)) return false;
+@@ -1380,4 +1380,4 @@
+-        if (searchTerm && !item.product_name?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
++        if (searchTerm && !String(item.product_name || '').toLowerCase().includes(sTerm)) return false;
+         return true;
+     });
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,49 @@
+
+The command exited with code 1.
+Output:
+======================================================================
+STARTING BACKEND AUDIT FOR REMAINING 5 MODULES
+======================================================================
+
+--- Phase 1: Authentication & Role Boundary Setup ---
+  [PASS] Admin Login (a@a) 
+  [PASS] IT Manager Login (z@z) 
+  [PASS] IT Role Blocked from Operational Emissions (403) 
+  [PASS] Admin Role Blocked from User Management (403) 
+
+--- Phase 2: Reports & Exports Endpoints ---
+  [PASS] GET /facilities (145 facilities)
+  [PASS] GET /filters/available 
+  [PASS] GET /emissions (Paginated) (Total: 530)
+  [PASS] GET /emissions?scope=1 
+  [PASS] GET /emissions?year=2024 
+  [PASS] GET /emissions/export?format=excel (Binary XLSX) (65094 bytes)
+  [PASS] GET /reports/export (Binary PDF) (49989 bytes)
+  [PASS] GET /reports/ogmp-export?year=2024 (OGMP 2.0 Workbook) (35056 bytes)
+  [FAIL] POST /reports/generate (Direct PDF Generation) (86 bytes)
+
+--- Phase 3: Methane Explorer & Satellite Endpoints ---
+  [PASS] GET /satellite/sentinel5p/layer-config 
+  [PASS] GET /dashboard/intensity-stats 
+  [PASS] GET /dashboard/years 
+  [PASS] GET /satellite/sentinel5p/facility-timeseries (Facility #1) 
+  [PASS] GET /data/ogmp-surveys?facilityId=1 
+  [FAIL] POST /satellite/sentinel5p/poll-new-passes 
+
+--- Phase 4: Reference Data Endpoints ---
+  [PASS] GET /emission-factors (84 factors)
+  [PASS] GET /emission-factors/segments 
+  [PASS] GET /custom-factors (101 custom factors)
+
+--- Phase 5: Settings Endpoints ---
+  [PASS] GET /auth/settings 
+  [FAIL] POST /satellite/sentinel5p/test-connection 
+
+--- Phase 6: User Management Endpoints (IT Session) ---
+  [PASS] GET /auth/users (IT Session) (7 user accounts)
+  [PASS] GET /facilities/all-regions (53 regions)
+
+======================================================================
+BACKEND TEST SUMMARY: 23 PASSED, 3 FAILED (TOTAL: 26)
+======================================================================
+

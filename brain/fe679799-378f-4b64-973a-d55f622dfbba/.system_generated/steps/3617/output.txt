@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+71 const [sourceType, setSourceType] = useState("default"); // 'default', 'custom', 'specific'
+1203 setSourceType,
+1318 setSourceType("specific");
+1331 setSourceType("default");
+1550 setSourceType(type);
+

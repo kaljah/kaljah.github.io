@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+  Id ProcessName Path                                                                CommandLine
+  -- ----------- ----                                                                -----------
+9420 Antigravity C:\Users\samsung\AppData\Local\Programs\Antigravity\Antigravity.exe            
+
+
+

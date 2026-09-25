@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\4f5c4a22-cb10-4941-803e-4e8ca7e2f2d4\scratch\test_api.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -9,7 +9,7 @@
+ print('CSRF token:', csrf_token[:20] + '...')
+ 
+ # 2. Login with CSRF header
+-login_data = json.dumps({'username': 'a', 'password': 'a'}).encode('utf-8')
++login_data = json.dumps({'email': 'a', 'password': 'a'}).encode('utf-8')
+ login_req = urllib.request.Request('http://127.0.0.1:5000/api/auth/login', data=login_data, headers={'Content-Type': 'application/json', 'X-CSRFToken': csrf_token})
+ try:
+     res_login = opener.open(login_req)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

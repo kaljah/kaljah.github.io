@@ -1,0 +1,55 @@
+
+The command exited with code 0.
+Output:
+<truncated 197 lines>
+new/graphify-out/graph.json:6886:      "label": "CustomFactor",
+new/server/app.py:101:        "CustomFactor",
+new/server/background_processor.py:296:                CustomFactor,
+new/server/background_processor.py:338:            custom_factors = CustomFactor.query.all()
+new/server/background_processor.py:1521:    from models import CustomFactor
+new/server/background_processor.py:1529:    factor = CustomFactor(
+new/server/migrations/versions/2ef6f882b02c_add_ghg_uncertainties_to_customfactor.py:1:"""Add GHG uncertainties to CustomFactor
+new/server/models.py:261:class CustomFactor(db.Model):
+new/server/routes/custom_factors.py:3:from models import CustomFactor, User
+new/server/routes/custom_factors.py:20:    factors = CustomFactor.query.all()
+new/server/routes/custom_factors.py:115:    factor = CustomFactor(
+new/server/routes/custom_factors.py:149:            entity="CustomFactor",
+new/server/routes/custom_factors.py:171:    factor = db.session.get(CustomFactor, factor_id)
+new/server/routes/custom_factors.py:240:            entity="CustomFactor",
+new/server/routes/custom_factors.py:257:    factor = db.session.get(CustomFactor, factor_id)
+new/server/routes/custom_factors.py:289:            entity="CustomFactor",
+new/server/routes/custom_factors.py:332:        factor = CustomFactor(
+new/server/routes/custom_factors.py:367:            entity="CustomFactor",
+new/server/routes/emissions.py:12:    CustomFactor,
+new/server/routes/emissions.py:508:    custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()
+new/server/routes/emissions.py:3058:        cf = db.session.get(CustomFactor, custom_factor_id)
+new/server/routes/emissions.py:3061:            # Map CustomFactor to factor_data structure
+new/server/routes/emissions.py:3488:            cf = db.session.get(CustomFactor, cf_id)
+new/server/routes/emissions.py:3852:                cf = db.session.get(CustomFactor, cf_id)
+new/server/routes/qaqc.py:5:from models import Emission, Scope2Emission, Scope3Emission, ActivityLog, Facility, CustomFactor
+new/server/routes/qaqc.py:316:            total_custom_factors = CustomFactor.query.count()
+new/server/tests/test_all_bulk_imports.py:10:    CustomFactor,
+new/server/tests/test_all_bulk_imports.py:39:            CustomFactor.query.filter_by(fuel_type="Special Test Fuel").delete()
+new/server/tests/test_all_bulk_imports.py:158:        CustomFactor.query.filter_by(name="My Factor").delete()
+new/server/tests/test_all_bulk_imports.py:195:        factor = CustomFactor.query.filter_by(name="My Factor").first()
+new/server/tests/test_audit_remediation.py:972:    from models import CustomFactor
+new/server/tests/test_audit_remediation.py:974:        cf = CustomFactor.query.filter_by(name="Test 5% Factor Audit").first()
+new/server/tests/test_audit_remediation.py:976:            cf = CustomFactor(
+new/server/tests/test_audit_remediation.py:1582:    """Verify CustomFactor description and source lab certification roundtrip via API."""
+new/server/tests/test_deep_injection_matrix.py:23:    CustomFactor,
+new/server/tests/test_deep_injection_matrix.py:453:        cf = CustomFactor.query.filter_by(name="Regional Saharan Sweet Gas").first()
+new/server/tests/test_deep_injection_matrix.py:455:            cf = CustomFactor(
+specs/002-qa-qc-ipcc-iso14064/data-model.md:18:### 4. `CustomFactor`
+specs/002-qa-qc-ipcc-iso14064/tasks.md:13:- [x] T001 [P] Update `c:\Users\samsung\Desktop\H2\new\server\models.py` to add `uncertainty_pct` (Float) and `qa_flag` (String) to `Emission`, `Scope2Emission`, `Scope3Emission`, and `CustomFactor`.
+temp_old/cbam_diff_new_server_background_processor.py.txt:9:-            from models import Facility, CustomFactor, Emission
+temp_old/cbam_diff_new_server_background_processor.py.txt:10:+            from models import Facility, CustomFactor, Emission, User
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:8:-from models import CustomFactor
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:10:+from models import CustomFactor, User
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:36:     factor = CustomFactor(
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:49:+            entity='CustomFactor',
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:69:     factor = CustomFactor.query.get(factor_id)
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:90:+            entity='CustomFactor',
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:110:     factor = CustomFactor.query.get(factor_id)
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:124:+            entity='CustomFactor',
+temp_old/cbam_diff_new_server_routes_custom_factors.py.txt:157:+            entity='CustomFactor',
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+ref_calculate_flaring res: {'co2': 82.43485600000001, 'ch4': 0.5970800000000005, 'n2o': 0.0, 'co2e': 99.15309600000003}
+

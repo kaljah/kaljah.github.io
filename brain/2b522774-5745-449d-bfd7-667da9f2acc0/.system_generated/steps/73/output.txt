@@ -1,0 +1,62 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\dashboard.py:1269:@dashboard_bp.route("/intensity-stats", methods=["GET"])
+  new\server\routes\dashboard.py:1270:@login_required
+  new\server\routes\dashboard.py:1271:def get_intensity_stats():
+  new\server\routes\dashboard.py:1272:    """
+  new\server\routes\dashboard.py:1273:    Get intensity metrics (kg/BOE) per facility.
+  new\server\routes\dashboard.py:1274:    Delegates to _query_intensity_stats() for thread-safe reuse.
+  new\server\routes\dashboard.py:1275:    """
+  new\server\routes\dashboard.py:1276:    user = get_current_user()
+  new\server\routes\dashboard.py:1277:    if is_it_role(user):
+  new\server\routes\dashboard.py:1278:        return (
+  new\server\routes\dashboard.py:1279:            jsonify(
+  new\server\routes\dashboard.py:1280:                {"error": "Forbidden: IT Administrators cannot access 
+operational dashboard data"}
+  new\server\routes\dashboard.py:1281:            ),
+  new\server\routes\dashboard.py:1282:            403,
+  new\server\routes\dashboard.py:1283:        )
+  new\server\routes\dashboard.py:1284:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\dashboard.py:1285:    return jsonify(
+  new\server\routes\dashboard.py:1286:        _query_intensity_stats(
+  new\server\routes\dashboard.py:1287:            facility_id=request.args.get("facilityId"),
+  new\server\routes\dashboard.py:1288:            year=request.args.get("year"),
+  new\server\routes\dashboard.py:1289:            activity=request.args.get("activity"),
+  new\server\routes\dashboard.py:1290:            division=request.args.get("division"),
+  new\server\routes\dashboard.py:1291:            allowed_fids=allowed_fids,
+  new\server\routes\dashboard.py:1292:            segment=request.args.get("segment"),
+  new\server\routes\dashboard.py:1293:        )
+  new\server\routes\dashboard.py:1294:    )
+> new\server\routes\dashboard.py:1668:    Pure query logic for /intensity-stats - returns a plain Python list.
+  new\server\routes\dashboard.py:1669:    Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility.
+  new\server\routes\dashboard.py:1670:    """
+  new\server\routes\dashboard.py:1671:    # 1. Fetch Production Data (Raw for normalization) - Aggregated in SQL
+  new\server\routes\dashboard.py:1672:    prod_query = db.session.query(
+  new\server\routes\dashboard.py:1673:        ProductionData.facility_id,
+  new\server\routes\dashboard.py:1674:        ProductionData.oil_unit,
+  new\server\routes\dashboard.py:1675:        ProductionData.gas_unit,
+  new\server\routes\dashboard.py:1676:        func.sum(ProductionData.oil_amount).label("total_oil_raw"),
+  new\server\routes\dashboard.py:1677:        func.sum(ProductionData.gas_amount).label("total_gas_raw"),
+  new\server\routes\dashboard.py:1678:    )
+  new\server\routes\dashboard.py:1679:
+  new\server\routes\dashboard.py:1680:    if allowed_fids is not None:
+  new\server\routes\dashboard.py:1681:        prod_query = 
+prod_query.filter(ProductionData.facility_id.in_(allowed_fids))
+  new\server\routes\dashboard.py:1682:    if year and year != "all":
+  new\server\routes\dashboard.py:1683:        prod_query = prod_query.filter(ProductionData.year == int(year))
+  new\server\routes\dashboard.py:1684:    if facility_id and facility_id != "all":
+  new\server\routes\dashboard.py:1685:        prod_query = prod_query.filter(ProductionData.facility_id == 
+int(facility_id))
+  new\server\routes\dashboard.py:1686:    if segment and segment != "all":
+  new\server\routes\dashboard.py:1687:        prod_query = prod_query.join(
+  new\server\routes\dashboard.py:1688:            Facility, ProductionData.facility_id == Facility.id
+  new\server\routes\dashboard.py:1689:        ).filter(Facility.segment == segment)
+  new\server\routes\dashboard.py:1690:    if activity and activity != "all":
+  new\server\routes\dashboard.py:1691:        prod_query = prod_query.filter(ProductionData.activity == activity)
+  new\server\routes\dashboard.py:1692:    if division and division != "all":
+  new\server\routes\dashboard.py:1693:        prod_query = prod_query.filter(ProductionData.division == division)
+
+
+

@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\extensions.py:1:import os
+  new\server\extensions.py:2:from flask_sqlalchemy import SQLAlchemy
+> new\server\extensions.py:3:from flask_limiter import Limiter
+> new\server\extensions.py:4:from flask_limiter.util import get_remote_address
+  new\server\extensions.py:5:from flask_wtf.csrf import CSRFProtect
+  new\server\extensions.py:6:
+  new\server\extensions.py:7:db = SQLAlchemy(session_options={"expire_on_commit": False})
+  new\server\extensions.py:8:csrf = CSRFProtect()
+  new\server\extensions.py:9:
+  new\server\extensions.py:11:# � Rate limiting �
+  new\server\extensions.py:12:# Global defaults apply to ALL endpoints unless overridden by a per-route
+> new\server\extensions.py:13:# @limiter.limit(...) decorator.
+  new\server\extensions.py:14:#
+  new\server\extensions.py:15:# Default: 200 requests/minute and 2000 requests/hour per IP address.
+  new\server\extensions.py:16:# Override via RATELIMIT_DEFAULT env var (e.g. "100 per minute").
+  new\server\extensions.py:17:#
+  new\server\extensions.py:18:# Auth endpoints have stricter per-route limits (e.g. login: 20/15min).
+  new\server\extensions.py:23:# Multi-worker production: set RATELIMIT_STORAGE_URI=redis://host:6379/0
+  new\server\extensions.py:24:#
+> new\server\extensions.py:25:limiter = Limiter(
+  new\server\extensions.py:26:    key_func=get_remote_address,
+  new\server\extensions.py:27:    default_limits=[
+  new\server\extensions.py:28:        os.environ.get("RATELIMIT_DEFAULT", "200 per minute"),
+  new\server\extensions.py:29:        "2000 per hour",
+  new\server\extensions.py:30:    ],
+
+
+

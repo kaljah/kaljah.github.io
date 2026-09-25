@@ -1,0 +1,9 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":110,"LineContent":"  const [gwpHorizon, setGwpHorizon] = useState(\"100\"); // \"100\" (Standard 100-yr) or \"20\" (Near-term 20-yr)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":158,"LineContent":"    gwpHorizon,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":187,"LineContent":"      if (gwpHorizon \u0026\u0026 gwpHorizon !== \"100\") {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":188,"LineContent":"        filterParams.append(\"gwp_horizon\", gwpHorizon);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":681,"LineContent":"              background: gwpHorizon === \"100\" ? \"var(--accent-color, #ff6600)\" : \"transparent\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":682,"LineContent":"              color: gwpHorizon === \"100\" ? \"#fff\" : \"var(--text-secondary)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":698,"LineContent":"              background: gwpHorizon === \"20\" ? \"#ef4444\" : \"transparent\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":699,"LineContent":"              color: gwpHorizon === \"20\" ? \"#fff\" : \"var(--text-secondary)\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":748,"LineContent":"    gwpHorizon,"}

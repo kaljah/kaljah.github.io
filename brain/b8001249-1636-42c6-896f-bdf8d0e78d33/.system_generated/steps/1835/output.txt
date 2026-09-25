@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_runner.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -392,11 +392,11 @@
+     r = safe_post(f"{BASE}/auth/login",
+                   json={"email": "a", "password": "wrong"},
+                   headers={"Content-Type": "application/json"})
+-    if r:
++    if r is not None:
+         attempt_statuses.append(r.status_code)
+         if r.status_code == 429:
+             got_429 = True
+-            print(f"  → 429 received at attempt {i+1}")
++            print(f"  -> 429 received at attempt {i+1}")
+             break
+ 
+ passed13 = got_429
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

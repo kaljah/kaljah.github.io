@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+Flagged Scope 1 count: 110
+197 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+201 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+207 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+218 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+227 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+231 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+236 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+240 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+247 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+258 None Rejected [Rejected] Historical values are constant (100.0) but new value is 5000000.0.
+

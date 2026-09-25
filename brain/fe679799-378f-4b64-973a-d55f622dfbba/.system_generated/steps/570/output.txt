@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\scratch\run_20_beta_testers_20k.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -378,7 +378,9 @@
+                 ch4_emissions=s["ch4"],
+                 n2o_emissions=s["n2o"],
+                 co2e_total=s["co2e"],
++                uncertainty=s["uncertainty"],
+                 uncertainty_pct=s["uncertainty"],
++                calc_method="API Compendium",
+                 status="Verified",
+                 created_by=admin_id,
+                 equipment_id=f"BETA-{s['entry_id']}",
+@@ -385,4 +385,5 @@
+-                factor_source=s["factor_source"]
++                factor_source=s["factor_source"],
++                source_payload=json.dumps(s)
+             )
+             db.session.add(e)
+             db_insert_count += 1
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

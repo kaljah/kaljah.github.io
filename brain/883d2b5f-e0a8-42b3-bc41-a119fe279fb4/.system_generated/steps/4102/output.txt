@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\models.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -215,6 +215,7 @@
+         db.UniqueConstraint(
+             "facility_id", "month", "year", name="_facility_month_year_uc"
+         ),
++        db.Index("ix_prod_yr_fac_units", "year", "facility_id", "oil_unit", "gas_unit"),
+     )
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

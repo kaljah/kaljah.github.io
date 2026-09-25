@@ -1,0 +1,21 @@
+Task: 09b5d183-b630-4b7f-9ff2-a124ffb240d4/task-40
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\09b5d183-b630-4b7f-9ff2-a124ffb240d4\.system_generated\tasks\task-40.log
+Log output:
+<truncated 8 lines>
+
+new\server\tests\test_independent_differential.py:27: in <module>
+    from validation.reference_model import (
+E   ImportError: cannot import name 'IndependentUnitConverter' from 'validation.reference_model' (C:\Users\samsung\Desktop\H2\validation\reference_model\__init__.py)
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR new\server\tests\test_independent_differential.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 warning, 1 error in 5.72s
+
+Last progress: 1s ago

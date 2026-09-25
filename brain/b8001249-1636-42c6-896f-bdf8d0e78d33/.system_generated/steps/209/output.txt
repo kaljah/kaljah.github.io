@@ -1,0 +1,24 @@
+{"name":"__pycache__", "isDir":true}
+{"name":"agent_01_launcher.py", "sizeBytes":"3128"}
+{"name":"agent_01_report.md", "sizeBytes":"1945"}
+{"name":"agent_02_bugs.json", "sizeBytes":"456"}
+{"name":"agent_02_credentials.json", "sizeBytes":"1924"}
+{"name":"agent_02_report.md", "sizeBytes":"1145"}
+{"name":"agent_02_seed.py", "sizeBytes":"16827"}
+{"name":"agent_02_seed_db.py", "sizeBytes":"11283"}
+{"name":"agent_02_seeder.py", "sizeBytes":"6071"}
+{"name":"agent_03_admin_api.py", "sizeBytes":"11612"}
+{"name":"agent_04_superuser_api.py", "sizeBytes":"6328"}
+{"name":"agent_05_bugs.json", "sizeBytes":"826"}
+{"name":"agent_05_report.md", "sizeBytes":"3837"}
+{"name":"agent_05_user_api.py", "sizeBytes":"6520"}
+{"name":"agent_06_itadmin_api.py", "sizeBytes":"4200"}
+{"name":"agent_07_viewer_api.py", "sizeBytes":"4171"}
+{"name":"agent_08_admin_playwright.py", "sizeBytes":"11184"}
+{"name":"agent_09_superuser_selenium.py", "sizeBytes":"12763"}
+{"name":"agent_10_user_playwright.py", "sizeBytes":"8757"}
+{"name":"agent_11_itadmin_selenium.py", "sizeBytes":"8639"}
+{"name":"agent_12_compiler.py", "sizeBytes":"7369"}
+{"name":"api_tester_base.py", "sizeBytes":"5702"}
+
+Summary: This directory contains 1 subdirectories and 21 files.

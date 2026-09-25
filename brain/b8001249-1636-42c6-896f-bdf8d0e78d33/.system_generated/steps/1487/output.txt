@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\auth.py:132:        return False, f"URL validation error: {str(e)}"
+  new\server\routes\auth.py:133:
+  new\server\routes\auth.py:134:    return True, ""
+  new\server\routes\auth.py:135:
+  new\server\routes\auth.py:136:
+> new\server\routes\auth.py:137:def login_required(f):
+  new\server\routes\auth.py:138:    @wraps(f)
+  new\server\routes\auth.py:139:    def decorated_function(*args, **kwargs):
+  new\server\routes\auth.py:334:
+  new\server\routes\auth.py:335:
+  new\server\routes\auth.py:336:@auth_bp.route("/login", methods=["POST"])
+  new\server\routes\auth.py:337:@csrf.exempt
+  new\server\routes\auth.py:338:@limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
+> new\server\routes\auth.py:339:def login():
+  new\server\routes\auth.py:340:    data = request.get_json()
+  new\server\routes\auth.py:341:    if not data or not data.get("email") or not data.get("password"):
+
+
+

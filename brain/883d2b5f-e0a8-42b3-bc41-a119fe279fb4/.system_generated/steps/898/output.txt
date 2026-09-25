@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -256,7 +256,13 @@
+                     )
+ 
+         # Extract common quantity
+-        quantity = float(flat_inputs.get("amount") or flat_inputs.get("quantity") or 0)
++        raw_qty = flat_inputs.get("amount") or flat_inputs.get("quantity") or 0
++        try:
++            quantity = float(raw_qty)
++        except (ValueError, TypeError):
++            raise ValueError(f"Invalid numeric quantity/amount: {raw_qty}")
++        if math.isnan(quantity) or math.isinf(quantity):
++            raise ValueError(f"Quantity/Amount cannot be NaN or Infinite: {quantity}")
+         if quantity < 0:
+             raise ValueError(f"Quantity/Amount cannot be negative: {quantity}")
+         unit = str(flat_inputs.get("unit", "m3")).lower()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+[{"tag":"BUTTON","text":"Sign Out","className":"dropdown-item logout-item","id":"logout-btn-drop"},{"tag":"BUTTON","text":"GWP-100","className":"","id":""},{"tag":"BUTTON","text":"GWP-20","className":"","id":""},{"tag":"BUTTON","text":"+ Set Target","className":"btn-target-action","id":""},{"tag":"BUTTON","text":"Export Executive Brief (PDF)","className":"btn-secondary-unified","id":""},{"tag":"BUTTON","text":"Compare Regions","className":"compare-toggle-btn ","id":""},{"tag":"BUTTON","text":"Manage Custom Factors","className":"manage-factors-btn","id":""}]
+```

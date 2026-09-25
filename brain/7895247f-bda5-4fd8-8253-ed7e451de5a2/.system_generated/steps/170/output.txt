@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\combustion.py:387:class FlaringCalculator(BaseCalculator):
+  new\server\calculations\combustion.py:388:    def __init__(self):
+  new\server\calculations\combustion.py:389:        super().__init__("Flaring Dual-Efficiency", "Section 5.2")
+  new\server\calculations\combustion.py:390:
+  new\server\calculations\combustion.py:391:    def calculate(
+  new\server\calculations\combustion.py:392:        self,
+  new\server\calculations\combustion.py:393:        gas_volume,
+  new\server\calculations\combustion.py:394:        ch4_fraction,
+  new\server\calculations\combustion.py:395:        flare_type,
+  new\server\calculations\combustion.py:396:        uncertainties,
+  new\server\calculations\combustion.py:397:        hhv=None,
+  new\server\calculations\combustion.py:398:        ef_unit=None,
+  new\server\calculations\combustion.py:399:        fuel_unit=None,
+  new\server\calculations\combustion.py:400:        fuel_type=None,
+  new\server\calculations\combustion.py:401:        ef_n2o=None,
+  new\server\calculations\combustion.py:402:        operating_temperature=None,
+  new\server\calculations\combustion.py:403:        temp_unit="C",
+  new\server\calculations\combustion.py:404:        operating_pressure=None,
+  new\server\calculations\combustion.py:405:        press_unit="psig",
+  new\server\calculations\combustion.py:406:        z_factor=1.0,
+  new\server\calculations\combustion.py:407:        gwp_dict=None,
+
+
+

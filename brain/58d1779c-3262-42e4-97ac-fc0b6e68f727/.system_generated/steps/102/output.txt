@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+At line:1 char:3
++ if not exist "docs\validation" mkdir "docs\validation"
++   ~
+Missing '(' after 'if' in if statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingOpenParenthesisInIfStatement
+ 
+

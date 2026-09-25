@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+ManageData.jsx:742: const regions = [...new Set(data.flatMap(f => [f.region_identifier, f.location]).filter(Boolean))].sort();
+MethaneExplorer.jsx:177: ...new Set(fetchedFacilities.flatMap((f) => [f.region_identifier, f.location]).filter(Boolean)),
+MethaneExplorer.jsx:236: // Region Filter - use region_identifier (= f.region ?? f.name) so facilities
+MethaneExplorer.jsx:240: f.region_identifier === filters.region;
+MethaneExplorer.jsx:249: const region = (f.region_identifier || "").toLowerCase();
+userDefaults.js:126: const uniqueRegions = [...new Set(facilities.map(f => f.region_identifier || f.location).filter(Boolean))];
+

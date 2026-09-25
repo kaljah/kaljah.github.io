@@ -1,0 +1,3 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":283,"LineContent":"                \"email\": \"admin@ghg.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":25,"LineContent":"        admin_email = os.environ.get(\"ADMIN_EMAIL\", \"admin@ghg.com\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":28,"LineContent":"        it_admin_email = os.environ.get(\"IT_ADMIN_EMAIL\", \"itadmin@ghg.com\").strip().lower()"}

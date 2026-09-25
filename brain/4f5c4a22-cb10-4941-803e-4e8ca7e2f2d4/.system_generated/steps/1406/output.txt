@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\EmissionFactors.js:73:    code: "LPG_Gas",
+new\client\src\utils\EmissionFactors.js:243:    code: "LPG_Flare",
+new\client\src\utils\EmissionFactors.js:354:  "Residual Fuel Oil (No. 6)": {
+new\client\src\utils\EmissionFactors.js:366:  Kerosene: {
+new\client\src\utils\EmissionFactors.js:403:    code: "LPG_Liq",
+new\client\src\utils\EmissionFactors.js:483:  "Anthracite Coal": {
+new\client\src\utils\EmissionFactors.js:893:  "Liquids Unloading - Plunger Lift": {
+new\client\src\utils\EmissionFactors.js:894:    code: "UnloadPlunger",
+new\client\src\utils\EmissionFactors.js:903:  "Liquids Unloading - Non-Plunger": {
+new\client\src\utils\EmissionFactors.js:904:    code: "UnloadNonPlunger",
+
+
+

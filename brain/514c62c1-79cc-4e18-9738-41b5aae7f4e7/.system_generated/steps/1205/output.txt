@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Total missing fuel records: 143
+372 2024 14 Venting None Verified None
+373 2024 14 None None Verified [Verified] Outlier
+379 2024 14 Venting None Verified None
+380 2024 14 Combustion None Draft None
+381 2024 14 Venting None Draft None
+

@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2999,6 +2999,8 @@
+     if allowed_ids is not None and fac_id not in allowed_ids:
+         return jsonify({"error": "Unauthorized for this facility"}), 403
+ 
++    facility = db.session.get(Facility, fac_id)
++
+     # Calculate Emissions
+     # We need to fetch factor data if not specific
+     # For now, using a simplified factor data placeholder or letting calculate handle it
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,79 @@
+
+The command exited with code 1.
+Output:
+
+Running 1 test using 1 worker
+
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+  x  1 [chromium] › e2e\test_scope1_form_engine.spec.js:203:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (17.3s)
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+  x  2 [chromium] › e2e\test_scope1_form_engine.spec.js:203:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (retry #1) (18.9s)
+
+
+  1) [chromium] › e2e\test_scope1_form_engine.spec.js:203:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.result-overlay')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.result-overlay') with timeout 10000ms
+      - waiting for locator('.result-overlay')
+
+
+      445 |       // Wait for Result Overlay
+      446 |       const resultOverlay = page.locator('.result-overlay');
+    > 447 |       await expect(resultOverlay).toBeVisible({ timeout: 10000 });
+          |                                   ^
+      448 |
+      449 |       // 6. Screenshot
+      450 |       const safeName = ef.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js:447:35
+
+    Error Context: test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.result-overlay')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.result-overlay') with timeout 10000ms
+      - waiting for locator('.result-overlay')
+
+
+      445 |       // Wait for Result Overlay
+      446 |       const resultOverlay = page.locator('.result-overlay');
+    > 447 |       await expect(resultOverlay).toBeVisible({ timeout: 10000 });
+          |                                   ^
+      448 |
+      449 |       // 6. Screenshot
+      450 |       const safeName = ef.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js:447:35
+
+    Error Context: test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_form_engine-Sc-dc6e3-g-Tanks-AGR-Dehydrator-More-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_scope1_form_engine.spec.js:203:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More 
+

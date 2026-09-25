@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":17,"LineContent":"import CombustionForm from \"./scope1/CombustionForm\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1214,"LineContent":"      return \u003cCombustionForm {...props} /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1223,"LineContent":"        return \u003cCombustionForm {...props} /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1228,"LineContent":"          \u003cCombustionForm {...props} /\u003e"}

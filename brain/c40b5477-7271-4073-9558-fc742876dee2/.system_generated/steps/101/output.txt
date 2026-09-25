@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+commit 5e3e6c9c2f53098bc6a52f930d1a5cbe39899447
+Author: kaljah <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 15:16:00 2026 +0200
+
+    Configure GitHub Pages deployment, SPA routing, and cross-origin authentication
+
+ .github/workflows/deploy-pages.yml            | 71 +++++++++++++++++++++++++++
+ Dockerfile                                    | 12 +++--
+ new/client/index.html                         |  9 ++++
+ new/client/public/404.html                    | 19 +++++++
+ new/client/src/App.jsx                        |  2 +-
+ new/client/src/components/BulkImportModal.jsx |  3 +-
+ new/client/vite.config.js                     |  1 +
+ new/server/app.py                             | 18 +++++++
+ new/server/config.py                          |  5 +-
+ 9 files changed, 133 insertions(+), 7 deletions(-)
+commit 9d4851bd65c9c0f585be1bdf54dcfb56651b7acd
+Author: kaljah <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 15:34:10 2026 +0200
+
+    Disable strict CSRF referrer check and exempt auth routes for cross-origin SPA login
+
+ new/server/app.py    | 1 +
+ new/server/config.py | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+

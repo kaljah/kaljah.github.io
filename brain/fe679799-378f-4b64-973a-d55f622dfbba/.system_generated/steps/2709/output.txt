@@ -1,0 +1,39 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -283,6 +283,8 @@
+         db.session.rollback()
+         return jsonify({"error": f"Failed to create Scope 2 emission: {str(e)}"}), 500
+ 
++    emission_id_val = emission.id
++
+     if user:
+         try:
+             from utils import log_activity_and_notify
+@@ -289,5 +289,5 @@
+                 action="CREATE",
+-                record_id=str(emission.id),
++                record_id=str(emission_id_val),
+                 user=user,
+                 request=request,
+                 entity="Scope2Emission",
+@@ -314,7 +314,7 @@
+         jsonify(
+             {
+                 "message": "Scope 2 emission created",
+-                "id": emission.id,
++                "id": emission_id_val,
+                 "co2e": co2e,
+                 "status": initial_status,
+                 "emissions": {
+@@ -324,7 +324,7 @@
+                     "uncertainty": final_uncertainty,
+                 },
+                 "record": {
+-                    "id": emission.id,
++                    "id": emission_id_val,
+                     "year": emission.year,
+                     "month": emission.month,
+                     "facility_id": emission.facility_id,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

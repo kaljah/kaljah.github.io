@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+Running 8 tests using 1 worker
+
+[AUDIT] Backend Ground Truth: Scope 1 = 256425.1 tCO2e, CH4 = 238.7 tCH4
+[AUDIT] UI Hero Card: Gross = 256.4K, Net = 256.4K, CH4 = 238.7
+[AUDIT] Scope Pills: S1 = 256.4K tCO₂e, S2 = 0 tCO₂e, S3 = 0 tCO₂e
+  ok 1 [chromium] › e2e\test_dashboard_deep_audit.spec.js:48:3 › Dashboard Page Deep Audit › 1. Core Dashboard Layout & Initial Numbers Verification (9.6s)
+[AUDIT] Top Filters Verified: 5 dropdowns present
+[AUDIT] Year Options: All Years, 2026, 2024, 2023, 2022
+[AUDIT] Supply Chain Options: All Supply Chains, Downstream, Midstream, Upstream
+[AUDIT] Cascaded Activity Options for Upstream: All Activities, E&P (Upstream)
+  ok 2 [chromium] › e2e\test_dashboard_deep_audit.spec.js:93:3 › Dashboard Page Deep Audit › 2. Top Filters Rendering & Cascading Dropdown Population (9.6s)
+[AUDIT] Switched to 2026: Gross = 256.4K, Scope 3 = 0 tCO₂e (verified accurate)
+[AUDIT] Switched to 2024: Gross = 0 (verified accurate, 0 emissions)
+[AUDIT] Switched to All Years: Gross = 256.4K restored
+  ok 3 [chromium] › e2e\test_dashboard_deep_audit.spec.js:152:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation (11.6s)
+[AUDIT] GWP-20 Gross Emissions: 269.7K
+[AUDIT] GWP-100 Restored: 256.4K
+[AUDIT] Compare Regions view activated
+[AUDIT] Standard View restored
+  ok 4 [chromium] › e2e\test_dashboard_deep_audit.spec.js:191:3 › Dashboard Page Deep Audit › 4. Mode Toggles: GWP Horizon, Compare Regions, Pending Preview (11.0s)
+[AUDIT] Breakdown Table Sources:
+      Combustion: 64.4K
+      Flaring: 24.5K
+      Venting: 16.5K
+      Other: 151K
+      Total: 256.4K
+[AUDIT] Expanded Facility Row: Complexe Sidérurgique = 74.4K
+[AUDIT] Detailed Breakdown Accordion Collapsed
+[AUDIT] Detailed Breakdown Accordion Expanded
+  ok 5 [chromium] › e2e\test_dashboard_deep_audit.spec.js:253:3 › Dashboard Page Deep Audit › 5. Detailed Breakdown Table & Organizational Hierarchy Tree (11.4s)
+[AUDIT] Notification Badge Visible: true
+[AUDIT] Notification Badge Count: 6
+[AUDIT] Notification Center Panel Opened
+[AUDIT] Notification Center Panel Closed via Escape
+  ok 6 [chromium] › e2e\test_dashboard_deep_audit.spec.js:316:3 › Dashboard Page Deep Audit › 6. Notification Center Panel, Real-time Counter & Actions (18.1s)
+[AUDIT] Target Action Button: "+ Set Target"
+[AUDIT] Manage Custom Factors button is visible and accessible
+  ok 7 [chromium] › e2e\test_dashboard_deep_audit.spec.js:351:3 › Dashboard Page Deep Audit › 7. Target Navigation and Reference Library Buttons (17.0s)
+[AUDIT] Verified Scope 3 evaluates to 0 tCO2e for 2026 (Bug 2 fix confirmed)
+  ok 8 [chromium] › e2e\test_dashboard_deep_audit.spec.js:367:3 › Dashboard Page Deep Audit › 8. Performance Intensity Card & Scope 3 Filter Parity (8.3s)
+
+  8 passed (1.6m)
+

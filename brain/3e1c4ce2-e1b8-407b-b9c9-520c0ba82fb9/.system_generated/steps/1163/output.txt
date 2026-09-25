@@ -1,0 +1,41 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 7 items
+
+new\server\tests\test_zero_trust_adversarial.py .....EE                  [100%]
+
+=================================== ERRORS ====================================
+_____________ ERROR at setup of test_base_year_singleton_fallback _____________
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py, line 147
+  def test_base_year_singleton_fallback(client, admin_headers):
+E       fixture 'admin_headers' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, app, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, client, disable_limiter_for_tests, doctest_namespace, faker, fastsession, init_test_db, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py:147
+___________ ERROR at setup of test_notification_broadcast_handling ____________
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py, line 181
+  def test_notification_broadcast_handling(client, admin_headers, operator_headers):
+E       fixture 'admin_headers' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, app, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, client, disable_limiter_for_tests, doctest_namespace, faker, fastsession, init_test_db, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py:181
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR new\server\tests\test_zero_trust_adversarial.py::test_base_year_singleton_fallback
+ERROR new\server\tests\test_zero_trust_adversarial.py::test_notification_broadcast_handling
+=================== 5 passed, 1 warning, 2 errors in 1.08s ====================
+

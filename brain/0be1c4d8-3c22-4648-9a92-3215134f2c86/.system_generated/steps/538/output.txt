@@ -1,0 +1,54 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1941,17 +1941,27 @@
+         l4_pct = (
+             round((ed["l4_emissions"] / total_s1 * 100.0), 1) if total_s1 > 0 else 0.0
+         )
+-        top_down_tch4 = ogmp_surveys.get(fid, 0.0)
+-        reconciliation_ratio = (
+-            round(top_down_tch4 / ed["total_ch4"], 2)
+-            if ed["total_ch4"] > 0 and top_down_tch4 > 0
+-            else None
+-        )
+-        variance_pct = (
+-            round(((top_down_tch4 - ed["total_ch4"]) / ed["total_ch4"] * 100.0), 2)
+-            if ed["total_ch4"] > 0 and top_down_tch4 > 0
+-            else None
+-        )
++        # Invariant Zero (Decision D-02): OGMP Top-Down Survey Reconciliation & Zero Bottom-Up Edge Case
++        if ed["total_ch4"] > 0 and top_down_tch4 > 0:
++            reconciliation_ratio = round(top_down_tch4 / ed["total_ch4"], 2)
++            variance_pct = round(((top_down_tch4 - ed["total_ch4"]) / ed["total_ch4"] * 100.0), 2)
++            variance_flag = abs(variance_pct) > threshold
++            reconciliation_status = "Discrepancy Flagged" if variance_flag else "Reconciled"
++        elif top_down_tch4 > 0 and ed["total_ch4"] == 0:
++            reconciliation_ratio = None
++            variance_pct = None
++            variance_flag = True
++            reconciliation_status = "Discrepancy Flagged"
++        elif top_down_tch4 == 0 and ed["total_ch4"] > 0:
++            reconciliation_ratio = None
++            variance_pct = None
++            variance_flag = False
++            reconciliation_status = "Bottom-Up Only"
++        else:
++            reconciliation_ratio = None
++            variance_pct = None
++            variance_flag = False
++            reconciliation_status = "No Activity"
+ 
+         # Gold Standard Roadmap & Deadline Tracker
+         from routes.auth import _app_settings
+@@ -1970,9 +1970,6 @@
+             if fac
+             else default_threshold
+         )
+-        variance_flag = (
+-            (abs(variance_pct) > threshold) if variance_pct is not None else False
+-        )
+ 
+         # Determine Current OGMP Level (1 to 5)
+         if top_down_tch4 > 0 and (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

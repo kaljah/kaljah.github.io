@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":47,"LineContent":"    if user.role in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":441,"LineContent":"    if user.role in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2943,"LineContent":"    if user.role in (\"viewer\", \"auditor\", \"it_admin\", \"it\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3318,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3620,"LineContent":"    if user.role in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3944,"LineContent":"    if user.role in [\"it_admin\", \"it\"]:"}

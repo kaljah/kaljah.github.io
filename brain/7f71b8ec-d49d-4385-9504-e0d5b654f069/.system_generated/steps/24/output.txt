@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\graphify-out\\graph.html"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.html"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\generate_storage_state.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_bulk_csv_uploader.spec.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_dashboard_and_intensity_audit.spec.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_dashboard_deep_audit.spec.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_carbon_intensity_deep_audit.spec.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_qfull_e2e_ui.spec.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_scope1_tier1_tier3_advanced.spec.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_scope1_extended_scenarios.spec.js"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\e2e\\test_scope1_form_engine.spec.js"}

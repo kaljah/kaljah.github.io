@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\ref_combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -141,7 +141,7 @@
+ 
+         # Moles of carbon per mole of gas
+         total_c_moles = (
+-            c1 * 1.0 + c2 * 2.0 + c3 * 3.0 + (ic4 + nc4) * 4.0 + (ic5 + nc5) * 5.0 + c6_plus * 6.0
++            c1 * 1.0 + c2 * 2.0 + c3 * 3.0 + c4_val * 4.0 + c5_val * 5.0 + c6_plus * 6.0
+         )
+         eta_c = max(0.0, min(1.0, float(combustion_efficiency)))
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

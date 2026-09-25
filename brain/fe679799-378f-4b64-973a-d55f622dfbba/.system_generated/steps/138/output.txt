@@ -1,0 +1,9 @@
+Created the following subagents:
+{
+  "conversationId":  "4bbdc7b5-209f-4b1c-adf5-ac8fe6f627cd",
+  "logAbsoluteUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/4bbdc7b5-209f-4b1c-adf5-ac8fe6f627cd/.system_generated/logs/transcript.jsonl",
+  "workspaceUris":  [
+    "file:///c%3A/Users/samsung/Desktop/H2"
+  ]
+}
+The subagents will send you a message when they have completed their task or require guidance. There is no need to poll for their responses.

@@ -1,0 +1,85 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Settings.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1032,6 +1032,7 @@
+                   type="radio"
+                   name="authMode"
+                   value="password"
++                  disabled={!isAdmin}
+                   checked={authMode === "password"}
+                   onChange={() => setAuthMode("password")}
+                 />
+@@ -1043,6 +1043,7 @@
+                   type="radio"
+                   name="authMode"
+                   value="oauth_client"
++                  disabled={!isAdmin}
+                   checked={authMode === "oauth_client"}
+                   onChange={() => setAuthMode("oauth_client")}
+                 />
+@@ -1059,6 +1059,7 @@
+                     type="email"
+                     placeholder="user@example.com"
+                     value={copernicusUsername}
++                    disabled={!isAdmin}
+                     onChange={(e) => setCopernicusUsername(e.target.value)}
+                     className="form-input"
+                     id="copernicus-email-input"
+@@ -1072,6 +1072,7 @@
+                     type="password"
+                     placeholder="••••••••••••"
+                     value={copernicusPassword}
++                    disabled={!isAdmin}
+                     onChange={(e) => setCopernicusPassword(e.target.value)}
+                     className="form-input"
+                     id="copernicus-password-input"
+@@ -1088,6 +1088,7 @@
+                     type="text"
+                     placeholder="e.g. 9b1deb4d-3b7d-4bad-9bdd-..."
+                     value={copernicusClientId}
++                    disabled={!isAdmin}
+                     onChange={(e) => setCopernicusClientId(e.target.value)}
+                     className="form-input"
+                     id="copernicus-client-id-input"
+@@ -1098,6 +1098,7 @@
+                     type="password"
+                     placeholder="••••••••••••"
+                     value={copernicusClientSecret}
++                    disabled={!isAdmin}
+                     onChange={(e) => setCopernicusClientSecret(e.target.value)}
+                     className="form-input"
+                     id="copernicus-client-secret-input"
+@@ -1128,6 +1128,7 @@
+                   min="0.3"
+                   max="0.9"
+                   step="0.05"
++                  disabled={!isAdmin}
+                   value={copernicusQaThreshold}
+                   onChange={(e) =>
+                     setCopernicusQaThreshold(Number(e.target.value))
+@@ -1154,7 +1154,7 @@
+                     display: "flex",
+                     alignItems: "center",
+                     gap: "10px",
+-                    cursor: "pointer",
++                    cursor: isAdmin ? "pointer" : "default",
+                     marginTop: "4px",
+                   }}
+                 >
+@@ -1161,4 +1161,5 @@
+                     type="checkbox"
++                    disabled={!isAdmin}
+                     checked={copernicusEnabled}
+                     onChange={(e) => setCopernicusEnabled(e.target.checked)}
+                     style={{
+@@ -1180,7 +1180,7 @@
+                 type="button"
+                 className="btn-test-connection"
+                 onClick={handleTestConnection}
+-                disabled={testingConnection}
++                disabled={!isAdmin || testingConnection}
+                 id="test-copernicus-connection-btn"
+               >
+                 {testingConnection ? (
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

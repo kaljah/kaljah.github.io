@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+[2026-09-23 09:47:19,730] INFO in app: Updated account: a
+[2026-09-23 09:47:19,810] INFO in app: Updated account: a@a
+[2026-09-23 09:47:19,891] INFO in app: Updated account: z
+[2026-09-23 09:47:19,970] INFO in app: Updated account: z@z
+[(1, 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'West', 'Steel & Iron (Acier DRI)', 'Metallurgy', 'Industrial Zone'), (2, 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'West', 'Chemicals & Fertilizers', 'Petrochemicals', 'Arzew Port'), (3, 'Cimenterie Industrielle de Chlef (GICA)', 'Center', 'Cement & Clinker', 'Building Materials', 'Chlef Plant'), (4, 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)', 'South', 'Upstream & Midstream Gas', 'Exploration & Production', 'HMD Field'), (5, 'ADR', None, 'Activit� E&P', 'DP', 'OF'), (6, 'REB', None, 'Activit� E&P', 'DP', 'OF'), (7, 'HBK', None, 'Activit� E&P', 'DP', 'GF'), (8, 'GTL', None, 'Activit� E&P', 'DP', 'GF'), (9, 'OHT', None, 'Activit� E&P', 'DP', 'GF'), (10, 'STAH', None, 'Activit� E&P', 'DP', 'OF'), (11, 'TFT', None, 'Activit� E&P', 'DP', 'GF'), (12, 'HMD', None, 'Activit� E&P', 'DP', 'OF'), (13, 'RNS', None, 'Activit� E&P', 'DP', 'GF'), (14, 'HRM', None, 'Activit� E&P', 'DP', 'GF'), (15, 'INAS', None, 'Activit� E&P', 'DP', 'GF')]
+

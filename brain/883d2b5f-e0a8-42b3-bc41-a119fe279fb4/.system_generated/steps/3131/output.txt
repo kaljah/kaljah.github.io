@@ -1,0 +1,39 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -17,10 +17,10 @@
+ 
+ def _calc_indirect_steam(data):
+     """Calculate tCO2e for indirect steam / heat entry."""
+-    amount = float(data.get("amount", 0))
++    amount = float(data.get("amount") or data.get("heat_mmbtu") or 0)
+     unit = (data.get("unit") or "mmbtu").lower().replace(" ", "")
+     ci = data.get("calc_inputs", {}).get("indirect_steam", {})
+-    boiler_eff = float(ci.get("boiler_eff", 0.80))
++    boiler_eff = float(data.get("boiler_efficiency") or ci.get("boiler_eff", 0.80))
+     trans_loss = float(ci.get("trans_loss", 0.0))
+     ef_co2 = float(ci.get("ef_co2", _DEFAULT_BOILER_EF_KG_PER_MMBTU))
+     if 0 < ef_co2 < 1.0:
+@@ -72,12 +72,15 @@
+ 
+ def _calc_cogen_allocation(data):
+     """Calculate heat-allocated tCO2e for CHP / cogeneration entry."""
+-    val = float(data.get("amount", 0))  # total facility emissions in tCO2e
++    val = float(data.get("amount", 0) or data.get("co2e", 0) or data.get("total_emissions", 0))
+     ci = data.get("calc_inputs", {}).get("cogen_allocation", {})
+-    total_emissions = float(ci.get("total_emissions", val))
+-    heat_output = float(ci.get("heat_output", 0))
+-    power_output = float(ci.get("power_output", 0))
+-    method = ci.get("allocation_method", "wri_efficiency")
++    total_emissions = float(data.get("total_emissions") or ci.get("total_emissions", val))
++    if total_emissions == 0 and data.get("fuel_consumed_mmbtu"):
++        # Calculate facility emissions from fuel consumed (e.g. 53.06 kg CO2/MMBtu)
++        total_emissions = (float(data["fuel_consumed_mmbtu"]) * _DEFAULT_BOILER_EF_KG_PER_MMBTU) / 1000.0
++    heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
++    power_output = float(data.get("power_output_mwh") or ci.get("power_output", 0))
++    method = data.get("allocation_method") or ci.get("allocation_method", "wri_efficiency")
+ 
+     if method == "wri_efficiency":
+         e_h, e_p = 0.8, 0.33
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

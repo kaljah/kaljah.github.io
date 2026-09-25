@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Dehydrator - Glycol (Uncontrolled) -> {'code': 'DehyUncont', 'type': 'equipment', 'ch4': 0.177, 'co2': 0, 'n2o': 0, 'uncertainty': {'co2': 0.3, 'ch4': 0.3, 'n2o': 0.3}, 'unit': 'scf/MMscf', 'segment': 'Midstream', 'process_category': 'dehydrator', 'description': 'Glycol dehydrator venting (uncontrolled)', 'source': 'API Compendium 2021 Section 6.11'}
+Gathering - Dehydrator -> {'code': 'GathDehy', 'type': 'equipment', 'ch4': 5.69e-05, 'co2': 0, 'n2o': 0, 'uncertainty': {'co2': 0, 'ch4': 0.13, 'n2o': 0}, 'unit': 'tonne CH₄/unit/hr', 'segment': 'Midstream', 'process_category': 'gathering_boosting', 'description': 'Dehydrator fugitive emissions in gathering', 'source': 'API Compendium 2021 Section 7.2.3, Table 7-29'}
+

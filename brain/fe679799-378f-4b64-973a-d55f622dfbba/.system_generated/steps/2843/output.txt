@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[('a', 'admin', 'active'), ('a@a', 'admin', 'active'), ('z', 'it_manager', 'active'), ('z@z', 'it_manager', 'active'), ('admin@ghg.com', 'admin', 'active'), ('itadmin@ghg.com', 'it_admin', 'active'), ('it@ghg.com', 'it', 'active')]
+

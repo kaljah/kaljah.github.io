@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -102,7 +102,9 @@
+     "combustion": "combustion",
+     "stationary_combustion": "combustion",
+     "mobile": "combustion",
++    "mobile_combustion": "combustion",
+     "flaring": "flaring",
++    "flare": "flaring",
+     "fugitive": "fugitive",
+     "fugitive_component": "fugitive",
+     "equipment_fugitive": "fugitive",
+@@ -109,8 +109,14 @@
++    "compressor_seal": "fugitive",
++    "wellhead_fugitive": "fugitive",
++    "separator_fugitive": "fugitive",
+     "venting": "vented",
+     "blowdown": "vented",
+     "completions": "vented",
++    "completion_flowback": "vented",
+     "drilling": "vented",
++    "mud_degassing": "vented",
+     "unloading": "vented",
++    "liquids_unloading": "vented",
+     "tank": "vented",
+     "tank_flashing": "vented",
+     "tank_working": "vented",
+@@ -117,4 +117,6 @@
++    "storage_tanks": "vented",
+     "pneumatic": "vented",
++    "pneumatic_device": "vented",
+     "pneumatic_devices": "vented",
+     "agr": "midstream",
+     "dehydrator": "midstream",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+........................                                                 [100%]
+24 passed in 0.24s
+

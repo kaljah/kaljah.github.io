@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+[WARNING] ADMIN_PASSWORD not set in env; using temporary dev password. Set ADMIN_PASSWORD in production!
+[WARNING] IT_ADMIN_PASSWORD not set in env; using temporary dev password. Set IT_ADMIN_PASSWORD in production!
+  [INFO] User 'admin@ghg.com' already exists. Password preserved (pass --force-reset-password to overwrite).
+  [INFO] User 'itadmin@ghg.com' already exists. Password preserved (pass --force-reset-password to overwrite).
+  [OK] User 'it@ghg.com' (role: it) seeded successfully.
+

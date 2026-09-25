@@ -1,0 +1,100 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\data.py:23:@data_bp.route('/production', methods=['GET'])
+> new\server\routes\data.py:24:@data_bp.route('/production/', methods=['GET'])
+  new\server\routes\data.py:25:@login_required
+> new\server\routes\data.py:26:def get_production():
+  new\server\routes\data.py:27:    user = get_current_user()
+  new\server\routes\data.py:28:    if is_it_role(user):
+  new\server\routes\data.py:29:        return jsonify({'error': 'IT administrators are not authorized to access 
+operational production data.'}), 403
+  new\server\routes\data.py:30:    query = ProductionData.query
+  new\server\routes\data.py:31:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\data.py:32:    if allowed_fids is not None:
+  new\server\routes\data.py:33:        query = query.filter(ProductionData.facility_id.in_(allowed_fids))
+  new\server\routes\data.py:34:    if request.args.get('facilityId'):
+  new\server\routes\data.py:35:        try:
+  new\server\routes\data.py:36:            fid = int(request.args.get('facilityId'))
+  new\server\routes\data.py:37:            if not require_facility_access(user, fid):
+  new\server\routes\data.py:38:                return jsonify({'error': 'Access to requested facility is denied'}), 403
+  new\server\routes\data.py:39:            query = query.filter_by(facility_id=fid)
+  new\server\routes\data.py:40:        except (ValueError, TypeError):
+  new\server\routes\data.py:41:            return jsonify({'error': 'Invalid facilityId'}), 400
+  new\server\routes\data.py:42:    if request.args.get('year'):
+  new\server\routes\data.py:43:        query = query.filter_by(year=request.args.get('year'))
+  new\server\routes\data.py:44:        
+  new\server\routes\data.py:45:    data = query.all()
+  new\server\routes\data.py:46:    return jsonify([{
+> new\server\routes\data.py:71:@data_bp.route('/production', methods=['POST'])
+> new\server\routes\data.py:72:@data_bp.route('/production/', methods=['POST'])
+  new\server\routes\data.py:73:@login_required
+  new\server\routes\data.py:74:def add_production():
+  new\server\routes\data.py:75:    from sqlalchemy.exc import IntegrityError
+  new\server\routes\data.py:76:    user = get_current_user()
+  new\server\routes\data.py:77:    if user and (user.role in ['auditor'] or is_it_role(user)):
+  new\server\routes\data.py:78:        return jsonify({'error': 'Read-only or IT administrative role cannot modify 
+operational production data.'}), 403
+  new\server\routes\data.py:79:    data = request.get_json() or {}
+  new\server\routes\data.py:80:    fid = data.get('facility_id') or data.get('facilityId')
+  new\server\routes\data.py:81:    if not fid:
+  new\server\routes\data.py:82:        return jsonify({'error': 'Facility ID is required'}), 400
+  new\server\routes\data.py:83:    try:
+  new\server\routes\data.py:84:        fid = int(fid)
+  new\server\routes\data.py:85:    except (ValueError, TypeError):
+  new\server\routes\data.py:86:        return jsonify({'error': 'Invalid facility ID'}), 400
+  new\server\routes\data.py:87:        
+  new\server\routes\data.py:88:    if not require_facility_access(user, fid):
+  new\server\routes\data.py:89:        return jsonify({'error': 'Access to this facility is denied'}), 403
+  new\server\routes\data.py:90:
+  new\server\routes\data.py:91:    year = data.get('year')
+  new\server\routes\data.py:92:    month = data.get('month')
+> new\server\routes\data.py:217:@data_bp.route('/production/<int:record_id>', methods=['DELETE'])
+  new\server\routes\data.py:218:@login_required
+  new\server\routes\data.py:219:def delete_production(record_id):
+  new\server\routes\data.py:220:    user = get_current_user()
+  new\server\routes\data.py:221:    if user and (user.role in ['auditor'] or is_it_role(user)):
+  new\server\routes\data.py:222:        return jsonify({'error': 'Read-only or IT administrative role cannot delete 
+operational production data.'}), 403
+  new\server\routes\data.py:223:    prod = db.session.get(ProductionData, record_id)
+  new\server\routes\data.py:224:    if not prod:
+  new\server\routes\data.py:225:        return jsonify({'error': 'Production record not found'}), 404
+  new\server\routes\data.py:226:    
+  new\server\routes\data.py:227:    if not require_facility_access(user, prod.facility_id):
+  new\server\routes\data.py:228:        return jsonify({'error': 'Access to this facility is denied'}), 403
+  new\server\routes\data.py:229:
+  new\server\routes\data.py:230:    try:
+  new\server\routes\data.py:231:        log_activity_and_notify(
+  new\server\routes\data.py:232:            action='DELETE',
+  new\server\routes\data.py:233:            record_id=str(record_id),
+  new\server\routes\data.py:234:            user=user,
+  new\server\routes\data.py:235:            request=request,
+  new\server\routes\data.py:236:            entity='ProductionData',
+  new\server\routes\data.py:237:            details=f"Deleted Production Data for facility {prod.facility_id} 
+({prod.year}-{prod.month})"
+> new\server\routes\data.py:250:@data_bp.route('/production/bulk-import', methods=['POST'])
+  new\server\routes\data.py:251:@login_required
+  new\server\routes\data.py:252:def bulk_import_production():
+  new\server\routes\data.py:253:    user = get_current_user()
+  new\server\routes\data.py:254:    if user and (user.role in ['auditor'] or is_it_role(user)):
+  new\server\routes\data.py:255:        return jsonify({'error': 'Read-only or IT administrative role cannot modify 
+operational production data.'}), 403
+  new\server\routes\data.py:256:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\data.py:257:    data = request.get_json() or {}
+  new\server\routes\data.py:258:    records = data.get('records', [])
+  new\server\routes\data.py:259:    if not records:
+  new\server\routes\data.py:260:        return jsonify({'error': 'No records provided'}), 400
+  new\server\routes\data.py:261:    
+  new\server\routes\data.py:262:    imported_count = 0
+  new\server\routes\data.py:263:    facility_cache = {}
+  new\server\routes\data.py:264:
+  new\server\routes\data.py:265:    for rec in records:
+  new\server\routes\data.py:266:        f_val = rec.get('facility_id')
+  new\server\routes\data.py:267:        facility = None
+  new\server\routes\data.py:268:        
+  new\server\routes\data.py:269:        if isinstance(f_val, str) and not str(f_val).isdigit():
+  new\server\routes\data.py:270:            f_name_clean = f_val.strip()
+
+
+

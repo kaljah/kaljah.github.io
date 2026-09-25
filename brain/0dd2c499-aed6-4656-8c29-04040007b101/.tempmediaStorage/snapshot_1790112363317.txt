@@ -1,0 +1,194 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=246_0 RootWebArea "Carbon Tech" url="http://localhost:5173/carbon-intensity"
+  uid=246_1 complementary
+    uid=246_2 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=246_3 StaticText "Carbon tech"
+    uid=246_4 button "Close navigation"
+    uid=246_5 navigation
+      uid=246_6 link "Dashboard" url="http://localhost:5173/"
+        uid=246_7 StaticText "Dashboard"
+      uid=246_8 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=246_9 StaticText "Carbon Intensity"
+      uid=246_10 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=246_11 StaticText "Methane Intensity"
+      uid=246_12 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=246_13 StaticText "SBTi Net-Zero"
+      uid=246_14 link "Calculations" url="http://localhost:5173/emissions"
+        uid=246_15 StaticText "Calculations"
+      uid=246_16 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=246_17 StaticText "Emissions Map"
+      uid=246_18 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=246_19 StaticText "Manage Data"
+      uid=246_20 link "Reports" url="http://localhost:5173/reports"
+        uid=246_21 StaticText "Reports"
+      uid=246_22 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=246_23 StaticText "Reference Data"
+      uid=246_24 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=246_25 StaticText "Uncertainty"
+      uid=246_26 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=246_27 StaticText "Audit Trail"
+      uid=246_28 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=246_29 StaticText "QA/QC & Diagnostics"
+    uid=246_30 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=246_31 StaticText "Settings"
+    uid=246_32 StaticText "A"
+    uid=246_33 StaticText "Administrator"
+    uid=246_34 StaticText "Sustainability Lead"
+  uid=246_35 main
+    uid=246_36 button "Open navigation menu"
+    uid=246_37 StaticText "Corporate ESG"
+    uid=247_0 StaticText "All Years"
+    uid=247_1 StaticText "All Supply Chains"
+    uid=247_2 StaticText "All Activities"
+    uid=247_3 StaticText "All Divisions"
+    uid=247_4 StaticText "All Regions"
+    uid=246_38 button "Notifications"
+    uid=246_39 button "User Profile" description="User Profile"
+    uid=247_5 heading "Carbon Intensity & Product Embodiment" level="2"
+    uid=247_6 StaticText "All-Time"
+    uid=247_7 StaticText " Performance"
+    uid=247_8 StaticText "GWP Horizon:"
+    uid=247_9 button "AR5 100-Yr" description="IPCC AR5 100-Year GWP (CH4: 28, N2O: 265)"
+    uid=247_10 button "AR5 20-Yr" description="IPCC AR5 20-Year GWP (CH4: 82.5, N2O: 268)"
+    uid=247_11 StaticText "GHG INTENSITY (AVG)"
+    uid=247_12 StaticText "0.04"
+    uid=247_13 StaticText "kg CO₂e / BOE"
+    uid=247_14 StaticText "GWP₁₀₀ Standard"
+    uid=247_15 StaticText "Total:"
+    uid=247_16 StaticText " "
+    uid=247_17 StaticText "10,235.932"
+    uid=247_18 StaticText " tCO₂e"
+    uid=247_19 StaticText "SCOPE 1 DIRECT INTENSITY"
+    uid=247_20 StaticText "0.04"
+    uid=247_21 StaticText "kg CO₂e / BOE"
+    uid=247_22 StaticText "Scope 2:"
+    uid=247_23 StaticText " "
+    uid=247_24 StaticText "0.00 kg/BOE"
+    uid=247_25 StaticText "Total S1: "
+    uid=247_26 StaticText "10,183.732"
+    uid=247_27 StaticText " t"
+    uid=247_28 StaticText "FLARING CARBON INTENSITY"
+    uid=247_29 StaticText "0.00"
+    uid=247_30 StaticText "kg CO₂e / BOE"
+    uid=247_31 StaticText "Flared:"
+    uid=247_32 StaticText " "
+    uid=247_33 StaticText "210.225"
+    uid=247_34 StaticText " tCO₂e"
+    uid=247_35 StaticText "SCOPE 3 VALUE CHAIN"
+    uid=247_36 StaticText "0.00"
+    uid=247_37 StaticText "kg CO₂e / BOE"
+    uid=247_38 StaticText "Total S3:"
+    uid=247_39 StaticText " "
+    uid=247_40 StaticText "216.850"
+    uid=247_41 StaticText " tCO₂e"
+    uid=247_42 StaticText "TOTAL OIL PRODUCTION"
+    uid=247_43 StaticText "60,872,374"
+    uid=247_44 StaticText " bbl"
+    uid=247_45 StaticText "TOTAL GAS PRODUCTION"
+    uid=247_46 StaticText "1,117,885,807"
+    uid=247_47 StaticText " mscf"
+    uid=247_48 StaticText "COMBINED PRODUCTION (BOE)"
+    uid=247_49 StaticText "259,856,047"
+    uid=247_50 StaticText " BOE"
+    uid=247_51 StaticText "TOTAL GAS FLARED"
+    uid=247_52 StaticText "100,000"
+    uid=247_53 StaticText " m³"
+    uid=247_54 heading "EU CBAM Product Specific Embedded Emissions" level="3"
+    uid=247_55 StaticText "Direct & indirect specific embedded emissions per export product (EU Regulation 2023/956)"
+    uid=247_56 StaticText "EU ETS Benchmark (Product-Specific): ~0.025 - 1.2 tCO₂e/t"
+    uid=247_57 StaticText "No CBAM product export records registered for the selected filters. Track exports via "
+    uid=247_58 StaticText "Manage Data > CBAM Products"
+    uid=247_59 StaticText "."
+    uid=247_60 heading "GHG Intensity by Facility (kg CO₂e / BOE)" level="3"
+    uid=247_61 image "value legend icon"
+    uid=247_62 StaticText "value"
+    uid=247_63 application
+      uid=247_64 group
+      uid=247_65 group
+      uid=247_66 group
+      uid=247_67 group
+      uid=247_68 group
+      uid=247_69 group
+      uid=247_70 group
+      uid=247_71 group
+      uid=247_72 group
+      uid=247_73 group
+      uid=247_74 group
+      uid=247_75 group
+        uid=247_76 StaticText "ADR"
+        uid=247_77 StaticText "REB"
+        uid=247_78 StaticText "HBK"
+        uid=247_79 StaticText "GTL"
+        uid=247_80 StaticText "OHT"
+        uid=247_81 StaticText "STAH"
+        uid=247_82 StaticText "TFT"
+        uid=247_83 StaticText "HMD"
+        uid=247_84 StaticText "RNS"
+        uid=247_85 StaticText "HRM"
+        uid=247_86 StaticText "INAS"
+        uid=247_87 StaticText "BRS"
+        uid=247_88 StaticText "0"
+        uid=247_89 StaticText "0.3"
+        uid=247_90 StaticText "0.6"
+        uid=247_91 StaticText "0.9"
+        uid=247_92 StaticText "1.2"
+    uid=247_93 heading "Scope 1 Direct vs Scope 2 Intensity" level="3"
+    uid=247_94 image "Scope 1 (Direct) legend icon"
+    uid=247_95 StaticText "Scope 1 (Direct)"
+    uid=247_96 image "Scope 2 (Indirect) legend icon"
+    uid=247_97 StaticText "Scope 2 (Indirect)"
+    uid=247_98 application
+      uid=247_99 group
+      uid=247_100 group
+      uid=247_101 group
+      uid=247_102 group
+      uid=247_103 group
+      uid=247_104 group
+      uid=247_105 group
+      uid=247_106 group
+      uid=247_107 group
+      uid=247_108 group
+      uid=247_109 group
+      uid=247_110 group
+        uid=247_111 StaticText "ADR"
+        uid=247_112 StaticText "REB"
+        uid=247_113 StaticText "HBK"
+        uid=247_114 StaticText "GTL"
+        uid=247_115 StaticText "OHT"
+        uid=247_116 StaticText "STAH"
+        uid=247_117 StaticText "TFT"
+        uid=247_118 StaticText "HMD"
+        uid=247_119 StaticText "RNS"
+        uid=247_120 StaticText "HRM"
+        uid=247_121 StaticText "INAS"
+        uid=247_122 StaticText "BRS"
+        uid=247_123 StaticText "0"
+        uid=247_124 StaticText "0.3"
+        uid=247_125 StaticText "0.6"
+        uid=247_126 StaticText "0.9"
+        uid=247_127 StaticText "1.2"
+    uid=247_128 heading "Oil BOE Contribution by Facility" level="3"
+    uid=247_129 image "value legend icon"
+    uid=247_130 StaticText "value"
+    uid=247_131 application
+      uid=247_132 group
+      uid=247_133 group
+      uid=247_134 group
+      uid=247_135 group
+      uid=247_136 group
+      uid=247_137 group
+      uid=247_138 group
+      uid=247_139 group
+      uid=247_140 group
+      uid=247_141 group
+      uid=247_142 group
+      uid=247_143 group
+        uid=247_144 StaticText "ADR"
+        uid=247_145 StaticText 
+<truncated 1943 bytes>
+
+[Snapshot truncated because it exceeded 8KB. Only showing first 8KB. Full snapshot saved to: C:/Users/samsung/.gemini/antigravity/brain/0dd2c499-aed6-4656-8c29-04040007b101/.tempmediaStorage/snapshot_full_1790112363314.txt]

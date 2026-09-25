@@ -1,0 +1,86 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 943 lines>
+127.0.0.1 - - [23/Sep/2026 17:32:13] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+[2026-09-23 17:32:13,124] INFO in app: GET /api/auth/users 200 [0.008s] [ReqID: e8281698-9073-439f-ba87-9bfa6ebdf1f5]
+127.0.0.1 - - [23/Sep/2026 17:32:13] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-23 17:32:13,161] INFO in app: GET /api/facilities/all-regions 200 [0.010s] [ReqID: fdf42c34-cfd2-4a63-b802-efbc995072c9]
+127.0.0.1 - - [23/Sep/2026 17:32:13] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-23 17:32:13,335] INFO in app: GET /api/auth/users 200 [0.013s] [ReqID: a93954b3-2300-4855-897d-b62daedf6e03]
+127.0.0.1 - - [23/Sep/2026 17:32:13] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-23 17:32:13,374] INFO in app: GET /api/facilities/all-regions 200 [0.010s] [ReqID: f5f1777f-21f4-40cb-9dbd-5877a1a4c25e]
+127.0.0.1 - - [23/Sep/2026 17:32:13] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-23 17:32:14,134] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 259b1b2d-50e5-4d79-a9e5-19d23022b1f6]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:32:14,143] INFO in app: GET /api/auth/me 200 [0.012s] [ReqID: f54e0126-8ba0-4931-bfc2-bb564eea67df]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-23 17:32:14,177] INFO in app: GET /api/auth/settings 200 [0.008s] [ReqID: 2b811c48-f81c-479b-ad29-0c26f5fbb37e]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-23 17:32:14,249] INFO in app: GET /api/notifications 200 [0.008s] [ReqID: cb66929d-f848-48da-a615-2ebc8036f1f9]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-23 17:32:14,278] INFO in app: GET /api/notifications/stream 200 [0.005s] [ReqID: 9d3dac3c-b328-475b-bb7b-2e275644ab5d]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+[2026-09-23 17:32:14,561] INFO in app: GET /api/audit/filters 200 [0.022s] [ReqID: 6806aa94-0ad2-4d28-8797-103895acca38]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/audit/filters HTTP/1.1" 200 -
+[2026-09-23 17:32:14,575] INFO in app: GET /api/audit/stats 200 [0.036s] [ReqID: 9c2f644b-a093-4c61-9685-856e4bfe8142]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/audit/stats HTTP/1.1" 200 -
+[2026-09-23 17:32:14,604] INFO in app: GET /api/audit 200 [0.061s] [ReqID: 68c68d76-9d78-44cd-8219-a037032d0bf7]
+127.0.0.1 - - [23/Sep/2026 17:32:14] "GET /api/audit?page=1&limit=50 HTTP/1.1" 200 -
+[2026-09-23 17:32:15,393] INFO in app: GET /api/csrf-token 200 [0.003s] [ReqID: 372643a1-d4e0-430d-962c-39f499ce6f6f]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:32:15,403] INFO in app: GET /api/auth/me 200 [0.014s] [ReqID: 8c106fc4-d643-40dd-8015-9e3a03a8681b]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-23 17:32:15,444] INFO in app: GET /api/auth/settings 200 [0.007s] [ReqID: 2e811c71-074b-46aa-9dbf-2692fc8de70f]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-23 17:32:15,532] INFO in app: GET /api/notifications 200 [0.010s] [ReqID: baf8eec7-2560-4967-9f67-c7cceeeaad51]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-23 17:32:15,559] INFO in app: GET /api/notifications/stream 200 [0.008s] [ReqID: 43d9a4f6-de2e-43ac-a780-8db57d57218f]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+[2026-09-23 17:32:15,633] INFO in app: GET /api/auth/users 200 [0.007s] [ReqID: 0f097501-467c-4ed4-8f81-bc096679b634]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-23 17:32:15,658] INFO in app: GET /api/facilities/all-regions 200 [0.011s] [ReqID: d1a160ef-7f1d-4635-8094-885104b0dc29]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-23 17:32:15,824] INFO in app: GET /api/auth/users 200 [0.006s] [ReqID: 80b2bc85-0e60-4c13-ad8d-e393cb7dcd33]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-23 17:32:15,849] INFO in app: GET /api/facilities/all-regions 200 [0.009s] [ReqID: 4667c60e-98c1-4714-94a6-452061e02c23]
+127.0.0.1 - - [23/Sep/2026 17:32:15] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-23 17:32:16,661] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: d59c7ad1-fd17-4710-960b-5519ba5b43be]
+127.0.0.1 - - [23/Sep/2026 17:32:16] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:32:16,671] INFO in app: GET /api/auth/me 200 [0.008s] [ReqID: 26087923-c5bd-43cb-8727-d1dd62137090]
+127.0.0.1 - - [23/Sep/2026 17:32:16] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-23 17:32:16,811] INFO in app: GET /api/auth/settings 200 [0.008s] [ReqID: df025aac-4373-439d-a97a-f9c618b02cfb]
+127.0.0.1 - - [23/Sep/2026 17:32:16] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-23 17:32:27,362] INFO in app: POST /api/auth/login 429 [0.002s] [ReqID: 759a1e45-50f4-4905-b75b-8bd86ef23aa7]
+127.0.0.1 - - [23/Sep/2026 17:32:27] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-23 17:32:29,575] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 54f9c9ad-cc68-46a3-904f-b3fe75960292]
+127.0.0.1 - - [23/Sep/2026 17:32:29] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:32:29,588] INFO in app: GET /api/auth/me 200 [0.014s] [ReqID: 31f34a29-5694-4dd1-9807-c775af205302]
+127.0.0.1 - - [23/Sep/2026 17:32:29] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-23 17:32:29,621] INFO in app: GET /api/auth/settings 200 [0.010s] [ReqID: df074170-f9c5-42cc-8b73-024d8f19f889]
+127.0.0.1 - - [23/Sep/2026 17:32:29] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-23 17:32:29,714] INFO in app: GET /api/notifications 200 [0.008s] [ReqID: 02043858-2799-4f3c-a6e6-0011f6d73631]
+127.0.0.1 - - [23/Sep/2026 17:32:29] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-23 17:32:29,739] INFO in app: GET /api/notifications/stream 200 [0.005s] [ReqID: a72a76ec-ce66-410a-82f9-b8cba48cebd0]
+127.0.0.1 - - [23/Sep/2026 17:32:29] "GET /api/notifications/stream?last_id=0 HTTP/1.1" 200 -
+[2026-09-23 17:32:29,826] INFO in app: GET /api/auth/users 200 [0.010s] [ReqID: 7698a619-37d5-4330-bfca-ae1a7e7f6443]
+127.0.0.1 - - [23/Sep/2026 17:32:29] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-23 17:32:29,846] INFO in app: GET /api/facilities/all-regions 200 [0.006s] [ReqID: ed26c75b-0644-4d0e-9210-3a642afa70a1]
+127.0.0.1 - - [23/Sep/2026 17:32:29] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-23 17:32:30,007] INFO in app: GET /api/auth/users 200 [0.006s] [ReqID: d5a33f0a-0f98-47bd-8abe-f4b82c31f6b7]
+127.0.0.1 - - [23/Sep/2026 17:32:30] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-23 17:32:30,042] INFO in app: GET /api/facilities/all-regions 200 [0.011s] [ReqID: c92d2ab5-1093-42b6-b89f-7832bd2b8fa9]
+127.0.0.1 - - [23/Sep/2026 17:32:30] "GET /api/facilities/all-regions HTTP/1.1" 200 -
+[2026-09-23 17:32:31,106] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: ed5b5676-6051-462b-9306-f66d661629bf]
+127.0.0.1 - - [23/Sep/2026 17:32:31] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:32:31,123] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: 514759c0-5f02-4ebb-b57a-99e6221914dd]
+127.0.0.1 - - [23/Sep/2026 17:32:31] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-23 17:32:31,139] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 5f8f5ef1-363e-4c99-8b0f-15dc1903e70b]
+127.0.0.1 - - [23/Sep/2026 17:32:31] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:32:31,152] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: debcc899-c235-492f-a63f-bf9f34f41ee2]
+127.0.0.1 - - [23/Sep/2026 17:32:31] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-23 17:32:31,167] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: cc2e47ac-da35-4b1a-8dbb-86bfe2ddb8e3]
+127.0.0.1 - - [23/Sep/2026 17:32:31] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-23 17:32:31,180] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: c55763a1-0fe8-4d15-a30c-115da03a39fd]
+127.0.0.1 - - [23/Sep/2026 17:32:31] "POST /api/auth/login HTTP/1.1" 429 -
+

@@ -1,0 +1,26 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\dispatcher.py:39:            "flaring": FlaringCalculator(),
+  new\server\calculations\dispatcher.py:40:            "flare": FlaringCalculator(),
+  new\server\calculations\dispatcher.py:41:            "drilling": MudDegassingCalculator(),
+  new\server\calculations\dispatcher.py:42:            "mud_degassing": MudDegassingCalculator(),
+  new\server\calculations\dispatcher.py:43:            "completions": CompletionFlowbackCalculator(),
+  new\server\calculations\dispatcher.py:44:            "completion_flowback": CompletionFlowbackCalculator(),
+> new\server\calculations\dispatcher.py:271:            "flaring",
+  new\server\calculations\dispatcher.py:272:            "flare",
+  new\server\calculations\dispatcher.py:273:            "separation",
+  new\server\calculations\dispatcher.py:274:        ]:
+  new\server\calculations\dispatcher.py:275:            spec = flat_inputs.get("specific_factors") or 
+flat_inputs.get("specificFactors")
+  new\server\calculations\dispatcher.py:276:            has_spec = isinstance(spec, dict) and any(
+> new\server\calculations\dispatcher.py:430:            elif process_type == "flaring":
+  new\server\calculations\dispatcher.py:431:                vol_raw = self._require_float(
+  new\server\calculations\dispatcher.py:432:                    flat_inputs,
+  new\server\calculations\dispatcher.py:433:                    ["amount", "quantity", "gas_volume"],
+  new\server\calculations\dispatcher.py:434:                    "flared gas volume",
+  new\server\calculations\dispatcher.py:435:                )
+
+
+

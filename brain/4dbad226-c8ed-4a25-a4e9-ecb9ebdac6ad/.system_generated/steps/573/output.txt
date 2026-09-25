@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\EmissionResult.css","LineNumber":1,"LineContent":".result-overlay {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\EmissionResult.jsx","LineNumber":36,"LineContent":"    \u003cdiv className=\"result-overlay\" onClick={onClose}\u003e"}

@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":433,"LineContent":"    api_res = api2021_dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":104,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":149,"LineContent":"        result_m3 = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":191,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":243,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":317,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":397,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":457,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":519,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":603,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":648,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":677,"LineContent":"        result = dispatcher.dispatch(\"drilling\", inputs, ef, UNC_SPECIFIC, gwp_dict=GWP)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":715,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":755,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":850,"LineContent":"        result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":865,"LineContent":"            dispatcher.dispatch(\"combustion\", inputs, EF_NG, UNC_DEFAULT, gwp_dict=GWP)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":885,"LineContent":"        r_mmscf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":888,"LineContent":"        r_scf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":913,"LineContent":"        result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":936,"LineContent":"        r_mscf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":939,"LineContent":"        r_scf = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":998,"LineContent":"        self.result = dispatcher.dispatch("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":63,"LineContent":"                res = dispatcher.dispatch(pt, payload, e_factors, {}, gwp_dict=GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":101,"LineContent":"        base_res = dispatcher.dispatch(\"flaring\", payload, ef, {}, gwp_dict=GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":107,"LineContent":"            res = dispatcher.dispatch(\"flaring\", payload, ef, {}, gwp_dict=GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":133,"LineContent":"        dispatcher.dispatch(\"stationary_combustion\", payload_copy, ef_copy, unc_copy, gwp_dict=GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":148,"LineContent":"        res = dispatcher.dispatch(\"stationary_combustion\", payload, ef, {}, gwp_dict=GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_battery_concurrency_stress_invariants.py","LineNumber":156,"LineContent":"        res = dispatcher.dispatch(\"stationary_combustion\", payload, ef, {}, gwp_dict=GWP_AR5)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":50,"LineContent":"        res = dispatcher.dispatch(process_id, payload, factor_data, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":68,"LineContent":"            res = dispatcher.dispatch(p, payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":93,"LineContent":"        res = dispatcher.dispatch(\"stationary_combustion\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":110,"LineContent":"        res = dispatcher.dispatch(\"mobile_combustion\", payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":123,"LineContent":"        res = dispatcher.dispatch(\"flaring\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":136,"LineContent":"        res = dispatcher.dispatch(\"drilling\", payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":148,"LineContent":"        res = dispatcher.dispatch(\"completions\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":163,"LineContent":"        res = dispatcher.dispatch(\"liquids_unloading\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":176,"LineContent":"        res = dispatcher.dispatch(\"blowdown\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":189,"LineContent":"        res = dispatcher.dispatch(\"storage_tanks\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":202,"LineContent":"        res = dispatcher.dispatch(\"pneumatic_devices\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":215,"LineContent":"        res = dispatcher.dispatch(\"fugitive_component\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":237,"LineContent":"        res = dispatcher.dispatch(fugitive_type, payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":248,"LineContent":"        res = dispatcher.dispatch(\"compressor_fugitive\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":263,"LineContent":"        res = dispatcher.dispatch(\"acid_gas_removal\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":278,"LineContent":"        res = dispatcher.dispatch(\"dehydrator\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":291,"LineContent":"        res = dispatcher.dispatch(\"indirect_steam\", payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":303,"LineContent":"        res = dispatcher.dispatch(\"cogen_allocation\", payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":321,"LineContent":"        res = dispatcher.dispatch(chem_type, payload, {}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":405,"LineContent":"        res = dispatcher.dispatch(\"indirect_steam\", payload, {\"co2\": 53.06}, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":467,"LineContent":"        res = dispatcher.dispatch(process_id, payload, factors, {})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":480,"LineContent":"        res1 = dispatcher.dispatch(process_id, p1, factors, {})"}
+(...78 more results not shown)

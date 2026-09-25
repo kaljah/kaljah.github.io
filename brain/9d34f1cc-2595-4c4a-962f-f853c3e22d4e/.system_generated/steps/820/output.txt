@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\utils.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -31,12 +31,15 @@
+     if user.role in ["it_admin", "it_manager", "it"]:
+         return []
+ 
+-    # Only admin has full unrestricted data access.
+-    if user.role == "admin":
+-        return None
+-
+-    # User is tied to a specific location/region
++    # Admin has full unrestricted data access.
++    if user.role == "admin":
++        return None
++
++    # Superuser with unrestricted location has full access across all facilities
+     user_region = str(user.location).strip() if user.location else ""
++    if user.role == "superuser" and is_unrestricted_location(user_region):
++        return None
++
+     if not user_region or is_unrestricted_location(user_region):
+         return []  # No region assigned, no access for restricted role
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,19 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-1536
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-1536.log
+Log output:
+<truncated 30 lines>
+ vs 20-Yr) (9.9s)
+[QFULL E2E] Navigated to: http://127.0.0.1:5173/manage-data
+  ok 13 [chromium] › e2e\test_qfull_e2e_ui.spec.js:273:3 › QFULL Full UI Pipeline › Navigate to Manage Data after login (7.5s)
+  ok 15 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:141:3 › Carbon Intensity Page Deep Audit › 3. Cascading Filters Interaction (7.5s)
+[AUDIT] Switched to 2026: Gross = 256.4K, Scope 3 = 0 tCO₂e (verified accurate)
+[AUDIT] Switched to 2024: Gross = 0 (verified accurate, 0 emissions)
+[AUDIT] Switched to All Years: Gross = 256.4K restored
+  ok 14 [chromium] › e2e\test_dashboard_deep_audit.spec.js:152:3 › Dashboard Page Deep Audit › 3. Dynamic Year Switching & Data Recalculation (13.9s)
+[QFULL E2E] Form submitted
+[QFULL E2E] API requests captured: 0
+[QFULL E2E] API responses captured: 0
+  ok 16 [chromium] › e2e\test_qfull_e2e_ui.spec.js:297:3 › QFULL Full UI Pipeline › QFULL PIPELINE: Combustion T1 form entry → API POST → result visible (9.9s)
+
+Last progress: 4s ago

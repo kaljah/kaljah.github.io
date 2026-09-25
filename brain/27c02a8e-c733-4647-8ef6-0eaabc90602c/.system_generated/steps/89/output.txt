@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:306:class Goal(db.Model):
+  new\server\models.py:307:    __tablename__ = "goals"
+  new\server\models.py:308:    year = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:309:    target_amount = db.Column(db.Float)
+  new\server\models.py:310:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:311:
+  new\server\models.py:312:
+  new\server\models.py:313:class BaseYear(db.Model):
+  new\server\models.py:314:    __tablename__ = "base_year"
+  new\server\models.py:315:    id = db.Column(
+  new\server\models.py:316:        db.Integer, primary_key=True
+  new\server\models.py:317:    )  # DB-02 FIX: enforced singleton via CheckConstraint below
+  new\server\models.py:318:    year = db.Column(db.Integer, nullable=False)
+  new\server\models.py:319:    locked = db.Column(db.Integer, default=1)
+  new\server\models.py:320:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:321:
+  new\server\models.py:322:    # DB-02 FIX: Only one row is ever allowed (id must equal 1)
+  new\server\models.py:323:    __table_args__ = (db.CheckConstraint("id = 1", name="base_year_singleton"),)
+  new\server\models.py:324:
+  new\server\models.py:325:
+  new\server\models.py:326:class MitigationRecord(db.Model):
+
+
+

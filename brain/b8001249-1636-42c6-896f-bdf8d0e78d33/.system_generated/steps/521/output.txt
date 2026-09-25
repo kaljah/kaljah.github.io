@@ -1,0 +1,1 @@
+A1: Do not add redirects; keep only `/qa-dashboard` and `/audit-trail` and update any documentation or links

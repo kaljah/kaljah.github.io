@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\combustion_flaring.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -64,12 +64,12 @@
+             n2o_kg = qty_in_f_denom * f_n2o
+ 
+         # Check numerator unit of EF (kg vs tonne vs gram)
+-        f_num = f_unit.split("/")[0].strip() if "/" in f_unit else f_unit
+-        if any(t in f_num for t in ["tonne", "metric_ton", "t co2", "tco2", "mt"]):
++        f_num = (f_unit.split("/")[0].strip().lower() if "/" in f_unit else f_unit.lower())
++        if f_num in ["t", "tonne", "tonnes", "metric_ton", "metric_tons", "t co2", "tco2", "mt"]:
+             co2_t = co2_kg
+             ch4_t = ch4_kg
+             n2o_t = n2o_kg
+-        elif any(g in f_num for g in ["g", "gram"]):
++        elif f_num in ["g", "gram", "grams"]:
+             co2_t = co2_kg / 1_000_000.0
+             ch4_t = ch4_kg / 1_000_000.0
+             n2o_t = n2o_kg / 1_000_000.0
+@@ -76,3 +76,4 @@
++            # Default is kg
+             co2_t = co2_kg / 1000.0
+             ch4_t = ch4_kg / 1000.0
+             n2o_t = n2o_kg / 1000.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

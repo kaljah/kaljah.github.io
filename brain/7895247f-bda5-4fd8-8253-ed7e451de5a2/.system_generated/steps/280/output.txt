@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -572,7 +572,7 @@
+     // Forms State
+     const [facilityForm, setFacilityForm] = useState({
+         name: '', activity: '', division: '', field: '', location: '',
+-        boundary_type: '', boundary_detail: '',
++        boundary_type: '', boundary_detail: '', equity_share_pct: '',
+         segment: '', latitude: '', longitude: ''
+     });
+ 
+@@ -587,7 +587,10 @@
+         activity: '', division: '', facility_id: '',
+         month: 1, year: new Date().getFullYear(),
+         oil_amount: '', oil_unit: 'bbl',
+-        gas_amount: '', gas_unit: 'mscf'
++        gas_amount: '', gas_unit: 'mscf',
++        gross_gas_mmsm3: '', gas_without_injected_mmsm3: '', injected_gas_mmsm3: '',
++        crude_oil_mmboe: '', condensate_mmboe: '', lpg_mmboe: '',
++        total_production_mmboe: '', saleable_production_mmboe: ''
+     });
+ 
+     const [sourceForm, setSourceForm] = useState({
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

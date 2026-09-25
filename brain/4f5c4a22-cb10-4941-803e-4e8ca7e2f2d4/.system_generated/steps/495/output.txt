@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+Generated 123 Tier 1 rows in: c:\Users\samsung\Desktop\H2\new\server\bulk_tier1_all_fuels.csv
+Traceback (most recent call last):
+  File "c:\Users\samsung\Desktop\H2\new\server\generate_bulk_test_csvs.py", line 290, in <module>
+    generate_tier3_csv()
+  File "c:\Users\samsung\Desktop\H2\new\server\generate_bulk_test_csvs.py", line 273, in generate_tier3_csv
+    assert len(region_rows) == 360, f"Expected 360 rows for region {rf['region']}, got {len(region_rows)}"
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected 360 rows for region West, got 355
+

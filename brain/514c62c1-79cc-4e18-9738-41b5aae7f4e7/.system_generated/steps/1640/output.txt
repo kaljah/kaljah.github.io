@@ -1,0 +1,43 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -870,6 +870,25 @@
+             return jsonify({"error": "Cannot assign a role higher than your own"}), 403
+         user.role = new_role
+ 
++    if "fullName" in data and data["fullName"]:
++        new_name = str(data["fullName"]).strip()
++        if new_name:
++            user.fullName = new_name
++
++    if "email" in data and data["email"]:
++        new_email = str(data["email"]).strip().lower()
++        if new_email and new_email != (user.email or "").lower():
++            existing = User.query.filter(User.email == new_email, User.id != user.id).first()
++            if existing:
++                return jsonify({"error": "Email is already in use by another account"}), 400
++            user.email = new_email
++
++    if "department" in data:
++        user.department = str(data["department"]).strip() if data["department"] else ""
++
++    if "jobTitle" in data:
++        user.jobTitle = str(data["jobTitle"]).strip() if data["jobTitle"] else ""
++
+     if "location" in data:
+         user.location = data["location"]
+     if "status" in data:
+@@ -891,8 +891,11 @@
+                 "id": user.id,
+                 "fullName": user.fullName,
+                 "email": user.email,
++                "orgName": user.orgName,
+                 "role": user.role,
+                 "location": user.location,
++                "department": user.department,
++                "jobTitle": user.jobTitle,
+                 "status": user.status,
+             },
+         }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

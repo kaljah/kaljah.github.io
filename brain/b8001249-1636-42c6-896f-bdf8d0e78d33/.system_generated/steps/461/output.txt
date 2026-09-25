@@ -1,0 +1,1 @@
+A1: if the super user is on the same regions as the user which he is supposed to be cause the shperuser is supposed to only see the emissions of the users in the same region as him check this, then its okey for hik to delete

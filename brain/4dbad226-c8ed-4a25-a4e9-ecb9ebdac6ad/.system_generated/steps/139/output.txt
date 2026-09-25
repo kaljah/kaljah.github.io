@@ -1,0 +1,20 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":321,"LineContent":"      await api.post(`/emissions/approve/${id}`, { scope: String(scope) });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":347,"LineContent":"      const res = await api.post('/emissions/approve/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":382,"LineContent":"            const res = await api.post('/emissions/approve/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":395,"LineContent":"            const res = await api.post('/emissions/approve/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":425,"LineContent":"        await api.post(`/emissions/reject/${rejectionModal.targetItem.id}`, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":438,"LineContent":"        const res = await api.post('/emissions/reject/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":446,"LineContent":"        const res = await api.post('/emissions/reject/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":459,"LineContent":"        const res = await api.post('/emissions/reject/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":840,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", formData, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":623,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.jsx","LineNumber":245,"LineContent":"      await api.post(\"/custom-factors\", {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1020,"LineContent":"      const res = await api.post(\"/emissions\", finalPayload);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\patch_s3_form.py","LineNumber":18,"LineContent":"      const res = await api.post(\"/scope3/eeio-calculate\", {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":222,"LineContent":"      const res = await api.post(\"/scope2\", payload);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":48,"LineContent":"      const res = await api.post(\"/scope3/eeio-calculate\", {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":314,"LineContent":"      const res = await api.post(\"/scope3\", payload);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":345,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":372,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":622,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\NotificationCenter.jsx","LineNumber":414,"LineContent":"      await api.post(\"/notifications/dismiss-all\");"}

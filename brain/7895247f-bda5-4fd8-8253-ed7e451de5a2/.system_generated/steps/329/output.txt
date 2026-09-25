@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\dashboard.py:2868:@dashboard_bp.route("/flaring-summary", methods=["GET"])
+  new\server\routes\dashboard.py:2869:@login_required
+  new\server\routes\dashboard.py:2870:def get_flaring_summary():
+  new\server\routes\dashboard.py:2871:    """
+  new\server\routes\dashboard.py:2872:    Returns flaring breakdown by operational stream: Routine, Non-Routine, 
+Safety, and Grand Total.
+  new\server\routes\dashboard.py:2873:    Evaluates compliance against Algerian Executive Decree 21-330 Article 9 
+(1.00% threshold).
+  new\server\routes\dashboard.py:2874:    """
+  new\server\routes\dashboard.py:2875:    user = get_current_user()
+  new\server\routes\dashboard.py:2876:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\dashboard.py:2877:
+  new\server\routes\dashboard.py:2878:    year = request.args.get("year")
+  new\server\routes\dashboard.py:2879:    try:
+  new\server\routes\dashboard.py:2880:        yr = int(year) if year and year != "all" else datetime.now().year
+  new\server\routes\dashboard.py:2881:    except ValueError:
+  new\server\routes\dashboard.py:2882:        yr = datetime.now().year
+  new\server\routes\dashboard.py:2883:
+  new\server\routes\dashboard.py:2884:    facility_id = request.args.get("facility_id") or 
+request.args.get("facilityId")
+  new\server\routes\dashboard.py:2885:    fac_filter = int(facility_id) if facility_id and facility_id != "all" else 
+None
+  new\server\routes\dashboard.py:2886:    if fac_filter and allowed_fids is not None and fac_filter not in 
+allowed_fids:
+  new\server\routes\dashboard.py:2887:        return jsonify({"error": "Unauthorized facility"}), 403
+  new\server\routes\dashboard.py:2888:
+  new\server\routes\dashboard.py:2889:    from models import FlaringDetail
+  new\server\routes\dashboard.py:2890:
+  new\server\routes\dashboard.py:2891:    # 1. First check FlaringDetail model records for explicit operational data
+  new\server\routes\dashboard.py:2892:    fd_q = FlaringDetail.query.filter_by(year=yr)
+  new\server\routes\dashboard.py:2893:    if allowed_fids is not None:
+
+
+

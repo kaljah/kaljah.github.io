@@ -1,0 +1,13 @@
+
+The command exited with code 1.
+Output:
+Get-ChildItem : Cannot bind parameter because parameter 'Filter' is specified more than once. To provide multiple 
+values to parameters that can accept multiple values, use the array syntax. For example, "-parameter 
+value1,value2,value3".
+At line:1 char:65
++ ... tem -Path new\client\src -Recurse -Filter "*.jsx" -Or -Filter "*.js"  ...
++                                                           ~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Get-ChildItem], ParameterBindingException
+    + FullyQualifiedErrorId : ParameterAlreadyBound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+

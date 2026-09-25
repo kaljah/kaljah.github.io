@@ -1,0 +1,105 @@
+
+The command exited with code 0.
+Output:
+<truncated 164 lines>
+Table 2 (29 rows):
+Category | Unit | 2021 | 2022 | 2023 | 2024 | 2025
+GHG Emissions |  |  |  |  |  | 
+GHG Direct Emissions (Scope 1) | MMtCO2e | 1.947 | 2.019 | 1.951 | 1.662 | 1.592
+GHG Indirect Emissions (Scope 2) | MMtCO2e | 0.259 | 0.301 | 0.336 | 0.326 | 0.317
+GHG Emissions (Total Scope 1+ 2) | MMtCO2e | 2.206 | 2.320 | 2.287 | 1.989 | 1.909
+Methane Emissions |  |  |  |  |  | 
+Methane Emissions in CH4 | tCH4 | 7124.82 | 7428.62 | 6,813.60 | 2,702.96 | 1656.69
+Methane Emissions in CO2e | tCO2e | 178,120.46 | 185715.38 | 170,340.04 | 67,573.96 | 46,387.32
+Flare Volume & Emissions |  |  |  |  |  | 
+Flare Volume[1] | MMSm3 | 196.296 | 212.767 | 136.657 | 132.982 | 121.488
+Routine Flaring[2] | MMSm3 | 100.397 | 83.367 | 81.771 | 77.291 | 75.538
+Non-Routine Flaring[2] | MMSm3 | 3.370 | 2.682 | 3.425 | 46.432 | 37.282
+Safety Flaring[2] | MMSm3 | 94.880 | 126.718 | 51.461 | 6.481 | 6.525
+Flare GHG Emissions | MMtCO2e | 0.566 | 0.586 | 0.372 | 0.369 | 0.306
+Production & Intensity by Total Production [3] |  |  |  |  |  | 
+=== PAGE 36 ===
+Table 1 (16 rows):
+JV Partners | HBNS 2021 | ELM2021 | Total 2021 | HBNS2022 | ELM2022 | Total2022 | HBNS 2025 | ELM2025 | Total 2025
+Sonatrach | 486,220 | 510,578 | 996,798 | 497,982 | 556,787 | 1,054,768 | 210,120 | 300,336 | 510,456
+Occidental | 233,073 | 245,470 | 478,544 | 239,254 | 267,483 | 506,738 | 244,617 | 350,955 | 595,572
+Eni | 278,796 | 122,190 | 400,986 | 237,176 | 133,742 | 370,917 | 206,984 | 175,477 | 382,461
+Total Energies | 117,094 | 122,190 | 239,284 | 119,573 | 133,742 | 253,314 | 122,309 | 175,477 | 297,786
+Pertamina | 0 | 58,913 | 58,913 | 0 | 87,159 | 87,159 | 0 | 79,865 | 79,865
+Repsol | 0 | 31,638 | 31,638 | 0 | 46,951 | 46,951 | 0 | 42,744 | 42,744
+Total CO2e | 1,115,184 | 1,090,978 | 2,206,162 | 1,093,985 | 1,225,862 | 2,319,847 | 784,030 | 1,124,855 | 1,908,885
+JV Partners | HBNS2023* | ELM2023* | Total2023* | HBNS2024 | ELM2024 | Total2024 |  |  | 
+Sonatrach | 348,148 | 416,964 | 765,112 | 229,256 | 302,564 | 531,820 |  |  | 
+Occidental | 289,066 | 347,866 | 636,932 | 266,896 | 353,558 | 620,453 |  |  | 
+Eni | 256,451 | 173,933 | 430,384 | 225,835 | 176,779 | 402,614 |  |  | 
+Total Energies | 144,514 | 173,933 | 318,448 | 133,448 | 176,779 | 310,227 |  |  | 
+Pertamina | 0 | 88,725 | 88,725 | 0 | 80,457 | 80,457 |  |  | 
+Repsol | 0 | 47,596 | 47,596 | 0 | 43,062 | 43,062 |  |  | 
+=== PAGE 37 ===
+Table 1 (16 rows):
+JV Partners | HBNS 2021 | ELM2021 | Total 2021 | HBNS2022 | ELM2022 | Total2022 | HBNS 2025 | ELM2025 | Total 2025
+Sonatrach | 1,265 | 1,976 | 3,242 | 1,264 | 2,113 | 3,377 | 210 | 233 | 443
+Occidental | 607 | 950 | 1,557 | 607 | 1,015 | 1,622 | 244 | 273 | 517
+Eni | 725 | 473 | 1,198 | 602 | 507 | 1,110 | 207 | 136 | 343
+Total Energies | 305 | 473 | 778 | 304 | 507 | 811 | 122 | 136 | 258
+Pertamina | 0 | 228 | 228 | 0 | 331 | 331 | 0 | 62 | 62
+Repsol | 0 | 122 | 122 | 0 | 178 | 178 | 0 | 33 | 33
+Total CO2e | 2,902 | 4,223 | 7,125 | 2,777 | 4,652 | 7,429 | 783 | 874 | 1,657
+JV Partners | HBNS2023* | ELM2023* | Total2023* | HBNS2024 | ELM2024 | Total2024 |  |  | 
+Sonatrach | 867 | 1,406 | 2,273 | 364 | 359 | 723 |  |  | 
+Occidental | 718 | 1,182 | 1,900 | 424 | 419 | 843 |  |  | 
+Eni | 637 | 591 | 1,228 | 359 | 210 | 569 |  |  | 
+Total Energies | 359 | 591 | 950 | 212 | 210 | 422 |  |  | 
+Pertamina | 0 | 301 | 301 | 0 | 95 | 95 |  |  | 
+Repsol | 0 | 161 | 161 | 0 | 51 | 51 |  |  | 
+=== PAGE 38 ===
+Table 1 (21 rows):
+Year | Source Module | NO 2 | CO | SO 2 | PM | VOC
+2021 | Stationary Combustion | 1,574.03 | 468.64 | 8.29 | 36.86 | 24.47
+ | Flare | 141.17 | 581.29 | 0.88 | 249.12 | 528.06
+ | Equipment Leaks | - | - | - | - | 364.02
+ | O&G Venting | - | - | - | - | 293.41
+ | Total | 1,715.19 | 1,049.93 | 9.17 | 285.98 | 1,669.18
+2022 | Stationary Combustion | 1,480.29 | 467.74 | 4.09 | 33.48 | 20.13
+ | Flare | 121.02 | 498.32 | 0.76 | 213.57 | 455.40
+ | Equipment Leaks | - | - | - | - | 802.10
+ | O&G Venting | - | - | - | - | 318.65
+ | Total | 1,601.31 | 966.06 | 4.84 | 247.05 | 1,596.27
+2023 | Stationary Combustion | 1,550.16 | 484.61 | 8.67 | 39.12 | 26.51
+ | Flare | 87.44 | 360.03 | 0.56 | 154.30 | 303.44
+ | Equipment Leaks | - | - | - | - | 717.06
+ | O&G Venting | - | - | - | - | 285.27
+=== PAGE 39 ===
+Table 1 (6 rows):
+Year | Source Module | NO 2 | CO | SO 2 | PM | VOC
+2025 | Stationary Combustion | 1340.53 | 363.13 | 5.87 | 26.01 | 15.85
+ | Flare | 74.18 | 305.44 | 0.47 | 130.90 | 19.63
+ | Equipment Leaks | - | - | - | - | 86.87
+ | O&G Venting | - | - | - | - | 284.03
+ | Total | 1414.70 | 668.58 | 6.35 | 156.91 | 406.37
+=== PAGE 40 ===
+Table 1 (21 rows):
+Year | Source Module | NO 2 | CO | SO 2 | PM | VOC
+2021 | Stationary Combustion | 1,306.03 | 396.94 | 10.18 | 34.29 | 24.63
+ | Flare | 138.7 | 571.12 | 0.93 | 244.76 | 364.07
+ | Equipment Leaks | - | - | - | - | 373.48
+ | O&G Venting | - | - | - | - | 53.46
+ | Total | 1,444.73 | 968.06 | 11.11 | 279.06 | 815.64
+2022 | Stationary Combustion | 1424.84 | 418.04 | 10.69 | 35.35 | 25.02
+ | Flare | 168.75 | 694.87 | 1.18 | 297.8 | 292.32
+ | Equipment Leaks | - | - | - | - | 307.23
+ | O&G Venting | - | - | - | - | 47.71
+ | Total | 1593.6 | 1112.9 | 11.87 | 333.15 | 672.28
+2023 | Stationary Combustion | 1727.01 | 510.26 | 11.62 | 41.71 | 28.69
+ | Flare | 96.74 | 398.33 | 0.69 | 170.71 | 134.9
+ | Equipment Leaks | - | - | - | - | 491.14
+ | O&G Venting | - | - | - | - | 82.13
+=== PAGE 41 ===
+Table 1 (6 rows):
+Year | Source Module | NO 2 | CO | SO 2 | PM | VOC
+2025 | Stationary Combustion | 1669.62 | 500.29 | 13.43 | 43.39 | 31.28
+ | Flare | 91.16 | 375.36 | 0.65 | 160.87 | 11.11
+ | Equipment Leaks | - | - | - | - | 19.03
+ | O&G Venting | - | - | - | - | 69.03
+ | Total | 1760.78 | 875.66 | 14.08 | 204.26 | 130.45
+

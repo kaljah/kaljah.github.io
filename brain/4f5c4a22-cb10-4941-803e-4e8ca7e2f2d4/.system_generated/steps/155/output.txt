@@ -1,0 +1,134 @@
+
+The command exited with code 1.
+Output:
+<truncated 60 lines>
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:247:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.grid-title')
+    Expected substring: "Carbon Intensity"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.grid-title') with timeout 5000ms
+      - waiting for locator('.grid-title')
+
+
+      247 |   test('2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table', async ({ page, request }) => {
+      248 |     await loginAndSetup(page, '/carbon-intensity');
+    > 249 |     await expect(page.locator('.grid-title')).toContainText('Carbon Intensity');
+          |                                               ^
+      250 |
+      251 |     // Screenshot 7: Carbon Intensity Initial
+      252 |     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_carbon_intensity_initial.png'), fullPage: true });
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:249:47
+
+    Error Context: test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.grid-title')
+    Expected substring: "Carbon Intensity"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.grid-title') with timeout 5000ms
+      - waiting for locator('.grid-title')
+
+
+      247 |   test('2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table', async ({ page, request }) => {
+      248 |     await loginAndSetup(page, '/carbon-intensity');
+    > 249 |     await expect(page.locator('.grid-title')).toContainText('Carbon Intensity');
+          |                                               ^
+      250 |
+      251 |     // Screenshot 7: Carbon Intensity Initial
+      252 |     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_carbon_intensity_initial.png'), fullPage: true });
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:249:47
+
+    Error Context: test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-4853d-Filters-Dual-GWP-CBAM-Table-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:300:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.grid-title')
+    Expected substring: "Methane"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.grid-title') with timeout 5000ms
+      - waiting for locator('.grid-title')
+
+
+      300 |   test('3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges', async ({ page, request }) => {
+      301 |     await loginAndSetup(page, '/methane-intensity');
+    > 302 |     await expect(page.locator('.grid-title')).toContainText('Methane');
+          |                                               ^
+      303 |
+      304 |     // Screenshot 11: Methane Intensity Initial
+      305 |     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11_methane_intensity_initial.png'), fullPage: true });
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:302:47
+
+    Error Context: test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.grid-title')
+    Expected substring: "Methane"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" locator('.grid-title') with timeout 5000ms
+      - waiting for locator('.grid-title')
+
+
+      300 |   test('3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges', async ({ page, request }) => {
+      301 |     await loginAndSetup(page, '/methane-intensity');
+    > 302 |     await expect(page.locator('.grid-title')).toContainText('Methane');
+          |                                               ^
+      303 |
+      304 |     // Screenshot 11: Methane Intensity Initial
+      305 |     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11_methane_intensity_initial.png'), fullPage: true });
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:302:47
+
+    Error Context: test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-ab119-ters-Loss-Rates-OGMP-Badges-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity 
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:247:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table 
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:300:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges 
+

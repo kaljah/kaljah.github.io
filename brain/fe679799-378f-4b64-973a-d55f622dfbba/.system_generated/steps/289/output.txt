@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope2Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -131,7 +131,7 @@
+       const sorted = data.sort((a, b) => b.id - a.id);
+       const start = (currentPage - 1) * RECORDS_PER_PAGE;
+       setEntries(sorted.slice(start, start + RECORDS_PER_PAGE));
+-      setTotalPages(Math.ceil(sorted.length / RECORDS_PER_PAGE));
++      setTotalPages(Math.max(1, Math.ceil(sorted.length / RECORDS_PER_PAGE)));
+     } catch (error) {
+       console.error("Failed to load entries:", error);
+       toast.error("Failed to load Scope 2 data");
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

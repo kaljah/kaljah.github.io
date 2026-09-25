@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":677,"LineContent":"   TECHNICAL RAW JSON VIEWER"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":680,"LineContent":".raw-json-viewer {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":689,"LineContent":".raw-json-viewer pre {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":838,"LineContent":"                      \u003cdiv className=\"raw-json-viewer\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":238,"LineContent":"            // \"All Statuses\" strictly excludes rejected records so reviewers focus on active items."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":239,"LineContent":"        // Don't repopulate the list while the reviewer is mid-review inside the wizard"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":116,"LineContent":"  const isReviewer = [\"admin\", \"superuser\"].includes(user?.role);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":434,"LineContent":"            {isReviewer ? ("}

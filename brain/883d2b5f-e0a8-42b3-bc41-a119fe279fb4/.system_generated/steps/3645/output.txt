@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":9,"LineContent":"  PieChart as PieChartWrapper,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1195,"LineContent":"                \u003cPieChartWrapper"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1216,"LineContent":"                \u003cPieChartWrapper"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\PieChart.jsx","LineNumber":3,"LineContent":"  PieChart as RechartsPie,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\PieChart.jsx","LineNumber":21,"LineContent":"export const PieChart = ({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\PieChart.jsx","LineNumber":134,"LineContent":"export default PieChart;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\charts\\index.js","LineNumber":3,"LineContent":"export { PieChart } from \"./PieChart\";"}

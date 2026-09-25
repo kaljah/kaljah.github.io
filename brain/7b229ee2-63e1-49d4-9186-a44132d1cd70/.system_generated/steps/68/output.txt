@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+new/server/routes/data.py:56:        'gas_without_injected_mmsm3': d.gas_without_injected_mmsm3 or 0.0,
+new/server/routes/data.py:57:        'injected_gas_mmsm3': d.injected_gas_mmsm3 or 0.0,
+new/server/routes/data.py:63:        'total_production_no_injected_mmboe': d.total_production_no_injected_mmboe or 0.0,
+new/server/routes/data.py:121:        gas_without_injected_mmsm3 = float(data.get('gas_without_injected_mmsm3') or 0.0)
+new/server/routes/data.py:122:        injected_gas_mmsm3 = float(data.get('injected_gas_mmsm3') or 0.0)
+new/server/routes/data.py:128:        total_production_no_injected_mmboe = float(data.get('total_production_no_injected_mmboe') or 0.0)
+new/server/routes/data.py:138:            existing.gas_without_injected_mmsm3 = gas_without_injected_mmsm3
+new/server/routes/data.py:139:            existing.injected_gas_mmsm3 = injected_gas_mmsm3
+new/server/routes/data.py:145:            existing.total_production_no_injected_mmboe = total_production_no_injected_mmboe
+new/server/routes/data.py:164:                gas_without_injected_mmsm3=gas_without_injected_mmsm3,
+new/server/routes/data.py:165:                injected_gas_mmsm3=injected_gas_mmsm3,
+new/server/routes/data.py:171:                total_production_no_injected_mmboe=total_production_no_injected_mmboe,
+

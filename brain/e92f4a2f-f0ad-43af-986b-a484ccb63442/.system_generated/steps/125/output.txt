@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Size before: 2341048320
+Size after: 2341048320
+

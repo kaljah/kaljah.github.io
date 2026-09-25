@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:1088:    curY = addTextBlock("The following routine checks are performed 
+as part of the QC procedures:", curY);
+
+
+

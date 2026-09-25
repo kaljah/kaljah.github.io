@@ -1,0 +1,135 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+new\server\tests\test_deep_injection_matrix.py::TestOperationalScenariosMatrix::test_flaring_destruction_efficiency_variations PASSED [ 50%]
+new\server\tests\test_deep_injection_matrix.py::TestOperationalScenariosMatrix::test_heavy_hydrocarbon_gas_c2_plus_stoichiometry PASSED [ 57%]
+new\server\tests\test_deep_injection_matrix.py::TestOperationalScenariosMatrix::test_dynamic_gwp_standards_ar4_ar5_ar6 PASSED [ 64%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier1_bulk_csv_upload PASSED [ 71%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier2_bulk_csv_upload_custom_factors FAILED [ 78%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier3_bulk_csv_upload_engineering_parameters PASSED [ 85%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope2_bulk_csv_upload_all_utility_types FAILED [ 92%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope3_bulk_csv_upload_all_categories_and_units FAILED [100%]
+
+================================== FAILURES ===================================
+_ TestBulkCSVIngestionAllTiersAndScopes.test_scope1_tier2_bulk_csv_upload_custom_factors _
+
+self = <test_deep_injection_matrix.TestBulkCSVIngestionAllTiersAndScopes object at 0x0000023E66E6FC20>
+app = <Flask 'app'>, test_user = <User 29>, test_facility = <Facility 20>
+db_session = <sqlalchemy.orm.scoping.scoped_session object at 0x0000023E645F1C70>
+
+    def test_scope1_tier2_bulk_csv_upload_custom_factors(self, app, test_user, test_facility, db_session):
+        """Tier 2 Bulk CSV: Uses regional custom emission factors created in DB."""
+        # Create a custom factor
+        cf = CustomFactor.query.filter_by(name="Regional Saharan Sweet Gas").first()
+        if not cf:
+>           cf = CustomFactor(
+                name="Regional Saharan Sweet Gas",
+                category="combustion",
+                fuel_type="Regional Saharan Sweet Gas",
+                co2_factor=51.25,
+                ch4_factor=0.0008,
+                n2o_factor=0.00008,
+                unit="kg/MMBtu",
+                hhv_factor=1050.0,
+                created_by=test_user.id,
+            )
+
+new\server\tests\test_deep_injection_matrix.py:413: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<string>:4: in __init__
+    ???
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:564: in _initialize_instance
+    with util.safe_reraise():
+..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py:562: in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <CustomFactor (transient 2467037637392)>
+kwargs = {'name': 'Regional Saharan Sweet Gas', 'category': 'combustion', 'fuel_type': 'Regional Saharan Sweet Gas', 'co2_factor': 51.25, ...}
+
+    def _declarative_constructor(self: Any, **kwargs: Any) -> None:
+        """A simple constructor that allows initialization from kwargs.
+    
+        Sets attributes on the constructed instance using the names and
+        values in ``kwargs``.
+    
+        Only keys that are present as
+        attributes of the instance's class are allowed. These could be,
+        for example, any mapped columns or relationships.
+        """
+        cls_ = type(self)
+        for k in kwargs:
+            if not hasattr(cls_, k):
+>               raise TypeError(
+                    "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+                )
+E               TypeError: 'category' is an invalid keyword argument for CustomFactor
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py:2139: TypeError
+_ TestBulkCSVIngestionAllTiersAndScopes.test_scope2_bulk_csv_upload_all_utility_types _
+
+self = <test_deep_injection_matrix.TestBulkCSVIngestionAllTiersAndScopes object at 0x0000023E66E942F0>
+app = <Flask 'app'>, test_user = <User 29>, test_facility = <Facility 20>
+db_session = <sqlalchemy.orm.scoping.scoped_session object at 0x0000023E645F1C70>
+
+    def test_scope2_bulk_csv_upload_all_utility_types(self, app, test_user, test_facility, db_session):
+        """Scope 2 Bulk CSV: Location-based electricity, Market-based renewable PPA, and Purchased Steam."""
+        csv_data = (
+            "Facility,Date,ElectricityKWh,FactorType,Factor,SteamMMBtu,HeatUnit\n"
+            f"{test_facility.name},2024-01,25000,grid,0.520,,\n"
+            f"{test_facility.name},2024-02,50000,market,0.000,,\n"
+            f"{test_facility.name},2024-03,0,steam,53.06,1200,mmbtu\n"
+        )
+        status = self._run_upload(app, csv_data, "scope2_all.csv", test_user.id, scope=2)
+        assert status["status"] == "completed"
+        assert status["processed"] == 3
+>       assert status["skipped_count"] == 0
+E       assert 3 == 0
+
+new\server\tests\test_deep_injection_matrix.py:469: AssertionError
+_ TestBulkCSVIngestionAllTiersAndScopes.test_scope3_bulk_csv_upload_all_categories_and_units _
+
+self = <test_deep_injection_matrix.TestBulkCSVIngestionAllTiersAndScopes object at 0x0000023E66E94680>
+app = <Flask 'app'>, test_user = <User 29>, test_facility = <Facility 20>
+db_session = <sqlalchemy.orm.scoping.scoped_session object at 0x0000023E645F1C70>
+
+    def test_scope3_bulk_csv_upload_all_categories_and_units(self, app, test_user, test_facility, db_session):
+        """Scope 3 Bulk CSV: Uploading mass, distance, and spend EEIO units across multiple categories."""
+        csv_data = (
+            "Facility,Date,Category,ActivityAmount,Unit,EmissionFactor,EFUnit\n"
+            f"{test_facility.name},2024-01,Category 1: Purchased Goods,50,tonnes,800,kg CO2e / tonne\n"
+            f"{test_facility.name},2024-02,Category 2: Capital Goods,150000,$,350,kg CO2e / $1000\n"
+            f"{test_facility.name},2024-03,Category 4: Upstream Transportation,25000,tonne-km,0.12,kg CO2e / tonne-km\n"
+            f"{test_facility.name},2024-04,Category 6: Business Travel,45000,passenger-km,0.18,kg CO2e / passenger-km\n"
+        )
+        status = self._run_upload(app, csv_data, "scope3_all.csv", test_user.id, scope=3)
+        assert status["status"] == "completed"
+        assert status["processed"] == 4
+        assert status["skipped_count"] == 0
+    
+        # Verify cement calculation: 50 tonnes * 800 kg/t / 1000 = 40.0 tCO2e
+        s3_mat = Scope3Emission.query.filter_by(facility_id=test_facility.id, year=2024, month=1).first()
+        assert s3_mat is not None
+>       assert pytest.approx(s3_mat.co2e, 1e-2) == 40.0
+E       assert 0.0 � 1.0e-12 == 40.0
+E         
+E         comparison failed
+E         Obtained: 40.0
+E         Expected: 0.0 � 1.0e-12
+
+new\server\tests\test_deep_injection_matrix.py:492: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier2_bulk_csv_upload_custom_factors
+FAILED new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope2_bulk_csv_upload_all_utility_types
+FAILED new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope3_bulk_csv_upload_all_categories_and_units
+=================== 3 failed, 11 passed, 1 warning in 3.01s ===================
+

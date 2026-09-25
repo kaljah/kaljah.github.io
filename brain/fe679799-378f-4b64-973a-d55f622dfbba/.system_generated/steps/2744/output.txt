@@ -1,0 +1,37 @@
+The search for ""sqlite3.InterfaceError: bad parameter or other API misuse" "SELECT" SQLAlchemy" returned the following summary:
+The `sqlite3.InterfaceError: bad parameter or other API misuse` in SQLAlchemy (when using SQLite) typically indicates that the database driver encountered an issue with how the query or its parameters were handled[1][2].
+
+Because this is a low-level DBAPI error, it is rarely a problem with SQLAlchemy’s core logic and usually stems from one of the following common issues:
+
+### 1. Unsupported Parameter Types
+The most frequent cause is attempting to pass a Python object to a query that the `sqlite3` driver does not know how to map to a SQL type[1][3].
+*   **Example:** Passing a complex object (like a list, dictionary, or custom class) directly into a query parameter[4][3].
+*   **Fix:** Ensure that all parameters are simple types (strings, integers, floats, `None`, or bytes)[1]. If you are trying to store a JSON object, serialize it to a string (using `json.dumps()`) before passing it to the query[4][3].
+
+### 2. Using Closed Connections/Cursors
+If your code attempts to execute a query on a connection or cursor that has already been closed, you will trigger this error[1][5].
+*   **Check:** Ensure that your session or connection management (e.g., in a `try...finally` block or a context manager) is not closing the database handle while a query is still in flight or expected to be used[1][5][6].
+
+### 3. Incorrect Parameter Binding
+This occurs when the number of parameters provided does not match the number of placeholders (`?`) in your SQL string[1].
+*   **Check:** Verify that your `SELECT` statement (or any other query) has exactly the same number of placeholders as there are arguments in the parameter tuple[1].
+*   **Example:** If your query is `SELECT * FROM table WHERE id = ? AND name = ?`, you **must** provide exactly two values in the parameter tuple[1].
+
+### 4. Multithreading Issues
+`sqlite3` (by default) has restrictions on sharing connections across threads. 
+*   **Fix:** If you are running a multithreaded application (like a web server), ensure you are using a thread-safe configuration. In SQLAlchemy, using `scoped_session` or ensuring each thread gets its own connection is the standard way to avoid this[7][8].
+
+### Troubleshooting Steps
+*   **Enable Logging:** Set your SQLAlchemy engine to echo mode (`create_engine(..., echo=True)`) to see the exact SQL statement and the parameters being passed. This often reveals that a parameter is `None` or an unexpected type when it should be a value.
+*   **Isolate the Query:** Try to run the raw SQL statement directly against your database using a tool like the `sqlite3` command-line interface or a database browser to verify the query syntax and parameter requirements independently of SQLAlchemy.
+*   **Check for "None" values:** Sometimes an object property you expect to be a string is actually `None`, which can occasionally cause binding issues depending on the driver version.
+
+Sources:
+[1] [zetcode.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEnZaAy_KDJPJ0ST0u8SPa8XAqiDxTcevxGnaX55V0aO7wVRmFD6zFUEbUiAKbbGNzRS7LuuiuPHUpImbXI-xWSVvVwgxgiY893SxE4-VEXHNudCub2Cl3BdoU_qA_0n1pmzQE89Cxj)
+[2] [zetcode.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEnZaAy_KDJPJ0ST0u8SPa8XAqiDxTcevxGnaX55V0aO7wVRmFD6zFUEbUiAKbbGNzRS7LuuiuPHUpImbXI-xWSVvVwgxgiY893SxE4-VEXHNudCub2Cl3BdoU_qA_0n1pmzQE89Cxj)
+[3] [stackoverflow.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFhpPGDBIDgBmoR6HetEiSxqMtE4d-4Idq_Gy3II2nOA0CeQ5m0K--w-iu365yDwdIROdWNRZmnphR9LH1rwgp0kObD0lE6UUKZzgCUKHHlbggDkATdS7LIUW9gr3nlBpFB4tvVhv0PGvTLBbkzVppPMg_6xrVMTe6inFIGe9eCZcc1onH2P1kk8m-4QNfJ9WXy4I7XrYTdTieCO1iTEWfTG3C50E_23EMywEZui48=)
+[4] [stackoverflow.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFhpPGDBIDgBmoR6HetEiSxqMtE4d-4Idq_Gy3II2nOA0CeQ5m0K--w-iu365yDwdIROdWNRZmnphR9LH1rwgp0kObD0lE6UUKZzgCUKHHlbggDkATdS7LIUW9gr3nlBpFB4tvVhv0PGvTLBbkzVppPMg_6xrVMTe6inFIGe9eCZcc1onH2P1kk8m-4QNfJ9WXy4I7XrYTdTieCO1iTEWfTG3C50E_23EMywEZui48=)
+[5] [zetcode.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEnZaAy_KDJPJ0ST0u8SPa8XAqiDxTcevxGnaX55V0aO7wVRmFD6zFUEbUiAKbbGNzRS7LuuiuPHUpImbXI-xWSVvVwgxgiY893SxE4-VEXHNudCub2Cl3BdoU_qA_0n1pmzQE89Cxj)
+[6] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFC8tz_7py2szHn9XYe1Vyk0dFdnh9qLrlnjaqNV7Pl81KebpiTP9yHpil7ZwarnbVSC1Pz25IDW9KCoi13TExeNyIUUcTQ2Adh_vi-_VsNehKdO6A3v3lF02kkDJc2sKPwUoo=)
+[7] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGJjduX3cBgAl7dHnv1qr45qg4ddNLZhyx3OqKflQYPhOpjHJw5EfASj-WVg4ZPU67elJ1LYVNV0HwcBBieD3-p5_tu8vD7aON7V6sgAJQlW7xKYrwonk3zVH8zsoKbJ5HV8pt8UFyNiNmCU21qrfbr)
+[8] [github.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGJjduX3cBgAl7dHnv1qr45qg4ddNLZhyx3OqKflQYPhOpjHJw5EfASj-WVg4ZPU67elJ1LYVNV0HwcBBieD3-p5_tu8vD7aON7V6sgAJQlW7xKYrwonk3zVH8zsoKbJ5HV8pt8UFyNiNmCU21qrfbr)

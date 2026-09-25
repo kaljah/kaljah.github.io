@@ -1,0 +1,43 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2,8 +2,23 @@
+ import api from "../api";
+ import { useAuth } from "../context/AuthContext";
+ import { useToast } from "../components/Toast";
+-import Modal from "../components/Modal";
++import Drawer from "../components/Drawer";
+ import ConfirmModal from "../components/ConfirmModal";
++import {
++  UserPlus,
++  UserCheck,
++  KeyRound,
++  Lock,
++  Shield,
++  Eye,
++  EyeOff,
++  Check,
++  User,
++  Mail,
++  Briefcase,
++  AlertCircle,
++  CheckCircle2,
++} from "lucide-react";
+ 
+ /* ─── tiny keyframe injection ─────────────────────────────────────────────── */
+ const STYLE_ID = "um-keyframes";
+@@ -57,9 +57,11 @@
+   page: {
+     padding: "32px",
+     fontFamily: "'Outfit', Inter, system-ui, sans-serif",
+-    maxWidth: "1400px",
++    maxWidth: "1600px",
++    width: "100%",
+     margin: "0 auto",
+     animation: "um-fade-in .4s ease both",
++    boxSizing: "border-box",
+   },
+   /* hero header */
+   hero: {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

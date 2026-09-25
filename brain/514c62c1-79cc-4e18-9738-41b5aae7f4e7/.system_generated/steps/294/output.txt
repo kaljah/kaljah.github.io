@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+SUM co2: 6877.765625256851 ch4: 428.3071447005252 n2o: 0.15907013652256669 co2e_total: 325030212.89560175
+

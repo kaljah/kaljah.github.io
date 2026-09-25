@@ -1,0 +1,64 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2703,6 +2703,38 @@
+                                             </select>
+                                         </div>
+                                     </div>
++                                    <div className="input-group">
++                                        <label>Gross Gas (MMSm³)</label>
++                                        <input type="number" step="any" value={prodForm.gross_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gross_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
++                                    <div className="input-group">
++                                        <label>Gas w/o Injection (MMSm³)</label>
++                                        <input type="number" step="any" value={prodForm.gas_without_injected_mmsm3} onChange={(e) => setProdForm({ ...prodForm, gas_without_injected_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
++                                    <div className="input-group">
++                                        <label>Injected Gas (MMSm³)</label>
++                                        <input type="number" step="any" value={prodForm.injected_gas_mmsm3} onChange={(e) => setProdForm({ ...prodForm, injected_gas_mmsm3: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
++                                    <div className="input-group">
++                                        <label>Crude Oil (MMBOE)</label>
++                                        <input type="number" step="any" value={prodForm.crude_oil_mmboe} onChange={(e) => setProdForm({ ...prodForm, crude_oil_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
++                                    <div className="input-group">
++                                        <label>Condensate (MMBOE)</label>
++                                        <input type="number" step="any" value={prodForm.condensate_mmboe} onChange={(e) => setProdForm({ ...prodForm, condensate_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
++                                    <div className="input-group">
++                                        <label>LPG (MMBOE)</label>
++                                        <input type="number" step="any" value={prodForm.lpg_mmboe} onChange={(e) => setProdForm({ ...prodForm, lpg_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
++                                    <div className="input-group">
++                                        <label>Total Production (MMBOE)</label>
++                                        <input type="number" step="any" value={prodForm.total_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, total_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
++                                    <div className="input-group">
++                                        <label>Total Saleable (MMBOE)</label>
++                                        <input type="number" step="any" value={prodForm.saleable_production_mmboe} onChange={(e) => setProdForm({ ...prodForm, saleable_production_mmboe: e.target.value })} className="mole-input" placeholder="0.0" />
++                                    </div>
+                                 </div>
+                                 <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                                     <button className="action-btn" onClick={handleSaveProduction}>Save Record</button>
+@@ -2722,6 +2722,9 @@
+                                                 <th>Month</th>
+                                                 <th style={{ textAlign: 'right' }}>Oil (bbl)</th>
+                                                 <th style={{ textAlign: 'right' }}>Gas (mcf)</th>
++                                                <th style={{ textAlign: 'right' }}>Gross Gas (MMSm³)</th>
++                                                <th style={{ textAlign: 'right' }}>Total (MMBOE)</th>
++                                                <th style={{ textAlign: 'right' }}>Saleable (MMBOE)</th>
+                                                 <th style={{ textAlign: 'center' }}>Actions</th>
+                                             </tr>
+                                         </thead>
+@@ -2740,6 +2740,9 @@
+                                                     <td>{new Date(2000, d.month - 1).toLocaleString('default', { month: 'short' })}</td>
+                                                     <td style={{ textAlign: 'right' }}>{(d.oil || 0).toLocaleString()} {d.oilUnit || 'bbl'}</td>
+                                                     <td style={{ textAlign: 'right' }}>{(d.gas || 0).toLocaleString()} {d.gasUnit || 'mscf'}</td>
++                                                    <td style={{ textAlign: 'right' }}>{d.gross_gas_mmsm3 ? Number(d.gross_gas_mmsm3).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
++                                                    <td style={{ textAlign: 'right' }}>{d.total_production_mmboe ? Number(d.total_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
++                                                    <td style={{ textAlign: 'right' }}>{d.saleable_production_mmboe ? Number(d.saleable_production_mmboe).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                                                     <td style={{ textAlign: 'center' }}>
+                                                         <button
+                                                             className="btn-delete"
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

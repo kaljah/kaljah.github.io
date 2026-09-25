@@ -1,0 +1,124 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -321,6 +321,118 @@
+     const healthColor = healthScore >= 80 ? '#10b981' : healthScore >= 60 ? '#f59e0b' : '#ef4444';
+     const healthStatusText = healthScore >= 80 ? 'Optimal & Verified' : healthScore >= 60 ? 'Attention Needed' : 'Action Required';
+ 
++    // Render helper for diagnostic finding card with sample inspection
++    const renderFindingCard = (item, type, icon) => {
++        const isExpanded = expandedFindingId === item.id;
++        const hasSamples = item.sample_records && item.sample_records.length > 0;
++
++        return (
++            <div key={`${type}-${item.id}`} className={`qa-issue-item ${type}`}>
++                <div className="qa-issue-main-row">
++                    <div className="qa-issue-content">
++                        <div className="qa-issue-title-row">
++                            {icon}
++                            <span className="qa-issue-title">{item.title}</span>
++                            <span className={`qa-issue-impact-badge ${item.impact ? item.impact.toLowerCase() : 'low'}`}>
++                                {item.impact ? `${item.impact} Impact` : 'Optimization'}
++                            </span>
++                            {item.affected_count > 0 && (
++                                <span className="qa-issue-count-pill">
++                                    {item.affected_count} {item.id === 'unused_facilities' ? 'facilities' : 'records'}
++                                </span>
++                            )}
++                        </div>
++                        <p className="qa-issue-desc">{item.description}</p>
++                    </div>
++
++                    <div className="qa-issue-actions-group">
++                        {hasSamples && (
++                            <button
++                                type="button"
++                                className="qa-btn-action qa-btn-inspect"
++                                onClick={() => setExpandedFindingId(prev => prev === item.id ? null : item.id)}
++                                title={isExpanded ? "Collapse preview" : "Inspect sample records"}
++                            >
++                                <Eye size={13} />
++                                <span>{isExpanded ? 'Hide' : `Inspect (${item.sample_records.length})`}</span>
++                                {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
++                            </button>
++                        )}
++                        <button
++                            type="button"
++                            className="qa-btn-action qa-btn-secondary"
++                            onClick={() => handleFindingAction(item)}
++                        >
++                            {item.action || 'Resolve'} <ArrowRight size={13} />
++                        </button>
++                    </div>
++                </div>
++
++                {/* Collapsible Sample Records Inspector */}
++                {isExpanded && hasSamples && (
++                    <div className="qa-issue-samples-container">
++                        <div className="qa-samples-header">
++                            <span style={{ fontWeight: 600, color: '#0f172a' }}>
++                                Sample Affected Entries (Showing {item.sample_records.length} of {item.affected_count})
++                            </span>
++                            <span className="qa-samples-hint">
++                                Direct correction available via the &ldquo;{item.action || 'Resolve'}&rdquo; button.
++                            </span>
++                        </div>
++                        <div className="qa-samples-table-wrap">
++                            <table className="qa-samples-table">
++                                <thead>
++                                    <tr>
++                                        {item.id === 'unused_facilities' ? (
++                                            <>
++                                                <th>Facility ID</th>
++                                                <th>Facility Name</th>
++                                                <th>Location / Field</th>
++                                            </>
++                                        ) : (
++                                            <>
++                                                <th>Record ID</th>
++                                                <th>Facility</th>
++                                                <th>Year</th>
++                                                <th>Process Type</th>
++                                                <th>Details</th>
++                                            </>
++                                        )}
++                                    </tr>
++                                </thead>
++                                <tbody>
++                                    {item.sample_records.map((s, sIdx) => (
++                                        <tr key={sIdx}>
++                                            {item.id === 'unused_facilities' ? (
++                                                <>
++                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
++                                                    <td><strong>{s.name}</strong></td>
++                                                    <td>{s.location || '-'}</td>
++                                                </>
++                                            ) : (
++                                                <>
++                                                    <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{s.id}</td>
++                                                    <td>{s.facility || (s.facility_id ? `Facility #${s.facility_id}` : 'Unassigned Boundary')}</td>
++                                                    <td>{s.year || '-'}</td>
++                                                    <td><span className="qa-sample-tag">{s.process || 'Combustion'}</span></td>
++                                                    <td>
++                                                        {s.fuel && <span style={{ marginRight: '8px' }}>Fuel: <strong>{s.fuel}</strong></span>}
++                                                        {s.quantity !== undefined && <span>Qty: <strong>{s.quantity === null ? 'None' : s.quantity}</strong></span>}
++                                                        {s.co2e !== undefined && <span style={{ marginLeft: '8px' }}>CO₂e: <strong>{s.co2e === null ? 'None' : s.co2e}</strong></span>}
++                                                    </td>
++                                                </>
++                                            )}
++                                        </tr>
++                                    ))}
++                                </tbody>
++                            </table>
++                        </div>
++                    </div>
++                )}
++            </div>
++        );
++    };
++
+     return (
+         <ErrorBoundary>
+             <div 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

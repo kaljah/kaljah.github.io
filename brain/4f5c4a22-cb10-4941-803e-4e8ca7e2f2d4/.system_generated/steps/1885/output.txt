@@ -1,0 +1,139 @@
+
+The command exited with code 1.
+Output:
+<truncated 67 lines>
+APPROVED: 0 records. Facility distribution: {1: 562, 3: 546, 4: 617}
+Facility ID 1: 562 verified records (Requirement: >= 360)
+Facility ID 3: 546 verified records (Requirement: >= 360)
+Facility ID 4: 617 verified records (Requirement: >= 360)
+  x  5 [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:690:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit (13.2s)
+APPROVED: 0 records. Facility distribution: {1: 562, 3: 546, 4: 617}
+Facility ID 1: 562 verified records (Requirement: >= 360)
+Facility ID 3: 546 verified records (Requirement: >= 360)
+Facility ID 4: 617 verified records (Requirement: >= 360)
+  x  6 [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:690:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit (retry #1) (13.3s)
+
+
+  1) [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:629:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 3. Scope 1 Table Audit: Column Validation, Uncertainty Percentages & Inspect Modal Details 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.scope-form, .calc-panel').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.scope-form, .calc-panel').first() with timeout 15000ms
+      - waiting for locator('.scope-form, .calc-panel').first()
+
+
+      115 |   });
+      116 |
+    > 117 |   await expect(page.locator('.scope-form, .calc-panel').first()).toBeVisible({ timeout: 15000 });
+          |                                                                  ^
+      118 |   await page.waitForTimeout(500);
+      119 | }
+      120 |
+        at setupScope1 (C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:117:66)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:631:5
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.scope-form, .calc-panel').first()
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.scope-form, .calc-panel').first() with timeout 15000ms
+      - waiting for locator('.scope-form, .calc-panel').first()
+
+
+      115 |   });
+      116 |
+    > 117 |   await expect(page.locator('.scope-form, .calc-panel').first()).toBeVisible({ timeout: 15000 });
+          |                                                                  ^
+      118 |   await page.waitForTimeout(500);
+      119 | }
+      120 |
+        at setupScope1 (C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:117:66)
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:631:5
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-f7929-tages-Inspect-Modal-Details-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:690:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first() with timeout 10000ms
+      - waiting for locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+
+
+      727 |     // Hero Gross Emissions Card
+      728 |     const heroCard = page.locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first();
+    > 729 |     await expect(heroCard).toBeVisible({ timeout: 10000 });
+          |                            ^
+      730 |     const heroText = await heroCard.innerText();
+      731 |     expect(heroText).not.toContain('NaN');
+      732 |     expect(heroText).not.toContain('undefined');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:729:28
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first() with timeout 10000ms
+      - waiting for locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first()
+
+
+      727 |     // Hero Gross Emissions Card
+      728 |     const heroCard = page.locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first();
+    > 729 |     await expect(heroCard).toBeVisible({ timeout: 10000 });
+          |                            ^
+      730 |     const heroText = await heroCard.innerText();
+      731 |     expect(heroText).not.toContain('NaN');
+      732 |     expect(heroText).not.toContain('undefined');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js:729:28
+
+    Error Context: test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_tier1_tier3_ad-f717f-st-Calculation-KPI-Re-Audit-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:629:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 3. Scope 1 Table Audit: Column Validation, Uncertainty Percentages & Inspect Modal Details 
+    [chromium] › e2e\test_scope1_tier1_tier3_advanced.spec.js:690:3 › Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Audit › 4. Maker-Checker Batch Approval & Post-Calculation KPI Re-Audit 
+  2 passed (2.6m)
+

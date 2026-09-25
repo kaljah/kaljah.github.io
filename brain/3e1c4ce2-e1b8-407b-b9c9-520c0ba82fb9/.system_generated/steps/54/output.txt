@@ -1,0 +1,44 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":300,"LineContent":"            from calculations import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":504,"LineContent":"                        compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1627,"LineContent":"    compute_emissions_fn,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1638,"LineContent":"    Validates a single mapped row and runs calculation via compute_emissions."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1790,"LineContent":"        em_result, _method = compute_emissions_fn("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":370,"LineContent":"def compute_emissions(payload, factor_data=None, gwp_dict=None, gwp_standard=None):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py","LineNumber":4,"LineContent":"from .legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py","LineNumber":11,"LineContent":"    \"compute_emissions\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":12,"LineContent":"from calculations import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\generate_scenarios.py","LineNumber":415,"LineContent":"                em_result, method = compute_emissions(data, factor_data)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1035,"LineContent":"        from calculations import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1062,"LineContent":"            compute_emissions_fn=compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1090,"LineContent":"        from calculations import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1108,"LineContent":"            compute_emissions_fn=compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1120,"LineContent":"        from calculations import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1137,"LineContent":"            compute_emissions_fn=compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1148,"LineContent":"        from calculations import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1167,"LineContent":"            compute_emissions_fn=compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1182,"LineContent":"        from calculations import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_emission_calculations.py","LineNumber":1205,"LineContent":"            compute_emissions_fn=compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":16,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":331,"LineContent":"    \"\"\"Verify compute_emissions pipeline routes and handles all canonical process types.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":334,"LineContent":"    def test_compute_emissions_for_all_processes(self, process_id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_all_process_types_matrix.py","LineNumber":349,"LineContent":"        em_res, method = compute_emissions(payload, factors)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_runner.py","LineNumber":101,"LineContent":"            compute_emissions_fn=compute_scope1_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":18,"LineContent":"    compute_emissions,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":776,"LineContent":"            em_result, method = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3027,"LineContent":"    # Call compute_emissions to calculate the actual emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3031,"LineContent":"        em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3473,"LineContent":"            calculated_em, method = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3814,"LineContent":"            em_result, method = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":4,"LineContent":"from calculations.legacy_engine import compute_emissions"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":52,"LineContent":"    em_ar5, method5 = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_gwp_dynamic.py","LineNumber":55,"LineContent":"    em_ar4, method4 = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":21,"LineContent":"from calculations import compute_emissions, calculate_co2e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":90,"LineContent":"            res, method = compute_emissions(payload, factor_data=factor)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":113,"LineContent":"            res, method = compute_emissions(payload, factor_data=factor)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":119,"LineContent":"        res_zero, _ = compute_emissions("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":137,"LineContent":"            res, _ = compute_emissions({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":148,"LineContent":"            res_inf, _ = compute_emissions({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_memory_leaks.py","LineNumber":8,"LineContent":"1. 10,000 sequential compute_emissions loops profiled via tracemalloc."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_memory_leaks.py","LineNumber":20,"LineContent":"from calculations import compute_emissions, calculate_co2e, convert"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_memory_leaks.py","LineNumber":74,"LineContent":"            res, _ = compute_emissions(payload, factor_data=factor)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_memory_leaks.py","LineNumber":213,"LineContent":"            res, _ = compute_emissions(payload, factor_data=API_FACTORS.get(\"Natural Gas\", {}))"}

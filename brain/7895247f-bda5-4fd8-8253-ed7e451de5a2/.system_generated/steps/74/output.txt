@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+
+new\server\tests\test_stress_memory_leaks.py:6:Validates that high-frequency calculation and conversion routines run 
+indefinitely
+
+
+

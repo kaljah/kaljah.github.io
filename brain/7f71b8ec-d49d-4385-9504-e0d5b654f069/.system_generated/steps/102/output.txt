@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+{"email":"a","pass":"a","emailRequired":true,"passRequired":true,"emailValidity":true,"passValidity":true}
+```

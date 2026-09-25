@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 17:08:38,212] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+[]
+

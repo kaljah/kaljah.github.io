@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -61,7 +61,7 @@
+         if cin > 1.0 or cout > 1.0:
+             cin /= 100.0
+             cout /= 100.0
+-        diff_co2 = max(0.0, (cin - cout) / max(0.0001, 1.0 - cout))
++        diff_co2 = max(0.0, cin - cout)
+         co2_vented_scf = throughput_scf * diff_co2
+         co2_vented_m3 = convert(co2_vented_scf, "scf", "m3")
+         co2_mass_kg = co2_vented_m3 * CONVERSIONS.get("density_co2", 1.861)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

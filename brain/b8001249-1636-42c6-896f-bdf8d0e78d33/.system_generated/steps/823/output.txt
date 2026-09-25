@@ -1,0 +1,87 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 474 lines>
+[2026-09-24 00:37:27,151] INFO in app: POST /api/satellite/sentinel5p/test-connection 200 [0.006s] [ReqID: 4317efc7-10a7-4aa9-b3d3-6fd5add0d688]
+127.0.0.1 - - [24/Sep/2026 00:37:27] "POST /api/satellite/sentinel5p/test-connection HTTP/1.1" 200 -
+[2026-09-24 00:37:29,235] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 141baf06-b540-429f-bb38-f858fcb564b8]
+127.0.0.1 - - [24/Sep/2026 00:37:29] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:37:31,298] INFO in app: GET /api/emissions 403 [0.006s] [ReqID: abdb313b-1d7a-47b8-9554-d67884ca92a6]
+127.0.0.1 - - [24/Sep/2026 00:37:31] "GET /api/emissions HTTP/1.1" 403 -
+[2026-09-24 00:37:33,368] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 2c852699-e38f-42df-bab6-e587cbab54af]
+127.0.0.1 - - [24/Sep/2026 00:37:33] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:37:35,445] INFO in app: POST /api/emissions 403 [0.004s] [ReqID: 08603893-b2e1-469f-9f62-d1b14deae3fe]
+127.0.0.1 - - [24/Sep/2026 00:37:35] "POST /api/emissions HTTP/1.1" 403 -
+[2026-09-24 00:37:37,488] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: b7a6f11d-cb9c-45dc-adda-68f439d79ccc]
+127.0.0.1 - - [24/Sep/2026 00:37:37] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:37:39,582] INFO in app: GET /api/facilities 403 [0.009s] [ReqID: 3c2e0655-3eef-42bc-8bb9-ffdb7fac3217]
+127.0.0.1 - - [24/Sep/2026 00:37:39] "GET /api/facilities HTTP/1.1" 403 -
+[2026-09-24 00:37:41,625] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: d8281183-b2d9-4f22-99d3-a0a26421d2ab]
+127.0.0.1 - - [24/Sep/2026 00:37:41] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:37:43,668] INFO in app: GET /api/dashboard/summary 403 [0.012s] [ReqID: f89a38ab-2e70-4ddc-ab0c-505bf653e9bc]
+127.0.0.1 - - [24/Sep/2026 00:37:43] "GET /api/dashboard/summary HTTP/1.1" 403 -
+[2026-09-24 00:37:45,690] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 144d6b85-b3e5-47e0-9cd1-87d6b834463e]
+127.0.0.1 - - [24/Sep/2026 00:37:45] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:37:47,739] INFO in app: GET /api/reports/export 403 [0.005s] [ReqID: a30dc7dc-dd16-424c-9fd2-f59c4cf131df]
+127.0.0.1 - - [24/Sep/2026 00:37:47] "GET /api/reports/export HTTP/1.1" 403 -
+[2026-09-24 00:37:49,813] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: daa5287b-1d34-403d-8e16-7a341f2a32da]
+127.0.0.1 - - [24/Sep/2026 00:37:49] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:37:51,889] INFO in app: GET /api/audit/ 200 [0.011s] [ReqID: ebc2c3bd-5b30-41a9-b33b-2065ab087a54]
+127.0.0.1 - - [24/Sep/2026 00:37:51] "GET /api/audit/ HTTP/1.1" 200 -
+[2026-09-24 00:37:53,938] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 2d519082-f974-42b3-a686-c55342a4e74b]
+127.0.0.1 - - [24/Sep/2026 00:37:53] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:37:55,995] INFO in app: GET /api/auth/settings 200 [0.005s] [ReqID: de55477f-ed75-4453-a477-03d2e77363fe]
+127.0.0.1 - - [24/Sep/2026 00:37:55] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-24 00:38:56,466] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: f544edd7-1106-42be-b830-eabc3901db4d]
+127.0.0.1 - - [24/Sep/2026 00:38:56] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:38:58,696] INFO in app: POST /api/auth/login 200 [0.175s] [ReqID: 6713e7b7-e680-4c29-9474-5de0f2194651]
+127.0.0.1 - - [24/Sep/2026 00:38:58] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-24 00:39:00,744] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 13f48532-7e4a-4908-8c11-bd2b325baa7b]
+127.0.0.1 - - [24/Sep/2026 00:39:00] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:02,795] INFO in app: GET /api/auth/me 200 [0.005s] [ReqID: 58b121ab-12f1-460e-9560-dace39819e98]
+127.0.0.1 - - [24/Sep/2026 00:39:02] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-24 00:39:04,879] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 764bcb5c-bb3f-47ae-92ec-ddf7cd704691]
+127.0.0.1 - - [24/Sep/2026 00:39:04] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:06,947] INFO in app: GET /api/auth/users 200 [0.007s] [ReqID: a6d398c0-870f-4c1c-9fc3-03f089e0715e]
+127.0.0.1 - - [24/Sep/2026 00:39:06] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-24 00:39:09,011] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: b22f46d0-4d49-4573-8f70-992457a0bae0]
+127.0.0.1 - - [24/Sep/2026 00:39:09] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:11,088] INFO in app: POST /api/auth/users 403 [0.010s] [ReqID: 81f3c9ef-dcc0-4cba-86d3-818d5f9ca4bd]
+127.0.0.1 - - [24/Sep/2026 00:39:11] "POST /api/auth/users HTTP/1.1" 403 -
+[2026-09-24 00:39:13,155] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 9a63bf99-ea06-445e-9299-d0f6d6bf73a2]
+127.0.0.1 - - [24/Sep/2026 00:39:13] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:15,205] INFO in app: GET /api/satellite/sentinel5p/layer-config 403 [0.005s] [ReqID: 9c034125-6e48-40ab-a759-515d505d6556]
+127.0.0.1 - - [24/Sep/2026 00:39:15] "GET /api/satellite/sentinel5p/layer-config HTTP/1.1" 403 -
+[2026-09-24 00:39:17,247] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 96853d2b-9684-47dd-a6b1-0bc30676fbe1]
+127.0.0.1 - - [24/Sep/2026 00:39:17] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:19,283] INFO in app: POST /api/satellite/sentinel5p/test-connection 200 [0.005s] [ReqID: 6a866ad1-622b-4119-a934-a99d35e4ec71]
+127.0.0.1 - - [24/Sep/2026 00:39:19] "POST /api/satellite/sentinel5p/test-connection HTTP/1.1" 200 -
+[2026-09-24 00:39:21,320] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 8264419c-9ae3-48e7-8ea3-ef67a267b7f3]
+127.0.0.1 - - [24/Sep/2026 00:39:21] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:23,395] INFO in app: GET /api/emissions 403 [0.010s] [ReqID: 65740ced-9cc7-4d91-adf0-60bdfaf21eee]
+127.0.0.1 - - [24/Sep/2026 00:39:23] "GET /api/emissions HTTP/1.1" 403 -
+[2026-09-24 00:39:25,441] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 0e7209f3-b399-4575-8ff1-acf47a6411d1]
+127.0.0.1 - - [24/Sep/2026 00:39:25] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:27,520] INFO in app: POST /api/emissions 403 [0.004s] [ReqID: 7cf253b4-c316-44b0-abb6-c9669facbc9f]
+127.0.0.1 - - [24/Sep/2026 00:39:27] "POST /api/emissions HTTP/1.1" 403 -
+[2026-09-24 00:39:29,547] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 525cd123-60e8-4abc-9ef5-104c31b70906]
+127.0.0.1 - - [24/Sep/2026 00:39:29] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:31,629] INFO in app: GET /api/facilities 403 [0.005s] [ReqID: 6d468781-d98e-4c8a-9dc8-8e0d487eebb5]
+127.0.0.1 - - [24/Sep/2026 00:39:31] "GET /api/facilities HTTP/1.1" 403 -
+[2026-09-24 00:39:33,687] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 5300c04a-f1b6-4ed5-9efd-e3bbd6598816]
+127.0.0.1 - - [24/Sep/2026 00:39:33] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:35,736] INFO in app: GET /api/dashboard/summary 403 [0.005s] [ReqID: da05b8f1-eb79-44d3-96df-c9a2effac776]
+127.0.0.1 - - [24/Sep/2026 00:39:35] "GET /api/dashboard/summary HTTP/1.1" 403 -
+[2026-09-24 00:39:37,775] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 08b327f5-5ea4-4b98-a87c-dbfaffe108f3]
+127.0.0.1 - - [24/Sep/2026 00:39:37] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:39,839] INFO in app: GET /api/reports/export 403 [0.005s] [ReqID: 68740789-1375-40b3-b8b7-88b2c84ac6fd]
+127.0.0.1 - - [24/Sep/2026 00:39:39] "GET /api/reports/export HTTP/1.1" 403 -
+[2026-09-24 00:39:41,878] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 73ae636f-4f3d-4435-ab45-6d861ebd117f]
+127.0.0.1 - - [24/Sep/2026 00:39:41] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:43,921] INFO in app: GET /api/audit/ 200 [0.011s] [ReqID: 1608a1e3-f2c9-4ad2-9642-bc16cddc9624]
+127.0.0.1 - - [24/Sep/2026 00:39:43] "GET /api/audit/ HTTP/1.1" 200 -
+[2026-09-24 00:39:45,956] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 08b36a1e-b6ab-4fc9-9f27-3736f25c9bc3]
+127.0.0.1 - - [24/Sep/2026 00:39:45] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:47,992] INFO in app: GET /api/auth/settings 200 [0.005s] [ReqID: 67b896d5-b71c-4d68-bb9d-d35b26156e95]
+127.0.0.1 - - [24/Sep/2026 00:39:47] "GET /api/auth/settings HTTP/1.1" 200 -
+

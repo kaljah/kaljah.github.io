@@ -1,0 +1,18 @@
+Task: b8001249-1636-42c6-896f-bdf8d0e78d33/task-823
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8001249-1636-42c6-896f-bdf8d0e78d33\.system_generated\tasks\task-823.log
+Log output:
+<truncated 546 lines>
+-token HTTP/1.1" 200 -
+[2026-09-24 00:39:39,839] INFO in app: GET /api/reports/export 403 [0.005s] [ReqID: 68740789-1375-40b3-b8b7-88b2c84ac6fd]
+127.0.0.1 - - [24/Sep/2026 00:39:39] "GET /api/reports/export HTTP/1.1" 403 -
+[2026-09-24 00:39:41,878] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 73ae636f-4f3d-4435-ab45-6d861ebd117f]
+127.0.0.1 - - [24/Sep/2026 00:39:41] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:43,921] INFO in app: GET /api/audit/ 200 [0.011s] [ReqID: 1608a1e3-f2c9-4ad2-9642-bc16cddc9624]
+127.0.0.1 - - [24/Sep/2026 00:39:43] "GET /api/audit/ HTTP/1.1" 200 -
+[2026-09-24 00:39:45,956] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 08b36a1e-b6ab-4fc9-9f27-3736f25c9bc3]
+127.0.0.1 - - [24/Sep/2026 00:39:45] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 00:39:47,992] INFO in app: GET /api/auth/settings 200 [0.005s] [ReqID: 67b896d5-b71c-4d68-bb9d-d35b26156e95]
+127.0.0.1 - - [24/Sep/2026 00:39:47] "GET /api/auth/settings HTTP/1.1" 200 -
+
+Last progress: 8h35m49s ago

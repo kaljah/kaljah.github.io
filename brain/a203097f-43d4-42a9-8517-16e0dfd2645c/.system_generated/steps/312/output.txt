@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 5 items
+
+validation/calculation/test_clean_uncertainty.py::TestCleanUncertainty::test_tier_resolution_logic PASSED [ 20%]
+validation/calculation/test_clean_uncertainty.py::TestCleanUncertainty::test_analytical_gaussian_propagation PASSED [ 40%]
+validation/calculation/test_clean_uncertainty.py::TestCleanUncertainty::test_non_negative_lower_bound PASSED [ 60%]
+validation/calculation/test_clean_uncertainty.py::TestCleanUncertainty::test_production_propagate_uncertainty_structure PASSED [ 80%]
+validation/calculation/test_clean_uncertainty.py::TestCleanUncertainty::test_sum_propagation_independent_sources PASSED [100%]
+
+============================== 5 passed in 1.10s ==============================
+

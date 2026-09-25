@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+gwp_100: {'CO2': 1.0, 'CH4': 28.0, 'N2O': 265.0}
+gwp_20: {'CO2': 1.0, 'CH4': 82.5, 'N2O': 268.0}
+ch4: 2.883625000000002 n2o: 0.01
+co2e_diff: 157.1875625000001
+ch4 diff: 157.15756250000013
+n2o diff: 0.03
+total expected diff: 157.18756250000013
+

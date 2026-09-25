@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -948,7 +948,7 @@
+                 await api.post('/custom-factors', factorForm);
+                 toast.success('Factor added!');
+             }
+-            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '' });
++            setFactorForm({ factor_name: '', parent_fuel: '', unit: 'scf', co2_factor: '', ch4_factor: '', n2o_factor: '', co_factor: '', co2_uncertainty: '', ch4_uncertainty: '', n2o_uncertainty: '', source: '', description: '' });
+             setEditingFactorId(null);
+             fetchCustomFactors();
+         } catch (err) { toast.error('Failed to save factor'); }
+@@ -971,7 +971,7 @@
+ 
+     const handleEditFactor = (factor) => {
+         setFactorForm({
+-            factor_name: factor.factor_name,
++            factor_name: factor.factor_name || factor.name || '',
+             parent_fuel: factor.parent_fuel || '',
+             unit: factor.unit || 'scf',
+             co2_factor: factor.co2_factor || '',
+@@ -979,7 +979,9 @@
+             co_factor: factor.co_factor || '',
+             co2_uncertainty: factor.co2_uncertainty || '',
+             ch4_uncertainty: factor.ch4_uncertainty || '',
+-            n2o_uncertainty: factor.n2o_uncertainty || ''
++            n2o_uncertainty: factor.n2o_uncertainty || '',
++            source: factor.source || '',
++            description: factor.description || ''
+         });
+         setEditingFactorId(factor.id);
+     };
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

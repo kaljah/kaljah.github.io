@@ -1,0 +1,20 @@
+Task: b8001249-1636-42c6-896f-bdf8d0e78d33/task-292
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\b8001249-1636-42c6-896f-bdf8d0e78d33\.system_generated\tasks\task-292.log
+Log output:
+<truncated 18 lines>
+but got 404
+[Agent7/viewer] 🐛 BUG [🔴 Critical] RBAC: Role 'viewer' should be DENIED DELETE /emissions/1 (viewer DENIED) but got 404
+[Agent7/viewer] ✅ Correctly denied POST /scope2 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied POST /scope3 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied POST /facilities (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied PUT /facilities/1 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied DELETE /facilities/1 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied GET /auth/users (viewer DENIED) → 403
+[Agent7/viewer] 🐛 BUG [🔴 Critical] RBAC: Role 'viewer' should be DENIED POST /auth/users (viewer DENIED) but got 405
+[Agent7/viewer] 🐛 BUG [🔴 Critical] RBAC: Role 'viewer' should be DENIED CSV upload (viewer DENIED) but got 405
+[Agent7/viewer] 
+## Own Profile (viewer)
+[Agent7] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_report.md | Bugs: 8
+
+Last progress: 0s ago

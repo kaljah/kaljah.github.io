@@ -1,0 +1,124 @@
+
+The command exited with code 0.
+Output:
+<truncated 155 lines>
+  new\server\routes\emissions.py:3983:                request=request,
+  new\server\routes\emissions.py:3984:                entity="Emission",
+> new\server\routes\emissions.py:4496:    log_activity_and_notify(
+  new\server\routes\emissions.py:4497:        action="UPDATE",
+  new\server\routes\emissions.py:4498:        record_id=rec_id,
+  new\server\routes\emissions.py:4499:        details=f"{label} emission approved by {user.fullName}",
+  new\server\routes\emissions.py:4500:        user=user,
+  new\server\routes\emissions.py:4501:        entity=f"scope{scope}_emission",
+> new\server\routes\emissions.py:4547:    log_activity_and_notify(
+  new\server\routes\emissions.py:4548:        action="UPDATE",
+  new\server\routes\emissions.py:4549:        record_id=rec_id,
+  new\server\routes\emissions.py:4550:        details=f"{label} emission rejected by {user.fullName}: {reason}",
+  new\server\routes\emissions.py:4551:        user=user,
+  new\server\routes\emissions.py:4552:        entity=f"scope{scope}_emission",
+> new\server\routes\emissions.py:4629:    log_activity_and_notify(
+  new\server\routes\emissions.py:4630:        action="UPDATE",
+  new\server\routes\emissions.py:4631:        record_id="batch_approve",
+  new\server\routes\emissions.py:4632:        details=f"{approved_count} pending records approved by {user.fullName}",
+  new\server\routes\emissions.py:4633:        user=user,
+  new\server\routes\emissions.py:4634:        entity="batch_emissions",
+> new\server\routes\emissions.py:4721:    log_activity_and_notify(
+  new\server\routes\emissions.py:4722:        action="DELETE",
+  new\server\routes\emissions.py:4723:        record_id="batch_reject",
+  new\server\routes\emissions.py:4724:        details=f"{deleted_count} pending records rejected by {user.fullName}: 
+{reason}",
+  new\server\routes\emissions.py:4725:        user=user,
+  new\server\routes\emissions.py:4726:        entity="batch_emissions",
+> new\server\routes\facilities.py:196:        log_activity_and_notify(
+  new\server\routes\facilities.py:197:            action="CREATE",
+  new\server\routes\facilities.py:198:            record_id=str(fac.id),
+  new\server\routes\facilities.py:199:            user=user,
+  new\server\routes\facilities.py:200:            request=request,
+  new\server\routes\facilities.py:201:            entity="Facility",
+> new\server\routes\facilities.py:322:        log_activity_and_notify(
+  new\server\routes\facilities.py:323:            action="UPDATE",
+  new\server\routes\facilities.py:324:            record_id=str(facility_id),
+  new\server\routes\facilities.py:325:            user=user,
+  new\server\routes\facilities.py:326:            request=request,
+  new\server\routes\facilities.py:327:            entity="Facility",
+> new\server\routes\facilities.py:382:        log_activity_and_notify(
+  new\server\routes\facilities.py:383:            action="DELETE",
+  new\server\routes\facilities.py:384:            record_id=str(facility_id),
+  new\server\routes\facilities.py:385:            user=user,
+  new\server\routes\facilities.py:386:            request=request,
+  new\server\routes\facilities.py:387:            entity="Facility",
+> new\server\routes\managedata.py:105:        log_activity_and_notify(
+  new\server\routes\managedata.py:106:            "CREATE",
+  new\server\routes\managedata.py:107:            source.id,
+  new\server\routes\managedata.py:108:            f"Added emission source {source.name}",
+  new\server\routes\managedata.py:109:            user=user,
+  new\server\routes\managedata.py:110:            request=request,
+> new\server\routes\managedata.py:141:        log_activity_and_notify(
+  new\server\routes\managedata.py:142:            "DELETE",
+  new\server\routes\managedata.py:143:            source_id,
+  new\server\routes\managedata.py:144:            f"Deleted emission source",
+  new\server\routes\managedata.py:145:            user=user,
+  new\server\routes\managedata.py:146:            request=request,
+> new\server\routes\managedata.py:225:        log_activity_and_notify(
+  new\server\routes\managedata.py:226:            "CREATE",
+  new\server\routes\managedata.py:227:            "bulk",
+  new\server\routes\managedata.py:228:            f"Bulk imported {imported_count} emission sources",
+  new\server\routes\managedata.py:229:            user=user,
+  new\server\routes\managedata.py:230:            request=request,
+> new\server\routes\managedata.py:727:        log_activity_and_notify(
+  new\server\routes\managedata.py:728:            "CREATE",
+  new\server\routes\managedata.py:729:            "bulk",
+  new\server\routes\managedata.py:730:            f"Bulk imported {imported_count} mitigation projects",
+  new\server\routes\managedata.py:731:            user=user,
+  new\server\routes\managedata.py:732:            request=request,
+> new\server\routes\qaqc.py:765:        log_activity_and_notify(
+  new\server\routes\qaqc.py:766:            action="UPDATE",
+  new\server\routes\qaqc.py:767:            record_id=str(record_id),
+  new\server\routes\qaqc.py:768:            user=user,
+  new\server\routes\qaqc.py:769:            request=request,
+  new\server\routes\qaqc.py:770:            entity=f"Scope{scope}Emission",
+> new\server\routes\qaqc.py:855:        log_activity_and_notify(
+  new\server\routes\qaqc.py:856:            action="UPDATE",
+  new\server\routes\qaqc.py:857:            record_id="bulk",
+  new\server\routes\qaqc.py:858:            user=user,
+  new\server\routes\qaqc.py:859:            request=request,
+  new\server\routes\qaqc.py:860:            entity="QABulkResolve",
+> new\server\routes\scope2.py:291:            log_activity_and_notify(
+  new\server\routes\scope2.py:292:                action="CREATE",
+  new\server\routes\scope2.py:293:                record_id=str(emission_id_val),
+  new\server\routes\scope2.py:294:                user=user,
+  new\server\routes\scope2.py:295:                request=request,
+  new\server\routes\scope2.py:296:                entity="Scope2Emission",
+> new\server\routes\scope2.py:517:        log_activity_and_notify(
+  new\server\routes\scope2.py:518:            action="DELETE",
+  new\server\routes\scope2.py:519:            record_id=str(emission_id),
+  new\server\routes\scope2.py:520:            user=user,
+  new\server\routes\scope2.py:521:            request=request,
+  new\server\routes\scope2.py:522:            entity="Scope2Emission",
+> new\server\routes\scope2.py:668:        log_activity_and_notify(
+  new\server\routes\scope2.py:669:            "IMPORT",
+  new\server\routes\scope2.py:670:            str(imported_count),
+  new\server\routes\scope2.py:671:            f"Bulk imported {imported_count} Scope 2 records",
+  new\server\routes\scope2.py:672:            user=user,
+  new\server\routes\scope2.py:673:            request=request,
+> new\server\routes\scope3.py:158:        log_activity_and_notify(
+  new\server\routes\scope3.py:159:            action="CREATE",
+  new\server\routes\scope3.py:160:            record_id=str(emission_id_val),
+  new\server\routes\scope3.py:161:            user=user,
+  new\server\routes\scope3.py:162:            request=request,
+  new\server\routes\scope3.py:163:            entity="Scope3Emission",
+> new\server\routes\scope3.py:341:        log_activity_and_notify(
+  new\server\routes\scope3.py:342:            action="DELETE",
+  new\server\routes\scope3.py:343:            record_id=str(emission_id),
+  new\server\routes\scope3.py:344:            user=user,
+  new\server\routes\scope3.py:345:            request=request,
+  new\server\routes\scope3.py:346:            entity="Scope3Emission",
+> new\server\routes\scope3.py:492:            log_activity_and_notify(
+  new\server\routes\scope3.py:493:                action="BULK_IMPORT",
+  new\server\routes\scope3.py:494:                record_id=f"count:{imported_count}",
+  new\server\routes\scope3.py:495:                user=user,
+  new\server\routes\scope3.py:496:                request=request,
+  new\server\routes\scope3.py:497:                entity="Scope3Emission",
+
+
+

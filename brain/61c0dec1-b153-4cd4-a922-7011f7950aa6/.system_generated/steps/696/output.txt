@@ -1,0 +1,160 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 52 items / 48 deselected / 4 selected
+
+new\server\tests\test_audit_remediation.py::test_facility_boundary_type_and_detail_roundtrip FAILED [ 25%]
+new\server\tests\test_audit_remediation.py::test_custom_factor_description_and_source_roundtrip FAILED [ 50%]
+new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_calculation FAILED [ 75%]
+new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_dispatcher FAILED [100%]
+
+================================== FAILURES ===================================
+______________ test_facility_boundary_type_and_detail_roundtrip _______________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_facility_boundary_type_and_detail_roundtrip(client, test_users):
+        """Verify Facility boundary_type and boundary_detail persistence and retrieval via API."""
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        # Create facility with explicit boundary_type and boundary_detail
+        resp = client.post(
+            "/api/facilities",
+            json={
+                "name": "Boundaries Test Facility",
+                "location": "In Salah",
+                "activity": "Extraction",
+                "division": "Upstream",
+                "segment": "Upstream",
+                "boundary_type": "Equity Share",
+                "boundary_detail": "Sonatrach 51%, Partner 49%",
+            },
+        )
+        assert resp.status_code == 201
+        fac_data = resp.get_json()
+>       assert fac_data["boundary_type"] == "Equity Share"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'boundary_type'
+
+new\server\tests\test_audit_remediation.py:1570: KeyError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:167 POST /api/facilities 201 [0.007s] [ReqID: 7da25d79-4567-495c-aeab-2cbda8fb10bc]
+_____________ test_custom_factor_description_and_source_roundtrip _____________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 21, 'it_admin': 22, 'user': 23, 'facility_id': 14}
+
+    def test_custom_factor_description_and_source_roundtrip(client, test_users):
+        """Verify CustomFactor description and source lab certification roundtrip via API."""
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        # Create custom factor with description and source
+        resp = client.post(
+            "/api/custom-factors",
+            json={
+                "fuel_name": "Test Flare Gas Lab Blend",
+                "process_type": "flaring",
+                "unit": "m3",
+                "co2_factor": 1.95,
+                "ch4_factor": 0.012,
+                "n2o_factor": 0.0001,
+                "source": "Sonatrach CRD Lab Cert #2026-B84",
+                "description": "Gas chromatography sample from separator train B, calibrated to ISO 6974.",
+            },
+        )
+>       assert resp.status_code == 201
+E       assert 400 == 201
+E        +  where 400 = <WrapperTestResponse streamed [400 BAD REQUEST]>.status_code
+
+new\server\tests\test_audit_remediation.py:1603: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:167 POST /api/custom-factors 400 [0.001s] [ReqID: 48c0e0a3-c8a7-42bb-aa08-85e220b10062]
+__________________ test_dehydrator_stripping_gas_calculation __________________
+
+    def test_dehydrator_stripping_gas_calculation():
+        """Verify Dehydrator stripping gas calculation adds methane volume to still vent before control."""
+        from calculations.midstream import DehydratorCalculator
+    
+        calc = DehydratorCalculator()
+        # Baseline without stripping gas
+        base_res = calc.calculate(
+            pump_rate=100.0,
+            pump_unit="gph",
+            hours=1000,
+            ch4_content=0.90,
+            has_flash_tank=False,
+            still_control_type="none",
+            control_eff=0.0,
+            stripping_gas_rate=0.0,
+        )
+    
+        # With stripping gas (50 scf/hr = 50,000 scf over 1000 hrs)
+        strip_res = calc.calculate(
+            pump_rate=100.0,
+            pump_unit="gph",
+            hours=1000,
+            ch4_content=0.90,
+            has_flash_tank=False,
+            still_control_type="none",
+            control_eff=0.0,
+            stripping_gas_rate=50.0,
+            stripping_gas_unit="scf/hr",
+        )
+    
+        # 50,000 scf * 0.90 CH4 = 45,000 scf CH4 = 45,000 * 0.0192 / 1000 = 0.864 tonnes CH4
+        expected_strip_ch4_tonnes = 45000.0 * 0.0192 / 1000.0
+        diff_ch4 = strip_res["results"]["ch4"]["value"] - base_res["results"]["ch4"]["value"]
+>       assert abs(diff_ch4 - expected_strip_ch4_tonnes) < 1e-4
+E       assert 0.0005841185702402107 < 0.0001
+E        +  where 0.0005841185702402107 = abs((0.8645841185702401 - 0.8639999999999999))
+
+new\server\tests\test_audit_remediation.py:1649: AssertionError
+__________________ test_dehydrator_stripping_gas_dispatcher ___________________
+
+    def test_dehydrator_stripping_gas_dispatcher():
+        """Verify dispatcher passes stripping gas parameters correctly."""
+        dispatcher = CalculationDispatcher()
+        payload = {
+            "process_type": "dehydrator",
+            "dehydrator_calc_method": "glycol_pump",
+            "teg_pump_rate": 100.0,
+            "teg_pump_unit": "gph",
+            "annual_hours": 1000.0,
+            "gas_ch4_mole_pct": 90.0,
+            "flash_tank": "no",
+            "still_vent_control": "none",
+            "stripping_gas_rate": 50.0,
+            "stripping_gas_unit": "scf/hr",
+        }
+        gwps = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
+        res = dispatcher.dispatch("dehydrator", payload, {}, gwps)
+        assert res is not None
+>       assert res["inputs"]["stripping_gas_scf"] == 50000.0
+               ^^^^^^^^^^^^^
+E       KeyError: 'inputs'
+
+new\server\tests\test_audit_remediation.py:1688: KeyError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_facility_boundary_type_and_detail_roundtrip
+FAILED new\server\tests\test_audit_remediation.py::test_custom_factor_description_and_source_roundtrip
+FAILED new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_calculation
+FAILED new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_dispatcher
+================= 4 failed, 48 deselected, 1 warning in 3.92s =================
+

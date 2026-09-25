@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+FullName                                                                      Length
+--------                                                                      ------
+C:\Users\samsung\Desktop\H2\new\server\database.db                                 0
+C:\Users\samsung\Desktop\H2\new\server\ghg_app.db                            2301952
+C:\Users\samsung\Desktop\H2\new\server\ghg_emissions.db                            0
+C:\Users\samsung\Desktop\H2\new\server\backups\ghg_app_20260920_172952.db 1911681024
+C:\Users\samsung\Desktop\H2\new\server\backups\ghg_app_20260920_173146.db 2341048320
+
+
+

@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_deep_injection_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -346,6 +346,8 @@
+     """Executes the full asynchronous/synchronous file processing pipeline for all 3 Tiers, Scope 2, and Scope 3."""
+ 
+     def _run_upload(self, app, csv_content, filename, user_id, scope=1):
++        with app.app_context():
++            db.session.commit()
+         fd, temp_path = tempfile.mkstemp(suffix=".csv")
+         try:
+             with os.fdopen(fd, "wb") as f:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

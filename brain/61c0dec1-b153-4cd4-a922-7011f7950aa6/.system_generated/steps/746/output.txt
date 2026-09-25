@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\custom_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -146,8 +146,8 @@
+     if not data:
+         return jsonify({"error": "No data provided"}), 400
+ 
+-    if "factor_name" in data or "name" in data:
+-        fn = (data.get("factor_name") or data.get("name") or "").strip()
++    if "factor_name" in data or "name" in data or "fuel_name" in data:
++        fn = (data.get("factor_name") or data.get("name") or data.get("fuel_name") or "").strip()
+         if not fn:
+             return jsonify({"error": "Factor name cannot be empty"}), 400
+         factor.name = fn
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

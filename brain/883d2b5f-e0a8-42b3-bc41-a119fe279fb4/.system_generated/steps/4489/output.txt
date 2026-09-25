@@ -1,0 +1,41 @@
+
+The command exited with code 1.
+Output:
+F.EE                                                                     [100%]
+=================================== ERRORS ====================================
+_________ ERROR at setup of test_delete_mitigation_invalid_id_format __________
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_audit_bug_fixes.py, line 33
+  def test_delete_mitigation_invalid_id_format(client, admin_token):
+E       fixture 'client' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, disable_limiter_for_tests, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_audit_bug_fixes.py:33
+____________ ERROR at setup of test_ogmp_survey_null_measured_rate ____________
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_audit_bug_fixes.py, line 50
+  def test_ogmp_survey_null_measured_rate(client, user_token):
+E       fixture 'client' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, disable_limiter_for_tests, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_audit_bug_fixes.py:50
+================================== FAILURES ===================================
+______________ test_component_fugitive_calculator_scalar_counts _______________
+
+    def test_component_fugitive_calculator_scalar_counts():
+        """Verify ComponentFugitiveCalculator handles scalar counts without AttributeError."""
+        calc = ComponentFugitiveCalculator()
+        # Passing scalar counts instead of nested dicts
+        counts = {"valves": 50, "flanges": 120}
+        res = calc.calculate(component_counts=counts, ch4_content=0.85, uncertainties={})
+        assert res is not None
+>       assert "ch4" in res
+E       AssertionError: assert 'ch4' in {'method': 'Component-Level Fugitive', 'api_reference': 'Section 7.2', 'inputs': {'component_counts': {'valves': 50, 'flanges': 120}, 'ch4_content': 0.85}, 'total_co2e': 0.0, ...}
+
+new\server\tests\test_audit_bug_fixes.py:14: AssertionError
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_bug_fixes.py::test_component_fugitive_calculator_scalar_counts
+ERROR new\server\tests\test_audit_bug_fixes.py::test_delete_mitigation_invalid_id_format
+ERROR new\server\tests\test_audit_bug_fixes.py::test_ogmp_survey_null_measured_rate
+1 failed, 1 passed, 2 errors in 0.62s
+

@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 1
+    import sqlite3; conn = sqlite3.connect('new/server/ghg_app.db'); print({t[0]: conn.execute(f'SELECT COUNT(*) FROM {t[0]}').fetchone()[0] for t in conn.execute('SELECT name FROM sqlite_master WHERE type=" table\').fetchall()
+                                                                                                                                                                   ^
+SyntaxError: unterminated string literal (detected at line 1)
+

@@ -1,0 +1,149 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\seed_berkine_data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -279,11 +279,10 @@
+                 date_str = f"{yr}-06-15"
+                 # Stationary Combustion
+                 db.session.add(Emission(
+-                    facility_id=fac.id,
+-                    year=yr,
+-                    date=date_str,
+-                    scope=1,
+-                    category="combustion",
++                    record_id=f"{fac.code}-{yr}-combustion",
++                    facility_id=fac.id,
++                    year=yr,
++                    month=6,
+                     process_type="fuel_gas",
+                     fuel_type="natural_gas",
+                     quantity=vals["combustion"] / 2.2,
+@@ -292,6 +292,9 @@
+                     ch4_emissions=vals["ch4"] * 0.25,
+                     n2o_emissions=vals["combustion"] * 0.0001,
+                     status="Verified",
++                    activity=fac.activity,
++                    division=fac.division,
++                    region=fac.region,
+                 ))
+ 
+                 # Split flaring into routine, non-routine, safety
+@@ -300,11 +300,10 @@
+                 s_flare = total_flare * 0.04
+ 
+                 db.session.add(Emission(
+-                    facility_id=fac.id,
+-                    year=yr,
+-                    date=date_str,
+-                    scope=1,
+-                    category="combustion",
++                    record_id=f"{fac.code}-{yr}-routine-flare",
++                    facility_id=fac.id,
++                    year=yr,
++                    month=6,
+                     process_type="routine_flaring",
+                     fuel_type="natural_gas",
+                     quantity=(r_flare / 2.5) * 1000.0,
+@@ -313,13 +313,15 @@
+                     ch4_emissions=vals["ch4"] * 0.35,
+                     n2o_emissions=r_flare * 0.0001,
+                     status="Verified",
+-                ))
+-                db.session.add(Emission(
+-                    facility_id=fac.id,
+-                    year=yr,
+-                    date=date_str,
+-                    scope=1,
+-                    category="combustion",
++                    activity=fac.activity,
++                    division=fac.division,
++                    region=fac.region,
++                ))
++                db.session.add(Emission(
++                    record_id=f"{fac.code}-{yr}-non-routine-flare",
++                    facility_id=fac.id,
++                    year=yr,
++                    month=6,
+                     process_type="non_routine_flaring",
+                     fuel_type="natural_gas",
+                     quantity=(nr_flare / 2.5) * 1000.0,
+@@ -328,13 +328,15 @@
+                     ch4_emissions=vals["ch4"] * 0.25,
+                     n2o_emissions=nr_flare * 0.0001,
+                     status="Verified",
+-                ))
+-                db.session.add(Emission(
+-                    facility_id=fac.id,
+-                    year=yr,
+-                    date=date_str,
+-                    scope=1,
+-                    category="combustion",
++                    activity=fac.activity,
++                    division=fac.division,
++                    region=fac.region,
++                ))
++                db.session.add(Emission(
++                    record_id=f"{fac.code}-{yr}-safety-flare",
++                    facility_id=fac.id,
++                    year=yr,
++                    month=6,
+                     process_type="safety_flaring",
+                     fuel_type="natural_gas",
+                     quantity=(s_flare / 2.5) * 1000.0,
+@@ -343,6 +343,9 @@
+                     ch4_emissions=vals["ch4"] * 0.05,
+                     n2o_emissions=s_flare * 0.0001,
+                     status="Verified",
++                    activity=fac.activity,
++                    division=fac.division,
++                    region=fac.region,
+                 ))
+ 
+                 # Venting & Fugitives
+@@ -349,8 +349,7 @@
+-                    facility_id=fac.id,
+-                    year=yr,
+-                    date=date_str,
+-                    scope=1,
+-                    category="vented",
++                    record_id=f"{fac.code}-{yr}-venting",
++                    facility_id=fac.id,
++                    year=yr,
++                    month=6,
+                     process_type="tank_venting",
+                     fuel_type="natural_gas",
+                     quantity=vals["venting"],
+@@ -359,13 +359,15 @@
+                     ch4_emissions=vals["ch4"] * 0.08,
+                     n2o_emissions=0.0,
+                     status="Verified",
+-                ))
+-                db.session.add(Emission(
+-                    facility_id=fac.id,
+-                    year=yr,
+-                    date=date_str,
+-                    scope=1,
+-                    category="fugitive",
++                    activity=fac.activity,
++                    division=fac.division,
++                    region=fac.region,
++                ))
++                db.session.add(Emission(
++                    record_id=f"{fac.code}-{yr}-fugitive",
++                    facility_id=fac.id,
++                    year=yr,
++                    month=6,
+                     process_type="equipment_leaks",
+                     fuel_type="natural_gas",
+                     quantity=vals["fugitive"],
+@@ -374,6 +374,9 @@
+                     ch4_emissions=vals["ch4"] * 0.02,
+                     n2o_emissions=0.0,
+                     status="Verified",
++                    activity=fac.activity,
++                    division=fac.division,
++                    region=fac.region,
+                 ))
+ 
+                 # Scope 2 (Grid electricity / imported power)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

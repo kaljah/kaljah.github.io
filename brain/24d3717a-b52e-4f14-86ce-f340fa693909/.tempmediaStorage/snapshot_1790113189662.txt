@@ -1,0 +1,53 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=844_0 RootWebArea "Carbon Tech" url="http://localhost:5173/methane-intensity"
+  uid=845_0 complementary
+    uid=845_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=845_2 StaticText "Carbon tech"
+    uid=845_3 navigation
+      uid=845_4 link "Dashboard" url="http://localhost:5173/"
+        uid=845_5 StaticText "Dashboard"
+      uid=845_6 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=845_7 StaticText "Carbon Intensity"
+      uid=845_8 link "Methane Intensity" focusable focused url="http://localhost:5173/methane-intensity"
+        uid=845_9 StaticText "Methane Intensity"
+      uid=845_10 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=845_11 StaticText "SBTi Net-Zero"
+      uid=845_12 link "Calculations" url="http://localhost:5173/emissions"
+        uid=845_13 StaticText "Calculations"
+      uid=845_14 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=845_15 StaticText "Emissions Map"
+      uid=845_16 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=845_17 StaticText "Manage Data"
+      uid=845_18 link "Reports" url="http://localhost:5173/reports"
+        uid=845_19 StaticText "Reports"
+      uid=845_20 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=845_21 StaticText "Reference Data"
+      uid=845_22 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=845_23 StaticText "Uncertainty"
+      uid=845_24 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=845_25 StaticText "Audit Trail"
+      uid=845_26 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=845_27 StaticText "QA/QC & Diagnostics"
+    uid=845_28 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=845_29 StaticText "Settings"
+    uid=845_30 StaticText "A"
+    uid=845_31 StaticText "Administrator"
+    uid=845_32 StaticText "Sustainability Lead"
+  uid=845_33 main
+    uid=845_34 StaticText "Corporate ESG"
+    uid=914_0 StaticText "All Years"
+    uid=914_1 StaticText "All Supply Chains"
+    uid=914_2 StaticText "All Activities"
+    uid=914_3 StaticText "All Divisions"
+    uid=914_4 StaticText "All Regions"
+    uid=916_0 button "Export OGMP 2.0 (Excel)" description="Download 5-Tab OGMP 2.0 Disclosure Workbook (.xlsx)"
+    uid=845_35 button "Notifications"
+    uid=845_36 button "User Profile" description="User Profile"
+    uid=845_37 StaticText "Administrator"
+    uid=916_1 StaticText "Calculating Methane Intensity & Loss Rates..."
+
+</current_snapshot>

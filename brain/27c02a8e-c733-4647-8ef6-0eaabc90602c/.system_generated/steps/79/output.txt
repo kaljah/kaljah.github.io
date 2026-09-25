@@ -1,0 +1,117 @@
+
+The command exited with code 0.
+Output:
+<truncated 123 lines>
+  new\server\background_processor.py:660:                if job_id in upload_jobs:
+> new\server\background_processor.py:689:        ("date", "date"),
+  new\server\background_processor.py:690:        ("activity", "activity"),
+  new\server\background_processor.py:691:        ("division", "division"),
+  new\server\background_processor.py:692:        ("field", "field"),
+  new\server\background_processor.py:693:        ("facility_name", "region") if str(scope) != "2" else ("grid_region", 
+"region"),
+  new\server\background_processor.py:694:        ("group", "emission source"),  # Emission Source maps to Group
+  new\server\background_processor.py:695:        ("equipment", "equipment"),
+  new\server\background_processor.py:696:        ("process", "process"),
+  new\server\background_processor.py:697:        ("fuel", "fuel"),
+  new\server\background_processor.py:698:        ("fuel", "activity/fuel"),
+  new\server\background_processor.py:699:        ("factor_type", "factor type"),
+> new\server\background_processor.py:798:        ("installation_date", "installation date"),
+  new\server\background_processor.py:799:        ("status", "status"),
+  new\server\background_processor.py:800:        ("description", "description"),
+  new\server\background_processor.py:801:        # Production fields
+  new\server\background_processor.py:802:        ("oil_volume", "oil volume"),
+  new\server\background_processor.py:803:        ("oil_unit", "oil unit"),
+  new\server\background_processor.py:804:        ("gas_volume", "gas volume"),
+  new\server\background_processor.py:805:        ("gas_unit", "gas unit"),
+  new\server\background_processor.py:806:        # Mitigation fields
+  new\server\background_processor.py:807:        ("quantity_tco2e", "quantity tco2e"),
+> new\server\background_processor.py:808:        ("start_date", "start date"),
+> new\server\background_processor.py:809:        ("end_date", "end date"),
+  new\server\background_processor.py:810:        ("investment_amount", "investment amount"),
+  new\server\background_processor.py:811:        ("investment_amount", "investment"),
+  new\server\background_processor.py:812:        ("project_type", "project type"),
+  new\server\background_processor.py:813:        # Custom factors fields
+  new\server\background_processor.py:814:        ("co2_factor", "co2 factor"),
+  new\server\background_processor.py:815:        ("ch4_factor", "ch4 factor"),
+  new\server\background_processor.py:816:        ("n2o_factor", "n2o_factor"),
+  new\server\background_processor.py:817:        ("co_factor", "co factor"),
+  new\server\background_processor.py:818:        ("hhv_factor", "hhv_factor"),
+  new\server\background_processor.py:819:        ("usage", "usage"),
+> new\server\background_processor.py:884:    # 1. Parse Date
+> new\server\background_processor.py:885:    date_str = str(row.get("date") or "").strip()
+  new\server\background_processor.py:886:    year = int(row.get("year") or 2024)
+  new\server\background_processor.py:887:    month = int(row.get("month") or 1)
+> new\server\background_processor.py:888:    if date_str and date_str != "None":
+  new\server\background_processor.py:889:        try:
+> new\server\background_processor.py:890:            parts = date_str.split("-")
+  new\server\background_processor.py:891:            year = int(parts[0])
+  new\server\background_processor.py:892:            if len(parts) > 1:
+  new\server\background_processor.py:893:                month = int(parts[1])
+  new\server\background_processor.py:894:        except:
+  new\server\background_processor.py:895:            pass
+  new\server\background_processor.py:896:
+  new\server\background_processor.py:897:    # 2. Resolve Facility
+  new\server\background_processor.py:898:    facility = None
+  new\server\background_processor.py:899:    fac_input = row.get("facility_name") or row.get("facility") or 
+row.get("facility_id")
+  new\server\background_processor.py:900:    if fac_input:
+> new\server\background_processor.py:1095:    # 1. Parse Date
+> new\server\background_processor.py:1096:    date_str = str(row.get("date") or "").strip()
+  new\server\background_processor.py:1097:    year = int(row.get("year") or 2024)
+  new\server\background_processor.py:1098:    month = int(row.get("month") or 1)
+> new\server\background_processor.py:1099:    if date_str and date_str != "None":
+  new\server\background_processor.py:1100:        try:
+> new\server\background_processor.py:1101:            parts = date_str.split("-")
+  new\server\background_processor.py:1102:            year = int(parts[0])
+  new\server\background_processor.py:1103:            if len(parts) > 1:
+  new\server\background_processor.py:1104:                month = int(parts[1])
+  new\server\background_processor.py:1105:        except:
+  new\server\background_processor.py:1106:            pass
+  new\server\background_processor.py:1107:
+  new\server\background_processor.py:1108:    if not year or not month:
+> new\server\background_processor.py:1109:        return None, ["Missing valid date (YYYY-MM) or separate year and 
+month columns"]
+  new\server\background_processor.py:1110:
+  new\server\background_processor.py:1111:    # 2. Resolve Facility
+  new\server\background_processor.py:1112:    fac_raw = str(row.get("facility_name") or row.get("facility_id") or 
+"").strip()
+  new\server\background_processor.py:1113:    facility = fac_id_map.get(fac_raw) or fac_name_map.get(fac_raw.lower())
+  new\server\background_processor.py:1114:    if not facility:
+  new\server\background_processor.py:1115:        return None, [f"Facility '{fac_raw}' not found"]
+  new\server\background_processor.py:1116:
+  new\server\background_processor.py:1117:    # 3. Resolve NAICS and Spend
+  new\server\background_processor.py:1118:    naics = str(row.get("naics_code") or "").strip()
+  new\server\background_processor.py:1119:    spend_usd = _clean_float(row.get("spend_usd"), default=-1.0)
+> new\server\background_processor.py:1195:    # 1. Parse Date
+> new\server\background_processor.py:1196:    date_str = str(row.get("date") or "").strip()
+  new\server\background_processor.py:1197:    year = int(row.get("year") or 2024)
+  new\server\background_processor.py:1198:    month = int(row.get("month") or 1)
+> new\server\background_processor.py:1199:    if date_str and date_str != "None":
+  new\server\background_processor.py:1200:        try:
+> new\server\background_processor.py:1201:            parts = date_str.split("-")
+  new\server\background_processor.py:1202:            year = int(parts[0])
+  new\server\background_processor.py:1203:            if len(parts) > 1:
+  new\server\background_processor.py:1204:                month = int(parts[1])
+  new\server\background_processor.py:1205:        except:
+  new\server\background_processor.py:1206:            pass
+  new\server\background_processor.py:1207:
+  new\server\background_processor.py:1208:    # 2. Resolve Facility
+  new\server\background_processor.py:1209:    facility = None
+  new\server\background_processor.py:1210:    fac_input = row.get("facility_name") or row.get("facility") or 
+row.get("facility_id")
+  new\server\background_processor.py:1211:    if fac_input:
+> new\server\background_processor.py:1315:    # Validate required name field
+  new\server\background_processor.py:1316:    name = str(row.get("name") or "").strip()
+  new\server\background_processor.py:1317:    if not name:
+  new\server\background_processor.py:1318:        errors.append("Equipment Name is required for emission source")
+  new\server\background_processor.py:1319:        return None, errors
+  new\server\background_processor.py:1320:
+  new\server\background_processor.py:1321:    facility = None
+  new\server\background_processor.py:1322:    fac_input = row.get("facility_name") or row.get("facility") or 
+row.get("facility_id")
+  new\server\background_processor.py:1323:    if fac_input:
+  new\server\background_processor.py:1324:        fac_str = str(fac_input).strip().lower()
+  new\server\background_processor.py:1325:        if fac_str in fac_name_map:
+
+
+

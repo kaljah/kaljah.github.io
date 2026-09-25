@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+[2026-09-19 18:13:51,076] INFO in app: GET /api/dashboard/batch-all 401 [0.000s] [ReqID: 5ea8a35c-ee6a-4911-add3-dc9fa11d4eb1]
+[2026-09-19 18:13:51,077] INFO in app: GET /api/dashboard/batch-all 401 [0.000s] [ReqID: 6f93add4-bd80-4bda-9b74-600f220a206d]
+100 summary keys: 0
+100 total s1: 0
+20 total s1: 0
+100 breakdown: []
+20 breakdown: []
+

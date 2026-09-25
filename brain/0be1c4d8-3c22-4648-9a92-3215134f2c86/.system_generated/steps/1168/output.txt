@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Settings.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -790,6 +790,7 @@
+                         <select
+                           className="table-select"
+                           value={opStatus}
++                          disabled={!isAdmin}
+                           onChange={(e) =>
+                             handleFacilityChange(
+                               fac.id,
+@@ -810,6 +810,7 @@
+                           type="text"
+                           className="table-input"
+                           value={edit.country || "Algeria"}
++                          disabled={!isAdmin}
+                           onChange={(e) =>
+                             handleFacilityChange(
+                               fac.id,
+@@ -822,6 +822,7 @@
+                         <select
+                           className="table-select-small"
+                           value={baseYear}
++                          disabled={!isAdmin}
+                           onChange={(e) =>
+                             handleFacilityChange(
+                               fac.id,
+@@ -848,6 +848,7 @@
+                             max="100"
+                             className="table-input-num"
+                             value={edit.reconciliation_threshold || 20.0}
++                            disabled={!isAdmin}
+                             onChange={(e) =>
+                               handleFacilityChange(
+                                 fac.id,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

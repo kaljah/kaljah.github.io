@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":233,"LineContent":"            setProductionData(res.data);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":233,"LineContent":"            setProductionData(res.data);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":58,"LineContent":"        prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\data.py","LineNumber":174,"LineContent":"            prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\background_processor.py","LineNumber":1423,"LineContent":"    prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\restore_full_data.py","LineNumber":331,"LineContent":"                    p_data = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\models.py","LineNumber":191,"LineContent":"class ProductionData(db.Model):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":759,"LineContent":"        prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":815,"LineContent":"        prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":106,"LineContent":"            prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":262,"LineContent":"            prod = ProductionData("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":345,"LineContent":"      setHasProductionData(hasProd);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":763,"LineContent":"            setProductionData(data);"}

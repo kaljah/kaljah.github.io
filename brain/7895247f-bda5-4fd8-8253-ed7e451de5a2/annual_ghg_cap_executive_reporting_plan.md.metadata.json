@@ -1,0 +1,6 @@
+{
+  "summary": "Updated implementation plan incorporating user comments: (1) Hybrid GWP across all years without fixed year boundaries; (2) Dual CAP methodology: Algerian Decree 06-138 concentration-to-mass compliance combined with API Compendium 2021 emission factors; (3) Equity share percentage input box dynamically displayed when 'Equity Share' boundary is chosen in the Region/Facility form; (4) Granular production fields integrated directly into the existing Production Data tab; (5) Routine, Non-Routine, and Safety flaring added as first-class process types in the emissions calculator, with KPI cards displaying each volume breakdown and the grand total.",
+  "updatedAt": "2026-09-24T14:47:26.358870Z",
+  "requestFeedback": true,
+  "userFacing": true
+}

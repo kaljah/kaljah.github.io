@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":44,"LineContent":"  it_admin: {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":50,"LineContent":"  it_manager: {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":476,"LineContent":"    if ([\"it_admin\", \"it_manager\", \"it\"].includes(user?.role)) fetchData();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":709,"LineContent":"  if (![\"it_admin\", \"it_manager\", \"it\"].includes(user?.role)) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":730,"LineContent":"  const itAdminCount = users.filter((u) =\u003e [\"it_admin\", \"it_manager\"].includes(u.role)).length;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":739,"LineContent":"      u.role === \"it_admin\" ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":740,"LineContent":"      u.role === \"it_manager\" ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":745,"LineContent":"      (filterRole === \"it_manager\" \u0026\u0026 [\"it_admin\", \"it_manager\"].includes(u.role)) ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":746,"LineContent":"      (filterRole === \"it_admin\" \u0026\u0026 [\"it_admin\", \"it_manager\"].includes(u.role));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":789,"LineContent":"            \u003coption value=\"it_manager\"\u003eIT Manager\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1109,"LineContent":"                        ) : u.role === \"it_admin\" || u.role === \"it_manager\" || u.role === \"it\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1356,"LineContent":"                  \u003coption value=\"it_manager\"\u003eIT Manager\u003c/option\u003e"}

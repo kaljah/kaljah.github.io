@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 12:44:28,044] INFO in app: Updated account: a
+[2026-09-21 12:44:28,144] INFO in app: Updated account: a@a
+[2026-09-21 12:44:28,255] INFO in app: Updated account: z
+[2026-09-21 12:44:28,374] INFO in app: Updated account: z@z
+Facility activities: {'Activit� E&P', 'Upstream & Midstream Gas', 'Chemicals & Fertilizers', 'Cement & Clinker', 'Activit� RPC', 'Steel & Iron (Acier DRI)', 'Activit� LQS'}
+Emission activities: {'Activit� E&P', 'Chemicals & Fertilizers', 'Upstream & Midstream Gas', 'Cement & Clinker', 'Steel & Iron (Acier DRI)'}
+In emissions but not facilities: set()
+In facilities but not emissions: {'Activit� RPC', 'Activit� LQS'}
+

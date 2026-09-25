@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -934,7 +934,7 @@
+             toast.success('Region added!');
+             setFacilityForm({
+                 name: '', activity: '', division: '', field: '', location: '',
+-                boundary_type: '', boundary_detail: '',
++                boundary_type: '', boundary_detail: '', equity_share_pct: '',
+                 segment: '', latitude: '', longitude: ''
+             });
+             fetchFacilities();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

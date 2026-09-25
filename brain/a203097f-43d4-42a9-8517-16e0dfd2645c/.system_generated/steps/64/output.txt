@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+v24.12.0
+11.6.2
+

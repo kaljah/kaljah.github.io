@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_user_profile_update.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -37,6 +37,10 @@
+ @pytest.fixture
+ def target_user(client):
+     with app.app_context():
++        leftover = User.query.filter_by(email="new_target_email@domain.com").first()
++        if leftover:
++            db.session.delete(leftover)
++            db.session.commit()
+         user = User.query.filter_by(email="target_user_edit@domain.com").first()
+         if not user:
+             user = User(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

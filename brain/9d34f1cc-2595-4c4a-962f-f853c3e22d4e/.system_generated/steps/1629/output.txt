@@ -1,0 +1,25 @@
+
+The command exited with code 0.
+Output:
+
+   Id ProcessName Path                                 
+   -- ----------- ----                                 
+  528 node        C:\Program Files\nodejs\node.exe     
+ 4280 node        C:\Program Files\nodejs\node.exe     
+12612 node        C:\Program Files\nodejs\node.exe     
+14912 node        C:\Program Files\nodejs\node.exe     
+16392 node        C:\Program Files\nodejs\node.exe     
+25500 node        C:\Program Files\nodejs\node.exe     
+27936 node        C:\Program Files\nodejs\node.exe     
+30476 node        C:\Program Files\nodejs\node.exe     
+31264 node        C:\Program Files\nodejs\node.exe     
+34304 node        C:\Program Files\nodejs\node.exe     
+34732 node        C:\Program Files\nodejs\node.exe     
+23660 python      C:\Users\samsung\anaconda3\python.exe
+28620 python      C:\Users\samsung\anaconda3\python.exe
+33396 python      C:\Users\samsung\anaconda3\python.exe
+34588 python      C:\Users\samsung\anaconda3\python.exe
+36756 python      C:\Users\samsung\anaconda3\python.exe
+
+
+

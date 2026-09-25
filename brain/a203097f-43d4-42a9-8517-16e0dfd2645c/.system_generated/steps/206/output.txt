@@ -1,0 +1,26 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-204
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-204.log
+Log output:
+<truncated 43 lines>
+4
+        # denom = 62,500 + 103,398.24 = 165,898.24
+        # heat_share = 62,500 / 165,898.24 = 37.67%
+>       res = calc.calculate(
+            total_facility_emissions=total_co2e,
+            heat_output_mmbtu=heat_mmbtu,
+            power_output_mwh=power_mwh,
+            method="efficiency",
+            heat_efficiency=0.80,
+            power_efficiency=0.33,
+            uncertainties={},
+        )
+E       TypeError: CogenAllocationCalculator.calculate() got an unexpected keyword argument 'total_facility_emissions'
+
+validation\calculation\test_clean_scope2.py:114: TypeError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_scope2.py::TestCleanScope2SteamAndHeat::test_steam_invalid_efficiency_rejected
+FAILED validation/calculation/test_clean_scope2.py::TestCleanScope2Cogeneration::test_cogen_wri_efficiency_method
+========================= 2 failed, 5 passed in 2.11s =========================
+
+Last progress: 1s ago

@@ -1,0 +1,34 @@
+
+The command exited with code 1.
+Output:
+Usage: graphify <command>
+
+Commands:
+  install [--platform P]  copy skill to platform config dir (claude|windows|codebuddy|codex|opencode|aider|amp|agents|claw|droid|trae|trae-cn|gemini|cursor|antigravity|hermes|kiro|pi|devin)
+  uninstall               remove graphify from all detected platforms in one shot
+    --purge                 also delete graphify-out/ directory
+  path "A" "B"            shortest path between two nodes in graph.json
+    --graph <path>          path to graph.json (default graphify-out/graph.json)
+  explain "X"             plain-language explanation of a node and its neighbors
+    --graph <path>          path to graph.json (default graphify-out/graph.json)
+  diagnose multigraph    report same-endpoint edge collapse risk in graph.json
+    --graph <path>          path to graph/extraction JSON
+                            (default graphify-out/graph.json)
+    --json                  emit machine-readable JSON
+    --max-examples N        max same-endpoint examples to print (default 5)
+    --directed              force directed post-build simulation
+    --undirected            force undirected post-build simulation
+                            (default follows JSON directed flag;
+                             raw extraction with no flag defaults directed)
+    --extract-path PATH     extractor source for suppression scan
+  clone <github-url>      clone a GitHub repo locally and print its path for /graphify
+  merge-driver <base> <current> <other>  git merge driver: union-merge two graph.json files (set up via hook install)
+  merge-graphs <g1> <g2>  merge two or more graph.json files into one cross-repo graph
+    --out <path>            output path (default: graphify-out/merged-graph.json)
+    --branch <branch>       checkout a specific branch (default: repo default)
+    --out <dir>             clone to a custom directory (default: ~/.graphify/repos/<owner>/<repo>)
+  add <url>               fetch a URL and save it to ./raw, then update the graph
+    --author "Name"         tag the author of the content
+    --contributor "Name"    tag who added it to the corpus
+    --dir <path>            target directory (default: ./raw)
+

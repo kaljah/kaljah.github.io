@@ -1,0 +1,21 @@
+
+The command exited with code 0.
+Output:
+warning: in the working copy of 'validation/reference_model/vented_processes.py', LF will be replaced by CRLF the next time Git touches it
+diff --git a/validation/reference_model/vented_processes.py b/validation/reference_model/vented_processes.py
+index 24e089f..5730e7f 100644
+--- a/validation/reference_model/vented_processes.py
++++ b/validation/reference_model/vented_processes.py
+@@ -218,8 +218,9 @@ class IndependentBlowdown:
+         gwp_horizon="100",
+     ):
+         v_phys = IndependentUnitConverter.convert(blowdown_volume, volume_unit, "m3")
+-        p_abs = to_psia(pressure, press_unit)
+-        p_factor = p_abs / STD_P_PSIA
++        p_initial_psia = to_psia(pressure, press_unit)
++        delta_p = max(0.0, p_initial_psia - STD_P_PSIA)
++        p_factor = delta_p / STD_P_PSIA
+ 
+         t_abs = to_kelvin(temp, temp_unit)
+         t_factor = STD_T_K / max(1.0, t_abs)
+

@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\satellite.py:257:    operating_hours = float(data.get("operating_hours") or 8760.0)
+new\server\routes\satellite.py:258:    estimated_annual_tch4 = (measured_rate_kg_hr * operating_hours) / 1000.0
+new\server\routes\satellite.py:297:        operating_hours_year=operating_hours,
+
+
+

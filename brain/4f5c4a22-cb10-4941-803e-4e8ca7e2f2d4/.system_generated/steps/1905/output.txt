@@ -1,0 +1,48 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_tier1_tier3_advanced.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -733,18 +733,12 @@
+     }
+ 
+     // 2. Audit Dashboard KPIs
+-    await page.goto(`${FRONTEND}/dashboard`, { waitUntil: 'domcontentloaded', timeout: 30000 });
++    await ensureAuthenticated(page, '/dashboard');
+     await page.waitForTimeout(2000);
+ 
+-    const skipBtn = page.locator('button.skip-intro-btn, button:has-text("Skip Intro")');
+-    if (await skipBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+-      await skipBtn.click();
+-      await page.waitForTimeout(500);
+-    }
+-
+     // Hero Gross Emissions Card
+     const heroCard = page.locator('.hero-card, .card.hero-card, .stat-item, .dashboard-content').first();
+-    await expect(heroCard).toBeVisible({ timeout: 10000 });
++    await expect(heroCard).toBeVisible({ timeout: 15000 });
+     const heroText = await heroCard.innerText();
+     expect(heroText).not.toContain('NaN');
+     expect(heroText).not.toContain('undefined');
+@@ -769,11 +769,11 @@
+     await expect(regionSection).toBeVisible();
+ 
+     // 3. Audit Carbon Intensity & CBAM page
+-    await page.goto(`${FRONTEND}/carbon-intensity`, { waitUntil: 'domcontentloaded', timeout: 30000 });
++    await ensureAuthenticated(page, '/carbon-intensity');
+     await page.waitForTimeout(1500);
+ 
+     const ciPage = page.locator('.carbon-intensity-page, .intensity-container, .main-content').first();
+-    await expect(ciPage).toBeVisible({ timeout: 10000 });
++    await expect(ciPage).toBeVisible({ timeout: 15000 });
+     const ciText = await ciPage.innerText();
+     expect(ciText).not.toContain('NaN');
+     expect(ciText).not.toContain('undefined');
+@@ -780,6 +780,6 @@
+ 
+     // 4. Audit Methane Intensity page
+-    await page.goto(`${FRONTEND}/methane-intensity`, { waitUntil: 'domcontentloaded', timeout: 30000 });
++    await ensureAuthenticated(page, '/methane-intensity');
+     await page.waitForTimeout(1500);
+ 
+     const miPage = page.locator('.methane-intensity-page, .methane-container, .main-content').first();
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

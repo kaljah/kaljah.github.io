@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['id', 'facility_id', 'year', 'month', 'source_module', 'pollutant', 'mass_tonnes', 'concentration_mg_nm3', 'flue_gas_volume_nm3', 'calc_method', 'notes', 'status', 'created_by', 'created_at', 'updated_at']
+

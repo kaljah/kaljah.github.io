@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\emissions.py:18:    compute_emissions,
+new\server\routes\emissions.py:806:            em_result, method = compute_emissions(
+new\server\routes\emissions.py:3057:    # Call compute_emissions to calculate the actual emissions
+new\server\routes\emissions.py:3061:        em_result, method = compute_emissions(data, factor_data, gwp_dict=gwp_dict)
+new\server\routes\emissions.py:3503:            calculated_em, method = compute_emissions(
+new\server\routes\emissions.py:3844:            em_result, method = compute_emissions(
+
+
+

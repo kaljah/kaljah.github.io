@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\process_categories.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -248,6 +248,15 @@
+         "required_inputs": ["production_amount", "abatement_type"],
+         "description": "N₂O emissions from adipic acid production",
+     },
++    "asphalt_blowing": {
++        "display_name": "Asphalt Blowing",
++        "segments": ["downstream"],
++        "category": "process",
++        "calculation_method": "production_factor",
++        "api_section": "Section 6 (Table 6-52)",
++        "required_inputs": ["production_amount"],
++        "description": "Process emissions from asphalt blowing",
++    },
+     # ========== FUGITIVE - COMPONENT LEVEL (All Segments) ==========
+     "fugitive_component": {
+         "display_name": "Fugitive - Component Level",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

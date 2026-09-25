@@ -1,0 +1,19 @@
+
+The command exited with code 1.
+Output:
+Scenario 01 [completions - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 02 [completions - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 03 [pneumatic - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 04 [pneumatic - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 05 [tank_working - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 06 [tank_breathing - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 07 [agr - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 08 [dehydrator - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 09 [blowdown - specific] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 10 [combustion - default] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 11 [combustion - default] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 12 [combustion - default] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 13 [combustion - default] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 14 [combustion - default] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+Scenario 15 [unloading - default] FAILED: CalculationDispatcher.dispatch() got an unexpected keyword argument 'activity_data'
+

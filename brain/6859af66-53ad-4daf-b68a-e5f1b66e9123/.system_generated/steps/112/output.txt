@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[('chart_cbam_savings.png', 244444), ('chart_competitive_matrix.png', 275442), ('chart_industry_emissions.png', 273194), ('chart_market_sizing.png', 209705), ('chart_reporting_risks.png', 232619), ('ui_dashboard.png', 56273), ('ui_methane.png', 66797), ('ui_reports.png', 66887)]
+

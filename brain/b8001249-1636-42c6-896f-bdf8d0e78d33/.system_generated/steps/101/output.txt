@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+requests OK
+playwright OK
+python : Traceback (most recent call last):
+At line:1 char:117
++ ... ht OK')" 2>&1; python -c "import selenium; print('selenium OK')" 2>&1
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'selenium'
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[SUCCESS] Generated master audit PDF: docs/validation/FINAL_VALIDATION_REPORT.pdf (20,604 bytes)
+

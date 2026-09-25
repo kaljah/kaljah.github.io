@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -480,10 +480,14 @@
+         proj_query = proj_query.filter(MitigationProject.year == int(year))
+     projects = proj_query.all()
+ 
+-    rec_query = MitigationRecord.query
+-    if year and year != "all":
+-        rec_query = rec_query.filter(MitigationRecord.year == int(year))
+-    records = rec_query.all()
++    # Only include unscoped company-wide MitigationRecord offsets when viewing corporate inventory
++    is_facility_scoped = bool(facility_id and facility_id != "all")
++    records = []
++    if not is_facility_scoped:
++        rec_query = MitigationRecord.query
++        if year and year != "all":
++            rec_query = rec_query.filter(MitigationRecord.year == int(year))
++        records = rec_query.all()
+ 
+     results = []
+     for p in projects:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

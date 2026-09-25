@@ -1,0 +1,22 @@
+Task: 883d2b5f-e0a8-42b3-bc41-a119fe279fb4/task-2140
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\.system_generated\tasks\task-2140.log
+Log output:
+<truncated 83 lines>
+2.16 kB
+dist/assets/ManageData-DygSSM9r.js                136.97 kB │ gzip:  28.34 kB
+dist/assets/index.es-mQ5NhuBS.js                  158.66 kB │ gzip:  52.97 kB
+dist/assets/Emissions-vEarHx51.js                 184.91 kB │ gzip:  41.91 kB
+dist/assets/MethaneExplorer-CgaFDSAf.js           186.30 kB │ gzip:  54.64 kB
+dist/assets/html2canvas.esm-DXEQVQnt.js           201.04 kB │ gzip:  47.43 kB
+dist/assets/LineChart-BdJiiYeL.js                 358.84 kB │ gzip: 107.04 kB
+dist/assets/index-CK6YVFmW.js                     401.16 kB │ gzip: 128.96 kB
+dist/assets/ModernReportGenerator-Bgfi28FC.js     651.89 kB │ gzip: 215.88 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 10.62s
+
+Last progress: 0s ago

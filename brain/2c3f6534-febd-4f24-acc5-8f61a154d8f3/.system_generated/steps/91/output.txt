@@ -1,0 +1,26 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":6,"LineContent":"from .unit_conversions import ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":12,"LineContent":"from .gwp import IndependentGWPModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\scope2.py","LineNumber":6,"LineContent":"from .unit_conversions import IndependentUnitConverter"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\unit_conversions.py","LineNumber":6,"LineContent":"import math"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\uncertainty.py","LineNumber":6,"LineContent":"import math"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\midstream.py","LineNumber":6,"LineContent":"import math"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\midstream.py","LineNumber":7,"LineContent":"from .unit_conversions import ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\midstream.py","LineNumber":14,"LineContent":"from .gwp import IndependentGWPModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\fugitives.py","LineNumber":6,"LineContent":"from .unit_conversions import IndependentUnitConverter"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\fugitives.py","LineNumber":7,"LineContent":"from .gwp import IndependentGWPModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\aggregation_intensity.py","LineNumber":6,"LineContent":"from .unit_conversions import DENSITY_CH4_STD"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":6,"LineContent":"import math"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":7,"LineContent":"from .unit_conversions import ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":16,"LineContent":"from .gwp import IndependentGWPModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":4,"LineContent":"This package does NOT import or reference production calculation modules."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":6,"LineContent":"from .unit_conversions import IndependentUnitConverter, normalize_to_standard_volume"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":7,"LineContent":"from .gwp import IndependentGWPModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":8,"LineContent":"from .combustion_flaring import IndependentCombustionModel, IndependentFlaringModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":9,"LineContent":"from .vented_processes import ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":18,"LineContent":"from .fugitives import IndependentFugitiveModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":19,"LineContent":"from .midstream import IndependentAGRModel, IndependentDehydratorModel, IndependentStoichiometryModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":20,"LineContent":"from .scope2 import IndependentScope2Model"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":21,"LineContent":"from .scope3 import IndependentScope3Model"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":22,"LineContent":"from .uncertainty import IndependentUncertaintyModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":23,"LineContent":"from .aggregation_intensity import IndependentIntensityModel"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\__init__.py","LineNumber":24,"LineContent":"from .ogmp import IndependentOGMPModel"}

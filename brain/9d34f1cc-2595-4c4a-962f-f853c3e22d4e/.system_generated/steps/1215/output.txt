@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -156,12 +156,12 @@
+ # ---------------------------------------------------------------------------
+ 
+ 
+-def combine_uncertainties_product(u_ef, u_ad):
++def combine_uncertainties_product(u_ef, u_ad, exact=False):
+     """
+     Combine relative uncertainties for E = Activity × EF (multiplicative).
+-    Exact formula for product of independent random variables:
+-    u_E = √(u_AD² + u_EF² + u_AD²·u_EF²)
+-    Reference: IPCC 2006 GL Vol.1 §3.3 Eq. 3.1 / Goodman (1960) / GUM §H.1
++    Standard IPCC Eq 3.1: u_E = sqrt(u_AD^2 + u_EF^2).
++    If exact=True, includes Goodman (1960) higher-order term sqrt(u_AD^2 + u_EF^2 + u_AD^2*u_EF^2).
++    Reference: IPCC 2006 GL Vol.1 §3.3 Eq. 3.1
+     Returns: combined relative standard uncertainty (1σ)
+     """
+     u_ef_f = float(u_ef or 0.0)
+@@ -168,4 +168,6 @@
+-    return math.sqrt(u_ef_f**2 + u_ad_f**2 + (u_ef_f**2 * u_ad_f**2))
++    if exact:
++        return math.sqrt(u_ef_f**2 + u_ad_f**2 + (u_ef_f**2 * u_ad_f**2))
++    return math.sqrt(u_ef_f**2 + u_ad_f**2)
+ 
+ 
+ def combine_uncertainties_sum(val1, u1_rel, val2, u2_rel):
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

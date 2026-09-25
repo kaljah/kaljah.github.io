@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1038,13 +1038,25 @@
+         if is_compliant:
+             gold_compliant_count += 1
+ 
+-        top_down = survey_map.get(f.id, 0.0)
+-        bottom_up = ch4_map.get(f.id, 0.0)
+-        variance_pct = (
+-            round(((top_down - bottom_up) / bottom_up * 100.0), 2)
+-            if (top_down > 0 and bottom_up > 0)
+-            else None
+-        )
++        top_down = float(survey_map.get(f.id, 0.0) or 0.0)
++        bottom_up = float(ch4_map.get(f.id, 0.0) or 0.0)
++        if top_down > 0 and bottom_up > 0:
++            variance_pct = round(((top_down - bottom_up) / bottom_up * 100.0), 2)
++            variance_flag = abs(variance_pct) > threshold
++            rec_status = "Discrepancy Flagged" if variance_flag else "Reconciled"
++        elif top_down > 0 and bottom_up == 0:
++            # Invariant Zero (Decision D-02): Zero Bottom-Up Edge Case
++            variance_pct = None
++            variance_flag = True
++            rec_status = "Discrepancy Flagged"
++        elif top_down == 0 and bottom_up > 0:
++            variance_pct = None
++            variance_flag = False
++            rec_status = "Bottom-Up Only"
++        else:
++            variance_pct = None
++            variance_flag = False
++            rec_status = "No Activity"
+ 
+         highest_level = compute_facility_ogmp_level(
+             f, year=current_year, top_down_tch4=top_down, bottom_up_tch4=bottom_up
+@@ -1067,6 +1067,8 @@
+                 "is_compliant": is_compliant,
+                 "highest_ogmp_level": highest_level,
+                 "reconciliation_variance_pct": variance_pct,
++                "variance_flag": variance_flag,
++                "reconciliation_status": rec_status,
+                 "status": (
+                     "Gold Pathway Active"
+                     if is_compliant
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

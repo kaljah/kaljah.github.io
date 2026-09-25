@@ -1,0 +1,63 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -166,4 +166,57 @@
+      - **37 KPI and metric cards** rendered with zero layout or JavaScript console exceptions.
+      - **375 SVG/canvas visualization elements** active.
+      - Real-time Gross Operational Emissions reflecting `5.1B tCO₂e`.
++
++---
++
++## 8. Physical Interactive Browser Audit (All Buttons, Dropdowns & Charts)
++
++A dedicated browser automation runner driving Google Chrome directly via the **Chrome DevTools Protocol (CDP)** was executed against the running frontend (`http://localhost:5173/`) using the authenticated session. Every interactive element, toggle, dropdown filter, accordion, table tree node, and chart visualization on the Dashboard was physically actuated, observed, and asserted.
++
++### 1. Physical Button & Toggle Audits
++
++| Control | Interaction | Observed UI Reaction | Verification Result |
++| :--- | :--- | :--- | :--- |
++| **GWP-20 Button** | Clicked button `GWP-20` | Real-time state recalculation with 20-year near-term methane warming potential ($GWP_{20}^{CH_4} = 84$). Gross emissions updated to **5.9B tCO₂e**, Net emissions **5.9B tCO₂e**, Performance Intensity **22.72K kg/BOE**. CH₄ mass remained constant at **14.3M tCH₄**. | **PASS** |
++| **GWP-100 Button** | Clicked button `GWP-100` | Real-time state recalculation with standard 100-year warming potential ($GWP_{100}^{CH_4} = 28$). Gross emissions updated to **5.1B tCO₂e**, Net emissions **5.1B tCO₂e**, Performance Intensity **19.63K kg/BOE**. CH₄ mass remained constant at **14.3M tCH₄**. | **PASS** |
++| **Compare Regions Toggle** | Clicked `.compare-toggle-btn` (ON) | Button switched to active state and text changed to `'Standard View'`. Line chart dynamically swapped from standard scope lines to facility-by-facility comparative curves (Tosyali, Fertial, Hassi Messaoud). | **PASS** |
++| **Standard View Toggle** | Clicked `.compare-toggle-btn` (OFF) | Button switched to inactive state and text reverted to `'Compare Regions'`. Line chart returned to standard multi-year projection mode. | **PASS** |
++
++### 2. Top-Bar Custom Dropdown Portals
++
++Each custom portal-mounted dropdown was opened, its options inspected, a non-default option selected to trigger state update, and then restored to the default option:
++
++| Dropdown Filter | Total Options Available | Sample Options Inspected | Selected Option | Verification Result |
++| :--- | :---: | :--- | :--- | :---: |
++| **Year** | 8 | All Years, 2026, 2025, 2024, 2023 | `2026` | **PASS** |
++| **Supply Chain** | 4 | All Supply Chains, Downstream, Midstream, Upstream | `Downstream` | **PASS** |
++| **Activity** | 8 | All Activities, E&P (Upstream), LQS, RPC, Cement & Clinker | `E&P (Upstream)` | **PASS** |
++| **Division** | 10 | All Divisions, AST, Building Materials, DP, Exploration & Production | `AST` | **PASS** |
++| **Region / Facility** | 44 | All Regions, Tosyali DRI/EAF, Fertial Ammonia, GICA Chlef, Sonatrach HMD | `Complexe Sidérurgique DRI/EAF (Tosyali)` | **PASS** |
++
++### 3. Accordions, Collapsibles & Hierarchical Tree Drill-Downs
++
++| Section | Action | Observed Result | Status |
++| :--- | :--- | :--- | :---: |
++| **Categorical Emissions Overview** | Clicked `.clickable-card-header` | Smooth collapsible transition toggled; body hidden and restored cleanly without layout shift. | **PASS** |
++| **Detailed Breakdown Table** | Clicked `.clickable-card-header` | Detailed emissions table collapsed and expanded cleanly. | **PASS** |
++| **Activity Tree Rows** | Clicked all 5 `tr.act-row.clickable` | Expanded all 5 organizational parent nodes: `E&P (Upstream)` (3.4B tCO₂e), `Steel & Iron (Acier DRI)` (1.7B tCO₂e), `Upstream & Midstream Gas` (117K tCO₂e), `Cement & Clinker` (90.8K tCO₂e), `Chemicals & Fertilizers` (80.4K tCO₂e). | **PASS** |
++
++### 4. Live Chart Visualizations (Recharts SVG Surface Integrity)
++
++| Chart Visualization | Container Size | SVG Surface | Data Series / Slices Rendered | Active Legends / Axes |
++| :--- | :---: | :---: | :---: | :--- |
++| **Emissions Trend & Projection** | 689 × 360 px | Verified (`<svg.recharts-surface>`) | Multi-year continuous curves with historical + 5-year predictive forecast | *Forecast, Scope 1, Target Path, Total Emissions* (Years 2020–2027) |
++| **Emissions by Activity** | 673 × 170 px | Verified (`<svg.recharts-surface>`) | **5 Pie Sectors** | *Cement & Clinker, Chemicals & Fertilizers, E&P (Upstream), Steel & Iron, Upstream & Midstream Gas* |
++| **Emissions by Process Source** | 673 × 170 px | Verified (`<svg.recharts-surface>`) | **4 Pie Sectors** | *Combustion, Flaring, Other, Venting* |
++| **SBTi Decarbonization Trajectory** | 673 × 320 px | Verified (`<svg.recharts-surface>`) | 3 Target Series (Base Year to Target Year) | *Actual Verified Emissions, Business as Usual (+1.5%/yr), SBTi 1.5°C Linear Target* (2026–2040) |
++
++### 5. Metric & KPI Card Integrity & Console Error Assertion
++
++- **Total Cards & Metric Elements Audited**: **53**
++- **Formatting / NaN / Undefined / Null / `[object Object]` Issues**: **0 (Zero)**
++- **Secondary Action Buttons Tested**:
++  - Clicked `"View Full SBTi Dashboard ->"`: Successfully navigated to `/sbti` and history popped back.
++  - Clicked `"Manage Custom Factors"`: Successfully navigated to `/manage-data` and history popped back.
++- **Uncaught Browser Console Errors**: **0 (Zero)**
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

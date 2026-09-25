@@ -1,0 +1,37 @@
+
+The command exited with code 1.
+Output:
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+[2026-09-19 18:25:20,443] INFO in app: POST /api/auth/login 401 [0.076s] [ReqID: ca269f20-76c1-4290-811f-8d1c5b9648cc]
+127.0.0.1 - - [19/Sep/2026 18:25:20] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-19 18:25:20,448] INFO in app: GET /api/dashboard/batch-all 401 [0.000s] [ReqID: 7eff8ca9-43b6-46fb-af1d-fef6bea0fa23]
+127.0.0.1 - - [19/Sep/2026 18:25:20] "GET /api/dashboard/batch-all?gwp_horizon=100 HTTP/1.1" 401 -
+[2026-09-19 18:25:20,453] INFO in app: GET /api/dashboard/batch-all 401 [0.000s] [ReqID: fa8fd4ab-91d0-4bab-ac6c-95ff3fde2466]
+127.0.0.1 - - [19/Sep/2026 18:25:20] "GET /api/dashboard/batch-all?gwp_horizon=20 HTTP/1.1" 401 -
+[2026-09-19 18:25:33,769] INFO in app: POST /api/auth/login 401 [0.077s] [ReqID: 53b0c314-054b-41bc-a65e-4ac020478c62]
+127.0.0.1 - - [19/Sep/2026 18:25:33] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-19 18:25:33,774] INFO in app: GET /api/dashboard/batch-all 401 [0.000s] [ReqID: 93f6f88c-927a-4234-858b-8e9a84506f79]
+127.0.0.1 - - [19/Sep/2026 18:25:33] "GET /api/dashboard/batch-all?gwp_horizon=100 HTTP/1.1" 401 -
+[2026-09-19 18:28:20,119] INFO in app: POST /api/auth/login 200 [0.079s] [ReqID: 8b6f5476-701a-4fc3-a902-2ee7a9afc462]
+127.0.0.1 - - [19/Sep/2026 18:28:20] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-19 18:28:20,294] INFO in app: GET /api/dashboard/batch-all 200 [0.171s] [ReqID: fb44e445-c64e-4b36-a9c8-96452f922497]
+127.0.0.1 - - [19/Sep/2026 18:28:20] "GET /api/dashboard/batch-all?gwp_horizon=100 HTTP/1.1" 200 -
+[2026-09-19 18:28:20,448] INFO in app: GET /api/dashboard/batch-all 200 [0.149s] [ReqID: 26dc818b-8e1d-4b5c-b23a-b6d7ecaf5e34]
+127.0.0.1 - - [19/Sep/2026 18:28:20] "GET /api/dashboard/batch-all?gwp_horizon=20 HTTP/1.1" 200 -
+[2026-09-19 18:28:30,238] INFO in app: POST /api/auth/login 200 [0.077s] [ReqID: a43ab3f0-ffe5-4d9e-9de5-f25574965937]
+127.0.0.1 - - [19/Sep/2026 18:28:30] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-19 18:28:30,396] INFO in app: GET /api/dashboard/batch-all 200 [0.153s] [ReqID: 768bef27-635a-4d95-b8fc-3828cd2d871e]
+127.0.0.1 - - [19/Sep/2026 18:28:30] "GET /api/dashboard/batch-all?gwp_horizon=100 HTTP/1.1" 200 -
+[2026-09-19 18:28:30,428] INFO in app: GET /api/dashboard/batch-all 200 [0.027s] [ReqID: 0c2c5abd-369f-47ec-8b62-75109e70c060]
+127.0.0.1 - - [19/Sep/2026 18:28:30] "GET /api/dashboard/batch-all?gwp_horizon=20 HTTP/1.1" 200 -
+[2026-09-19 18:28:48,994] INFO in app: POST /api/auth/login 200 [0.076s] [ReqID: ed19b385-ffc6-4106-b0a6-0db1da891a40]
+127.0.0.1 - - [19/Sep/2026 18:28:48] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-19 18:28:49,028] INFO in app: GET /api/dashboard/batch-all 200 [0.028s] [ReqID: c163495a-0977-4ae9-9782-e1b847ea51b7]
+127.0.0.1 - - [19/Sep/2026 18:28:49] "GET /api/dashboard/batch-all?gwp_horizon=100 HTTP/1.1" 200 -
+[2026-09-19 18:28:49,065] INFO in app: GET /api/dashboard/batch-all 200 [0.033s] [ReqID: 3ea03c6b-56be-4eee-b686-6f5633fcb3de]
+127.0.0.1 - - [19/Sep/2026 18:28:49] "GET /api/dashboard/batch-all?gwp_horizon=20 HTTP/1.1" 200 -
+

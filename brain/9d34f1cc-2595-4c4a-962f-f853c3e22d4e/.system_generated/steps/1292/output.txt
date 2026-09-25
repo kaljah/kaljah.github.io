@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\scope2.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -81,7 +81,7 @@
+         total_emissions = (float(data["fuel_consumed_mmbtu"]) * _DEFAULT_BOILER_EF_KG_PER_MMBTU) / 1000.0
+     heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
+     power_output = float(data.get("power_output_mwh") or ci.get("power_output", 0))
+-    power_mmbtu = power_output * 3.412142
++    power_mmbtu = power_output
+     method = data.get("allocation_method") or ci.get("allocation_method", "wri_efficiency")
+ 
+     if method == "wri_efficiency":
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

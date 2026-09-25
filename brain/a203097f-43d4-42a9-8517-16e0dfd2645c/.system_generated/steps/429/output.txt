@@ -1,0 +1,35 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":241,"LineContent":"# Register Blueprints"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":1,"LineContent":"from flask import Blueprint"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":3,"LineContent":"auth_bp = Blueprint(\"auth\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":4,"LineContent":"emissions_bp = Blueprint(\"emissions\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":5,"LineContent":"facilities_bp = Blueprint(\"facilities\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":6,"LineContent":"data_bp = Blueprint(\"data\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":7,"LineContent":"reports_bp = Blueprint(\"reports\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":8,"LineContent":"custom_factors_bp = Blueprint(\"custom_factors\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":9,"LineContent":"scope2_bp = Blueprint(\"scope2\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":10,"LineContent":"scope3_bp = Blueprint(\"scope3\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":11,"LineContent":"managedata_bp = Blueprint(\"managedata\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":12,"LineContent":"dashboard_bp = Blueprint(\"dashboard\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":13,"LineContent":"factors_bp = Blueprint(\"factors\", __name__)  # New: API 2021 emission factors endpoints"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":1,"LineContent":"from flask import Blueprint, request, jsonify, session"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":11,"LineContent":"scope3_bp = Blueprint(\"scope3\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":1,"LineContent":"from flask import Blueprint, request, jsonify, session"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":11,"LineContent":"scope2_bp = Blueprint(\"scope2\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":4,"LineContent":"from flask import Blueprint, request, jsonify, session"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":13,"LineContent":"satellite_bp = Blueprint(\"satellite\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":2,"LineContent":"from flask import Blueprint, jsonify, request, send_file, current_app"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":33,"LineContent":"reports_bp = Blueprint(\"reports\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":1,"LineContent":"from flask import Blueprint, jsonify, request, Response"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\qaqc.py","LineNumber":12,"LineContent":"qaqc_bp = Blueprint(\"qaqc_bp\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\notifications.py","LineNumber":4,"LineContent":"    Blueprint,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\notifications.py","LineNumber":16,"LineContent":"notifications_bp = Blueprint(\"notifications\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":1,"LineContent":"from flask import Blueprint, jsonify, request"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\managedata.py","LineNumber":22,"LineContent":"managedata_bp = Blueprint(\"managedata\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":7,"LineContent":"from flask import Blueprint, jsonify, request"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emission_factors_routes.py","LineNumber":26,"LineContent":"factors_bp = Blueprint(\"factors\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2,"LineContent":"from flask import Blueprint, request, jsonify, current_app"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":110,"LineContent":"dashboard_bp = Blueprint(\"dashboard\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":2,"LineContent":"from flask import Blueprint, request, jsonify, session, current_app"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\custom_factors.py","LineNumber":8,"LineContent":"custom_factors_bp = Blueprint(\"custom_factors\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":8,"LineContent":"from flask import Blueprint, jsonify, request, Response, current_app"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\audit.py","LineNumber":13,"LineContent":"audit_bp = Blueprint(\"audit\", __name__)"}

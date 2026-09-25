@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+Users:
+(1, 'a', 'Administrator', 'admin')
+(2, 'a@a', 'Administrator', 'admin')
+(3, 'z', 'IT Manager', 'it_manager')
+(4, 'z@z', 'IT Manager', 'it_manager')
+(5, 'admin@ghg.com', 'Administrator', 'admin')
+(6, 'itadmin@ghg.com', 'IT Administrator', 'it_admin')
+(7, 'it@ghg.com', 'IT Support', 'it')
+
+Facilities:
+

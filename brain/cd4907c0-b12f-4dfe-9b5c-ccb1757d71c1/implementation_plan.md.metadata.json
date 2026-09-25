@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan to grant the IT Manager role full unrestricted access to the User Management page and reposition action buttons (Create User, Save Changes, Reset Password) directly under the input fields.",
+  "updatedAt":  "2026-09-20T07:52:00.480844100Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

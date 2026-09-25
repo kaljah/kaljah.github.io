@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+[INFO] Connecting to SQLite: ghg_app.db
+[INFO] Found 24 tables in SQLite database.
+[INFO] DRY RUN MODE: Counting records per table:
+  - users: 0 rows
+  - facilities: 0 rows
+  - emission_sources: 0 rows
+  - custom_factors: 0 rows
+  - emissions: 0 rows
+  - production_data: 0 rows
+  - scope2_emissions: 0 rows
+  - scope3_emissions: 0 rows
+  - scope3_data: 0 rows
+  - mitigation_records: 0 rows
+  - mitigation_projects: 0 rows
+  - goals: 0 rows
+  - base_year: 0 rows
+  - base_year_recalculations: 0 rows
+  - reporting_metadata: 0 rows
+  - notifications: 0 rows
+  - cbam_product_exports: 0 rows
+  - ogmp_surveys: 0 rows
+  - methane_source_types: 0 rows
+  - level_upgrade_logs: 0 rows
+  - sbti_targets: 0 rows
+  - system_settings: 0 rows
+  - activity_log: 0 rows
+

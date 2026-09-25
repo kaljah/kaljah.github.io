@@ -1,0 +1,45 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 2 items
+
+new\server\tests\test_user_profile_update.py F.                          [100%]
+
+================================== FAILURES ===================================
+____________________ test_update_user_profile_information _____________________
+
+client = <FlaskClient <Flask 'app'>>, it_admin = 38, target_user = 40
+
+    def test_update_user_profile_information(client, it_admin, target_user):
+        payload = {
+            "fullName": "Updated Target Name",
+            "email": "new_target_email@domain.com",
+            "department": "Renewables & Carbon",
+            "jobTitle": "Lead Carbon Analyst",
+            "role": "user",
+            "location": "Algiers",
+        }
+        res = client.put(f"/api/auth/users/{target_user}", json=payload)
+>       assert res.status_code == 200
+E       assert 400 == 200
+E        +  where 400 = <WrapperTestResponse streamed [400 BAD REQUEST]>.status_code
+
+new\server\tests\test_user_profile_update.py:86: AssertionError
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:160 PUT /api/auth/users/40 400 [0.005s] [ReqID: c56d4c03-046f-4511-88d8-a7d7668b3315]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_user_profile_update.py::test_update_user_profile_information
+=================== 1 failed, 1 passed, 1 warning in 2.56s ====================
+

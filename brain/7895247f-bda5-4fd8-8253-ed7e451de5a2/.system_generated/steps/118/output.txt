@@ -1,0 +1,1 @@
+A1: Unified Master Report: Upgrade the existing ISO 14064-1 report generator to dynamically incorporate the CAP, Flaring, JV Equity, and SANGEA sections whenever relevant facility data is present.

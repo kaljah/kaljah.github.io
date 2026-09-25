@@ -1,0 +1,35 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\scope2.py:71:    return co2_kg / 1000.0, energy_mmbtu, ef_co2
+  new\server\routes\scope2.py:72:
+  new\server\routes\scope2.py:73:
+> new\server\routes\scope2.py:74:def _calc_cogen_allocation(data):
+> new\server\routes\scope2.py:75:    """Calculate heat-allocated tCO2e for CHP / cogeneration entry."""
+  new\server\routes\scope2.py:76:    val = float(data.get("amount", 0) or data.get("co2e", 0) or 
+data.get("total_emissions", 0))
+> new\server\routes\scope2.py:77:    ci = data.get("calc_inputs", {}).get("cogen_allocation", {})
+  new\server\routes\scope2.py:78:    total_emissions = float(data.get("total_emissions") or ci.get("total_emissions", 
+val))
+  new\server\routes\scope2.py:79:    if total_emissions == 0 and data.get("fuel_consumed_mmbtu"):
+  new\server\routes\scope2.py:80:        # Calculate facility emissions from fuel consumed (e.g. 53.06 kg CO2/MMBtu)
+  new\server\routes\scope2.py:81:        total_emissions = (float(data["fuel_consumed_mmbtu"]) * 
+_DEFAULT_BOILER_EF_KG_PER_MMBTU) / 1000.0
+  new\server\routes\scope2.py:82:    heat_output = float(data.get("heat_output_mmbtu") or ci.get("heat_output", 0))
+  new\server\routes\scope2.py:210:        except Exception as exc:
+  new\server\routes\scope2.py:211:            return jsonify({"error": f"Indirect steam calculation failed: {exc}"}), 
+422
+  new\server\routes\scope2.py:212:
+> new\server\routes\scope2.py:213:    elif source_type == "cogen_allocation":
+  new\server\routes\scope2.py:214:        try:
+> new\server\routes\scope2.py:215:            co2e = _calc_cogen_allocation(data)
+  new\server\routes\scope2.py:216:        except Exception as exc:
+  new\server\routes\scope2.py:217:            return jsonify({"error": f"CHP allocation calculation failed: {exc}"}), 
+422
+  new\server\routes\scope2.py:218:
+  new\server\routes\scope2.py:219:    # Calculate uncertainty
+  new\server\routes\scope2.py:220:    provided_uncertainty = data.get("uncertainty")
+
+
+

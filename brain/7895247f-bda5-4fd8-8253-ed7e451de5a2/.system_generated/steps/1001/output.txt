@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+  new\server\routes\dashboard.py:2866:
+  new\server\routes\dashboard.py:2867:
+> new\server\routes\dashboard.py:2868:@dashboard_bp.route("/flaring-summary", methods=["GET"])
+  new\server\routes\dashboard.py:2869:@login_required
+  new\server\routes\dashboard.py:2870:def get_flaring_summary():
+  new\server\routes\dashboard.py:2871:    """
+  new\server\routes\dashboard.py:2872:    Returns flaring breakdown by operational stream: Routine, Non-Routine, 
+Safety, and Grand Total.
+  new\server\routes\dashboard.py:2873:    Evaluates compliance against Algerian Executive Decree 21-330 Article 9 
+(1.00% threshold).
+
+
+

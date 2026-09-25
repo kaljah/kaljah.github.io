@@ -1,0 +1,3 @@
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":15,"LineContent":"def get_user_operational_defaults(user):"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":342,"LineContent":"        user_defaults = get_user_operational_defaults(user)"}
+{"File":"C:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":502,"LineContent":"    user_defaults = get_user_operational_defaults(user)"}

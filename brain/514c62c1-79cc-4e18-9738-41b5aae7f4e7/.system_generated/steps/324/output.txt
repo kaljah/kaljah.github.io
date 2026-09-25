@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Dashboard.css. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -942,10 +942,11 @@
+ .dashboard-filters {
+   display: flex;
+   align-items: center;
+-  gap: 12px;
+-  margin-left: 20px;
++  gap: 8px;
++  margin-left: 10px;
+   height: auto;
+-  flex-wrap: wrap;
++  flex-wrap: nowrap !important;
++  white-space: nowrap;
+ }
+ 
+ .filter-wrapper {
+@@ -952,6 +952,6 @@
+   align-items: center;
+-  flex: 1 1 auto;
+-  min-width: 120px;
++  flex: 0 0 auto;
++  min-width: 105px;
+ }
+ 
+ /* Ensure dropdowns fit well in top bar */
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

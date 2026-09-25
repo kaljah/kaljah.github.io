@@ -1,0 +1,57 @@
+
+The command exited with code 0.
+Output:
+warning: in the working copy of 'new/server/calculations/dispatcher.py', LF will be replaced by CRLF the next time Git touches it
+diff --git a/new/server/calculations/dispatcher.py b/new/server/calculations/dispatcher.py
+index 2c79d51..6daa886 100644
+--- a/new/server/calculations/dispatcher.py
++++ b/new/server/calculations/dispatcher.py
+@@ -51,6 +51,7 @@ class CalculationDispatcher:
+             "storage_tanks": TankFlashingCalculator(),
+             "pneumatic_devices": PneumaticDeviceCalculator(),
+             "pneumatic_device": PneumaticDeviceCalculator(),
++            "pneumatics": PneumaticDeviceCalculator(),
+             "pneumatic": PneumaticDeviceCalculator(),
+             "fugitive_component": ComponentFugitiveCalculator(),
+             "component_fugitive": ComponentFugitiveCalculator(),
+@@ -457,6 +458,19 @@ class CalculationDispatcher:
+                     "n2_comp": safe_frac("n2") or safe_frac("n2_mol"),
+                 }
+ 
++                def _get_eff(keys):
++                    for k in keys:
++                        v = flat_inputs.get(k)
++                        if v not in [None, "", "-"]:
++                            return v
++                    return None
++
++                comb_eff = _get_eff(["combustion_efficiency", "combustion_eff", "eta_c"])
++                dest_eff = _get_eff(["destruction_efficiency", "destruction_eff", "eta_d"])
++                ef_n2o_val = emission_factors.get("n2o") if emission_factors.get("n2o") not in [None, "", "-"] else (
++                    emission_factors.get("ef_n2o") if emission_factors.get("ef_n2o") not in [None, "", "-"] else flat_inputs.get("ef_n2o", 0.0)
++                )
++
+                 return calculator.calculate(
+                     gas_volume=vol_m3,
+                     ch4_fraction=ch4_content,
+@@ -468,7 +482,9 @@ class CalculationDispatcher:
+                     ),
+                     fuel_unit="m3",
+                     fuel_type=flat_inputs.get("fuel_type"),
+-                    ef_n2o=emission_factors.get("n2o", 0.0),
++                    ef_n2o=float(ef_n2o_val or 0.0),
++                    combustion_efficiency=comb_eff,
++                    destruction_efficiency=dest_eff,
+                     operating_temperature=flat_inputs.get("operating_temperature")
+                     or flat_inputs.get("temperature"),
+                     temp_unit=flat_inputs.get("temp_unit", "C"),
+@@ -999,7 +1015,7 @@ class CalculationDispatcher:
+                 )
+                 ch4_slip = self._optional_fraction(
+                     flat_inputs,
+-                    ["agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor"],
++                    ["agr_ch4_slip_pct", "ch4_slip_pct", "agr_ch4_slip", "ch4_slip_fraction", "methane_slip_factor", "ch4_slip"],
+                     0.001,
+                 )
+                 ctrl_eff = self._optional_fraction(
+

@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+2025 Process Breakdown:
+  GWP100 -> venting: 11691.798552 flaring: 48.35457375000001 combustion: 8414.37951643324
+  GWP20  -> venting: 35159.21 flaring: 64.5 combustion: 8451.92
+

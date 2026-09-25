@@ -1,0 +1,2 @@
+Successfully clicked on the element
+Page navigated to http://localhost:5173/.

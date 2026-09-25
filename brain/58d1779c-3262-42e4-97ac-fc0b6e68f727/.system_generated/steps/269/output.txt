@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -255,7 +255,6 @@
+ from routes.qaqc import qaqc_bp
+ 
+ app.register_blueprint(auth_bp, url_prefix="/api/auth")
+-csrf.exempt(auth_bp)
+ app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
+ app.register_blueprint(facilities_bp, url_prefix="/api/facilities")
+ app.register_blueprint(data_bp, url_prefix="/api/data")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

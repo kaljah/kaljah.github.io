@@ -1,0 +1,88 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 1910 lines>
+[2026-09-22 17:30:48,541] INFO in app: GET /api/notifications 200 [0.005s] [ReqID: 6fda0e63-ae0f-4881-962f-a1817655a039]
+127.0.0.1 - - [22/Sep/2026 17:30:48] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 17:30:48,655] INFO in app: GET /api/notifications/stream 200 [0.005s] [ReqID: 37545aab-b74e-4e88-bc00-3441844e8f3d]
+127.0.0.1 - - [22/Sep/2026 17:30:48] "GET /api/notifications/stream?last_id=43 HTTP/1.1" 200 -
+[2026-09-22 17:30:48,922] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 17:30:48,930] INFO in emissions: [Emissions] Scope 1 count: 2534
+[2026-09-22 17:30:48,931] INFO in app: GET /api/custom-factors 200 [0.011s] [ReqID: b9293355-1f78-4334-884f-b285458c9286]
+127.0.0.1 - - [22/Sep/2026 17:30:48] "GET /api/custom-factors HTTP/1.1" 200 -
+[2026-09-22 17:30:48,947] INFO in app: GET /api/sources 200 [0.020s] [ReqID: 454a9c80-00de-4ae1-b57a-0ed40af37c41]
+[2026-09-22 17:30:48,948] INFO in app: GET /api/emission-factors/process-types/upstream 200 [0.010s] [ReqID: 80a57898-02bc-4792-a222-ec2ec314ebf8]
+127.0.0.1 - - [22/Sep/2026 17:30:48] "GET /api/sources HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 17:30:48] "GET /api/emission-factors/process-types/upstream HTTP/1.1" 200 -
+[2026-09-22 17:30:48,958] INFO in app: GET /api/emissions 200 [0.042s] [ReqID: c4b75a9f-82a7-4c58-8674-f090029b966c]
+127.0.0.1 - - [22/Sep/2026 17:30:48] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 17:30:48,964] INFO in app: GET /api/facilities/ 200 [0.052s] [ReqID: d7678e33-611e-4872-8f98-2736fc4cc43b]
+127.0.0.1 - - [22/Sep/2026 17:30:48] "GET /api/facilities/ HTTP/1.1" 200 -
+[2026-09-22 17:30:48,981] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 17:30:48,987] INFO in emissions: [Emissions] Scope 1 count: 2534
+[2026-09-22 17:30:49,001] INFO in app: GET /api/emissions 200 [0.021s] [ReqID: b646b2fe-8b0b-4517-a2dc-03bec2cde15a]
+127.0.0.1 - - [22/Sep/2026 17:30:49] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 17:30:49,034] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 17:30:49,044] INFO in emissions: [Emissions] Scope 1 count: 2534
+[2026-09-22 17:30:49,074] INFO in app: GET /api/emissions 200 [0.054s] [ReqID: 815eb7dd-9038-4a42-a176-d5f7a34faad0]
+127.0.0.1 - - [22/Sep/2026 17:30:49] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 17:30:58,073] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 275c07db-a6cb-4bc9-bd1a-6018e68f500d]
+[2026-09-22 17:30:58,074] INFO in app: GET /api/auth/me 200 [0.003s] [ReqID: 281c2ee3-7b88-4e31-8772-cce0ab2e17fb]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/csrf-token HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-22 17:30:58,095] INFO in app: GET /api/auth/settings 200 [0.003s] [ReqID: 6995fee0-9ab0-464c-b6fb-d76e686dde4d]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-22 17:30:58,177] INFO in app: GET /api/notifications 200 [0.008s] [ReqID: 215d2118-ab84-44e9-a301-83cc47178c05]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/notifications HTTP/1.1" 200 -
+[2026-09-22 17:30:58,302] INFO in app: GET /api/notifications/stream 200 [0.005s] [ReqID: af84d971-c0ea-4624-b6bd-82bd6d00f825]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/notifications/stream?last_id=43 HTTP/1.1" 200 -
+[2026-09-22 17:30:58,693] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 17:30:58,703] INFO in app: GET /api/facilities/ 200 [0.016s] [ReqID: b390969d-b1c2-4786-9db9-5f26838afcee]
+[2026-09-22 17:30:58,704] INFO in app: GET /api/custom-factors 200 [0.011s] [ReqID: 8785834b-1b98-49d1-98ec-52f1cfde874c]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/facilities/ HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/custom-factors HTTP/1.1" 200 -
+[2026-09-22 17:30:58,708] INFO in emissions: [Emissions] Scope 1 count: 2534
+[2026-09-22 17:30:58,722] INFO in app: GET /api/sources 200 [0.016s] [ReqID: bf24c46d-66d9-4470-b418-bfeae5c86740]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/sources HTTP/1.1" 200 -
+[2026-09-22 17:30:58,734] INFO in app: GET /api/emissions 200 [0.044s] [ReqID: ebfa1d61-4687-4bc8-9c9b-9feb6c41a0fd]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 17:30:58,756] INFO in app: GET /api/emission-factors/process-types/upstream 200 [0.005s] [ReqID: a7b138a3-d90a-4310-9ba2-599d1a6b4551]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/emission-factors/process-types/upstream HTTP/1.1" 200 -
+[2026-09-22 17:30:58,758] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 17:30:58,765] INFO in emissions: [Emissions] Scope 1 count: 2534
+[2026-09-22 17:30:58,786] INFO in app: GET /api/emissions 200 [0.032s] [ReqID: 72700614-fe48-45e6-b117-d46c62816aad]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 17:30:58,798] INFO in emissions: [Emissions] Fetch requested by user_id: 1
+[2026-09-22 17:30:58,803] INFO in emissions: [Emissions] Scope 1 count: 2534
+[2026-09-22 17:30:58,817] INFO in app: GET /api/emissions 200 [0.021s] [ReqID: ae5407c7-4bb7-412c-8f3d-3cc00f7c597a]
+127.0.0.1 - - [22/Sep/2026 17:30:58] "GET /api/emissions?scope=1&limit=10&offset=0 HTTP/1.1" 200 -
+[2026-09-22 17:31:08,245] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 38d67e68-650a-4a63-99cc-82b06b61e60b]
+[2026-09-22 17:31:08,246] INFO in app: GET /api/auth/me 200 [0.002s] [ReqID: 3c87e2b0-24f8-4b04-b655-f0b95b3a926e]
+127.0.0.1 - - [22/Sep/2026 17:31:08] "GET /api/csrf-token HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 17:31:08] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-22 17:31:08,265] INFO in app: GET /api/auth/settings 200 [0.002s] [ReqID: 06811535-dc3a-4e69-bb74-7c60aaad32a7]
+127.0.0.1 - - [22/Sep/2026 17:31:08] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-22 17:31:22,467] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: a1cb76a0-7e7b-41f4-a99d-228b6881059f]
+127.0.0.1 - - [22/Sep/2026 17:31:22] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-22 17:31:22,469] INFO in app: GET /api/auth/me 200 [0.003s] [ReqID: a160bfec-6efa-47de-848c-d3495edbc701]
+127.0.0.1 - - [22/Sep/2026 17:31:22] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-22 17:31:22,484] INFO in app: GET /api/auth/settings 200 [0.002s] [ReqID: 2a7b5672-5f5a-4b8e-a1d8-0548ba70b9b5]
+127.0.0.1 - - [22/Sep/2026 17:31:22] "GET /api/auth/settings HTTP/1.1" 200 -
+[2026-09-22 17:42:31,954] INFO in app: POST /api/auth/login 400 [0.001s] [ReqID: 92e7beca-91a0-4efb-80a6-ba5455e91153]
+127.0.0.1 - - [22/Sep/2026 17:42:31] "POST /api/auth/login HTTP/1.1" 400 -
+127.0.0.1 - - [22/Sep/2026 17:42:31] "POST /api/emissions/ HTTP/1.1" 400 -
+[2026-09-22 17:42:41,460] INFO in app: GET /api/auth/me 200 [0.000s] [ReqID: b1bd3d36-4dab-4fe4-bda0-d1b0c25892f9]
+127.0.0.1 - - [22/Sep/2026 17:42:41] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-22 17:42:41,466] INFO in app: POST /api/auth/login 400 [0.001s] [ReqID: f534cffb-c6ec-4278-b523-a57179d47640]
+127.0.0.1 - - [22/Sep/2026 17:42:41] "POST /api/auth/login HTTP/1.1" 400 -
+127.0.0.1 - - [22/Sep/2026 17:42:41] "POST /api/emissions/ HTTP/1.1" 400 -
+[2026-09-22 17:43:34,637] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: f1304314-09ec-4312-a78c-8f8e317b4aa0]
+127.0.0.1 - - [22/Sep/2026 17:43:34] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-22 17:43:34,736] INFO in app: POST /api/auth/login 200 [0.093s] [ReqID: 63e223d9-3a90-45f0-8ccd-f9069925c15b]
+127.0.0.1 - - [22/Sep/2026 17:43:34] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-22 17:43:34,743] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 516ffc29-52db-4ca6-ae24-284efa746f12]
+127.0.0.1 - - [22/Sep/2026 17:43:34] "GET /api/csrf-token HTTP/1.1" 200 -
+[_lookup_api_factor CALLED] fuel_name='Propane (Liquid)', in API_FACTORS: False
+[2026-09-22 17:43:34,758] INFO in app: POST /api/emissions/ 201 [0.008s] [ReqID: 53e1162f-53f9-4c80-83b4-164a97c9b583]
+127.0.0.1 - - [22/Sep/2026 17:43:34] "POST /api/emissions/ HTTP/1.1" 201 -
+

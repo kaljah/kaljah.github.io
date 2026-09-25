@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\auth.py:10:from extensions import db, limiter
+new\server\routes\auth.py:248:@limiter.limit("20 per 15 minutes")  # SEC-01 FIX: rely cleanly on Flask-Limiter
+new\server\routes\auth.py:301:@limiter.limit("5 per 15 minutes")
+
+
+

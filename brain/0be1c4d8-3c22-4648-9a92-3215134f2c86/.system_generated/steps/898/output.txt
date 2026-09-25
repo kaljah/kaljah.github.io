@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1116,"LineContent":"@dashboard_bp.route(\"/intensity-stats\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1507,"LineContent":"    Pure query logic for /intensity-stats — returns a plain Python list."}

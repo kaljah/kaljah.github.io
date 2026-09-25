@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+new\server\background_processor.py:494:                    emission_obj, row_errors = _process_row_facilities(
+new\server\background_processor.py:864:def _process_row_scope2(
+new\server\background_processor.py:1075:def _process_row_scope3_eeio(
+new\server\background_processor.py:1176:def _process_row_scope3(
+new\server\background_processor.py:1305:def _process_row_sources(row, user_id, fac_name_map, fac_id_map):
+new\server\background_processor.py:1347:def _process_row_production(row, user_id, fac_name_map, fac_id_map, 
+batch_prod_map=None):
+new\server\background_processor.py:1441:def _process_row_mitigation(row, user_id, fac_name_map, fac_id_map):
+new\server\background_processor.py:1515:def _process_row_custom_factors(row, user_id):
+new\server\background_processor.py:1545:def _process_row_facilities(row, user_id, overwrite_duplicates):
+new\server\background_processor.py:1621:def _process_row(
+
+
+

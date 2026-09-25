@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+CDP tabs: 200 3
+Tab: Carbon Tech http://localhost:5173/login
+Tab: Omnibox Popup chrome://omnibox-popup.top-chrome/
+Tab: Omnibox Popup chrome://omnibox-popup.top-chrome/omnibox_popup_aim.html
+

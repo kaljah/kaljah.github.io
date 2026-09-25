@@ -1,0 +1,176 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -884,10 +884,60 @@
+                     gwp_dict=gwp_dict,
+                 )
+ 
+-            elif process_type in ["equipment_fugitive", "wellhead_fugitive", "separator_fugitive"]:
+-                count = self._require_float(
+-                    flat_inputs,
+-                    ["equipment_count", "well_count", "count", "amount", "quantity"],
++            elif process_type in ["fugitive_component", "component_fugitive"]:
++                comps_dict = flat_inputs.get("component_counts")
++                if not comps_dict and (
++                    flat_inputs.get("component_type")
++                    or flat_inputs.get("count")
++                    or flat_inputs.get("amount")
++                    or flat_inputs.get("quantity")
++                ):
++                    c_type = str(flat_inputs.get("component_type") or "valves")
++                    c_count = float(
++                        flat_inputs.get("count")
++                        or flat_inputs.get("amount")
++                        or flat_inputs.get("quantity")
++                        or 0
++                    )
++                    c_ef = float(
++                        emission_factors.get("ch4")
++                        or emission_factors.get("factor")
++                        or flat_inputs.get("ef")
++                        or 0.0
++                    )
++                    c_unit = str(
++                        emission_factors.get("unit")
++                        or flat_inputs.get("unit")
++                        or "kg/hr"
++                    )
++                    comps_dict = {
++                        c_type: {"count": c_count, "ef": c_ef, "unit": c_unit}
++                    }
++
++                ch4_content = self._optional_fraction(
++                    flat_inputs, ["ch4_content", "ch4_fraction", "c1"], 0.85
++                )
++                return calculator.calculate(
++                    component_counts=comps_dict or {},
++                    ch4_content=ch4_content,
++                    uncertainties=uncertainties,
++                    gwp_dict=gwp_dict,
++                )
++
++            elif process_type in [
++                "equipment_fugitive",
++                "wellhead_fugitive",
++                "separator_fugitive",
++                "gathering_boosting",
++                "gas_processing",
++                "transmission_storage",
++                "refinery_fugitive",
++                "distribution_fugitive",
++                "lng_operations",
++            ]:
++                count = self._require_float(
++                    flat_inputs,
++                    ["equipment_count", "well_count", "separator_count", "count", "amount", "quantity"],
+                     "equipment count",
+                 )
+                 ef = float(
+@@ -908,10 +908,10 @@
+                     gwp_dict=gwp_dict,
+                 )
+ 
+-            elif process_type == "agr":
++            elif process_type in ["agr", "acid_gas_removal"]:
+                 agr_vol = self._require_float(
+                     flat_inputs,
+-                    ["agr_throughput", "amount", "quantity"],
++                    ["agr_throughput", "gas_throughput", "amount", "quantity", "throughput"],
+                     "gas throughput",
+                 )
+                 vol_mmscf = self._normalize_volume(
+@@ -918,16 +918,19 @@
+                 )
+                 raw_co2_in = self._require_float(
+-                    flat_inputs, ["agr_co2_in", "co2_in"], "inlet CO2 mole %"
+-                )
+-                raw_co2_out = self._require_float(
+-                    flat_inputs, ["agr_co2_out", "co2_out"], "outlet CO2 mole %"
+-                )
+-
+-                if raw_co2_in > 1.0 or raw_co2_out > 1.0:
+-                    co2_in = raw_co2_in / 100.0 if raw_co2_in > 1.0 else raw_co2_in
+-                    co2_out = (raw_co2_out / 100.0) if raw_co2_in > 1.0 else (raw_co2_out / 100.0 if raw_co2_out > 1.0 else raw_co2_out)
++                    flat_inputs, ["agr_co2_in", "co2_in", "co2_content"], "inlet CO2 mole %"
++                )
++                raw_co2_out = self._optional_fraction(
++                    flat_inputs, ["agr_co2_out", "co2_out"], 0.001
++                )
++
++                if raw_co2_in > 1.0:
++                    co2_in = raw_co2_in / 100.0
+                 else:
+                     co2_in = raw_co2_in
++
++                if raw_co2_out > 1.0:
++                    co2_out = raw_co2_out / 100.0
++                else:
+                     co2_out = raw_co2_out
+ 
+                 if co2_out > co2_in:
+@@ -941,7 +941,7 @@
+                     0.001,
+                 )
+                 ctrl_eff = self._optional_fraction(
+-                    flat_inputs, ["agr_control_eff", "control_efficiency"], 0.0
++                    flat_inputs, ["agr_control_eff", "control_efficiency", "removal_efficiency"], 0.0
+                 )
+                 ctrl_type = (
+                     flat_inputs.get("agr_control_type")
+@@ -960,6 +960,54 @@
+                     gwp_dict=gwp_dict,
+                 )
+ 
++            elif process_type in ["cogen_allocation", "cogen"]:
++                tot_em = self._require_float(
++                    flat_inputs,
++                    ["total_emissions", "amount", "quantity"],
++                    "total emissions",
++                )
++                heat_out = self._require_float(
++                    flat_inputs, ["heat_output"], "heat output"
++                )
++                power_out = self._require_float(
++                    flat_inputs, ["power_output"], "power output"
++                )
++                c_method = flat_inputs.get("cogen_method") or flat_inputs.get(
++                    "method", "wri_efficiency"
++                )
++                return calculator.calculate(
++                    total_emissions=tot_em,
++                    heat_output=heat_out,
++                    power_output=power_out,
++                    method=c_method,
++                    uncertainties=uncertainties,
++                )
++
++            elif process_type in [
++                "stoichiometry",
++                "chemical_production",
++                "nitric_acid_production",
++                "adipic_acid_production",
++            ]:
++                raw_amt = self._require_float(
++                    flat_inputs,
++                    ["quantity", "amount", "fuel_mass", "production_amount"],
++                    "mass / production amount",
++                )
++                carbon_content = self._optional_fraction(
++                    flat_inputs,
++                    ["carbon_content", "c_content"],
++                    0.85,
++                )
++
++                return calculator.calculate(
++                    fuel_mass=raw_amt,
++                    carbon_content=carbon_content,
++                    uncertainties=uncertainties,
++                    mass_unit=unit,
++                    gwp_dict=gwp_dict,
++                )
++
+             elif process_type == "dehydrator":
+                 throughput = (
+                     flat_inputs.get("dehy_throughput")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,25 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -301,6 +301,7 @@
+ 
+       // Weighted Intensity Calculation
+       let weightedIntensity = 0;
++      let hasProd = false;
+       if (intensityData && intensityData.length > 0) {
+         let totalEmissionsForIntensity = 0;
+         let totalBoeForIntensity = 0;
+@@ -311,9 +311,11 @@
+         });
+         if (totalBoeForIntensity > 0) {
+           weightedIntensity = totalEmissionsForIntensity / totalBoeForIntensity;
++          hasProd = true;
+         }
+       }
+       setIntensity(weightedIntensity);
++      setHasProductionData(hasProd);
+ 
+       // YoY Variance Calculation
+       if (currentYear !== "all") {
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":585,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":604,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":623,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":642,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":889,"LineContent":"                \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":764,"LineContent":"          \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":778,"LineContent":"          \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1416,"LineContent":"                \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1455,"LineContent":"                  \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ReferenceData.jsx","LineNumber":404,"LineContent":"        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1381,"LineContent":"                                    \u003cselect value={filterActivity} onChange={(e) =\u003e { setFilterActivity(e.target.value); setFilterDivision(''); }} className=\"component-select\" style={{ width: 'auto' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1386,"LineContent":"                                    \u003cselect value={filterDivision} onChange={(e) =\u003e setFilterDivision(e.target.value)} className=\"component-select\" style={{ width: 'auto' }} disabled={!filterActivity}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1391,"LineContent":"                                    \u003cselect value={filterRegion} onChange={(e) =\u003e setFilterRegion(e.target.value)} className=\"component-select\" style={{ width: 'auto' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1397,"LineContent":"                                        \u003cselect value={filterYear} onChange={(e) =\u003e setFilterYear(e.target.value)} className=\"component-select\" style={{ width: 'auto' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2107,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2125,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2205,"LineContent":"                                            \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2326,"LineContent":"                                                \u003cselect name=\"activity\" value={facilityForm.activity} onChange={(e) =\u003e setFacilityForm({ ...facilityForm, activity: e.target.value, division: '' })} className=\"component-select\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2333,"LineContent":"                                                \u003cselect name=\"division\" value={facilityForm.division} onChange={handleFacilityChange} className=\"component-select\" disabled={!facilityForm.activity}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2348,"LineContent":"                                                \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2362,"LineContent":"                                                \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2377,"LineContent":"                                                \u003cselect name=\"segment\" value={facilityForm.segment} onChange={handleFacilityChange} className=\"component-select\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2484,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2501,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2534,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2552,"LineContent":"                                            \u003cselect value={prodForm.oil_unit} onChange={(e) =\u003e setProdForm({ ...prodForm, oil_unit: e.target.value })} className=\"component-select\" style={{ width: '80px' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2562,"LineContent":"                                            \u003cselect value={prodForm.gas_unit} onChange={(e) =\u003e setProdForm({ ...prodForm, gas_unit: e.target.value })} className=\"component-select\" style={{ width: '80px' }}\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2646,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2663,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":2700,"LineContent":"                                        \u003cselect value={sourceForm.type} onChange={(e) =\u003e setSourceForm({ ...sourceForm, type: e.target.value })} className=\"component-select\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3152,"LineContent":"                                            \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3197,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3214,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3257,"LineContent":"                                        \u003cselect value={mitigationForm.type} onChange={(e) =\u003e setMitigationForm({ ...mitigationForm, type: e.target.value })} className=\"component-select\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3271,"LineContent":"                                        \u003cselect value={mitigationForm.status} onChange={(e) =\u003e setMitigationForm({ ...mitigationForm, status: e.target.value })} className=\"component-select\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3356,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3377,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3397,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3425,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3444,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3469,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3685,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3706,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3726,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3761,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":3789,"LineContent":"                                        \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1021,"LineContent":"                \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1041,"LineContent":"                \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":1062,"LineContent":"              \u003cselect"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.jsx","LineNumber":458,"LineContent":"                            \u003cselect"}
+(...14 more results not shown)

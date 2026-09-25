@@ -1,0 +1,33 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\.env.example. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -19,4 +19,27 @@
+ 
+ # Allowed CORS Origins (comma-separated)
+ ALLOWED_ORIGINS=http://localhost:5173,http://localhost:5174,http://localhost:3000,http://127.0.0.1:5173
++
++# ===================================================
++# Admin Account Seeding (SECURITY CRITICAL)
++# ===================================================
++# Set SEED_ADMIN=true ONLY during initial setup, then remove or set to false.
++# NEVER commit .env with SEED_ADMIN=true to version control.
++# In production, ADMIN_PASSWORD must NOT be a known-weak value.
++SEED_ADMIN=false
++ADMIN_EMAIL=your-admin@company.com
++ADMIN_PASSWORD=CHANGEME_use_a_strong_unique_password_here
++ADMIN_FULL_NAME=System Administrator
++
++# Optional IT admin account
++# IT_ADMIN_EMAIL=it-admin@company.com
++# IT_ADMIN_PASSWORD=CHANGEME_strong_password
++
++# ===================================================
++# Rate Limiting
++# ===================================================
++RATELIMIT_DEFAULT=200 per minute
++# For multi-worker production (requires Redis):
++# RATELIMIT_STORAGE_URI=redis://localhost:6379/0
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

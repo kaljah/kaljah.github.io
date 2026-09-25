@@ -1,0 +1,48 @@
+
+The command exited with code 0.
+Output:
+
+Name                           Length LastWriteTime        
+----                           ------ -------------        
+__pycache__                           9/24/2026 12:21:29 AM
+agent_01_launcher.py           3128   9/23/2026 9:49:50 PM 
+agent_01_report.md             1945   9/23/2026 10:05:07 PM
+agent_02_bugs.json             72     9/24/2026 12:29:51 AM
+agent_02_credentials.json      1924   9/23/2026 10:13:02 PM
+agent_02_report.md             1145   9/23/2026 10:13:02 PM
+agent_02_seed.py               16827  9/23/2026 10:08:13 PM
+agent_02_seeder.py             6071   9/23/2026 9:50:19 PM 
+agent_02_seed_db.py            11283  9/23/2026 10:12:32 PM
+agent_03_admin_api.py          11220  9/24/2026 12:28:40 AM
+agent_03_bugs.json             2      9/24/2026 12:31:52 AM
+agent_03_report.md             1575   9/24/2026 12:31:52 AM
+agent_04_bugs.json             2      9/24/2026 12:33:25 AM
+agent_04_report.md             1196   9/24/2026 12:33:25 AM
+agent_04_superuser_api.py      6367   9/24/2026 12:29:01 AM
+agent_05_bugs.json             2      9/24/2026 12:36:46 AM
+agent_05_report.md             945    9/24/2026 12:36:46 AM
+agent_05_user_api.py           6576   9/24/2026 12:35:02 AM
+agent_06_bugs.json             2      9/24/2026 12:39:47 AM
+agent_06_itadmin_api.py        3850   9/24/2026 12:38:36 AM
+agent_06_report.md             847    9/24/2026 12:39:47 AM
+agent_07_bugs.json             2      9/24/2026 12:29:55 AM
+agent_07_report.md             3849   9/23/2026 11:07:17 PM
+agent_07_viewer_api.py         4209   9/23/2026 11:01:47 PM
+agent_08_admin_playwright.py   12020  9/23/2026 11:08:31 PM
+agent_08_bugs.json             2      9/24/2026 12:39:54 AM
+agent_08_report.md             3380   9/23/2026 11:10:36 PM
+agent_09_bugs.json             2      9/24/2026 12:39:57 AM
+agent_09_report.md             756    9/23/2026 11:10:00 PM
+agent_09_superuser_selenium.py 13271  9/23/2026 11:08:49 PM
+agent_10_bugs.json             2      9/24/2026 12:40:00 AM
+agent_10_report.md             1946   9/23/2026 11:10:35 PM
+agent_10_user_playwright.py    9278   9/23/2026 11:08:42 PM
+agent_11_bugs.json             2      9/24/2026 12:40:03 AM
+agent_11_itadmin_selenium.py   9176   9/23/2026 11:09:01 PM
+agent_11_report.md             502    9/23/2026 11:11:11 PM
+agent_12_compiler.py           8274   9/23/2026 11:12:12 PM
+api_tester_base.py             5713   9/24/2026 12:21:04 AM
+MASTER_BUG_REPORT.md           1851   9/24/2026 12:40:07 AM
+
+
+

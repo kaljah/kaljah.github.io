@@ -1,0 +1,21 @@
+You have 2 background task(s) currently running:
+{
+  "taskId":  "fe679799-378f-4b64-973a-d55f622dfbba/task-33",
+  "toolName":  "run_command",
+  "toolSummary":  "Starting Vite frontend",
+  "description":  "npm run dev",
+  "startTime":  "2026-09-22T20:21:42.113232900Z",
+  "stepIndex":  33,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/fe679799-378f-4b64-973a-d55f622dfbba/.system_generated/tasks/task-33.log",
+  "isDaemon":  true
+}
+{
+  "taskId":  "fe679799-378f-4b64-973a-d55f622dfbba/task-174",
+  "toolName":  "run_command",
+  "toolSummary":  "Starting Chrome daemon process",
+  "description":  "cmd.exe /c \"`\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe`\" --headless=new --remote-debugging-port=9222 --remote-allow-origins=* --user-data-dir=`\"C:\\Users\\samsung\\AppData\\Local\\Temp\\chrome_dev_test`\" `\"http://localhost:5173`\" 2>&1\"",
+  "startTime":  "2026-09-22T21:23:39.823459700Z",
+  "stepIndex":  174,
+  "logUri":  "file:///C:/Users/samsung/.gemini/antigravity/brain/fe679799-378f-4b64-973a-d55f622dfbba/.system_generated/tasks/task-174.log",
+  "isDaemon":  true
+}

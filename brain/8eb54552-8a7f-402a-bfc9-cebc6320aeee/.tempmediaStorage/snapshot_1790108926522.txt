@@ -1,0 +1,200 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=6_0 RootWebArea "Carbon Tech" url="http://localhost:5173/"
+  uid=10_0 complementary
+    uid=10_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=10_2 StaticText "Carbon tech"
+    uid=10_3 button "Close navigation"
+    uid=10_4 navigation
+      uid=10_5 link "Dashboard" url="http://localhost:5173/"
+        uid=10_6 StaticText "Dashboard"
+      uid=10_7 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=10_8 StaticText "Carbon Intensity"
+      uid=10_9 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=10_10 StaticText "Methane Intensity"
+      uid=10_11 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=10_12 StaticText "SBTi Net-Zero"
+      uid=10_13 link "Calculations" url="http://localhost:5173/emissions"
+        uid=10_14 StaticText "Calculations"
+      uid=10_15 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=10_16 StaticText "Emissions Map"
+      uid=10_17 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=10_18 StaticText "Manage Data"
+      uid=10_19 link "Reports" url="http://localhost:5173/reports"
+        uid=10_20 StaticText "Reports"
+      uid=10_21 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=10_22 StaticText "Reference Data"
+      uid=10_23 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=10_24 StaticText "Uncertainty"
+      uid=10_25 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=10_26 StaticText "Audit Trail"
+      uid=10_27 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=10_28 StaticText "QA/QC & Diagnostics"
+    uid=10_29 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=10_30 StaticText "Settings"
+    uid=10_31 StaticText "A"
+    uid=10_32 StaticText "Administrator"
+    uid=10_33 StaticText "Sustainability Lead"
+  uid=10_34 main
+    uid=10_35 button "Open navigation menu"
+    uid=10_36 StaticText "Corporate ESG"
+    uid=11_0 StaticText "All Years"
+    uid=11_1 StaticText "All Supply Chains"
+    uid=11_2 StaticText "All Activities"
+    uid=11_3 StaticText "All Divisions"
+    uid=11_4 StaticText "All Regions"
+    uid=11_5 button "GWP-100"
+    uid=11_6 button "GWP-20"
+    uid=11_7 button "+ Set Target" description="Set emission targets in Manage Data"
+    uid=10_37 button "Notifications"
+    uid=10_38 button "User Profile" description="User Profile" focusable focused
+    uid=19_0 StaticText "Administrator"
+    uid=19_1 StaticText "Sustainability Lead"
+    uid=19_2 button "Sign Out"
+    uid=13_0 heading "GHG Emissions Dashboard" level="1"
+    uid=13_1 StaticText "Live Content • Updated 10:28 PM"
+    uid=13_2 heading "EMISSIONS OVERVIEW" level="2"
+    uid=13_3 StaticText "All Regions"
+    uid=13_4 button "Export Executive Brief (PDF)" description="Export multi-page executive summary PDF"
+    uid=13_5 StaticText "GROSS OPERATIONAL EMISSIONS (SCOPE 1+2)"
+    uid=13_6 StaticText "10.2K"
+    uid=13_7 StaticText "tCO₂e"
+    uid=13_8 StaticText "NET EMISSIONS"
+    uid=13_9 StaticText "10.2K"
+    uid=13_10 StaticText "tCO₂e"
+    uid=13_11 StaticText "Less"
+    uid=13_12 StaticText "0"
+    uid=13_13 StaticText "Mitigation"
+    uid=13_14 StaticText "TOTAL CH4 (METHANE)"
+    uid=13_15 StaticText "338.9"
+    uid=13_16 StaticText "tCH₄"
+    uid=13_17 StaticText "PERFORMANCE INTENSITY"
+    uid=13_18 StaticText "0.04"
+    uid=13_19 StaticText "kg/BOE"
+    uid=13_20 StaticText "CO₂e Intensity (Scope 1+2)"
+    uid=13_21 StaticText "Scope 1 (Direct)"
+    uid=13_22 StaticText "10.2K"
+    uid=13_23 StaticText " tCO₂e"
+    uid=13_24 StaticText "Scope 2 (Indirect)"
+    uid=13_25 StaticText "0"
+    uid=13_26 StaticText " tCO₂e"
+    uid=13_27 StaticText "Scope 3 (Supply Chain)"
+    uid=13_28 StaticText "0"
+    uid=13_29 StaticText " tCO₂e"
+    uid=13_30 heading "Emissions Trend & Projection" level="3"
+    uid=13_31 StaticText "Historical inventory trajectory with 5-year predictive forecast"
+    uid=13_32 button "Standard View"
+    uid=13_33 image "RNS legend icon"
+    uid=13_34 StaticText "RNS"
+    uid=13_41 application
+      uid=13_42 group
+      uid=13_43 group
+      uid=13_44 group
+      uid=13_45 group
+      uid=13_46 group
+      uid=13_47 group
+      uid=13_48 group
+      uid=13_49 group
+      uid=13_50 group
+      uid=13_51 group
+      uid=13_52 group
+      uid=13_53 group
+        uid=13_54 StaticText "2026"
+        uid=13_55 StaticText "0"
+        uid=16_0 StaticText "3.0k"
+        uid=16_1 StaticText "6.0k"
+        uid=16_2 StaticText "9.0k"
+        uid=16_3 StaticText "12.0k"
+    uid=13_60 heading "Emissions by Activity" level="3"
+    uid=13_61 image "E&P (Upstream) legend icon"
+    uid=13_62 StaticText "E&P (Upstream)"
+    uid=13_63 application
+      uid=13_64 group
+      uid=13_65 group
+      uid=13_66 group
+        uid=13_67 group
+          uid=18_0 group
+            uid=18_1 graphics-symbol
+      uid=13_70 group
+      uid=13_71 group
+      uid=13_72 group
+      uid=13_73 group
+      uid=13_74 group
+      uid=13_75 group
+      uid=13_76 group
+      uid=13_77 group
+      uid=13_78 group
+    uid=13_79 heading "Emissions by Source" level="3"
+    uid=13_80 image "Combustion legend icon"
+    uid=13_81 StaticText "Combustion"
+    uid=13_82 image "Flaring legend icon"
+    uid=13_83 StaticText "Flaring"
+    uid=13_84 image "Other legend icon"
+    uid=13_85 StaticText "Other"
+    uid=13_86 image "Venting legend icon"
+    uid=13_87 StaticText "Venting"
+    uid=13_88 application
+      uid=13_89 group
+      uid=13_90 group
+      uid=13_91 group
+        uid=13_92 group
+          uid=18_2 group
+            uid=18_3 graphics-symbol
+          uid=18_4 group
+            uid=18_5 graphics-symbol
+          uid=18_6 group
+            uid=18_7 graphics-symbol
+          uid=18_8 group
+            uid=18_9 graphics-symbol
+      uid=13_101 group
+      uid=13_102 group
+      uid=13_103 group
+      uid=13_104 group
+      uid=13_105 group
+      uid=13_106 group
+      uid=13_107 group
+      uid=13_108 group
+      uid=13_109 group
+    uid=13_110 heading "Categorical Emissions Overview" level="3"
+    uid=13_111 StaticText "Activity → Division → Region"
+    uid=13_112 StaticText "E&P (Upstream)"
+    uid=13_113 StaticText "DP"
+    uid=13_114 StaticText "RNS"
+    uid=13_115 StaticText " "
+    uid=13_116 StaticText "- "
+    uid=13_117 StaticText "GF"
+    uid=13_118 StaticText "10.2K"
+    uid=13_119 StaticText " "
+    uid=13_120 StaticText "tCO₂e"
+    uid=13_121 StaticText "LQS (Liquefaction)"
+    uid=13_122 StaticText "No emissions data for this activity"
+    uid=13_123 StaticText "RPC (Refining)"
+    uid=13_124 StaticText "No emissions data for this activity"
+    uid=13_125 StaticText "Cement & Clinker"
+    uid=13_126 StaticText "No emissions data for this activity"
+    uid=13_127 StaticText "Chemicals & Fertilizers"
+    uid=13_128 StaticText "No emissions data for this activity"
+    uid=13_129 StaticText "Steel & Iron (Acier DRI)"
+    uid=13_130 StaticText "No emissions data for this activity"
+    uid=13_131 StaticText "Upstream & Midstream Gas"
+    uid=13_132 StaticText "No emissions data for this activity"
+    uid=13_133 heading "Detailed Breakdown" level="3"
+    uid=13_134 StaticText "CATEGORY / SOURCE"
+    uid=13_135 StaticText "RESULTS (TCO₂E)"
+    uid=13_136 StaticText "Scope 1 (Direct)"
+    uid=13_137 StaticText "10.2K"
+    uid=13_138 StaticText "Stationary Combustion"
+    uid=13_139 StaticText "191.5"
+    uid=13_140 StaticText "Flaring"
+    uid=13_141 StaticText "210.2"
+    uid=13_142 StaticText "Venting"
+    uid=13_143 StaticText "6.7K"
+    uid=13_144 StaticText "Other Sources"
+    uid=13_145 StaticText "3K"
+    uid=13_146 Stat
+<truncated 740 bytes>
+
+[Snapshot truncated because it exceeded 8KB. Only showing first 8KB. Full snapshot saved to: C:/Users/samsung/.gemini/antigravity/brain/8eb54552-8a7f-402a-bfc9-cebc6320aeee/.tempmediaStorage/snapshot_full_1790108926511.txt]

@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2190,6 +2190,7 @@
+                 "co2_intensity": co2_int,
+                 "co2_intensity_gwp20": co2_int_gwp20,
+                 "scope1_intensity": scope1_int,
++                "scope1_intensity_gwp20": scope1_int_gwp20,
+                 "scope2_intensity": scope2_int,
+                 "scope3_intensity": scope3_int,
+                 "ch4_intensity": ch4_int,
+@@ -2229,6 +2229,7 @@
+                 "total_co2e": scope1_2_co2e,
+                 "total_co2e_gwp20": total_co2e_gwp20,
+                 "total_scope1": total_s1,
++                "total_scope1_gwp20": s1_gwp20,
+                 "total_scope2": s2_val,
+                 "total_scope3": scope3_co2e,
+                 "total_co2": ed["total_co2"],
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

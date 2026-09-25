@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\models.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -257,6 +257,7 @@
+     usage = db.Column(db.String(100))  # stored as stringified list or CSV
+     parent_fuel = db.Column(db.String(50))
+     source = db.Column(db.String(100))
++    description = db.Column(db.Text, nullable=True)
+     version = db.Column(db.String(20))
+     uncertainty = db.Column(db.Float)  # legacy fallback
+     co2_uncertainty = db.Column(db.Float)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

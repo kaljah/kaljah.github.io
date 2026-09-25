@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -291,11 +291,17 @@
+     }
+   };
+ 
+-  const handleMasterReportDownload = async () => {
++  const handleMasterReportDownload = async (targetFacilityId = null) => {
+     try {
+       setLoading(true);
+-      toast.info("Downloading Groupement Berkine 2025 Master Report (PDF)...");
+-      const response = await api.get("/reports/master-annual-report", {
++      const selectedId = targetFacilityId || (reportSelectedRegions.length === 1 ? reportSelectedRegions[0] : (regionId !== "all" ? regionId : null));
++      const isElMerk = selectedId === "170" || selectedId === 170;
++      const reportTitle = isElMerk ? "El Merk (Block 208) Master Report" : "Groupement Berkine Master Report";
++      const downloadFilename = isElMerk ? "El_Merk_2025_Annual_GHG_Report.pdf" : "Groupement_Berkine_2025_Annual_GHG_Report.pdf";
++
++      toast.info(`Downloading ${reportTitle} (PDF)...`);
++      const endpoint = selectedId ? `/reports/master-annual-report?facility_id=${selectedId}` : "/reports/master-annual-report";
++      const response = await api.get(endpoint, {
+         responseType: "blob",
+       });
+       const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+@@ -302,12 +302,12 @@
+       link.href = url;
+-      link.download = "Groupement_Berkine_2025_Annual_GHG_Report.pdf";
+-      document.body.appendChild(link);
+-      link.click();
+-      setTimeout(() => {
+-        link.remove();
+-        window.URL.revokeObjectURL(url);
+-      }, 1000);
+-      toast.success("Groupement Berkine Master Report downloaded successfully!");
++      link.download = downloadFilename;
++      document.body.appendChild(link);
++      link.click();
++      setTimeout(() => {
++        link.remove();
++        window.URL.revokeObjectURL(url);
++      }, 1000);
++      toast.success(`${reportTitle} downloaded successfully!`);
+     } catch (error) {
+       console.error("Master report download failed:", error);
+       toast.error("Failed to download Master Report.");
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

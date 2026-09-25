@@ -1,0 +1,6 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":39,"LineContent":"  // EEIO Quick Calculator State"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":64,"LineContent":"      toast.show(\"Error calculating EEIO emissions\", \"error\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":433,"LineContent":"        {/* EEIO Quick Spend Calculator */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":438,"LineContent":"              \u003cstrong style={{ color: \"#334155\" }}\u003eEEIO Quick Spend Calculator\u003c/strong\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":619,"LineContent":"        {/* EEIO Quick Spend Calculator */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":624,"LineContent":"              \u003cstrong style={{ color: \"#334155\" }}\u003eEEIO Quick Spend Calculator\u003c/strong\u003e"}

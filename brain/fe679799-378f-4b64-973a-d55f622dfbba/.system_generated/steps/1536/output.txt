@@ -1,0 +1,20 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+STARTING BACKEND TEST SUITE: UNCERTAINTY, AUDIT TRAIL, AND QA/QC
+================================================================================
+
+Authenticating Admin ('a@a') and IT Admin ('z@z')...
+Traceback (most recent call last):
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_uncertainty_audit_qaqc_backend.py", line 366, in <module>
+    success = run_backend_tests()
+              ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_uncertainty_audit_qaqc_backend.py", line 72, in run_backend_tests
+    admin_session = get_authenticated_session("a@a", "a")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_uncertainty_audit_qaqc_backend.py", line 38, in get_authenticated_session
+    raise Exception(f"Login failed for {email}: {login_res.status_code} {login_res.text}")
+Exception: Login failed for a@a: 404 {"code":404,"error":"Not found","request_id":"4a1be4c7-3504-42c6-9827-51f45e097980"}
+
+

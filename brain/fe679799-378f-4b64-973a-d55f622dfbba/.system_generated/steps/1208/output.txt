@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+(node:30176) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Connected! Contexts: 1
+Pages: 1
+ - http://localhost:5173/login
+

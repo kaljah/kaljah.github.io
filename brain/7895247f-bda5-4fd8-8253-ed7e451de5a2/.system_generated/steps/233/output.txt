@@ -1,0 +1,129 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  new\server\routes\data.py:126:                gas_amount=gas_amount,
+  new\server\routes\data.py:127:                oil_unit=oil_unit,
+  new\server\routes\data.py:128:                gas_unit=gas_unit,
+  new\server\routes\data.py:129:                activity=activity,
+  new\server\routes\data.py:130:                division=division,
+  new\server\routes\data.py:131:                field=field
+> new\server\routes\data.py:139:        log_details = f"{action.title()} Production Data for {year}-{month}: 
+{oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas"
+  new\server\routes\data.py:140:        log_activity_and_notify(
+  new\server\routes\data.py:141:            action=action,
+  new\server\routes\data.py:142:            record_id=str(rec_id),
+  new\server\routes\data.py:143:            user=user,
+  new\server\routes\data.py:144:            request=request,
+> new\server\routes\data.py:145:            entity='ProductionData',
+  new\server\routes\data.py:146:            details=log_details
+  new\server\routes\data.py:147:        )
+  new\server\routes\data.py:148:        db.session.commit()
+  new\server\routes\data.py:149:
+  new\server\routes\data.py:150:    try:
+  new\server\routes\data.py:151:        perform_upsert()
+  new\server\routes\data.py:152:    except IntegrityError:
+  new\server\routes\data.py:153:        # Concurrent insert occurred between check and insert; retry once as update
+  new\server\routes\data.py:154:        db.session.rollback()
+  new\server\routes\data.py:155:        try:
+> new\server\routes\data.py:165:            current_app.logger.error(f"Production save error: 
+{traceback.format_exc()}")
+> new\server\routes\data.py:166:        return jsonify({'error': 'Failed to save production data'}), 500
+  new\server\routes\data.py:167:
+  new\server\routes\data.py:168:    from routes.dashboard import clear_dashboard_cache
+  new\server\routes\data.py:169:    clear_dashboard_cache()
+> new\server\routes\data.py:170:    return jsonify({'message': 'Production data saved', 'id': saved_rec_id}), 201
+  new\server\routes\data.py:171:
+> new\server\routes\data.py:172:@data_bp.route('/production/<int:record_id>', methods=['DELETE'])
+  new\server\routes\data.py:173:@login_required
+> new\server\routes\data.py:174:def delete_production(record_id):
+  new\server\routes\data.py:175:    user = get_current_user()
+  new\server\routes\data.py:176:    if user and (user.role in ['auditor'] or is_it_role(user)):
+> new\server\routes\data.py:177:        return jsonify({'error': 'Read-only or IT administrative role cannot delete 
+operational production data.'}), 403
+> new\server\routes\data.py:178:    prod = db.session.get(ProductionData, record_id)
+  new\server\routes\data.py:179:    if not prod:
+> new\server\routes\data.py:180:        return jsonify({'error': 'Production record not found'}), 404
+  new\server\routes\data.py:181:    
+  new\server\routes\data.py:182:    if not require_facility_access(user, prod.facility_id):
+  new\server\routes\data.py:183:        return jsonify({'error': 'Access to this facility is denied'}), 403
+  new\server\routes\data.py:184:
+  new\server\routes\data.py:185:    try:
+  new\server\routes\data.py:186:        log_activity_and_notify(
+  new\server\routes\data.py:187:            action='DELETE',
+  new\server\routes\data.py:188:            record_id=str(record_id),
+  new\server\routes\data.py:189:            user=user,
+  new\server\routes\data.py:190:            request=request,
+> new\server\routes\data.py:191:            entity='ProductionData',
+> new\server\routes\data.py:192:            details=f"Deleted Production Data for facility {prod.facility_id} 
+({prod.year}-{prod.month})"
+  new\server\routes\data.py:193:        )
+  new\server\routes\data.py:194:        db.session.delete(prod)
+  new\server\routes\data.py:195:        db.session.commit()
+  new\server\routes\data.py:196:        from routes.dashboard import clear_dashboard_cache
+  new\server\routes\data.py:197:        clear_dashboard_cache()
+  new\server\routes\data.py:198:    except Exception as e:
+  new\server\routes\data.py:199:        db.session.rollback()
+> new\server\routes\data.py:200:        return jsonify({'error': 'Failed to delete production record'}), 500
+  new\server\routes\data.py:201:
+> new\server\routes\data.py:202:    return jsonify({'message': 'Production record deleted'})
+  new\server\routes\data.py:203:
+  new\server\routes\data.py:204:
+> new\server\routes\data.py:205:@data_bp.route('/production/bulk-import', methods=['POST'])
+  new\server\routes\data.py:206:@login_required
+> new\server\routes\data.py:207:def bulk_import_production():
+  new\server\routes\data.py:208:    user = get_current_user()
+  new\server\routes\data.py:209:    if user and (user.role in ['auditor'] or is_it_role(user)):
+> new\server\routes\data.py:210:        return jsonify({'error': 'Read-only or IT administrative role cannot modify 
+operational production data.'}), 403
+  new\server\routes\data.py:211:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\data.py:212:    data = request.get_json() or {}
+  new\server\routes\data.py:213:    records = data.get('records', [])
+  new\server\routes\data.py:214:    if not records:
+  new\server\routes\data.py:215:        return jsonify({'error': 'No records provided'}), 400
+  new\server\routes\data.py:216:    
+  new\server\routes\data.py:217:    imported_count = 0
+  new\server\routes\data.py:218:    facility_cache = {}
+  new\server\routes\data.py:219:
+  new\server\routes\data.py:220:    for rec in records:
+> new\server\routes\data.py:259:        existing = ProductionData.query.filter_by(
+  new\server\routes\data.py:260:            facility_id=facility.id,
+  new\server\routes\data.py:261:            year=year,
+  new\server\routes\data.py:262:            month=month
+  new\server\routes\data.py:263:        ).first()
+  new\server\routes\data.py:264:
+  new\server\routes\data.py:265:        from background_processor import _clean_float
+  new\server\routes\data.py:266:        oil_amount = _clean_float(rec.get('oil_amount'), default=0.0)
+  new\server\routes\data.py:267:        gas_amount = _clean_float(rec.get('gas_amount'), default=0.0)
+  new\server\routes\data.py:268:
+  new\server\routes\data.py:269:        if existing:
+> new\server\routes\data.py:278:            prod = ProductionData(
+  new\server\routes\data.py:279:                facility_id=facility.id,
+  new\server\routes\data.py:280:                year=year,
+  new\server\routes\data.py:281:                month=month,
+  new\server\routes\data.py:282:                oil_amount=oil_amount,
+  new\server\routes\data.py:283:                gas_amount=gas_amount,
+  new\server\routes\data.py:284:                oil_unit=rec.get('oil_unit', 'bbl'),
+  new\server\routes\data.py:285:                gas_unit=rec.get('gas_unit', 'mscf'),
+  new\server\routes\data.py:286:                activity=rec.get('activity') or facility.activity,
+  new\server\routes\data.py:287:                division=rec.get('division') or facility.division,
+  new\server\routes\data.py:288:                field=rec.get('field') or facility.field
+> new\server\routes\data.py:298:        return jsonify({'error': f'Failed to import production records: {str(e)}'}), 
+500
+  new\server\routes\data.py:299:
+  new\server\routes\data.py:300:    from routes.dashboard import clear_dashboard_cache
+  new\server\routes\data.py:301:    clear_dashboard_cache()
+> new\server\routes\data.py:302:    return jsonify({'message': f'{imported_count} production records imported'}), 201
+  new\server\routes\data.py:303:
+  new\server\routes\data.py:304:
+  new\server\routes\data.py:305:
+  new\server\routes\data.py:306:
+  new\server\routes\data.py:307:
+  new\server\routes\data.py:308:# ==========================================
+  new\server\routes\data.py:309:# OGMP 2.0 TOP-DOWN SURVEYS & TAXONOMY
+  new\server\routes\data.py:310:# ==========================================
+  new\server\routes\data.py:311:@data_bp.route('/methane-sources', methods=['GET'])
+  new\server\routes\data.py:312:@login_required
+
+
+

@@ -1,0 +1,57 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -758,7 +758,17 @@
+     return mapping
+ 
+ 
+-def _process_row_scope2(row, user_id, fac_name_map, fac_id_map, GRID_FACTORS, job_id, row_idx):
++def _process_row_scope2(
++    row,
++    user_id,
++    fac_name_map,
++    fac_id_map,
++    GRID_FACTORS,
++    job_id,
++    row_idx,
++    batch_keys=None,
++    overwrite_duplicates=False,
++):
+     from models import Scope2Emission
+ 
+     errors = []
+@@ -865,6 +865,32 @@
+             return None, errors
+         co2e = (kwh * ef) / 1000.0
+ 
++    key = (facility.id, year, month, source_type.strip().lower())
++    if batch_keys is not None:
++        if key in batch_keys:
++            existing_id = batch_keys[key]
++            if not overwrite_duplicates:
++                errors.append(
++                    f"Duplicate record: Scope 2 emission for '{facility.name}' "
++                    f"({year}-{month:02d}, source '{source_type}') already exists. "
++                    f"Enable 'Overwrite Duplicates' to replace it."
++                )
++                return None, errors
++            else:
++                from extensions import db
++                existing_obj = db.session.get(Scope2Emission, existing_id) if existing_id else None
++                if existing_obj:
++                    existing_obj.source_type = source_type
++                    existing_obj.electricity_kwh = kwh
++                    existing_obj.heat_mmbtu = heat_mmbtu
++                    existing_obj.emission_factor = ef
++                    existing_obj.co2e = co2e
++                    existing_obj.grid_region = grid_region
++                    existing_obj.location = grid_region
++                    existing_obj.status = "Pending"
++                    return None, []
++        batch_keys[key] = None
++
+     emission = Scope2Emission(
+         facility_id=facility.id,
+         year=year,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

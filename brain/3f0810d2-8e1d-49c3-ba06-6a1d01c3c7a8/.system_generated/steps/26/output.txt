@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+
+    "severity": "Critical",
+    "severity": "Critical",
+    "severity": "Critical",
+    "severity": "Critical",
+    "severity": "Critical",
+    "severity": "Critical",
+    "severity": "High",
+    "severity": "High",
+    "severity": "High",
+    "severity": "High",
+    "severity": "High",
+    "severity": "High",
+    "severity": "High",
+    "severity": "High",
+    "severity": "High",
+    "severity": "Medium",
+    "severity": "Medium",
+    "severity": "Medium",
+    "severity": "Medium",
+    "severity": "Medium",
+    "severity": "Medium",
+    "severity": "Medium",
+TOTAL_BUGS: 22
+SEVERITY_COUNTS: {'Critical': 6, 'High': 9, 'Medium': 7}
+
+
+

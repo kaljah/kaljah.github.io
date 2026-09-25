@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Total missing fuel records in DB: 143
+How many of them have qa_flag isnot(None)?: 45
+Total missing amount records in DB: 282
+How many of them have qa_flag isnot(None)?: 45
+

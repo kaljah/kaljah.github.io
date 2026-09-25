@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\utils\ModernReportGenerator.js:715:      doc.addImage(profileImg, "JPEG", margin, curY, profileW, 
+profileH);
+  new\client\src\utils\ModernReportGenerator.js:716:
+  new\client\src\utils\ModernReportGenerator.js:717:      const textX = margin + profileW + 15;
+  new\client\src\utils\ModernReportGenerator.js:718:      const textW = pageWidth - margin - textX;
+  new\client\src\utils\ModernReportGenerator.js:719:
+  new\client\src\utils\ModernReportGenerator.js:720:      doc.setFontSize(11);
+
+
+

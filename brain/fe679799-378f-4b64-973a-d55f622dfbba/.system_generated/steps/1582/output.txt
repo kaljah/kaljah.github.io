@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\test_uncertainty_audit_qaqc_backend.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -189,16 +189,16 @@
+ 
+     # Test 2.4: Search Query Filtering
+     try:
+-        res = admin_session.get(f"{BASE_URL}/audit?search=LOGIN")
+-        if res.status_code == 200:
+-            d = res.json()
+-            logs = d.get("logs", [])
+-            all_match = all("LOGIN" in (l.get("action", "") + l.get("details", "") + l.get("user", "")) for l in logs[:10])
+-            record_test("Audit", "Search Query 'LOGIN'", len(logs) > 0 and all_match, f"Matches: {len(logs)}")
+-        else:
+-            record_test("Audit", "Search Query 'LOGIN'", False, f"Status: {res.status_code}")
+-    except Exception as e:
+-        record_test("Audit", "Search Query 'LOGIN'", False, str(e))
++        res = admin_session.get(f"{BASE_URL}/audit?search=AGT")
++        if res.status_code == 200:
++            d = res.json()
++            logs = d.get("logs", [])
++            all_match = all("AGT" in (str(l.get("action", "")) + str(l.get("details", "")) + str(l.get("user", "")) + str(l.get("recordId", ""))) for l in logs[:10])
++            record_test("Audit", "Search Query 'AGT'", len(logs) > 0 and all_match, f"Matches: {len(logs)}")
++        else:
++            record_test("Audit", "Search Query 'AGT'", False, f"Status: {res.status_code}")
++    except Exception as e:
++        record_test("Audit", "Search Query 'AGT'", False, str(e))
+ 
+     # Test 2.5: Action Filter
+     try:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

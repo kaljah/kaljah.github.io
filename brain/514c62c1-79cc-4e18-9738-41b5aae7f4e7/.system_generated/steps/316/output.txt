@@ -1,0 +1,28 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":451,"LineContent":"    is_20 = str(gwp_horizon).lower() in (\"20\", \"gwp20\", \"20yr\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":462,"LineContent":"        gwp20_val = round(co2_val + (84.0 * ch4_val) + (264.0 * n2o_val), 2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":467,"LineContent":"            \"scope1_total\": gwp20_val if is_20 else gwp100_val,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":469,"LineContent":"            \"scope1_total_gwp20\": gwp20_val,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1486,"LineContent":"    gwp20_factors = get_active_gwp(horizon=\"20\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1487,"LineContent":"    ch4_gwp20 = float(gwp20_factors.get(\"CH4\", 82.5))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1488,"LineContent":"    n2o_gwp20 = float(gwp20_factors.get(\"N2O\", 268.0))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1519,"LineContent":"        # Exact GWP20 formula using dynamic active standard"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1521,"LineContent":"        s1_gwp20 = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1523,"LineContent":"            + (ed[\"total_ch4\"] * ch4_gwp20)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1524,"LineContent":"            + (ed[\"total_n2o\"] * n2o_gwp20)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1526,"LineContent":"        total_gwp20 = s1_gwp20 + ed[\"total_s2\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1530,"LineContent":"            co2_int_gwp20 = (total_gwp20 * 1000.0) / boe"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1537,"LineContent":"            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1550,"LineContent":"                \"co2_intensity_gwp20\": co2_int_gwp20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1575,"LineContent":"                \"total_co2e_gwp20\": total_gwp20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1601,"LineContent":"    Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1957,"LineContent":"        gwp20_factors = get_active_gwp(horizon=\"20\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1958,"LineContent":"        ch4_gwp20 = float(gwp20_factors.get(\"CH4\", 82.5))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1959,"LineContent":"        n2o_gwp20 = float(gwp20_factors.get(\"N2O\", 268.0))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1960,"LineContent":"        s1_gwp20 = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1962,"LineContent":"            + (ed[\"total_ch4\"] * ch4_gwp20)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1963,"LineContent":"            + (ed[\"total_n2o\"] * n2o_gwp20)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1966,"LineContent":"        total_co2e_gwp20 = s1_gwp20 + s2_val"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1971,"LineContent":"            co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1979,"LineContent":"            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = ch4_int = ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2136,"LineContent":"                \"co2_intensity_gwp20\": co2_int_gwp20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2176,"LineContent":"                \"total_co2e_gwp20\": total_co2e_gwp20,"}

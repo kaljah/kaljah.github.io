@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -18,7 +18,10 @@
+ | **Database Stray Test Artifacts** | Two 2025 records (IDs 830 and 831) existed with 1000 m3 qty and 0 emissions. | Leftover test records from concurrency testing corrupted year availability. | Purged records 830 and 831 from `ghg_app.db` and updated Year filter assertions to test valid database years (`2026, 2024, 2023, 2022`). | **PASSED** (2024 verified with 0 emissions, 2026 with 256.4K) |
+ | **Stoichiometric GWP-100 Calculation** | Verified records previously lacked stoichiometric $N_2O \times 265.0$. | Under-reported gross operational emissions by 1,530.1 tCO2e. | Corrected seed formulas to $CO_2 \times 1.0 + CH_4 \times 28.0 + N_2O \times 265.0$. | **PASSED** ($256,425.1\text{ tCO}_2\text{e}$ confirmed) |
+ | **Dynamic GWP-20 Near-Term Scaling** | Backend had hardcoded $+56$ and $-1$ deltas; constants had outdated GWP-20 values. | Inaccurate near-term climate impact assessment under alternate GWP standards. | Aligned IPCC AR5 20-yr values ($CH_4: 84.0, N_2O: 264.0$) and derived dynamic deltas from `get_active_gwp()`. | **PASSED** ($269,741.2\text{ tCO}_2\text{e} \implies 269.7\text{K}$ confirmed) |
+-| **Performance Intensity YoY Variance** | KPI card had placeholder comment and backend lacked prior-year intensity metrics. | Performance intensity card could never show YoY variance or trend badges. | Parallelized prior year query `f_intensity_py` in backend and rendered `.variance-badge` in frontend. | **PASSED** (E2E Test 8 verified) |
++| **Goal Cache Invalidation Gap** | In [`routes/managedata.py`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/managedata.py), `POST /api/manage/goals` and `DELETE /api/manage/goals/<year>` did not call `clear_dashboard_cache()`. | When an admin updated or deleted an emission target, the dashboard continued serving stale cached `goal: null` for up to 5 minutes, hiding the `% GOAL` badge and trajectory. | Added `clear_dashboard_cache()` to both `add_or_update_goal` and `delete_goal`. | **PASSED** (Verified in [`test_zero_trust_adversarial.py`](file:///c:/Users/samsung/Desktop/H2/new/server/tests/test_zero_trust_adversarial.py)) |
++| **Base Year Singleton Fallback** | In [`routes/dashboard.py`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/dashboard.py), `batch-all` and `/base-year` only queried `BaseYearRecalculation`. | If an organization set an official base year in `BaseYear` without a formal recalculation, the API returned `base_year: null`, breaking the target path trajectory. | Added fallback to `db.session.get(BaseYear, 1) or BaseYear.query.first()` with label `"Official Baseline"`. | **PASSED** (Verified in [`test_zero_trust_adversarial.py`](file:///c:/Users/samsung/Desktop/H2/new/server/tests/test_zero_trust_adversarial.py)) |
++| **Broadcast Notification Handling** | In [`routes/notifications.py`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/notifications.py), non-admins got 403 on marking broadcast notices as read; admin `dismiss_all()` excluded `user_id == None`. | Console errors when regular users acknowledged system notifications; admin "Dismiss All" left broadcast notices unread. | Permitted all authenticated users to acknowledge broadcast notices and updated `dismiss-all` to clear broadcast notifications for admins/superusers. | **PASSED** (Verified in [`test_zero_trust_adversarial.py`](file:///c:/Users/samsung/Desktop/H2/new/server/tests/test_zero_trust_adversarial.py)) |
++| **Pending Records Data Mismatch** | In `ghg_app.db`, 797 of 820 pending records had `co2e_total = 0.0`. | Synthetic bulk data generator mapped the French activity string (`'Activité E&P'`) and empty string into `fuel_type`, causing zero factor match. | Identified root cause: only 23 of 820 pending records have valid fuel types (contributing ~4.13M tCO2e to preview). | **DOCUMENTED** |
+ 
+ ---
+ 
+@@ -27,11 +27,11 @@
+ 1. **Backend Regression & QFULL Test Suite**:
+    ```
+    pytest tests/test_audit_remediation.py tests/test_qfull_validation.py tests/test_zero_trust_adversarial.py
+-   ======================= 101 passed, 1 warning in 3.45s ========================
++   ======================= 103 passed, 2 warnings in 3.40s =======================
+    ```
+    - **`test_audit_remediation.py`**: 38 / 38 passed
+    - **`test_qfull_validation.py`**: 58 / 58 passed
+-   - **`test_zero_trust_adversarial.py`**: 5 / 5 passed (mass conservation, extreme temperature/pressure normalization, destruction efficiency boundaries, multi-standard GWP consistency)
++   - **`test_zero_trust_adversarial.py`**: 7 / 7 passed (mass conservation, extreme temperature/pressure normalization, destruction efficiency boundaries, multi-standard GWP consistency, base year fallback, notification broadcast handling)
+ 
+ 2. **Playwright Browser E2E Test Suite (`test_dashboard_deep_audit.spec.js`)**:
+    ```
+@@ -38,4 +38,4 @@
+-   ======================= 8 passed (1.2m) ========================
++   ======================= 8 passed (1.6m) ========================
+    ```
+    - **Test 1**: Core Layout & Initial Ground-Truth Numbers (Gross: `256.4K`, Net: `256.4K`, CH4: `238.7`, S1: `256.4K`, S2: `0`, S3: `0`)
+    - **Test 2**: Top Filters & Cascading Dropdowns (`All Years, 2026, 2024, 2023, 2022`, cascading segment to upstream activities)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

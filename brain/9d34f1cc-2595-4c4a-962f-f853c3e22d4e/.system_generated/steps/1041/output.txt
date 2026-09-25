@@ -1,0 +1,78 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\formatters.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -8,16 +8,20 @@
+  */
+ export const formatCompactNumber = (value, decimals = 1) => {
+   if (value === null || value === undefined || value === "") return "0";
+-  const num = parseFloat(value);
+-  if (!Number.isFinite(num)) {
+-    if (num === Infinity) return "∞";
+-    if (num === -Infinity) return "-∞";
+-    return "0";
+-  }
+-
+-  const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
+-
+-  return new Intl.NumberFormat("en-US", {
++  let num = parseFloat(value);
++  if (!Number.isFinite(num)) {
++    if (num === Infinity) return "∞";
++    if (num === -Infinity) return "-∞";
++    return "0";
++  }
++
++  const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
++
++  if (Object.is(num, -0) || Math.abs(num) < 1e-12) {
++    num = 0;
++  }
++
++  const res = new Intl.NumberFormat("en-US", {
+     notation: "compact",
+     compactDisplay: "short",
+     maximumFractionDigits: safeDecimals,
+@@ -24,3 +24,5 @@
++
++  return res.replace(/^-0(\.0+)?$/, "0$1");
+ };
+ 
+ /**
+@@ -30,19 +30,25 @@
+  */
+ export const formatNumber = (value, decimals = 3) => {
+   if (value === null || value === undefined || value === "") return "0";
+-  const num = parseFloat(value);
+-  if (!Number.isFinite(num)) {
+-    if (num === Infinity) return "∞";
+-    if (num === -Infinity) return "-∞";
+-    return "0";
+-  }
+-
+-  const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
+-
+-  return num.toLocaleString("en-US", {
++  let num = parseFloat(value);
++  if (!Number.isFinite(num)) {
++    if (num === Infinity) return "∞";
++    if (num === -Infinity) return "-∞";
++    return "0";
++  }
++
++  const safeDecimals = Math.max(0, Math.min(20, Math.round(Number(decimals) || 0)));
++
++  if (Object.is(num, -0) || Math.abs(num) < Math.pow(10, -(safeDecimals + 1))) {
++    num = 0;
++  }
++
++  const res = num.toLocaleString("en-US", {
+     minimumFractionDigits: safeDecimals,
+     maximumFractionDigits: safeDecimals,
+   });
++
++  return res.replace(/^-0(\.0+)?$/, "0$1");
+ };
+ 
+ /**
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

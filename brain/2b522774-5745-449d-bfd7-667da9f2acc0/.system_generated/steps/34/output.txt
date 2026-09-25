@@ -1,0 +1,60 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\models.py:41:class Facility(db.Model):
+  new\server\models.py:42:    __tablename__ = "facilities"
+  new\server\models.py:43:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:44:    name = db.Column(db.String(120))
+  new\server\models.py:45:    location = db.Column(db.String(120))
+  new\server\models.py:46:    description = db.Column(db.Text)
+  new\server\models.py:47:    boundary_notes = db.Column(db.Text)
+  new\server\models.py:48:    boundary_type = db.Column(db.String(100), default="Operational Control")
+  new\server\models.py:49:    boundary_detail = db.Column(db.Text)
+  new\server\models.py:50:    activity = db.Column(db.String(100))
+  new\server\models.py:51:    division = db.Column(db.String(100))
+  new\server\models.py:52:    region = db.Column(db.String(100))
+  new\server\models.py:53:    field = db.Column(db.String(100))  # OF / GF / GNL / GPL / Raffinerie / P�trochimie
+  new\server\models.py:54:    code = db.Column(db.String(50), unique=True)
+  new\server\models.py:55:    external_id = db.Column(db.String(50))
+  new\server\models.py:56:    segment = db.Column(db.String(20))  # Upstream, Midstream, Downstream
+  new\server\models.py:57:    operator_status = db.Column(
+  new\server\models.py:58:        db.String(20), default="operated"
+  new\server\models.py:59:    )  # operated, non_operated
+  new\server\models.py:60:    country = db.Column(db.String(100), default="Algeria")
+  new\server\models.py:61:    equity_share_pct = db.Column(db.Float, default=100.0)
+  new\server\models.py:62:    ogmp_membership_year = db.Column(db.Integer, default=2023)
+  new\server\models.py:63:    reconciliation_threshold = db.Column(
+  new\server\models.py:64:        db.Float, default=20.0
+  new\server\models.py:65:    )  # % threshold for variance flagging
+  new\server\models.py:66:    latitude = db.Column(db.Float)
+> new\server\models.py:692:class FacilityEquityShare(db.Model):
+  new\server\models.py:693:    """
+  new\server\models.py:694:    Time-sliced equity ownership percentages per facility.
+  new\server\models.py:695:    Supports mid-year ownership shifts (e.g. May 2, 2023).
+  new\server\models.py:696:    """
+  new\server\models.py:697:    __tablename__ = "facility_equity_shares"
+  new\server\models.py:698:    id = db.Column(db.Integer, primary_key=True)
+  new\server\models.py:699:    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, 
+nullable=False)
+  new\server\models.py:700:    partner_id = db.Column(db.Integer, db.ForeignKey("jv_partners.id"), index=True, 
+nullable=False)
+  new\server\models.py:701:    facility = db.relationship("Facility", backref=db.backref("equity_shares", 
+cascade="all, delete-orphan"))
+  new\server\models.py:702:    partner = db.relationship("JvPartner", backref=db.backref("facility_shares", 
+cascade="all, delete-orphan"))
+  new\server\models.py:703:    equity_share_pct = db.Column(db.Float, nullable=False)  # e.g. 51.0, 24.5
+  new\server\models.py:704:    effective_start_date = db.Column(db.String(20), default="2021-01-01", nullable=False)
+  new\server\models.py:705:    effective_end_date = db.Column(db.String(20), nullable=True)  # None = currently active
+  new\server\models.py:706:    agreement_reference = db.Column(db.String(255), nullable=True)
+  new\server\models.py:707:    created_at = db.Column(db.DateTime, default=utc_now)
+  new\server\models.py:708:
+  new\server\models.py:709:    __table_args__ = (
+  new\server\models.py:710:        db.Index("ix_fac_partner_date", "facility_id", "partner_id", 
+"effective_start_date"),
+  new\server\models.py:711:    )
+  new\server\models.py:712:
+  new\server\models.py:713:
+
+
+

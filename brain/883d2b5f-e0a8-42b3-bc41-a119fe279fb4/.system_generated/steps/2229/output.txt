@@ -1,0 +1,39 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -256,14 +256,25 @@
+             or_(Emission.co2e_total.is_(None), Emission.co2e_total < 0)
+         ).count()
+ 
+-        # Facilities coverage
+-        total_facilities = Facility.query.count()
+-        active_fids = set(
+-            r[0]
+-            for r in db.session.query(distinct(Emission.facility_id))
+-            .filter(Emission.facility_id.isnot(None))
+-            .all()
+-        )
++        # Facilities coverage (scoped to allowed facilities and reporting year)
++        if allowed_fids is not None:
++            total_facilities = len(allowed_fids)
++        else:
++            total_facilities = Facility.query.count()
++
++        # Check active facilities across Scope 1, Scope 2, and Scope 3
++        def _get_active_fids(model):
++            q = db.session.query(distinct(model.facility_id)).filter(model.facility_id.isnot(None))
++            if allowed_fids is not None:
++                q = q.filter(model.facility_id.in_(allowed_fids))
++            if year_arg and year_arg not in ["all", ""]:
++                try:
++                    q = q.filter(model.year == int(year_arg))
++                except ValueError:
++                    pass
++            return set(r[0] for r in q.all())
++
++        active_fids = _get_active_fids(Emission) | _get_active_fids(Scope2Emission) | _get_active_fids(Scope3Emission)
+         unused_facilities = max(0, total_facilities - len(active_fids))
+ 
+         # Custom factors
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

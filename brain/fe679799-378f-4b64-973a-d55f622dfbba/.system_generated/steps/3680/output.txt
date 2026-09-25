@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":14,"LineContent":"    propagate_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":324,"LineContent":"        co2_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":333,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":342,"LineContent":"        n2o_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":498,"LineContent":"        co2_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":507,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":532,"LineContent":"        n2o_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":21,"LineContent":"    propagate_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":871,"LineContent":"                        u = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":1385,"LineContent":"            return propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":8,"LineContent":"from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":44,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":99,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\fugitive.py","LineNumber":143,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":17,"LineContent":"from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":95,"LineContent":"        co2_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":102,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":181,"LineContent":"            ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":314,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":322,"LineContent":"            propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\indirect.py","LineNumber":8,"LineContent":"from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\indirect.py","LineNumber":82,"LineContent":"        co2_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\indirect.py","LineNumber":144,"LineContent":"        co2_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\stoichiometry.py","LineNumber":8,"LineContent":"from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\stoichiometry.py","LineNumber":57,"LineContent":"        co2_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":238,"LineContent":"def propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py","LineNumber":2,"LineContent":"from .uncertainty import propagate_uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\__init__.py","LineNumber":8,"LineContent":"    \"propagate_uncertainty\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":18,"LineContent":"from .uncertainty import propagate_uncertainty, resolve_tier, resolve_ef_uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":91,"LineContent":"    ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":99,"LineContent":"        propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":110,"LineContent":"        propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":148,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":595,"LineContent":"            ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":672,"LineContent":"        ch4_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_performance.py","LineNumber":2,"LineContent":"from calculations.uncertainty import propagate_uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_performance.py","LineNumber":13,"LineContent":"    result = benchmark(propagate_uncertainty, base_emissions, 0.05, 0.02, tier, \"combustion\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_independent_differential.py","LineNumber":17,"LineContent":"from calculations.uncertainty import propagate_uncertainty, Tier"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_independent_differential.py","LineNumber":409,"LineContent":"        prod_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":26,"LineContent":"    propagate_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":301,"LineContent":"        res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":313,"LineContent":"        res = propagate_uncertainty(0.0, 0.10, 0.05)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":7,"LineContent":"from calculations.uncertainty import propagate_uncertainty, Tier"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":224,"LineContent":"        u_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":627,"LineContent":"            u_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":6,"LineContent":"from calculations.uncertainty import propagate_uncertainty, Tier"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":131,"LineContent":"        u_res = propagate_uncertainty("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":37,"LineContent":"    propagate_uncertainty,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":344,"LineContent":"        u = propagate_uncertainty(emissions_tco2e, ef_uncertainty=0.30, activity_uncertainty=0.15, tier=Tier.T1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":372,"LineContent":"        u = propagate_uncertainty(emissions_tco2e, ef_uncertainty=0.05, activity_uncertainty=0.02, tier=Tier.T3)"}
+(...1 more results not shown)

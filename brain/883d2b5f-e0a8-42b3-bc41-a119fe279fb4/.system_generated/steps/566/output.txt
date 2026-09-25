@@ -1,0 +1,59 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -502,27 +502,34 @@
+         }
+     };
+ 
+-    const handleApproveAllInScope = async (scopeNum) => {
++    const handleApproveAllInScope = (scopeNum) => {
+         const count = pendingMetrics[`count${scopeNum}`];
+         if (!count) return;
+-        if (!window.confirm(`Approve all ${count} pending Scope ${scopeNum} records?`)) return;
+-        setIsProcessingBatch(true);
+-        try {
+-            await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
+-            toast.success(`Approved all Scope ${scopeNum} records`);
+-            setSelectedPendingKeys(prev => {
+-                const next = new Set(prev);
+-                Array.from(next).forEach(k => {
+-                    if (k.startsWith(`${scopeNum}-`)) next.delete(k);
+-                });
+-                return next;
+-            });
+-            fetchPendingEmissions();
+-        } catch (err) {
+-            toast.error(err.response?.data?.error || 'Failed to approve batch');
+-        } finally {
+-            setIsProcessingBatch(false);
+-        }
++        requestConfirm({
++            title: `Approve Scope ${scopeNum} Records`,
++            message: `Are you sure you want to approve all ${count} pending Scope ${scopeNum} records?`,
++            confirmLabel: "Approve All",
++            confirmVariant: "primary",
++            onConfirm: async () => {
++                setIsProcessingBatch(true);
++                try {
++                    await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });
++                    toast.success(`Approved all Scope ${scopeNum} records`);
++                    setSelectedPendingKeys(prev => {
++                        const next = new Set(prev);
++                        Array.from(next).forEach(k => {
++                            if (k.startsWith(`${scopeNum}-`)) next.delete(k);
++                        });
++                        return next;
++                    });
++                    fetchPendingEmissions();
++                } catch (err) {
++                    toast.error(err.response?.data?.error || 'Failed to approve batch');
++                } finally {
++                    setIsProcessingBatch(false);
++                }
++            }
++        });
+     };
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

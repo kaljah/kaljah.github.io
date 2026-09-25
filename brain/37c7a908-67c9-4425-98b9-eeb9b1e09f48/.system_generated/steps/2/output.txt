@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+200 {"csrf_token":"IjcyMjc5MDBmZTNiNDhmMmZlZGIwNDU1NTE1NDYxZDgxZGI2ZmVjZDYi.arQzVA.wg5XbXu7O0eg6W8bPh1rsGSaBqY"}
+
+

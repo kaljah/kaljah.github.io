@@ -1,0 +1,44 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_stress_memory_leaks.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -38,8 +38,8 @@
+         warmup_iterations = 1000
+ 
+         factor_ng = API_FACTORS.get("Natural Gas", {})
+-        factor_diesel = API_FACTORS.get("Diesel", {})
+-        factor_fg = API_FACTORS.get("Field Gas", {})
++        factor_rfg = API_FACTORS.get("Refinery Fuel Gas", {})
++        factor_diesel = API_FACTORS.get("Diesel (No. 2 Fuel Oil)", {})
+ 
+         mem_at_warmup = 0
+         t_start = time.perf_counter()
+@@ -46,5 +46,5 @@
+         for i in range(num_iterations):
+-            # Rotate across multiple process categories
++            # Rotate across multiple fuel categories
+             if i % 3 == 0:
+                 payload = {
+                     "process_type": "combustion",
+@@ -54,16 +54,16 @@
+                 factor = factor_ng
+             elif i % 3 == 1:
+                 payload = {
+-                    "process_type": "flaring",
+-                    "fuel": "Field Gas",
++                    "process_type": "combustion",
++                    "fuel": "Refinery Fuel Gas",
+                     "quantity": 300.0 + (i % 50),
+                     "unit": "m3",
+                 }
+-                factor = factor_fg
++                factor = factor_rfg
+             else:
+                 payload = {
+                     "process_type": "combustion",
+-                    "fuel": "Diesel",
++                    "fuel": "Diesel (No. 2 Fuel Oil)",
+                     "quantity": 40.0 + (i % 20),
+                     "unit": "gal",
+                 }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

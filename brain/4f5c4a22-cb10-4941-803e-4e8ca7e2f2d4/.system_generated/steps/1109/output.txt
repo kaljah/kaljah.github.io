@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":232,"LineContent":"  // Custom renderOption for emission factors with segment badges and uncertainty"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":575,"LineContent":"      toast.warning(\"Please select a fuel or emission factor\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1152,"LineContent":"          name: \"2. Emission Factor Application \u0026 Species Mass\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1482,"LineContent":"            {/* Hoisted Emission Factor Selection — hidden for stoichiometry */}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1493,"LineContent":"                  \u003clabel style={{ margin: 0 }}\u003eEmission Factor\u003c/label\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1569,"LineContent":"                    placeholder=\"Select Emission Factor...\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1844,"LineContent":"                Emission Factor / Direct Measurement Uncertainty Override (±%)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2129,"LineContent":"              {formData.fuel ? `${formData.fuel} Factor` : \"[Emission Factor]\"}"}

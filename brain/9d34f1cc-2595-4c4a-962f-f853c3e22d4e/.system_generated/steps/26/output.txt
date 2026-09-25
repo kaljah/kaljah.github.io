@@ -1,0 +1,79 @@
+
+The command exited with code 0.
+Output:
+
+Name                       Length Directory                                          
+----                       ------ ---------                                          
+anomaly.py                  13123 C:\Users\samsung\Desktop\H2\new\server\calculations
+base.py                      2400 C:\Users\samsung\Desktop\H2\new\server\calculations
+calculations.rar            33187 C:\Users\samsung\Desktop\H2\new\server\calculations
+combustion.py               21168 C:\Users\samsung\Desktop\H2\new\server\calculations
+constants.py                 2673 C:\Users\samsung\Desktop\H2\new\server\calculations
+dispatcher.py               62865 C:\Users\samsung\Desktop\H2\new\server\calculations
+fugitive.py                  5987 C:\Users\samsung\Desktop\H2\new\server\calculations
+indirect.py                  6331 C:\Users\samsung\Desktop\H2\new\server\calculations
+legacy_engine.py            36124 C:\Users\samsung\Desktop\H2\new\server\calculations
+midstream.py                15053 C:\Users\samsung\Desktop\H2\new\server\calculations
+stoichiometry.py             2658 C:\Users\samsung\Desktop\H2\new\server\calculations
+uncertainty.py              16320 C:\Users\samsung\Desktop\H2\new\server\calculations
+units.py                    16194 C:\Users\samsung\Desktop\H2\new\server\calculations
+vented.py                   23926 C:\Users\samsung\Desktop\H2\new\server\calculations
+__init__.py                   308 C:\Users\samsung\Desktop\H2\new\server\calculations
+audit.py                    14068 C:\Users\samsung\Desktop\H2\new\server\routes      
+auth.py                     42896 C:\Users\samsung\Desktop\H2\new\server\routes      
+cap_routes.py                9819 C:\Users\samsung\Desktop\H2\new\server\routes      
+custom_factors.py           14324 C:\Users\samsung\Desktop\H2\new\server\routes      
+dashboard.py               127293 C:\Users\samsung\Desktop\H2\new\server\routes      
+data.py                     39411 C:\Users\samsung\Desktop\H2\new\server\routes      
+emissions.py               191754 C:\Users\samsung\Desktop\H2\new\server\routes      
+emission_factors_routes.py  12387 C:\Users\samsung\Desktop\H2\new\server\routes      
+equity_routes.py             7069 C:\Users\samsung\Desktop\H2\new\server\routes      
+facilities.py               16857 C:\Users\samsung\Desktop\H2\new\server\routes      
+managedata.py               40749 C:\Users\samsung\Desktop\H2\new\server\routes      
+notifications.py             7540 C:\Users\samsung\Desktop\H2\new\server\routes      
+qaqc.py                     35375 C:\Users\samsung\Desktop\H2\new\server\routes      
+reports.py                  55548 C:\Users\samsung\Desktop\H2\new\server\routes      
+satellite.py                20535 C:\Users\samsung\Desktop\H2\new\server\routes      
+scope2.py                   29275 C:\Users\samsung\Desktop\H2\new\server\routes      
+scope3.py                   21576 C:\Users\samsung\Desktop\H2\new\server\routes      
+__init__.py                   590 C:\Users\samsung\Desktop\H2\new\server\routes      
+AuditTrail.css              20513 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+AuditTrail.jsx              31918 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+CarbonIntensity.css         18347 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+CarbonIntensity.jsx         37111 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Dashboard.css               30798 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+DashboardEnhanced.jsx       75986 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Diagnostics.css              4192 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Diagnostics.jsx               349 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Emissions.css               14752 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Emissions.jsx               11191 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+ErpSync.jsx                  6479 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Login.css                    7682 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Login.jsx                   14298 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+ManageData.css              20288 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+ManageData.jsx             283905 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+MethaneExplorer.css         31177 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+MethaneExplorer.jsx         60610 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+MethaneIntensity.jsx        61006 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+QADashboard.css             18009 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+QADashboard.jsx             69195 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+ReferenceData.css            3712 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+ReferenceData.jsx           18928 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Reports.css                  9655 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Reports.jsx                 47894 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+SbtiDashboard.css            8563 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+SbtiDashboard.jsx           25355 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Settings.css                21484 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+Settings.jsx                47879 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+UncertaintyAssessment.css    8999 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+UncertaintyAssessment.jsx   12728 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+UserManagement.jsx          66757 C:\Users\samsung\Desktop\H2\new\client\src\pages   
+constants.js                  322 C:\Users\samsung\Desktop\H2\new\client\src\utils   
+EmissionFactors.js          35356 C:\Users\samsung\Desktop\H2\new\client\src\utils   
+emissionFactorsAPI.js        7912 C:\Users\samsung\Desktop\H2\new\client\src\utils   
+formatters.js                2529 C:\Users\samsung\Desktop\H2\new\client\src\utils   
+ModernReportGenerator.js    80087 C:\Users\samsung\Desktop\H2\new\client\src\utils   
+userDefaults.js              5969 C:\Users\samsung\Desktop\H2\new\client\src\utils   
+
+
+

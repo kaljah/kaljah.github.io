@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+new\server\background_processor.py:15:def _update_job(job_id, **kwargs):
+new\server\background_processor.py:285:            _update_job(job_id, total=total_rows)
+new\server\background_processor.py:581:                    _update_job(
+new\server\background_processor.py:592:            _update_job(
+new\server\background_processor.py:645:                _update_job(job_id, error_csv_path=error_file)
+
+
+

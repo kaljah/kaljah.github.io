@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -429,14 +429,15 @@
+                             </div>
+                         </div>
+                         <div className="qa-kpi-body">
+-                            <span className="qa-kpi-value" style={{ color: total_flagged_count > 0 ? '#ef4444' : '#10b981' }}>
+-                                {total_flagged_count}
+-                            </span>
+-                            <span className="qa-kpi-unit">records</span>
+-                        </div>
+-                        <div className="qa-kpi-footer">
+-                            <span>Pending: <strong>{diagnostics.anomalies_summary?.pending ?? total_flagged_count}</strong></span>
+-                            <span>Verified: <strong style={{ color: '#10b981' }}>{diagnostics.anomalies_summary?.verified ?? 0}</strong></span>
++                            <span className="qa-kpi-value" style={{ color: anomaliesSummary.all > 0 ? '#ef4444' : '#10b981' }}>
++                                {anomaliesSummary.all}
++                            </span>
++                            <span className="qa-kpi-unit">active</span>
++                        </div>
++                        <div className="qa-kpi-footer">
++                            <span>Pending: <strong>{anomaliesSummary.pending}</strong></span>
++                            <span>Verified: <strong style={{ color: '#10b981' }}>{anomaliesSummary.verified}</strong></span>
++                            <span>Rejected: <strong style={{ color: '#ef4444' }}>{anomaliesSummary.rejected}</strong></span>
+                         </div>
+                     </div>
+ 
+@@ -468,7 +468,7 @@
+                     >
+                         <AlertTriangle size={15} />
+                         <span>Anomaly Resolution Queue</span>
+-                        <span className="qa-tab-count-pill">{total_flagged_count}</span>
++                        <span className="qa-tab-count-pill">{anomaliesSummary.all}</span>
+                     </button>
+ 
+                     <button
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

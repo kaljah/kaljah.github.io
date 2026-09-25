@@ -1,0 +1,13 @@
+
+The command exited with code 1.
+Output:
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx
+  398:14  error    'err' is defined but never used                                                                               no-unused-vars
+  407:14  error    'err' is defined but never used                                                                               no-unused-vars
+  417:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  579:36  error    Unnecessary escape character: \[                                                                              no-useless-escape
+
+✖ 4 problems (3 errors, 1 warning)
+
+

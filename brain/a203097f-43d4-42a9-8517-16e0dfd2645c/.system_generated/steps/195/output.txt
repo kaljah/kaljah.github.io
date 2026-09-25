@@ -1,0 +1,17 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-193
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-193.log
+Log output:
+<truncated 14 lines>
+ty_boundary PASSED [ 36%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_elevated_dual_efficiency PASSED [ 45%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_enclosed_high_efficiency PASSED [ 54%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_pneumatic_devices_intermittent PASSED [ 63%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_blowdown_depressuring PASSED [ 72%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_acid_gas_removal_sweetening PASSED [ 81%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_component_fugitives_valve_leaks PASSED [ 90%]
+validation/calculation/test_clean_scope1.py::TestCleanScope1DispatcherRouting::test_dispatcher_combustion_routing PASSED [100%]
+
+============================= 11 passed in 1.82s ==============================
+
+Last progress: 2s ago

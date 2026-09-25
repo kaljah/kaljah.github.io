@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+src\pages\Login.jsx:310:                onChange={(e) => setPassword(e.target.value)}
+src\pages\Settings.jsx:1037:                  onChange={() => setAuthMode("password")}
+src\pages\Settings.jsx:1082:                    onChange={(e) => setCopernicusPassword(e.target.value)}
+src\pages\UserManagement.jsx:699:      await api.post(`/auth/users/${resetTarget.id}/reset-password`, { newPassword: 
+resetPwd });
+
+
+

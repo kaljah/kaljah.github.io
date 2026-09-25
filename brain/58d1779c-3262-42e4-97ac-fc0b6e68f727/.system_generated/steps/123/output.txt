@@ -1,0 +1,10 @@
+A1: go from critical to least ctitical
+A2: (Recommended) Install Vitest + React Testing Library for components, Playwright for E2E
+A3: (Recommended) Create an isolated in-memory SQLite test database via conftest.py fixture — completely separate from production
+A4: (Recommended) Implement double-submit cookie CSRF pattern that works cross-origin — most secure
+A5: (Recommended) Set conservative global defaults (e.g., 200/min general, 10/min auth, 20/min calculations) and let me adjust
+A6: (Recommended) Add a full backend CI job to the existing GitHub Actions workflow (run pytest, calculation validation, security tests on every push)
+A7: Plan a migration from SQLite to PostgreSQL as part of this work
+A8: (Recommended) Use API Compendium 2021 Table 5-3 value (0.0001 kg/MMBtu) as the single default in BOTH paths and add a regression test
+A9: (Recommended) Delete it immediately and route future import logging through the existing rotating handler (50 MB, 3 backups)
+A10: (Recommended) Fully executable plan with exact file paths, code snippets, commands, and test cases for every fix

@@ -1,0 +1,31 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\neocarbon_flyer_fr.html. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -684,10 +684,23 @@
+   </div>
+ 
+   <!-- =========================================================
+-       PAGE 1: VISUEL COUVERTURE (ORDINATEUR)
++       PAGE 1: VISUEL COUVERTURE (SHOWCASE PÉTROLE & GAZ)
+        ========================================================= -->
+   <div class="page-sheet page-sheet-hero">
+-    <img src="neocarbon_flyer_page1_fr.jpg" alt="NeoCarbon Enterprise - Logiciel Devrait Résoudre les Problèmes Pas en Créer" class="hero-full-img">
++    <img src="neocarbon_flyer_page1_fr.jpg" alt="NeoCarbon Enterprise - Vos Gisements Sont Plus Propres Que Les Forfaits UE. Prouvez-le Grâce à la Physique Réelle." class="hero-full-img">
++    <div class="hero-footer-bar">
++      <div class="hfb-left">
++        <strong>NEOCARBON™</strong>
++        <span>Plateforme Souveraine de Décarbonation des Hydrocarbures</span>
++      </div>
++      <div class="hfb-mid">
++        Physique API 2021 Tier 3 • OGMP 2.0 Gold Standard Niveau 5 • Règlement Méthane UE (2024/1787)
++      </div>
++      <div class="hfb-right">
++        <svg style="width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
++        <span>www.neocarbon.dz</span>
++      </div>
++    </div>
+   </div>
+ 
+   <!-- =========================================================
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

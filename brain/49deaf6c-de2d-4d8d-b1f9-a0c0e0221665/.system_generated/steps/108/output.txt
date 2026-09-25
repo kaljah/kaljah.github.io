@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\audit.py:128:        if log.old_values:
+new\server\routes\audit.py:130:                old_val = json.loads(log.old_values)
+new\server\routes\audit.py:132:                old_val = log.old_values
+new\server\routes\audit.py:149:        "old_values": old_val,
+new\server\routes\audit.py:346:            json.dumps(item["old_values"])
+new\server\routes\audit.py:347:            if isinstance(item["old_values"], (dict, list))
+new\server\routes\audit.py:348:            else str(item["old_values"] or "")
+new\server\models.py:293:    old_values = db.Column(db.Text, nullable=True)  # JSON before-state diff
+new\server\utils.py:82:    old_values=None,
+new\server\utils.py:95:    old_val_str = json.dumps(old_values, default=str) if isinstance(old_values, dict) else 
+(str(old_values) if old_values is not None else None)
+new\server\utils.py:103:        old_values=old_val_str,
+
+
+

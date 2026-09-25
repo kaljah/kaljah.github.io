@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+new\server\background_processor.py:408:            anomaly_detector = AnomalyDetector()
+new\server\background_processor.py:552:                                anomaly = anomaly_detector.check_scope1(fac_id, 
+getattr(emission_obj, 'process_type', ''), co2e_val, yr, mo)
+new\server\background_processor.py:555:                                anomaly = anomaly_detector.check_scope2(fac_id, 
+getattr(emission_obj, 'source_type', ''), co2e_val, yr, mo)
+new\server\background_processor.py:558:                                anomaly = anomaly_detector.check_scope3(fac_id, 
+getattr(emission_obj, 'category', ''), co2e_val, yr, mo)
+
+
+

@@ -1,0 +1,27 @@
+
+The command exited with code 0.
+Output:
+[Agent11] ## Login
+[Agent11] ✅ IT Admin logged in
+[Agent11] ## Comprehensive Page Navigation (it_admin)
+[Agent11] ✅ Dashboard (/) renders for it_admin
+[Agent11] ✅ Manage Data (/manage-data) renders for it_admin
+[Agent11] ✅ Carbon Intensity (/carbon-intensity) renders for it_admin
+[Agent11] ✅ Methane Explorer (/methane-explorer) renders for it_admin
+[Agent11] ✅ Methane Intensity (/methane-intensity) renders for it_admin
+[Agent11] 🐛 BUG [🟠 High] Navigation: QA/QC page blank for it_admin
+[Agent11] ✅ Reports (/reports) renders for it_admin
+[Agent11] ✅ Settings (/settings) renders for it_admin
+[Agent11] ✅ Reference Data (/reference-data) renders for it_admin
+[Agent11] ✅ Uncertainty Assessment (/uncertainty) renders for it_admin
+[Agent11] ✅ SBTi Dashboard (/sbti) renders for it_admin
+[Agent11] 🐛 BUG [🟠 High] Navigation: ERP Sync page blank for it_admin
+[Agent11] ## Satellite Data UI
+[Agent11]   No satellite/OGMP nav link found (may be API-only)
+[Agent11] ## Settings (it_admin)
+[Agent11] ✅ Settings page loads, content length=2073
+[Agent11] ## RBAC: Admin-only page access
+[Agent11] 🐛 BUG [🔴 Critical] RBAC UI: it_admin can access User Management page
+[Agent11] ## Logout
+[Agent11] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_11_report.md
+

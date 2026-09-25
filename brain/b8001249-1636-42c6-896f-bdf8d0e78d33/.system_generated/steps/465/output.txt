@@ -1,0 +1,14 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4,"LineContent":"from utils import get_current_user, get_allowed_facility_ids"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":133,"LineContent":"        allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":490,"LineContent":"    allowed_facilities = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2999,"LineContent":"    allowed_ids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3326,"LineContent":"        allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3372,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3631,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3681,"LineContent":"    allowed_ids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3996,"LineContent":"    allowed_ids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4438,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4494,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4529,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4615,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":4732,"LineContent":"    allowed_fids = get_allowed_facility_ids(user)"}

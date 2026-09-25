@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+def _app_ctx_id() -> int:
+    """Get the id of the current Flask application context for the session scope."""
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+
+

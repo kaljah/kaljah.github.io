@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Scope 2 status: []
+Scope 3 status: []
+

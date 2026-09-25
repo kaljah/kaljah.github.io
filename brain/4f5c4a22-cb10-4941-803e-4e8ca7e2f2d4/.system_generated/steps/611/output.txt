@@ -1,0 +1,42 @@
+
+The command exited with code 0.
+Output:
+[2026-09-22 10:25:04,259] INFO in app: Updated account: a
+[2026-09-22 10:25:04,344] INFO in app: Updated account: a@a
+[2026-09-22 10:25:04,432] INFO in app: Updated account: z
+[2026-09-22 10:25:04,523] INFO in app: Updated account: z@z
+[2026-09-22 10:25:04,542] ERROR in app: Unhandled Exception: name 'os' is not defined
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_limits.py", line 324, in __inner
+    self.limiter._check_request_limit(in_middleware=False, callable_name=name)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_extension.py", line 1169, in _check_request_limit
+    raise e
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_extension.py", line 1147, in _check_request_limit
+    all_limits = self.__filter_limits(
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_extension.py", line 998, in __filter_limits
+    defaults, decorated = self.limit_manager.resolve_limits(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_manager.py", line 94, in resolve_limits
+    decorated_limits.extend(self.decorated_limits(name))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_manager.py", line 163, in decorated_limits
+    for limit in group:
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask_limiter\_limits.py", line 183, in __iter__
+    limit_str = self.limit_provider() if callable(self.limit_provider) else self.limit_provider
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users/samsung/Desktop/H2/new/server\routes\auth.py", line 310, in <lambda>
+    @limiter.limit(lambda: os.environ.get("LOGIN_RATE_LIMIT", "300 per 15 minutes"))
+                           ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'
+
+[2026-09-22 10:25:04,543] INFO in app: POST /api/auth/login 500 [0.011s] [ReqID: f916cc6a-830d-4764-9f50-cce4d004dad9]
+Login: 500
+Post: 400 {'code': 400, 'error': 'CSRF token missing or invalid. Refresh the page and try again.'}
+

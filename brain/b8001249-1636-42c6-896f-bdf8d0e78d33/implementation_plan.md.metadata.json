@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan to fix the bugs identified by the 10-agent swarm:\n1. Session & Logout: Return 401 Unauthorized from GET /api/auth/me when unauthenticated or logged out.\n2. RBAC & Superuser Scoping: Ensure only admin has global unrestricted access in utils.py; strictly scope superusers to their assigned region, preventing cross-region/cross-facility data modifications and deletions.\n3. Delete Viewer Role: Completely purge the unused 'viewer' role references across models, routes, and tests.\n4. Input Validation & Numeric Checks: Reject inf, -inf, NaN, and negative numbers in POST /api/emissions with 422/400 validation errors instead of unhandled 500 exceptions.\n5. User Management & Method Not Allowed: Return 403 Forbidden for unauthorized user management attempts on /api/auth/register and add proper method handling.\n6. Documentation of Canonical Routes: Document the exact canonical frontend routes (/qa-dashboard, /audit-trail) and backend API endpoints without introducing unneeded aliases.",
+  "updatedAt":  "2026-09-23T22:09:43.858989900Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

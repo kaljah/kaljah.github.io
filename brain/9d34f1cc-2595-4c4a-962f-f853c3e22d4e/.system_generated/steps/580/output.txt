@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+new/client/src/components/Scope1Form.jsx:      case "nitric_acid_production":
+new/client/src/components/Scope1Form.jsx:          "nitric_acid_production",
+new/client/src/components/Scope1Form.jsx:            {!["stoichiometry", "chemical_production", "nitric_acid_production", "adipic_acid_production", "asphalt_blowing"].includes(processType) && (
+new/client/src/components/scope1/NitricAcidForm.jsx:const NITRIC_ACID_OPTIONS = [
+new/client/src/components/scope1/NitricAcidForm.jsx:            options={NITRIC_ACID_OPTIONS}
+new/client/src/utils/EmissionFactors.js:    usage: ["nitric_acid_production"],
+new/client/src/utils/EmissionFactors.js:    usage: ["nitric_acid_production"],
+new/client/src/utils/EmissionFactors.js:  nitric_acid_production: "Nitric Acid Production (Process N₂O)",
+new/client/src/utils/EmissionFactors.js:      "nitric_acid_production",
+new/server/calculations/dispatcher.py:            "nitric_acid_production": StoichiometricCalculator(),
+new/server/calculations/dispatcher.py:                "nitric_acid_production",
+new/server/calculations/uncertainty.py:    "nitric_acid_production": "stoichiometric",
+new/server/emission_factors_api2021.py:        "usage": ["nitric_acid_production"],
+new/server/emission_factors_api2021.py:        "process_category": "nitric_acid_production",
+new/server/emission_factors_api2021.py:        "usage": ["nitric_acid_production"],
+new/server/emission_factors_api2021.py:        "process_category": "nitric_acid_production",
+new/server/process_categories.py:    "nitric_acid_production": {
+new/server/process_categories.py:    "chemical_production", "nitric_acid_production", "adipic_acid_production",
+new/server/tests/test_all_process_types_matrix.py:        "nitric_acid_production",
+

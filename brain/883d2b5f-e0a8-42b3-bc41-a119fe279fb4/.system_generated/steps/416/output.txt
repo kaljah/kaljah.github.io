@@ -1,0 +1,122 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -933,7 +933,16 @@
+     return emission, errors
+ 
+ 
+-def _process_row_scope3_eeio(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):
++def _process_row_scope3_eeio(
++    row,
++    user_id,
++    fac_name_map,
++    fac_id_map,
++    job_id,
++    row_idx,
++    batch_keys=None,
++    overwrite_duplicates=False,
++):
+     from models import Scope3Emission
+     from emission_factors.eeio_factors import get_eeio_factor
+ 
+@@ -972,6 +972,30 @@
+     kg_co2e = spend_k * factor_data["kg_co2e_per_1000_usd"]
+     tonnes_co2e = kg_co2e / 1000.0
+ 
++    key = (facility.id, year, month, "category 1")
++    if batch_keys is not None:
++        if key in batch_keys:
++            existing_id = batch_keys[key]
++            if not overwrite_duplicates:
++                return None, [
++                    f"Duplicate record: Scope 3 emission for facility '{facility.name}' "
++                    f"({year}-{month:02d}, Category 1) already exists. "
++                    f"Enable 'Overwrite Duplicates' to replace it."
++                ]
++            else:
++                from extensions import db
++                existing_obj = db.session.get(Scope3Emission, existing_id) if existing_id else None
++                if existing_obj:
++                    existing_obj.sub_category = f"Spend-based: {factor_data['name']} (NAICS {naics})"
++                    existing_obj.activity_data = spend_usd
++                    existing_obj.unit = "USD"
++                    existing_obj.emission_factor = factor_data["kg_co2e_per_1000_usd"]
++                    existing_obj.co2e = tonnes_co2e
++                    existing_obj.notes = row.get("notes", "Bulk Imported via EEIO")
++                    existing_obj.status = "Pending"
++                    return None, []
++        batch_keys[key] = None
++
+     emission = Scope3Emission(
+         facility_id=facility.id,
+         year=year,
+@@ -999,7 +999,16 @@
+ 
+     return emission, errors
+ 
+-def _process_row_scope3(row, user_id, fac_name_map, fac_id_map, job_id, row_idx):
++def _process_row_scope3(
++    row,
++    user_id,
++    fac_name_map,
++    fac_id_map,
++    job_id,
++    row_idx,
++    batch_keys=None,
++    overwrite_duplicates=False,
++):
+     from models import Scope3Emission
+ 
+     errors = []
+@@ -1031,6 +1031,7 @@
+         return None, errors
+ 
+     cat = row.get("category", "11")
++    cat_str = f"Category {cat}" if not str(cat).startswith("Category") else cat
+     sub_cat = row.get("sub_category")
+ 
+     amt = _clean_float(row.get("amount"), default=0.0)
+@@ -1043,11 +1043,36 @@
+     else:
+         co2e = (amt * ef) / 1000.0
+ 
+-    emission = Scope3Emission(
+-        facility_id=facility.id,
+-        year=year,
+-        month=month,
+-        category=f"Category {cat}" if not str(cat).startswith("Category") else cat,
++    key = (facility.id, year, month, str(cat_str).strip().lower())
++    if batch_keys is not None:
++        if key in batch_keys:
++            existing_id = batch_keys[key]
++            if not overwrite_duplicates:
++                return None, [
++                    f"Duplicate record: Scope 3 emission for facility '{facility.name}' "
++                    f"({year}-{month:02d}, {cat_str}) already exists. "
++                    f"Enable 'Overwrite Duplicates' to replace it."
++                ]
++            else:
++                from extensions import db
++                existing_obj = db.session.get(Scope3Emission, existing_id) if existing_id else None
++                if existing_obj:
++                    existing_obj.category = cat_str
++                    existing_obj.sub_category = sub_cat
++                    existing_obj.activity_data = amt
++                    existing_obj.unit = row.get("unit")
++                    existing_obj.emission_factor = ef
++                    existing_obj.co2e = co2e
++                    existing_obj.notes = row.get("notes")
++                    existing_obj.status = "Pending"
++                    return None, []
++        batch_keys[key] = None
++
++    emission = Scope3Emission(
++        facility_id=facility.id,
++        year=year,
++        month=month,
++        category=cat_str,
+         sub_category=sub_cat,
+         activity_data=amt,
+         unit=row.get("unit"),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

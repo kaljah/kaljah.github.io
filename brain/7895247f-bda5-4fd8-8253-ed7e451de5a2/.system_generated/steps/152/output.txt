@@ -1,0 +1,118 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\models.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -603,4 +603,112 @@
+     value = db.Column(db.Text, nullable=False)  # JSON-encoded value
+     updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+ 
++
++class CapEmission(db.Model):
++    """
++    Criteria Air Pollutants (CAP) - Mass and stack concentration tracking.
++    Complies with Algerian Executive Decree 06-138 and API Compendium 2021.
++    """
++    __tablename__ = "cap_emissions"
++    id = db.Column(db.Integer, primary_key=True)
++    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
++    facility = db.relationship("Facility", backref=db.backref("cap_emissions", cascade="all, delete-orphan"))
++    year = db.Column(db.Integer, index=True, nullable=False)
++    month = db.Column(db.Integer, nullable=True)  # NULL for annual totals
++    source_module = db.Column(db.String(100), index=True, nullable=False)  # Stationary Combustion, Flare, Equipment Leaks, O&G Venting, Total
++    pollutant = db.Column(db.String(20), index=True, nullable=False)  # NO2, CO, SO2, PM, VOC
++    mass_tonnes = db.Column(db.Float, default=0.0, nullable=False)
++    concentration_mg_nm3 = db.Column(db.Float, nullable=True)
++    flue_gas_volume_nm3 = db.Column(db.Float, nullable=True)
++    calc_method = db.Column(db.String(100), default="API Compendium")
++    notes = db.Column(db.String(255), nullable=True)
++    status = db.Column(db.String(20), default="Verified", index=True)
++    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
++    created_at = db.Column(db.DateTime, default=utc_now)
++    updated_at = db.Column(db.DateTime, onupdate=utc_now)
++
++    __table_args__ = (
++        db.Index("ix_cap_fac_yr_mod_pol", "facility_id", "year", "source_module", "pollutant"),
++    )
++
++
++class CapRegulatoryLimit(db.Model):
++    """
++    Regulatory limit values for Criteria Air Pollutants in mg/Nm3.
++    Default standard: Algerian Executive Decree No. 06-138.
++    """
++    __tablename__ = "cap_regulatory_limits"
++    id = db.Column(db.Integer, primary_key=True)
++    standard_name = db.Column(db.String(100), default="Executive Decree 06-138", nullable=False)
++    pollutant = db.Column(db.String(20), nullable=False)  # NO2, CO, SO2, PM, VOC
++    limit_mg_nm3 = db.Column(db.Float, nullable=False)
++    unit = db.Column(db.String(20), default="mg/Nm3")
++    notes = db.Column(db.String(255), nullable=True)
++
++    __table_args__ = (
++        db.UniqueConstraint("standard_name", "pollutant", name="_cap_standard_pollutant_uc"),
++    )
++
++
++class FlaringDetail(db.Model):
++    """
++    Detailed operational flaring streams (Routine, Non-Routine, Safety)
++    and field-measured DRE for Algerian Executive Decree 21-330 compliance.
++    """
++    __tablename__ = "flaring_details"
++    id = db.Column(db.Integer, primary_key=True)
++    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
++    facility = db.relationship("Facility", backref=db.backref("flaring_details", cascade="all, delete-orphan"))
++    year = db.Column(db.Integer, index=True, nullable=False)
++    month = db.Column(db.Integer, nullable=True)
++    network = db.Column(db.String(50), default="CPF")  # CPF or Field
++    routine_knm3 = db.Column(db.Float, default=0.0)
++    non_routine_knm3 = db.Column(db.Float, default=0.0)
++    safety_knm3 = db.Column(db.Float, default=0.0)
++    total_knm3 = db.Column(db.Float, default=0.0)
++    measured_dre_pct = db.Column(db.Float, nullable=True)  # e.g. 99.85 from VISR camera
++    dre_method = db.Column(db.String(100), default="VISR Camera")
++    status = db.Column(db.String(20), default="Verified")
++    created_at = db.Column(db.DateTime, default=utc_now)
++
++    __table_args__ = (
++        db.Index("ix_flare_fac_yr_net", "facility_id", "year", "network"),
++    )
++
++
++class JvPartner(db.Model):
++    """
++    Joint Venture Partner metadata for equity share carbon & methane accounting.
++    """
++    __tablename__ = "jv_partners"
++    id = db.Column(db.Integer, primary_key=True)
++    name = db.Column(db.String(120), unique=True, nullable=False)  # Sonatrach, Occidental, Eni, TotalEnergies, Pertamina, Repsol
++    code = db.Column(db.String(50), unique=True, nullable=False)
++    country = db.Column(db.String(100), default="Algeria")
++    is_operator = db.Column(db.Boolean, default=False)
++    created_at = db.Column(db.DateTime, default=utc_now)
++
++
++class FacilityEquityShare(db.Model):
++    """
++    Time-sliced equity ownership percentages per facility.
++    Supports mid-year ownership shifts (e.g. May 2, 2023).
++    """
++    __tablename__ = "facility_equity_shares"
++    id = db.Column(db.Integer, primary_key=True)
++    facility_id = db.Column(db.Integer, db.ForeignKey("facilities.id"), index=True, nullable=False)
++    partner_id = db.Column(db.Integer, db.ForeignKey("jv_partners.id"), index=True, nullable=False)
++    facility = db.relationship("Facility", backref=db.backref("equity_shares", cascade="all, delete-orphan"))
++    partner = db.relationship("JvPartner", backref=db.backref("facility_shares", cascade="all, delete-orphan"))
++    equity_share_pct = db.Column(db.Float, nullable=False)  # e.g. 51.0, 24.5
++    effective_start_date = db.Column(db.String(20), default="2021-01-01", nullable=False)
++    effective_end_date = db.Column(db.String(20), nullable=True)  # None = currently active
++    agreement_reference = db.Column(db.String(255), nullable=True)
++    created_at = db.Column(db.DateTime, default=utc_now)
++
++    __table_args__ = (
++        db.Index("ix_fac_partner_date", "facility_id", "partner_id", "effective_start_date"),
++    )
++
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1211,9 +1211,27 @@
+     cat_str = f"Category {cat}" if not str(cat).startswith("Category") else cat
+     sub_cat = row.get("sub_category")
+ 
+-    amt = _clean_float(row.get("amount"), default=0.0)
+-    ef = _clean_float(row.get("emission_factor"), default=0.0)
+-    ef_unit = str(row.get("ef_unit") or row.get("factor_unit") or "kg").strip()
++    amt = _clean_float(
++        row.get("amount")
++        or row.get("activityamount")
++        or row.get("activity_amount")
++        or row.get("activitydata")
++        or row.get("quantity"),
++        default=0.0,
++    )
++    ef = _clean_float(
++        row.get("emission_factor")
++        or row.get("emissionfactor")
++        or row.get("factor")
++        or row.get("ef"),
++        default=0.0,
++    )
++    ef_unit = str(
++        row.get("ef_unit")
++        or row.get("efunit")
++        or row.get("factor_unit")
++        or "kg"
++    ).strip()
+     calc_method = str(row.get("calculation_method") or "")
+ 
+     from calculations.units import compute_scope3_co2e
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

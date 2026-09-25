@@ -1,0 +1,22 @@
+
+The command exited with code 1.
+Output:
+[2026-09-24 17:11:19,031] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+--- Seeding Groupement Berkine 2021-2025 Data ---
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\server\seed_berkine_data.py", line 504, in <module>
+    seed_berkine()
+  File "C:\Users\samsung\Desktop\H2\new\server\seed_berkine_data.py", line 400, in seed_berkine
+    db.session.add(Scope2Emission(
+                   ^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 564, in _initialize_instance
+    with util.safe_reraise():
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 562, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 2139, in _declarative_constructor
+    raise TypeError(
+TypeError: 'energy_consumed' is an invalid keyword argument for Scope2Emission
+

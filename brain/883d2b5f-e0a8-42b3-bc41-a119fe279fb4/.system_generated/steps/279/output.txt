@@ -1,0 +1,10 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":73,"LineContent":"    ogmpGoldStatus: \"Compliant\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":272,"LineContent":"        ogmpGoldStatus: goldStatus,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":706,"LineContent":"                  stats.ogmpGoldStatus === \"Compliant\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":708,"LineContent":"                    : stats.ogmpGoldStatus === \"Warning\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":712,"LineContent":"                  stats.ogmpGoldStatus === \"Compliant\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":714,"LineContent":"                    : stats.ogmpGoldStatus === \"Warning\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":719,"LineContent":"                  stats.ogmpGoldStatus === \"Compliant\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":721,"LineContent":"                    : stats.ogmpGoldStatus === \"Warning\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":728,"LineContent":"              {stats.ogmpGoldStatus === \"Compliant\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneIntensity.jsx","LineNumber":734,"LineContent":"                OGMP 2.0 Targets: {stats.ogmpGoldStatus} (\u0026le;"}

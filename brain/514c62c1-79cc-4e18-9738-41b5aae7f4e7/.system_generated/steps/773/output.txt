@@ -1,0 +1,103 @@
+
+The command exited with code 0.
+Output:
+<truncated 75 lines>
+GWP)`,
+new\client\src\pages\CarbonIntensity.jsx:914:                          ? gwpHorizon === "20"
+new\client\src\pages\CarbonIntensity.jsx:915:                            ? record.co2_intensity_gwp20 || 
+record.co2_intensity
+new\client\src\pages\DashboardEnhanced.jsx:114:  const [gwpHorizon, setGwpHorizon] = useState("100"); // "100" 
+(Standard 100-yr) or "20" (Near-term 20-yr)
+new\client\src\pages\DashboardEnhanced.jsx:162:    gwpHorizon,
+new\client\src\pages\DashboardEnhanced.jsx:191:      if (gwpHorizon && gwpHorizon !== "100") {
+new\client\src\pages\DashboardEnhanced.jsx:192:        filterParams.append("gwp_horizon", gwpHorizon);
+new\client\src\pages\DashboardEnhanced.jsx:325:              gwpHorizon === "20" && d.co2_intensity_gwp20 != null
+new\client\src\pages\DashboardEnhanced.jsx:326:                ? d.co2_intensity_gwp20
+new\client\src\pages\DashboardEnhanced.jsx:660:        {/* Dual GWP Horizon Toggle */}
+new\client\src\pages\DashboardEnhanced.jsx:681:              background: gwpHorizon === "100" ? "var(--accent-color, 
+#ff6600)" : "transparent",
+new\client\src\pages\DashboardEnhanced.jsx:682:              color: gwpHorizon === "100" ? "#fff" : 
+"var(--text-secondary)",
+new\client\src\pages\DashboardEnhanced.jsx:685:            onClick={() => setGwpHorizon("100")}
+new\client\src\pages\DashboardEnhanced.jsx:687:            GWP-100
+new\client\src\pages\DashboardEnhanced.jsx:698:              background: gwpHorizon === "20" ? "#ef4444" : 
+"transparent",
+new\client\src\pages\DashboardEnhanced.jsx:699:              color: gwpHorizon === "20" ? "#fff" : 
+"var(--text-secondary)",
+new\client\src\pages\DashboardEnhanced.jsx:702:            onClick={() => setGwpHorizon("20")}
+new\client\src\pages\DashboardEnhanced.jsx:704:            GWP-20
+new\client\src\pages\DashboardEnhanced.jsx:748:    gwpHorizon,
+new\client\src\pages\ManageData.jsx:9:import { GWP_AR5, BOUNDARY_OPTIONS } from '../constants';
+new\client\src\pages\ManageData.jsx:644:        meter_precision: 5.0, lab_precision: 2.0, gwp_uncertainty: 15.0
+new\client\src\pages\ManageData.jsx:2204:                                            <label style={{ fontSize: 
+'0.8rem' }}>GWP Standard Selection</label>
+new\client\src\pages\ManageData.jsx:2208:                                                
+value={workbench.gwp_uncertainty}
+new\client\src\pages\ManageData.jsx:2209:                                                onChange={(e) => 
+setWorkbench({ ...workbench, gwp_uncertainty: parseFloat(e.target.value) || 0 })}
+new\client\src\pages\ManageData.jsx:2951:                                        <strong>GHG Protocol Recalculation 
+Rule:</strong> Base year emissions must be recalculated to reflect significant structural changes (e.g. acquisitions, 
+divestments, boundary changes), methodology updates (e.g. new emission factors or GWP standards), or cumulative data 
+errors exceeding significance thresholds. Every adjustment must include a documented reason.
+new\client\src\pages\ManageData.jsx:3005:                                                placeholder="Detail the 
+justification for setting or recalculating the base year (e.g. 'Structural acquisition of 2 production units', 
+'Methodology update to IPCC AR5 GWPs', 'Boundary adjustment')..."
+new\client\src\pages\ReferenceData.jsx:108:    gwp: {
+new\client\src\pages\ReferenceData.jsx:109:      title: "Global Warming Potentials (GWPs)",
+new\client\src\pages\ReferenceData.jsx:377:          (GWPs), unit conversions, and data quality tiers. Custom regional
+new\client\src\pages\ReferenceData.jsx:413:          <option value="gwp">Global Warming Potentials</option>
+new\client\src\pages\Settings.jsx:27:const GWP_DATA = {
+new\client\src\pages\Settings.jsx:69:  const [activeTab, setActiveTab] = useState("gwp");
+new\client\src\pages\Settings.jsx:72:  const [gwpStandard, setGwpStandard] = useState("AR5");
+new\client\src\pages\Settings.jsx:110:        if (settings.gwp_standard) setGwpStandard(settings.gwp_standard);
+new\client\src\pages\Settings.jsx:186:        gwp_standard: gwpStandard,
+new\client\src\pages\Settings.jsx:309:  const currentGwp = GWP_DATA[gwpStandard] || GWP_DATA.AR5;
+new\client\src\pages\Settings.jsx:323:              Configure IPCC Global Warming Potential (GWP) conversion factors,
+new\client\src\pages\Settings.jsx:354:            className={`settings-tab-btn ${activeTab === "gwp" ? "active" : ""}`}
+new\client\src\pages\Settings.jsx:355:            onClick={() => setActiveTab("gwp")}
+new\client\src\pages\Settings.jsx:356:            id="tab-gwp"
+new\client\src\pages\Settings.jsx:359:            <span>IPCC GWP Standards</span>
+new\client\src\pages\Settings.jsx:406:            <strong>Read-Only Mode:</strong> System methodologies (IPCC GWP 
+standards, OGMP reconciliation parameters, and Copernicus satellite credentials) are centrally managed. Updates 
+require an Administrator account.
+new\client\src\pages\Settings.jsx:411:      {/* TAB CONTENT: GWP Standards */}
+new\client\src\pages\Settings.jsx:412:      {activeTab === "gwp" && (
+new\client\src\pages\Settings.jsx:417:              <h2>IPCC Global Warming Potential (GWP) Standard</h2>
+new\client\src\pages\Settings.jsx:426:          <div className="gwp-cards-grid">
+new\client\src\pages\Settings.jsx:427:            {Object.entries(GWP_DATA).map(([key, data]) => {
+new\client\src\pages\Settings.jsx:428:              const isSelected = gwpStandard === key;
+new\client\src\pages\Settings.jsx:432:                  className={`gwp-card ${isSelected ? "selected" : ""}`}
+new\client\src\pages\Settings.jsx:433:                  onClick={() => { if (isAdmin) setGwpStandard(key); }}
+new\client\src\pages\Settings.jsx:435:                  id={`gwp-card-${key.toLowerCase()}`}
+new\client\src\pages\Settings.jsx:437:                  <div className="gwp-card-header">
+new\client\src\pages\Settings.jsx:438:                    <div className="gwp-version-badge">{key}</div>
+new\client\src\pages\Settings.jsx:440:                      <div className="gwp-active-indicator">
+new\client\src\pages\Settings.jsx:446:                  <h3 className="gwp-title">{data.name}</h3>
+new\client\src\pages\Settings.jsx:447:                  <div className="gwp-status-pill">{data.status}</div>
+new\client\src\pages\Settings.jsx:448:                  <p className="gwp-desc">{data.description}</p>
+new\client\src\pages\Settings.jsx:450:                  <div className="gwp-factors-box">
+new\client\src\pages\Settings.jsx:496:                  <tr className={gwpStandard === "AR5" ? "active-row" : ""}>
+new\client\src\utils\ModernReportGenerator.js:4:import { DEFAULT_GWP } from "../constants";
+new\client\src\utils\ModernReportGenerator.js:148:      api.get("/auth/settings").catch(() => ({ data: { gwp_standard: 
+'IPCC AR5' } })),
+new\client\src\utils\ModernReportGenerator.js:178:    const settingsData = settingsRes.data || { gwp_standard: 'IPCC 
+AR5' };
+new\client\src\utils\ModernReportGenerator.js:179:    const gwpStandard = settingsData.gwp_standard || 'IPCC AR5';
+new\client\src\utils\ModernReportGenerator.js:687:    doc.text("GWP Values Used", margin, curY);
+new\client\src\utils\ModernReportGenerator.js:689:    curY = addTextBlock(`The Global Warming Potential (GWP) values 
+used in the calculations are sourced from: IPCC AR5.`, curY);
+new\client\src\constants.js:1:// IPCC Assessment Report GWP Standards
+new\client\src\constants.js:2:export const GWP_AR4 = {
+new\client\src\constants.js:10:export const GWP_AR5 = {
+new\client\src\constants.js:18:export const GWP_AR6 = {
+new\client\src\constants.js:26:export const GWP_STANDARDS = {
+new\client\src\constants.js:27:  AR4: GWP_AR4,
+new\client\src\constants.js:28:  AR5: GWP_AR5,
+new\client\src\constants.js:29:  AR6: GWP_AR6,
+new\client\src\constants.js:32:// Standard GWP for the application (default to AR5)
+new\client\src\constants.js:33:export const DEFAULT_GWP = GWP_AR5;
+new\client\src\constants.js:35:export const getActiveGwpFactors = (standard = "AR5", horizon = "100") => {
+new\client\src\constants.js:36:  const std = GWP_STANDARDS[standard] || GWP_AR5;
+
+
+

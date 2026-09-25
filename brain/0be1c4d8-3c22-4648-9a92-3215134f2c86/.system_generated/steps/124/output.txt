@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+At line:14 char:83
++ ... es = re.findall(r'api\.(get|post|put|delete|patch)\([`\'\"]([^\`\'\"] ...
++                                                                  ~
+Missing type name after '['.
+At line:22 char:2
++ "
++  ~
+Missing closing ')' in expression.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingTypename
+ 
+

@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 25 items
+
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A01-COMB-NG-NORM] PASSED [  4%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A02-FLARE-ELEV-NORM] PASSED [  8%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A03-UNLOAD-NORM] PASSED [ 12%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A04-TANK-FLASH-NORM] PASSED [ 16%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A05-SCOPE2-GRID-NORM] PASSED [ 20%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A06-SCOPE3-EEIO-NORM] PASSED [ 24%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-B01-ZERO-ACTIVITY] PASSED [ 28%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-B02-ZERO-SCOPE2] PASSED [ 32%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-C01-VERY-SMALL-VAL] PASSED [ 36%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-D01-VERY-LARGE-VAL] PASSED [ 40%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-E01-DECIMAL-VALS] PASSED [ 44%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-F01-EFFICIENCY-100PCT] PASSED [ 48%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-F02-EFFICIENCY-0PCT] PASSED [ 52%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-G01-MISSING-OPTIONAL-HOURS] PASSED [ 56%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-H01-INVALID-NAN-QTY] PASSED [ 60%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-H02-INVALID-INF-QTY] PASSED [ 64%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-I01-NEGATIVE-QTY-REJECTED] PASSED [ 68%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-J01-UNIT-EQUIV-MASS] PASSED [ 72%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-K01-MULTI-GAS-MASS] PASSED [ 76%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-L01-MULTI-SOURCE-AGG] PASSED [ 80%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-M01-MULTI-FACILITY-BOE] PASSED [ 84%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-N01-MULTI-YEAR-WEC] PASSED [ 88%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-O01-CUSTOM-FACTOR] PASSED [ 92%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-P01-DEFAULT-DEHY-FACTOR] PASSED [ 96%]
+tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-Q01-METHODOLOGY-COMPARISON] PASSED [100%]
+
+============================= 25 passed in 0.56s ==============================
+

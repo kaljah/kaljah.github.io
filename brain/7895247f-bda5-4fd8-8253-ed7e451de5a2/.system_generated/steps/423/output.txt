@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+Page 26: HBNS GHG EMISSIONS BY MODULE � 2021 TO 2025 | Total CO2e Emissions (Tonnes/Year)
+Page 27: ELM GHG EMISSIONS BY MODULE � 2021 TO 2025 | Total CO2e Emissions (Tonnes/Year)
+Page 28: GB TOTAL GHG EMISSIONS BY MODULE � 2021 TO 2024 | Total CO2e Emissions (Tonnes/Year)
+Page 29: HBNS CH4 EMISSIONS BY MODULE � 2021 TO 2024 | Total CH4 Emissions (Tonnes/Year)
+Page 30: ELM CH4 EMISSIONS BY MODULE � 2021 TO 2025 | Total CH4 Emissions (Tonnes/Year)
+Page 31: GB TOTAL CH4 EMISSIONS BY MODULE � 2021 TO 2025 | Total CH4 Emissions (Tonnes/Year)
+Page 32: 2025 YEARLY CPF FLARING BREAKDOWN | Flaring in KNm3
+Page 33: HBNS | Category Unit 2021 2022 2023 2024 2025
+Page 34: ELM | Category Unit 2021 2022 2023 2024 2025
+Page 35: GB | Category Unit 2021 2022 2023 2024 2025
+Page 36: TOTAL GHG EMISSIONS BY JV PARTNER EQUITY SHARE | Total CO2e Emissions (Tonnes/Year)
+Page 37: TOTAL CH4 EMISSIONS BY JV PARTNER EQUITY SHARE | Total CH4 Emissions (Tonnes/Year)
+Page 38: HBNS CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year)
+Page 39: HBNS CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year)
+Page 40: ELM CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year)
+Page 41: ELM CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year)
+

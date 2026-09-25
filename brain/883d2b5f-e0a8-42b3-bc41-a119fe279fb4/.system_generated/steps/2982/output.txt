@@ -1,0 +1,58 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\ManageData.jsx:299:                desc: `${r.process_type || 'General'} � ${r.fuel_type || ''} 
+(${Number(r.quantity || 0).toLocaleString()} ${r.unit || ''})`,
+new\client\src\pages\ManageData.jsx:316:                desc: `${r.source_type || 'Electricity'} 
+(${Number(r.electricity_kwh || 0).toLocaleString()} kWh)`,
+new\client\src\pages\ManageData.jsx:1170:            const mcf = (val * 0.0353147).toFixed(2);
+new\client\src\pages\ManageData.jsx:1174:            const bbl = (val * 6.28981).toFixed(2);
+new\client\src\pages\ManageData.jsx:1637:                                                
+{pendingMetrics.totalTco2e.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+new\client\src\pages\ManageData.jsx:1791:                                                Cumulative: <strong style={{ 
+color: '#ffffff' }}>{selectedPendingImpactTco2e.toLocaleString(undefined, { minimumFractionDigits: 2, 
+maximumFractionDigits: 2 })}</strong> tCO�e
+new\client\src\pages\ManageData.jsx:1975:                                                                        
+{item.tco2e.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+new\client\src\pages\ManageData.jsx:2231:                                                co2_uncertainty: 
+co2_u.toFixed(2),
+new\client\src\pages\ManageData.jsx:2232:                                                ch4_uncertainty: 
+ch4_u.toFixed(2),
+new\client\src\pages\ManageData.jsx:2233:                                                n2o_uncertainty: 
+n2o_u.toFixed(2)
+new\client\src\pages\ManageData.jsx:2540:                                                <option key={m} 
+value={m}>{new Date(2000, m - 1).toLocaleString('default', { month: 'long' })}</option>
+new\client\src\pages\ManageData.jsx:2604:                                                    <td>{new Date(2000, 
+d.month - 1).toLocaleString('default', { month: 'short' })}</td>
+new\client\src\pages\ManageData.jsx:2605:                                                    <td style={{ textAlign: 
+'right' }}>{(d.oil || 0).toLocaleString()} {d.oilUnit || 'bbl'}</td>
+new\client\src\pages\ManageData.jsx:2606:                                                    <td style={{ textAlign: 
+'right' }}>{(d.gas || 0).toLocaleString()} {d.gasUnit || 'mscf'}</td>
+new\client\src\pages\ManageData.jsx:2899:                                                                
+{Number(g.target_amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} tCO�e
+new\client\src\pages\ManageData.jsx:3058:                                                                        ? 
+Number(b.previous_emissions).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+new\client\src\pages\ManageData.jsx:3063:                                                                        ? 
+Number(b.adjusted_emissions).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+new\client\src\pages\ManageData.jsx:3069:                                                                            
+{diff > 0 ? `+${diff.toLocaleString()}` : diff.toLocaleString()} tCO�e
+new\client\src\pages\ManageData.jsx:3317:                                                        
+-{parseFloat(m.quantity_tco2e).toLocaleString()}
+new\client\src\pages\ManageData.jsx:3476:                                                    {new Date(2000, 
+i).toLocaleString('default', { month: 'long' })}
+new\client\src\pages\ManageData.jsx:3594:                                                        <td style={{ 
+textAlign: 'right', fontWeight: 600 }}>{qTonnes.toLocaleString()}</td>
+new\client\src\pages\ManageData.jsx:3595:                                                        <td style={{ 
+textAlign: 'right' }}>{direct.toFixed(3)}</td>
+new\client\src\pages\ManageData.jsx:3596:                                                        <td style={{ 
+textAlign: 'right' }}>{indirect.toFixed(3)}</td>
+new\client\src\pages\ManageData.jsx:3598:                                                            
+{totalEmbedded.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+new\client\src\pages\ManageData.jsx:3878:                                                            
+{mRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
+new\client\src\pages\ManageData.jsx:3881:                                                            
+{parseFloat(annualizedTonne).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+
+
+

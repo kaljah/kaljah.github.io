@@ -1,0 +1,67 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\units.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -216,4 +216,61 @@
+ 
+ # Common alias for internal module usage
+ _normalize_efficiency = normalize_efficiency
++
++
++def compute_scope3_co2e(
++    amt: float, ef: float, ef_unit: str = "", calc_method: str = ""
++) -> float:
++    """
++    Authoritatively calculates Scope 3 CO2e in metric tonnes from activity amount and emission factor.
++
++    Robustly distinguishes numerator GHG mass unit (t vs kg vs g) from denominator activity unit (e.g. tonne, liter, m3).
++    - If factor is spend-based / EEIO (e.g. per $1,000 spend, or method containing 'eeio'):
++      divide by 1,000,000 (kg -> tonnes and / 1000 spend).
++    - If numerator is tonnes CO2e (e.g. 'tCO2e/unit', 'tonne CO2e/bbl', 't/bbl', 'mtCO2e/t'):
++      co2e = amt * ef
++    - If numerator is kg CO2e (default standard, e.g. 'kg CO2e/liter', 'kg CO2e/tonne', 'kg/unit'):
++      co2e = (amt * ef) / 1000.0
++    """
++    try:
++        amt_val = float(amt or 0.0)
++        ef_val = float(ef or 0.0)
++    except (ValueError, TypeError):
++        return 0.0
++
++    if amt_val <= 0.0 or ef_val <= 0.0:
++        return 0.0
++
++    unit_str = str(ef_unit or "").lower().strip()
++    method_str = str(calc_method or "").lower().strip()
++
++    # 1. EEIO / spend-based per-$1,000 factor check
++    is_per_thousand = any(
++        k in unit_str for k in ["1000", "1,000", "1k", "$1000", "$1k"]
++    ) or (
++        "eeio" in method_str
++        and not any(t in unit_str for t in ["tonne", "tco2", "mtco2"])
++    )
++    if is_per_thousand:
++        return (amt_val * ef_val) / 1_000_000.0
++
++    # 2. Extract numerator before '/' or ' per '
++    num = unit_str.split("/")[0].split(" per ")[0].strip()
++
++    # 3. Check if numerator specifies tonnes CO2e
++    # Must NOT be kg, g, or lb
++    is_tonne_num = False
++    if not any(
++        prefix in num for prefix in ["kg", "kilogram", " g", "gram", "lb", "pound"]
++    ):
++        if any(
++            t in num for t in ["tonne", "metric_ton", "tco2", "mtco2", "t/"]
++        ) or num.startswith("t ") or num == "t":
++            is_tonne_num = True
++
++    if is_tonne_num:
++        return amt_val * ef_val
++    else:
++        # Standard kg CO2e / unit -> tonnes CO2e
++        return (amt_val * ef_val) / 1000.0
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

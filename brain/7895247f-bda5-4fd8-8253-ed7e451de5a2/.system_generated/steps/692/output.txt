@@ -1,0 +1,46 @@
+
+The command exited with code 0.
+Output:
+Total pages: 41
+Page 1: GROUPEMENT BERKINE | MARCH 10, 2026 | 2025
+Page 2: TABLE OF CONTENTS | TABLE OF CONTENTS N° APPENDICES N° | Glossary 3 Production – 2021 to 2025 24-25
+Page 3: GLOSSARY | TERM DEFINITION TERM DEFINITION | API American Petroleum Institute JV PARTNER Joint Venture Partner
+Page 4: EXECUTIVE SUMMARY | 2025 GHG PERFORMANCE | ▪ 2025 Progress Towards GHG Emissions Goals:
+Page 5: EXECUTIVE SUMMARY | 2025 METHANE PERFORMANCE | • Completed 2nd annual LDAR campaign, with incorporation of high-flow sam
+Page 6: EXECUTIVE SUMMARY | 2025 FLARING PERFORMANCE | HBNS:
+Page 7: KEY ACTIONS | Commitment to Zero Routine Flaring (ZRF): | • Completed concept-selection phase for Flare Gas Recovery Uni
+Page 8: YEARLY PRODUCTION TREND | HBNS Gas Production (Sm3) ELM GAS Production (Sm3) | 7,000 5,000
+Page 9: YEARLY TOTAL GHG EMISSIONS BY SCOPE | Total CO2e Emissions (Tonnes/Year) | HBNS YEARLY TREND GB TOTAL YEARLY TREND
+Page 10: HBNS YEARLY TOTAL GHG EMISSIONS BY MODULE | Total CO2e Emissions (Tonnes/Year) | HBNS YEARLY GHG TREND BY MODULE HBNS YE
+Page 11: ELM YEARLY TOTAL GHG EMISSIONS BY MODULE | Total CO2e Emissions (Tonnes/Year) | ELM YEARLY GHG TREND BY MODULE ELM YEARL
+Page 12: GB TOTAL YEARLY GHG EMISSIONS BY MODULE | Total CO2e Emissions (Tonnes/Year) | GB TOTAL YEARLY GHG TREND BY MODULE GB TO
+Page 13: GB TOTAL GHG EMISSIONS PROGRESS TOWARDS TARGET | Total CO2e Emissions (Tonnes/Year) | Total Annual Emissions
+Page 14: YEARLY TOTAL CH4 EMISSIONS | Total CH4 Emissions (Thousand Tonnes/Year) | HBNS YEARLY TREND GB TOTAL YEARLY TREND
+Page 15: HBNS CPF FLARING BREAKDOWN | Flaring in KNm3 | HBNS Total Flaring HBNS Routine Flaring
+Page 16: ELM CPF FLARING BREAKDOWN | Flaring in KNm3 | ELM Routine Flaring
+Page 17: TOTAL CPF FLARING YEARLY TREND | ELM Year-to-Year Percentage Change in HBNS Year-to-Year Percentage Change in | Total Fl
+Page 18: YEARLY CPF FLARING INTENSITY | Intensity (%) | HBNS Flare Intensity (%)
+Page 19: CARBON INTENSITIES | Summary of HBNS Intensities Summary of ELM Intensities | 40.0 3.50%
+Page 20: TOTAL GHG EMISSIONS BY JV PARTNER EQUITY SHARE | Total CO2e Emissions (Tonnes/Year) | CO2e Emissions by JV Partner
+Page 21: TOTAL CH4 EMISSIONS BY JV PARTNER EQUITY SHARE | Total CH4 Emissions (Tonnes/Year) | CH4 Emissions by JV Partner
+Page 22: CAP EMISSIONS BY SOURCE MODULE | CAP Emissions (Tonnes/Year) | ELM
+Page 23: APPENDICES | DATA TABLES | 23 HBNS and El Merk | 2025 GHG & CAP Annual Report
+Page 24: HBNS PRODUCTION – 2021 TO 2025 | Products Unit 2021 2022 2023 2024 2025 | MMSm3 5,088.03 5,497.26 5,541.74 5,723.88 5,51
+Page 25: ELM PRODUCTION – 2021 TO 2025 | Products Unit 2021 2022 2023 2024 2025 | MMSm3 3,655.66 3,964.74 4,244.53 4,353.68 4,239
+Page 26: HBNS GHG EMISSIONS BY MODULE – 2021 TO 2025 | Total CO2e Emissions (Tonnes/Year) | SANGEA Module 2021 2022 2023 2024 202
+Page 27: ELM GHG EMISSIONS BY MODULE – 2021 TO 2025 | Total CO2e Emissions (Tonnes/Year) | SANGEA Module 2021 2022 2023 2024 2025
+Page 28: GB TOTAL GHG EMISSIONS BY MODULE – 2021 TO 2024 | Total CO2e Emissions (Tonnes/Year) | SANGEA Module 2021 2022 2023 2024
+Page 29: HBNS CH4 EMISSIONS BY MODULE – 2021 TO 2024 | Total CH4 Emissions (Tonnes/Year) | SANGEA Module 2021 2022 2023 2024 2025
+Page 30: ELM CH4 EMISSIONS BY MODULE – 2021 TO 2025 | Total CH4 Emissions (Tonnes/Year) | SANGEA Module 2021 2022 2023 2024 2025
+Page 31: GB TOTAL CH4 EMISSIONS BY MODULE – 2021 TO 2025 | Total CH4 Emissions (Tonnes/Year) | SANGEA Module 2021 2022 2023 2024 
+Page 32: 2025 YEARLY CPF FLARING BREAKDOWN | Flaring in KNm3 | HBNS CPF Flaring ELM CPF Flaring
+Page 33: HBNS | Category Unit 2021 2022 2023 2024 2025 | 2021 2025 GHG Emissions
+Page 34: ELM | Category Unit 2021 2022 2023 2024 2025 | 2021 2025 GHG Emissions
+Page 35: GB | Category Unit 2021 2022 2023 2024 2025 | 2021 2025 GHG Emissions
+Page 36: TOTAL GHG EMISSIONS BY JV PARTNER EQUITY SHARE | Total CO2e Emissions (Tonnes/Year) | JV Partners HBNS 2021 ELM2021 Tota
+Page 37: TOTAL CH4 EMISSIONS BY JV PARTNER EQUITY SHARE | Total CH4 Emissions (Tonnes/Year) | JV Partners HBNS 2021 ELM2021 Total
+Page 38: HBNS CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year) | Year Source Module NO CO SO PM VOC
+Page 39: HBNS CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year) | Year Source Module NO CO SO PM VOC
+Page 40: ELM CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year) | Year Source Module NO CO SO PM VOC
+Page 41: ELM CAP EMISSIONS BY SOURCE MODULE 2021 TO 2025 | CAP Emissions (Tonnes/Year) | Year Source Module NO CO SO PM VOC
+

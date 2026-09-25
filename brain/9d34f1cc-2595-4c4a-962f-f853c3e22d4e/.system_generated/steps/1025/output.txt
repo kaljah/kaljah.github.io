@@ -1,0 +1,20 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1049,10 +1049,10 @@
+     doc.text("Table 5.2: SANGEA Modular Inventory Breakdown", margin, curY);
+     curY += 5;
+ 
+-    const sangeaCombustion = fullData.processBreakdown?.["Combustion"] || fullData.scope1Total * 0.75;
+-    const sangeaFlaring = fullData.processBreakdown?.["Flaring"] || (flaringSummary?.total_flaring?.tco2e || fullData.scope1Total * 0.20);
+-    const sangeaLeaks = fullData.processBreakdown?.["Fugitive"] || 2400.0;
+-    const sangeaVenting = fullData.processBreakdown?.["Venting"] || 4100.0;
++    const sangeaCombustion = fullData.processBreakdown?.["Combustion"] ?? (fullData.scope1Total * 0.75);
++    const sangeaFlaring = fullData.processBreakdown?.["Flaring"] ?? (flaringSummary?.total_flaring?.tco2e ?? (fullData.scope1Total * 0.20));
++    const sangeaLeaks = fullData.processBreakdown?.["Fugitive"] ?? 0.0;
++    const sangeaVenting = fullData.processBreakdown?.["Venting"] ?? 0.0;
+ 
+     const sangeaRows = [
+       ["Stationary Combustion", Number(sangeaCombustion).toLocaleString(undefined, { maximumFractionDigits: 1 }), "Gas turbines, compressor drivers, heaters, thermal oxidizers"],
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

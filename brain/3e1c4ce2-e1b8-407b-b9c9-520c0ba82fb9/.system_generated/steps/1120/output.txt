@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Pending fuel_types: [('', 120, 0.0), ('Activit� E&P', 700, 4133587.212760512)]
+

@@ -1,0 +1,1 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\emission_factors_api2021.py","LineNumber":1233,"LineContent":"ALL_EMISSION_FACTORS = {"}

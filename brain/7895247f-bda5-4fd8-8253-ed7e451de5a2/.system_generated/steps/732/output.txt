@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['id', 'facility_id', 'year', 'month', 'source_type', 'electricity_kwh', 'steam_ton', 'heat_mmbtu', 'cooling_ton', 'emission_factor', 'co2e', 'uncertainty', 'uncertainty_pct', 'qa_flag', 'location', 'grid_region', 'activity', 'division', 'region', 'field', 'created_by', 'status', 'created_at', 'approved_by', 'approved_at']
+

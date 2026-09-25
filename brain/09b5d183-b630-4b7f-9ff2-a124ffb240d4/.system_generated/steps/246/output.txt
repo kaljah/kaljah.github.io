@@ -1,0 +1,33 @@
+
+The command exited with code 0.
+Output:
+ "m3",
+                }
+                factor = factor_ng
+            elif i % 3 == 1:
+                payload = {
+                    "process_type": "combustion",
+                    "fuel": "Refinery Fuel Gas",
+                    "quantity": 300.0 + (i % 50),
+                    "unit": "m3",
+                }
+                factor = factor_rfg
+            else:
+                payload = {
+                    "process_type": "combustion",
+                    "fuel": "Diesel (No. 2 Fuel Oil)",
+                    "quantity": 40.0 + (i % 20),
+                    "unit": "gal",
+                }
+                factor = factor_diesel
+    
+            res, _ = compute_emissions(payload, factor_data=factor)
+            assert res["totalCo2e"] > 0
+    
+            # Record memory baseline after warmup
+            if i == warmup_iterations:
+                current, peak = tracemalloc.get_traced_memory()
+                mem_at_warmup = current
+    
+        total_elapsed = time.perf_coun
+

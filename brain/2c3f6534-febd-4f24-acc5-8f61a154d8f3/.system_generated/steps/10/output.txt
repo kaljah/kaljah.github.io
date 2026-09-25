@@ -1,0 +1,19 @@
+{"name":".env", "sizeBytes":"47"}
+{"name":".env.example", "sizeBytes":"306"}
+{"name":".env.production", "sizeBytes":"143"}
+{"name":".gitignore", "sizeBytes":"253"}
+{"name":"dist", "isDir":true}
+{"name":"eslint.config.js", "sizeBytes":"758"}
+{"name":"index.html", "sizeBytes":"1013"}
+{"name":"node_modules", "isDir":true}
+{"name":"package-lock.json", "sizeBytes":"168054"}
+{"name":"package.json", "sizeBytes":"1289"}
+{"name":"public", "isDir":true}
+{"name":"src", "isDir":true}
+{"name":"stats.html", "sizeBytes":"1412936"}
+{"name":"tailwind.config.js", "sizeBytes":"1908"}
+{"name":"test_ui_numerical_parity.mjs", "sizeBytes":"4127"}
+{"name":"tests", "isDir":true}
+{"name":"vite.config.js", "sizeBytes":"1231"}
+
+Summary: This directory contains 5 subdirectories and 12 files.

@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+TopBar Profile btn exists: True
+Top profile dropdown rendered: True
+Top profile content: 'Administrator\nSustainability Lead\nSign Out'
+Notification bell button exists: False
+Notification flyout opened: False
+Sidebar profile toggle exists: True
+Sidebar account menu opened: True
+Sidebar account menu content: 'Administrator\na@a\nSettings & Standards\nAudit Trail\nSign Out'
+TopBar and layout popover verification completed successfully.
+

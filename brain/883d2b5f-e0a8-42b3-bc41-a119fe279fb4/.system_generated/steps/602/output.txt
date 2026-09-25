@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2651,6 +2651,16 @@
+           onClose={() => setInspectRecord(null)}
+         />
+       )}
++
++      <ConfirmModal
++        isOpen={Boolean(deleteConfirmId)}
++        title="Delete Scope 1 Emission"
++        message="Are you sure you want to delete this emission entry? This action cannot be undone."
++        confirmLabel="Delete"
++        confirmVariant="danger"
++        onConfirm={confirmDelete}
++        onCancel={() => setDeleteConfirmId(null)}
++      />
+     </div>
+   );
+ };
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

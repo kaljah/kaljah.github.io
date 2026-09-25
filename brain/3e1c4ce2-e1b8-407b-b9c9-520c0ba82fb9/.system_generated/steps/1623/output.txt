@@ -1,0 +1,8 @@
+
+Encountered error in step execution: context canceled
+Output:
+
+Running 6 tests using 1 worker
+
+  x  1 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:54:3 › Carbon Intensity Page Deep Audit › 1. Core Layout & KPI Cards Verification (29.8s)
+

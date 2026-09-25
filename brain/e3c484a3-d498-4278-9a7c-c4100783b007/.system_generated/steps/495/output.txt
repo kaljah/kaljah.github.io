@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\golden_dataset\dataset_generator.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -115,9 +115,9 @@
+         category_name="Normal Case",
+         calc_type="flaring",
+         methodology="API Compendium 2021 §5.2 (Dual-Efficiency)",
+-        activity_data={"volume": 50_000.0, "flare_type": "elevated", "ch4_fraction": 0.88},
+-        units="m3",
+-        emission_factor={"flare_type": "elevated", "ef_n2o": 0.0001},
++        activity_data={"volume": 50_000.0, "amount": 50_000.0, "flare_type": "elevated", "ch4_fraction": 0.88, "c1": 0.88, "c2": 0.05, "co2_mol": 0.02},
++        units="m3",
++        emission_factor={"flare_type": "elevated", "ef_n2o": 0.0001, "ef_unit": "kg/m3"},
+         expected_final_result=res_a2,
+         assumptions="Elevated flare default eta_c=0.984, eta_d=0.980",
+     ))
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

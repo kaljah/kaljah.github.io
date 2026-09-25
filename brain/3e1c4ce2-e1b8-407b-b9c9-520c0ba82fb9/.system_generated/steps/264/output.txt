@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+Name                         LastWriteTime        
+----                         -------------        
+.links                       9/21/2026 12:05:41 PM
+chromium-1208                4/27/2026 1:13:37 AM 
+chromium_headless_shell-1208 4/27/2026 1:13:37 AM 
+ffmpeg-1011                  4/27/2026 1:13:37 AM 
+winldd-1007                  4/27/2026 1:13:37 AM 
+
+
+

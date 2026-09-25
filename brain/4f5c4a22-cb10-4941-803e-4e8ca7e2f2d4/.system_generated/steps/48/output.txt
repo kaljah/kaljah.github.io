@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+Years: [(2022,), (2023,), (2024,), (2025,), (2026,)]
+Regions: [('West',), ('Center',), ('South',), (None,)]
+Activities: [('Steel & Iron (Acier DRI)',), ('Chemicals & Fertilizers',), ('Cement & Clinker',), ('Upstream & Midstream Gas',), ('Activit� E&P',), ('Activit� LQS',), ('Activit� RPC',)]
+Divisions: [('Metallurgy',), ('Petrochemicals',), ('Building Materials',), ('Exploration & Production',), ('DP',), ('AST',), ('LSH',), ('RAF',), ('PEC',)]
+Facilities count: 43
+Emissions count: 830
+

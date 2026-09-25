@@ -1,0 +1,70 @@
+
+The command exited with code 0.
+Output:
+Traversal: BFS depth=2 | Start: ['High-Level Directory Overview', 'LevelUpgradeLog', 'Data Model: QA/QC Module', 'Graphify Workflow'] | 56 nodes found
+
+[!] TRUNCATED: showing 56 of 56 nodes (~2000-token budget). The answer may be among the 0 cut nodes — raise the token budget (CLI: --budget) or narrow the query (e.g. context_filter=['call'], or get_node for a specific symbol).
+
+NODE High-Level Directory Overview [src=.antigravity/SYSTEM_MEMORY.md loc=L22 community=5. CHANGELOG & DRIFT LOG]
+NODE LevelUpgradeLog [src=new/server/models.py loc=L547 community=clear_dashboard_cache]
+NODE Data Model: QA/QC Module [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L1 community=Existing Entities to Modify]
+NODE Graphify Workflow [src=.agents/workflows/graphify.md loc=None community=Graphify Workflow Tools]
+NODE models.py [src=new/server/models.py loc=L1 community=models.py]
+NODE routes/data.py [src=new/server/routes/data.py loc=L1 community=clear_dashboard_cache]
+NODE log_level_upgrade() [src=new/server/routes/data.py loc=L538 community=clear_dashboard_cache]
+NODE Existing Entities to Modify [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L3 community=Existing Entities to Modify]
+NODE 1. ARCHITECTURAL MAP & ENTRY POINTS [src=.antigravity/SYSTEM_MEMORY.md loc=L20 community=5. CHANGELOG & DRIFT LOG]
+NODE Graphify Rules [src=.agents/rules/graphify.md loc=None community=Graphify Workflow Tools]
+NODE Graphify CLI [src=.agents/rules/graphify.md loc=None community=Graphify Workflow Tools]
+NODE Existing Entities to Utilize [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L21 community=Existing Entities to Modify]
+NODE 002-qa-qc-ipcc-iso14064/data-model.md [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L1 community=Existing Entities to Modify]
+NODE login_required() [src=new/server/routes/auth.py loc=L83 community=login_required]
+NODE get_current_user() [src=new/server/utils.py loc=L5 community=get_current_user]
+NODE get_allowed_facility_ids() [src=new/server/utils.py loc=L21 community=get_allowed_facility_ids]
+NODE User [src=new/server/models.py loc=L10 community=User]
+NODE Facility [src=new/server/models.py loc=L41 community=Facility]
+NODE log_activity_and_notify() [src=new/server/utils.py loc=L76 community=log_activity_and_notify]
+NODE Emission [src=new/server/models.py loc=L116 community=models.py]
+NODE auth.py [src=new/server/routes/auth.py loc=L1 community=auth.py]
+NODE clear_dashboard_cache() [src=new/server/routes/dashboard.py loc=L62 community=clear_dashboard_cache]
+NODE Scope2Emission [src=new/server/models.py loc=L335 community=Scope2Emission]
+NODE app.py [src=new/server/app.py loc=L1 community=app.py]
+NODE extensions.py [src=new/server/extensions.py loc=L1 community=models.py]
+NODE ProductionData [src=new/server/models.py loc=L189 community=test_csv_engine_matrix.py]
+NODE utils.py [src=new/server/utils.py loc=L1 community=log_activity_and_notify]
+NODE require_facility_access() [src=new/server/utils.py loc=L58 community=clear_dashboard_cache]
+NODE _clean_float() [src=new/server/background_processor.py loc=L27 community=background_processor.py]
+NODE route [src= loc= community=clear_dashboard_cache]
+NODE ActivityLog [src=new/server/models.py loc=L268 community=log_activity_and_notify]
+NODE OgmpSurvey [src=new/server/models.py loc=L502 community=satellite.py]
+NODE bulk_import_production() [src=new/server/routes/data.py loc=L191 community=clear_dashboard_cache]
+NODE save_ogmp_survey() [src=new/server/routes/data.py loc=L379 community=clear_dashboard_cache]
+NODE SYSTEM MEMORY & KNOWLEDGE GRAPH [src=.antigravity/SYSTEM_MEMORY.md loc=L1 community=5. CHANGELOG & DRIFT LOG]
+NODE delete_ogmp_survey() [src=new/server/routes/data.py loc=L503 community=clear_dashboard_cache]
+NODE delete_production() [src=new/server/routes/data.py loc=L158 community=clear_dashboard_cache]
+NODE save_cbam_export() [src=new/server/routes/data.py loc=L669 community=clear_dashboard_cache]
+NODE MethaneSourceType [src=new/server/models.py loc=L534 community=models.py]
+NODE add_production() [src=new/server/routes/data.py loc=L60 community=clear_dashboard_cache]
+NODE delete_cbam_export() [src=new/server/routes/data.py loc=L775 community=clear_dashboard_cache]
+NODE get_production() [src=new/server/routes/data.py loc=L23 community=clear_dashboard_cache]
+NODE CbamProductExport [src=new/server/models.py loc=L484 community=clear_dashboard_cache]
+NODE get_cbam_exports() [src=new/server/routes/data.py loc=L612 community=clear_dashboard_cache]
+NODE get_level_logs() [src=new/server/routes/data.py loc=L575 community=clear_dashboard_cache]
+NODE get_ogmp_surveys() [src=new/server/routes/data.py loc=L309 community=clear_dashboard_cache]
+NODE get_methane_sources() [src=new/server/routes/data.py loc=L292 community=clear_dashboard_cache]
+NODE routes/__init__.py [src=new/server/routes/__init__.py loc=L1 community=login_required]
+NODE Graphify MCP [src=.agents/rules/graphify.md loc=None community=Graphify Workflow Tools]
+NODE Global Configurations & Environment Variables [src=.antigravity/SYSTEM_MEMORY.md loc=L111 community=5. CHANGELOG & DRIFT LOG]
+NODE Primary Runtime Entry Points [src=.antigravity/SYSTEM_MEMORY.md loc=L98 community=5. CHANGELOG & DRIFT LOG]
+NODE 1. `Emission` (Scope 1) [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L6 community=Existing Entities to Modify]
+NODE 2. `Scope2Emission` [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L10 community=Existing Entities to Modify]
+NODE 3. `Scope3Emission` [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L14 community=Existing Entities to Modify]
+NODE 4. `CustomFactor` [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L18 community=Existing Entities to Modify]
+NODE `ActivityLog` [src=specs/002-qa-qc-ipcc-iso14064/data-model.md loc=L22 community=Existing Entities to Modify]
+EDGE Graphify Rules --conceptually_related_to [INFERRED]--> Graphify Workflow
+EDGE Graphify Workflow --references [INFERRED]--> Graphify CLI
+EDGE 1. ARCHITECTURAL MAP & ENTRY POINTS --contains [EXTRACTED]--> High-Level Directory Overview at=.antigravity/SYSTEM_MEMORY.md:L22
+EDGE models.py --contains [EXTRACTED]--> LevelUpgradeLog at=new/server/models.py:L547
+EDGE routes/data.py --imports [EXTRACTED context=import]--> LevelUpgradeLog at=new/server/routes/data.py:L7
+... (truncated — 0 more nodes cut by ~2000-token budget. Narrow with context_filter=['call'] or use get_node for a specific symbol)
+

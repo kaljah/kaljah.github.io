@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\scratch\run_20_beta_testers_dashboard_20k.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -20,8 +20,8 @@
+ sys.path.insert(0, SERVER_DIR)
+ 
+ from app import app
+-app.config["RATELIMIT_ENABLED"] = False
+-from extensions import db
++from extensions import db, limiter
++limiter.enabled = False
+ from models import (
+     User, Emission, Facility, Scope2Emission, Scope3Emission,
+     ProductionData, Goal, BaseYear, BaseYearRecalculation, OgmpSurvey, MitigationProject
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

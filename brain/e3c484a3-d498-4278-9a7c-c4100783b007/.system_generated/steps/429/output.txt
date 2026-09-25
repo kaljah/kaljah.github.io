@@ -1,0 +1,171 @@
+
+The command exited with code 1.
+Output:
+<truncated 569 lines>
+            return
+    
+        # Category Q is methodology comparison container
+        if calc_type == "dehydrator_methodology":
+            res_t1 = dispatcher.dispatch(
+                "dehydrator",
+                {"quantity": act_data["tier1_throughput_mmscf"], "unit": "MMscf", "factor_source": "default"},
+                {"factor": 0.266, "unit": "tonnes CH4/MMscf"},
+                {},
+                gwp_dict=gwp_dict,
+            )
+            assert pytest.approx(res_t1["results"]["ch4"]["value"], rel=tol) == expected["tier1"]["ch4"]
+            return
+    
+        # Scope 3 Spend EEIO
+        if calc_type == "scope3_spend":
+            res = compute_scope3_co2e(
+                act_data["spend_amount"],
+                ef["factor"],
+                ef["unit"],
+                method="spend_eeio",
+            )
+            assert pytest.approx(res, rel=tol) == expected["co2e"]
+            return
+    
+        # Dispatch standard process calculations
+        res = dispatcher.dispatch(
+            calc_type,
+            {**act_data, "unit": case.get("units", "m3"), "factor_source": case.get("factor_source", "default")},
+            ef,
+            {},
+            gwp_dict=gwp_dict,
+        )
+    
+        if "co2" in expected:
+            assert pytest.approx(res["results"]["co2"]["value"], rel=tol) == expected["co2"]
+        if "ch4" in expected:
+>           assert pytest.approx(res["results"]["ch4"]["value"], rel=tol) == expected["ch4"]
+E           assert 0.0 � 1.0e-12 == 21.458977822913354
+E             
+E             comparison failed
+E             Obtained: 21.458977822913354
+E             Expected: 0.0 � 1.0e-12
+
+tests\test_golden_dataset_validation.py:94: AssertionError
+____ TestGoldenDatasetCases.test_golden_case[GOLD-P01-DEFAULT-DEHY-FACTOR] ____
+
+self = <test_golden_dataset_validation.TestGoldenDatasetCases object at 0x0000022A44A7B6B0>
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x0000022A44A7B9E0>
+case = {'test_id': 'GOLD-P01-DEFAULT-DEHY-FACTOR', 'category_code': 'P', 'category_name': 'Default Factor Case', 'calc_type': 'dehydrator', ...}
+
+    @pytest.mark.parametrize("case", GOLDEN_CASES, ids=[c["test_id"] for c in GOLDEN_CASES])
+    def test_golden_case(self, dispatcher, case):
+        test_id = case["test_id"]
+        calc_type = case["calc_type"]
+        act_data = case["activity_data"]
+        ef = case["emission_factor"]
+        gwp_dict = GWP_AR4 if case.get("gwp_version") == "AR4" else (
+            GWP_AR6 if case.get("gwp_version") == "AR6" else GWP_AR5
+        )
+        expected = case["expected_final_result"]
+        tol = case.get("tolerance", 1e-4)
+    
+        if case.get("is_invalid", False):
+            # Invalid input cases must raise ValueError
+            with pytest.raises(ValueError):
+                dispatcher.dispatch(calc_type, act_data, ef, {}, gwp_dict=gwp_dict)
+            return
+    
+        # Category Q is methodology comparison container
+        if calc_type == "dehydrator_methodology":
+            res_t1 = dispatcher.dispatch(
+                "dehydrator",
+                {"quantity": act_data["tier1_throughput_mmscf"], "unit": "MMscf", "factor_source": "default"},
+                {"factor": 0.266, "unit": "tonnes CH4/MMscf"},
+                {},
+                gwp_dict=gwp_dict,
+            )
+            assert pytest.approx(res_t1["results"]["ch4"]["value"], rel=tol) == expected["tier1"]["ch4"]
+            return
+    
+        # Scope 3 Spend EEIO
+        if calc_type == "scope3_spend":
+            res = compute_scope3_co2e(
+                act_data["spend_amount"],
+                ef["factor"],
+                ef["unit"],
+                method="spend_eeio",
+            )
+            assert pytest.approx(res, rel=tol) == expected["co2e"]
+            return
+    
+        # Dispatch standard process calculations
+        res = dispatcher.dispatch(
+            calc_type,
+            {**act_data, "unit": case.get("units", "m3"), "factor_source": case.get("factor_source", "default")},
+            ef,
+            {},
+            gwp_dict=gwp_dict,
+        )
+    
+        if "co2" in expected:
+            assert pytest.approx(res["results"]["co2"]["value"], rel=tol) == expected["co2"]
+        if "ch4" in expected:
+>           assert pytest.approx(res["results"]["ch4"]["value"], rel=tol) == expected["ch4"]
+E           assert 0.0 � 1.0e-12 == 26.6
+E             
+E             comparison failed
+E             Obtained: 26.6
+E             Expected: 0.0 � 1.0e-12
+
+tests\test_golden_dataset_validation.py:94: AssertionError
+__ TestGoldenDatasetCases.test_golden_case[GOLD-Q01-METHODOLOGY-COMPARISON] ___
+
+self = <test_golden_dataset_validation.TestGoldenDatasetCases object at 0x0000022A44A7B7A0>
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x0000022A44A7B9E0>
+case = {'test_id': 'GOLD-Q01-METHODOLOGY-COMPARISON', 'category_code': 'Q', 'category_name': 'Different Methodology Case', 'calc_type': 'dehydrator_methodology', ...}
+
+    @pytest.mark.parametrize("case", GOLDEN_CASES, ids=[c["test_id"] for c in GOLDEN_CASES])
+    def test_golden_case(self, dispatcher, case):
+        test_id = case["test_id"]
+        calc_type = case["calc_type"]
+        act_data = case["activity_data"]
+        ef = case["emission_factor"]
+        gwp_dict = GWP_AR4 if case.get("gwp_version") == "AR4" else (
+            GWP_AR6 if case.get("gwp_version") == "AR6" else GWP_AR5
+        )
+        expected = case["expected_final_result"]
+        tol = case.get("tolerance", 1e-4)
+    
+        if case.get("is_invalid", False):
+            # Invalid input cases must raise ValueError
+            with pytest.raises(ValueError):
+                dispatcher.dispatch(calc_type, act_data, ef, {}, gwp_dict=gwp_dict)
+            return
+    
+        # Category Q is methodology comparison container
+        if calc_type == "dehydrator_methodology":
+            res_t1 = dispatcher.dispatch(
+                "dehydrator",
+                {"quantity": act_data["tier1_throughput_mmscf"], "unit": "MMscf", "factor_source": "default"},
+                {"factor": 0.266, "unit": "tonnes CH4/MMscf"},
+                {},
+                gwp_dict=gwp_dict,
+            )
+>           assert pytest.approx(res_t1["results"]["ch4"]["value"], rel=tol) == expected["tier1"]["ch4"]
+E           assert 0.0 � 1.0e-12 == 13.3
+E             
+E             comparison failed
+E             Obtained: 13.3
+E             Expected: 0.0 � 1.0e-12
+
+tests\test_golden_dataset_validation.py:68: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A02-FLARE-ELEV-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A03-UNLOAD-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A04-TANK-FLASH-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A05-SCOPE2-GRID-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-A06-SCOPE3-EEIO-NORM]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-E01-DECIMAL-VALS]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-F01-EFFICIENCY-100PCT]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-F02-EFFICIENCY-0PCT]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-G01-MISSING-OPTIONAL-HOURS]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-P01-DEFAULT-DEHY-FACTOR]
+FAILED tests/test_golden_dataset_validation.py::TestGoldenDatasetCases::test_golden_case[GOLD-Q01-METHODOLOGY-COMPARISON]
+======================== 11 failed, 14 passed in 0.92s ========================
+

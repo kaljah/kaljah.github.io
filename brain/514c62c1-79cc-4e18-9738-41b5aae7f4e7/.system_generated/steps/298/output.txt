@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+total records: 24231 null co2: 183 null ch4: 181
+

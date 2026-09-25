@@ -1,0 +1,28 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\config.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -34,10 +34,18 @@
+             os.environ.get("SECRET_KEY") or "dev-secret-key-change-in-prod-please"
+         )
+ 
+-    ALLOWED_ORIGINS = os.environ.get(
+-        "ALLOWED_ORIGINS",
+-        "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000",
+-    ).split(",")
++    _default_origins = (
++        "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,"
++        "http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175,http://127.0.0.1:3000,"
++        "https://kaljah.github.io"
++    )
++    ALLOWED_ORIGINS = [
++        o.strip()
++        for o in os.environ.get("ALLOWED_ORIGINS", _default_origins).split(",")
++        if o.strip()
++    ]
++    if "https://kaljah.github.io" not in ALLOWED_ORIGINS:
++        ALLOWED_ORIGINS.append("https://kaljah.github.io")
+ 
+     # Database Configuration
+     # Defaults to SQLite, can be overridden by DB_TYPE env var
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

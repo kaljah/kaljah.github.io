@@ -1,0 +1,240 @@
+
+The command exited with code 0.
+Output:
+{
+  "buttons": [
+    {
+      "index": 0,
+      "text": "",
+      "className": "mobile-sidebar-close",
+      "disabled": false
+    },
+    {
+      "index": 1,
+      "text": "Sign Out",
+      "className": "dropdown-item logout-item",
+      "disabled": false
+    },
+    {
+      "index": 2,
+      "text": "",
+      "className": "mobile-hamburger-btn",
+      "disabled": false
+    },
+    {
+      "index": 3,
+      "text": "GWP-100",
+      "className": "",
+      "disabled": false
+    },
+    {
+      "index": 4,
+      "text": "GWP-20",
+      "className": "",
+      "disabled": false
+    },
+    {
+      "index": 5,
+      "text": "+ Set Target",
+      "className": "btn-target-action",
+      "disabled": false
+    },
+    {
+      "index": 6,
+      "text": "14",
+      "className": "",
+      "disabled": false
+    },
+    {
+      "index": 7,
+      "text": "",
+      "className": "icon-button user-profile-tab-btn",
+      "disabled": false
+    },
+    {
+      "index": 8,
+      "text": "Export Executive Brief (PDF)",
+      "className": "btn-secondary-unified",
+      "disabled": false
+    },
+    {
+      "index": 9,
+      "text": "Compare Regions",
+      "className": "compare-toggle-btn ",
+      "disabled": false
+    },
+    {
+      "index": 10,
+      "text": "View Full SBTi Dashboard \u2192",
+      "className": "btn-secondary-unified",
+      "disabled": false
+    },
+    {
+      "index": 11,
+      "text": "Manage Custom Factors",
+      "className": "manage-factors-btn",
+      "disabled": false
+    }
+  ],
+  "dropdowns": [
+    {
+      "index": 0,
+      "text": "Administratora@aSettings & StandardsAudit TrailSig",
+      "className": "account-dropdown "
+    },
+    {
+      "index": 1,
+      "text": "Administratora@a",
+      "className": "dropdown-header"
+    },
+    {
+      "index": 2,
+      "text": "",
+      "className": "dropdown-divider"
+    },
+    {
+      "index": 3,
+      "text": "Settings & Standards",
+      "className": "dropdown-item"
+    },
+    {
+      "index": 4,
+      "text": "Audit Trail",
+      "className": "dropdown-item"
+    },
+    {
+      "index": 5,
+      "text": "",
+      "className": "dropdown-divider"
+    },
+    {
+      "index": 6,
+      "text": "Sign Out",
+      "className": "dropdown-item logout-item"
+    },
+    {
+      "index": 7,
+      "text": "All Years",
+      "className": "custom-dropdown "
+    },
+    {
+      "index": 8,
+      "text": "All Years",
+      "className": "dropdown-selected"
+    },
+    {
+      "index": 9,
+      "text": "All Supply Chains",
+      "className": "custom-dropdown "
+    },
+    {
+      "index": 10,
+      "text": "All Supply Chains",
+      "className": "dropdown-selected"
+    },
+    {
+      "index": 11,
+      "text": "All Activities",
+      "className": "custom-dropdown "
+    },
+    {
+      "index": 12,
+      "text": "All Activities",
+      "className": "dropdown-selected"
+    },
+    {
+      "index": 13,
+      "text": "All Divisions",
+      "className": "custom-dropdown "
+    },
+    {
+      "index": 14,
+      "text": "All Divisions",
+      "className": "dropdown-selected"
+    },
+    {
+      "index": 15,
+      "text": "All Regions",
+      "className": "custom-dropdown "
+    },
+    {
+      "index": 16,
+      "text": "All Regions",
+      "className": "dropdown-selected"
+    }
+  ],
+  "svgCount": 57,
+  "sampleSvgs": [
+    {
+      "index": 0,
+      "className": "lucide lucide-x",
+      "width": 20,
+      "height": 20,
+      "parentClass": "mobile-sidebar-close"
+    },
+    {
+      "index": 1,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link active"
+    },
+    {
+      "index": 2,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    },
+    {
+      "index": 3,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    },
+    {
+      "index": 4,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    },
+    {
+      "index": 5,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    },
+    {
+      "index": 6,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    },
+    {
+      "index": 7,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    },
+    {
+      "index": 8,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    },
+    {
+      "index": 9,
+      "className": "nav-icon",
+      "width": 18,
+      "height": 18,
+      "parentClass": "nav-link "
+    }
+  ]
+}
+

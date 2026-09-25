@@ -1,0 +1,96 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 52 items / 48 deselected / 4 selected
+
+new\server\tests\test_audit_remediation.py::test_facility_boundary_type_and_detail_roundtrip PASSED [ 25%]
+new\server\tests\test_audit_remediation.py::test_custom_factor_description_and_source_roundtrip PASSED [ 50%]
+new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_calculation FAILED [ 75%]
+new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_dispatcher FAILED [100%]
+
+================================== FAILURES ===================================
+__________________ test_dehydrator_stripping_gas_calculation __________________
+
+    def test_dehydrator_stripping_gas_calculation():
+        """Verify Dehydrator stripping gas calculation adds methane volume to still vent before control."""
+        from calculations.midstream import DehydratorCalculator
+        from calculations.units import convert
+    
+        calc = DehydratorCalculator()
+        # Baseline without stripping gas
+        base_res = calc.calculate(
+            pump_rate=100.0,
+            pump_unit="gph",
+            hours=1000,
+            ch4_content=0.90,
+            has_flash_tank=False,
+            still_control_type="none",
+            control_eff=0.0,
+            stripping_gas_rate=0.0,
+        )
+    
+        # With stripping gas (50 scf/hr = 50,000 scf over 1000 hrs)
+        strip_res = calc.calculate(
+            pump_rate=100.0,
+            pump_unit="gph",
+            hours=1000,
+            ch4_content=0.90,
+            has_flash_tank=False,
+            still_control_type="none",
+            control_eff=0.0,
+            stripping_gas_rate=50.0,
+            stripping_gas_unit="scf/hr",
+        )
+    
+        # 50,000 scf * 0.90 CH4 = 45,000 scf CH4
+        expected_strip_ch4_tonnes = convert(45000.0, "scf", "m3") * 0.6785 / 1000.0
+        diff_ch4 = strip_res["results"]["ch4"]["value"] - base_res["results"]["ch4"]["value"]
+        assert abs(diff_ch4 - expected_strip_ch4_tonnes) < 1e-4
+>       assert strip_res["inputs"]["stripping_gas_scf"] == 50000.0
+E       assert 45000.0 == 50000.0
+
+new\server\tests\test_audit_remediation.py:1648: AssertionError
+__________________ test_dehydrator_stripping_gas_dispatcher ___________________
+
+    def test_dehydrator_stripping_gas_dispatcher():
+        """Verify dispatcher passes stripping gas parameters correctly."""
+        dispatcher = CalculationDispatcher()
+        payload = {
+            "process_type": "dehydrator",
+            "dehydrator_calc_method": "glycol_pump",
+            "teg_pump_rate": 100.0,
+            "teg_pump_unit": "gph",
+            "annual_hours": 1000.0,
+            "gas_ch4_mole_pct": 90.0,
+            "flash_tank": "no",
+            "still_vent_control": "none",
+            "stripping_gas_rate": 50.0,
+            "stripping_gas_unit": "scf/hr",
+        }
+        gwps = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0}
+        res = dispatcher.dispatch("dehydrator", payload, {}, gwps)
+        assert res is not None
+>       assert res["inputs"]["stripping_gas_scf"] == 50000.0
+               ^^^^^^^^^^^^^
+E       KeyError: 'inputs'
+
+new\server\tests\test_audit_remediation.py:1686: KeyError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_calculation
+FAILED new\server\tests\test_audit_remediation.py::test_dehydrator_stripping_gas_dispatcher
+============ 2 failed, 2 passed, 48 deselected, 1 warning in 3.84s ============
+

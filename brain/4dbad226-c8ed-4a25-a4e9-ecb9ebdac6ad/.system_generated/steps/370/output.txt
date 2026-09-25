@@ -1,0 +1,2 @@
+You have 1 active subagent(s):
+[{"role":"Browser QA Automation Specialist","type":"browser","conversationId":"4c2a6e56-a3a4-4c58-8104-90fda9b05936","transcript":"file:///C:/Users/samsung/.gemini/antigravity/brain/4c2a6e56-a3a4-4c58-8104-90fda9b05936/.system_generated/logs/transcript.jsonl","state":"idle"}]

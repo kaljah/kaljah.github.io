@@ -1,0 +1,24 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\emission_factors.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -268,6 +268,18 @@
+         "description": "Average per event (Uncontrolled)",
+         "uncertainty": {"co2": 0.0, "ch4": 0.3, "n2o": 0.0},
+     },
++    "Tank - Flash Emissions (Oil)": {
++        "code": "TankFlashOil",
++        "type": "tank",
++        "ch4": 0.193,
++        "co2": 0.012,
++        "n2o": 0,
++        "factor": 0.193,
++        "unit": "kg/bbl",
++        "usage": ["tank_flashing"],
++        "description": "API Table 5-16 / 6-4 — Default crude oil flash emission factor",
++        "uncertainty": {"co2": 0.15, "ch4": 0.4, "n2o": 0.0},
++    },
+     "Tank - Working Losses (Oil)": {
+         "code": "TankWorkOil",
+         "ch4": 0.05,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

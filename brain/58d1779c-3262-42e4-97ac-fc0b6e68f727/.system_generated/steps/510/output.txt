@@ -1,0 +1,16 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\.github\workflows\deploy-pages.yml. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -145,6 +145,10 @@
+       - name: Lint
+         run: npm run lint
+ 
++      - name: Run frontend unit tests
++        run: npm run test
++
++
+       - name: Determine Base Path and Build
+         env:
+           VITE_API_URL: ${{ vars.VITE_API_URL || secrets.VITE_API_URL || 'https://ghg-accounting.onrender.com/api' }}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

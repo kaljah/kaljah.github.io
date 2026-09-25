@@ -1,0 +1,79 @@
+
+The command exited with code 0.
+Output:
+
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:64:| 
+**41** | [reports.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/reports.py#L924) | **Critical** | Zero gas 
+production defaults loss rate to 0.0% | **False "Compliant" status for OGMP 2.0** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:65:| 
+**42** | [satellite.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/satellite.py#L257) | **Critical** | 
+Snapshot plume flux multiplied by 8,760 hours by default | Brief blowdown reported as 10,000+ t leak |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:66:| 
+**43** | 
+[emission_factors_routes.py](file:///c:/Users/samsung/Desktop/H2/new/server/routes/emission_factors_routes.py#L72) | 
+**Critical** | `.capitalize()` ("Upstream") vs lowercase keys ("upstream") | **100% of `/by-segment/<segment>` calls 
+return 400** |
+> C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:67:| 
+**44** | [EmissionFactors.js](file:///c:/Users/samsung/Desktop/H2/new/client/src/utils/EmissionFactors.js#L913) | 
+**Critical** | Mud degassing factor 0.18 kg/bbl vs backend 0.15 kg/m� | **7.5x discrepancy** between frontend & 
+backend |
+> C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:68:| 
+**45** | [EmissionFactors.js](file:///c:/Users/samsung/Desktop/H2/new/client/src/utils/EmissionFactors.js#L1100) | 
+**Critical** | TEG dehydrator factors use outdated 37.85 scf/gal | **12.6x overestimate** vs backend 3.0 scf/gal |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:69:| 
+**46** | [emissionFactorsAPI.js](file:///c:/Users/samsung/Desktop/H2/new/client/src/utils/emissionFactorsAPI.js#L232) 
+| **Critical** | Missing core conversions (`bbl_m3`, `lb_kg`, `mmscf_scf`) | **Silently returns raw unconverted 
+amounts** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:70:| 
+**47** | 
+[ModernReportGenerator.js](file:///c:/Users/samsung/Desktop/H2/new/client/src/utils/ModernReportGenerator.js#L1752) | 
+**Critical** | `totalProductionBoe` omitted from `fetchAllReportData` | Chapter 4 permanently displays fallback 
+`"9,757.51"` |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:71:| 
+**48** | 
+[ModernReportGenerator.js](file:///c:/Users/samsung/Desktop/H2/new/client/src/utils/ModernReportGenerator.js#L1052) | 
+**Critical** | Falsy `||` replaces 0 emissions with 2,400 t leaks & 1,909,500 t total | **Fabricates millions of 
+tonnes of emissions in PDF** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:72:| 
+**49** | [UserManagement.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/pages/UserManagement.jsx#L1589) | 
+**Critical** | Non-existent `S.roleBadge()` invoked on password reset | **Fatal React crash: TypeError: S.roleBadge is 
+not a function** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:73:| 
+**50** | [Settings.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/pages/Settings.jsx#L286) | **Critical** | 
+Unedited facility save accesses `facilityEdits[facId]` | **Fatal TypeError: Cannot read properties of undefined** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:74:| 
+**51** | [DashboardEnhanced.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/pages/DashboardEnhanced.jsx#L49) | 
+**High** | Forecast linear regression divides by zero on duplicate years | Injects `NaN` into SVG `<path>` breaking 
+charts |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:75:| 
+**52** | [CarbonIntensity.jsx](file:///c:/Users/samsung/Desktop/H2/new/client/src/pages/CarbonIntensity.jsx#L108) | 
+**Critical** | Async race condition between initial fetch and operational defaults | **Leaks global enterprise data to 
+regional operators** |
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:76:
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:77:---
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:78:
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:198:   - 
+Restrict IT Admin role modifications in `auth.py`.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:199:   - 
+Wrap `require_facility_access` in conditional guards across all routes.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:200:3. 
+**Phase 3: Client Math Parity & ModernReportGenerator Fixes (P1)**
+> C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:201:   - 
+Align `EmissionFactors.js` with API Compendium 2021 database values.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:202:   - 
+Expand `convertActivityData` with `bbl_m3`, `lb_kg`, `mmscf_scf`, `mcf_m3`.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:203:   - 
+Replace falsy `||` fallbacks with `??` in `ModernReportGenerator.js`.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:204:4. 
+**Phase 4: Frontend Runtime Crashes & Race Conditions (P1/P2)**
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:205:   - 
+Replace `S.roleBadge` with `S.regionPill` in `UserManagement.jsx`.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:206:   - 
+Add null-guard for `facilityEdits[facId]` in `Settings.jsx`.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:207:   - 
+Guard linear regression forecast denominator in `DashboardEnhanced.jsx`.
+  C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\comprehensive_bug_report.md:208:   - 
+Introduce `isReady` flags to prevent operational filter overwrite race conditions.
+
+
+

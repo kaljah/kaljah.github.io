@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2033,6 +2033,7 @@
+                 "reconciliation_threshold": threshold,
+                 "variance_pct": variance_pct,
+                 "variance_flag": variance_flag,
++                "reconciliation_status": reconciliation_status,
+                 # Operational intensities
+                 "co2_intensity": co2_int,
+                 "co2_intensity_gwp20": co2_int_gwp20,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

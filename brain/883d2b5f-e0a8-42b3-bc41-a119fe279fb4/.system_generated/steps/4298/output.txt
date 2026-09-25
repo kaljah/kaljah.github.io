@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":7,"LineContent":"    TankFlashingCalculator,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":47,"LineContent":"            \"tank\": TankFlashingCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":48,"LineContent":"            \"tank_flashing\": TankFlashingCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":49,"LineContent":"            \"tank_working\": TankFlashingCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":50,"LineContent":"            \"tank_breathing\": TankFlashingCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":51,"LineContent":"            \"storage_tanks\": TankFlashingCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":515,"LineContent":"class TankFlashingCalculator(BaseCalculator):"}

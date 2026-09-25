@@ -1,0 +1,216 @@
+
+The command exited with code 0.
+Output:
+[
+  {
+    "page": 1,
+    "title": "GROUPEMENT BERKINE",
+    "subtitle": "MARCH 10, 2026",
+    "num_tables": 0,
+    "num_lines": 9,
+    "sample_text": [
+      "GROUPEMENT BERKINE",
+      "MARCH 10, 2026",
+      "2025",
+      "Annual GHG & CAP Emissions Report:",
+      "HBNS and El Merk"
+    ]
+  },
+  {
+    "page": 2,
+    "title": "TABLE OF CONTENTS",
+    "subtitle": "TABLE OF CONTENTS N\u00b0 APPENDICES N\u00b0",
+    "num_tables": 0,
+    "num_lines": 29,
+    "sample_text": [
+      "TABLE OF CONTENTS",
+      "TABLE OF CONTENTS N\u00b0 APPENDICES N\u00b0",
+      "Glossary 3 Production \u2013 2021 to 2025 24-25",
+      "Executive Summary 4-6 \u2022 HBNS 24",
+      "\u2022 2025 GHG Performance 4 \u2022 ELM 25"
+    ]
+  },
+  {
+    "page": 3,
+    "title": "GLOSSARY",
+    "subtitle": "TERM DEFINITION TERM DEFINITION",
+    "num_tables": 1,
+    "num_lines": 21,
+    "sample_text": [
+      "GLOSSARY",
+      "TERM DEFINITION TERM DEFINITION",
+      "API American Petroleum Institute JV PARTNER Joint Venture Partner",
+      "Fourth Assessment Report (Intergovernmental",
+      "AR4 LDAR Leak Detection and Repair"
+    ]
+  },
+  {
+    "page": 4,
+    "title": "EXECUTIVE SUMMARY",
+    "subtitle": "2025 GHG PERFORMANCE",
+    "num_tables": 0,
+    "num_lines": 19,
+    "sample_text": [
+      "EXECUTIVE SUMMARY",
+      "2025 GHG PERFORMANCE",
+      "\u25aa 2025 Progress Towards GHG Emissions Goals:",
+      "o Total GHG emissions (CO2e) \u2013 achieved total reduction of 15.9% relative to the 2.27 million-tonnes baseline (2021\u20132023 average).",
+      "o Net GHG emissions \u2013 achieved reduction of 3.5% in 2025, improving on 12.4% achieved in 2024."
+    ]
+  },
+  {
+    "page": 5,
+    "title": "EXECUTIVE SUMMARY",
+    "subtitle": "2025 METHANE PERFORMANCE",
+    "num_tables": 0,
+    "num_lines": 21,
+    "sample_text": [
+      "EXECUTIVE SUMMARY",
+      "2025 METHANE PERFORMANCE",
+      "\u2022 Completed 2nd annual LDAR campaign, with incorporation of high-flow sampler measurements for > 99% of detected fugitive leaks.",
+      "\u2022 Integrated LDAR campaign high-flow sampler measurements into fugitive emissions source reporting.",
+      "\u2022 Application of measured flare DRE measurements for both CPF flare networks."
+    ]
+  },
+  {
+    "page": 6,
+    "title": "EXECUTIVE SUMMARY",
+    "subtitle": "2025 FLARING PERFORMANCE",
+    "num_tables": 0,
+    "num_lines": 18,
+    "sample_text": [
+      "EXECUTIVE SUMMARY",
+      "2025 FLARING PERFORMANCE",
+      "HBNS:",
+      "\u25aa CPF flaring volume decreased by 24.91% in 2025, compared to 2024.",
+      "\u25aa Routine flaring remains the largest component of CPF gas flared: the ratio increased to 56.2% in 2025, compared to 41.6% in 2024."
+    ]
+  },
+  {
+    "page": 7,
+    "title": "KEY ACTIONS",
+    "subtitle": "Commitment to Zero Routine Flaring (ZRF):",
+    "num_tables": 0,
+    "num_lines": 18,
+    "sample_text": [
+      "KEY ACTIONS",
+      "Commitment to Zero Routine Flaring (ZRF):",
+      "\u2022 Completed concept-selection phase for Flare Gas Recovery Units and started Front-End Engineering Design for both",
+      "HBNS and ELM CPF flare networks.",
+      "Commitment to OGMP 2.0"
+    ]
+  },
+  {
+    "page": 8,
+    "title": "YEARLY PRODUCTION TREND",
+    "subtitle": "HBNS Gas Production (Sm3) ELM GAS Production (Sm3)",
+    "num_tables": 2,
+    "num_lines": 72,
+    "sample_text": [
+      "YEARLY PRODUCTION TREND",
+      "HBNS Gas Production (Sm3) ELM GAS Production (Sm3)",
+      "7,000 5,000",
+      "6,000",
+      "4,000"
+    ]
+  },
+  {
+    "page": 9,
+    "title": "YEARLY TOTAL GHG EMISSIONS BY SCOPE",
+    "subtitle": "Total CO2e Emissions (Tonnes/Year)",
+    "num_tables": 4,
+    "num_lines": 37,
+    "sample_text": [
+      "YEARLY TOTAL GHG EMISSIONS BY SCOPE",
+      "Total CO2e Emissions (Tonnes/Year)",
+      "HBNS YEARLY TREND GB TOTAL YEARLY TREND",
+      "1.20 2.50",
+      "s"
+    ]
+  },
+  {
+    "page": 10,
+    "title": "HBNS YEARLY TOTAL GHG EMISSIONS BY MODULE",
+    "subtitle": "Total CO2e Emissions (Tonnes/Year)",
+    "num_tables": 3,
+    "num_lines": 28,
+    "sample_text": [
+      "HBNS YEARLY TOTAL GHG EMISSIONS BY MODULE",
+      "Total CO2e Emissions (Tonnes/Year)",
+      "HBNS YEARLY GHG TREND BY MODULE HBNS YEARLY GHG TREND BY MODULE",
+      "0.80 0.04",
+      "0.70"
+    ]
+  },
+  {
+    "page": 11,
+    "title": "ELM YEARLY TOTAL GHG EMISSIONS BY MODULE",
+    "subtitle": "Total CO2e Emissions (Tonnes/Year)",
+    "num_tables": 3,
+    "num_lines": 32,
+    "sample_text": [
+      "ELM YEARLY TOTAL GHG EMISSIONS BY MODULE",
+      "Total CO2e Emissions (Tonnes/Year)",
+      "ELM YEARLY GHG TREND BY MODULE ELM YEARLY GHG TREND BY MODULE",
+      "0.80 0.08",
+      "0.70 0.07"
+    ]
+  },
+  {
+    "page": 12,
+    "title": "GB TOTAL YEARLY GHG EMISSIONS BY MODULE",
+    "subtitle": "Total CO2e Emissions (Tonnes/Year)",
+    "num_tables": 3,
+    "num_lines": 34,
+    "sample_text": [
+      "GB TOTAL YEARLY GHG EMISSIONS BY MODULE",
+      "Total CO2e Emissions (Tonnes/Year)",
+      "GB TOTAL YEARLY GHG TREND BY MODULE GB TOTAL YEARLY GHG TREND BY MODULE",
+      "1.60 0.12",
+      "1.40 0.10"
+    ]
+  },
+  {
+    "page": 13,
+    "title": "GB TOTAL GHG EMISSIONS PROGRESS TOWARDS TARGET",
+    "subtitle": "Total CO2e Emissions (Tonnes/Year)",
+    "num_tables": 1,
+    "num_lines": 30,
+    "sample_text": [
+      "GB TOTAL GHG EMISSIONS PROGRESS TOWARDS TARGET",
+      "Total CO2e Emissions (Tonnes/Year)",
+      "Total Annual Emissions",
+      "2.50 2.32",
+      "2.21 2.29"
+    ]
+  },
+  {
+    "page": 14,
+    "title": "YEARLY TOTAL CH4 EMISSIONS",
+    "subtitle": "Total CH4 Emissions (Thousand Tonnes/Year)",
+    "num_tables": 3,
+    "num_lines": 35,
+    "sample_text": [
+      "YEARLY TOTAL CH4 EMISSIONS",
+      "Total CH4 Emissions (Thousand Tonnes/Year)",
+      "HBNS YEARLY TREND GB TOTAL YEARLY TREND",
+      "3.50 8.00",
+      "3.00 7.00"
+    ]
+  },
+  {
+    "page": 15,
+    "title": "HBNS CPF FLARING BREAKDOWN",
+    "subtitle": "Flaring in KNm3",
+    "num_tables": 1,
+    "num_lines": 26,
+    "sample_text": [
+      "HBNS CPF FLARING BREAKDOWN",
+      "Flaring in KNm3",
+      "HBNS Total Flaring HBNS Routine Flaring",
+      "100 89.68 30 25.43 26.77 26.84 26.45 26.82",
+      "80 25"
+    ]
+  }
+]
+

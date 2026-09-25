@@ -1,0 +1,59 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_08_admin_playwright.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -62,7 +62,7 @@
+         # ── Login ────────────────────────────────────────────────────────────
+         log("## Login Page")
+         try:
+-            page.goto(f"{BASE_URL}/login", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/login", wait_until="domcontentloaded")
+             ok("Login page loaded")
+         except Exception as e:
+             bug("🔴 Critical", "Frontend", "Login page failed to load", "Page loads", str(e))
+@@ -86,7 +86,7 @@
+         except Exception:
+             # Try fallback credentials
+             try:
+-                page.goto(f"{BASE_URL}/login", wait_until="networkidle")
++                page.goto(f"{BASE_URL}/login", wait_until="domcontentloaded")
+                 try:
+                     skip_btn = page.locator('.skip-intro-btn, button:has-text("Skip Intro")')
+                     if skip_btn.is_visible(timeout=2000):
+@@ -153,7 +153,7 @@
+         # ── ManageData: Create Scope 1 Entry ─────────────────────────────────
+         log("## ManageData: Create Emission")
+         try:
+-            page.goto(f"{BASE_URL}/manage-data", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/manage-data", wait_until="domcontentloaded")
+             # Click "Add" or "New" button
+             add_btn = page.locator('button:has-text("Add"), button:has-text("New"), button:has-text("Create")').first
+             add_btn.click(timeout=5000)
+@@ -164,7 +164,7 @@
+         # ── Reports Page ──────────────────────────────────────────────────────
+         log("## Reports: Generate")
+         try:
+-            page.goto(f"{BASE_URL}/reports", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/reports", wait_until="domcontentloaded")
+             gen_btn = page.locator('button:has-text("Generate"), button:has-text("Export"), button:has-text("Download")').first
+             if gen_btn.count() > 0:
+                 gen_btn.click(timeout=5000)
+@@ -177,7 +177,7 @@
+         # ── User Management ───────────────────────────────────────────────────
+         log("## User Management")
+         try:
+-            page.goto(f"{BASE_URL}/user-management", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/user-management", wait_until="domcontentloaded")
+             body = page.inner_text("body")
+             if "user" in body.lower():
+                 ok("User Management page renders with content")
+@@ -188,7 +188,7 @@
+         # ── Settings ─────────────────────────────────────────────────────────
+         log("## Settings")
+         try:
+-            page.goto(f"{BASE_URL}/settings", wait_until="networkidle")
++            page.goto(f"{BASE_URL}/settings", wait_until="domcontentloaded")
+             ok("Settings page loaded")
+         except Exception as e:
+             bug("🟡 Medium", "Settings", f"Settings page error: {e}", "Page loads", str(e))
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

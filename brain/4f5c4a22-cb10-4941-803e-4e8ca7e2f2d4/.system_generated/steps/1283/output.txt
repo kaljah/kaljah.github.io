@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+CSRF token: ImEzMjE4Mjg0MTc0YzU2...
+Login status: 200
+Post-login CSRF token: IjUxMTA5NzZhNzc3NzFj...
+POST emissions status: 201
+Response: {"calculation_method":"server_default","emissions":{"ch4":0.0,"co2":0.0,"n2o":0.0,"totalCo2e":0.0,"uncertainty":{}},"id":2475,"message":"Record added","record":{"amount":75000,"facility_name":"Centre de Traitement Gazier Hassi Messaoud (Sonatrach)","fuel":"Natural Gas - 4-Stroke Lean Burn Engine","month":9,"process_type":"combustion","unit":"scf","year":2026}}
+
+

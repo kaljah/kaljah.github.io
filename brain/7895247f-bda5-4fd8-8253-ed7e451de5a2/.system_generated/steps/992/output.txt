@@ -1,0 +1,8 @@
+Task: 7895247f-bda5-4fd8-8253-ed7e451de5a2/task-990
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\7895247f-bda5-4fd8-8253-ed7e451de5a2\.system_generated\tasks\task-990.log
+Log output:
+<truncated 2 lines>
+th/logout', 'auth.logout'), ('/api/auth/me', 'auth.me'), ('/api/auth/profile', 'auth.update_profile'), ('/api/auth/change-password', 'auth.change_password'), ('/api/auth/upload-avatar', 'auth.upload_avatar'), ('/api/auth/settings', 'auth.get_settings'), ('/api/auth/settings', 'auth.update_settings'), ('/api/auth/users', 'auth.create_user'), ('/api/auth/users', 'auth.get_users'), ('/api/auth/users/<int:id>', 'auth.update_user'), ('/api/auth/users/<int:id>', 'auth.delete_user'), ('/api/auth/users/<int:id>/reset-password', 'auth.admin_reset_password'), ('/api/reports/generate', 'reports.generate_report'), ('/api/reports/master-annual-report', 'reports.get_master_annual_report'), ('/api/reports/export', 'reports.export_emissions'), ('/api/reports/ogmp-export', 'reports.export_ogmp_excel'), ('/api/dashboard/flaring-summary', 'dashboard.get_flaring_summary'), ('/api/reporting-metadata', 'managedata.get_reporting_metadata'), ('/api/reporting-metadata', 'managedata.save_reporting_metadata')]
+
+Last progress: 4s ago

@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -431,10 +431,13 @@
+                     for k, v in row_dict.items()
+                     if k is not None
+                 }
+-                mapped_data.update(row_dict)
+                 for sys_key, header_name in mapping.items():
+                     if header_name:
+-                        mapped_data[sys_key] = row_dict.get(header_name)
++                        val = row_dict.get(header_name)
++                        if val is not None and str(val).strip() != "":
++                            mapped_data[sys_key] = val
++                        elif sys_key not in mapped_data:
++                            mapped_data[sys_key] = val
+ 
+ 
+                 # Merge Tier 3 / Gas Composition if present
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

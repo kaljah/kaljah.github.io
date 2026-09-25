@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_emission_factor_selection.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -114,8 +114,8 @@
+         # 53.06 kg/MMBtu with natural gas in m3 (requires HHV)
+         hhv = 1020.0
+         kg_per_m3 = convert_factor_to_kg_per_unit(
+-            factor=53.06,
+-            ef_unit="kg/MMBtu",
++            value=53.06,
++            factor_unit="kg/MMBtu",
+             activity_unit="m3",
+             hhv=hhv,
+             fuel_type="natural_gas",
+@@ -126,8 +126,8 @@
+     def test_mass_factor_unit_scaling(self):
+         # 2.5 tonne CO2 / tonne fuel -> in kg/tonne
+         kg_per_t = convert_factor_to_kg_per_unit(
+-            factor=2.5,
+-            ef_unit="tonne/tonne",
++            value=2.5,
++            factor_unit="tonne/tonne",
+             activity_unit="tonne",
+         )
+         assert pytest.approx(kg_per_t, rel=1e-6) == 2500.0
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

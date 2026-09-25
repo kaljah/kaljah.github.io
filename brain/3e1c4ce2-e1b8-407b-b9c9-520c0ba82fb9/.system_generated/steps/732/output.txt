@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_deep_audit.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -358,7 +358,7 @@
+ 
+     // 2. Reference Libraries Card & Manage Custom Factors button
+     const manageFactorsBtn = page.locator('.manage-factors-btn');
+-    manageFactorsBtn.scrollIntoViewIfNeeded();
++    await manageFactorsBtn.scrollIntoViewIfNeeded();
+     await expect(manageFactorsBtn).toBeVisible();
+     console.log('[AUDIT] Manage Custom Factors button is visible and accessible');
+   });
+@@ -369,7 +369,7 @@
+     const intensityCard = page.locator('.stat-item:has-text("Performance Intensity")');
+     await expect(intensityCard).toBeVisible();
+     const intensityLabel = await intensityCard.locator('.stat-label').innerText();
+-    expect(intensityLabel).toBe('Performance Intensity');
++    expect(intensityLabel.toUpperCase()).toBe('PERFORMANCE INTENSITY');
+ 
+     // Scope 3 Year Filter check: Ensure Scope 3 displays 0 when year has no scope 3 records
+     const yearDropdown = page.locator('.top-bar-injected-left .filter-wrapper').nth(0).locator('.dropdown-selected');
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

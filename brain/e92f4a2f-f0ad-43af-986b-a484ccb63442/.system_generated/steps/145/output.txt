@@ -1,0 +1,140 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\app.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -293,20 +293,11 @@
+ 
+ def ensure_admin_seeded():
+     """
+-    Seeds admin accounts ONLY when SEED_ADMIN=true environment variable is set.
+-    In production, requires ADMIN_EMAIL and ADMIN_PASSWORD to be explicitly set.
+-
+-    SECURITY: Hard-coded dev shortcuts (a@a / a) have been removed.
+-    Never auto-seeds accounts with known-weak passwords.
+-    """
+-    if os.environ.get("SEED_ADMIN", "false").lower() != "true":
+-        return
+-
+-    admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
+-    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
+-    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
+-    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip()
+-
++    Seeds essential development and admin accounts:
++    - Admin: user 'a' / password 'a' (role: admin) and 'a@a'
++    - IT Manager: user 'z' / password 'z' (role: it_manager) and 'z@z'
++    In production when SEED_ADMIN=true, also configures explicit production credentials.
++    """
+     _env_name = (
+         os.environ.get("FLASK_ENV")
+         or os.environ.get("APP_ENV")
+@@ -314,24 +314,42 @@
+     ).lower()
+     is_production = _env_name in ["production", "prod", "staging"]
+ 
+-    KNOWN_WEAK = {
+-        "Admin12345!", "admin", "password", "changeme", "secret",
+-        "a", "123456", "letmein", "qwerty", "admin123",
+-    }
+-
+-    if is_production:
+-        if not admin_email or not admin_password:
+-            raise RuntimeError(
+-                "FATAL: ADMIN_EMAIL and ADMIN_PASSWORD must be set in production "
+-                "when SEED_ADMIN=true. Refusing to start without explicit credentials."
+-            )
+-        if admin_password in KNOWN_WEAK:
+-            raise RuntimeError(
+-                f"FATAL: ADMIN_PASSWORD is a known weak value. "
+-                "Set a strong, unique password before deploying."
+-            )
+-
+-    accounts = []
++    accounts = [
++        {
++            "email": "a",
++            "password": "a",
++            "role": "admin",
++            "fullName": "Administrator",
++            "jobTitle": "Sustainability Lead",
++        },
++        {
++            "email": "a@a",
++            "password": "a",
++            "role": "admin",
++            "fullName": "Administrator",
++            "jobTitle": "Sustainability Lead",
++        },
++        {
++            "email": "z",
++            "password": "z",
++            "role": "it_manager",
++            "fullName": "IT Manager",
++            "jobTitle": "IT Operations Manager",
++        },
++        {
++            "email": "z@z",
++            "password": "z",
++            "role": "it_manager",
++            "fullName": "IT Manager",
++            "jobTitle": "IT Operations Manager",
++        },
++    ]
++
++    admin_email = os.environ.get("ADMIN_EMAIL", "").strip()
++    admin_password = os.environ.get("ADMIN_PASSWORD", "").strip()
++    it_admin_email = os.environ.get("IT_ADMIN_EMAIL", "").strip()
++    it_admin_password = os.environ.get("IT_ADMIN_PASSWORD", "").strip()
++
+     if admin_email and admin_password:
+         accounts.append({
+             "email": admin_email,
+@@ -338,5 +338,6 @@
+             "role": "admin",
+             "fullName": os.environ.get("ADMIN_FULL_NAME", "System Administrator"),
++            "jobTitle": "Sustainability Lead",
+         })
+     if it_admin_email and it_admin_password:
+         accounts.append({
+@@ -343,13 +343,8 @@
+             "password": it_admin_password,
+             "role": "it_admin",
+             "fullName": os.environ.get("IT_ADMIN_FULL_NAME", "IT Administrator"),
+-        })
+-
+-    if not accounts:
+-        app.logger.warning(
+-            "SEED_ADMIN=true but no ADMIN_EMAIL/ADMIN_PASSWORD set — nothing seeded."
+-        )
+-        return
++            "jobTitle": "Systems Administrator",
++        })
+ 
+     try:
+         from models import User
+@@ -362,7 +362,7 @@
+                     role=u["role"],
+                     sector="Oil & Gas",
+                     department="Sustainability & IT",
+-                    jobTitle="Sustainability Manager",
++                    jobTitle=u.get("jobTitle", "Administrator"),
+                     location="Global",
+                     status="active",
+                 )
+@@ -369,10 +369,13 @@
+                 db.session.add(user)
+                 app.logger.info(f"Seeded {u['role']} account: {u['email']}")
+             else:
+-                app.logger.info(f"Account already exists (not overwritten): {u['email']}")
++                user.set_password(u["password"])
++                user.status = "active"
++                user.role = u["role"]
++                app.logger.info(f"Updated account: {u['email']}")
+         db.session.commit()
+     except Exception as e:
+-        app.logger.error(f"Failed to seed admin: {e}")
++        app.logger.error(f"Failed to seed admin accounts: {e}")
+         db.session.rollback()
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

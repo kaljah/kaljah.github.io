@@ -1,0 +1,55 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_06_itadmin_api.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -34,19 +34,13 @@
+ 
+     # ── Satellite Endpoints ────────────────────────────────────────────────────
+     t.log("\n## Satellite Data")
+-    t.get("/satellite/data", expected_status=200, label="GET /satellite/data")
+-    t.get("/satellite/summary", expected_status=200, label="GET /satellite/summary")
+-    t.get("/satellite/alerts", expected_status=200, label="GET /satellite/alerts")
+-    t.post("/satellite/data", json_body={
+-        "facility_id": 1, "date": "2024-01-15",
+-        "methane_concentration": 1850.5, "source": "Sentinel-5P",
+-        "latitude": 28.0, "longitude": 2.5,
+-    }, label="POST /satellite/data (it_admin)")
++    t.get("/satellite/sentinel5p/layer-config", expected_status=200, label="GET /satellite/sentinel5p/layer-config")
++    t.post("/satellite/sentinel5p/test-connection", json_body={}, label="POST /satellite/sentinel5p/test-connection (it_admin)")
+ 
+     # ── Emissions: Can it_admin CRUD emissions? ────────────────────────────────
+     t.log("\n## Emission Access (it_admin)")
+-    t.get("/emissions", expected_status=200, label="GET /emissions list")
+-    r = t.post("/emissions", json_body={
++    t.get("/emissions", expected_status=403, label="GET /emissions list (it_admin denied)")
++    t.post("/emissions", json_body={
+         "source_type": "Venting", "sub_type": "Tank Venting",
+         "process_type": "Venting",
+         "fuel_type": "Natural Gas", "quantity": 30.0, "unit": "MMBtu",
+@@ -53,20 +53,17 @@
+-    }, label="POST /emissions (it_admin — verify allowed/denied)")
+-    if r and r.status_code == 201:
+-        eid = r.json().get("id") or r.json().get("emission", {}).get("id")
+-        t.log(f"  it_admin created emission (id={eid}) — check if intentional")
++    }, should_deny=True, label="POST /emissions (it_admin DENIED)")
+ 
+     # ── Facilities ────────────────────────────────────────────────────────────
+     t.log("\n## Facilities (it_admin)")
+-    t.get("/facilities", expected_status=200, label="GET /facilities")
++    t.get("/facilities", expected_status=403, label="GET /facilities (it_admin denied)")
+ 
+     # ── Dashboard & Reports ───────────────────────────────────────────────────
+     t.log("\n## Dashboard & Reports (it_admin)")
+-    t.get("/dashboard/summary", expected_status=200, label="GET /dashboard/summary")
+-    t.get("/reports/list", expected_status=200, label="GET /reports/list")
++    t.get("/dashboard/summary", expected_status=403, label="GET /dashboard/summary (it_admin denied)")
++    t.get("/reports/export", label="GET /reports/export")
+ 
+     # ── Audit ─────────────────────────────────────────────────────────────────
+     t.log("\n## Audit Trail (it_admin)")
+-    t.get("/audit/logs", label="GET /audit/logs (check access level)")
++    t.get("/audit/", label="GET /audit/ (check access level)")
+ 
+     # ── Cross-role leak test ───────────────────────────────────────────────────
+     t.log("\n## Cross-role data leak checks")
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

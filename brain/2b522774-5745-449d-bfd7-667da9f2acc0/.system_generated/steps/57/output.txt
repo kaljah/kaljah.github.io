@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\routes\facilities.py:222:def update_facility(facility_id):
+  new\server\routes\facilities.py:223:    user_id = session.get("user_id")
+  new\server\routes\facilities.py:224:    user = db.session.get(User, user_id) if user_id else None  # API-02 FIX
+  new\server\routes\facilities.py:225:    if not user:
+  new\server\routes\facilities.py:226:        return jsonify({"error": "Unauthorized"}), 401
+  new\server\routes\facilities.py:227:    if user.role not in ["admin", "superuser"]:
+  new\server\routes\facilities.py:228:        return (
+  new\server\routes\facilities.py:229:            jsonify(
+  new\server\routes\facilities.py:230:                {"error": "Forbidden: Administrative privileges required to 
+manage facility configuration"}
+  new\server\routes\facilities.py:231:            ),
+  new\server\routes\facilities.py:232:            403,
+  new\server\routes\facilities.py:233:        )
+  new\server\routes\facilities.py:234:
+  new\server\routes\facilities.py:235:    facility = db.session.get(
+  new\server\routes\facilities.py:236:        Facility, facility_id
+  new\server\routes\facilities.py:237:    )  # API-02 FIX: replaced deprecated query.get
+  new\server\routes\facilities.py:238:    if not facility:
+  new\server\routes\facilities.py:239:        return jsonify({"error": "Facility not found"}), 404
+  new\server\routes\facilities.py:240:
+  new\server\routes\facilities.py:241:    allowed_fids = get_allowed_facility_ids(user)
+  new\server\routes\facilities.py:242:    if allowed_fids is not None and facility.id not in allowed_fids:
+  new\server\routes\facilities.py:243:        return jsonify({"error": "Unauthorized: Outside your region"}), 403
+  new\server\routes\facilities.py:244:
+  new\server\routes\facilities.py:245:    data = request.get_json()
+  new\server\routes\facilities.py:246:
+  new\server\routes\facilities.py:247:    if "name" in data:
+
+
+

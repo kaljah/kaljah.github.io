@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 21
+    print(f'{k}: resolve_tier={v[" resolve_tier\]},
+                                 ^
+SyntaxError: unterminated string literal (detected at line 21)
+

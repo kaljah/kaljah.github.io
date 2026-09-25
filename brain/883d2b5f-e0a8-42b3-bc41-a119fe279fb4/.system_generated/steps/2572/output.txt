@@ -1,0 +1,177 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+
+    def convert(value, from_unit, to_unit):
+        """Simple unit conversion wrapper."""
+        if from_unit == to_unit:
+            return value
+        key = f"{from_unit}_to_{to_unit}"
+        if key in CONVERSIONS:
+            return value * CONVERSIONS[key]
+    
+        # Reverse conversion
+        rev_key = f"{to_unit}_to_{from_unit}"
+        if rev_key in CONVERSIONS:
+            return value / CONVERSIONS[rev_key]
+    
+>       raise ValueError(f"Unsupported conversion: {from_unit} to {to_unit}")
+E       ValueError: Unsupported conversion: m3 to cf
+
+new\server\calculations\units.py:180: ValueError
+__ TestUnitConversionInvarianceMatrix.test_all_twelve_mass_units_invariance ___
+
+self = <test_deep_injection_matrix.TestUnitConversionInvarianceMatrix object at 0x000001DA63E44AA0>
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001DA63F11CD0>
+
+    def test_all_twelve_mass_units_invariance(self, dispatcher):
+        """10 tonnes carbon mass converted across all 12 mass units must yield identical stoichiometric emissions."""
+        base_tonnes = 10.0
+        mass_units = [
+            "tonne", "tonnes", "metric_ton", "mt", "t",
+            "kg", "lb", "lbs", "pound", "ton", "short_ton", "g"
+        ]
+        # Base: 10 tonnes * 0.85 carbon * (44.01 / 12.011) = 31.144 tonnes CO2
+        base_res = dispatcher.dispatch(
+            "stoichiometry",
+            {"amount": base_tonnes, "unit": "tonne", "carbon_content": 0.85, "factor_source": "specific"},
+            {},
+            {},
+        )
+        base_co2e = base_res["total_co2e"]
+        assert pytest.approx(base_co2e, rel=1e-3) == 31.144
+    
+        for u in mass_units:
+>           equiv_qty = convert(base_tonnes, "tonne", u)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+new\server\tests\test_deep_injection_matrix.py:159: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 10.0, from_unit = 'tonne', to_unit = 'tonnes'
+
+    def convert(value, from_unit, to_unit):
+        """Simple unit conversion wrapper."""
+        if from_unit == to_unit:
+            return value
+        key = f"{from_unit}_to_{to_unit}"
+        if key in CONVERSIONS:
+            return value * CONVERSIONS[key]
+    
+        # Reverse conversion
+        rev_key = f"{to_unit}_to_{from_unit}"
+        if rev_key in CONVERSIONS:
+            return value / CONVERSIONS[rev_key]
+    
+>       raise ValueError(f"Unsupported conversion: {from_unit} to {to_unit}")
+E       ValueError: Unsupported conversion: tonne to tonnes
+
+new\server\calculations\units.py:180: ValueError
+__ TestUnitConversionInvarianceMatrix.test_all_seven_energy_units_invariance __
+
+self = <test_deep_injection_matrix.TestUnitConversionInvarianceMatrix object at 0x000001DA63E44D10>
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001DA63F127E0>
+
+    def test_all_seven_energy_units_invariance(self, dispatcher):
+        """1,000 MMBtu of steam converted across all 7 energy units must yield identical indirect emissions."""
+        base_mmbtu = 1000.0
+        energy_units = ["mmbtu", "btu", "gj", "mj", "kwh", "mwh", "therm"]
+        base_res = dispatcher.dispatch(
+            "indirect_steam",
+            {
+                "amount": base_mmbtu,
+                "heat_unit": "mmbtu",
+                "boiler_efficiency": 0.80,
+                "transmission_loss": 0.05,
+                "factor_source": "specific",
+            },
+            {"co2": 53.06},
+            {},
+        )
+        base_co2e = base_res["total_co2e"]
+        assert base_co2e > 0
+    
+        for u in energy_units:
+>           equiv_qty = convert(base_mmbtu, "mmbtu", u)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+new\server\tests\test_deep_injection_matrix.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 1000.0, from_unit = 'mmbtu', to_unit = 'btu'
+
+    def convert(value, from_unit, to_unit):
+        """Simple unit conversion wrapper."""
+        if from_unit == to_unit:
+            return value
+        key = f"{from_unit}_to_{to_unit}"
+        if key in CONVERSIONS:
+            return value * CONVERSIONS[key]
+    
+        # Reverse conversion
+        rev_key = f"{to_unit}_to_{from_unit}"
+        if rev_key in CONVERSIONS:
+            return value / CONVERSIONS[rev_key]
+    
+>       raise ValueError(f"Unsupported conversion: {from_unit} to {to_unit}")
+E       ValueError: Unsupported conversion: mmbtu to btu
+
+new\server\calculations\units.py:180: ValueError
+_ TestUnitConversionInvarianceMatrix.test_all_seven_pressure_units_invariance _
+
+self = <test_deep_injection_matrix.TestUnitConversionInvarianceMatrix object at 0x000001DA63E45250>
+dispatcher = <calculations.dispatcher.CalculationDispatcher object at 0x000001DA6316A9C0>
+
+    def test_all_seven_pressure_units_invariance(self, dispatcher):
+        """Blowdown calculation at 1000 kPa expressed in kPa, MPa, Pa, bar, mbar, psia, psig must agree."""
+        press_cases = [
+            ("kpa", 1000.0),
+            ("mpa", 1.0),
+            ("bar", 10.0),
+            ("psia", 145.038),
+            ("psig", 145.038 - 14.696),
+        ]
+        results = []
+        for u, p in press_cases:
+            res = dispatcher.dispatch(
+                "blowdown",
+                {
+                    "blowdown_volume": 50.0,
+                    "pressure": p,
+                    "press_unit": u,
+                    "events": 1,
+                    "ch4_content": 90.0,
+                    "factor_source": "specific",
+                },
+                {},
+                {},
+            )
+            results.append((u, res["results"]["ch4"]["value"]))
+    
+        base_val = results[0][1]
+        for u, val in results:
+            rel_diff = abs(val - base_val) / base_val
+>           assert rel_diff < 0.01, f"Pressure invariance failed for unit '{u}': val={val}, base={base_val}"
+E           AssertionError: Pressure invariance failed for unit 'mpa': val=0.032610156352586274, base=0.30133230485897095
+E           assert 0.891780085219046 < 0.01
+
+new\server\tests\test_deep_injection_matrix.py:265: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_thirteen_volume_units_invariance
+FAILED new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_twelve_mass_units_invariance
+FAILED new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_seven_energy_units_invariance
+FAILED new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_seven_pressure_units_invariance
+ERROR new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier1_bulk_csv_upload
+ERROR new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier2_bulk_csv_upload_custom_factors
+ERROR new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier3_bulk_csv_upload_engineering_parameters
+ERROR new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope2_bulk_csv_upload_all_utility_types
+ERROR new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope3_bulk_csv_upload_all_categories_and_units
+============== 4 failed, 5 passed, 1 warning, 5 errors in 3.36s ===============
+

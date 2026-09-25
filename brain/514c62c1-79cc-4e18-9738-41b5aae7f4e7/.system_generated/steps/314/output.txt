@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+GWP100 (s1): 325030212.89560175
+Old GWP20: 42897.560296142925
+New GWP20: 325054197.93663484
+

@@ -1,0 +1,112 @@
+
+The command exited with code 1.
+Output:
+
+Running 3 tests using 1 worker
+
+[DASHBOARD BASELINE] Gross: 256.4K, Net: 256.4K, CH4: 238.7
+[DASHBOARD PILLS] S1: 256.4K tCO₂e, S2: 0 tCO₂e, S3: 0 tCO₂e
+[DASHBOARD API] Total Scope 1 (API): 256425.1
+[YEAR TEST] 2026 -> Gross Emissions: 256.4K
+[YEAR TEST] 2024 -> Gross Emissions: 0
+[YEAR TEST] 2023 -> Gross Emissions: 0
+[YEAR TEST] 2022 -> Gross Emissions: 0
+[YEAR TEST] All Years -> Gross Emissions: 256.4K
+[SUPPLY CHAIN TEST] Upstream -> Gross: 0
+[SUPPLY CHAIN TEST] Midstream -> Gross: 0
+[SUPPLY CHAIN TEST] Downstream -> Gross: 0
+[SUPPLY CHAIN TEST] All Supply Chains -> Gross: 256.4K
+[REGION/FACILITY TEST] West (Tosyali) -> Gross: 74.4K
+[GWP TOGGLE] Switched from GWP-100 -> Gross: 256.4K
+[DETAILED BREAKDOWN] Rows found: 15
+[DETAILED BREAKDOWN] Combustion: 64.4K, Total: 256.4K
+  x  1 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity (31.4s)
+[DASHBOARD BASELINE] Gross: 256.4K, Net: 256.4K, CH4: 238.7
+[DASHBOARD PILLS] S1: 256.4K tCO₂e, S2: 0 tCO₂e, S3: 0 tCO₂e
+[DASHBOARD API] Total Scope 1 (API): 256425.1
+[YEAR TEST] 2026 -> Gross Emissions: 256.4K
+[YEAR TEST] 2024 -> Gross Emissions: 0
+[YEAR TEST] 2023 -> Gross Emissions: 0
+[YEAR TEST] 2022 -> Gross Emissions: 0
+[YEAR TEST] All Years -> Gross Emissions: 256.4K
+[SUPPLY CHAIN TEST] Upstream -> Gross: 0
+[SUPPLY CHAIN TEST] Midstream -> Gross: 0
+[SUPPLY CHAIN TEST] Downstream -> Gross: 0
+[SUPPLY CHAIN TEST] All Supply Chains -> Gross: 256.4K
+[REGION/FACILITY TEST] West (Tosyali) -> Gross: 74.4K
+[GWP TOGGLE] Switched from GWP-100 -> Gross: 256.4K
+[DETAILED BREAKDOWN] Rows found: 15
+[DETAILED BREAKDOWN] Combustion: 64.4K, Total: 256.4K
+  x  2 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity (retry #1) (43.6s)
+[CARBON INTENSITY] GHG: 0.99, S1: 0.99, Flare: 0.09, S3: 0.00
+[CARBON INTENSITY GWP20] GHG Intensity 20-Yr: 1.04
+[CBAM TABLE] Product rows: 6
+  ok 3 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:247:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 2. Carbon Intensity Page: Filters, Dual GWP & CBAM Table (10.8s)
+[METHANE INTENSITY] KPI Cards count: 4
+[METHANE INTENSITY] Card 1 Value: 0.0009
+[METHANE INTENSITY] OGMP 2.0 Gold Standard section verified
+  ok 4 [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:300:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 3. Methane Intensity Page: Filters, Loss Rates & OGMP Badges (6.6s)
+
+
+  1) [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.chart-card, .line-chart-wrapper').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.chart-card, .line-chart-wrapper').first() with timeout 5000ms
+      - waiting for locator('.chart-card, .line-chart-wrapper').first()
+
+
+      239 |     // Verify Charts are present and rendered
+      240 |     const trendChart = page.locator('.chart-card, .line-chart-wrapper').first();
+    > 241 |     await expect(trendChart).toBeVisible();
+          |                              ^
+      242 |     const pieChart = page.locator('.pie-chart-wrapper, canvas').first();
+      243 |     await expect(pieChart).toBeVisible();
+      244 |     console.log('[DASHBOARD] Charts verified successfully.');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:241:30
+
+    Error Context: test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.chart-card, .line-chart-wrapper').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.chart-card, .line-chart-wrapper').first() with timeout 5000ms
+      - waiting for locator('.chart-card, .line-chart-wrapper').first()
+
+
+      239 |     // Verify Charts are present and rendered
+      240 |     const trendChart = page.locator('.chart-card, .line-chart-wrapper').first();
+    > 241 |     await expect(trendChart).toBeVisible();
+          |                              ^
+      242 |     const pieChart = page.locator('.pie-chart-wrapper, canvas').first();
+      243 |     await expect(pieChart).toBeVisible();
+      244 |     console.log('[DASHBOARD] Charts verified successfully.');
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_dashboard_and_intensity_audit.spec.js:241:30
+
+    Error Context: test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_dashboard_and_intensi-a8f64-ns-Toggles-Tri-Layer-Parity-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_dashboard_and_intensity_audit.spec.js:56:3 › Baseline UX/UI Audit: Dashboard & Intensity Pages › 1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Parity 
+  2 passed (1.7m)
+

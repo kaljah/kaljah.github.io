@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_carbon_intensity_validation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -125,6 +125,28 @@
+             )
+             db.session.add(em2)
+ 
++        # Emissions for fac3 (2026) with zero production
++        em3 = Emission.query.filter_by(record_id="EM-CI-003").first()
++        if not em3:
++            em3 = Emission(
++                record_id="EM-CI-003",
++                facility_id=fac3.id,
++                year=2026,
++                month=1,
++                process_type="combustion",
++                status="Verified",
++                activity=fac3.activity,
++                division=fac3.division,
++                co2_emissions=200.0,
++                ch4_emissions=0.0,
++                n2o_emissions=0.0,
++                co2e_total=200.0,
++                quantity=100.0,
++                unit="m3",
++                created_by=admin.id,
++            )
++            db.session.add(em3)
++
+         # Production for fac1 (2026)
+         prod1 = ProductionData.query.filter_by(facility_id=fac1.id, year=2026, month=1).first()
+         if not prod1:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

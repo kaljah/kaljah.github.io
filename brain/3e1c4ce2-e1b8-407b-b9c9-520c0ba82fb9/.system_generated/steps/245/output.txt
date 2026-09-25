@@ -1,0 +1,15 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-241
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-241.log
+Log output:
+Version 1.63.0
+head : The term 'head' is not recognized as the name of a cmdlet, function, script file, or operable program. Check 
+the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:68
++ ... aywright --version 2>&1; npx playwright show-browsers 2>&1 | head -20
++                                                                  ~~~~
+    + CategoryInfo          : ObjectNotFound: (head:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+
+Last progress: 0s ago

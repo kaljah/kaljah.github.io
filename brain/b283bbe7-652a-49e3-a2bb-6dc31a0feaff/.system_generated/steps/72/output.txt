@@ -1,0 +1,14 @@
+
+The command exited with code 1.
+Output:
+python :   File "<string>", line 44
+At line:1 char:1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (  File "<string>", line 44:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    role_bug = f'Role {acct[" role\]}
+                            ^
+SyntaxError: unterminated string literal (detected at line 44)
+

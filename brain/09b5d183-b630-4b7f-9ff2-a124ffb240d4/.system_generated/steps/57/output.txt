@@ -1,0 +1,26 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\golden_dataset\\dataset_generator.py","LineNumber":9,"LineContent":"    IndependentUnitConverter,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\mutation\\test_calculation_mutations.py","LineNumber":29,"LineContent":"    IndependentUnitConverter,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\mutation\\test_calculation_mutations.py","LineNumber":56,"LineContent":"        clean_m3 = IndependentUnitConverter.convert(scf_qty, \"scf\", \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":7,"LineContent":"    IndependentUnitConverter,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":48,"LineContent":"                    gal = IndependentUnitConverter.convert(qty, u_fuel, \"gal\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":52,"LineContent":"                    scf = IndependentUnitConverter.convert(qty, u_fuel, \"scf\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":61,"LineContent":"            qty_in_f_denom = IndependentUnitConverter.convert(qty, u_fuel, f_denom)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":101,"LineContent":"        vol_m3_actual = IndependentUnitConverter.convert(qty, u_fuel, \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\combustion_flaring.py","LineNumber":176,"LineContent":"        vol_m3_actual = IndependentUnitConverter.convert(qty, u_vol, \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\fugitives.py","LineNumber":6,"LineContent":"from .unit_conversions import IndependentUnitConverter"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\midstream.py","LineNumber":8,"LineContent":"    IndependentUnitConverter,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\midstream.py","LineNumber":115,"LineContent":"        rate_gph = IndependentUnitConverter.convert(pump_rate, pump_unit, \"gal/hr\") if pump_unit != \"gph\" else float(pump_rate or 0.0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\midstream.py","LineNumber":186,"LineContent":"        mass_kg = IndependentUnitConverter.convert(fuel_mass, mass_unit, \"kg\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\regression\\test_regression_archive.py","LineNumber":7,"LineContent":"    IndependentUnitConverter,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\regression\\test_regression_archive.py","LineNumber":145,"LineContent":"        v1 = IndependentUnitConverter.convert(1.0, \"MWh\", \"MJ\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\regression\\test_regression_archive.py","LineNumber":146,"LineContent":"        v2 = IndependentUnitConverter.convert(1.0, \"mwh\", \"mj\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\regression\\test_regression_archive.py","LineNumber":147,"LineContent":"        v3 = IndependentUnitConverter.convert(1.0, \"KWH\", \"MJ\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\unit_conversions.py","LineNumber":253,"LineContent":"class IndependentUnitConverter:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\scope2.py","LineNumber":6,"LineContent":"from .unit_conversions import IndependentUnitConverter"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":8,"LineContent":"    IndependentUnitConverter,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":71,"LineContent":"        vol_m3 = IndependentUnitConverter.convert(mud_volume, mud_unit, \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":106,"LineContent":"            total_gas_m3 = IndependentUnitConverter.convert(flowback_volume, volume_unit, \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":158,"LineContent":"        depth_m = IndependentUnitConverter.convert(well_depth, depth_unit, \"m\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":159,"LineContent":"        diam_m = IndependentUnitConverter.convert(diameter, diameter_unit, \"m\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":220,"LineContent":"        v_phys = IndependentUnitConverter.convert(blowdown_volume, volume_unit, \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\validation\\reference_model\\vented_processes.py","LineNumber":277,"LineContent":"        bbl = IndependentUnitConverter.convert(throughput, throughput_unit, \"bbl\")"}

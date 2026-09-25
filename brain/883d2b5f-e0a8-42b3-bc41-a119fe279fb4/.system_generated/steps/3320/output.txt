@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -190,14 +190,14 @@
+     scope=1,
+     overwrite_duplicates=False,
+ ):
++    wb = None
++    f = None
+     with app.app_context():
+         try:
+-            is_excel = original_filename.lower().endswith(".xlsx")
++            is_excel = str(original_filename or "").lower().endswith(".xlsx")
+ 
+             headers = []
+             rows_iterator = None
+-            wb = None
+-            f = None
+ 
+             # 1. Open File & Extract Headers
+             tier3_data_map = {}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

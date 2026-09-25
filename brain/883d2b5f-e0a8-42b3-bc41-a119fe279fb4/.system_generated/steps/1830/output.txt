@@ -1,0 +1,32 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3128,7 +3128,7 @@
+     # --- Audit Log ---
+     try:
+         # Fetch facility name for better description
+-        facility = Facility.query.get(data["facility_id"])
++        facility = db.session.get(Facility, data["facility_id"])
+         facility_name = facility.name if facility else "Unknown"
+ 
+         log_details = f"Added {record.process_type} emission: {record.quantity} {record.unit} of {record.fuel_type} for {facility_name} ({record.month}/{record.year})"
+@@ -3171,7 +3171,7 @@
+                 )
+ 
+                 # Get Goal
+-                goal = Goal.query.get(current_year)
++                goal = db.session.get(Goal, current_year)
+ 
+                 if goal and goal.target_amount > 0:
+                     percent = total_emissions / goal.target_amount
+@@ -3193,7 +3193,7 @@
+                         # an unread notification of the same type and year doesn't exist.
+                         from datetime import timedelta
+ 
+-                        cutoff = datetime.datetime.utcnow() - timedelta(hours=24)
++                        cutoff = datetime.datetime.now(datetime.timezone.utc) - timedelta(hours=24)
+                         existing = Notification.query.filter(
+                             Notification.user_id == user.id,
+                             Notification.type == n_type,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

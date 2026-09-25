@@ -1,0 +1,104 @@
+
+The command exited with code 0.
+Output:
+import math
+from .combustion import CombustionCalculator, FlaringCalculator
+from .vented import (
+    PneumaticDeviceCalculator,
+    LiquidsUnloadingCalculator,
+    MudDegassingCalculator,
+    TankFlashingCalculator,
+    CompletionFlowbackCalculator,
+    BlowdownCalculator,
+)
+from .fugitive import (
+    ComponentFugitiveCalculator,
+    EquipmentFugitiveCalculator,
+    CompressorSealCalculator,
+)
+from .midstream import AGRCalculator, DehydratorCalculator
+from .indirect import IndirectSteamCalculator, CogenAllocationCalculator
+from .stoichiometry import StoichiometricCalculator
+from .units import CONVERSIONS, calculate_co2e
+from .uncertainty import (
+    propagate_uncertainty,
+    resolve_tier,
+    resolve_ef_uncertainty,
+    PROCESS_CATEGORY,
+)
+
+
+class CalculationDispatcher:
+    """
+    Routes a calculation request to the appropriate API 2021 calculator.
+    """
+
+    def __init__(self):
+        self.calculators = {
+            "stationary_combustion": CombustionCalculator(),
+            "combustion": CombustionCalculator(),
+            "mobile_combustion": CombustionCalculator(),
+            "mobile": CombustionCalculator(),
+            "flaring": FlaringCalculator(),
+            "flare": FlaringCalculator(),
+            "drilling": MudDegassingCalculator(),
+            "mud_degassing": MudDegassingCalculator(),
+            "completions": CompletionFlowbackCalculator(),
+            "completion_flowback": CompletionFlowbackCalculator(),
+            "liquids_unloading": LiquidsUnloadingCalculator(),
+            "unloading": LiquidsUnloadingCalculator(),
+            "tank": TankFlashingCalculator(),
+            "tank_flashing": TankFlashingCalculator(),
+            "tank_working": TankFlashingCalculator(),
+            "tank_breathing": TankFlashingCalculator(),
+            "storage_tanks": TankFlashingCalculator(),
+            "pneumatic_devices": PneumaticDeviceCalculator(),
+            "pneumatic_device": PneumaticDeviceCalculator(),
+            "pneumatics": PneumaticDeviceCalculator(),
+            "pneumatic": PneumaticDeviceCalculator(),
+            "fugitive_component": ComponentFugitiveCalculator(),
+            "component_fugitive": ComponentFugitiveCalculator(),
+            "equipment_fugitive": EquipmentFugitiveCalculator(),
+            "wellhead_fugitive": EquipmentFugitiveCalculator(),
+            "separator_fugitive": EquipmentFugitiveCalculator(),
+            "gathering_boosting": EquipmentFugitiveCalculator(),
+            "gas_processing": EquipmentFugitiveCalculator(),
+            "transmission_storage": EquipmentFugitiveCalculator(),
+            "refinery_fugitive": EquipmentFugitiveCalculator(),
+            "distribution_fugitive": EquipmentFugitiveCalculator(),
+            "lng_operations": EquipmentFugitiveCalculator(),
+            "compressor_fugitive": CompressorSealCalculator(),
+            "compressor_seal": CompressorSealCalculator(),
+            "fugitive": EquipmentFugitiveCalculator(),
+            "agr": AGRCalculator(),
+            "acid_gas_removal": AGRCalculator(),
+            "dehydrator": DehydratorCalculator(),
+            "indirect_steam": IndirectSteamCalculator(),
+            "cogen_allocation": CogenAllocationCalculator(),
+            "cogen": CogenAllocationCalculator(),
+            "stoichiometry": StoichiometricCalculator(),
+            "chemical_production": StoichiometricCalculator(),
+            "nitric_acid_production": StoichiometricCalculator(),
+            "adipic_acid_production": StoichiometricCalculator(),
+            "venting": BlowdownCalculator(),
+            "blowdown": BlowdownCalculator(),
+        }
+
+    def _require(self, key, inputs, description):
+        val = inputs.get(key)
+        if val in [None, "", "-"]:
+            from flask import current_app, has_app_context
+
+            if has_app_context():
+                current_app.logger.warning(
+                    f"Missing required field: {key} ({description})"
+                )
+            else:
+                import logging
+
+                logging.warning(f"Missing required field: {key} ({description})")
+            raise ValueError(f"Missing required field: {key} ({description})")
+        return float(val)
+
+    def _normalize_volume(self, value, unit, target_unit="m3"):
+

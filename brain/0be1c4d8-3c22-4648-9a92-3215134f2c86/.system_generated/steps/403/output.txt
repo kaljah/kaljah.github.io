@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+['id', 'year', 'type', 'subtype', 'quantity_tco2e', 'notes', 'reference_id', 'date_added']
+

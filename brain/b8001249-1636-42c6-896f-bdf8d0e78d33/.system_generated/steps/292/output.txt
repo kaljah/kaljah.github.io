@@ -1,0 +1,34 @@
+
+The command exited with code 0.
+Output:
+[Agent7/viewer] ✅ Login as test_viewer@ghg-test.com
+[Agent7/viewer] ✅ GET /auth/me → 200
+[Agent7/viewer] 
+## Read-Only Access (should all pass)
+[Agent7/viewer] ✅ GET /emissions → 200
+[Agent7/viewer] ✅ GET /facilities → 200
+[Agent7/viewer] ✅ GET /dashboard/summary → 200
+[Agent7/viewer] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/trends
+[Agent7/viewer] 🐛 BUG [🟠 High] API: Unexpected status on GET /dashboard/scope-breakdown
+[Agent7/viewer] ✅ GET /scope2 → 200
+[Agent7/viewer] ✅ GET /scope3 → 200
+[Agent7/viewer] ✅ GET /notifications → 200
+[Agent7/viewer] 🐛 BUG [🟠 High] API: Unexpected status on GET /reports/list
+[Agent7/viewer] 🐛 BUG [🟠 High] API: Unexpected status on GET /qaqc/anomalies
+[Agent7/viewer] 
+## Write Attempts (ALL must be 401/403)
+[Agent7/viewer] ✅ Correctly denied POST /emissions (viewer write DENIED) → 403
+[Agent7/viewer] 🐛 BUG [🔴 Critical] RBAC: Role 'viewer' should be DENIED PUT /emissions/1 (viewer write DENIED) but got 404
+[Agent7/viewer] 🐛 BUG [🔴 Critical] RBAC: Role 'viewer' should be DENIED DELETE /emissions/1 (viewer DENIED) but got 404
+[Agent7/viewer] ✅ Correctly denied POST /scope2 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied POST /scope3 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied POST /facilities (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied PUT /facilities/1 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied DELETE /facilities/1 (viewer DENIED) → 403
+[Agent7/viewer] ✅ Correctly denied GET /auth/users (viewer DENIED) → 403
+[Agent7/viewer] 🐛 BUG [🔴 Critical] RBAC: Role 'viewer' should be DENIED POST /auth/users (viewer DENIED) but got 405
+[Agent7/viewer] 🐛 BUG [🔴 Critical] RBAC: Role 'viewer' should be DENIED CSV upload (viewer DENIED) but got 405
+[Agent7/viewer] 
+## Own Profile (viewer)
+[Agent7] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_07_report.md | Bugs: 8
+

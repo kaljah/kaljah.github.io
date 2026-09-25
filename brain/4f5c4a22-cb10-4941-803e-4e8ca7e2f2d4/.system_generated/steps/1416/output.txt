@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+
+new\server\emission_factors_api2021.py:136:    "Residual Fuel Oil (No. 6)": {
+new\server\emission_factors_api2021.py:235:    "Anthracite Coal": {
+new\server\generate_bulk_test_csvs.py:42:    ("Residual Fuel Oil (No. 6 Fuel Oil)", ["gal", "bbl", "m3"]),
+new\server\generate_bulk_test_csvs.py:51:    ("Coal (Anthracite)", ["ton", "tonne"]),
+
+
+

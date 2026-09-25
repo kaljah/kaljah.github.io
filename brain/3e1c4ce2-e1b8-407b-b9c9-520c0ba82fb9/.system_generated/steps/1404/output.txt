@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1481,6 +1481,10 @@
+         s2_q = s2_q.join(Facility, Scope2Emission.facility_id == Facility.id).filter(
+             Facility.segment == segment
+         )
++    if activity and activity != "all":
++        s2_q = s2_q.filter(Scope2Emission.activity == activity)
++    if division and division != "all":
++        s2_q = s2_q.filter(Scope2Emission.division == division)
+     s2_rows = s2_q.group_by(Scope2Emission.year, Scope2Emission.facility_id).all()
+     for rec in s2_rows:
+         key = (rec.year, rec.facility_id)
+@@ -1511,6 +1511,13 @@
+         s3_q = s3_q.join(Facility, Scope3Emission.facility_id == Facility.id).filter(
+             Facility.segment == segment
+         )
++    if (activity and activity != "all") or (division and division != "all"):
++        if not (segment and segment != "all"):
++            s3_q = s3_q.join(Facility, Scope3Emission.facility_id == Facility.id)
++        if activity and activity != "all":
++            s3_q = s3_q.filter(Facility.activity == activity)
++        if division and division != "all":
++            s3_q = s3_q.filter(Facility.division == division)
+     s3_rows = s3_q.group_by(Scope3Emission.year, Scope3Emission.facility_id).all()
+     s3_map = {}  # {(year, fid): co2e}
+     for rec in s3_rows:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

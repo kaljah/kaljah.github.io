@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+(node:2668) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+URL: http://localhost:5173/manage-data
+Title: Carbon Tech
+Nav items count: 9
+ 0: Pending Review
+ 1: Emission Factors
+ 2: Regions
+ 3: Production Data
+ 4: Emission Sources
+ 5: Emission Goals & Base Years
+ 6: Mitigation Projects
+ 7: OGMP 2.0 Surveys
+ 8: CBAM Products
+

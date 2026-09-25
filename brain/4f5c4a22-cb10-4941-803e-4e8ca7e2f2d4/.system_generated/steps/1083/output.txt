@@ -1,0 +1,48 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":639,"LineContent":"  \"Fugitive - Valve (Gas/Vapor)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":644,"LineContent":"    // Actually fugitive average factors are usually total hydrocarbon or methane?"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":646,"LineContent":"    // For compliance, let's look at legacy: efFugitiveAverage returns tonnes_ch4/year."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":648,"LineContent":"    // Legacy efFugitiveAverage for Gas Valves = 0.026 tonnes CH4/year."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":653,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":657,"LineContent":"  \"Fugitive - Connector (Gas/Vapor)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":663,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":667,"LineContent":"  \"Fugitive - Flange (Gas/Vapor)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":673,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":677,"LineContent":"  // --- API 2021 ADDITIONAL FUGITIVES ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":678,"LineContent":"  \"Fugitive - Valve (Light Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":684,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":688,"LineContent":"  \"Fugitive - Valve (Heavy Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":694,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":698,"LineContent":"  \"Fugitive - Connector (Light Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":704,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":708,"LineContent":"  \"Fugitive - Connector (Heavy Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":714,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":718,"LineContent":"  // --- ADDITIONAL FUGITIVES (Seals, OEL, PRV) ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":719,"LineContent":"  \"Fugitive - Open-Ended Line (Gas)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":725,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":728,"LineContent":"  \"Fugitive - Open-Ended Line (Light Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":734,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":737,"LineContent":"  \"Fugitive - Pressure Relief Valve (Gas)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":743,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":746,"LineContent":"  \"Fugitive - Pressure Relief Valve (Light Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":752,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":755,"LineContent":"  \"Fugitive - Compressor Seal (Centrifugal - Wet)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":761,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":764,"LineContent":"  \"Fugitive - Compressor Seal (Centrifugal - Dry)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":770,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":773,"LineContent":"  \"Fugitive - Compressor Seal (Reciprocating)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":779,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":782,"LineContent":"  \"Fugitive - Pump Seal (Gas)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":788,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":791,"LineContent":"  \"Fugitive - Pump Seal (Light Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":797,"LineContent":"    usage: [\"fugitive\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":800,"LineContent":"  // --- PIPELINE FUGITIVES ---"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":801,"LineContent":"  \"Fugitive - Pipeline Leaks (Gas)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":807,"LineContent":"    usage: [\"fugitive_pipeline\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":808,"LineContent":"    description: \"Average fugitive emissions per km of gas pipeline\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":811,"LineContent":"  \"Fugitive - Pipeline Leaks (Oil)\": {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":817,"LineContent":"    usage: [\"fugitive_pipeline\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":818,"LineContent":"    description: \"Average fugitive emissions per km of oil pipeline\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1209,"LineContent":"  fugitive: \"Fugitive Emissions\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1232,"LineContent":"      \"fugitive\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1251,"LineContent":"      \"fugitive\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\EmissionFactors.js","LineNumber":1267,"LineContent":"      \"fugitive\","}

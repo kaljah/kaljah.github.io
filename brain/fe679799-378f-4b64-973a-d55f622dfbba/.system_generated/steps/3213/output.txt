@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0  0      0   0      0   0      0      0      0                              0
+HTTP/1.1 200 OK
+Vary: Origin
+Content-Type: text/html
+Cache-Control: no-cache
+Etag: W/"504-JupPfO7Sxa01a3+xFO51/BuAPWk"
+Date: Wed, 23 Sep 2026 15:10:01 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+

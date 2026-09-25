@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+res1 co2: 80.573856
+res1 ch4: 0.5970800000000005
+

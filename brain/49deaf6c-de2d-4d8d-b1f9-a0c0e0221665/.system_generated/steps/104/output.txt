@@ -1,0 +1,117 @@
+
+The command exited with code 0.
+Output:
+<truncated 225 lines>
+  new\server\routes\managedata.py:828:    except Exception as e:
+  new\server\routes\managedata.py:829:        db.session.rollback()
+  new\server\routes\managedata.py:830:        return jsonify({"error": str(e)}), 500
+  new\server\routes\managedata.py:831:
+> new\server\routes\managedata.py:953:@managedata_bp.route("/base-years/<int:rec_id>", methods=["DELETE"])
+  new\server\routes\managedata.py:954:@login_required
+  new\server\routes\managedata.py:955:def delete_base_year_recalculation(rec_id):
+  new\server\routes\managedata.py:956:    user = get_current_user()
+  new\server\routes\managedata.py:957:    if user and user.role in ["it_admin", "it_manager", "it"]:
+  new\server\routes\managedata.py:958:        return jsonify({"error": "IT administrators are not authorized to modify 
+base year recalculation data."}), 403
+  new\server\routes\managedata.py:959:    if not user or user.role not in ["admin", "superuser"]:
+  new\server\routes\managedata.py:960:        return jsonify({"error": "Administrator privileges required to modify 
+base year recalculation data."}), 403
+  new\server\routes\managedata.py:961:    try:
+  new\server\routes\managedata.py:962:        rec = db.session.get(BaseYearRecalculation, rec_id)
+  new\server\routes\managedata.py:963:        if not rec:
+  new\server\routes\managedata.py:964:            return jsonify({"error": "Recalculation record not found"}), 404
+  new\server\routes\managedata.py:965:        db.session.delete(rec)
+  new\server\routes\managedata.py:966:        db.session.commit()
+  new\server\routes\managedata.py:967:
+  new\server\routes\managedata.py:968:        # Resync singleton with latest remaining
+  new\server\routes\managedata.py:969:        latest = BaseYearRecalculation.query.order_by(
+  new\server\routes\managedata.py:970:            BaseYearRecalculation.recalc_date.desc()
+  new\server\routes\managedata.py:971:        ).first()
+  new\server\routes\managedata.py:972:        if latest:
+  new\server\routes\managedata.py:973:            singleton = db.session.get(BaseYear, 1)
+> new\server\routes\notifications.py:195:@notifications_bp.route("/<int:id>", methods=["DELETE"])
+  new\server\routes\notifications.py:196:@login_required
+  new\server\routes\notifications.py:197:def delete_notification(id):
+  new\server\routes\notifications.py:198:    """Permanently delete a single notification."""
+  new\server\routes\notifications.py:199:    user = get_current_user()
+  new\server\routes\notifications.py:200:    if not user:
+  new\server\routes\notifications.py:201:        return jsonify({"error": "Not authenticated"}), 401
+  new\server\routes\notifications.py:202:
+  new\server\routes\notifications.py:203:    n = Notification.query.get_or_404(id)
+  new\server\routes\notifications.py:204:    if n.user_id is None:
+  new\server\routes\notifications.py:205:        if user.role not in ["admin", "superuser"]:
+  new\server\routes\notifications.py:206:            return jsonify({"error": "Only administrators can delete system 
+notifications"}), 403
+  new\server\routes\notifications.py:207:    elif n.user_id != user.id and user.role not in ["admin", "superuser"]:
+  new\server\routes\notifications.py:208:        return jsonify({"error": "Unauthorized"}), 403
+  new\server\routes\notifications.py:209:
+  new\server\routes\notifications.py:210:    try:
+  new\server\routes\notifications.py:211:        db.session.delete(n)
+  new\server\routes\notifications.py:212:        db.session.commit()
+  new\server\routes\notifications.py:213:    except Exception as e:
+  new\server\routes\notifications.py:214:        db.session.rollback()
+  new\server\routes\notifications.py:215:        return jsonify({"error": "Failed to delete notification"}), 500
+> new\server\routes\notifications.py:219:@notifications_bp.route("/all", methods=["DELETE"])
+  new\server\routes\notifications.py:220:@login_required
+  new\server\routes\notifications.py:221:def delete_all_notifications():
+  new\server\routes\notifications.py:222:    """Permanently delete all notifications for the current user."""
+  new\server\routes\notifications.py:223:    user = get_current_user()
+  new\server\routes\notifications.py:224:    if not user:
+  new\server\routes\notifications.py:225:        return jsonify({"error": "Not authenticated"}), 401
+  new\server\routes\notifications.py:226:
+  new\server\routes\notifications.py:227:    try:
+  new\server\routes\notifications.py:228:        deleted = Notification.query.filter_by(user_id=user.id).delete()
+  new\server\routes\notifications.py:229:        db.session.commit()
+  new\server\routes\notifications.py:230:    except Exception as e:
+  new\server\routes\notifications.py:231:        db.session.rollback()
+  new\server\routes\notifications.py:232:        return jsonify({"error": "Failed to delete notifications"}), 500
+  new\server\routes\notifications.py:233:    return jsonify({"success": True, "deleted": deleted})
+> new\server\routes\scope2.py:483:@scope2_bp.route("/<int:emission_id>", methods=["DELETE"])
+  new\server\routes\scope2.py:484:@login_required
+  new\server\routes\scope2.py:485:def delete_scope2_emission(emission_id):
+  new\server\routes\scope2.py:486:    """Delete a Scope 2 emission record"""
+  new\server\routes\scope2.py:487:    user = get_current_user()
+  new\server\routes\scope2.py:488:    if not user:
+  new\server\routes\scope2.py:489:        return jsonify({"error": "Not authenticated"}), 401
+  new\server\routes\scope2.py:490:    if user.role in ["it_admin", "it_manager", "it"]:
+  new\server\routes\scope2.py:491:        return jsonify({"error": "IT personnel do not have access to emission 
+data"}), 403
+  new\server\routes\scope2.py:492:
+  new\server\routes\scope2.py:493:    if user.role in ["auditor"]:
+  new\server\routes\scope2.py:494:        return jsonify({"error": "Forbidden: Read-only accounts cannot delete 
+emission records"}), 403
+  new\server\routes\scope2.py:495:
+  new\server\routes\scope2.py:496:    emission = db.session.get(Scope2Emission, emission_id)
+  new\server\routes\scope2.py:497:    if not emission:
+  new\server\routes\scope2.py:498:        return jsonify({"error": "Emission not found"}), 404
+  new\server\routes\scope2.py:499:
+  new\server\routes\scope2.py:500:    if user.role not in ["admin", "superuser"]:
+  new\server\routes\scope2.py:501:        if emission.created_by != user.id:
+  new\server\routes\scope2.py:502:            return (
+  new\server\routes\scope2.py:503:                jsonify(
+> new\server\routes\scope3.py:308:@scope3_bp.route("/<int:emission_id>", methods=["DELETE"])
+  new\server\routes\scope3.py:309:@login_required
+  new\server\routes\scope3.py:310:def delete_scope3_emission(emission_id):
+  new\server\routes\scope3.py:311:    """Delete a Scope 3 emission record"""
+  new\server\routes\scope3.py:312:    user = get_current_user()
+  new\server\routes\scope3.py:313:    if not user:
+  new\server\routes\scope3.py:314:        return jsonify({"error": "Not authenticated"}), 401
+  new\server\routes\scope3.py:315:    if user.role in ["it_admin", "it_manager", "it"]:
+  new\server\routes\scope3.py:316:        return jsonify({"error": "IT personnel do not have access to emission 
+data"}), 403
+  new\server\routes\scope3.py:317:
+  new\server\routes\scope3.py:318:    if user.role in ["auditor"]:
+  new\server\routes\scope3.py:319:        return jsonify({"error": "Forbidden: Read-only accounts cannot delete 
+emission records"}), 403
+  new\server\routes\scope3.py:320:
+  new\server\routes\scope3.py:321:    emission = db.session.get(Scope3Emission, emission_id)
+  new\server\routes\scope3.py:322:    if not emission:
+  new\server\routes\scope3.py:323:        return jsonify({"error": "Emission not found"}), 404
+  new\server\routes\scope3.py:324:
+  new\server\routes\scope3.py:325:    if user.role not in ["admin", "superuser"]:
+  new\server\routes\scope3.py:326:        if emission.created_by != user.id:
+  new\server\routes\scope3.py:327:            return (
+  new\server\routes\scope3.py:328:                jsonify(
+
+
+

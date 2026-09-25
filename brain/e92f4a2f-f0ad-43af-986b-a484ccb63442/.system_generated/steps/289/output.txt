@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Logged in user: admin
+Number of facilities returned to admin: 43
+Sample facilities: [(1, 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'West', 'Bethioua, Oran', 'Steel & Iron (Acier DRI)', 'Metallurgy'), (2, 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'West', 'Arzew, Oran', 'Chemicals & Fertilizers', 'Petrochemicals'), (3, 'Cimenterie Industrielle de Chlef (GICA)', 'Center', 'Chlef', 'Cement & Clinker', 'Building Materials'), (4, 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)', 'South', 'Hassi Messaoud, Ouargla', 'Upstream & Midstream Gas', 'Exploration & Production'), (5, 'ADR', None, 'Adrar', 'Activit� E&P', 'DP'), (6, 'REB', None, 'Algeria', 'Activit� E&P', 'DP')]
+

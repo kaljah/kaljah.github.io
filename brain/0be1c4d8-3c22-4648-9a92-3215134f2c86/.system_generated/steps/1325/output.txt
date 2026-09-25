@@ -1,0 +1,71 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\context\AuthContext.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3,8 +3,9 @@
+ 
+ const AuthContext = createContext(null);
+ 
+-// 10-minute idle session timeout
++// 10-minute idle session timeout, 9-minute warning
+ const IDLE_TIMEOUT_MS = 10 * 60 * 1000;
++const IDLE_WARNING_MS = 9 * 60 * 1000;
+ 
+ export const AuthProvider = ({ children }) => {
+   const [user, setUser] = useState(null);
+@@ -11,6 +11,8 @@
+   const [loading, setLoading] = useState(true);
+   const [sessionExpired, setSessionExpired] = useState(false);
++  const [sessionWarning, setSessionWarning] = useState(false);
+   const idleTimerRef = useRef(null);
++  const idleWarningRef = useRef(null);
+   const lastActivityRef = useRef(Date.now());
+ 
+   // Register global logout hook for API interceptor
+@@ -37,6 +37,7 @@
+     setUser(null);
+     setPreferences({});
+     applyTheme("light");
++    setSessionWarning(false);
+     if (isTimeout) {
+       setSessionExpired(true);
+     }
+@@ -44,7 +44,7 @@
+     } catch (e) {}
+   }, []);
+ 
+-  // ── 10-Minute Idle Session Timeout ─────────────────────────────────────────
++  // ── 10-Minute Idle Session Timeout & 9-Minute Warning ─────────────────────
+   useEffect(() => {
+     if (!user) {
+       if (idleTimerRef.current) {
+@@ -51,5 +51,10 @@
+         idleTimerRef.current = null;
+       }
++      if (idleWarningRef.current) {
++        clearTimeout(idleWarningRef.current);
++        idleWarningRef.current = null;
++      }
++      setSessionWarning(false);
+       return;
+     }
+ 
+@@ -56,7 +56,14 @@
+       lastActivityRef.current = Date.now();
+-      if (idleTimerRef.current) {
+-        clearTimeout(idleTimerRef.current);
+-      }
++      setSessionWarning(false);
++      if (idleTimerRef.current) {
++        clearTimeout(idleTimerRef.current);
++      }
++      if (idleWarningRef.current) {
++        clearTimeout(idleWarningRef.current);
++      }
++      idleWarningRef.current = setTimeout(() => {
++        setSessionWarning(true);
++      }, IDLE_WARNING_MS);
+       idleTimerRef.current = setTimeout(() => {
+         console.warn("[Auth] 10-minute idle session timeout reached. Logging out.");
+         logout(true);
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

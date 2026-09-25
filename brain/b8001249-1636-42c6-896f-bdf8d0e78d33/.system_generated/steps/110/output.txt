@@ -1,0 +1,2 @@
+You have 1 active subagent(s):
+[{"role":"Agent 1: App Launcher","type":"self","conversationId":"195cc5c9-fc1d-4667-ab87-ced4425652ad","transcript":"file:///C:/Users/samsung/.gemini/antigravity/brain/195cc5c9-fc1d-4667-ab87-ced4425652ad/.system_generated/logs/transcript.jsonl","state":"running","stateDetail":"read_url_content: Frontend health check"}]

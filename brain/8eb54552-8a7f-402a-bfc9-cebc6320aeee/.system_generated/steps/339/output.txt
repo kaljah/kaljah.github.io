@@ -1,0 +1,4 @@
+Script ran on page and returned:
+```json
+[{"tagName":"DIV","className":"custom-dropdown ","options":"2026"},{"tagName":"DIV","className":"custom-dropdown ","options":"All Scopes"},{"tagName":"DIV","className":"custom-dropdown ","options":"All Facilities"}]
+```

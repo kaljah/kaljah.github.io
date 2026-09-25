@@ -1,0 +1,87 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 25 lines>
+127.0.0.1 - - [24/Sep/2026 12:28:18] "GET /api/emissions/;%20DROP%20TABLE%20emissions;%20-- HTTP/1.1" 405 -
+[2026-09-24 12:28:20,233] INFO in app: GET /api/emissions/9999999999999999999999 405 [0.001s] [ReqID: 64c2c6c8-b4d9-4427-a196-e29dc0fde2a1]
+127.0.0.1 - - [24/Sep/2026 12:28:20] "GET /api/emissions/9999999999999999999999 HTTP/1.1" 405 -
+[2026-09-24 12:28:22,294] INFO in app: GET /api/facilities/9999999999999999999999 405 [0.000s] [ReqID: 890c0697-e474-4a16-a2a7-0b780d104710]
+127.0.0.1 - - [24/Sep/2026 12:28:22] "GET /api/facilities/9999999999999999999999 HTTP/1.1" 405 -
+[2026-09-24 12:28:24,471] INFO in app: POST /api/auth/login 401 [0.104s] [ReqID: ad0108f8-5000-4271-8cb4-1b0cd52d9e6a]
+127.0.0.1 - - [24/Sep/2026 12:28:24] "POST /api/auth/login HTTP/1.1" 401 -
+127.0.0.1 - - [24/Sep/2026 12:28:26] "POST /api/emissions HTTP/1.1" 400 -
+[2026-09-24 12:28:28,603] INFO in app: OPTIONS /api/auth/me 200 [0.000s] [ReqID: 1d0d3f88-fd53-40c9-b602-02399b020399]
+127.0.0.1 - - [24/Sep/2026 12:28:28] "OPTIONS /api/auth/me HTTP/1.1" 200 -
+[2026-09-24 12:28:30,772] INFO in app: POST /api/auth/login 200 [0.114s] [ReqID: 39c6d193-719c-4c02-a1e6-7157ee933f1f]
+127.0.0.1 - - [24/Sep/2026 12:28:30] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-24 12:28:32,826] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: d6d5eebe-7e50-4778-ba78-f29fb1bc90b1]
+127.0.0.1 - - [24/Sep/2026 12:28:32] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-24 12:28:34,873] INFO in app: GET /api/auth/me 200 [0.006s] [ReqID: f6ea6d2e-fccc-4400-b5db-2a9450df178f]
+127.0.0.1 - - [24/Sep/2026 12:28:34] "GET /api/auth/me HTTP/1.1" 200 -
+[2026-09-24 12:28:36,916] INFO in app: PUT /api/auth/profile 200 [0.005s] [ReqID: 0ecddb62-70ff-41df-ae6f-5d803041df61]
+127.0.0.1 - - [24/Sep/2026 12:28:36] "PUT /api/auth/profile HTTP/1.1" 200 -
+[2026-09-24 12:28:38,979] INFO in app: DELETE /api/emissions/1 404 [0.009s] [ReqID: 6a8d600f-ffa8-4aa5-8482-f74613007330]
+127.0.0.1 - - [24/Sep/2026 12:28:38] "DELETE /api/emissions/1 HTTP/1.1" 404 -
+[2026-09-24 12:28:41,074] INFO in app: POST /api/emissions 201 [0.034s] [ReqID: 2c84e034-2cec-42bc-864f-bd0c4d7539b3]
+127.0.0.1 - - [24/Sep/2026 12:28:41] "POST /api/emissions HTTP/1.1" 201 -
+[2026-09-24 12:28:43,107] INFO in app: POST /api/facilities 409 [0.006s] [ReqID: 9c3640d0-0ca9-4cdf-892a-155409d7b9ee]
+127.0.0.1 - - [24/Sep/2026 12:28:43] "POST /api/facilities HTTP/1.1" 409 -
+[2026-09-24 12:28:45,162] INFO in app: POST /api/auth/logout 200 [0.004s] [ReqID: 0d913155-76bf-44a0-9971-714490493020]
+127.0.0.1 - - [24/Sep/2026 12:28:45] "POST /api/auth/logout HTTP/1.1" 200 -
+[2026-09-24 12:28:47,232] INFO in app: GET /api/auth/me 401 [0.000s] [ReqID: 6f7e70b7-f1a3-43e9-9921-840dec1e6d1e]
+127.0.0.1 - - [24/Sep/2026 12:28:47] "GET /api/auth/me HTTP/1.1" 401 -
+[2026-09-24 12:28:49,400] INFO in app: POST /api/auth/login 401 [0.094s] [ReqID: 13f98207-d5bd-419f-ac5c-c786fae62769]
+127.0.0.1 - - [24/Sep/2026 12:28:49] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:28:51,549] INFO in app: POST /api/auth/login 401 [0.086s] [ReqID: 6189000b-4e42-430c-8b45-2a5615430c1e]
+127.0.0.1 - - [24/Sep/2026 12:28:51] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:28:53,708] INFO in app: POST /api/auth/login 401 [0.090s] [ReqID: 6bb3451c-a221-40a5-befb-846167d88c61]
+127.0.0.1 - - [24/Sep/2026 12:28:53] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:28:55,878] INFO in app: POST /api/auth/login 401 [0.094s] [ReqID: b581d1db-ed43-4125-bba8-d3effb4a1d4d]
+127.0.0.1 - - [24/Sep/2026 12:28:55] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:28:58,037] INFO in app: POST /api/auth/login 401 [0.083s] [ReqID: 14e2e6ca-b62d-479d-8dfc-89574f065e81]
+127.0.0.1 - - [24/Sep/2026 12:28:58] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:00,184] INFO in app: POST /api/auth/login 401 [0.092s] [ReqID: 5b485afb-f089-4c5d-8258-7120ecae20c7]
+127.0.0.1 - - [24/Sep/2026 12:29:00] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:02,357] INFO in app: POST /api/auth/login 401 [0.099s] [ReqID: ca65eed5-0245-4df7-ae68-6996805ef9ad]
+127.0.0.1 - - [24/Sep/2026 12:29:02] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:04,485] INFO in app: POST /api/auth/login 401 [0.088s] [ReqID: 42e356fe-6338-4f9d-9efe-0cbd2c26edcc]
+127.0.0.1 - - [24/Sep/2026 12:29:04] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:06,646] INFO in app: POST /api/auth/login 401 [0.085s] [ReqID: 8a2a8739-86ba-41ca-bf8c-483fbd0dbe63]
+127.0.0.1 - - [24/Sep/2026 12:29:06] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:08,793] INFO in app: POST /api/auth/login 401 [0.092s] [ReqID: 4ffd9566-3a98-4960-ad11-2e50b90648db]
+127.0.0.1 - - [24/Sep/2026 12:29:08] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:10,939] INFO in app: POST /api/auth/login 401 [0.082s] [ReqID: 3d76f740-fa1c-4afd-892d-d3b9a315cd71]
+127.0.0.1 - - [24/Sep/2026 12:29:10] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:13,077] INFO in app: POST /api/auth/login 401 [0.081s] [ReqID: 52eb6dbc-1186-4e6b-918f-eb857e7f977b]
+127.0.0.1 - - [24/Sep/2026 12:29:13] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:15,252] INFO in app: POST /api/auth/login 401 [0.087s] [ReqID: 8b0c638f-0e3f-475d-8c8e-f2109cc4014a]
+127.0.0.1 - - [24/Sep/2026 12:29:15] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:17,385] INFO in app: POST /api/auth/login 401 [0.081s] [ReqID: 8c856829-b8cf-418f-a319-34dfdee46cdf]
+127.0.0.1 - - [24/Sep/2026 12:29:17] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:19,511] INFO in app: POST /api/auth/login 401 [0.082s] [ReqID: 9537f9af-b2de-4292-9fe5-740fa1234e4d]
+127.0.0.1 - - [24/Sep/2026 12:29:19] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:21,658] INFO in app: POST /api/auth/login 401 [0.084s] [ReqID: 1d0fa99c-9bbc-44e0-b5fd-ff22d51f96d6]
+127.0.0.1 - - [24/Sep/2026 12:29:21] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:23,806] INFO in app: POST /api/auth/login 401 [0.092s] [ReqID: ed58309b-a428-4990-9d2e-84e4fe7521f7]
+127.0.0.1 - - [24/Sep/2026 12:29:23] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:25,957] INFO in app: POST /api/auth/login 401 [0.086s] [ReqID: 4b97388e-da22-4175-bc78-822052327b3c]
+127.0.0.1 - - [24/Sep/2026 12:29:25] "POST /api/auth/login HTTP/1.1" 401 -
+[2026-09-24 12:29:27,998] INFO in app: POST /api/auth/login 429 [0.000s] [ReqID: cd5b0e41-8c96-451d-91aa-43b29cd46e03]
+127.0.0.1 - - [24/Sep/2026 12:29:27] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:29:30,041] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: 59d8f6e1-3d33-4a41-82c4-fd3f79c42b7b]
+127.0.0.1 - - [24/Sep/2026 12:29:30] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:29:32,071] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: f8d0f10a-e492-4601-9187-da468ee867d2]
+127.0.0.1 - - [24/Sep/2026 12:29:32] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:29:34,132] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: fa26358c-c884-41cc-b52c-a64eeffa07b1]
+127.0.0.1 - - [24/Sep/2026 12:29:34] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:29:36,190] INFO in app: POST /api/auth/login 429 [0.000s] [ReqID: 5295ec6d-8215-45a3-a258-3e412da94ed0]
+127.0.0.1 - - [24/Sep/2026 12:29:36] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:29:38,245] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: 81d3df3c-143d-48fd-a5a6-5e73fffb7be4]
+127.0.0.1 - - [24/Sep/2026 12:29:38] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:29:40,305] INFO in app: POST /api/auth/login 429 [0.000s] [ReqID: bd86e594-8816-4559-b4ec-d09bf1b7227d]
+127.0.0.1 - - [24/Sep/2026 12:29:40] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:29:59,151] INFO in app: POST /api/auth/login 429 [0.001s] [ReqID: cc82a8a4-9821-48df-b437-f4daacff4fc7]
+127.0.0.1 - - [24/Sep/2026 12:29:59] "POST /api/auth/login HTTP/1.1" 429 -
+[2026-09-24 12:30:14,260] INFO in app: POST /api/auth/login 429 [0.000s] [ReqID: cd9500c7-3c6b-469f-bf15-41ab4deb4dfe]
+127.0.0.1 - - [24/Sep/2026 12:30:14] "POST /api/auth/login HTTP/1.1" 429 -
+

@@ -1,0 +1,60 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -79,8 +79,16 @@
+ 
+     year = data.get('year')
+     month = data.get('month')
+-    oil_amount = data.get('oil_amount', 0)
+-    gas_amount = data.get('gas_amount', 0)
++    try:
++        oil_amount = float(data.get('oil_amount', 0) if data.get('oil_amount') is not None else (data.get('oil_production', 0) or 0))
++        gas_amount = float(data.get('gas_amount', 0) if data.get('gas_amount') is not None else (data.get('gas_production', 0) or 0))
++        gross_prod = float(data.get('gross_production', 0) if data.get('gross_production') is not None else 0)
++    except (ValueError, TypeError):
++        return jsonify({'error': 'Production amounts must be valid numbers'}), 400
++
++    if oil_amount < 0 or gas_amount < 0 or gross_prod < 0:
++        return jsonify({'error': 'Production amounts cannot be negative'}), 400
++
+     oil_unit = data.get('oil_unit', 'bbl')
+     gas_unit = data.get('gas_unit', 'mscf')
+     activity = data.get('activity')
+@@ -87,7 +87,10 @@
+     field = data.get('field')
+ 
++    saved_rec_id = None
++
+     # Atomic upsert pattern: try update if existing, handle race condition gracefully
+     def perform_upsert():
++        nonlocal saved_rec_id
+         existing = ProductionData.query.filter_by(
+             facility_id=fid,
+             year=year,
+@@ -102,6 +102,7 @@
+             existing.division = division
+             existing.field = field
+             rec_id = existing.id
++            saved_rec_id = rec_id
+             action = 'UPDATE'
+         else:
+             prod = ProductionData(
+@@ -118,6 +118,7 @@
+             db.session.add(prod)
+             db.session.flush()
+             rec_id = prod.id
++            saved_rec_id = rec_id
+             action = 'CREATE'
+ 
+         log_details = f"{action.title()} Production Data for {year}-{month}: {oil_amount} {oil_unit} oil, {gas_amount} {gas_unit} gas"
+@@ -150,7 +150,7 @@
+ 
+     from routes.dashboard import clear_dashboard_cache
+     clear_dashboard_cache()
+-    return jsonify({'message': 'Production data saved'})
++    return jsonify({'message': 'Production data saved', 'id': saved_rec_id}), 201
+ 
+ @data_bp.route('/production/<int:record_id>', methods=['DELETE'])
+ @login_required
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

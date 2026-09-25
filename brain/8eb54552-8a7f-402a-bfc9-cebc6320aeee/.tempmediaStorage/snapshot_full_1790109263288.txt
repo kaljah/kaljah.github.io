@@ -1,0 +1,417 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=125_0 RootWebArea "Carbon Tech" url="http://localhost:5173/methane-explorer"
+  uid=125_1 complementary
+    uid=125_2 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=125_3 StaticText "Carbon tech"
+    uid=125_4 button "Close navigation"
+    uid=125_5 navigation
+      uid=125_6 link "Dashboard" url="http://localhost:5173/"
+        uid=125_7 StaticText "Dashboard"
+      uid=125_8 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=125_9 StaticText "Carbon Intensity"
+      uid=125_10 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=125_11 StaticText "Methane Intensity"
+      uid=125_12 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=125_13 StaticText "SBTi Net-Zero"
+      uid=125_14 link "Calculations" url="http://localhost:5173/emissions"
+        uid=125_15 StaticText "Calculations"
+      uid=125_16 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=125_17 StaticText "Emissions Map"
+      uid=125_18 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=125_19 StaticText "Manage Data"
+      uid=125_20 link "Reports" url="http://localhost:5173/reports"
+        uid=125_21 StaticText "Reports"
+      uid=125_22 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=125_23 StaticText "Reference Data"
+      uid=125_24 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=125_25 StaticText "Uncertainty"
+      uid=125_26 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=125_27 StaticText "Audit Trail"
+      uid=125_28 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=125_29 StaticText "QA/QC & Diagnostics"
+    uid=125_30 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=125_31 StaticText "Settings"
+    uid=125_32 StaticText "A"
+    uid=125_33 StaticText "Administrator"
+    uid=125_34 StaticText "Sustainability Lead"
+  uid=125_35 main
+    uid=125_36 button "Open navigation menu"
+    uid=125_37 StaticText "Corporate ESG"
+    uid=125_38 button "Notifications"
+    uid=125_39 button "User Profile" description="User Profile"
+    uid=126_0 StaticText "METHANE RECON COCKPIT"
+    uid=126_1 StaticText "COPERNICUS SENTINEL-5P TROPOMI"
+    uid=126_2 button "CONFIGURE S5P" description="Configure CDSE API credentials in Settings"
+    uid=126_3 StaticText "MONITORED ASSETS"
+    uid=126_4 StaticText "39"
+    uid=126_5 StaticText "REGIONAL METHANE"
+    uid=126_6 StaticText "339 t"
+    uid=126_7 StaticText "MEAN LOSS INTENSITY"
+    uid=126_8 StaticText "0.002"
+    uid=126_9 StaticText " "
+    uid=126_10 StaticText "kg/boe"
+    uid=126_11 StaticText "SUPER-EMITTERS"
+    uid=126_12 StaticText "0"
+    uid=126_13 button "CH₄ Flux" description="Focus on Methane (CH4) emissions"
+    uid=126_14 button "Total GHG" description="Focus on Total GHG (CO2e) emissions"
+    uid=126_15 button "Standard" description="Switch to Standard Vector"
+    uid=126_16 generic
+      uid=126_17 button
+      uid=126_18 button
+      uid=126_19 button
+      uid=126_20 button
+      uid=126_21 button
+      uid=126_22 button
+      uid=126_23 button
+      uid=126_24 button
+      uid=126_25 button
+      uid=126_26 button
+      uid=126_27 button
+      uid=126_28 button
+      uid=126_29 button
+      uid=126_30 button
+      uid=126_31 button
+      uid=126_32 button
+      uid=126_33 button
+      uid=126_34 button
+      uid=126_35 button
+      uid=126_36 button
+      uid=126_37 button
+      uid=126_38 button
+      uid=126_39 button
+      uid=126_40 button
+      uid=126_41 button
+      uid=126_42 button
+      uid=126_43 button
+      uid=126_44 button
+      uid=126_45 button
+      uid=126_46 button
+      uid=126_47 button
+      uid=126_48 button
+      uid=126_49 button
+      uid=126_50 button
+      uid=126_51 button
+      uid=126_52 button
+      uid=126_53 button
+      uid=126_54 button
+      uid=126_55 button
+      uid=126_56 button
+      uid=126_57 button
+      uid=126_58 button
+      uid=126_59 button
+      uid=126_60 button
+      uid=126_61 button
+      uid=126_62 button
+      uid=126_63 button
+      uid=126_64 button
+      uid=126_65 button
+      uid=126_66 button
+      uid=126_67 button
+      uid=126_68 button
+      uid=126_69 button
+      uid=126_70 button
+      uid=126_71 button
+      uid=126_72 button
+      uid=126_73 button
+      uid=126_74 button
+      uid=126_75 button
+      uid=126_76 button
+      uid=126_77 button
+      uid=126_78 button
+      uid=126_79 button
+      uid=126_80 button
+      uid=126_81 button
+      uid=126_82 button
+      uid=126_83 button
+      uid=126_84 button
+      uid=126_85 button
+      uid=126_86 button
+      uid=126_87 button
+      uid=126_88 button
+      uid=126_89 button
+      uid=126_90 button
+      uid=126_91 button
+      uid=126_92 button
+      uid=126_93 button
+      uid=126_94 button
+      uid=126_95 button "Zoom in" description="Zoom in"
+      uid=126_96 button "Zoom out" description="Zoom out"
+      uid=126_97 link " Leaflet" description="A JavaScript library for interactive maps" url="https://leafletjs.com/"
+        uid=126_98 StaticText " Leaflet"
+      uid=126_99 StaticText " "
+      uid=126_100 StaticText " © "
+      uid=126_101 link "Google Maps" url="https://www.google.com/maps"
+        uid=126_102 StaticText "Google Maps"
+      uid=126_103 StaticText ", © "
+      uid=126_104 link "Copernicus Sentinel-5P (ESA/EU)" url="https://dataspace.copernicus.eu/"
+        uid=126_105 StaticText "Copernicus Sentinel-5P (ESA/EU)"
+    uid=126_106 button "Collapse drawer" description="Collapse drawer"
+    uid=126_107 heading "Target Reconnaissance" level="3"
+    uid=126_108 StaticText "39"
+    uid=126_109 StaticText " ASSETS"
+    uid=126_110 StaticText "SEARCH ASSET / FIELD"
+    uid=126_111 textbox "Search name, region, division..."
+    uid=126_112 StaticText "REGION / BASIN"
+    uid=126_113 combobox expandable haspopup="menu" value="All Regions"
+      uid=126_114 option "All Regions" selectable selected value="All Regions"
+      uid=126_115 option "ADR" selectable value="ADR"
+      uid=126_116 option "Adrar" selectable value="Adrar"
+      uid=126_117 option "Alger" selectable value="Alger"
+      uid=126_118 option "Algeria" selectable value="Algeria"
+      uid=126_119 option "Arzew, Oran" selectable value="Arzew, Oran"
+      uid=126_120 option "BMS" selectable value="BMS"
+      uid=126_121 option "BRS" selectable value="BRS"
+      uid=126_122 option "Bethioua, Oran" selectable value="Bethioua, Oran"
+      uid=126_123 option "CP1Z" selectable value="CP1Z"
+      uid=126_124 option "CPEK" selectable value="CPEK"
+      uid=126_125 option "Center" selectable value="Center"
+      uid=126_126 option "Chlef" selectable value="Chlef"
+      uid=126_127 option "G SH-ENI" selectable value="G SH-ENI"
+      uid=126_128 option "GB" selectable value="GB"
+      uid=126_129 option "GL1K" selectable value="GL1K"
+      uid=126_130 option "GL1Z" selectable value="GL1Z"
+      uid=126_131 option "GL2Z" selectable value="GL2Z"
+      uid=126_132 option "GL3Z" selectable value="GL3Z"
+      uid=126_133 option "GP1Z" selectable value="GP1Z"
+      uid=126_134 option "GP2Z" selectable value="GP2Z"
+      uid=126_135 option "GSS" selectable value="GSS"
+      uid=126_136 option "GTFT" selectable value="GTFT"
+      uid=126_137 option "GTG" selectable value="GTG"
+      uid=126_138 option "GTIM" selectable value="GTIM"
+      uid=126_139 option "GTL" selectable value="GTL"
+      uid=126_140 option "HBK" selectable value="HBK"
+      uid=126_141 option "HBR" selectable value="HBR"
+      uid=126_142 option "HMD" selectable value="HMD"
+      uid=126_143 option "HRM" selectable value="HRM"
+      uid=126_144 option "Hassi Messaoud, Ouargla" selectable value="Hassi Messaoud, Ouargla"
+      uid=126_145 option "INA" selectable value="INA"
+      uid=126_146 option "INAS" selectable value="INAS"
+      uid=126_147 option "ISG" selectable value="ISG"
+      uid=126_148 option "Illizi" selectable value="Illizi"
+      uid=126_149 option "MLN" selectable value="MLN"
+      uid=126_150 option "OHT" selectable value="OHT"
+      uid=126_151 option "OURHOUD" selectable value="OURHOUD"
+      uid=126_152 option "Oran" selectable value="Oran"
+      uid=126_153 option "Ouargla" selectable value="Ouargla"
+      uid=126_154 option "RA1A" selectable value="RA1A"
+      uid=126_155 option "RA1G" selectable value="RA1G"
+      uid=126_156 option "RA1K" selectable value="RA1K"
+      uid=126_157 option "RA1Z" selectable value="RA1Z"
+      uid=126_158 option "REB" selectable value="REB"
+      uid=126_159 option "REGGANE" selectable value="REGGANE"
+      uid=126_160 option "RKF" selectable value="RKF"
+      uid=126_161 option "RNS" selectable value="RNS"
+      uid=126_162 option "SH-FCP MLE" selectable value="SH-FCP MLE"
+      uid=126_163 option "STAH" selectable value="STAH"
+      uid=126_164 option "Skikda" selectable value="Skikda"
+      uid=126_165 option "South" selectable value="South"
+      uid=126_166 option "TFT" selectable value="TFT"
+      uid=126_167 option "West" selectable value="West"
+    uid=126_168 StaticText "ACCOUNTING YEAR"
+    uid=126_169 combobox expandable haspopup="menu" value="All Years"
+      uid=126_170 option "All Years" selectable selected value="All Years"
+      uid=126_171 option "2026" selectable value="2026"
+      uid=126_172 option "2025" selectable value="2025"
+      uid=126_173 option "2024" selectable value="2024"
+      uid=126_174 option "2023" selectable value="2023"
+      uid=126_175 option "2022" selectable value="2022"
+    uid=126_176 StaticText "ACTIVITY TYPE"
+    uid=126_177 combobox expandable haspopup="menu" value="All Activities"
+      uid=126_178 option "All Activities" selectable selected value="All Activities"
+      uid=126_179 option "Activité E&P" selectable value="Activité E&P"
+      uid=126_180 option "Activité LQS" selectable value="Activité LQS"
+      uid=126_181 option "Activité RPC" selectable value="Activité RPC"
+      uid=126_182 option "Cement & Clinker" selectable value="Cement & Clinker"
+      uid=126_183 option "Chemicals & Fertilizers" selectable value="Chemicals & Fertilizers"
+      uid=126_184 option "Steel & Iron (Acier DRI)" selectable value="Steel & Iron (Acier DRI)"
+      uid=126_185 option "Upstream & Midstream Gas" selectable value="Upstream & Midstream Gas"
+    uid=126_186 StaticText "ANOMALY SEVERITY"
+    uid=126_187 button "All"
+    uid=126_188 button "Super-Emitters"
+    uid=126_189 button "Moderate"
+    uid=126_190 button "Baseline"
+    uid=126_191 StaticText "Sentinel-5P Overlay"
+    uid=126_192 checkbox checked
+    uid=126_193 StaticText "Opacity: "
+    uid=126_194 StaticText "75"
+    uid=126_195 StaticText "%"
+    uid=126_196 slider orientation="horizontal" value="0.75" valuemax="1" valuemin="0.15000000596046448" valuetext="0.75"
+    uid=126_197 checkbox "Plume Footprints" checked
+    uid=126_198 StaticText "Plume Footprints"
+    uid=126_199 checkbox "Legend" checked
+    uid=126_200 StaticText "Legend"
+    uid=126_201 StaticText "FACILITY INVENTORY"
+    uid=126_202 StaticText "Click to inspect"
+    uid=126_203 StaticText "ADR"
+    uid=126_204 StaticText "Activité E&P"
+    uid=126_205 StaticText "0"
+    uid=126_206 StaticText "tCH₄"
+    uid=126_207 StaticText "REB"
+    uid=126_208 StaticText "Activité E&P"
+    uid=126_209 StaticText "0"
+    uid=126_210 StaticText "tCH₄"
+    uid=126_211 StaticText "HBK"
+    uid=126_212 StaticText "Activité E&P"
+    uid=126_213 StaticText "0"
+    uid=126_214 StaticText "tCH₄"
+    uid=126_215 StaticText "GTL"
+    uid=126_216 StaticText "Activité E&P"
+    uid=126_217 StaticText "0"
+    uid=126_218 StaticText "tCH₄"
+    uid=126_219 StaticText "OHT"
+    uid=126_220 StaticText "Activité E&P"
+    uid=126_221 StaticText "0"
+    uid=126_222 StaticText "tCH₄"
+    uid=126_223 StaticText "STAH"
+    uid=126_224 StaticText "Activité E&P"
+    uid=126_225 StaticText "0"
+    uid=126_226 StaticText "tCH₄"
+    uid=126_227 StaticText "TFT"
+    uid=126_228 StaticText "Activité E&P"
+    uid=126_229 StaticText "0"
+    uid=126_230 StaticText "tCH₄"
+    uid=126_231 StaticText "HMD"
+    uid=126_232 StaticText "Activité E&P"
+    uid=126_233 StaticText "0"
+    uid=126_234 StaticText "tCH₄"
+    uid=126_235 StaticText "RNS"
+    uid=126_236 StaticText "Activité E&P"
+    uid=126_237 StaticText "339"
+    uid=126_238 StaticText "tCH₄"
+    uid=126_239 StaticText "HRM"
+    uid=126_240 StaticText "Activité E&P"
+    uid=126_241 StaticText "0"
+    uid=126_242 StaticText "tCH₄"
+    uid=126_243 StaticText "INAS"
+    uid=126_244 StaticText "Activité E&P"
+    uid=126_245 StaticText "0"
+    uid=126_246 StaticText "tCH₄"
+    uid=126_247 StaticText "BRS"
+    uid=126_248 StaticText "Activité E&P"
+    uid=126_249 StaticText "0"
+    uid=126_250 StaticText "tCH₄"
+    uid=126_251 StaticText "MLN"
+    uid=126_252 StaticText "Activité E&P"
+    uid=126_253 StaticText "0"
+    uid=126_254 StaticText "tCH₄"
+    uid=126_255 StaticText "BMS"
+    uid=126_256 StaticText "Activité E&P"
+    uid=126_257 StaticText "0"
+    uid=126_258 StaticText "tCH₄"
+    uid=126_259 StaticText "GSS"
+    uid=126_260 StaticText "Activité E&P"
+    uid=126_261 StaticText "0"
+    uid=126_262 StaticText "tCH₄"
+    uid=126_263 StaticText "OURHOUD"
+    uid=126_264 StaticText "Activité E&P"
+    uid=126_265 StaticText "0"
+    uid=126_266 StaticText "tCH₄"
+    uid=126_267 StaticText "RKF"
+    uid=126_268 StaticText "Activité E&P"
+    uid=126_269 StaticText "0"
+    uid=126_270 StaticText "tCH₄"
+    uid=126_271 StaticText "G SH-ENI"
+    uid=126_272 StaticText "Activité E&P"
+    uid=126_273 StaticText "0"
+    uid=126_274 StaticText "tCH₄"
+    uid=126_275 StaticText "HBR"
+    uid=126_276 StaticText "Activité E&P"
+    uid=126_277 StaticText "0"
+    uid=126_278 StaticText "tCH₄"
+    uid=126_279 StaticText "GB"
+    uid=126_280 StaticText "Activité E&P"
+    uid=126_281 StaticText "0"
+    uid=126_282 StaticText "tCH₄"
+    uid=126_283 StaticText "REGGANE"
+    uid=126_284 StaticText "Activité E&P"
+    uid=126_285 StaticText "0"
+    uid=126_286 StaticText "tCH₄"
+    uid=126_287 StaticText "INA"
+    uid=126_288 StaticText "Activité E&P"
+    uid=126_289 StaticText "0"
+    uid=126_290 StaticText "tCH₄"
+    uid=126_291 StaticText "ISG"
+    uid=126_292 StaticText "Activité E&P"
+    uid=126_293 StaticText "0"
+    uid=126_294 StaticText "tCH₄"
+    uid=126_295 StaticText "GTIM"
+    uid=126_296 StaticText "Activité E&P"
+    uid=126_297 StaticText "0"
+    uid=126_298 StaticText "tCH₄"
+    uid=126_299 StaticText "SH-FCP MLE"
+    uid=126_300 StaticText "Activité E&P"
+    uid=126_301 StaticText "0"
+    uid=126_302 StaticText "tCH₄"
+    uid=126_303 StaticText "GTG"
+    uid=126_304 StaticText "Activité E&P"
+    uid=126_305 StaticText "0"
+    uid=126_306 StaticText "tCH₄"
+    uid=126_307 StaticText "GTFT"
+    uid=126_308 StaticText "Activité E&P"
+    uid=126_309 StaticText "0"
+    uid=126_310 StaticText "tCH₄"
+    uid=126_311 StaticText "GL1Z"
+    uid=126_312 StaticText "Activité LQS"
+    uid=126_313 StaticText "0"
+    uid=126_314 StaticText "tCH₄"
+    uid=126_315 StaticText "GL2Z"
+    uid=126_316 StaticText "Activité LQS"
+    uid=126_317 StaticText "0"
+    uid=126_318 StaticText "tCH₄"
+    uid=126_319 StaticText "GL3Z"
+    uid=126_320 StaticText "Activité LQS"
+    uid=126_321 StaticText "0"
+    uid=126_322 StaticText "tCH₄"
+    uid=126_323 StaticText "GL1K"
+    uid=126_324 StaticText "Activité LQS"
+    uid=126_325 StaticText "0"
+    uid=126_326 StaticText "tCH₄"
+    uid=126_327 StaticText "GP1Z"
+    uid=126_328 StaticText "Activité LQS"
+    uid=126_329 StaticText "0"
+    uid=126_330 StaticText "tCH₄"
+    uid=126_331 StaticText "GP2Z"
+    uid=126_332 StaticText "Activité LQS"
+    uid=126_333 StaticText "0"
+    uid=126_334 StaticText "tCH₄"
+    uid=126_335 StaticText "RA1K"
+    uid=126_336 StaticText "Activité RPC"
+    uid=126_337 StaticText "0"
+    uid=126_338 StaticText "tCH₄"
+    uid=126_339 StaticText "RA1Z"
+    uid=126_340 StaticText "Activité RPC"
+    uid=126_341 StaticText "0"
+    uid=126_342 StaticText "tCH₄"
+    uid=126_343 StaticText "RA1G"
+    uid=126_344 StaticText "Activité RPC"
+    uid=126_345 StaticText "0"
+    uid=126_346 StaticText "tCH₄"
+    uid=126_347 StaticText "RA1A"
+    uid=126_348 StaticText "Activité RPC"
+    uid=126_349 StaticText "0"
+    uid=126_350 StaticText "tCH₄"
+    uid=126_351 StaticText "CP1Z"
+    uid=126_352 StaticText "Activité RPC"
+    uid=126_353 StaticText "0"
+    uid=126_354 StaticText "tCH₄"
+    uid=126_355 StaticText "CPEK"
+    uid=126_356 StaticText "Activité RPC"
+    uid=126_357 StaticText "0"
+    uid=126_358 StaticText "tCH₄"
+    uid=126_359 region "Spectral Legend"
+      uid=126_360 StaticText "TROPOMI CH₄ Column Mole Fraction"
+      uid=126_361 button "Hide Legend"
+      uid=126_362 StaticText "<1,750"
+      uid=126_363 StaticText "1,800"
+      uid=126_364 StaticText "1,850"
+      uid=126_365 StaticText "1,900"
+      uid=126_366 StaticText "≥1,950 ppb"
+      uid=126_367 StaticText "SWIR Band 7/8 (2.3 µm) • L3 5.5×7 km"
+      uid=126_368 link "CDSE Hub" url="https://dataspace.copernicus.eu/"
+        uid=126_369 StaticText "CDSE Hub"
+
+</current_snapshot>

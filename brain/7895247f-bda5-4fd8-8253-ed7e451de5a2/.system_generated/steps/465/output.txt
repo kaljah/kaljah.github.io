@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 17:11:37,006] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+--- Seeding Groupement Berkine 2021-2025 Data ---
+--- Berkine Historical Data Seeding Completed Successfully! ---
+

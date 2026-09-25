@@ -1,0 +1,29 @@
+
+The command exited with code 0.
+Output:
+[UNIT MISMATCH] Natural Gas (Venting/Blowdown).unit: client=kg/m³ vs backend=kg/m³
+[UNIT MISMATCH] Natural Gas (Flaring - Elevated).unit: client=kg/m³ vs backend=kg/m³
+[UNIT MISMATCH] Natural Gas (Flaring - Ground).unit: client=kg/m³ vs backend=kg/m³
+[UNIT MISMATCH] Natural Gas (Flaring - Enclosed).unit: client=kg/m³ vs backend=kg/m³
+[UNIT MISMATCH] Natural Gas (Flaring).unit: client=kg/m³ vs backend=kg/m³
+[UNIT MISMATCH] Associated Gas (Flaring).unit: client=kg/m³ vs backend=kg/m³
+[UNIT MISMATCH] Sour Gas (Flaring).unit: client=kg/m³ vs backend=kg/m³
+[UNIT MISMATCH] Pneumatic Controller - Intermittent.unit: client=tonnes/yr vs backend=tonnes CH₄/yr
+[UNIT MISMATCH] Pneumatic Controller - Continuous Vent (T&S).unit: client=tonnes/yr vs backend=tonnes CH₄/yr
+[MISMATCH] Drilling - Mud Degassing (Water Based).ch4: client=0.18 vs backend=0.15
+[UNIT MISMATCH] Drilling - Mud Degassing (Water Based).unit: client=kg CH4/bbl mud vs backend=kg CH₄/m³
+[MISMATCH] Dehydrator - Glycol (Uncontrolled).ch4: client=0.00082 vs backend=0.177
+[UNIT MISMATCH] Dehydrator - Glycol (Uncontrolled).unit: client=tonnes/MMscf vs backend=scf/MMscf
+[UNIT MISMATCH] Acrylonitrile.unit: client=tonne CO₂/tonne product vs backend=tonne CO₂/tonne product
+[UNIT MISMATCH] Carbon Black.unit: client=tonne CO₂/tonne product vs backend=tonne CO₂/tonne product
+[UNIT MISMATCH] Ethylene.unit: client=tonne CO₂/tonne product vs backend=tonne CO₂/tonne product
+[UNIT MISMATCH] Ethylene Dichloride.unit: client=tonne CO₂/tonne product vs backend=tonne CO₂/tonne product
+[UNIT MISMATCH] Ethylene Oxide.unit: client=tonne CO₂/tonne product vs backend=tonne CO₂/tonne product
+[UNIT MISMATCH] Methanol.unit: client=tonne CO₂/tonne product vs backend=tonne CO₂/tonne product
+[UNIT MISMATCH] Nitric Acid - With NSCR.unit: client=kg N₂O/tonne product vs backend=kg N₂O/tonne product
+[UNIT MISMATCH] Nitric Acid - Without NSCR.unit: client=kg N₂O/tonne product vs backend=kg N₂O/tonne product
+[UNIT MISMATCH] Adipic Acid - Thermal Abatement.unit: client=kg N₂O/tonne product vs backend=kg N₂O/tonne product
+[UNIT MISMATCH] Adipic Acid - Catalytic Abatement.unit: client=kg N₂O/tonne product vs backend=kg N₂O/tonne product
+[UNIT MISMATCH] Adipic Acid - Uncontrolled.unit: client=kg N₂O/tonne product vs backend=kg N₂O/tonne product
+[MISMATCH] Asphalt.co2: client=10.4326 vs backend=10.432616
+

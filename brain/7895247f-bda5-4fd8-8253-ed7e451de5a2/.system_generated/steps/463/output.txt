@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\seed_berkine_data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -401,11 +401,14 @@
+                     facility_id=fac.id,
+                     year=yr,
+                     month=6,
+-                    energy_consumed=vals["scope2"] / 0.58,  # kWh
+-                    energy_unit="kWh",
++                    source_type="electricity",
++                    electricity_kwh=vals["scope2"] / 0.58,  # kWh
+                     emission_factor=0.58,
+                     co2e=vals["scope2"],
+                     status="Verified",
++                    activity=fac.activity,
++                    division=fac.division,
++                    region=fac.region,
+                 ))
+ 
+         db.session.commit()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3120,9 +3120,10 @@
+         month=data["month"],
+         facility_id=data["facility_id"],
+         group_name=data.get("group_name"),
+-        activity=data.get("activity"),
+-        division=data.get("division"),
+-        field=data.get("field"),
++        activity=data.get("activity") or (facility.activity if facility else None),
++        division=data.get("division") or (facility.division if facility else None),
++        region=data.get("region") or (facility.region if facility and facility.region else (facility.name if facility else None)),
++        field=data.get("field") or (facility.field if facility else None),
+         process_type=data["process_type"],
+         fuel_type=data.get("fuel"),
+         quantity=data.get("amount"),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

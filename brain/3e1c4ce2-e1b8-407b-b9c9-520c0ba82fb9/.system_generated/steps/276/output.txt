@@ -1,0 +1,40 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":18,"LineContent":"        admin_email = os.environ.get(\"ADMIN_EMAIL\", \"admin@ghg.com\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":21,"LineContent":"        it_admin_email = os.environ.get(\"IT_ADMIN_EMAIL\", \"itadmin@ghg.com\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":62,"LineContent":"                    \"example\": \"admin@example.com\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":91,"LineContent":"                        \"email\": { \"type\": \"string\", \"example\": \"admin@example.com\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":124,"LineContent":"                    \"email\": { \"type\": \"string\", \"example\": \"admin@example.com\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":34,"LineContent":"                User.email.in_([\"admin@test.com\", \"user@test.com\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":57,"LineContent":"        u = User.query.filter_by(email=\"admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":61,"LineContent":"                email=\"admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_api_security.py","LineNumber":62,"LineContent":"                password_hash=generate_password_hash(\"Admin@123!\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":21,"LineContent":"        admin = User.query.filter_by(email=\"audit_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":24,"LineContent":"                email=\"audit_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":34,"LineContent":"        it_admin = User.query.filter_by(email=\"audit_itadmin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":37,"LineContent":"                email=\"audit_itadmin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_bug_fixes.py","LineNumber":19,"LineContent":"        admin = User.query.filter_by(email=\"bugfix_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_bug_fixes.py","LineNumber":22,"LineContent":"                email=\"bugfix_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":50,"LineContent":"        it_admin = User.query.filter_by(email=\"it_test_admin@domain.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_it_role_security.py","LineNumber":53,"LineContent":"                email=\"it_test_admin@domain.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":28,"LineContent":"            email=\"smoke_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_production_smoke.py","LineNumber":66,"LineContent":"        \"email\": \"smoke_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":26,"LineContent":"        user = User.query.filter_by(email=\"qa_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":29,"LineContent":"                email=\"qa_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":51,"LineContent":"        json={\"email\": \"qa_admin@test.com\", \"password\": \"AdminPass123!\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":90,"LineContent":"        json={\"email\": \"qa_admin@test.com\", \"password\": \"AdminPass123!\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":104,"LineContent":"        json={\"email\": \"qa_admin@test.com\", \"password\": \"AdminPass123!\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_qaqc_diagnostics.py","LineNumber":132,"LineContent":"        json={\"email\": \"qa_admin@test.com\", \"password\": \"AdminPass123!\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":32,"LineContent":"        admin = User.query.filter_by(email=\"boundary_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_boundary_resilience.py","LineNumber":35,"LineContent":"                email=\"boundary_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_bulk_pipeline.py","LineNumber":37,"LineContent":"        admin = User.query.filter_by(email=\"bulk_stress_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_bulk_pipeline.py","LineNumber":40,"LineContent":"                email=\"bulk_stress_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":29,"LineContent":"        admin = User.query.filter_by(email=\"concurrency_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":32,"LineContent":"                email=\"concurrency_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":80,"LineContent":"                    json={\"email\": \"concurrency_admin@test.com\", \"password\": \"StressPass2026!\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":182,"LineContent":"                    json={\"email\": \"concurrency_admin@test.com\", \"password\": \"StressPass2026!\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_concurrency.py","LineNumber":188,"LineContent":"                return data.get(\"email\") == \"concurrency_admin@test.com\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":93,"LineContent":"        user = User.query.filter_by(email=\"ui_parity_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":96,"LineContent":"                email=\"ui_parity_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_ui_calculation_parity.py","LineNumber":107,"LineContent":"    res = client.post(\"/api/auth/login\", json={\"email\": \"ui_parity_admin@test.com\", \"password\": \"AdminPass2026!\"})"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":31,"LineContent":"        user = User.query.filter_by(email=\"volume_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":34,"LineContent":"                email=\"volume_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":150,"LineContent":"            json={\"email\": \"volume_admin@test.com\", \"password\": \"VolumePass2026!\"},"}

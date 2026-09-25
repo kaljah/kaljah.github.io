@@ -1,0 +1,71 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\charts\BarChart.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1,4 +1,4 @@
+-import React from "react";
++import React, { useState, useEffect } from "react";
+ import {
+   BarChart as RechartsBar,
+   Bar,
+@@ -22,12 +22,19 @@
+   height = 300,
+   showLegend = true,
+   formatValue = (val) => {
+-    if (val === null || val === undefined) return "0";
+-    if (Math.abs(val) >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
+-    if (Math.abs(val) >= 1000) return `${(val / 1000).toFixed(1)}k`;
+-    return Number(val).toLocaleString();
++    if (val === null || val === undefined || isNaN(val)) return "0";
++    const num = Number(val);
++    if (!isFinite(num)) return "0";
++    if (Math.abs(num) >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
++    if (Math.abs(num) >= 1000) return `${(num / 1000).toFixed(1)}k`;
++    return num.toLocaleString();
+   },
+ }) => {
++  const [isMounted, setIsMounted] = useState(false);
++  useEffect(() => {
++    setIsMounted(true);
++  }, []);
++
+   const finalXKey = xAxisKey || xKey || "name";
+   const finalDataKey = dataKey || barKey || "value";
+ 
+@@ -53,6 +53,35 @@
+     return null;
+   };
+ 
++  if (!isMounted) {
++    return (
++      <div
++        style={{
++          height: typeof height === "number" ? `${height}px` : height,
++          width: "100%",
++        }}
++      />
++    );
++  }
++
++  if (!data || data.length === 0) {
++    return (
++      <div className="chart-wrapper empty">
++        <div
++          style={{
++            height,
++            display: "flex",
++            alignItems: "center",
++            justifyContent: "center",
++            color: "var(--text-muted, #94a3b8)",
++          }}
++        >
++          No data available
++        </div>
++      </div>
++    );
++  }
++
+   return (
+     <div className="chart-wrapper">
+       {title && <h3 className="chart-title">{title}</h3>}
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

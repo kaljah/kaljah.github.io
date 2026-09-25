@@ -1,0 +1,84 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\fugitive.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -69,7 +69,7 @@
+         super().__init__("Equipment-Level Fugitive", "Section 7.2.2")
+ 
+     def calculate(
+-        self, equipment_count, ef, ch4_content, uncertainties, ef_unit="kg/hr", gwp_dict=None
++        self, equipment_count, ef, ch4_content=0.85, uncertainties=None, ef_unit="kg/hr", gwp_dict=None
+     ):
+         """
+         Average Factor Method for equipment - count * EF
+@@ -76,16 +76,23 @@
++        uncertainties = uncertainties or {}
+         self.validate_inputs({"count": equipment_count, "ef": ef}, ["count", "ef"])
+ 
+         # Check if EF is already in tonnes
+-        is_tonne = "tonne" in ef_unit.lower() or " mt" in ef_unit.lower()
++        u_low = str(ef_unit or "kg/hr").lower().strip()
++        is_tonne = any(x in u_low for x in ["tonne", " mt", "t/", "tco2", "tch4"]) or u_low.startswith("t ") or u_low == "t"
+         # Check if EF is already methane-based (do not match substrings like 'component')
+-        is_methane = any(x in ef_unit.lower() for x in ["ch4", "methane", "ch_4"])
++        is_methane = any(x in u_low for x in ["ch4", "methane", "ch_4"])
++
++        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
++        if c_ch4 > 1.0:
++            c_ch4 /= 100.0
++        c_ch4 = max(0.0, min(1.0, c_ch4))
+ 
+         total_ch4_raw = equipment_count * ef
+         if not is_methane:
+-            total_ch4_raw *= ch4_content
++            total_ch4_raw *= c_ch4
+ 
+         # Determine annual tonnes
+-        if "yr" in ef_unit.lower() or "year" in ef_unit.lower():
++        if "yr" in u_low or "year" in u_low:
+             # Factor is already annual
+             if is_tonne:
+                 total_ch4_tonnes_year = total_ch4_raw
+@@ -116,7 +116,7 @@
+             inputs={
+                 "equipment_count": equipment_count,
+                 "ef": ef,
+-                "ch4_content": ch4_content,
++                "ch4_content": c_ch4,
+             },
+         )
+ 
+@@ -124,10 +124,11 @@
+     def __init__(self):
+         super().__init__("Compressor Seal Leakage", "Section 7.2.3")
+ 
+-    def calculate(self, compressor_count, seal_type, uncertainties, gwp_dict=None):
++    def calculate(self, compressor_count, seal_type, uncertainties=None, hours=8760, gwp_dict=None):
+         """
+         API Section 7.2.3 - Compressor seals
+         """
++        uncertainties = uncertainties or {}
+         self.validate_inputs({"count": compressor_count}, ["count"])
+ 
+         # kg CH4 / hr / compressor
+@@ -137,8 +137,9 @@
+         }
+         ef = factors.get(seal_type, 1.2)
+ 
++        op_hours = float(hours if hours is not None else 8760)
+         total_ch4_kg_hr = compressor_count * ef
+-        total_ch4_tonnes_year = (total_ch4_kg_hr * 8760) / 1000.0
++        total_ch4_tonnes_year = (total_ch4_kg_hr * op_hours) / 1000.0
+ 
+         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+         ch4_res = propagate_uncertainty(
+@@ -154,7 +154,7 @@
+         return self.format_result(
+             ch4=ch4_res,
+             total_co2e=total_co2e,
+-            inputs={"compressor_count": compressor_count, "seal_type": seal_type},
++            inputs={"compressor_count": compressor_count, "seal_type": seal_type, "hours": op_hours},
+         )
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

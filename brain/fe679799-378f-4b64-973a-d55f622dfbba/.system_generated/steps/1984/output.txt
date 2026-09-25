@@ -1,0 +1,11 @@
+
+The command exited with code 1.
+Output:
+At line:18 char:65
++ ...  = evaluate('document.querySelector(\".notification-bell-btn, .notifi ...
++                                                                 ~
+Missing argument in parameter list.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingArgument
+ 
+

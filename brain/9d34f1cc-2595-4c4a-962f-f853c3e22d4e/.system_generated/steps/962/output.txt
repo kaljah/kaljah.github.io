@@ -1,0 +1,34 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\notifications.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -16,6 +16,19 @@
+ notifications_bp = Blueprint("notifications", __name__)
+ 
+ 
++def _is_read_for_user(n, uid):
++    if n.is_read:
++        return True
++    if n.user_id is None and n.metadata_json:
++        try:
++            meta = json.loads(n.metadata_json)
++            if uid in meta.get("read_by", []):
++                return True
++        except Exception:
++            pass
++    return False
++
++
+ @notifications_bp.route("/", methods=["GET"])
+ @login_required
+ def get_notifications():
+@@ -38,7 +38,7 @@
+                 "type": n.type,
+                 "title": n.title,
+                 "message": n.message,
+-                "is_read": n.is_read,
++                "is_read": _is_read_for_user(n, user_id),
+                 "time": n.created_at.isoformat() + "Z",
+                 "metadata": n.metadata_json,
+             }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

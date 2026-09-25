@@ -1,0 +1,85 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 4 items
+
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_calculation_loop_memory_profile FAILED
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_unit_conversions_zero_leak 
+[UNIT CONVERSION SUSTAINED PROFILE]
+   Conversions: 25,000
+   Elapsed: 0.15s (163,874 conv/sec)
+   Net Growth: 0.0000 MB
+PASSED
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_uncertainty_propagation_loop 
+[UNCERTAINTY PROPAGATION PROFILE]
+   Iterations: 5,000 (x3 calculations each)
+   Elapsed: 0.13s (37,830 ops/sec)
+   Net Growth: 0.0001 MB
+PASSED
+new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_gc_stability_and_cycle_cleanup 
+[GC STABILITY CHECK] Unreachable objects collected: 0, Uncollectable: 0
+PASSED
+
+================================== FAILURES ===================================
+_ TestMemoryLeakAndSustainedLoops.test_sustained_calculation_loop_memory_profile _
+
+self = <test_stress_memory_leaks.TestMemoryLeakAndSustainedLoops object at 0x000001E038B27FE0>
+
+    def test_sustained_calculation_loop_memory_profile(self):
+        """Profile 10,000 sequential calculation dispatcher loops with tracemalloc."""
+        gc.collect()
+        tracemalloc.start()
+    
+        num_iterations = 10000
+        warmup_iterations = 1000
+    
+        factor_ng = API_FACTORS.get("Natural Gas", {})
+        factor_diesel = API_FACTORS.get("Diesel", {})
+        factor_fg = API_FACTORS.get("Field Gas", {})
+    
+        mem_at_warmup = 0
+        t_start = time.perf_counter()
+    
+        for i in range(num_iterations):
+            # Rotate across multiple process categories
+            if i % 3 == 0:
+                payload = {
+                    "process_type": "combustion",
+                    "fuel": "Natural Gas",
+                    "quantity": 1500.0 + (i % 100),
+                    "unit": "m3",
+                }
+                factor = factor_ng
+            elif i % 3 == 1:
+                payload = {
+                    "process_type": "flaring",
+                    "fuel": "Field Gas",
+                    "quantity": 300.0 + (i % 50),
+                    "unit": "m3",
+                }
+                factor = factor_fg
+            else:
+                payload = {
+                    "process_type": "combustion",
+                    "fuel": "Diesel",
+                    "quantity": 40.0 + (i % 20),
+                    "unit": "gal",
+                }
+                factor = factor_diesel
+    
+            res, _ = compute_emissions(payload, factor_data=factor)
+>           assert res["totalCo2e"] > 0
+E           assert 0.0 > 0
+
+new\server\tests\test_stress_memory_leaks.py:75: AssertionError
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_memory_leaks.py::TestMemoryLeakAndSustainedLoops::test_sustained_calculation_loop_memory_profile
+========================= 1 failed, 3 passed in 3.08s =========================
+

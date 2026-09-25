@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1342,6 +1342,10 @@
+                     any(liq in fuel_name for liq in ["diesel", "gasoline", "petrol", "fuel oil", "crude", "oil", "kerosene", "lpg", "propane", "condensate", "naphtha", "liquid"])
+                     or unit in ["bbl", "barrel", "barrels", "gal", "gallon", "gallons", "l", "liter", "liters"]
+                 )
++                is_solid = (
++                    any(sol in fuel_name for sol in ["coal", "coke", "petcoke", "anthracite", "lignite", "bituminous", "sub-bituminous", "subbituminous", "peat", "wood", "biomass", "solid"])
++                    or unit in ["tonne", "tonnes", "metric_ton", "metric ton", "mt", "t", "ton", "tons", "short_ton", "us_ton", "kg", "kilogram", "kilograms", "lb", "lbs", "pound", "pounds"]
++                )
+                 if is_liquid:
+                     # Liquid fuel HHV: standard ~138,000 Btu/gal (0.138 MMBtu/gal)
+                     hhv_liquid = float(inputs.get("hhv") or emission_factors.get("hhv") or 138000.0)
+@@ -1353,6 +1353,24 @@
+                     else:  # gal
+                         gallons = quantity
+                     energy_mmbtu = (gallons * hhv_liquid) / 1_000_000.0
++                elif is_solid:
++                    kg_val = quantity * mass_factors.get(unit, 1000.0)
++                    short_tons = kg_val / 907.185
++                    tonnes = kg_val / 1000.0
++                    hhv_raw = inputs.get("hhv") or emission_factors.get("hhv")
++                    if hhv_raw:
++                        hhv_solid = float(hhv_raw)
++                        if hhv_solid > 1000:
++                            # In catalog, coal HHV is stored as kBtu/short ton (e.g. 24930, 25090)
++                            energy_mmbtu = short_tons * (hhv_solid / 1000.0)
++                        elif hhv_solid > 100:
++                            energy_mmbtu = tonnes * (hhv_solid / 1000.0)
++                        else:
++                            # Direct MMBtu/tonne or MMBtu/ton
++                            energy_mmbtu = (short_tons if "ton" in unit and "tonne" not in unit else tonnes) * hhv_solid
++                    else:
++                        # Standard default solid fuel HHV: 26.0 MMBtu/short ton (~28.6 MMBtu/metric ton)
++                        energy_mmbtu = short_tons * 26.0
+                 else:
+                     # Gaseous fuel HHV: standard ~1,020 Btu/scf
+                     hhv_gas = float(inputs.get("hhv") or emission_factors.get("hhv") or 1020.0)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

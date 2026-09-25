@@ -1,0 +1,102 @@
+
+The command exited with code 0.
+Output:
+
+--- Logging in as admin (admin@ghg.com) ---
+Logged in successfully as admin.
+
+---> Auditing View: Dashboard (/)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope Select (/emissions)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope 1 (/emissions?scope=1)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope 2 (/emissions?scope=2)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Emissions Scope 3 (/emissions?scope=3)
+  [Main View] Pressed 0 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Pending Review (/manage-data?tab=pending)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Factors (/manage-data?tab=factors)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Facilities (/manage-data?tab=facilities)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Production (/manage-data?tab=production)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Sources (/manage-data?tab=sources)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Goals & Base Years (/manage-data?tab=goals)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Mitigation (/manage-data?tab=mitigation)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - OGMP 2.0 (/manage-data?tab=ogmp)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - CBAM (/manage-data?tab=cbam)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Metadata (/manage-data?tab=metadata)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Manage Data - Level Upgrades (/manage-data?tab=level_upgrades)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: QA/QC Dashboard (/qa-dashboard)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Reports & Analytics (/reports)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Carbon Intensity (/carbon-intensity)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Methane Intensity (/methane-intensity)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Methane Explorer (/methane-explorer)
+  [Main View] Pressed 0 unique button interactions cleanly.
+
+---> Auditing View: SBTi Trajectory (/sbti)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Uncertainty Monte Carlo (/uncertainty)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Reference Data Factors (/reference-data)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Audit Trail (Admin) (/audit-trail)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Settings (/settings)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+--- Logging in as it_admin (itadmin@ghg.com) ---
+Logged in successfully as it_admin.
+
+---> Auditing View: User Management (/user-management)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+---> Auditing View: Audit Trail (IT Admin) (/audit-trail)
+  [Main View] Pressed 2 unique button interactions cleanly.
+
+============================================================
+ COMPLETE BUTTON-CLICK AUDIT SUMMARY
+============================================================
+Total Button Interactions Verified: 52
+Total Console Errors Encountered: 0
+
+AUDIT PASSED: 100% of tested buttons across the entire software executed with 0 console errors!
+

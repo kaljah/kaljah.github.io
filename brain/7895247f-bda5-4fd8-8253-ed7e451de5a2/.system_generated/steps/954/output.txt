@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+P28: GB TOTAL GHG EMISSIONS BY MODULE � 2021 TO 2024
+Total CO2e Emissions (Tonnes/Year)
+SANGEA Module 2021 2022 2023 2024 2025
+Stationary Combustion 1,249,
+P29: HBNS CH4 EMISSIONS BY MODULE � 2021 TO 2024
+Total CH4 Emissions (Tonnes/Year)
+SANGEA Module 2021 2022 2023 2024 2025
+Stationary Combustion 38.12 36.88
+P30: ELM CH4 EMISSIONS BY MODULE � 2021 TO 2025
+Total CH4 Emissions (Tonnes/Year)
+SANGEA Module 2021 2022 2023 2024 2025
+Stationary Combustion 31.18 34.49 
+

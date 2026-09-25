@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+
+src\pages\Settings.jsx:69:  const [activeTab, setActiveTab] = useState("gwp");
+src\pages\Settings.jsx:83:  const [copernicusPassword, setCopernicusPassword] = useState("");
+src\pages\Settings.jsx:88:  const [authMode, setAuthMode] = useState("password"); // 'password' or 'oauth_client'
+src\pages\Settings.jsx:121:        if (settings.copernicus_password)
+src\pages\Settings.jsx:122:          setCopernicusPassword(settings.copernicus_password);
+src\pages\Settings.jsx:199:      if (copernicusPassword && copernicusPassword !== "********") {
+src\pages\Settings.jsx:200:        payload.copernicus_password = copernicusPassword;
+src\pages\Settings.jsx:223:        authMode === "password"
+src\pages\Settings.jsx:226:              ...(copernicusPassword && copernicusPassword !== "********"
+src\pages\Settings.jsx:227:                ? { copernicus_password: copernicusPassword }
+src\pages\Settings.jsx:351:        {/* Navigation Tabs Bar */}
+src\pages\Settings.jsx:352:        <div className="settings-tabs-bar">
+src\pages\Settings.jsx:354:            className={`settings-tab-btn ${activeTab === "gwp" ? "active" : ""}`}
+src\pages\Settings.jsx:355:            onClick={() => setActiveTab("gwp")}
+src\pages\Settings.jsx:356:            id="tab-gwp"
+src\pages\Settings.jsx:358:            <Globe size={17} className="tab-icon-svg" />
+src\pages\Settings.jsx:362:            className={`settings-tab-btn ${activeTab === "ogmp" ? "active" : ""}`}
+src\pages\Settings.jsx:363:            onClick={() => setActiveTab("ogmp")}
+src\pages\Settings.jsx:364:            id="tab-ogmp"
+src\pages\Settings.jsx:366:            <Target size={17} className="tab-icon-svg" />
+src\pages\Settings.jsx:370:            className={`settings-tab-btn ${activeTab === "facilities" ? "active" : ""}`}
+src\pages\Settings.jsx:371:            onClick={() => setActiveTab("facilities")}
+src\pages\Settings.jsx:372:            id="tab-facilities"
+src\pages\Settings.jsx:374:            <Building2 size={17} className="tab-icon-svg" />
+src\pages\Settings.jsx:378:            className={`settings-tab-btn ${activeTab === "satellite" ? "active" : ""}`}
+src\pages\Settings.jsx:379:            onClick={() => setActiveTab("satellite")}
+src\pages\Settings.jsx:380:            id="tab-satellite"
+src\pages\Settings.jsx:382:            <Satellite size={17} className="tab-icon-svg" />
+src\pages\Settings.jsx:411:      {/* TAB CONTENT: GWP Standards */}
+src\pages\Settings.jsx:412:      {activeTab === "gwp" && (
+
+
+

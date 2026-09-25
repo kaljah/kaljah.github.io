@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+get_factor_by_segment(upstream): 0
+get_factor_by_segment(Upstream): 32
+

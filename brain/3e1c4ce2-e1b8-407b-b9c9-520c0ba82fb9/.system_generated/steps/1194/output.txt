@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_zero_trust_adversarial.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -197,7 +197,7 @@
+     with client.application.app_context():
+         admin = User.query.filter_by(role="admin").first()
+         if not admin:
+-            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Sonatrach", role="admin")
++            admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="admin")
+             admin.set_password("pass")
+             db.session.add(admin)
+             db.session.commit()
+@@ -204,7 +204,7 @@
+ 
+         operator = User.query.filter_by(role="user").first()
+         if not operator:
+-            operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Sonatrach", role="user")
++            operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Sonatrach", sector="Energy", location="Algiers", role="user")
+             operator.set_password("pass")
+             db.session.add(operator)
+             db.session.commit()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

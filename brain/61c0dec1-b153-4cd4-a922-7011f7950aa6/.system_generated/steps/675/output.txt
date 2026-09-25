@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\ManageData.jsx:909:    const handleFacilityChange = (e) => {
+new\client\src\pages\ManageData.jsx:913:    const handleFactorChange = (e) => {
+new\client\src\pages\ManageData.jsx:1198:    const handleFactorChange = (e) => {
+new\client\src\pages\ManageData.jsx:1202:    const handleFacilityChange = (e) => {
+new\client\src\pages\ManageData.jsx:2183:                                            onChange={handleFactorChange}
+new\client\src\pages\ManageData.jsx:2211:                                            onChange={handleFactorChange}
+new\client\src\pages\ManageData.jsx:2228:                                            onChange={handleFactorChange}
+new\client\src\pages\ManageData.jsx:2240:                                            onChange={handleFactorChange}
+new\client\src\pages\ManageData.jsx:2252:                                            onChange={handleFactorChange}
+new\client\src\pages\ManageData.jsx:2260:                                        <input type="number" 
+name="co2_uncertainty" value={factorForm.co2_uncertainty} onChange={handleFactorChange} className="mole-input" 
+placeholder="e.g. 5.0" step="0.1" />
+new\client\src\pages\ManageData.jsx:2264:                                        <input type="number" 
+name="ch4_uncertainty" value={factorForm.ch4_uncertainty} onChange={handleFactorChange} className="mole-input" 
+placeholder="e.g. 50.0" step="0.1" />
+new\client\src\pages\ManageData.jsx:2268:                                        <input type="number" 
+name="n2o_uncertainty" value={factorForm.n2o_uncertainty} onChange={handleFactorChange} className="mole-input" 
+placeholder="e.g. 150.0" step="0.1" />
+new\client\src\pages\ManageData.jsx:2276:                                            onChange={handleFactorChange}
+new\client\src\pages\ManageData.jsx:2286:                                            onChange={handleFactorChange}
+new\client\src\pages\ManageData.jsx:2435:                                                <input type="text" 
+name="name" value={facilityForm.name} onChange={handleFacilityChange} className="mole-input" placeholder="e.g. Hassi 
+R'Mel" />
+new\client\src\pages\ManageData.jsx:2446:                                                <select name="division" 
+value={facilityForm.division} onChange={handleFacilityChange} className="component-select" 
+disabled={!facilityForm.activity}>
+new\client\src\pages\ManageData.jsx:2453:                                                <input type="text" 
+name="field" value={facilityForm.field} onChange={handleFacilityChange} className="mole-input" placeholder="Optional" 
+/>
+new\client\src\pages\ManageData.jsx:2457:                                                <input type="text" 
+name="location" value={facilityForm.location} onChange={handleFacilityChange} className="mole-input" placeholder="e.g. 
+Laghouat" />
+new\client\src\pages\ManageData.jsx:2490:                                                <select name="segment" 
+value={facilityForm.segment} onChange={handleFacilityChange} className="component-select">
+new\client\src\pages\ManageData.jsx:2502:                                                <input type="number" 
+step="any" name="latitude" value={facilityForm.latitude} onChange={handleFacilityChange} className="mole-input" 
+placeholder="e.g. 33.8" />
+new\client\src\pages\ManageData.jsx:2506:                                                <input type="number" 
+step="any" name="longitude" value={facilityForm.longitude} onChange={handleFacilityChange} className="mole-input" 
+placeholder="e.g. 6.07" />
+
+
+

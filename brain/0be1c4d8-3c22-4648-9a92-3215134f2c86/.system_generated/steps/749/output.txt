@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\.antigravity\SYSTEM_MEMORY.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1355,4 +1355,30 @@
+   - `new/client/src/components/Scope1Form.jsx`: Updated `handleInspect` to parse `source_payload`, resolve effective emission factors (`ef_co2`, `ef_ch4`, `ef_n2o`), inject active GWP standards, pass facility and reporting period metadata, and provide four detailed, descriptive calculation steps.
+ - **Verification:** Verified compilation via `npm run build` in `new/client` (0 errors, 3,199 modules transformed).
+ - **Status:** Complete, verified, and in full synchronization with the repository.
++
++### [2026-09-15T00:52:00Z] - FULL-STACK RESILIENCE & RUNTIME VERIFICATION REMEDIATION
++- **Action:** Executed end-to-end audit and remediation across Computational Precision, State & Cache Coherence, Ingestion Resilience, and Concurrency Boundaries.
++- **Files Modified:**
++  - `new/server/calculations/units.py`: Added `normalize_efficiency(eff_val, default=0.0)` bounding outputs to `[0.0, 1.0]` and cleanly mapping percentage inputs `[1.0, 100.0]` to fractional representation.
++  - `new/server/calculations/combustion.py`: Standardized control and destruction efficiencies via `_normalize_efficiency` in `CombustionCalculator` and `FlaringCalculator`, eliminating negative unburnt methane inverted emissions.
++  - `new/server/calculations/midstream.py`: Applied `normalize_efficiency` across `AGRCalculator` and `DehydratorCalculator` (Tier 1 & Tier 3 still/flash control efficiencies).
++  - `new/server/calculations/vented.py`: Applied `normalize_efficiency` to `_split_vented_and_flared`, preventing percentage values like 98.0 from clamping to 1.0.
++  - `new/server/calculations/dispatcher.py`: Supported GWP dicts passed in 4th positional parameter in `CalculationDispatcher.dispatch`.
++  - `new/server/routes/dashboard.py`:
++    - Implemented multi-worker Gunicorn TTLCache synchronization via database-backed `_dashboard_cache_epoch` in `SystemSetting` using isolated `db.engine` connection (preventing session conflicts during `after_commit`).
++    - Fixed unscoped mitigation leakage by filtering facility-specific mitigation records in `_query_mitigation`.
++    - Protected BaseYear singleton against concurrent insert races via `db.session.get(BaseYear, 1)` and `db.session.merge`.
++    - Enforced Invariant Zero (Decision D-02) for OGMP 2.0 reconciliation: handled zero bottom-up edge case (`top_down > 0` and `bottom_up == 0` yields `variance_pct = None`, `variance_flag = True`, `reconciliation_status = "Discrepancy Flagged"`). Corrected N2O 20-year GWP fallback from 264.0 to 268.0.
++  - `new/server/background_processor.py`:
++    - Added `_clean_float` handling thousands separators, currency symbols, and European decimals across all ingestion parsers (`_process_row`, `_process_row_production`, `_process_row_scope2`, `_process_row_scope3`).
++    - Enforced org-wide `SystemSetting` GWP standard per Invariant Zero Rule 3 (Decision D-09).
++    - Added in-batch duplicate deduplication via `batch_prod_map` in `_process_row_production` to prevent `IntegrityError` collisions during `bulk_save_objects`.
++    - Implemented asymptotic progress curve for streaming CSV uploads where total row count is unknown.
++    - Added `db.session.rollback()` in fatal exception handler.
++  - `new/server/routes/emissions.py`:
++    - Refactored `reject_batch_emissions` from an $O(N \times A)$ loop into an atomic `q.update(...)` with a single batch activity log entry, eliminating N+1 notification storms.
++- **Verification:**
++  - Full backend pytest suite passed: **214 passed, 52 warnings** (benchmark: ~308 Kops/s).
++  - Frontend production build passed: **`npm run build` completed in 10.96s** (0 errors).
++- **Status:** Complete, verified, and in full synchronization with the repository.
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1752,6 +1752,8 @@
+         import json
+ 
+         eq_id = str(row.get("equipment_id") or row.get("equipment") or "").strip().lower()
++        proc_lower = process_type.strip().lower()
++        fuel_k = "" if proc_lower in NON_COMBUSTION_PROCESSES else fuel.strip().lower()
+         key = (
+             facility.id,
+             year,
+@@ -1758,5 +1758,5 @@
+-            process_type.strip().lower(),
+-            fuel.strip().lower(),
++            proc_lower,
++            fuel_k,
+             eq_id,
+         )
+         if batch_keys is not None:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

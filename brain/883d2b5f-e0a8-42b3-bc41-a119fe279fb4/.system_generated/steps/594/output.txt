@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -55,6 +55,7 @@
+   const [streamType, setStreamType] = useState("Upstream"); // 'Upstream', 'Midstream', 'Downstream'
+   const [groupName, setGroupName] = useState("");
+   const [equipmentId, setEquipmentId] = useState("");
++  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+ 
+   // Dynamic Form Data State
+   const [formData, setFormData] = useState({});
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

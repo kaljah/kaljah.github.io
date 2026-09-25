@@ -1,0 +1,16 @@
+
+The command exited with code 0.
+Output:
+GET /api/auth/csrf-token: 404  {"code":404,"error":"Not found","request_id":"86d501c3-1faf-474f-9422-955d9e890fc8"}
+
+GET /api/auth/csrf: 404  {"code":404,"error":"Not found","request_id":"6627b0b3-a06a-4234-afce-cf7d56d58a56"}
+
+GET /api/csrf-token: 200  {"csrf_token":"Ijk0ZTdmYmVmMzhjMjFhNGNjYzdlNTZiNjQxY2NmMTcxOGEwNDNlYmIi.arQyPQ.g1O0uNiU8QdNJMNUa9nmpsJH9ig"}
+
+GET /csrf-token: 404  {"code":404,"error":"Not found","request_id":"50d3b6c3-0e63-4251-9cda-4ceb732fa446"}
+
+GET /api/auth/register: 405  {"code":405,"error":"The method is not allowed for the requested URL.","request_id":"502775cd-1833-4c7e-aac3-75793f231f19"}
+
+Cookies after login: {'csrf_token': 'Ijk0ZTdmYmVmMzhjMjFhNGNjYzdlNTZiNjQxY2NmMTcxOGEwNDNlYmIi.arQyPQ.g1O0uNiU8QdNJMNUa9nmpsJH9ig', 'session': 'eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyX2lkIjoxfQ.arQyRA.xoNJWlSvvDfTDm4aDxuJvaLdXuE'}
+Response headers: {'Server': 'Werkzeug/3.0.3 Python/3.12.4', 'Date': 'Wed, 23 Sep 2026 20:10:44 GMT', 'Content-Type': 'application/json', 'Content-Length': '394', 'X-Request-ID': '33e559af-7bab-4fc9-9bfb-4a0b58c70e5f', 'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'", 'X-Frame-Options': 'DENY', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0', 'Pragma': 'no-cache', 'Expires': '0', 'X-RateLimit-Limit': '1000', 'X-RateLimit-Remaining': '992', 'X-RateLimit-Reset': '1790194960', 'Retry-After': '715', 'Access-Control-Allow-Origin': 'http://127.0.0.1:3000', 'Access-Control-Expose-Headers': 'Content-Disposition, X-Request-ID', 'Access-Control-Allow-Credentials': 'true', 'Vary': 'Origin, Cookie', 'Set-Cookie': 'session=eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyX2lkIjoxfQ.arQyRA.xoNJWlSvvDfTDm4aDxuJvaLdXuE; Expires=Thu, 24 Sep 2026 04:10:44 GMT; HttpOnly; Path=/; SameSite=Lax', 'Connection': 'close'}
+

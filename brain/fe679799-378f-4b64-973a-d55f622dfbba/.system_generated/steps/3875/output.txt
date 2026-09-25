@@ -1,0 +1,35 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\combustion.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -138,15 +138,21 @@
+     }
+ 
+     # Standard representative fuel densities (kg/m3) when crossing mass/volume boundary
+-    fuel_lower = str(fuel_type or "").lower()
+-    if any(k in fuel_lower for k in ["gas", "methane", "c1", "natural_gas"]):
+-        density_kg_m3 = 0.80
+-    elif any(k in fuel_lower for k in ["oil", "diesel", "crude", "petroleum", "gasoline", "fuel_oil", "liquid"]):
+-        density_kg_m3 = 850.0
+-    elif any(k in fuel_lower for k in ["coal", "coke", "lignite", "solid"]):
+-        density_kg_m3 = 1300.0
++    if density is not None and float(density or 0) > 0:
++        try:
++            density_kg_m3 = float(density)
++        except (ValueError, TypeError):
++            density_kg_m3 = 850.0
+     else:
+-        density_kg_m3 = 850.0 if "liquid" in a_unit else 0.80
++        fuel_lower = str(fuel_type or "").lower()
++        if any(k in fuel_lower for k in ["gas", "methane", "c1", "natural_gas"]):
++            density_kg_m3 = 0.80
++        elif any(k in fuel_lower for k in ["oil", "diesel", "crude", "petroleum", "gasoline", "fuel_oil", "liquid"]):
++            density_kg_m3 = 850.0
++        elif any(k in fuel_lower for k in ["coal", "coke", "lignite", "solid"]):
++            density_kg_m3 = 1300.0
++        else:
++            density_kg_m3 = 850.0 if "liquid" in a_unit else 0.80
+ 
+     if factor_denom in vol_conv and a_unit in vol_conv:
+         return val * (vol_conv[factor_denom] / vol_conv[a_unit])
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

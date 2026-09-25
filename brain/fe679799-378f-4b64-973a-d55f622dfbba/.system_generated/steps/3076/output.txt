@@ -1,0 +1,18 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+EXHAUSTIVE QA MISSION - MULTI-PROCESS SCENARIO UPLOAD & VERIFICATION
+================================================================================
+Generated 107 scenario rows written to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_all_scenarios_matrix.csv
+Generated 11 scenario rows written to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_scope2_scenarios.csv
+Generated 15 scenario rows written to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_scope3_scenarios.csv
+
+[Step 1] Fetching CSRF Token and Authenticating as admin@ghg.com...
+CSRF token obtained: IjI2N2QyYTNi...
+SUCCESS: Authenticated. Session cookies established.
+
+[Step 2] Uploading Scope 1 Exhaustive Scenario Matrix (107 rows)...
+FAILED to initiate upload: 400 {"code":400,"error":"CSRF token missing or invalid. Refresh the page and try again."}
+
+

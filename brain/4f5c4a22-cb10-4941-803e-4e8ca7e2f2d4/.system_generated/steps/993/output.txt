@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\test_results\screenshots
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/22/2026   1:40 PM         125626 01_dashboard_initial_view.png                                        
+-a----         9/22/2026   1:41 PM         109331 02_dashboard_year_switching.png                                      
+-a----         9/22/2026   1:41 PM         109294 03_dashboard_gwp20_active.png                                        
+-a----         9/22/2026   1:41 PM         109648 04_dashboard_compare_regions.png                                     
+-a----         9/22/2026   1:41 PM          82214 06_dashboard_detailed_breakdown_expanded.png                         
+-a----         9/22/2026   1:41 PM          40446 07_carbon_intensity_initial.png                                      
+-a----         9/22/2026   1:41 PM          40492 08_carbon_intensity_gwp20.png                                        
+-a----         9/22/2026   1:41 PM          35966 10_carbon_intensity_cbam_table.png                                   
+-a----         9/22/2026   1:41 PM          48192 11_methane_intensity_initial.png                                     
+-a----         9/22/2026   1:41 PM          43568 12_methane_intensity_ogmp_roadmap.png                                
+-a----         9/22/2026   1:41 PM          40446 carbon_intensity_post_calculation_audit.png                          
+-a----         9/22/2026   1:41 PM         109635 dashboard_post_calculation_audit.png                                 
+-a----         9/22/2026   1:41 PM          48192 methane_intensity_post_calculation_audit.png                         
+-a----         9/22/2026   1:41 PM         144678 scope1_acid_gas_removal___agr__tier_3_.png                           
+-a----         9/22/2026   1:42 PM         136699 scope1_blowdowns___venting__tier_3_.png                              
+-a----         9/22/2026   1:41 PM         149094 scope1_combustion__tier_3_.png                                       
+-a----         9/22/2026  10:04 AM          49262 scope1_eng_combustion.png                                            
+-a----         9/22/2026   1:41 PM         166690 scope1_flaring__tier_3_.png                                          
+-a----         9/22/2026   1:41 PM         149179 scope1_glycol_dehydrator__tier_3_.png                                
+-a----         9/22/2026   1:41 PM         160472 scope1_liquids_unloading__tier_3_.png                                
+-a----         9/22/2026   1:41 PM         152467 scope1_pneumatic_devices__tier_3_.png                                
+-a----         9/22/2026   1:41 PM         153882 scope1_storage_tanks__tier_3_.png                                    
+-a----         9/22/2026   1:40 PM          46217 scope1_tier1_bulk_imported.png                                       
+-a----         9/22/2026   1:41 PM         144786 scope1_tier1_center.png                                              
+-a----         9/22/2026   1:41 PM         130919 scope1_tier1_south.png                                               
+-a----         9/22/2026   1:40 PM         122287 scope1_tier1_west.png                                                
+-a----         9/22/2026   1:40 PM          46235 scope1_tier3_bulk_1080_records.png                                   
+-a----         9/22/2026   1:41 PM         154530 scope1_well_completions_flowback__tier_3_.png                        
+
+
+

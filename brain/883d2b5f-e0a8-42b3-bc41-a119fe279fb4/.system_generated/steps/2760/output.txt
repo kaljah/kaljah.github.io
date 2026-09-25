@@ -1,0 +1,79 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 14 items
+
+new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_thirteen_volume_units_invariance PASSED [  7%]
+new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_twelve_mass_units_invariance PASSED [ 14%]
+new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_seven_energy_units_invariance PASSED [ 21%]
+new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_four_temperature_units_invariance PASSED [ 28%]
+new\server\tests\test_deep_injection_matrix.py::TestUnitConversionInvarianceMatrix::test_all_seven_pressure_units_invariance PASSED [ 35%]
+new\server\tests\test_deep_injection_matrix.py::TestOperationalScenariosMatrix::test_thermodynamic_real_gas_compressibility_z PASSED [ 42%]
+new\server\tests\test_deep_injection_matrix.py::TestOperationalScenariosMatrix::test_flaring_destruction_efficiency_variations PASSED [ 50%]
+new\server\tests\test_deep_injection_matrix.py::TestOperationalScenariosMatrix::test_heavy_hydrocarbon_gas_c2_plus_stoichiometry PASSED [ 57%]
+new\server\tests\test_deep_injection_matrix.py::TestOperationalScenariosMatrix::test_dynamic_gwp_standards_ar4_ar5_ar6 PASSED [ 64%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier1_bulk_csv_upload PASSED [ 71%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier2_bulk_csv_upload_custom_factors FAILED [ 78%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier3_bulk_csv_upload_engineering_parameters PASSED [ 85%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope2_bulk_csv_upload_all_utility_types PASSED [ 92%]
+new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope3_bulk_csv_upload_all_categories_and_units PASSED [100%]
+
+================================== FAILURES ===================================
+_ TestBulkCSVIngestionAllTiersAndScopes.test_scope1_tier2_bulk_csv_upload_custom_factors _
+
+self = <test_deep_injection_matrix.TestBulkCSVIngestionAllTiersAndScopes object at 0x000001C7051532C0>
+app = <Flask 'app'>, test_user = <User 29>, test_facility = <Facility 20>
+db_session = <sqlalchemy.orm.scoping.scoped_session object at 0x000001C7028A5910>
+
+    def test_scope1_tier2_bulk_csv_upload_custom_factors(self, app, test_user, test_facility, db_session):
+        """Tier 2 Bulk CSV: Uses regional custom emission factors created in DB."""
+        # Create a custom factor
+        cf = CustomFactor.query.filter_by(name="Regional Saharan Sweet Gas").first()
+        if not cf:
+            cf = CustomFactor(
+                name="Regional Saharan Sweet Gas",
+                co2_factor=51.25,
+                ch4_factor=0.0008,
+                n2o_factor=0.00008,
+                unit="kg/MMBtu",
+                hhv_factor=1050.0,
+                parent_fuel="Natural Gas",
+                created_by=test_user.id,
+            )
+            db_session.add(cf)
+            db_session.commit()
+    
+        csv_data = (
+            "Facility,Date,Process,Fuel,Quantity,Unit,FactorSource\n"
+            f"{test_facility.name},2024-06,Combustion,Regional Saharan Sweet Gas,12000,m3,custom\n"
+        )
+        status = self._run_upload(app, csv_data, "scope1_tier2.csv", test_user.id, scope=1)
+        assert status["status"] == "completed"
+        assert status["processed"] == 1
+        assert status["skipped_count"] == 0
+    
+        em = Emission.query.filter_by(facility_id=test_facility.id, year=2024, month=6).first()
+        assert em is not None
+        assert em.fuel_type == "Regional Saharan Sweet Gas"
+>       assert em.co2e_total > 0
+E       assert 0.0 > 0
+E        +  where 0.0 = <Emission 881>.co2e_total
+
+new\server\tests\test_deep_injection_matrix.py:438: AssertionError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_deep_injection_matrix.py::TestBulkCSVIngestionAllTiersAndScopes::test_scope1_tier2_bulk_csv_upload_custom_factors
+=================== 1 failed, 13 passed, 1 warning in 2.97s ===================
+

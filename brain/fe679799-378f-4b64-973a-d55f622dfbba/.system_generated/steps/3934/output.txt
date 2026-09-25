@@ -1,0 +1,19 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -100,6 +100,13 @@
+   const [meterUncertaintyPct, setMeterUncertaintyPct] = useState("2.0"); // Default Tier 3 ±2.0%
+   const [gcUncertaintyPct, setGcUncertaintyPct] = useState("");
+ 
++  // Tier 2 Enhanced State
++  const [tier2Mode, setTier2Mode] = useState("override"); // 'override' (Mode A: Lab/Ticket properties) or 'custom_factor' (Mode B: Saved custom factor)
++  const [activePresetId, setActivePresetId] = useState("");
++  const [fuelDensity, setFuelDensity] = useState("");
++  const [dataSourceRef, setDataSourceRef] = useState("");
++  const [isQuickAddModalOpen, setIsQuickAddModalOpen] = useState(false);
++
+   const [facilities, setFacilities] = useState([]);
+   const [emissionSources, setEmissionSources] = useState([]);
+   const [emissionSourceId, setEmissionSourceId] = useState("");
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

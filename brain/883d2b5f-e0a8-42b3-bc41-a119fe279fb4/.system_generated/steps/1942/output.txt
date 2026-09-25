@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_api_security.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -148,7 +148,7 @@
+         """User should not be able to delete an emission record created by another user (e.g. admin)."""
+         with app.app_context():
+             from models import Facility
+-            if not Facility.query.get(1):
++            if not db.session.get(Facility, 1):
+                 f = Facility(id=1, name="Test Facility")
+                 db.session.add(f)
+                 db.session.commit()
+@@ -183,7 +183,7 @@
+         """User should be able to delete their own emission record."""
+         with app.app_context():
+             from models import Facility
+-            if not Facility.query.get(1):
++            if not db.session.get(Facility, 1):
+                 f = Facility(id=1, name="Test Facility")
+                 db.session.add(f)
+                 db.session.commit()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

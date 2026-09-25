@@ -1,0 +1,38 @@
+
+Encountered error in step execution: context canceled
+Output:
+
+Running 2 tests using 1 worker
+
+
+========================================
+[TIER 1 TEST] Testing Region: West (Tosyali)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Steel & Iron (Acier DRI)
+[TIER 1 DB VERIFIED] Row ID=841, Facility=1, CO2=2.7060600000000004, CH4=0.00005100000000000001, Total CO2e=2.7088752000000005 tCO2e
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Steel & Iron (Acier DRI)	Complexe Sidérurgique DRI/EAF (Tosyali)	Metallurgy	Industrial Zone	-	-	combustion	Natural Gas	Default	1,765,735.00 scf	2.706	0.00005	0.00001	2.709	±6%	±11%	±11%	±11%	±22%	±22%	
+
+========================================
+[TIER 1 TEST] Testing Region: Center (GICA)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Cement & Clinker
+[TIER 1 DB VERIFIED] Row ID=842, Facility=3, CO2=122.47775999999999, CH4=0.004968, Total CO2e=122.88761999999998 tCO2e
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Cement & Clinker	Cimenterie Industrielle de Chlef (GICA)	Building Materials	Chlef Plant	-	-	combustion	Diesel (No. 2 Fuel Oil)	Default	3,170,064.00 gal	122.478	0.00497	0.00099	122.888	±5%	±13%	±16%	±10%	±27%	±32%	
+
+========================================
+[TIER 1 TEST] Testing Region: South (Sonatrach)
+========================================
+[TIER 1 TEST] Auto-filled Activity: Upstream & Midstream Gas
+[TIER 1 DB VERIFIED] Row ID=843, Facility=4, CO2=4.329696000000001, CH4=0.00008160000000000002, Total CO2e=4.334200320000001 tCO2e
+[TIER 1 TABLE DISPLAY] Top Row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Exploration & Production	HMD Field	-	-	combustion	Natural Gas	Default	2,825,176.00 scf	4.330	0.00008	0.00001	4.334	±6%	±11%	±11%	±11%	±22%	±22%	
+  ok 1 [chromium] › e2e\test_scope1_form_engine.spec.js:84:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 1. Tier 1 Default Factors across All Database Regions (West, Center, South) (16.3s)
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+  x  2 [chromium] › e2e\test_scope1_form_engine.spec.js:203:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (16.0s)
+
+========================================
+[TIER 3 ENGINEERING] Testing: Combustion (Tier 3)
+========================================
+

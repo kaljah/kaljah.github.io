@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+SUCCESS: The process with PID 24412 has been terminated.
+SUCCESS: The process with PID 10284 has been terminated.
+

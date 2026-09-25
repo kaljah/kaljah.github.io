@@ -1,0 +1,58 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\constants.py:7:GWP_AR4 = {"CO2": 1.0, "CH4": 25.0, "N2O": 298.0, "CH4_20": 72.0, "N2O_20": 
+289.0}
+new\server\calculations\constants.py:10:GWP_AR5 = {"CO2": 1.0, "CH4": 28.0, "N2O": 265.0, "CH4_20": 82.5, "N2O_20": 
+268.0}
+new\server\calculations\constants.py:13:GWP_AR6 = {"CO2": 1.0, "CH4": 27.9, "N2O": 273.0, "CH4_20": 82.5, "N2O_20": 
+273.0}
+new\server\calculations\constants.py:54:            "CH4": std_profile.get("CH4_20", 82.5),
+new\server\routes\auth.py:567:        "AR5": {"ch4_100": 28.0, "ch4_20": 82.5, "n2o_100": 265.0, "co2": 1.0},
+new\server\routes\auth.py:568:        "AR6": {"ch4_100": 27.9, "ch4_20": 82.5, "n2o_100": 273.0, "co2": 1.0},
+new\server\routes\auth.py:569:        "AR4": {"ch4_100": 25.0, "ch4_20": 72.0, "n2o_100": 298.0, "co2": 1.0},
+new\server\routes\dashboard.py:136:    gwp_horizon = request.args.get("gwp_horizon", "100")
+new\server\routes\dashboard.py:147:        gwp_horizon,
+new\server\routes\dashboard.py:177:                gwp_horizon=gwp_horizon,
+new\server\routes\dashboard.py:209:                gwp_horizon=gwp_horizon,
+new\server\routes\dashboard.py:379:    gwp_horizon="100",
+new\server\routes\dashboard.py:454:    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
+new\server\routes\dashboard.py:468:        gwp20_val = round(max(gwp100_val, gwp100_val + (56.0 * ch4_val) - (1.0 * 
+n2o_val)), 2)
+new\server\routes\dashboard.py:473:            "scope1_total": gwp20_val if is_20 else gwp100_val,
+new\server\routes\dashboard.py:475:            "scope1_total_gwp20": gwp20_val,
+new\server\routes\dashboard.py:476:            "gwp_horizon": 20 if is_20 else 100,
+new\server\routes\dashboard.py:683:    gwp_horizon="100",
+new\server\routes\dashboard.py:763:    is_20 = str(gwp_horizon).lower() in ("20", "gwp20", "20yr")
+new\server\routes\dashboard.py:850:            gwp_horizon=request.args.get("gwp_horizon", "100"),
+new\server\routes\dashboard.py:990:            gwp_horizon=request.args.get("gwp_horizon", "100"),
+new\server\routes\dashboard.py:1509:    gwp20_factors = get_active_gwp(horizon="20")
+new\server\routes\dashboard.py:1510:    ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
+new\server\routes\dashboard.py:1511:    n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
+new\server\routes\dashboard.py:1542:        # Exact GWP20 formula using dynamic active standard
+new\server\routes\dashboard.py:1544:        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * 
+(n2o_gwp20 - 265.0))
+new\server\routes\dashboard.py:1545:        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
+new\server\routes\dashboard.py:1546:        total_gwp20 = s1_gwp20 + ed["total_s2"]
+new\server\routes\dashboard.py:1550:            co2_int_gwp20 = (total_gwp20 * 1000.0) / boe
+new\server\routes\dashboard.py:1557:            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = 
+ch4_int = (
+new\server\routes\dashboard.py:1570:                "co2_intensity_gwp20": co2_int_gwp20,
+new\server\routes\dashboard.py:1595:                "total_co2e_gwp20": total_gwp20,
+new\server\routes\dashboard.py:1621:    Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility.
+new\server\routes\dashboard.py:1977:        gwp20_factors = get_active_gwp(horizon="20")
+new\server\routes\dashboard.py:1978:        ch4_gwp20 = float(gwp20_factors.get("CH4", 82.5))
+new\server\routes\dashboard.py:1979:        n2o_gwp20 = float(gwp20_factors.get("N2O", 268.0))
+new\server\routes\dashboard.py:1982:        delta_gwp = (ed["total_ch4"] * (ch4_gwp20 - 28.0)) + (ed["total_n2o"] * 
+(n2o_gwp20 - 265.0))
+new\server\routes\dashboard.py:1983:        s1_gwp20 = round(max(total_s1, total_s1 + delta_gwp), 2)
+new\server\routes\dashboard.py:1984:        total_co2e_gwp20 = s1_gwp20 + s2_val
+new\server\routes\dashboard.py:1989:            co2_int_gwp20 = (total_co2e_gwp20 * 1000.0) / boe
+new\server\routes\dashboard.py:1997:            co2_int = co2_int_gwp20 = scope1_int = scope2_int = scope3_int = 
+ch4_int = (
+new\server\routes\dashboard.py:2154:                "co2_intensity_gwp20": co2_int_gwp20,
+new\server\routes\dashboard.py:2194:                "total_co2e_gwp20": total_co2e_gwp20,
+
+
+

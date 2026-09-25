@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+Tables: ['alembic_version', 'users', 'goals', 'base_year', 'mitigation_records', 'scope3_data', 'reporting_metadata', 'methane_source_types', 'system_settings', 'facilities', 'custom_factors', 'activity_log', 'base_year_recalculations', 'notifications', 'sbti_targets', 'emissions', 'production_data', 'emission_sources', 'scope2_emissions', 'scope3_emissions', 'mitigation_projects', 'cbam_product_exports', 'ogmp_surveys', 'level_upgrade_logs']
+
+Table: facilities
+Count: 43
+Columns: ['id', 'name', 'location', 'description', 'boundary_notes', 'boundary_type', 'boundary_detail', 'activity', 'division', 'region', 'field', 'code', 'external_id', 'segment', 'operator_status', 'country', 'ogmp_membership_year', 'reconciliation_threshold', 'latitude', 'longitude', 'created_by', 'updated_at', 'created_at']
+(1, 'Complexe Sid�rurgique DRI/EAF (Tosyali)', 'Bethioua, Oran', None, None, 'Operational Control', None, 'Steel & Iron (Acier DRI)', 'Metallurgy', 'West', 'Industrial Zone', 'STL-TOS-01', None, 'Heavy Industry', 'operated', 'Algeria', 2023, 20.0, None, None, 1, None, '2026-09-20 16:52:24.040976')
+(2, 'Complexe Ammoniac & Engrais Azot�s (Fertial)', 'Arzew, Oran', None, None, 'Operational Control', None, 'Chemicals & Fertilizers', 'Petrochemicals', 'West', 'Arzew Port', 'FERT-ARZ-01', None, 'Heavy Industry', 'operated', 'Algeria', 2023, 20.0, None, None, 1, None, '2026-09-20 16:52:24.040976')
+(3, 'Cimenterie Industrielle de Chlef (GICA)', 'Chlef', None, None, 'Operational Control', None, 'Cement & Clinker', 'Building Materials', 'Center', 'Chlef Plant', 'CIM-GIC-01', None, 'Heavy Industry', 'operated', 'Algeria', 2023, 20.0, None, None, 1, None, '2026-09-20 16:52:24.040976')
+(4, 'Centre de Traitement Gazier Hassi Messaoud (Sonatrach)', 'Hassi Messaoud, Ouargla', None, None, 'Operational Control', None, 'Upstream & Midstream Gas', 'Exploration & Production', 'South', 'HMD Field', 'GAS-HMD-01', None, 'Oil & Gas', 'operated', 'Algeria', 2023, 20.0, None, None, 1, None, '2026-09-20 16:52:24.040976')
+(5, 'ADR', 'Adrar', None, None, 'Operational Control', 'Full Operational Control', 'Activit� E&P', 'DP', None, 'OF', None, None, 'Upstream', 'operated', 'Algeria', 2023, 20.0, 27.87, -0.29, 1, None, '2026-09-20 16:58:19.653506')
+

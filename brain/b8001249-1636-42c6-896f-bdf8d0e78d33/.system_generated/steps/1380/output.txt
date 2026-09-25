@@ -1,0 +1,28 @@
+
+The command exited with code 0.
+Output:
+[Agent6/it_admin] ✅ Login as test_itadmin@ghg-test.com
+[Agent6/it_admin] ✅ GET /auth/me → 200
+[Agent6/it_admin] 
+## RBAC (it_admin)
+[Agent6/it_admin]   it_admin can list users — check if this is intended
+[Agent6/it_admin] ✅ Correctly denied it_admin tries to create admin user → 403
+[Agent6/it_admin] 
+## Satellite Data
+[Agent6/it_admin] ✅ Correctly denied GET /satellite/sentinel5p/layer-config (it_admin denied operational data) → 403
+[Agent6/it_admin] 
+## Emission Access (it_admin)
+[Agent6/it_admin] ✅ GET /emissions list (it_admin denied) → 403
+[Agent6/it_admin] ✅ Correctly denied POST /emissions (it_admin DENIED) → 403
+[Agent6/it_admin] 
+## Facilities (it_admin)
+[Agent6/it_admin] ✅ GET /facilities (it_admin denied) → 403
+[Agent6/it_admin] 
+## Dashboard & Reports (it_admin)
+[Agent6/it_admin] ✅ GET /dashboard/summary (it_admin denied) → 403
+[Agent6/it_admin] 
+## Audit Trail (it_admin)
+[Agent6/it_admin] 
+## Cross-role data leak checks
+[Agent6] Report → C:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_06_report.md | Bugs: 0
+

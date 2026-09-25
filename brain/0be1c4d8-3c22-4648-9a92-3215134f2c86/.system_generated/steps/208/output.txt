@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+index.css has :root
+CarbonIntensity.css has :root
+Login.css has :root
+

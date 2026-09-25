@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\patch_app.py","LineNumber":8,"LineContent":"import ErpSync from \"./pages/ErpSync\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\patch_app.py","LineNumber":25,"LineContent":"              \u003cErpSync /\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":8,"LineContent":"const ErpSync = () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":132,"LineContent":"export default ErpSync;"}

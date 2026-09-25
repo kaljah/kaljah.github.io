@@ -1,0 +1,96 @@
+
+The command exited with code 0.
+Output:
+<truncated 22 lines>
+new\server\routes\emissions.py:186:                        f"%{_escape_like(method_arg)}%", escape="\\"
+new\server\routes\emissions.py:193:            safe_term = _escape_like(search_term)
+new\server\routes\emissions.py:197:                    model.process_type.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:201:                    model.fuel_type.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:205:                    model.activity.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:209:                    model.group_name.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:213:                    model.equipment_id.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:217:                    model.division.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:220:                search_filters.append(model.field.ilike(f"%{safe_term}%", 
+escape="\\"))
+new\server\routes\emissions.py:223:                    model.category.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:227:                    model.sub_category.ilike(f"%{safe_term}%", escape="\\")
+new\server\routes\emissions.py:3371:    # BUG-05 FIX: capture audit data before deletion, then commit everything 
+atomically
+new\server\routes\emissions.py:4095:            q1 = 
+q1.filter(Emission.division.ilike(f"%{_escape_like(division_arg.strip())}%", escape="\\"))
+new\server\routes\emissions.py:4097:            q1 = 
+q1.filter(Emission.field.ilike(f"%{_escape_like(field_arg.strip())}%", escape="\\"))
+new\server\routes\emissions.py:4099:            q1 = 
+q1.filter(Emission.calc_method.ilike(f"%{_escape_like(method_arg.strip())}%", escape="\\"))
+new\server\routes\emissions.py:4101:            safe_s = _escape_like(search_arg.strip())
+new\server\routes\emissions.py:4104:                    Emission.process_type.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emissions.py:4105:                    Emission.fuel_type.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emissions.py:4106:                    Emission.equipment_id.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emissions.py:4107:                    Emission.group_name.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emissions.py:4147:            q2 = 
+q2.filter(Scope2Emission.division.ilike(f"%{_escape_like(division_arg.strip())}%", escape="\\"))
+new\server\routes\emissions.py:4149:            q2 = 
+q2.filter(Scope2Emission.field.ilike(f"%{_escape_like(field_arg.strip())}%", escape="\\"))
+new\server\routes\emissions.py:4151:            safe_s = _escape_like(search_arg.strip())
+new\server\routes\emissions.py:4154:                    Scope2Emission.activity.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emissions.py:4155:                    Scope2Emission.grid_region.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emissions.py:4195:            safe_s = _escape_like(search_arg.strip())
+new\server\routes\emissions.py:4198:                    Scope3Emission.category.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emissions.py:4199:                    Scope3Emission.sub_category.ilike(f"%{safe_s}%", escape="\\"),
+new\server\routes\emission_factors_routes.py:72:    segment_normalized = segment.lower().capitalize()
+new\server\routes\emission_factors_routes.py:207:    segment_normalized = segment.lower().capitalize()
+new\server\routes\emission_factors_routes.py:252:        segment_normalized = segment_filter.lower().capitalize()
+new\server\routes\emission_factors_routes.py:257:        segment_normalized = segment_filter.lower().capitalize()
+new\server\routes\facilities.py:37:        escaped_search = search_term.replace("\\", "\\\\").replace("%", 
+"\\%").replace("_", "\\_")
+new\server\routes\facilities.py:38:        query = query.filter(Facility.name.ilike(f"%{escaped_search}%", 
+escape="\\"))
+new\server\routes\managedata.py:49:                "design_capacity": s.design_capacity,
+new\server\routes\managedata.py:89:        design_capacity=data.get("design_capacity"),
+new\server\routes\managedata.py:207:            design_capacity=rec.get("design_capacity"),
+new\server\routes\reports.py:98:        filter_text += f"Year: {html.escape(str(filters['year']))}<br/>"
+new\server\routes\reports.py:100:        filter_text += f"Month: {html.escape(str(filters['month']))}<br/>"
+new\server\routes\reports.py:105:                filter_text += f"Facility: {html.escape(str(facility.name))}<br/>"
+new\server\routes\reports.py:109:        filter_text += f"Division: {html.escape(str(filters['division']))}<br/>"
+new\server\routes\reports.py:111:        filter_text += f"Field: {html.escape(str(filters['field']))}<br/>"
+new\server\routes\reports.py:113:        filter_text += f"Process Type: 
+{html.escape(str(filters['process_type']))}<br/>"
+new\server\routes\reports.py:115:        filter_text += f"Method: {html.escape(str(filters['method']))}<br/>"
+new\server\routes\reports.py:117:        filter_text += f"Search: {html.escape(str(filters['search']))}<br/>"
+new\server\routes\satellite.py:512:            prefs["s5p_seen_product_ids"] = list(seen_ids)[-200:]  # cap list at 200
+new\server\services\ogmp.py:108:            # Reconciling with generic Level 2 or Level 3 factors is capped at Level 4.
+new\server\tests\test_all_process_types_matrix.py:422:        (2, "$", 280.0, "kg CO2e / $1000"),                  # 
+Capital goods (spend EEIO)
+new\server\tests\test_api_security.py:220:    def test_limit_all_capped_at_5000(self, client, regular_user):
+new\server\tests\test_audit.py:229:    found_escaped = False
+new\server\tests\test_audit.py:234:            found_escaped = True
+new\server\tests\test_audit.py:235:    assert found_escaped
+new\server\tests\test_audit_remediation.py:1535:def test_csv_formula_injection_whitespace_and_tab_escaping():
+new\server\tests\test_deep_injection_matrix.py:521:            f"{test_facility.name},2024-02,Category 2: Capital 
+Goods,150000,$,350,kg CO2e / $1000\n"
+new\server\tests\test_emission_factor_selection.py:47:            factors = get_factor_by_segment(seg.capitalize())
+new\server\tests\test_it_role_security.py:206:def test_it_manager_full_management_capabilities(client):
+new\server\tests\test_tier_scope_kpi_numerical.py:467:        If bottom-up is Level 2 or 3 (desk factors), facility 
+level is capped at Level 4.
+new\server\tests\test_tier_scope_kpi_numerical.py:476:        # Case 1: Reconciled within 5% variance, but bottom-up 
+is Level 3 (generic equipment factors) -> Cap at Level 4
+new\server\tests\test_tier_scope_kpi_numerical.py:477:        lvl_cap = compute_facility_ogmp_level(
+new\server\tests\test_tier_scope_kpi_numerical.py:484:        assert lvl_cap == 4
+new\server\tests\test_ui_calculation_parity.py:237:        """Hydrogen SMR with CCS: Feedstock + Fuel CO2 minus 
+Capture."""
+new\server\tests\test_ui_calculation_parity.py:251:                    "ccs_capture_rate": 0.85,
+new\server\background_processor.py:797:        ("design_capacity", "design capacity"),
+new\server\background_processor.py:861:                pattern = r'(?:\b|_)' + re.escape(st_norm) + r'(?:\b|_)'
+new\server\background_processor.py:1340:        design_capacity=row.get("design_capacity"),
+new\server\generate_scenarios.py:438:                    calc_method=s["factor_source"].capitalize(),
+new\server\generate_test_csvs.py:9:    ["REB", 2024, 2, "electricity", "Captive Power Plant", 2500, "MWh"],
+new\server\models.py:230:    design_capacity = db.Column(db.String(50))
+new\server\models.py:416:    )  # renewable, efficiency, carbon_capture, etc.
+new\server\process_categories.py:149:        "required_inputs": ["equipment_counts", "processing_capacity"],
+new\server\restore_full_data.py:407:                    # Scope 3 Emissions (Purchased Goods, Capital Goods, 
+Transport, Use of Sold Products)
+new\server\restore_full_data.py:410:                        ("2", "Capital Goods", "Heavy machinery & compressors", 
+random.randint(10000, 50000), "USD", 0.45),
+
+
+

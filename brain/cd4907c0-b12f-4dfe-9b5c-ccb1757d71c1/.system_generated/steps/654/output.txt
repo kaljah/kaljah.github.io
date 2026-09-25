@@ -1,0 +1,13 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\CarbonIntensity.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -8,6 +8,7 @@
+ import CustomDropdown from "../components/CustomDropdown";
+ import { formatNumber } from "../utils/formatters";
+ import { getActiveGwpFactors } from "../constants";
++import { getUserOperationalDefaults } from "../utils/userDefaults";
+ import {
+   Cloud,
+   Flame,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

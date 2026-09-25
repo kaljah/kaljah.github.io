@@ -1,0 +1,23 @@
+Task: 9d34f1cc-2595-4c4a-962f-f853c3e22d4e/task-463
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\.system_generated\tasks\task-463.log
+Log output:
+<truncated 50 lines>
+ 0.00189449 == 19.25426758192284
+E         
+E         comparison failed
+E         Obtained: 19.25426758192284
+E         Expected: 18.944918118949417 � 0.00189449
+
+tests\test_battery_midstream_process_equipment.py:262: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_battery_midstream_process_equipment.py::TestBlowdownBattery::test_blowdown_with_z_factor_correction
+=================== 1 failed, 15 passed, 1 warning in 1.35s ===================
+
+Last progress: 1s ago

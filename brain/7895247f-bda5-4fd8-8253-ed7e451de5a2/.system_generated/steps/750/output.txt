@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 20:20:27,145] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+Generating charts in temporary folder: C:\Users\samsung\AppData\Local\Temp\tmph3f_irws
+Master publication report built successfully: c:\Users\samsung\Desktop\H2\Groupement_Berkine_2025_Annual_GHG_Report.pdf
+Copied to artifact path: C:/Users/samsung/.gemini/antigravity/brain/7895247f-bda5-4fd8-8253-ed7e451de5a2/Groupement_Berkine_2025_Annual_GHG_Report.pdf
+

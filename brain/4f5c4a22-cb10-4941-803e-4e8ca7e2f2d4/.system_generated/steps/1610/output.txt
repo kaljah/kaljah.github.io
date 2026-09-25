@@ -1,0 +1,67 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\app.py:6:from flask_wtf.csrf import CSRFProtect, generate_csrf, CSRFError
+  new\server\app.py:7:import uuid
+  new\server\app.py:8:import time
+  new\server\app.py:9:import traceback
+  new\server\app.py:10:import logging
+  new\server\app.py:11:from logging.handlers import RotatingFileHandler
+> new\server\app.py:13:from extensions import db, limiter, csrf  # SEC-08 FIX: import limiter, csrf
+  new\server\app.py:14:
+  new\server\app.py:15:app = Flask(__name__)
+  new\server\app.py:16:app.url_map.strict_slashes = False
+  new\server\app.py:17:app.config.from_object(Config)
+  new\server\app.py:18:
+> new\server\app.py:40:    allow_headers=["Content-Type", "Authorization", "X-CSRFToken", "X-Request-ID", "Accept"],
+  new\server\app.py:41:    methods=["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
+  new\server\app.py:42:    expose_headers=["X-Request-ID", "Content-Disposition"],
+  new\server\app.py:43:)
+  new\server\app.py:44:
+  new\server\app.py:45:# Database
+> new\server\app.py:124:# CSRF Protection
+> new\server\app.py:125:csrf.init_app(app)
+  new\server\app.py:126:
+  new\server\app.py:127:
+> new\server\app.py:128:@app.errorhandler(CSRFError)
+> new\server\app.py:129:def handle_csrf_error(e):
+  new\server\app.py:130:    return jsonify({
+> new\server\app.py:131:        "error": "CSRF token missing or invalid. Refresh the page and try again.",
+  new\server\app.py:132:        "code": 400,
+  new\server\app.py:133:    }), 400
+  new\server\app.py:134:
+  new\server\app.py:135:
+  new\server\app.py:136:
+> new\server\app.py:213:    # Prevent masking of CSRF errors
+> new\server\app.py:214:    if "CSRF" in str(type(error)):
+  new\server\app.py:215:        return (
+  new\server\app.py:216:            jsonify(
+  new\server\app.py:217:                {
+  new\server\app.py:218:                    "error": str(error),
+  new\server\app.py:219:                    "code": 400,
+> new\server\app.py:289:        csrf.exempt(swaggerui_blueprint)
+  new\server\app.py:290:    except Exception as e:
+  new\server\app.py:291:        app.logger.warning(f"Could not initialize Swagger UI: {e}")
+  new\server\app.py:292:
+  new\server\app.py:293:
+  new\server\app.py:294:def ensure_admin_seeded():
+> new\server\app.py:437:@app.route("/api/csrf-token")
+> new\server\app.py:438:def get_csrf_token():
+  new\server\app.py:439:    """
+> new\server\app.py:440:    Issues a CSRF token for the double-submit cookie pattern.
+  new\server\app.py:441:    Sets a non-HttpOnly cookie readable by the SPA via document.cookie.
+> new\server\app.py:442:    The client must send the same value as X-CSRFToken header on mutating requests.
+  new\server\app.py:443:    """
+> new\server\app.py:444:    token = generate_csrf()
+> new\server\app.py:445:    resp = jsonify({"csrf_token": token})
+  new\server\app.py:446:    resp.set_cookie(
+> new\server\app.py:447:        "csrf_token",
+  new\server\app.py:448:        token,
+  new\server\app.py:449:        httponly=False,          # Must be False - JavaScript reads this cookie
+  new\server\app.py:450:        secure=app.config.get("SESSION_COOKIE_SECURE", False),
+  new\server\app.py:451:        samesite=app.config.get("SESSION_COOKIE_SAMESITE", "Lax"),
+  new\server\app.py:452:        max_age=86400,
+
+
+

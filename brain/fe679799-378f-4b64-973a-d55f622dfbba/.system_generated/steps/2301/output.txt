@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+res1: 99.153096
+res2: 44.808755250000004
+res3: 22.627170000000007
+

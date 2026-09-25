@@ -1,0 +1,127 @@
+
+The command exited with code 0.
+Output:
+<truncated 8 lines>
+[TIER 1 EXT DB VERIFIED] Propane Gas (West - Downstream) -> ID: 2477, Facility: 1, Fuel: Propane (Gas), Quantity: 30000 scf, CO2: 4.6095, CH4: 0.000225, Total: 4.627725 tCO2e
+
+========================================
+[TIER 1 EXTENDED] Running: Diesel Fuel bbl to gal Conversion (Center)
+========================================
+[TIER 1 EXTENDED] Factor "Diesel (No. 2 Fuel Oil)" selected: true
+BROWSER LOG: Converting 50 bbl to 2100 gal
+[TIER 1 EXT DB VERIFIED] Diesel Fuel bbl to gal Conversion (Center) -> ID: 2478, Facility: 3, Fuel: Diesel (No. 2 Fuel Oil), Quantity: 2100 gal, CO2: 21.433607999999996, CH4: 0.0008694000000000001, Total: 21.504029399999997 tCO2e
+
+========================================
+[TIER 1 EXTENDED] Running: Crude Oil (South - Upstream)
+========================================
+[TIER 1 EXTENDED] Factor "Crude Oil" selected: true
+BROWSER LOG: Converting 250 bbl to 10500 gal
+[TIER 1 EXT DB VERIFIED] Crude Oil (South - Upstream) -> ID: 2479, Facility: 4, Fuel: Crude Oil, Quantity: 10500 gal, CO2: 108.00846000000003, CH4: 0.004347, Total: 108.36056700000003 tCO2e
+
+========================================
+[TIER 1 EXTENDED] Running: Natural Gas - 4-Stroke Lean Burn Engine (High CH4 Slip)
+========================================
+[TIER 1 EXTENDED] Factor "Natural Gas - 4-Stroke Lean Burn Engine" selected: true
+[TIER 1 EXT DB VERIFIED] Natural Gas - 4-Stroke Lean Burn Engine (High CH4 Slip) -> ID: 2480, Facility: 4, Fuel: Natural Gas - 4-Stroke Lean Burn Engine, Quantity: 75000 scf, CO2: 4.05909, CH4: 0.022949999999999998, Total: 4.70371725 tCO2e
+
+========================================
+[TIER 1 EXTENDED] Running: Natural Gas Flaring - Elevated (South)
+========================================
+[TIER 1 EXTENDED] Factor "Natural Gas (Flaring - Elevated)" selected: true
+[TIER 1 EXT DB VERIFIED] Natural Gas Flaring - Elevated (South) -> ID: 2481, Facility: 4, Fuel: Natural Gas (Flaring - Elevated), Quantity: 18000 m3, CO2: 34.56, CH4: 0.216, Total: 40.6557 tCO2e
+
+========================================
+[TIER 1 EXTENDED] Running: Coke Oven Gas (West - Downstream)
+========================================
+[TIER 1 EXTENDED] Factor "Coke Oven Gas" selected: true
+[TIER 1 EXT DB VERIFIED] Coke Oven Gas (West - Downstream) -> ID: 2482, Facility: 1, Fuel: Coke Oven Gas, Quantity: 45000 scf, CO2: 1.2438675000000001, CH4: 0.000012744000000000002, Total: 1.2449279070000001 tCO2e
+
+========================================
+[TIER 1 EXTENDED] Running: Bituminous Coal (Center)
+========================================
+[TIER 1 EXTENDED] Factor "Bituminous Coal" selected: true
+[TIER 1 EXT DB VERIFIED] Bituminous Coal (Center) -> ID: 2483, Facility: 3, Fuel: Bituminous Coal, Quantity: 150 ton, CO2: 0.34874577, CH4: 0.0000411345, Total: 0.351483084 tCO2e
+  ok 1 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:163:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 1. Tier 1 Extended Scenarios: Fuels, Units, Streams, Equipment Factors & Uncertainties (42.5s)
+
+========================================
+[TIER 3 EXTENDED] Running: Drilling Mud Degassing - Water Based Mud
+========================================
+[TIER 3 EXT DB VERIFIED] Drilling Mud Degassing - Water Based Mud -> ID: 2484, CO2: 0, CH4: 0.05962023562499999, Total: 1.6693665974999998 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Drilling Mud Degassing - Oil Based Mud (High Degassing Factor)
+========================================
+[TIER 3 EXT DB VERIFIED] Drilling Mud Degassing - Oil Based Mud (High Degassing Factor) -> ID: 2485, CO2: 0, CH4: 1.33, Total: 37.24 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Average Method (Valve Count)
+========================================
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Average Method (Valve Count) -> ID: 2486, CO2: 0, CH4: 0.0005399999999999999, Total: 0.015119999999999998 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Screening PPM Method (15,000 PPM Multiplier)
+========================================
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Screening PPM Method (15,000 PPM Multiplier) -> ID: 2487, CO2: 0, CH4: 0.00035999999999999997, Total: 0.010079999999999999 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Pipeline Leaks (Length km)
+========================================
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Pipeline Leaks (Length km) -> ID: 2488, CO2: 0, CH4: 1.17, Total: 32.76 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Storage Tank Flashing with Vapor Recovery Unit (98% Control)
+========================================
+[TIER 3 EXT DB VERIFIED] Storage Tank Flashing with Vapor Recovery Unit (98% Control) -> ID: 2489, CO2: 0, CH4: 155.33694663645312, Total: 4349.434505820687 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Multi-Component Combustion with Gas Chromatography
+========================================
+[TIER 3 EXT DB VERIFIED] Multi-Component Combustion with Gas Chromatography -> ID: 2490, CO2: 0, CH4: 0.0076279752000000004, Total: 0.41572464840000006 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Flaring - Enclosed Flare with Ground Burner (99.5% Destruction)
+========================================
+[TIER 3 EXT DB VERIFIED] Flaring - Enclosed Flare with Ground Burner (99.5% Destruction) -> ID: 2491, CO2: 63.3603504, CH4: 0.4695220000000004, Total: 76.6129664 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Acid Gas Removal (AGR) - High Sour Gas with Thermal Oxidizer
+========================================
+[TIER 3 EXT DB VERIFIED] Acid Gas Removal (AGR) - High Sour Gas with Thermal Oxidizer -> ID: 2492, CO2: 0, CH4: 0.4495837416565248, Total: 12.588344766382695 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Glycol Dehydrator with Stripping Gas & Condenser Control
+========================================
+[TIER 3 EXT DB VERIFIED] Glycol Dehydrator with Stripping Gas & Condenser Control -> ID: 2493, CO2: 0, CH4: 1.65766822525478, Total: 46.414710307133845 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Liquids Unloading - Deep Gas Well with Flaring Control
+========================================
+[TIER 3 EXT DB VERIFIED] Liquids Unloading - Deep Gas Well with Flaring Control -> ID: 2494, CO2: 0, CH4: 7.29797372099449, Total: 204.3432641878457 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Pipeline Blowdown & Venting with Flaring Control
+========================================
+[TIER 3 EXT DB VERIFIED] Pipeline Blowdown & Venting with Flaring Control -> ID: 2495, CO2: 0, CH4: 163.3930373393492, Total: 4575.005045501778 tCO2e
+  ok 2 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:315:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 2. Tier 3 Extended Engineering Scenarios: Drilling, Fugitives, Controlled Tanks & Advanced Engineering (59.8s)
+[CSRF TOKEN EXTRACTED] Success
+[BATCH APPROVE STATUS] 200
+[UNVERIFIED RECORDS REMAINING] 0
+
+[POST-CALCULATION KPI AUDIT] Auditing Dashboard...
+[DASHBOARD RECALCULATED HERO] Gross: 9.8M, Net: 9.8M
+[DASHBOARD RECALCULATED S1 PILL] 9.8M tCO₂e
+[DASHBOARD GWP-20 RECALCULATED HERO] Gross: 13.1M
+
+[POST-CALCULATION KPI AUDIT] Auditing Carbon Intensity...
+[CBAM TABLE TOP ROWS] FACILITY	PRODUCT NAME	EU CN CODE	PERIOD	EXPORT QTY (T)	DESTINATION	DIRECT INTENSITY (TCO₂E/T)	INDIRECT INTENSITY (TCO₂E/T)	TOTAL EMBEDDED (TCO₂E) | Cent
+
+[POST-CALCULATION KPI AUDIT] Auditing Methane Intensity...
+[METHANE INTENSITY KPI] METHANE INTENSITY (AVG) 0.2238 kg CH₄ / BOE Total CH₄: 60,112.127 tCH₄
+
+========================================
+[ALL EXTENDED SCENARIOS AUDIT COMPLETED 100%]
+========================================
+  ok 3 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:676:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 3. Maker-Checker Batch Approval & Post-Calculation KPI Recalculation (10.4s)
+
+  3 passed (1.9m)
+

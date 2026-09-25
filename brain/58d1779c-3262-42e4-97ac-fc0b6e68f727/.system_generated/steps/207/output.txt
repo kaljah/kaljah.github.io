@@ -1,0 +1,41 @@
+
+The command exited with code 0.
+Output:
+ M .github/workflows/deploy-pages.yml
+ M docs/validation/FINAL_VALIDATION_REPORT.md
+ M docs/validation/HUMAN_REVIEW_REQUIRED.md
+ M graphify-out/.graphify_labels.json
+ M graphify-out/.graphify_labels.json.sig
+ M graphify-out/2026-09-20/.graphify_labels.json
+ M graphify-out/2026-09-20/GRAPH_REPORT.md
+ M graphify-out/2026-09-20/graph.json
+ M graphify-out/2026-09-20/manifest.json
+ M graphify-out/GRAPH_REPORT.md
+ M graphify-out/graph.html
+ M graphify-out/graph.json
+ M graphify-out/manifest.json
+ M new/server/.env.example
+ M new/server/app.py
+ M new/server/extensions.py
+?? FINAL_VALIDATION_REPORT.pdf
+?? docs/validation/00-current-architecture.md
+?? docs/validation/00-repository-audit.md
+?? docs/validation/01-calculation-inventory.md
+?? docs/validation/01-testing-inventory.md
+?? docs/validation/02-calculation-inventory.md
+?? docs/validation/02-test-inventory.md
+?? docs/validation/03-security-audit.md
+?? docs/validation/04-database-audit.md
+?? docs/validation/05-performance-audit.md
+?? docs/validation/06-accessibility-audit.md
+?? docs/validation/07-browser-audit.md
+?? docs/validation/08-production-readiness.md
+?? docs/validation/09-calculation-validation.md
+?? docs/validation/10-human-review.md
+?? docs/validation/CALCULATION_VALIDATION_REPORT.md
+?? docs/validation/FINAL_VALIDATION_REPORT.pdf
+?? generate_pdf_report.py
+?? new/server/delete_dev_accounts.py
+?? new/server/tests/test_log_handler.py
+?? new/server/tests/test_security_hardening.py
+

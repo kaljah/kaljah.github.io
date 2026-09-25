@@ -1,0 +1,129 @@
+
+The command exited with code 1.
+Output:
+<truncated 62 lines>
+
+========================================
+[TIER 3 EXTENDED] Running: Drilling Mud Degassing - Oil Based Mud (High Degassing Factor)
+========================================
+[TIER 3 EXT DB VERIFIED] Drilling Mud Degassing - Oil Based Mud (High Degassing Factor) -> ID: 2462, CO2: 0, CH4: 0.95, Total: 26.599999999999998 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Average Method (Valve Count)
+========================================
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Average Method (Valve Count) -> ID: 2463, CO2: 0, CH4: 0.0005399999999999999, Total: 0.015119999999999998 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Screening PPM Method (15,000 PPM Multiplier)
+========================================
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Screening PPM Method (15,000 PPM Multiplier) -> ID: 2464, CO2: 0, CH4: 0.00035999999999999997, Total: 0.010079999999999999 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Pipeline Leaks (Length km)
+========================================
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Pipeline Leaks (Length km) -> ID: 2465, CO2: 0, CH4: 1.17, Total: 32.76 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Storage Tank Flashing with Vapor Recovery Unit (98% Control)
+========================================
+[TIER 3 EXT DB VERIFIED] Storage Tank Flashing with Vapor Recovery Unit (98% Control) -> ID: 2466, CO2: 0, CH4: 155.33694663645312, Total: 4349.434505820687 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Multi-Component Combustion with Gas Chromatography
+========================================
+[TIER 3 EXT DB VERIFIED] Multi-Component Combustion with Gas Chromatography -> ID: 2467, CO2: 0, CH4: 0.0076279752000000004, Total: 0.41572464840000006 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Flaring - Enclosed Flare with Ground Burner (99.5% Destruction)
+========================================
+[TIER 3 EXT DB VERIFIED] Flaring - Enclosed Flare with Ground Burner (99.5% Destruction) -> ID: 2468, CO2: 63.3603504, CH4: 0.4695220000000004, Total: 76.6129664 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Acid Gas Removal (AGR) - High Sour Gas with Thermal Oxidizer
+========================================
+[TIER 3 EXT DB VERIFIED] Acid Gas Removal (AGR) - High Sour Gas with Thermal Oxidizer -> ID: 2469, CO2: 0, CH4: 0.4495837416565248, Total: 12.588344766382695 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Glycol Dehydrator with Stripping Gas & Condenser Control
+========================================
+[TIER 3 EXT DB VERIFIED] Glycol Dehydrator with Stripping Gas & Condenser Control -> ID: 2470, CO2: 0, CH4: 1.65766822525478, Total: 46.414710307133845 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Liquids Unloading - Deep Gas Well with Flaring Control
+========================================
+[TIER 3 EXT DB VERIFIED] Liquids Unloading - Deep Gas Well with Flaring Control -> ID: 2471, CO2: 0, CH4: 7.29797372099449, Total: 204.3432641878457 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Pipeline Blowdown & Venting with Flaring Control
+========================================
+[TIER 3 EXT DB VERIFIED] Pipeline Blowdown & Venting with Flaring Control -> ID: 2472, CO2: 0, CH4: 163.3930373393492, Total: 4575.005045501778 tCO2e
+  ok 3 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:315:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 2. Tier 3 Extended Engineering Scenarios: Drilling, Fugitives, Controlled Tanks & Advanced Engineering (1.0m)
+[CSRF TOKEN EXTRACTED] Success
+[BATCH APPROVE STATUS] 200
+[UNVERIFIED RECORDS REMAINING] 0
+
+[POST-CALCULATION KPI AUDIT] Auditing Dashboard...
+[DASHBOARD RECALCULATED HERO] Gross: 9.8M, Net: 9.8M
+[DASHBOARD RECALCULATED S1 PILL] 9.8M tCO₂e
+[DASHBOARD GWP-20 RECALCULATED HERO] Gross: 13.1M
+
+[POST-CALCULATION KPI AUDIT] Auditing Carbon Intensity...
+[CBAM TABLE TOP ROWS] FACILITY	PRODUCT NAME	EU CN CODE	PERIOD	EXPORT QTY (T)	DESTINATION	DIRECT INTENSITY (TCO₂E/T)	INDIRECT INTENSITY (TCO₂E/T)	TOTAL EMBEDDED (TCO₂E) | Cent
+
+[POST-CALCULATION KPI AUDIT] Auditing Methane Intensity...
+[METHANE INTENSITY KPI] METHANE INTENSITY (AVG) 0.2226 kg CH₄ / BOE Total CH₄: 59,780.686 tCH₄
+
+========================================
+[ALL EXTENDED SCENARIOS AUDIT COMPLETED 100%]
+========================================
+  ok 4 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:676:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 3. Maker-Checker Batch Approval & Post-Calculation KPI Recalculation (10.8s)
+
+
+  1) [chromium] › e2e\test_scope1_extended_scenarios.spec.js:163:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 1. Tier 1 Extended Scenarios: Fuels, Units, Streams, Equipment Factors & Uncertainties 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      299 |       expect(dbRow.id).toBeDefined();
+      300 |       console.log(`[TIER 1 EXT DB VERIFIED] ${sc.name} -> ID: ${dbRow.id}, Facility: ${dbRow.facility_id}, Fuel: ${dbRow.fuel_type}, Quantity: ${dbRow.quantity} ${dbRow.unit}, CO2: ${dbRow.co2_emissions}, CH4: ${dbRow.ch4_emissions}, Total: ${dbRow.co2e_total} tCO2e`);
+    > 301 |       expect(Number(dbRow.co2e_total)).toBeGreaterThan(0);
+          |                                        ^
+      302 |
+      303 |       // 9. Close overlay
+      304 |       await closeAnyOverlay(page);
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:301:40
+
+    Error Context: test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium\error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      299 |       expect(dbRow.id).toBeDefined();
+      300 |       console.log(`[TIER 1 EXT DB VERIFIED] ${sc.name} -> ID: ${dbRow.id}, Facility: ${dbRow.facility_id}, Fuel: ${dbRow.fuel_type}, Quantity: ${dbRow.quantity} ${dbRow.unit}, CO2: ${dbRow.co2_emissions}, CH4: ${dbRow.ch4_emissions}, Total: ${dbRow.co2e_total} tCO2e`);
+    > 301 |       expect(Number(dbRow.co2e_total)).toBeGreaterThan(0);
+          |                                        ^
+      302 |
+      303 |       // 9. Close overlay
+      304 |       await closeAnyOverlay(page);
+        at C:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_extended_scenarios.spec.js:301:40
+
+    Error Context: test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\test_scope1_extended_scena-0bccf-pment-Factors-Uncertainties-chromium-retry1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e\test_scope1_extended_scenarios.spec.js:163:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 1. Tier 1 Extended Scenarios: Fuels, Units, Streams, Equipment Factors & Uncertainties 
+  2 passed (2.2m)
+

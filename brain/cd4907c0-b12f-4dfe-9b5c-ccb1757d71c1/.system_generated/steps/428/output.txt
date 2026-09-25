@@ -1,0 +1,19 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":74,"LineContent":"  const [availableFilters, setAvailableFilters] = useState({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":593,"LineContent":"                {availableFilters.users.map((u) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":612,"LineContent":"                {availableFilters.actions.map((a) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.jsx","LineNumber":631,"LineContent":"                {availableFilters.entities.map((e) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":71,"LineContent":"  const [availableFilters, setAvailableFilters] = useState({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":453,"LineContent":"    const segments = availableFilters.segments || [];"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":461,"LineContent":"    const filtered = availableFilters.regions.filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":475,"LineContent":"    const filtered = availableFilters.regions.filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":490,"LineContent":"    const filtered = availableFilters.regions.filter("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":509,"LineContent":"      ...availableFilters.years"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":135,"LineContent":"    const [availableFilters, setAvailableFilters] = useState({ years: [], regions: [] });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1393,"LineContent":"                                        {availableFilters.regions?.map(r =\u003e \u003coption key={r} value={r}\u003e{r}\u003c/option\u003e)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1399,"LineContent":"                                            {availableFilters.years?.map(y =\u003e \u003coption key={y} value={y}\u003e{y}\u003c/option\u003e)}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":14,"LineContent":"  const [availableFilters, setAvailableFilters] = useState({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":570,"LineContent":"                  {availableFilters.years.length \u003e 0 ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":571,"LineContent":"                    availableFilters.years.map((y) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":592,"LineContent":"                  {availableFilters.years"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":737,"LineContent":"                  {availableFilters.years.map((y) =\u003e ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":770,"LineContent":"                  {availableFilters.regions.map((f) =\u003e ("}

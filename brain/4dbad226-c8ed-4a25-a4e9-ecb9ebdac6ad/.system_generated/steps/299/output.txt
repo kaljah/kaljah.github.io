@@ -1,0 +1,82 @@
+
+The command exited with code 0.
+Output:
+Usage 'agr' (1):
+   Amine Unit - Venting (Generic)
+Usage 'combustion' (12):
+   Acetylene
+   Propylene
+   Butane
+   Isobutane
+   Naphtha
+   Compressed Natural Gas (CNG)
+Usage 'completions' (2):
+   Completion - Gas Well (No Flaring)
+   Workover - Gas Well (No Flaring)
+Usage 'dehydrator' (7):
+   Glycol Dehydrator
+   Desiccant Dehydrator
+   Dehydrator - Glycol (Uncontrolled)
+   Dehydrator - Glycol (Controlled)
+   Dehydrator - TEG (No Controls)
+   Dehydrator - TEG (Flash Tank)
+Usage 'drilling' (1):
+   uncertainty
+Usage 'flaring' (7):
+   Propylene
+   Butane
+   Isobutane
+   Propane (Flaring)
+   Butane (Flaring)
+   Ethylene (Flaring)
+Usage 'fugitive' (16):
+   Fugitive - Valve (Gas/Vapor)
+   Fugitive - Connector (Gas/Vapor)
+   Fugitive - Flange (Gas/Vapor)
+   Fugitive - Valve (Light Oil)
+   Fugitive - Valve (Heavy Oil)
+   Fugitive - Connector (Light Oil)
+Usage 'fugitive_pipeline' (2):
+   Fugitive - Pipeline Leaks (Gas)
+   Fugitive - Pipeline Leaks (Oil)
+Usage 'loading' (5):
+   Loading - Crude Oil (Tank Truck)
+   Loading - Crude Oil (Rail)
+   Loading - Crude Oil (Marine Vessel)
+   Loading - Condensate (Tank Truck)
+   Loading - Gasoline (Tank Truck)
+Usage 'mobile' (2):
+   Compressed Natural Gas (CNG)
+   Liquefied Natural Gas (LNG)
+Usage 'pneumatic' (9):
+   Pneumatic Controller - High Bleed
+   Pneumatic Controller - Low Bleed
+   Pneumatic Controller - Intermittent
+   Pneumatic Controller - Continuous Vent (T&S)
+   Pneumatic Pump - Chemical Injection (Piston)
+   Pneumatic Pump - Chemical Injection (Diaphragm)
+Usage 'separation' (4):
+   Separator Venting - Gas Well
+   Separator Venting - Oil Well
+   Wastewater - CH4 (Open System)
+   Wastewater - Oil/Water Separator
+Usage 'tank' (5):
+   Methane Flashing - Crude Oil (Small Tank)
+   Methane Flashing - Crude Oil (Large Tank)
+   Methane Flashing - Production Condensate (Small Tank)
+   Methane Flashing - Production Condensate (Large Tank)
+   Methane Flashing - Produced Water (Tank)
+Usage 'tank_breathing' (1):
+   Tank - Breathing Losses (Oil)
+Usage 'tank_flashing' (1):
+   Tank - Flash Emissions (Oil)
+Usage 'tank_working' (1):
+   Tank - Working Losses (Oil)
+Usage 'unloading' (2):
+   Liquids Unloading - Plunger Lift
+   Liquids Unloading - Non-Plunger
+Usage 'venting' (3):
+   Blowdown - Compressor (Reciprocating)
+   Blowdown - Compressor (Centrifugal)
+   Blowdown - Pipeline
+

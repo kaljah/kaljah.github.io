@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":2323,"LineContent":"          \u003ctable className=\"excel-table\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":648,"LineContent":"          \u003ctable className=\"excel-table\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":741,"LineContent":"          \u003ctable className=\"excel-table\"\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":1,"LineContent":".excel-table {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":12,"LineContent":".excel-table thead {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":21,"LineContent":".excel-table th,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":22,"LineContent":".excel-table td {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":28,"LineContent":".excel-table th {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":32,"LineContent":".excel-table tr:last-child td {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":36,"LineContent":".excel-table tr:hover {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":78,"LineContent":".excel-table th:last-child,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ScopeTables.css","LineNumber":79,"LineContent":".excel-table td:last-child {"}

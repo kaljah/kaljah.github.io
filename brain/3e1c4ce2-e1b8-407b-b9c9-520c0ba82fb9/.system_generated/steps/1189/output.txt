@@ -1,0 +1,132 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1967: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000021F958D2990>
+cursor = <sqlite3.Cursor object at 0x0000021F9828E8C0>
+statement = 'INSERT INTO users ("fullName", "orgName", password_hash, sector, email, "jobTitle", department, phone, location, bio,...assword_updated_at, last_login, preferences, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+parameters = ('User Notif', 'Sonatrach', 'scrypt:32768:8:1$WfnfXd0sxelSR6pO$7922689bc7ebf827ba95c3e53f32cc1374a57aea203363c92ea83705ae78a0fd92b2ef0816b53a9eff11dd5c9e5902ac7b8723a0a03f21c3e0d5312ec806943a', None, 'user_notif@test.com', None, ...)
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000021F95E7CA10>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlite3.IntegrityError: NOT NULL constraint failed: users.sector
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: IntegrityError
+
+The above exception was the direct cause of the following exception:
+
+client = <FlaskClient <Flask 'app'>>
+
+    def test_notification_broadcast_handling(client):
+        """Verify broadcast notifications (user_id=None) can be marked as read by users and dismissed by admins."""
+        from extensions import db
+        from models import Notification, User
+    
+        with client.application.app_context():
+            admin = User.query.filter_by(role="admin").first()
+            if not admin:
+                admin = User(email="admin_notif@test.com", fullName="Admin Notif", orgName="Sonatrach", role="admin")
+                admin.set_password("pass")
+                db.session.add(admin)
+                db.session.commit()
+            admin_id = admin.id
+    
+            operator = User.query.filter_by(role="user").first()
+            if not operator:
+                operator = User(email="user_notif@test.com", fullName="User Notif", orgName="Sonatrach", role="user")
+                operator.set_password("pass")
+                db.session.add(operator)
+>               db.session.commit()
+
+new\server\tests\test_zero_trust_adversarial.py:211: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\scoping.py:597: in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:2017: in commit
+    trans.commit(_to_root=True)
+<string>:2: in commit
+    ???
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:139: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1302: in commit
+    self._prepare_impl()
+<string>:2: in _prepare_impl
+    ???
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\state_changes.py:139: in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:1277: in _prepare_impl
+    self.session.flush()
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4341: in flush
+    self._flush(objects)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4476: in _flush
+    with util.safe_reraise():
+..\..\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py:146: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\session.py:4437: in _flush
+    flush_context.execute()
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py:466: in execute
+    rec.execute(self)
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\unitofwork.py:642: in execute
+    util.preloaded.orm_persistence.save_obj(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py:93: in save_obj
+    _emit_insert_statements(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\orm\persistence.py:1233: in _emit_insert_statements
+    result = connection.execute(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1418: in execute
+    return meth(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\sql\elements.py:515: in _execute_on_connection
+    return connection._execute_clauseelement(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1640: in _execute_clauseelement
+    ret = self._execute_context(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1846: in _execute_context
+    return self._exec_single_context(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:2353: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000021F958D2990>
+cursor = <sqlite3.Cursor object at 0x0000021F9828E8C0>
+statement = 'INSERT INTO users ("fullName", "orgName", password_hash, sector, email, "jobTitle", department, phone, location, bio,...assword_updated_at, last_login, preferences, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+parameters = ('User Notif', 'Sonatrach', 'scrypt:32768:8:1$WfnfXd0sxelSR6pO$7922689bc7ebf827ba95c3e53f32cc1374a57aea203363c92ea83705ae78a0fd92b2ef0816b53a9eff11dd5c9e5902ac7b8723a0a03f21c3e0d5312ec806943a', None, 'user_notif@test.com', None, ...)
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000021F95E7CA10>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: users.sector
+E       [SQL: INSERT INTO users ("fullName", "orgName", password_hash, sector, email, "jobTitle", department, phone, location, bio, "profilePic", "consolidationApproach", role, status, password_updated_at, last_login, preferences, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+E       [parameters: ('User Notif', 'Sonatrach', 'scrypt:32768:8:1$WfnfXd0sxelSR6pO$7922689bc7ebf827ba95c3e53f32cc1374a57aea203363c92ea83705ae78a0fd92b2ef0816b53a9eff11dd5c9e5902ac7b8723a0a03f21c3e0d5312ec806943a', None, 'user_notif@test.com', None, None, None, None, None, None, None, 'user', 'active', '2026-09-21 17:37:34.825105', None, None, '2026-09-21 17:37:34.825105')]
+E       (Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+..\..\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py:924: IntegrityError
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_zero_trust_adversarial.py::test_notification_broadcast_handling
+=================== 1 failed, 6 passed, 1 warning in 2.33s ====================
+

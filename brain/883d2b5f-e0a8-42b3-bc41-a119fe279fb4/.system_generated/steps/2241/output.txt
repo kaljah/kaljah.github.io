@@ -1,0 +1,191 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_audit_remediation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1348,6 +1348,183 @@
+     assert pytest.approx(res["total_co2e"], 0.01) == 3.114
+ 
+ 
+-
+-
++def test_compute_scope3_co2e_units():
++    """Verify compute_scope3_co2e distinguishes numerator units from denominator units."""
++    from calculations.units import compute_scope3_co2e
++
++    # 1. kg CO2e / liter: 1000 liters * 2.68 kg/L = 2680 kg = 2.68 tonnes (NOT 2680 tonnes!)
++    res_l = compute_scope3_co2e(1000, 2.68, "kg CO2e / liter")
++    assert pytest.approx(res_l, 0.0001) == 2.68
++
++    # 2. kg CO2e / tonne: 50 tonnes * 1200 kg/t = 60,000 kg = 60.0 tonnes (NOT 60,000 tonnes!)
++    res_t = compute_scope3_co2e(50, 1200, "kg CO2e / tonne")
++    assert pytest.approx(res_t, 0.0001) == 60.0
++
++    # 3. kg CO2e / metric ton
++    res_mt = compute_scope3_co2e(10, 500, "kg CO2e / metric ton")
++    assert pytest.approx(res_mt, 0.0001) == 5.0
++
++    # 4. tCO2e / bbl: 100 bbl * 0.43 t/bbl = 43.0 tonnes
++    res_bbl = compute_scope3_co2e(100, 0.43, "tCO2e / bbl")
++    assert pytest.approx(res_bbl, 0.0001) == 43.0
++
++    # 5. tonne CO2e / unit: 10 * 1.8 = 18.0 tonnes
++    res_tonne = compute_scope3_co2e(10, 1.8, "tonne CO2e / unit")
++    assert pytest.approx(res_tonne, 0.0001) == 18.0
++
++    # 6. Activity units containing 't' (flight, night, mmbtu) with kg factors
++    res_flight = compute_scope3_co2e(4, 250, "kg CO2e / flight")
++    assert pytest.approx(res_flight, 0.0001) == 1.0
++
++    res_mmbtu = compute_scope3_co2e(100, 53.06, "kg CO2e / MMBtu")
++    assert pytest.approx(res_mmbtu, 0.0001) == 5.306
++
++    # 7. Spend-based EEIO (/ $1000)
++    res_eeio = compute_scope3_co2e(100000, 350, "kg CO2e / $1000")
++    assert pytest.approx(res_eeio, 0.0001) == 35.0
++
++
++def test_scope3_bulk_import_and_create_authoritative_calculation(client, test_users):
++    """Verify Scope 3 creation and bulk import enforce authoritative calculation and override injected co2e."""
++    from models import Scope3Emission
++
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["user"]
++
++    # 1. Single create endpoint
++    res_single = client.post(
++        "/api/scope3",
++        json={
++            "facility_id": test_users["facility_id"],
++            "year": 2026,
++            "month": 6,
++            "category": "1",
++            "sub_category": "Diesel Transport",
++            "activity_data": 1000,
++            "unit": "liter",
++            "emission_factor": 2.68,
++            "factor_unit": "kg CO2e / liter",
++            "co2e": 9999.0,  # Injected mismatched value
++        },
++    )
++    assert res_single.status_code == 201
++    s_data = res_single.get_json()
++    assert pytest.approx(s_data["co2e"], 0.001) == 2.68
++
++    # 2. Bulk import endpoint
++    res_bulk = client.post(
++        "/api/scope3/bulk-import",
++        json={
++            "records": [
++                {
++                    "facility_id": test_users["facility_id"],
++                    "year": 2026,
++                    "month": 7,
++                    "category": "1",
++                    "sub_category": "Purchased Cement",
++                    "amount": 50,
++                    "unit": "tonne",
++                    "emission_factor": 800,
++                    "ef_unit": "kg CO2e / tonne",
++                    "co2e": 88888.0,  # Injected mismatched value
++                }
++            ]
++        },
++    )
++    assert res_bulk.status_code == 200
++    with client.application.app_context():
++        rec = Scope3Emission.query.filter_by(
++            facility_id=test_users["facility_id"], year=2026, month=7
++        ).first()
++        assert rec is not None
++        # 50 tonnes * 800 kg/tonne / 1000 = 40.0 tCO2e (NOT 40,000 tCO2e!)
++        assert pytest.approx(rec.co2e, 0.001) == 40.0
++
++
++def test_background_processor_scope3_units(app, test_users):
++    """Verify background_processor._process_row_scope3 correctly computes units with 't' in denominator."""
++    from background_processor import _process_row_scope3
++    from models import Facility
++
++    with app.app_context():
++        fac = db.session.get(Facility, test_users["facility_id"])
++        fac_name_map = {fac.name.lower(): fac}
++        fac_id_map = {str(fac.id): fac}
++
++        # Case A: kg CO2e / liter
++        row_l = {
++            "facility_name": fac.name,
++            "year": 2026,
++            "month": 8,
++            "category": "1",
++            "sub_category": "Fuel",
++            "amount": "1000",
++            "emission_factor": "2.68",
++            "ef_unit": "kg CO2e / liter",
++        }
++        em_obj, errs = _process_row_scope3(
++            row_l,
++            user_id=test_users["user"],
++            fac_name_map=fac_name_map,
++            fac_id_map=fac_id_map,
++            job_id="test-job",
++            row_idx=1,
++        )
++        assert not errs
++        assert em_obj is not None
++        assert pytest.approx(em_obj.co2e, 0.001) == 2.68
++
++        # Case B: kg CO2e / tonne
++        row_t = {
++            "facility_name": fac.name,
++            "year": 2026,
++            "month": 9,
++            "category": "1",
++            "sub_category": "Steel",
++            "amount": "20",
++            "emission_factor": "1800",
++            "ef_unit": "kg CO2e / tonne",
++        }
++        em_obj2, errs2 = _process_row_scope3(
++            row_t,
++            user_id=test_users["user"],
++            fac_name_map=fac_name_map,
++            fac_id_map=fac_id_map,
++            job_id="test-job",
++            row_idx=2,
++        )
++        assert not errs2
++        assert em_obj2 is not None
++        # 20 * 1800 / 1000 = 36.0 tonnes
++        assert pytest.approx(em_obj2.co2e, 0.001) == 36.0
++
++
++def test_qaqc_dashboard_regional_facility_scoping(client, test_users):
++    """Verify QA/QC dashboard scopes total and active facilities to the user's allowed regions."""
++    with client.session_transaction() as sess:
++        sess["user_id"] = test_users["user"]
++
++    res = client.get("/api/qaqc/dashboard")
++    assert res.status_code == 200
++    diag = res.get_json()["diagnostics"]
++
++    # The standard user only has access to 1 facility (test_users["facility_id"])
++    assert diag["total_facilities"] == 1
++    assert diag["active_facilities"] in [0, 1]
++    assert diag["unused_facilities"] in [0, 1]
++
++
++def test_csv_formula_injection_whitespace_and_tab_escaping():
++    """Verify formula injection sanitization handles leading whitespace and format bypasses."""
++    from routes.audit import sanitize_csv_cell
++
++    assert sanitize_csv_cell("  =SUM(A1:A10)") == "'  =SUM(A1:A10)"
++    assert sanitize_csv_cell("\t=CMD()") == "'\t=CMD()"
++    assert sanitize_csv_cell("\r-100") == "'\r-100"
++    assert sanitize_csv_cell("  +200") == "'  +200"
++    assert sanitize_csv_cell("  @MACRO") == "'  @MACRO"
++    assert sanitize_csv_cell("  %EVIL") == "'  %EVIL"
++    assert sanitize_csv_cell("Normal Text") == "Normal Text"
++    assert sanitize_csv_cell(123.45) == "123.45"
++    assert sanitize_csv_cell(None) == ""
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

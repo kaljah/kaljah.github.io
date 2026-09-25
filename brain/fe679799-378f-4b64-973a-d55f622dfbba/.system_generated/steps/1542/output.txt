@@ -1,0 +1,61 @@
+
+The command exited with code 1.
+Output:
+================================================================================
+STARTING BACKEND TEST SUITE: UNCERTAINTY, AUDIT TRAIL, AND QA/QC
+================================================================================
+
+Authenticating Admin ('a@a') and IT Admin ('z@z')...
+
+============================================================
+SUITE 1: UNCERTAINTY ASSESSMENT ENDPOINTS
+============================================================
+[PASS] [Uncertainty] Default Analysis Schema Uncertainty: ±33.66% | CI: 95% (k=2.0)
+[PASS] [Uncertainty] Year 2020 Scan Uncertainty: ±818.97% (1 categories)
+[PASS] [Uncertainty] Year 2021 Scan Uncertainty: ±874.74% (1 categories)
+[PASS] [Uncertainty] Year 2022 Scan Uncertainty: ±1249.35% (1 categories)
+[PASS] [Uncertainty] Year 2023 Scan Uncertainty: ±1334.02% (1 categories)
+[PASS] [Uncertainty] Year 2024 Scan Uncertainty: ±713.71% (1 categories)
+[PASS] [Uncertainty] Year 2025 Scan Uncertainty: ±1184.04% (1 categories)
+[PASS] [Uncertainty] Year 2026 Scan Uncertainty: ±33.66% (17 categories)
+[PASS] [Uncertainty] Scope Filter 'all' Uncertainty: ±33.66%
+[PASS] [Uncertainty] Scope Filter '1' Uncertainty: ±34.54%
+[PASS] [Uncertainty] Scope Filter '2' Uncertainty: ±5.39%
+[PASS] [Uncertainty] Scope Filter '3' Uncertainty: ±22.36%
+[PASS] [Uncertainty] Facility ID Filter Facility 1 Uncertainty: ±17.93%
+[PASS] [Uncertainty] CSV Export Rows received: 22
+
+============================================================
+SUITE 2: AUDIT TRAIL ENDPOINTS & IMMUTABILITY
+============================================================
+[PASS] [Audit] Listing & Pagination Page 1: 25 logs | Total in DB: 967
+[PASS] [Audit] Stats Overview Events: 967 | Logins: 0 | Mutations: 967 | Users: 1
+[PASS] [Audit] Filter Options Users: 1 | Actions: 3 | Entities: 9
+[FAIL] [Audit] Search Query 'LOGIN' Matches: 0
+[PASS] [Audit] Action Filter 'CREATE' Matches: 50
+[PASS] [Audit] Export CSV Exported bytes: 166866
+[PASS] [Audit] Export JSON Exported items: 968
+[FAIL] [Audit] IT Admin Redaction & Segregation Status: 403
+
+============================================================
+SUITE 3: QA/QC DASHBOARD & RESOLUTION PIPELINES
+============================================================
+[PASS] [QA/QC] Dashboard Overview Schema Health Score: 80/100 | Completeness: 90.0% | Flagged: 0
+[PASS] [QA/QC] Scope 1 Anomalies Returned records: 0
+[PASS] [QA/QC] Scope 2 Anomalies Returned records: 0
+[PASS] [QA/QC] Scope 3 Anomalies Returned records: 0
+[PASS] [QA/QC] Status Filter 'all' Count: 0
+[PASS] [QA/QC] Status Filter 'pending' Count: 0
+[PASS] [QA/QC] Status Filter 'verified' Count: 0
+[PASS] [QA/QC] Status Filter 'rejected' Count: 0
+[PASS] [QA/QC] CSV Compliance Export Exported rows: 1
+[PASS] [QA/QC] Single Record Resolve (Approve) No pending anomalies requiring resolution (Queue Clean)
+[PASS] [QA/QC] Bulk Resolve Pipeline Handled non-existent test ID safely: [{'id': 999999, 'reason': 'not_found'}]
+[PASS] [QA/QC] Unauthenticated Denial Status: 401
+
+================================================================================
+BACKEND TESTS COMPLETE: Total: 34 | Passed: 32 | Failed: 2
+Success Rate: 94.12%
+================================================================================
+Report saved to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\uncertainty_audit_qaqc_backend_report.json
+

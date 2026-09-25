@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -404,7 +404,7 @@
+         return jsonify({'error': 'Access to this facility is denied'}), 403
+ 
+     # Validate facility is Oil & Gas scope
+-    fac = Facility.query.get(facility_id)
++    fac = db.session.get(Facility, facility_id)
+     if not fac:
+         return jsonify({'error': 'Facility not found'}), 404
+     if fac.activity in NON_OG_ACTIVITIES:
+@@ -479,7 +479,7 @@
+ 
+     try:
+         user_id = session.get('user_id')
+-        user = User.query.get(user_id) if user_id else None
++        user = db.session.get(User, user_id) if user_id else None
+         log_activity_and_notify(
+             action=action,
+             record_id=str(record.id),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

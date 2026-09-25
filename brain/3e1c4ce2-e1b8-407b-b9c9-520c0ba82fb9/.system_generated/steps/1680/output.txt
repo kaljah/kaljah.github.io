@@ -1,0 +1,13 @@
+Task: 3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9/task-1678
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\3e1c4ce2-e1b8-407b-b9c9-520c0ba82fb9\.system_generated\tasks\task-1678.log
+Log output:
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:54:3 › Carbon Intensity Page Deep Audit › 1. Core Layout & KPI Cards Verification (6.0s)
+  ok 2 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:114:3 › Carbon Intensity Page Deep Audit › 2. Dual GWP Horizon Dynamic Toggle (100-Yr vs 20-Yr) (9.9s)
+  ok 3 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:148:3 › Carbon Intensity Page Deep Audit › 3. Cascading Filters Interaction (7.9s)
+  ok 4 [chromium] › e2e\test_carbon_intensity_deep_audit.spec.js:173:3 › Carbon Intensity Page Deep Audit › 4. EU CBAM Product Specific Embedded Emissions Table (5.9s)
+
+Last progress: 4s ago

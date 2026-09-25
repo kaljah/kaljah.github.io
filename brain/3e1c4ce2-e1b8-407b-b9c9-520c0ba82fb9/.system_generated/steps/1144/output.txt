@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -960,7 +960,7 @@
+ @dashboard_bp.route("/base-year", methods=["GET"])
+ @login_required
+ def get_base_year():
+-    """Get most recent base year recalculation"""
++    """Get most recent base year recalculation or baseline"""
+     base_year = BaseYearRecalculation.query.order_by(
+         BaseYearRecalculation.recalc_date.desc()
+     ).first()
+@@ -967,4 +967,12 @@
+     if not base_year:
++        base_year_singleton = db.session.get(BaseYear, 1) or BaseYear.query.first()
++        if base_year_singleton:
++            return jsonify({
++                "id": base_year_singleton.id,
++                "year": base_year_singleton.year,
++                "reason": "Official Baseline",
++                "recalc_date": None,
++            })
+         return jsonify(None)
+ 
+     return jsonify(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

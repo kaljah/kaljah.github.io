@@ -1,0 +1,15 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-2565
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-2565.log
+Log output:
+ImportError while loading conftest 'C:\Users\samsung\Desktop\H2\new\server\tests\conftest.py'.
+new\server\tests\conftest.py:22: in <module>
+    from app import app as flask_app
+new\server\app.py:243: in <module>
+    from routes.emissions import emissions_bp
+E     File "C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py", line 3185
+E       log_activity_and_notify(
+E                              ^
+E   SyntaxError: '(' was never closed
+
+Last progress: 3s ago

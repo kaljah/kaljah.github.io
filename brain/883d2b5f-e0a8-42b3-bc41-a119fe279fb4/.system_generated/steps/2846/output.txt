@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":705,"LineContent":"    m3_val = convert(10.0, \"mscf\", \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":707,"LineContent":"    mscf_back = convert(m3_val, \"m3\", \"mscf\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":711,"LineContent":"    mcf_m3 = convert(5.0, \"mcf\", \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":713,"LineContent":"    mcf_back = convert(mcf_m3, \"m3\", \"mcf\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":717,"LineContent":"    scf_val = convert(2.5, \"mmscf\", \"scf\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":719,"LineContent":"    mmscf_back = convert(scf_val, \"scf\", \"mmscf\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":242,"LineContent":"            converted = convert(test_val, u1, u2)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_numerical_invariants.py","LineNumber":243,"LineContent":"            roundtrip = convert(converted, u2, u1)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":190,"LineContent":"        total_m3_ch4 = convert(total_scf_ch4, \"scf\", \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_tier_scope_kpi_numerical.py","LineNumber":203,"LineContent":"        total_t3_m3 = convert(total_t3_scf, \"scf\", \"m3\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":128,"LineContent":"            equiv_qty = convert(base_m3, \"m3\", u)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":158,"LineContent":"            equiv_qty = convert(base_tonnes, \"tonne\", u)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_deep_injection_matrix.py","LineNumber":188,"LineContent":"            equiv_qty = convert(base_mmbtu, \"mmbtu\", u)"}

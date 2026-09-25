@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":363,"LineContent":"                    \"default_activity\": user_defaults[\"activity\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":508,"LineContent":"            \"default_activity\": user_defaults[\"activity\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py","LineNumber":57,"LineContent":"    assert u[\"default_activity\"] == \"Upstream\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py","LineNumber":67,"LineContent":"    assert data_me[\"default_activity\"] == \"Upstream\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_operational_defaults.py","LineNumber":110,"LineContent":"    assert u[\"default_activity\"] == \"Downstream\""}

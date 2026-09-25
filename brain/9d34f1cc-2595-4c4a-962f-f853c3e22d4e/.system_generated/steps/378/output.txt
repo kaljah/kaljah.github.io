@@ -1,0 +1,93 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\vented.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -663,6 +663,7 @@
+         ch4_content=0.85,
+         uncertainties=None,
+         actuations=None,
++        co2_content=0.0,
+         gwp_dict=None,
+     ):
+         """
+@@ -669,5 +669,6 @@
+         - Continuous bleed: Device count * Hours * Bleed rate (scf/hr)
+         - Intermittent / actuation-based: Device count * Actuations * Bleed per event (scf/actuation)
++        Accounts for both CH4 and native CO2 in supply gas.
+         """
+         uncertainties = uncertainties or {}
+         self.validate_inputs(
+@@ -674,6 +674,16 @@
+             ["count"],
+         )
+ 
++        c_ch4 = float(ch4_content if ch4_content is not None else 0.85)
++        if c_ch4 > 1.0:
++            c_ch4 /= 100.0
++        c_ch4 = max(0.0, min(1.0, c_ch4))
++
++        c_co2 = float(co2_content or 0.0)
++        if c_co2 > 1.0:
++            c_co2 /= 100.0
++        c_co2 = max(0.0, min(1.0, c_co2))
++
+         is_intermittent = actuations is not None and float(actuations) > 0
+         if is_intermittent:
+             # Bleed rate is scf/event (default 13.5 scf/event per EPA Subpart W Table W-1 / API §6.10 if bleed_rate <= 0)
+@@ -680,7 +680,5 @@
+             event_bleed_m3 = convert(event_bleed_scf, "scf", "m3")
+-            total_ch4_vol = (
+-                float(count) * float(actuations) * event_bleed_m3 * float(ch4_content)
+-            )
++            total_bleed_vol = float(count) * float(actuations) * event_bleed_m3
+         else:
+             self.validate_inputs(
+                 {"hours": hours, "bleed_rate": bleed_rate},
+@@ -687,13 +687,16 @@
+             )
+             # Bleed rate in scf/hr -> m3/hr
+             bleed_m3_hr = convert(float(bleed_rate), "scf", "m3")
+-            total_ch4_vol = (
+-                float(count) * float(hours) * bleed_m3_hr * float(ch4_content)
+-            )
+-
++            total_bleed_vol = float(count) * float(hours) * bleed_m3_hr
++
++        total_ch4_vol = total_bleed_vol * c_ch4
+         ch4_mass_kg = total_ch4_vol * CONVERSIONS["density_ch4"]
+         ch4_tonnes = ch4_mass_kg / 1000.0
+ 
++        total_co2_vol = total_bleed_vol * c_co2
++        co2_mass_kg = total_co2_vol * CONVERSIONS["density_co2"]
++        co2_tonnes = co2_mass_kg / 1000.0
++
+         _tier = resolve_tier(uncertainties.get("_factor_source", "default"))
+         ch4_res = propagate_uncertainty(
+             ch4_tonnes,
+@@ -701,10 +701,21 @@
+             process_category="pneumatic",
+             gas="ch4",
+         )
+-        total_co2e = calculate_co2e(ch4=ch4_tonnes, gwp_dict=gwp_dict)
+-
+-        return self.format_result(
+-            ch4=ch4_res,
++        co2_res = propagate_uncertainty(
++            co2_tonnes,
++            resolve_ef_uncertainty("pneumatic", "co2", _tier, uncertainties.get("co2")),
++            tier=_tier,
++            process_category="pneumatic",
++            gas="co2",
++        ) if co2_tonnes > 0 else None
++
++        total_co2e = calculate_co2e(co2=co2_tonnes, ch4=ch4_tonnes, gwp_dict=gwp_dict)
++
++        result_kwargs = {"ch4": ch4_res, "total_co2e": total_co2e}
++        if co2_res is not None:
++            result_kwargs["co2"] = co2_res
++
++        return self.format_result(
+             total_co2e=total_co2e,
+             inputs={
+                 "device_count": count,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+ M graphify-out/.graphify_labels.json
+ M graphify-out/.graphify_labels.json.sig
+ M graphify-out/GRAPH_REPORT.md
+ M graphify-out/graph.html
+ M graphify-out/graph.json
+ M graphify-out/manifest.json
+ M new/client/src/App.jsx
+ M new/client/src/components/layout/Sidebar.jsx
+ M new/client/src/pages/UserManagement.jsx
+ M new/client/stats.html
+ M new/server/calculations/dispatcher.py
+ M new/server/pytest.ini
+ M new/server/routes/auth.py
+ M new/server/routes/custom_factors.py
+ M new/server/routes/emissions.py
+ M new/server/routes/facilities.py
+ M new/server/routes/managedata.py
+ M new/server/routes/reports.py
+ M new/server/routes/scope2.py
+ M new/server/routes/scope3.py
+ M new/server/tests/test_it_role_security.py
+ M new/server/tests/test_operational_defaults.py
+ M new/server/utils.py
+?? docs/
+?? graphify-out/2026-09-20/
+?? new/server/tests/test_aggregation_reconciliation.py
+?? new/server/tests/test_boundary_and_negative.py
+?? new/server/tests/test_emission_factor_selection.py
+?? new/server/tests/test_golden_dataset_validation.py
+?? new/server/tests/test_independent_differential.py
+?? new/server/tests/test_property_invariants.py
+?? new/server/tests/test_unit_conversions_exhaustive.py
+?? validation/
+

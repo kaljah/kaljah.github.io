@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Overlay visible before close: True
+Close button count: 1
+Overlay visible after close: False
+

@@ -1,0 +1,31 @@
+
+The command exited with code 0.
+Output:
+test_production_upsert_and_delete_audit ___________________
+
+client = <FlaskClient <Flask 'app'>>
+test_users = {'admin': 13, 'it_admin': 14, 'user': 15, 'facility_id': 4}
+
+    def test_production_upsert_and_delete_audit(client, test_users):
+        """Verify ProductionData atomic upsert and audit logging on delete."""
+        with client.session_transaction() as sess:
+            sess["user_id"] = test_users["admin"]
+    
+        res1 = client.post(
+            "/api/data/production",
+            json={
+                "facility_id": test_users["facility_id"],
+                "year": 2026,
+                "month": 5,
+                "oil_amount": 10000.0,
+                "gas_amount": 5000.0,
+                "oil_unit": "bbl",
+                "gas_unit": "mscf",
+            },
+        )
+>       assert res1.status_code == 200
+E       assert 201 == 200
+E        +  where 201 = <WrapperTestResponse streamed [201 CREATED]>.status_code
+
+new\server\tests\test_audit_remediation.py:247: Asserti
+

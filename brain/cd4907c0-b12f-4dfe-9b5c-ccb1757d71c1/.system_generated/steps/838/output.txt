@@ -1,0 +1,21 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":40,"LineContent":"  if ([\"it_admin\", \"it\"].includes(user.role)) return \u003cNavigate to=\"/user-management\" /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":48,"LineContent":"  if (![\"it_admin\", \"it\"].includes(user.role)) return \u003cNavigate to=\"/\" /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":72,"LineContent":"  if (![\"admin\", \"superuser\", \"it_admin\"].includes(user.role))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":62,"LineContent":"          {![\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":324,"LineContent":"          {[\"admin\", \"superuser\", \"it_admin\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":378,"LineContent":"          {[\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":411,"LineContent":"      {![\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":489,"LineContent":"          {![\"it_admin\", \"it\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":511,"LineContent":"          {[\"admin\", \"superuser\", \"it_admin\"].includes(user?.role) \u0026\u0026 ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":176,"LineContent":"    user?.role === \"it_admin\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":282,"LineContent":"    if (user?.role === \"it_admin\" || (user?.role !== \"admin\" \u0026\u0026 user?.role !== \"superuser\")) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":873,"LineContent":"                          disabled={user?.role === \"it_admin\" || (user?.role !== \"admin\" \u0026\u0026 user?.role !== \"superuser\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.jsx","LineNumber":874,"LineContent":"                          title={user?.role === \"it_admin\" || (user?.role !== \"admin\" \u0026\u0026 user?.role !== \"superuser\") ? \"Administrator privileges required to update facility\" : \"Save Facility Settings\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":44,"LineContent":"  it_admin: {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":470,"LineContent":"    if ([\"it_admin\", \"it\"].includes(user?.role)) fetchData();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":699,"LineContent":"  if (![\"it_admin\", \"it\"].includes(user?.role)) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":720,"LineContent":"  const itAdminCount = users.filter((u) =\u003e u.role === \"it_admin\").length;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":729,"LineContent":"      u.role === \"it_admin\" ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":774,"LineContent":"            \u003coption value=\"it_admin\"\u003eIT Admin\u003c/option\u003e"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1094,"LineContent":"                        ) : u.role === \"it_admin\" || u.role === \"it\" ? ("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UserManagement.jsx","LineNumber":1440,"LineContent":"                  \u003coption value=\"it_admin\"\u003eIT Admin\u003c/option\u003e"}

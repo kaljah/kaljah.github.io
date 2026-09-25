@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\validation\reference_model\uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -32,17 +32,38 @@
+         return math.sqrt(sum_sq) / total_val
+ 
+     @staticmethod
+-    def propagate(value, ef_uncertainty, activity_uncertainty=0.10, coverage_factor=COVERAGE_FACTOR_95):
++    def propagate(value, ef_uncertainty, activity_uncertainty=0.10, coverage_factor=COVERAGE_FACTOR_95, input_is_95pct=True):
++        """Propagates uncertainties per IPCC 2006 Eq 3.1 & GUM §6.2.
++        
++        If input_is_95pct is True (standard IPCC approach where published table values are 95% CI half-widths):
++        - 1-sigma components = input / coverage_factor (k=2)
++        - relative_uncertainty_1sigma = sqrt(u_ef_1sigma^2 + u_ad_1sigma^2)
++        - relative_uncertainty_95pct = relative_uncertainty_1sigma * coverage_factor = sqrt(ef^2 + ad^2)
++        - ci_95_abs = value * relative_uncertainty_95pct
++        """
+         val = float(value or 0.0)
+-        u_rel = IndependentUncertaintyModel.combine_product(activity_uncertainty, ef_uncertainty)
+-        u_abs_1sigma = val * u_rel
+-        ci_95_abs = u_abs_1sigma * coverage_factor
++        ef_val = float(ef_uncertainty or 0.0)
++        ad_val = float(activity_uncertainty or 0.0)
++
++        if input_is_95pct:
++            u_ef_1sigma = ef_val / coverage_factor
++            u_ad_1sigma = ad_val / coverage_factor
++            u_rel_1sigma = math.sqrt(u_ef_1sigma**2 + u_ad_1sigma**2)
++            ci_95_rel = u_rel_1sigma * coverage_factor
++        else:
++            u_rel_1sigma = math.sqrt(ef_val**2 + ad_val**2)
++            ci_95_rel = u_rel_1sigma * coverage_factor
++
++        abs_1sigma = val * u_rel_1sigma
++        ci_95_abs = val * ci_95_rel
+         lower = max(0.0, val - ci_95_abs)
+         upper = val + ci_95_abs
++
+         return {
+             "value": val,
+-            "relative_uncertainty_1sigma": u_rel,
+-            "absolute_uncertainty_1sigma": u_abs_1sigma,
++            "relative_uncertainty_1sigma": u_rel_1sigma,
++            "relative_uncertainty_95pct": ci_95_rel,
++            "absolute_uncertainty_1sigma": abs_1sigma,
+             "ci_95_abs": ci_95_abs,
+             "lower_bound_95": lower,
+             "upper_bound_95": upper,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

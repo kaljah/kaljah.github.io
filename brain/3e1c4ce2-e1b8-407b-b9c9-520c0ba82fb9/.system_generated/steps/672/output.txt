@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":191,"LineContent":"                _query_scope3_summary,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":613,"LineContent":"    cache=DASHBOARD_CACHE, key=make_cache_key(\"_query_scope3_summary\"), lock=CACHE_LOCK"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":615,"LineContent":"def _query_scope3_summary("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":893,"LineContent":"    Delegates to _query_scope3_summary() for thread-safe reuse."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":905,"LineContent":"        _query_scope3_summary("}

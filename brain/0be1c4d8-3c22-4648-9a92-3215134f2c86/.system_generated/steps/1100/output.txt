@@ -1,0 +1,57 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\QADashboard.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1015,6 +1015,51 @@
+                     </div>
+                 )}
+             </div>
++
++            <Modal
++                isOpen={resolveModal.isOpen}
++                onClose={() => setResolveModal({ isOpen: false, resolution: null })}
++                title={`Confirm Bulk ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
++            >
++                <div style={{ padding: "8px 0" }}>
++                    <p style={{ margin: "0 0 20px 0", color: "#475569", fontSize: "0.95rem", lineHeight: 1.5 }}>
++                        Are you sure you want to mark <strong>{selectedIds.size}</strong> selected record(s) as <strong>{resolveModal.resolution}</strong>?
++                    </p>
++                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
++                        <button
++                            type="button"
++                            style={{
++                                background: "#f1f5f9",
++                                color: "#475569",
++                                border: "1px solid #cbd5e1",
++                                padding: "8px 16px",
++                                borderRadius: "8px",
++                                fontWeight: 600,
++                                cursor: "pointer",
++                            }}
++                            onClick={() => setResolveModal({ isOpen: false, resolution: null })}
++                        >
++                            Cancel
++                        </button>
++                        <button
++                            type="button"
++                            style={{
++                                background: resolveModal.resolution === 'Verified' ? '#10b981' : '#ef4444',
++                                color: '#ffffff',
++                                border: 'none',
++                                padding: '8px 16px',
++                                borderRadius: '8px',
++                                fontWeight: 600,
++                                cursor: 'pointer',
++                            }}
++                            onClick={confirmBulkResolve}
++                            disabled={resolving}
++                        >
++                            {resolving ? "Updating…" : `Confirm ${resolveModal.resolution === 'Verified' ? 'Verification' : 'Rejection'}`}
++                        </button>
++                    </div>
++                </div>
++            </Modal>
+         </ErrorBoundary>
+     );
+ }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

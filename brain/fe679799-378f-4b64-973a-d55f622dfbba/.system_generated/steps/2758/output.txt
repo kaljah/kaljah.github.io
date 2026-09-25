@@ -1,0 +1,114 @@
+
+The command exited with code 1.
+Output:
+<truncated 650 lines>
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 796, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\loading.py", line 1682, in load_scalar_attributes
+    raise orm_exc.ObjectDeletedError(state)
+sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Scope3Emission at 0x169366f67e0>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/scope3 500 [0.259s] [ReqID: 712e00c5-1a39-4331-8a66-5fcb10e61a74]
+INFO     app:app.py:183 POST /api/emissions 201 [0.142s] [ReqID: 7c2946fc-1ba7-422b-840c-965dde286f99]
+ERROR    app:app.py:233 Unhandled Exception: Instance '<Scope3Emission at 0x169366b3b00>' has been deleted, or its row is otherwise not present.
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 152, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\scope3.py", line 155, in create_scope3_emission
+    emission_id_val = emission.id
+                      ^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 566, in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1086, in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1116, in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 796, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\loading.py", line 1682, in load_scalar_attributes
+    raise orm_exc.ObjectDeletedError(state)
+sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Scope3Emission at 0x169366b3b00>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/scope3 500 [0.331s] [ReqID: 168342e4-d830-4c27-8a24-ecfe243ae7d9]
+ERROR    app:app.py:233 Unhandled Exception: Instance '<Emission at 0x1693454ff20>' has been deleted, or its row is otherwise not present.
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 152, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\emissions.py", line 3182, in add_emission
+    record_id_val = record.id
+                    ^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 566, in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1086, in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1116, in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 796, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\loading.py", line 1682, in load_scalar_attributes
+    raise orm_exc.ObjectDeletedError(state)
+sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Emission at 0x1693454ff20>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/emissions 500 [0.471s] [ReqID: b245ac03-0c5d-430b-b902-c9420bce7376]
+ERROR    app:app.py:233 Unhandled Exception: Instance '<Scope2Emission at 0x169366b0740>' has been deleted, or its row is otherwise not present.
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\auth.py", line 152, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\Desktop\H2\new\server\routes\scope2.py", line 286, in create_scope2_emission
+    emission_id_val = emission.id
+                      ^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 566, in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1086, in get
+    value = self._fire_loader_callables(state, key, passive)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\attributes.py", line 1116, in _fire_loader_callables
+    return state._load_expired(state, passive)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 796, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\loading.py", line 1682, in load_scalar_attributes
+    raise orm_exc.ObjectDeletedError(state)
+sqlalchemy.orm.exc.ObjectDeletedError: Instance '<Scope2Emission at 0x169366b0740>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/scope2 500 [0.235s] [ReqID: de50da12-8147-48ea-ba47-e3f05b48a989]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+=================== 1 failed, 1 passed, 1 warning in 3.84s ====================
+

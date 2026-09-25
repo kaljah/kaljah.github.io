@@ -1,0 +1,45 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -562,15 +562,25 @@
+     }
+   };
+ 
+-  const handleDelete = async (id) => {
+-    if (
+-      !window.confirm("Are you sure you want to completely remove this user?")
+-    )
+-      return;
+-    try {
+-      await api.delete(`/auth/users/${id}`);
+-      setUsers((prev) => prev.filter((u) => u.id !== id));
++  const handleDelete = (target) => {
++    // Accepts either user object or user id
++    if (typeof target === "object" && target !== null) {
++      setDeleteTargetUser(target);
++    } else {
++      const found = users.find((u) => u.id === target) || { id: target };
++      setDeleteTargetUser(found);
++    }
++  };
++
++  const handleConfirmDelete = async () => {
++    if (!deleteTargetUser?.id) return;
++    setDeleteLoading(true);
++    const targetId = deleteTargetUser.id;
++    try {
++      await api.delete(`/auth/users/${targetId}`);
++      setUsers((prev) => prev.filter((u) => u.id !== targetId));
+       toast.success("User deleted");
++      setDeleteTargetUser(null);
+       fetchData(true);
+     } catch (error) {
+       toast.error(error.response?.data?.error || "Failed to delete user");
+@@ -577,3 +577,5 @@
++    } finally {
++      setDeleteLoading(false);
+     }
+   };
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

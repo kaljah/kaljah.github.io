@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+God nodes (most connected):
+  1. login_required() - 131 edges
+  2. get_current_user() - 104 edges
+  3. Backend (Server) - 74 edges
+  4. CalculationDispatcher - 72 edges
+  5. get_allowed_facility_ids() - 71 edges
+  6. Frontend (Client) - 66 edges
+  7. User - 62 edges
+  8. log_activity_and_notify() - 57 edges
+  9. Facility - 54 edges
+  10. Emission - 52 edges
+

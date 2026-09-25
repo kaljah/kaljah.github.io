@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\benchmark_db.py","LineNumber":29,"LineContent":"    print(\"\\n--- Facility Intensity Aggregation Benchmark ---\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\locustfile.py","LineNumber":19,"LineContent":"    def view_intensity_stats(self):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\locustfile.py","LineNumber":20,"LineContent":"        # Methane explorer / intensity stats"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\locustfile.py","LineNumber":21,"LineContent":"        self.client.get(\"/api/dashboard/intensity-stats?year=2024\", headers=self.headers)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":211,"LineContent":"            f_intensity = executor.submit("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":214,"LineContent":"                _query_intensity_stats,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":296,"LineContent":"                \"intensity_stats\": f_intensity.result(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":309,"LineContent":"            \"intensity_stats\": f_intensity.result(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":333,"LineContent":"@dashboard_bp.route(\"/intensity-trend\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":335,"LineContent":"def get_intensity_trend():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":358,"LineContent":"    bulk = _query_intensity_trend_bulk("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1233,"LineContent":"@dashboard_bp.route(\"/intensity-stats\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1235,"LineContent":"def get_intensity_stats():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1237,"LineContent":"    Get intensity metrics (kg/BOE) per facility."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1238,"LineContent":"    Delegates to _query_intensity_stats() for thread-safe reuse."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1250,"LineContent":"        _query_intensity_stats("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1262,"LineContent":"# BULK INTENSITY TREND (replaces per-year N+1 loop in get_intensity_trend)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1268,"LineContent":"    key=make_cache_key(\"_query_intensity_trend_bulk\"),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1271,"LineContent":"def _query_intensity_trend_bulk("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1280,"LineContent":"    Fetches intensity data for ALL requested years in 5 bulk queries instead of"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1570,"LineContent":"                \"co2_intensity\": co2_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1571,"LineContent":"                \"co2_intensity_gwp20\": co2_int_gwp20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1572,"LineContent":"                \"scope1_intensity\": scope1_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1573,"LineContent":"                \"scope2_intensity\": scope2_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1574,"LineContent":"                \"scope3_intensity\": scope3_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1575,"LineContent":"                \"ch4_intensity\": ch4_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1576,"LineContent":"                \"api_flaring_intensity\": flare_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1610,"LineContent":"    cache=DASHBOARD_CACHE, key=make_cache_key(\"_query_intensity_stats\"), lock=CACHE_LOCK"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1612,"LineContent":"def _query_intensity_stats("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1621,"LineContent":"    Pure query logic for /intensity-stats — returns a plain Python list."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1622,"LineContent":"    Get intensity metrics (kg/BOE, loss rates %, EPA WEC, GWP20) per facility."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":1851,"LineContent":"    # Fetch Scope 2 for intensity"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2154,"LineContent":"                \"co2_intensity\": co2_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2155,"LineContent":"                \"co2_intensity_gwp20\": co2_int_gwp20,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2156,"LineContent":"                \"scope1_intensity\": scope1_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2157,"LineContent":"                \"scope2_intensity\": scope2_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2158,"LineContent":"                \"scope3_intensity\": scope3_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2159,"LineContent":"                \"ch4_intensity\": ch4_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2160,"LineContent":"                \"api_flaring_intensity\": flare_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\dashboard.py","LineNumber":2161,"LineContent":"                \"biogenic_intensity\": biogenic_int,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":747,"LineContent":"def test_dashboard_intensity_mmscf_scaling(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":748,"LineContent":"    \"\"\"Verify _query_intensity_stats properly normalizes MMscf gas and flaring volumes.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":749,"LineContent":"    from routes.dashboard import _query_intensity_stats"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":786,"LineContent":"        stats = _query_intensity_stats(facility_id=str(fid), year=\"2029\", allowed_fids=[fid])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":801,"LineContent":"    from routes.dashboard import _query_intensity_stats, _query_intensity_trend_bulk"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":840,"LineContent":"        stats_mid = _query_intensity_stats(facility_id=str(fid), year=\"2028\", allowed_fids=[fid])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":846,"LineContent":"        trend_mid = _query_intensity_trend_bulk(facility_id=str(fid), years=[2028], allowed_fids=[fid])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":855,"LineContent":"        stats_up = _query_intensity_stats(facility_id=str(fid), year=\"2028\", allowed_fids=[fid])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":861,"LineContent":"        trend_up = _query_intensity_trend_bulk(facility_id=str(fid), years=[2028], allowed_fids=[fid])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_stress_volume_analytics.py","LineNumber":10,"LineContent":"3. Complex intensity trend calculations across reporting periods."}
+(...7 more results not shown)

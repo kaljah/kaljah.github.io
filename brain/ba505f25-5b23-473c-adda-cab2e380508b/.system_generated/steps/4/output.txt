@@ -1,0 +1,13 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\test_all_apis_health.py","LineNumber":49,"LineContent":"        return {\"email\": \"dummy_test@ghg.com\", \"password\": \"Password123!\", \"name\": \"Dummy Test\", \"role\": \"viewer\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":2983,"LineContent":"    if user.role in (\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3311,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\emissions.py","LineNumber":3362,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":77,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":223,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":318,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":528,"LineContent":"    if user and user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":164,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":361,"LineContent":"    if user.role in [\"viewer\", \"auditor\", \"it_admin\", \"it_manager\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope2.py","LineNumber":493,"LineContent":"    if user.role in [\"viewer\", \"auditor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\satellite.py","LineNumber":212,"LineContent":"    if user.role == \"viewer\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":292,"LineContent":"                role=\"viewer\","}

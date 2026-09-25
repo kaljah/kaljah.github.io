@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+[2026-09-24 20:39:05,180] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+<string>:3: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+Traceback (most recent call last):
+  File "<string>", line 11, in <module>
+AttributeError: 'Emission' object has no attribute 'scope'
+Facility: Centre de Traitement Gazier Hassi Messaoud (Sonatrach), Code: GAS-HMD-01, Field: HMD Field
+Emission years: [2020, 2023]
+Production years: [2022, 2023, 2024, 2025, 2026]
+

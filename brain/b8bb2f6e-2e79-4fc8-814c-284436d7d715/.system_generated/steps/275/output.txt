@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\docs\validation\FINAL_VALIDATION_REPORT.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -120,7 +120,27 @@
+ - **Correct Result**: Factor scaled by $10^6$ ($10^3$ for kg-to-tonne and $10^3$ for per-\$1k spend basis).
+ - **Remediation & Regression Test**: Fixed in `calculations/units.py`; locked by `test_scope3_eeio_per_thousand_scaling_defect`.
+ 
+----
++#### HIGH-04: Frontend Constants GWP_AR5 20-Year N2O Fallback Defect (B15)
++- **Original Behavior**: `new/client/src/constants.js` function `getActiveGwpFactors` contained `N2O: std.N2O_20 || 264` fallback.
++- **Why It Was Wrong**: Returned outdated AR4-era value 264 when resolving missing/unspecified 20-year profile, conflicting with AR5 standard value 268.
++- **Reference Methodology**: IPCC AR5 WG1 Table 8.7 (2013).
++- **Correct Result**: Fallback strictly aligned to `268`.
++- **Remediation & Regression Test**: Fixed in `new/client/src/constants.js`; locked by `test_reg_b15_client_constants_gwp20_n2o_alignment`.
++
++### 3.3 Audit of `1k_scope1_comprehensive_test.csv`
++- **Origin**: Generated programmatically by `new/server/generate_1k_comprehensive.py`.
++- **Structure**: 1,001 data rows across 13 Scope 1 process categories.
++- **Key Finding**: The dataset **DOES NOT** contain precomputed expected output emission values (`co2`, `ch4`, `n2o`, `co2e`).
++- **Purpose**: It is an input fuzzing and boundary-stress test harness for `background_processor.py`. It deliberately injects invalid rows:
++  - Missing date/year/month (Lines 41, 59, 63)
++  - Non-existent facility regions like `"Test Region"` (Line 40)
++  - Missing quantity fields (Lines 26, 46)
++  - Missing process types (Line 50)
++  - Malformed non-numeric quantities like `"?"`, `"—"`, `"Unknown"` (Lines 14, 15, 56)
++- **Validation Conclusion**: `1k_scope1_comprehensive_test.csv` is an operational ingestion test harness, NOT an authoritative calculation benchmark. Comparing calculation outputs directly against this file would be a category error. Authoritative calculation testing is properly conducted via `validation/golden_dataset/golden_cases.json`.
++
++---
++
+ 
+ ## 4. Mutation Testing Verification
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.

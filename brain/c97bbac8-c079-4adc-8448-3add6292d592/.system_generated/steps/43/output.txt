@@ -1,0 +1,35 @@
+Task: c97bbac8-c079-4adc-8448-3add6292d592/task-25
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\c97bbac8-c079-4adc-8448-3add6292d592\.system_generated\tasks\task-25.log
+Log output:
+<truncated 168 lines>
+"
+    },
+    {
+      "test_id": "T18",
+      "name": "QAQC anomaly detection",
+      "status": "PASS",
+      "details": "Anomaly detected: True, response: {'diagnostics': {'active_facilities': 118, 'anomalies_summary': {'pending': 0, 'rejected': 0, 'total': 0, 'verified': 0}, 'completeness': 89.7, 'dimension_completeness': {'activity_amount': 80.6, 'calculation': 100.0, 'facility': 100.0, 'fuel_source': 78.0}, 'health_score': 80, 'issues': [], 'recent"
+    }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-09-08",
+      "severity": "MEDIUM",
+      "title": "Reports generate accepts year=1800 without validation",
+      "endpoint": "POST /api/reports/generate",
+      "expected": "HTTP 400",
+      "actual": "HTTP 200"
+    },
+    {
+      "id": "BUG-09-09",
+      "severity": "MEDIUM",
+      "title": "Reports generate accepts empty body without validation",
+      "endpoint": "POST /api/reports/generate",
+      "expected": "HTTP 400",
+      "actual": "HTTP 200"
+    }
+  ]
+}
+
+Last progress: 2s ago

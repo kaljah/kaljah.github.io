@@ -1,0 +1,35 @@
+
+The command exited with code 1.
+Output:
+Logging in as Admin (admin@ghg.com)...
+
+--> Auditing Methane Intensity (/methane-intensity)...
+Waiting for intensity data computation to finish...
+Found 11 interactive buttons on Methane Intensity
+
+--> Auditing Uncertainty Assessment (/uncertainty)...
+Waiting for uncertainty quantification to finish...
+Found 3 interactive buttons on Uncertainty Assessment
+
+--> Auditing Methane Explorer Map (/methane-explorer)...
+Waiting for satellite map telemetry to load...
+Found 26 interactive buttons on Methane Explorer
+
+[PAGE ERROR] http://127.0.0.1:5173/methane-explorer : Failed to execute 'writeText' on 'Clipboard': Write permission denied.
+
+
+============================================================
+TARGETED VIEWS AUDIT SUMMARY
+============================================================
+Total Button Interactions: 25
+Total Console Errors: 1
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\new\test_targeted_pages.py", line 189, in <module>
+    run_targeted()
+  File "C:\Users\samsung\Desktop\H2\new\test_targeted_pages.py", line 182, in run_targeted
+    print("\u274c FAIL: Console errors occurred!", flush=True)
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u274c' in position 0: character maps to <undefined>
+

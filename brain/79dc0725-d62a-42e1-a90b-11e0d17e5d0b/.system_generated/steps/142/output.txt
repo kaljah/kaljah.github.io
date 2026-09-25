@@ -1,0 +1,12 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                  Filename             
+---------- ----                                                  --------             
+       469     const filtered = availableFilters.regions.filter( DashboardEnhanced.jsx
+       483     const filtered = availableFilters.regions.filter( DashboardEnhanced.jsx
+       498     const filtered = availableFilters.regions.filter( DashboardEnhanced.jsx
+
+
+

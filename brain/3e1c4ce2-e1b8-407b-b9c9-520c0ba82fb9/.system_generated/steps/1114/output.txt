@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+sqlite3.OperationalError: no such column: co2e_total
+Scope 1 status: [('Pending', 820, 4133587.212760512), ('Verified', 9, 256425.1)]
+

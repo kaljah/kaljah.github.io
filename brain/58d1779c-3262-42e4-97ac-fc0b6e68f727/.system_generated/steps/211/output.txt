@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\tests\test_log_handler.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -23,7 +23,7 @@
+     )
+ 
+ 
+-def test_trace_log_uses_rotating_handler(app):
++def test_trace_log_uses_rotating_handler():
+     """
+     Verify that the application's rotating log handler is configured
+     with size and backup limits (not unbounded).
+@@ -30,10 +30,9 @@
+     import logging
+     from logging.handlers import RotatingFileHandler
+-
+-    root_logger = logging.getLogger()
+-    app_handlers = []
+-    for handler in root_logger.handlers:
+-        app_handlers.append(handler)
++    from app import app
++
++    app_handlers = list(app.logger.handlers) + list(logging.getLogger().handlers)
++
+ 
+     # Find any RotatingFileHandlers
+     rotating_handlers = [h for h in app_handlers if isinstance(h, RotatingFileHandler)]
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

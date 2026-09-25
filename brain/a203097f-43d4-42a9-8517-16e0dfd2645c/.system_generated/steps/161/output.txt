@@ -1,0 +1,18 @@
+Task: a203097f-43d4-42a9-8517-16e0dfd2645c/task-159
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\a203097f-43d4-42a9-8517-16e0dfd2645c\.system_generated\tasks\task-159.log
+Log output:
+<truncated 188 lines>
+((255.99052289793028 - 210.26362951577087))
+
+validation\calculation\test_clean_scope1.py:240: AssertionError
+=========================== short test summary info ===========================
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Combustion::test_combustion_tier3_gas_composition_carbon_balance
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_elevated_dual_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1Flaring::test_flaring_enclosed_high_efficiency
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_pneumatic_devices_intermittent
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_blowdown_depressuring
+FAILED validation/calculation/test_clean_scope1.py::TestCleanScope1VentingAndMidstream::test_acid_gas_removal_sweetening
+========================= 6 failed, 5 passed in 2.16s =========================
+
+Last progress: 2s ago

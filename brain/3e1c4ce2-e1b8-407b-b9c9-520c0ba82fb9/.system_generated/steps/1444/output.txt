@@ -1,0 +1,27 @@
+
+The command exited with code 1.
+Output:
+[2026-09-21 20:01:58,708] INFO in app: Updated account: a
+[2026-09-21 20:01:58,800] INFO in app: Updated account: a@a
+[2026-09-21 20:01:58,888] INFO in app: Updated account: z
+[2026-09-21 20:01:58,975] INFO in app: Updated account: z@z
+--- Seeding Production Data ---
+Successfully seeded 180 monthly production records.
+--- Seeding EU CBAM Product Export Records ---
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\seed_production_and_cbam.py", line 208, in <module>
+    seed()
+  File "C:\Users\samsung\Desktop\H2\seed_production_and_cbam.py", line 185, in seed
+    rec = CbamProductExport(
+          ^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 564, in _initialize_instance
+    with util.safe_reraise():
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\state.py", line 562, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 2139, in _declarative_constructor
+    raise TypeError(
+TypeError: 'total_embedded_emissions' is an invalid keyword argument for CbamProductExport
+

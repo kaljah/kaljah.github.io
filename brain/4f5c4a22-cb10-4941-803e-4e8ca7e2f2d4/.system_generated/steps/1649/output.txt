@@ -1,0 +1,12 @@
+
+The command exited with code 1.
+Output:
+
+LocalPort OwningProcess       State
+--------- -------------       -----
+     5173         13172 Established
+     5173         13172 Established
+     5173         13172      Listen
+
+
+

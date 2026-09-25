@@ -1,0 +1,38 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -565,6 +565,32 @@
+                 </svg>
+                 PDF Report
+               </button>
++              <button
++                className="btn-action"
++                onClick={handleMasterReportDownload}
++                style={{
++                  background: "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)",
++                  color: "#ffffff",
++                  border: "none",
++                  fontWeight: 600,
++                  boxShadow: "0 2px 8px rgba(234, 88, 12, 0.25)",
++                }}
++              >
++                <svg
++                  width="16"
++                  height="16"
++                  viewBox="0 0 24 24"
++                  fill="none"
++                  stroke="currentColor"
++                  strokeWidth="2"
++                >
++                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
++                  <polyline points="14 2 14 8 20 8"></polyline>
++                  <line x1="16" y1="13" x2="8" y2="13"></line>
++                  <line x1="16" y1="17" x2="8" y2="17"></line>
++                </svg>
++                2025 Master Report (PDF)
++              </button>
+             </div>
+           </div>
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

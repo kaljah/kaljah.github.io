@@ -1,0 +1,64 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\fugitive.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -12,7 +12,7 @@
+     def __init__(self):
+         super().__init__("Component-Level Fugitive", "Section 7.2")
+ 
+-    def calculate(self, component_counts, ch4_content, uncertainties):
++    def calculate(self, component_counts, ch4_content, uncertainties, gwp_dict=None):
+         """
+         Average Factor Method - counts * EF
+         component_counts: dict of {type: count}
+@@ -44,7 +44,7 @@
+             process_category="fugitive_component",
+             gas="ch4",
+         )
+-        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year)
++        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year, gwp_dict=gwp_dict)
+ 
+         return self.format_result(
+             ch4=ch4_res,
+@@ -57,7 +57,7 @@
+         super().__init__("Equipment-Level Fugitive", "Section 7.2.2")
+ 
+     def calculate(
+-        self, equipment_count, ef, ch4_content, uncertainties, ef_unit="kg/hr"
++        self, equipment_count, ef, ch4_content, uncertainties, ef_unit="kg/hr", gwp_dict=None
+     ):
+         """
+         Average Factor Method for equipment - count * EF
+@@ -97,7 +97,7 @@
+             process_category="equipment_fugitive",
+             gas="ch4",
+         )
+-        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year)
++        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year, gwp_dict=gwp_dict)
+ 
+         return self.format_result(
+             ch4=ch4_res,
+@@ -113,7 +113,7 @@
+     def __init__(self):
+         super().__init__("Compressor Seal Leakage", "Section 7.2.3")
+ 
+-    def calculate(self, compressor_count, seal_type, uncertainties):
++    def calculate(self, compressor_count, seal_type, uncertainties, gwp_dict=None):
+         """
+         API Section 7.2.3 - Compressor seals
+         """
+@@ -139,7 +139,7 @@
+             process_category="compressor_fugitive",
+             gas="ch4",
+         )
+-        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year)
++        total_co2e = calculate_co2e(ch4=total_ch4_tonnes_year, gwp_dict=gwp_dict)
+ 
+         return self.format_result(
+             ch4=ch4_res,
+@@ -146,3 +146,4 @@
+             inputs={"compressor_count": compressor_count, "seal_type": seal_type},
+         )
++
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

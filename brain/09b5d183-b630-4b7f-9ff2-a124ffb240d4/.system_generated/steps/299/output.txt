@@ -1,0 +1,145 @@
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+STARTING 100% EXHAUSTIVE AUDIT: CARBON INTENSITY, METHANE INTENSITY & SBTI PAGES
+===============================================================================================
+Connected to Chrome Tab: Carbon Tech (http://localhost:5173/)
+
+################################################################################
+PART 1: AUDITING CARBON INTENSITY PAGE (/carbon-intensity)
+################################################################################
+
+[1.1] Testing GWP Horizon Toggles (100-Yr vs 20-Yr)...
+ - Clicked 20-Yr: GHG INTENSITY (AVG) = 22234.13 kg CO₂e / BOE (GWP₂₀ Active
+Total: 5,902,947,438.570 tCO₂e)
+ - Clicked 100-Yr: GHG INTENSITY (AVG) = 19215.53 kg CO₂e / BOE (GWP₁₀₀ Standard
+Total: 5,101,536,847.653 tCO₂e)
+
+[1.2] Testing View Toggles (Chart vs Heatmap)...
+ - Switched to Heatmap View: Mounted=True, Rows=116
+ - Switched back to Chart View: Mounted=True
+
+[1.3] Testing Dropdowns in Carbon Intensity Page...
+ - Dropdown 'Year': 8 options detected.
+   [01/08] 'All Years': GHG Intensity = 19215.53 -> PASS
+   [02/08] '2026': GHG Intensity = 0.31 -> PASS
+   [03/08] '2025': GHG Intensity = 0.31 -> PASS
+   [04/08] '2024': GHG Intensity = 0.70 -> PASS
+   [05/08] '2023': GHG Intensity = 1.44 -> PASS
+   [06/08] '2022': GHG Intensity = 1.99 -> PASS
+ - Dropdown 'Supply Chain': 4 options detected.
+   [01/04] 'All Supply Chains': GHG Intensity = 19215.53 -> PASS
+   [02/04] 'Downstream': GHG Intensity = 0.00 -> PASS
+   [03/04] 'Midstream': GHG Intensity = 0.00 -> PASS
+   [04/04] 'Upstream': GHG Intensity = 16450.05 -> PASS
+ - Dropdown 'Activity': 14 options detected.
+   [01/14] 'All Activities': GHG Intensity = 19215.53 -> PASS
+   [02/14] 'Activité E&P': GHG Intensity = 19215.53 -> PASS
+   [03/14] 'Activité LQS': GHG Intensity = 0.00 -> PASS
+   [04/14] 'Activité RPC': GHG Intensity = 0.00 -> PASS
+   [05/14] 'Association': GHG Intensity = 0.00 -> PASS
+   [06/14] 'Cement & Clinker': GHG Intensity = 0.00 -> PASS
+ - Dropdown 'Division': 12 options detected.
+   [01/12] 'All Divisions': GHG Intensity = 19215.53 -> PASS
+   [02/12] 'AST': GHG Intensity = 0.00 -> PASS
+   [03/12] 'Building Materials': GHG Intensity = 0.00 -> PASS
+   [04/12] 'DP': GHG Intensity = 0.05 -> PASS
+   [05/12] 'Downstream': GHG Intensity = 0.00 -> PASS
+   [06/12] 'Exploration & Production': GHG Intensity = 0.00 -> PASS
+ - Dropdown 'Region': 146 options detected.
+   [01/146] 'All Regions': GHG Intensity = 19215.53 -> PASS
+   [02/146] 'Complexe Sidérurgique DRI/EAF ': GHG Intensity = 313222.16 -> PASS
+   [03/146] 'Complexe Ammoniac & Engrais Az': GHG Intensity = 13.61 -> PASS
+   [04/146] 'Cimenterie Industrielle de Chl': GHG Intensity = 36.05 -> PASS
+   [05/146] 'Centre de Traitement Gazier Ha': GHG Intensity = 2.94 -> PASS
+   [06/146] 'ADR - - OF': GHG Intensity = 5.19 -> PASS
+
+[1.4] Production Context Bar: [{'label': 'TOTAL OIL PRODUCTION', 'val': '64,554,874 bbl'}, {'label': 'TOTAL GAS PRODUCTION', 'val': '1,128,850,807 mscf'}, {'label': 'COMBINED PRODUCTION (BOE)', 'val': '265,490,317 BOE'}, {'label': 'TOTAL GAS FLARED', 'val': '100,000 m³'}]
+[1.5] EU CBAM Section: Table=True (106 rows) | EmptyState=False
+[1.6] Charts in Carbon Intensity: 12 SVG surfaces verified active.
+
+################################################################################
+PART 2: AUDITING METHANE INTENSITY PAGE (/methane-intensity)
+################################################################################
+
+[2.1] Testing Interactive Baseline Year Selector Buttons...
+ - Clicked Base Year Pill 2021: Clicked=True, Active=True
+ - Clicked Base Year Pill 2022: Clicked=True, Active=True
+ - Clicked Base Year Pill 2023: Clicked=True, Active=True
+ - Clicked Base Year Pill 2024: Clicked=True, Active=True
+ - Clicked Base Year Pill 2025: Clicked=True, Active=True
+ - Clicked Base Year Pill 2026: Clicked=True, Active=True
+
+[2.2] Testing OGMP 2.0 Roadmap Accordion Toggle...
+ - Toggled Roadmap Accordion (Expanded): Collapsed=False, Facility Cards=145
+ - Toggled Roadmap Accordion (Collapsed): Collapsed=True
+
+[2.3] Testing OGMP Survey Reconciliation Accordion...
+ - Toggled Survey Accordion: Collapsed=False, Table=True (100 rows)
+
+[2.4] Testing View Toggles in Methane Intensity...
+ - Methane Heatmap View: Rows=116
+
+[2.5] Testing Dropdowns in Methane Intensity Page...
+ - Dropdown 'Year': 8 options detected.
+   [01/08] 'All Years': CH4 Intensity = 53.9131 -> PASS
+   [02/08] '2026': CH4 Intensity = 0.0103 -> PASS
+   [03/08] '2025': CH4 Intensity = 0.0026 -> PASS
+   [04/08] '2024': CH4 Intensity = 0.0116 -> PASS
+   [05/08] '2023': CH4 Intensity = 0.0046 -> PASS
+   [06/08] '2022': CH4 Intensity = 0.0082 -> PASS
+ - Dropdown 'Supply Chain': 4 options detected.
+   [01/04] 'All Supply Chains': CH4 Intensity = 53.9131 -> PASS
+   [02/04] 'Downstream': CH4 Intensity = 0.0000 -> PASS
+   [03/04] 'Midstream': CH4 Intensity = 0.0000 -> PASS
+   [04/04] 'Upstream': CH4 Intensity = 55.2612 -> PASS
+ - Dropdown 'Activity': 14 options detected.
+   [01/14] 'All Activities': CH4 Intensity = 53.9131 -> PASS
+   [02/14] 'Activité E&P': CH4 Intensity = 0.0016 -> PASS
+   [03/14] 'Activité LQS': CH4 Intensity = 0.0000 -> PASS
+   [04/14] 'Activité RPC': CH4 Intensity = 0.0000 -> PASS
+   [05/14] 'Association': CH4 Intensity = 0.0000 -> PASS
+   [06/14] 'Cement & Clinker': CH4 Intensity = 0.0000 -> PASS
+ - Dropdown 'Division': 12 options detected.
+   [01/12] 'All Divisions': CH4 Intensity = 53.9131 -> PASS
+   [02/12] 'AST': CH4 Intensity = 0.0000 -> PASS
+   [03/12] 'Building Materials': CH4 Intensity = 0.0000 -> PASS
+   [04/12] 'DP': CH4 Intensity = 0.0018 -> PASS
+   [05/12] 'Downstream': CH4 Intensity = 0.0000 -> PASS
+   [06/12] 'Exploration & Production': CH4 Intensity = 0.0000 -> PASS
+ - Dropdown 'Region': 146 options detected.
+   [01/146] 'All Regions': CH4 Intensity = 53.9131 -> PASS
+   [02/146] 'Complexe Sidérurgique DRI/EAF ': CH4 Intensity = 534.6295 -> PASS
+   [03/146] 'Complexe Ammoniac & Engrais Az': CH4 Intensity = 0.0561 -> PASS
+   [04/146] 'Cimenterie Industrielle de Chl': CH4 Intensity = 0.0635 -> PASS
+   [05/146] 'Centre de Traitement Gazier Ha': CH4 Intensity = 0.0083 -> PASS
+   [06/146] 'ADR - - OF': CH4 Intensity = 0.0225 -> PASS
+
+[2.6] Methane KPI Cards: ['METHANE INTENSITY (AVG)=53.9131', 'METHANE LOSS RATE=65.995%', 'GAS FLARING RATE=0.000%', 'EPA WEC LIABILITY=$21,461,108,586']
+ - Methane Mass Balance: [{'label': 'TOTAL GAS PRODUCED', 'val': '31,965,442,532 m³ (1,128,850,807 mscf)'}, {'label': 'METHANE LOSS VOLUME', 'val': '21,095,667,507 m³'}, {'label': 'TOTAL GAS FLARED', 'val': '100,000 m³'}, {'label': 'TOTAL COMBINED BOE', 'val': '265,490,317 BOE'}]
+[2.7] Charts in Methane Intensity: 14 SVG surfaces verified active.
+
+################################################################################
+PART 3: AUDITING SBTI DECARBONIZATION DASHBOARD (/sbti)
+################################################################################
+
+[3.1] Testing Scope Disaggregation Toggles...
+ - Selected Scope 1+2 (Operational): Current Target = 687,000tCO2e
+ - Selected All Scopes (1+2+3): Current Target = 687,000tCO2e
+
+[3.2] Testing SBTi Target Configuration Drawer & Alignment Buttons...
+ - Configure Target Drawer Opened: True
+   Clicked WB-2°C Button: Reduction Rate updated to 2.5%/yr
+   Clicked 1.5°C Button: Reduction Rate updated to 4.2%/yr
+   Clicked 'Auto-Fill Verified' Baseline: Value = 248015.84 tCO2e
+
+[3.3] SBTi KPI Cards: ['BASE YEAR BASELINE=750,000tCO2e', 'CURRENT YEAR TARGET=687,000tCO2e', 'PATHWAY STATUS=ON TRACK', 'NET-ZERO GOAL (2030)=561,000tCO2e']
+[3.4] SBTi Charts: 10 SVG surfaces verified active.
+[3.5] Annual Milestone Table: 7 yearly milestones verified without missing rows.
+
+================================================================================
+AUDIT COMPLETED. Uncaught Console Errors: 0
+================================================================================
+Full report saved to: C:\Users\samsung\Desktop\H2\scratch\exhaustive_intensity_sbti_audit_report.json
+

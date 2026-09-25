@@ -1,0 +1,75 @@
+
+The command exited with code 0.
+Output:
+
+new\server\background_processor.py:134:            "skipped": [],  # per-row skip reasons [{row, reason, date, 
+facility, ...}]
+new\server\background_processor.py:295:                Facility,
+new\server\background_processor.py:321:            from utils import get_allowed_facility_ids
+new\server\background_processor.py:323:            allowed_fac_ids = get_allowed_facility_ids(user_obj)
+new\server\background_processor.py:326:                all_facilities = Facility.query.all()
+new\server\background_processor.py:328:                all_facilities = Facility.query.filter(
+new\server\background_processor.py:329:                    Facility.id.in_(allowed_fac_ids)
+new\server\background_processor.py:332:            fac_name_map = {f.name.lower(): f for f in all_facilities}
+new\server\background_processor.py:333:            fac_id_map = {str(f.id): f for f in all_facilities}
+new\server\background_processor.py:352:                    Emission.facility_id,
+new\server\background_processor.py:362:                        e.facility_id,
+new\server\background_processor.py:374:                    Scope2Emission.facility_id,
+new\server\background_processor.py:380:                        e.facility_id,
+new\server\background_processor.py:390:                    Scope3Emission.facility_id,
+new\server\background_processor.py:396:                        e.facility_id,
+new\server\background_processor.py:493:                elif str(scope) == "facilities":
+new\server\background_processor.py:494:                    emission_obj, row_errors = _process_row_facilities(
+new\server\background_processor.py:527:                        "facility": mapped_data.get("facility_name", ""),
+new\server\background_processor.py:542:                            fac_id = getattr(emission_obj, 'facility_id', None)
+new\server\background_processor.py:562:                                    "facility_id": fac_id,
+new\server\background_processor.py:603:                    from models import User, Notification, Facility
+new\server\background_processor.py:605:                    for fac in all_facilities:
+new\server\background_processor.py:677:        ("facility_name", "facility name"),
+new\server\background_processor.py:678:        ("facility_name", "facility"),
+new\server\background_processor.py:679:        ("facility_name", "facility id"),
+new\server\background_processor.py:680:        ("facility_name", "plant"),
+new\server\background_processor.py:681:        ("facility_name", "site"),
+new\server\background_processor.py:688:        ("facility_name", "region") if str(scope) != "2" else ("grid_region", 
+"region"),
+new\server\background_processor.py:751:        ),  # Might overlap with facility region but we check mapping
+new\server\background_processor.py:822:        # Facility fields
+new\server\background_processor.py:892:    # 2. Resolve Facility
+new\server\background_processor.py:893:    facility = None
+new\server\background_processor.py:894:    fac_input = row.get("facility_name") or row.get("facility") or 
+row.get("facility_id")
+new\server\background_processor.py:898:            facility = fac_name_map[fac_str]
+new\server\background_processor.py:900:            facility = fac_id_map[fac_str]
+new\server\background_processor.py:902:    if not facility:
+new\server\background_processor.py:903:        errors.append(f"Facility '{fac_input}' not found")
+new\server\background_processor.py:1018:    key = (facility.id, year, month, source_type.strip().lower())
+new\server\background_processor.py:1024:                    f"Duplicate record: Scope 2 emission for '{facility.name}' 
+"
+new\server\background_processor.py:1045:        facility_id=facility.id,
+new\server\background_processor.py:1055:        activity=row.get("activity") or facility.activity,
+new\server\background_processor.py:1056:        division=row.get("division") or facility.division,
+new\server\background_processor.py:1057:        field=row.get("field") or facility.field,
+new\server\background_processor.py:1106:    # 2. Resolve Facility
+new\server\background_processor.py:1107:    fac_raw = str(row.get("facility_name") or row.get("facility_id") or 
+"").strip()
+new\server\background_processor.py:1108:    facility = fac_id_map.get(fac_raw) or fac_name_map.get(fac_raw.lower())
+new\server\background_processor.py:1109:    if not facility:
+new\server\background_processor.py:1110:        return None, [f"Facility '{fac_raw}' not found"]
+new\server\background_processor.py:1124:    key = (facility.id, year, month, "category 1")
+new\server\background_processor.py:1130:                    f"Duplicate record: Scope 3 emission for facility 
+'{facility.name}' "
+new\server\background_processor.py:1149:        facility_id=facility.id,
+new\server\background_processor.py:1203:    # 2. Resolve Facility
+new\server\background_processor.py:1204:    facility = None
+new\server\background_processor.py:1205:    fac_input = row.get("facility_name") or row.get("facility") or 
+row.get("facility_id")
+new\server\background_processor.py:1209:            facility = fac_name_map[fac_str]
+new\server\background_processor.py:1211:            facility = fac_id_map[fac_str]
+new\server\background_processor.py:1213:    if not facility:
+new\server\background_processor.py:1214:        errors.append(f"Facility '{fac_input}' not found")
+new\server\background_processor.py:1253:    key = (facility.id, year, month, str(cat_str).strip().lower())
+new\server\background_processor.py:1259:                    f"Duplicate record: Scope 3 emission for facility 
+'{facility.name}' "
+
+
+

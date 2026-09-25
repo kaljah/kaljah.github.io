@@ -1,0 +1,84 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\dashboard.py:295:        ).filter(Emission.status == "Pending")
+new\server\routes\dashboard.py:307:        ).filter(Scope2Emission.status == "Pending")
+new\server\routes\dashboard.py:426:    s1_status_filter = (
+new\server\routes\dashboard.py:427:        Emission.status.in_(["Verified", "Pending"])
+new\server\routes\dashboard.py:429:        else (Emission.status == "Verified")
+new\server\routes\dashboard.py:431:    scope1_query = scope1_query.filter(s1_status_filter)
+new\server\routes\dashboard.py:461:    s2_status_filter = (
+new\server\routes\dashboard.py:462:        Scope2Emission.status.in_(["Verified", "Pending"])
+new\server\routes\dashboard.py:464:        else (Scope2Emission.status == "Verified")
+new\server\routes\dashboard.py:466:    scope2_query = scope2_query.filter(s2_status_filter)
+new\server\routes\dashboard.py:550:    activity_query = activity_query.filter(s1_status_filter)
+new\server\routes\dashboard.py:627:                "status": p.status,
+new\server\routes\dashboard.py:641:                "status": "Active",
+new\server\routes\dashboard.py:678:    by_year_query = by_year_query.filter(Scope3Emission.status == "Verified")
+new\server\routes\dashboard.py:731:    query = query.filter(Emission.status == "Verified")
+new\server\routes\dashboard.py:755:    scope2_q = scope2_q.filter(Scope2Emission.status == "Verified")
+new\server\routes\dashboard.py:779:    scope3_q = scope3_q.filter(Scope3Emission.status == "Verified")
+new\server\routes\dashboard.py:827:        .filter(Emission.status == "Verified")
+new\server\routes\dashboard.py:833:        .filter(Scope2Emission.status == "Verified")
+new\server\routes\dashboard.py:839:        .filter(Scope3Emission.status == "Verified")
+new\server\routes\dashboard.py:1108:    Returns compliance deadlines, current L1-L5 levels, and reconciliation status.
+new\server\routes\dashboard.py:1165:    ).filter(Emission.status == "Verified")
+new\server\routes\dashboard.py:1181:        op_status = f.operator_status or "operated"
+new\server\routes\dashboard.py:1183:        target_yr = membership_yr + (3 if op_status == "operated" else 5)
+new\server\routes\dashboard.py:1186:        if op_status == "operated":
+new\server\routes\dashboard.py:1200:            rec_status = "Discrepancy Flagged" if variance_flag else "Reconciled"
+new\server\routes\dashboard.py:1205:            rec_status = "Discrepancy Flagged"
+new\server\routes\dashboard.py:1209:            rec_status = "Bottom-Up Only"
+new\server\routes\dashboard.py:1213:            rec_status = "No Activity"
+new\server\routes\dashboard.py:1228:                "operator_status": op_status,
+new\server\routes\dashboard.py:1238:                "reconciliation_status": rec_status,
+new\server\routes\dashboard.py:1239:                "status": (
+new\server\routes\dashboard.py:1399:    ).filter(Emission.year.in_(year_list), Emission.status == "Verified")
+new\server\routes\dashboard.py:1436:        Emission.status == "Verified",
+new\server\routes\dashboard.py:1487:    ).filter(Scope2Emission.year.in_(year_list), Scope2Emission.status == 
+"Verified")
+new\server\routes\dashboard.py:1522:    ).filter(Scope3Emission.year.in_(year_list), Scope3Emission.status == 
+"Verified")
+new\server\routes\dashboard.py:1627:                "ogmp_target_status": (
+new\server\routes\dashboard.py:1773:    em_query = em_query.filter(Emission.status == "Verified")
+new\server\routes\dashboard.py:1840:        Emission.status == "Verified",
+new\server\routes\dashboard.py:1917:    s2_query = s2_query.filter(Scope2Emission.status == "Verified")
+new\server\routes\dashboard.py:1956:    s3_query = s3_query.filter(Scope3Emission.status == "Verified")
+new\server\routes\dashboard.py:2081:            wec_status = "Not Applicable (Pre-2024)"
+new\server\routes\dashboard.py:2086:            wec_status = "Exempt (Downstream)"
+new\server\routes\dashboard.py:2095:            wec_status = "Compliant" if excess_ch4_tonnes <= 0 else "Taxable 
+Liability"
+new\server\routes\dashboard.py:2114:        op_status = fac.operator_status or "operated" if fac else "operated"
+new\server\routes\dashboard.py:2119:        deadline_years = 3 if op_status == "operated" else 5
+new\server\routes\dashboard.py:2132:            reconciliation_status = "Discrepancy Flagged" if variance_flag else 
+"Reconciled"
+new\server\routes\dashboard.py:2137:            reconciliation_status = "Discrepancy Flagged"
+new\server\routes\dashboard.py:2142:            reconciliation_status = "Bottom-Up Only"
+new\server\routes\dashboard.py:2147:            reconciliation_status = "No Activity"
+new\server\routes\dashboard.py:2169:            pathway_status = "Gold Standard Achieved (Level 5)"
+new\server\routes\dashboard.py:2171:            pathway_status = "Level 4 Pathway (Target Met)"
+new\server\routes\dashboard.py:2173:            pathway_status = (
+new\server\routes\dashboard.py:2177:            pathway_status = "Overdue / Action Plan Required"
+new\server\routes\dashboard.py:2190:                "operator_status": op_status,
+new\server\routes\dashboard.py:2196:                "gold_pathway_status": pathway_status,
+new\server\routes\dashboard.py:2200:                "reconciliation_status": reconciliation_status,
+new\server\routes\dashboard.py:2215:                "ogmp_target_status": (
+new\server\routes\dashboard.py:2223:                "wec_status": wec_status,
+new\server\routes\dashboard.py:2382:        ).filter(Emission.year == year, Emission.status == "Verified")
+new\server\routes\dashboard.py:2404:            Scope2Emission.year == year, Scope2Emission.status == "Verified"
+new\server\routes\dashboard.py:2423:            Scope3Emission.year == year, Scope3Emission.status == "Verified"
+new\server\routes\dashboard.py:2700:    q_s1 = Emission.query.filter_by(status="Verified")
+new\server\routes\dashboard.py:2701:    q_s2 = Scope2Emission.query.filter_by(status="Verified")
+new\server\routes\dashboard.py:2702:    q_s3 = Scope3Emission.query.filter_by(status="Verified")
+new\server\routes\dashboard.py:2908:        Emission.status == "Verified",
+new\server\routes\dashboard.py:3015:            Emission.status == "Verified",
+new\server\routes\dashboard.py:3068:        "compliance_status": "COMPLIANT (Under 1.00% Target)" if is_compliant else 
+"EXCEEDS THRESHOLD (> 1.00%)",
+new\server\routes\dashboard.py:3104:    ).filter(Emission.year == yr, Emission.status == "Verified")
+new\server\routes\dashboard.py:3115:        Scope2Emission.year == yr, Scope2Emission.status == "Verified"
+new\server\routes\dashboard.py:3169:        "ogci_status": "WITHIN TARGET" if ci_saleable_prod_kg <= OGCI_TARGET else 
+f"{round(ratio_to_ogci, 1)}x ABOVE TARGET",
+
+
+

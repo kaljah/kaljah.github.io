@@ -1,0 +1,1 @@
+A1: (Recommended) Prioritize Fuel-Based Processes (Stationary Combustion, Mobile Combustion, Flaring) for HHV/density overrides and legal presets, while standardizing Tier 1/2/3 labels across all other processes.

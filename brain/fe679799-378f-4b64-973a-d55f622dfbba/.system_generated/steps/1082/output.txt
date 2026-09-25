@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -299,7 +299,7 @@
+ @login_required
+ def get_methane_sources():
+     user = get_current_user()
+-    if user and user.role == 'it_admin':
++    if is_it_role(user):
+         return jsonify({'error': 'IT administrators are not authorized to view operational data.'}), 403
+     sources = MethaneSourceType.query.order_by(MethaneSourceType.id.asc()).all()
+     return jsonify([{
+@@ -315,7 +315,7 @@
+ @login_required
+ def get_ogmp_surveys():
+     user = get_current_user()
+-    if user and user.role == 'it_admin':
++    if is_it_role(user):
+         return jsonify({'error': 'IT administrators are not authorized to view operational OGMP data.'}), 403
+     query = OgmpSurvey.query
+     allowed_fids = get_allowed_facility_ids(user)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

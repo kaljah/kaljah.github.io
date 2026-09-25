@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -658,9 +658,14 @@
+                 pass
+ 
+ 
+-def _build_mapping(headers):
+-    # Matches the exact UI table headers to backend keys
++def _build_mapping(headers, scope=1):
++    # Matches the exact UI table headers and standard enterprise headers to backend keys
+     EXPECTED_FIELDS = [
++        ("facility_name", "facility name"),
++        ("facility_name", "facility"),
++        ("facility_name", "facility id"),
++        ("facility_name", "plant"),
++        ("facility_name", "site"),
+         ("name", "name"),
+         ("name", "region name"),
+         ("date", "date"),
+@@ -667,6 +667,6 @@
+         ("division", "division"),
+         ("field", "field"),
+-        ("facility_name", "region"),  # Region maps to Facility
++        ("facility_name", "region") if str(scope) != "2" else ("grid_region", "region"),
+         ("group", "emission source"),  # Emission Source maps to Group
+         ("equipment", "equipment"),
+         ("process", "process"),
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

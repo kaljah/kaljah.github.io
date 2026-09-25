@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+(1, 'Administrator', 'a', 'admin', 'active')
+(2, 'Administrator', 'a@a', 'admin', 'active')
+(3, 'IT Manager', 'z', 'it_manager', 'active')
+(4, 'IT Manager', 'z@z', 'it_manager', 'active')
+(5, 'Administrator', 'admin@ghg.com', 'admin', 'active')
+(6, 'IT Administrator', 'itadmin@ghg.com', 'it_admin', 'active')
+(7, 'IT Support', 'it@ghg.com', 'it', 'active')
+

@@ -1,0 +1,55 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=893_0 RootWebArea "Carbon Tech" url="http://localhost:5173/"
+  uid=893_1 complementary
+    uid=893_2 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=893_3 StaticText "Carbon tech"
+    uid=893_4 navigation
+      uid=893_5 link "Dashboard" focusable focused url="http://localhost:5173/"
+        uid=893_6 StaticText "Dashboard"
+      uid=893_7 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=893_8 StaticText "Carbon Intensity"
+      uid=893_9 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=893_10 StaticText "Methane Intensity"
+      uid=893_11 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=893_12 StaticText "SBTi Net-Zero"
+      uid=893_13 link "Calculations" url="http://localhost:5173/emissions"
+        uid=893_14 StaticText "Calculations"
+      uid=893_15 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=893_16 StaticText "Emissions Map"
+      uid=893_17 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=893_18 StaticText "Manage Data"
+      uid=893_19 link "Reports" url="http://localhost:5173/reports"
+        uid=893_20 StaticText "Reports"
+      uid=893_21 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=893_22 StaticText "Reference Data"
+      uid=893_23 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=893_24 StaticText "Uncertainty"
+      uid=893_25 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=893_26 StaticText "Audit Trail"
+      uid=893_27 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=893_28 StaticText "QA/QC & Diagnostics"
+    uid=893_29 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=893_30 StaticText "Settings"
+    uid=893_31 StaticText "A"
+    uid=893_32 StaticText "Administrator"
+    uid=893_33 StaticText "Sustainability Lead"
+  uid=893_34 main
+    uid=893_35 StaticText "Corporate ESG"
+    uid=936_0 StaticText "All Years"
+    uid=936_1 StaticText "All Supply Chains"
+    uid=936_2 StaticText "All Activities"
+    uid=936_3 StaticText "All Divisions"
+    uid=936_4 StaticText "All Regions"
+    uid=936_5 button "GWP-100"
+    uid=936_6 button "GWP-20"
+    uid=936_7 button "+ Set Target" description="Set emission targets in Manage Data"
+    uid=893_36 button "Notifications"
+    uid=893_37 button "User Profile" description="User Profile"
+    uid=893_38 StaticText "Administrator"
+    uid=936_8 StaticText "Loading Dashboard Data..."
+
+</current_snapshot>

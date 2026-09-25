@@ -1,0 +1,44 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2111,6 +2111,7 @@
+         <div style={{ display: "flex", gap: "10px" }}>
+           <button
+             className="btn-add-draft"
++            disabled={submitting}
+             onClick={() => handleAddEntry("Draft")}
+             style={{
+               flex: 1,
+@@ -2119,17 +2119,23 @@
+               fontWeight: 600,
+               padding: "10px 16px",
+               borderRadius: "10px",
+-              cursor: "pointer",
+-            }}
+-          >
+-            Save as Draft (Maker Mode)
++              cursor: submitting ? "not-allowed" : "pointer",
++              opacity: submitting ? 0.6 : 1,
++            }}
++          >
++            {submitting ? "Saving..." : "Save as Draft (Maker Mode)"}
+           </button>
+           <button
+             className="btn-add-activity"
++            disabled={submitting}
+             onClick={() => handleAddEntry("Verified")}
+-            style={{ flex: 1.5 }}
+-          >
+-            + Calculate & Submit for Review
++            style={{
++              flex: 1.5,
++              cursor: submitting ? "not-allowed" : "pointer",
++              opacity: submitting ? 0.6 : 1,
++            }}
++          >
++            {submitting ? "Processing..." : "+ Calculate & Submit for Review"}
+           </button>
+         </div>
+       </div>
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

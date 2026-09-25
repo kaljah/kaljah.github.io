@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[(1, '1', 'combustion', 'Natural Gas', 3531470.0, 191.12739416400004, 0.0036020994000000002, 0.00036020994, 191.32370858130005, 'Verified', None, 13)]
+

@@ -1,0 +1,17 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":304,"LineContent":"    User triggers a password reset request."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":305,"LineContent":"    Creates a notification for the IT Role / Admin to reset their credentials."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":321,"LineContent":"            f\"User {user.fullName} ({user.email}) requested a password reset at \""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":323,"LineContent":"            f\"Please review and reset their password in User Management.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":336,"LineContent":"            from services.email_service import send_password_reset_email"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":337,"LineContent":"            send_password_reset_email(user.email, user.fullName)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":339,"LineContent":"            current_app.logger.warning(f\"Failed to dispatch password reset email: {_em_err}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":348,"LineContent":"                details=f\"Password reset requested for: {user.email}\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":361,"LineContent":"        \"message\": \"If your email is registered in the system, a password reset request has been forwarded to the IT Administrator.\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":965,"LineContent":"@auth_bp.route(\"/users/\u003cint:id\u003e/reset-password\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":967,"LineContent":"def admin_reset_password(id):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":969,"LineContent":"    IT Admin resets a user's password directly (global authority)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":992,"LineContent":"    # Create notification for the user whose password was reset"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":995,"LineContent":"        message=f\"Your account password was reset by IT Administrator ({admin_user.fullName if admin_user else 'IT Admin'}) on {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}.\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1007,"LineContent":"            details=f\"Password reset for {user.email} by IT Admin {admin_user.email if admin_user else 'system'}\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1012,"LineContent":"        current_app.logger.error(f\"Error logging admin password reset: {e}\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":1014,"LineContent":"    return jsonify({\"message\": f\"Password for {user.fullName} ({user.email}) has been successfully reset.\"}), 200"}

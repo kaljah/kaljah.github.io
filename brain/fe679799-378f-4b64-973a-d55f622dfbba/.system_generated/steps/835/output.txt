@@ -1,0 +1,61 @@
+
+The command exited with code 1.
+Output:
+=====================================================================================
+STARTING PHYSICAL BROWSER INTERACTIVE AUDIT (ALL BUTTONS, DROPDOWNS & CHARTS)
+=====================================================================================
+Connected to Chrome Tab: Carbon Tech (http://localhost:5173/)
+
+[1/7] Testing GWP Horizon Toggle Buttons (GWP-100 / GWP-20)...
+ - Clicked GWP-20: {'found': True, 'text': 'GWP-20', 'className': ''} | Card Value: Not Found
+ - Clicked GWP-100: {'found': True, 'text': 'GWP-100', 'className': ''} | Card Value: Not Found
+
+[2/7] Testing Facility Comparison Mode Toggle...
+ - Compare Mode ON: Table Mounted: True | Rows: 15
+ - Compare Mode OFF: Table Mounted: True
+
+[3/7] Testing All Top-Bar Filter Dropdowns...
+
+ --- Testing Dropdown [1/5]: Year ---
+   Opened Year: found 0 options: []
+   Selected option: {'selected': True, 'text': '2026'}
+
+ --- Testing Dropdown [2/5]: Supply Chain ---
+   Opened Supply Chain: found 0 options: []
+   Selected option: {'selected': True, 'text': 'Downstream'}
+
+ --- Testing Dropdown [3/5]: Activity ---
+   Opened Activity: found 0 options: []
+   Selected option: {'selected': True, 'text': 'E&P (Upstream)'}
+
+ --- Testing Dropdown [4/5]: Division ---
+   Opened Division: found 0 options: []
+   Selected option: {'selected': True, 'text': 'AST'}
+
+ --- Testing Dropdown [5/5]: Region ---
+   Opened Region: found 0 options: []
+   Selected option: {'selected': True, 'text': 'Complexe Sid�rurgique DRI/EAF (Tosyali)\n- Industrial Zone'}
+
+[4/7] Testing Accordion & Tree Collapsibles...
+ - Accordion actions triggered: [{'section': 'Activity Tree Rows', 'rowsClicked': 0}]
+
+[5/7] Testing All 4 Live Recharts Chart Visualizations...
+ - [1/4] Emissions Trend Over Time (Multi-Year Line Chart): Dimensions: 689x360px | Elements: 3 | Pies: 0 | Legend: ['Forecast', 'Scope 1', 'Target Path', 'Total Emissions']
+ - [2/4] Emissions by Activity Breakdown (Donut Chart): Dimensions: 673x170px | Elements: 3 | Pies: 5 | Legend: ['Cement & Clinker', 'Chemicals & Fertilizers', 'E&P (Upstream)', 'Steel & Iron (Acier DRI)', 'Upstream & Midstream Gas']
+ - [3/4] Emissions by Process Source (Donut Chart): Dimensions: 673x170px | Elements: 3 | Pies: 4 | Legend: ['Combustion', 'Flaring', 'Other', 'Venting']
+ - [4/4] SBTi Net-Zero Trajectory Model (Target Curve Chart): Dimensions: 673x320px | Elements: 3 | Pies: 0 | Legend: ['Actual Verified Emissions', 'Business as Usual (+1.5%/yr)', 'SBTi 1.5�C Linear Target']
+
+[6/7] Auditing All 37 Dashboard Metric & KPI Cards...
+ - Total Cards Audited: 37 | Formatting / NaN Issues: 0
+
+[7/7] Testing Navigation Buttons & Asserting Zero Console Errors...
+Traceback (most recent call last):
+  File "C:\Users\samsung\Desktop\H2\scratch\press_all_dashboard_buttons_and_verify_charts.py", line 446, in <module>
+    run_full_browser_audit()
+  File "C:\Users\samsung\Desktop\H2\scratch\press_all_dashboard_buttons_and_verify_charts.py", line 420, in run_full_browser_audit
+    print(f" - Clicked SBTi Button: {sbti_click} -> Navigated to: {curr_url}")
+  File "C:\Users\samsung\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 76: character maps to <undefined>
+

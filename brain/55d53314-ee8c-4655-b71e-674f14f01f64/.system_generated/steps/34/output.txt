@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+new/server/models.py-257-    updated_at = db.Column(db.DateTime, onupdate=utc_now)
+new/server/models.py-258-    created_at = db.Column(db.DateTime, default=utc_now)
+new/server/models.py-259-
+new/server/models.py-260-
+new/server/models.py-261-class CustomFactor(db.Model):
+new/server/models.py:262:    __tablename__ = "custom_factors"
+new/server/models.py-263-    id = db.Column(db.Integer, primary_key=True)
+new/server/models.py-264-    name = db.Column(db.String(120), index=True)
+new/server/models.py-265-    co2_factor = db.Column(db.Float)
+new/server/models.py-266-    ch4_factor = db.Column(db.Float)
+new/server/models.py-267-    n2o_factor = db.Column(db.Float)
+

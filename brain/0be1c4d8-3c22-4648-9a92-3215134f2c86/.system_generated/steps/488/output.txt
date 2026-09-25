@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\midstream.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -70,7 +70,7 @@
+         ch4_mass_kg = ch4_slipped_m3 * CONVERSIONS.get("density_ch4", 0.6785)
+ 
+         # Apply acid gas control technology
+-        ctrl_eff = max(0.0, min(1.0, float(acid_gas_control_eff or 0.0)))
++        ctrl_eff = normalize_efficiency(acid_gas_control_eff, default=0.0)
+         ctype = str(acid_gas_control_type or "vent").strip().lower()
+ 
+         if ctype in ["agi", "ccus", "injection", "sequestration"]:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

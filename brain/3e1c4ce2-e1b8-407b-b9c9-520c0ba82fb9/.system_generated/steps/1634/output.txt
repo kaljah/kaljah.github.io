@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 20:25:31,244] INFO in app: Updated account: a
+[2026-09-21 20:25:31,373] INFO in app: Updated account: a@a
+[2026-09-21 20:25:31,533] INFO in app: Updated account: z
+[2026-09-21 20:25:31,705] INFO in app: Updated account: z@z
+User: 1 a admin Administrator
+User: 2 a@a admin Administrator
+User: 3 z it_manager IT Manager
+User: 4 z@z it_manager IT Manager
+User: 5 admin@ghg.com admin Administrator
+User: 6 itadmin@ghg.com it_admin IT Administrator
+User: 7 it@ghg.com it IT Support
+

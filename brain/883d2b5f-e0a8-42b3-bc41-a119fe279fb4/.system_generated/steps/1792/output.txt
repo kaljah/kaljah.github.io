@@ -1,0 +1,47 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -224,12 +224,29 @@
+         recent_records_count = recent_s1 + recent_s2 + recent_s3
+ 
+         # Field-level gap checks on Scope 1
+-        missing_facility_count = Emission.query.filter(Emission.facility_id.is_(None)).count()
+-        missing_fuel_count = q_s1_all.filter(
++        if allowed_fids is not None:
++            missing_facility_count = 0
++        else:
++            missing_fac_q = Emission.query.filter(Emission.facility_id.is_(None))
++            if year_arg and year_arg not in ["all", ""]:
++                try:
++                    missing_fac_q = missing_fac_q.filter(Emission.year == int(year_arg))
++                except ValueError:
++                    pass
++            missing_facility_count = missing_fac_q.count()
++
++        # Fuel check applies strictly to combustion processes or unspecified process types
++        comb_q = q_s1_all.filter(
++            or_(
++                Emission.process_type.is_(None),
++                ~Emission.process_type.in_(NON_COMBUSTION_PROCESSES),
++            )
++        )
++        comb_count = comb_q.count()
++        missing_fuel_count = comb_q.filter(
+             or_(
+                 Emission.fuel_type.is_(None),
+                 Emission.fuel_type == "",
+-                and_(Emission.process_type.is_(None), Emission.fuel_type.is_(None)),
+             )
+         ).count()
+         missing_amount_count = q_s1_all.filter(
+@@ -286,7 +286,7 @@
+         # Completeness rates per dimension
+         if s1_count > 0:
+             fac_completeness = round(max(0.0, (s1_count - missing_facility_count) / s1_count * 100), 1)
+-            fuel_completeness = round(max(0.0, (s1_count - missing_fuel_count) / s1_count * 100), 1)
++            fuel_completeness = round(max(0.0, (comb_count - missing_fuel_count) / comb_count * 100), 1) if comb_count > 0 else 100.0
+             amount_completeness = round(max(0.0, (s1_count - missing_amount_count) / s1_count * 100), 1)
+             calc_completeness = round(max(0.0, (s1_count - missing_co2e_count) / s1_count * 100), 1)
+             overall_completeness = round(
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

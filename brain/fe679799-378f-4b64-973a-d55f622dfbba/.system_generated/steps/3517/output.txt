@@ -1,0 +1,30 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -44,8 +44,13 @@
+ IT_EMAIL = "itadmin@ghg.com"
+ IT_PASS = "ChangeMeITAdmin2026!"
+ 
++_SESSION_CACHE = {}
++
+ def get_auth_session(email, password):
+-    """Establishes an authenticated session with fresh CSRF token."""
++    """Establishes an authenticated session with fresh CSRF token, caching per role."""
++    if email in _SESSION_CACHE:
++        return _SESSION_CACHE[email]
++
+     s = requests.Session()
+     r_csrf = s.get(f"{BASE_URL}/api/csrf-token")
+     if r_csrf.status_code == 200:
+@@ -58,7 +58,8 @@
+     if r_csrf2.status_code == 200:
+         s.headers["X-CSRFToken"] = r_csrf2.json().get("csrf_token")
+     
+-    return s, r_login.json().get("user")
++    _SESSION_CACHE[email] = (s, r_login.json().get("user"))
++    return _SESSION_CACHE[email]
+ 
+ 
+ # =============================================================================
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,23 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\index.css","LineNumber":296,"LineContent":"@media print {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":1000,"LineContent":"@media (max-width: 1024px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\AuditTrail.css","LineNumber":1006,"LineContent":"@media (max-width: 768px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":589,"LineContent":"@media (max-width: 1200px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.css","LineNumber":598,"LineContent":"@media (max-width: 768px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\CalculationDetails.css","LineNumber":381,"LineContent":"@media (max-width: 640px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":193,"LineContent":"@media (max-width: 1024px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":484,"LineContent":"@media (max-width: 1200px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":789,"LineContent":"@media print {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":1035,"LineContent":"@media (max-width: 1200px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Dashboard.css","LineNumber":1058,"LineContent":"@media (max-width: 768px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Diagnostics.css","LineNumber":233,"LineContent":"@media (max-width: 768px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.css","LineNumber":922,"LineContent":"@media (max-width: 960px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":173,"LineContent":"@media (max-width: 1200px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":179,"LineContent":"@media (max-width: 640px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\QADashboard.css","LineNumber":715,"LineContent":"@media (max-width: 900px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.css","LineNumber":312,"LineContent":"@media (max-width: 1100px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Settings.css","LineNumber":1068,"LineContent":"@media (max-width: 768px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\UncertaintyAssessment.css","LineNumber":447,"LineContent":"@media (max-width: 900px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ErrorBoundary.css","LineNumber":154,"LineContent":"@media (max-width: 768px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\GasCompositionCalculator.css","LineNumber":238,"LineContent":"@media (max-width: 850px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.css","LineNumber":871,"LineContent":"@media (max-width: 600px) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Toast.css","LineNumber":122,"LineContent":"@media (max-width: 768px) {"}

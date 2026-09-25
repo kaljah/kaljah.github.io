@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+Updated record: (9, 'REC-2026-0009', 110.0, 'tonnes', 110.0, 3080.0)
+2025 records count remaining: 0
+

@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":4,"LineContent":" * Custom hook to manage form draft persistence in localStorage."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":17,"LineContent":"      const item = localStorage.getItem(`draft_${draftKey}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":46,"LineContent":"          localStorage.setItem(`draft_${draftKey}`, JSON.stringify(values));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\hooks\\useFormDraft.js","LineNumber":67,"LineContent":"      localStorage.removeItem(`draft_${draftKey}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\context\\AuthContext.jsx","LineNumber":104,"LineContent":"      localStorage.setItem(\"ghg_auth_logout_event\", Date.now().toString());"}

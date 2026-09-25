@@ -1,0 +1,84 @@
+
+The command exited with code 1.
+Output:
+<truncated 281 lines>
+   969:18  error    'err' is defined but never used                                                                                           no-unused-vars
+  1016:18  error    'err' is defined but never used                                                                                           no-unused-vars
+  1064:26  error    'err' is defined but never used                                                                                           no-unused-vars
+  1207:11  error    'handleImportCSV' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                           no-unused-vars
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneExplorer.jsx
+  149:10  error    'loadingSurveys' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                no-unused-vars
+  152:10  error    'lastPollTime' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                  no-unused-vars
+  210:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  392:14  error    'err' is defined but never used                                                                               no-unused-vars
+  482:14  error    'err' is defined but never used                                                                               no-unused-vars
+  495:16  error    'fallbackErr' is defined but never used                                                                       no-unused-vars
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\MethaneIntensity.jsx
+   33:11  error    'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                no-unused-vars
+  150:6   warning  React Hook useEffect has missing dependencies: 'loadMethaneData', 'loadOgmpData', and 'loadRoadmapData'. Either include them or remove the dependency array                                                                                         react-hooks/exhaustive-deps
+  163:6   warning  React Hook useEffect has a missing dependency: 'loadTrendData'. Either include it or remove the dependency array                                                                                                                                    react-hooks/exhaustive-deps
+  577:6   warning  React Hook useEffect has missing dependencies: 'getActivityOptions', 'getDivisionOptions', 'getRegionOptions', 'getSegmentOptions', 'handleExportExcel', 'setTopBarLeft', and 'setTopBarRight'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\ReferenceData.jsx
+  49:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  47 |
+  48 |   useEffect(() => {
+> 49 |     fetchData();
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  50 |   }, []);
+  51 |
+  52 |   const toggleCategory = (cat) => {  react-hooks/set-state-in-effect
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\Reports.jsx
+   36:10  error    'apiError' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                           no-unused-vars
+   37:10  error    'rawDebug' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                           no-unused-vars
+   91:6   warning  React Hook useEffect has a missing dependency: 'toast'. Either include it or remove the dependency array           react-hooks/exhaustive-deps
+  128:6   warning  React Hook useEffect has a missing dependency: 'fetchEmissions'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  287:9   error    'handleISOReport' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                    no-unused-vars
+  312:9   error    'getGroupedData' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                     no-unused-vars
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\SbtiDashboard.jsx
+   37:10  error    'suggestedBaseline' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u             no-unused-vars
+  101:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  137:14  error    'e' is defined but never used                                                                                 no-unused-vars
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\Settings.jsx
+   77:10  error    'theme' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                            no-unused-vars
+   98:6   warning  React Hook useEffect has a missing dependency: 'loadSettings'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  164:27  error    'newTheme' is defined but never used                                                                             no-unused-vars
+  168:9   error    'handleThemeChange' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                no-unused-vars
+  168:30  error    'newTheme' is defined but never used                                                                             no-unused-vars
+  309:9   error    'currentGwp' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                       no-unused-vars
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\UncertaintyAssessment.jsx
+  17:11  error    'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                             no-unused-vars
+  57:6   warning  React Hook useEffect has a missing dependency: 'selectedYear'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  84:6   warning  React Hook useEffect has a missing dependency: 'toast'. Either include it or remove the dependency array         react-hooks/exhaustive-deps
+
+C:\Users\samsung\Desktop\H2\new\client\src\pages\UserManagement.jsx
+  448:6   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  610:36  error    Unnecessary escape character: \[                                                                              no-useless-escape
+
+C:\Users\samsung\Desktop\H2\new\client\src\utils\ModernReportGenerator.js
+    47:16  error  'e' is defined but never used                                                                  no-unused-vars
+   179:11  error  'gwpStandard' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u    no-unused-vars
+   333:14  error  'getScopeInterpretation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+   355:14  error  'getTrendInterpretation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+   503:5   error  'cautionY' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u       no-unused-vars
+  1553:18  error  'e' is defined but never used                                                                  no-unused-vars
+
+C:\Users\samsung\Desktop\H2\new\client\vite.config.js
+  8:9  error  'process' is not defined  no-undef
+
+✖ 137 problems (105 errors, 32 warnings)
+
+

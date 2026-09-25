@@ -1,0 +1,68 @@
+
+The command exited with code 0.
+Output:
+<truncated 159 lines>
+-- Table 2 --
+Category | Unit | 2021 | 2022 | 2023 | 2024 | 2025
+GHG Emissions |  |  |  |  |  | 
+GHG Direct Emissions (Scope 1) | MMtCO2e | 0.919 | 1.011 | 1.004 | 0.883 | 0.886
+GHG Indirect Emissions (Scope 2) | MMtCO2e | 0.172 | 0.215 | 0.245 | 0.250 | 0.239
+GHG Emissions (Total Scope 1+ 2) | MMtCO2e | 1.091 | 1.226 | 1.249 | 1.133 | 1.125
+Methane Emissions |  |  |  |  |  | 
+Methane Emissions in CH4 | tCH4 | 4,222.85 | 4,651.57 | 4,232.70 | 1,343.18 | 874.08
+Methane Emissions in CO2e | tCO2e | 105,571.27 | 116,289.37 | 105,817.61 | 33,579.48 | 24,474.34
+Flare Volume & Emissions |  |  |  |  |  | 
+Flare Volume[1] | MMSm3 | 101.682 | 129.575 | 75.558 | 63.344 | 70.148
+Routine Flaring[2] | MMSm3 | 50.271 | 37.066 | 43.579 | 49.387 | 47.246
+Non-Routine Flaring[2] | MMSm3 | 3.026 | 2.393 | 3.134 | 9.262 | 17.269
+Safety Flaring[2] | MMSm3 | 48.384 | 90.116 | 28.845 | 4.470 | 4.458
+Flare GHG Emissions | MMtCO2e | 0.281 | 0.342 | 0.196 | 0.167 | 0.168
+Production & Intensity by Total Production [3] |  |  |  |  |  | 
+Total Production | MMBOE | 59.192 | 60.709 | 64.742 | 64.429 | 60.767
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0155 | 0.0167 | 0.0155 | 0.0137 | 0.0146
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0029 | 0.0035 | 0.0038 | 0.0039 | 0.0039
+Total GHG Intensity | tCO2e/BOE | 0.0184 | 0.0202 | 0.0193 | 0.0176 | 0.0185
+Methane Intensity | tCH4/BOE | 0.000071 | 0.000077 | 0.000065 | 0.000021 | 0.000014
+Flaring Intensity (Total Flare/Total Gas Produced) | Vol.% | 2.78% | 3.27% | 1.78% | 1.45% | 1.65%
+Production & Intensity by Total Saleable Production [4] |  |  |  |  |  | 
+Total Saleable Production | MMBOE | 32.922 | 32.605 | 34.993 | 33.971 | 31.184
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0279 | 0.0310 | 0.0287 | 0.0260 | 0.0284
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0052 | 0.0066 | 0.0070 | 0.00737 | 0.0077
+Total GHG Intensity | tCO2e/BOE | 0.0331 | 0.0376 | 0.0357 | 0.0334 | 0.0361
+Methane Intensity | tCH4/BOE | 0.000128 | 0.000143 | 0.000121 | 0.000040 | 0.000028
+Flaring Intensity | Sm3/BOE | 3.089 | 3.974 | 2.159 | 1.865 | 2.250
+Methane Intensity per NGSI[5] | wt% | 0.164% | 0.176% | 0.148% | 0.047% | 0.033%
+=== PAGE 35: GB ===
+-- Table 1 --
+GB 2021 2025 TO TOTAL PRODUCTION, GHG, METHANE, FLARE VOLUMES, & INTENSITIES [1] Flare volume based on data provided for GHG emissions. Flaring volume includes both CPF and field flaring. [2] 2025 data on Routine , Non-routine and Safety flaring volumes are associated with CPF activities; classifications does not include field flaring. [3] Total production includes oil, NGL, LPG and gas used for reinjection, artificial lifts, fuel gas, & flares. [4] Saleable Production includes fuel gas export to PK0, crude oil, NGL, and LPG. [5] Methane intensity based on the Natural Gas Sustainability Initiative (NGSI) Methane Intensity Protocol. 35 | Category Unit 2021 2022 2023 2024 2025 GHG Emissions GHG Direct Emissions (Scope 1) MMtCO2e 1.947 2.019 1.951 1.662 1.592 GHG Indirect Emissions (Scope 2) MMtCO2e 0.259 0.301 0.336 0.326 0.317 GHG Emissions (Total Scope 1+ 2) MMtCO2e 2.206 2.320 2.287 1.989 1.909 Methane Emissions Methane Emissions in CH4 tCH4 7124.82 7428.62 6,813.60 2,702.96 1656.69 Methane Emissions in CO2e tCO2e 178,120.46 185715.38 170,340.04 67,573.96 46,387.32 Flare Volume & Emissions Flare Volume[1] MMSm3 196.296 212.767 136.657 132.982 121.488 Routine Flaring[2] MMSm3 100.397 83.367 81.771 77.291 75.538 Non-Routine Flaring[2] MMSm3 3.370 2.682 3.425 46.432 37.282 Safety Flaring[2] MMSm3 94.880 126.718 51.461 6.481 6.525 Flare GHG Emissions MMtCO2e 0.566 0.586 0.372 0.369 0.306 Production & Intensity by Total Production [3] Total Production MMBOE 126.303 132.893 135.890 134.282 130.927 Scope 1 GHG Intensity tCO2e/BOE 0.0154 0.0152 0.0144 0.0124 0.0122 Scope 2 GHG Intensity tCO2e/BOE 0.0021 0.0023 0.0025 0.0024 0.0024 Total GHG Intensity tCO2e/BOE 0.0175 0.0175 0.0168 0.0148 0.0146 Methane Intensity tCH4/BOE 0.000056 0.000056 0.000050 0.000020 0.000013 Flaring Intensity (Total Flare/Total Gas Vol.% 2.25% 2.25% 1.40% 1.32% 1.25% Produced) Production & Intensity by Total Saleable Production [4] Total Saleable Production MMBOE 61.282 63.058 63.766 58.468 56.619 Scope 1 GHG Intensity tCO2e/BOE 0.0318 0.0320 0.0306 0.0284 0.0281 Scope 2 GHG Intensity tCO2e/BOE 0.0042 0.0048 0.0053 0.0056 0.0056 Total GHG Intensity tCO2e/BOE 0.0360 0.0368 0.0359 0.0340 0.0337 Methane Intensity tCH4/BOE 0.000116 0.000118 0.000107 0.000046 0.000029 Flaring Intensity Sm3/BOE 3.203 3.374 2.143 2.274 2.146 Methane Intensity per NGSI[5] wt% 0.165% 0.158% 0.147% 0.072% 0.041% HBNS and El Merk | 2025 GHG & CAP Annual Report
+-- Table 2 --
+Category | Unit | 2021 | 2022 | 2023 | 2024 | 2025
+GHG Emissions |  |  |  |  |  | 
+GHG Direct Emissions (Scope 1) | MMtCO2e | 1.947 | 2.019 | 1.951 | 1.662 | 1.592
+GHG Indirect Emissions (Scope 2) | MMtCO2e | 0.259 | 0.301 | 0.336 | 0.326 | 0.317
+GHG Emissions (Total Scope 1+ 2) | MMtCO2e | 2.206 | 2.320 | 2.287 | 1.989 | 1.909
+Methane Emissions |  |  |  |  |  | 
+Methane Emissions in CH4 | tCH4 | 7124.82 | 7428.62 | 6,813.60 | 2,702.96 | 1656.69
+Methane Emissions in CO2e | tCO2e | 178,120.46 | 185715.38 | 170,340.04 | 67,573.96 | 46,387.32
+Flare Volume & Emissions |  |  |  |  |  | 
+Flare Volume[1] | MMSm3 | 196.296 | 212.767 | 136.657 | 132.982 | 121.488
+Routine Flaring[2] | MMSm3 | 100.397 | 83.367 | 81.771 | 77.291 | 75.538
+Non-Routine Flaring[2] | MMSm3 | 3.370 | 2.682 | 3.425 | 46.432 | 37.282
+Safety Flaring[2] | MMSm3 | 94.880 | 126.718 | 51.461 | 6.481 | 6.525
+Flare GHG Emissions | MMtCO2e | 0.566 | 0.586 | 0.372 | 0.369 | 0.306
+Production & Intensity by Total Production [3] |  |  |  |  |  | 
+Total Production | MMBOE | 126.303 | 132.893 | 135.890 | 134.282 | 130.927
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0154 | 0.0152 | 0.0144 | 0.0124 | 0.0122
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0021 | 0.0023 | 0.0025 | 0.0024 | 0.0024
+Total GHG Intensity | tCO2e/BOE | 0.0175 | 0.0175 | 0.0168 | 0.0148 | 0.0146
+Methane Intensity | tCH4/BOE | 0.000056 | 0.000056 | 0.000050 | 0.000020 | 0.000013
+Flaring Intensity (Total Flare/Total Gas Produced) | Vol.% | 2.25% | 2.25% | 1.40% | 1.32% | 1.25%
+Production & Intensity by Total Saleable Production [4] |  |  |  |  |  | 
+Total Saleable Production | MMBOE | 61.282 | 63.058 | 63.766 | 58.468 | 56.619
+Scope 1 GHG Intensity | tCO2e/BOE | 0.0318 | 0.0320 | 0.0306 | 0.0284 | 0.0281
+Scope 2 GHG Intensity | tCO2e/BOE | 0.0042 | 0.0048 | 0.0053 | 0.0056 | 0.0056
+Total GHG Intensity | tCO2e/BOE | 0.0360 | 0.0368 | 0.0359 | 0.0340 | 0.0337
+Methane Intensity | tCH4/BOE | 0.000116 | 0.000118 | 0.000107 | 0.000046 | 0.000029
+Flaring Intensity | Sm3/BOE | 3.203 | 3.374 | 2.143 | 2.274 | 2.146
+Methane Intensity per NGSI[5] | wt% | 0.165% | 0.158% | 0.147% | 0.072% | 0.041%
+

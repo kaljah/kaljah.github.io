@@ -1,0 +1,58 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\Desktop\H2\new\server\routes\auth.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -31,23 +31,35 @@
+     user_loc = str(user.location).strip() if user.location else ""
+     if user_loc and not is_unrestricted_location(user_loc):
+         defaults["region"] = user_loc
+-        fac = (
+-            Facility.query.filter(
+-                db.or_(
+-                    Facility.region.ilike(f"%{user_loc}%"),
+-                    Facility.location.ilike(f"%{user_loc}%"),
+-                    Facility.name.ilike(f"%{user_loc}%"),
+-                )
+-            )
+-            .order_by(Facility.division.isnot(None).desc(), Facility.id.desc())
+-            .first()
+-        )
+-        if fac:
+-            defaults["region"] = fac.region or fac.location or user_loc
+-            defaults["division"] = fac.division
+-            defaults["activity"] = fac.activity
+-            defaults["facility_id"] = str(fac.id)
+-            defaults["facility_name"] = fac.name
++        try:
++            with db.session.no_autoflush:
++                fac = (
++                    db.session.query(
++                        Facility.id,
++                        Facility.name,
++                        Facility.region,
++                        Facility.location,
++                        Facility.division,
++                        Facility.activity,
++                    )
++                    .filter(
++                        db.or_(
++                            Facility.region.ilike(f"%{user_loc}%"),
++                            Facility.location.ilike(f"%{user_loc}%"),
++                            Facility.name.ilike(f"%{user_loc}%"),
++                        )
++                    )
++                    .order_by(Facility.division.isnot(None).desc(), Facility.id.desc())
++                    .first()
++                )
++                if fac:
++                    defaults["region"] = fac.region or fac.location or user_loc
++                    defaults["division"] = fac.division
++                    defaults["activity"] = fac.activity
++                    defaults["facility_id"] = str(fac.id)
++                    defaults["facility_name"] = fac.name
++        except Exception:
++            defaults["region"] = user_loc
+ 
+     return defaults
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

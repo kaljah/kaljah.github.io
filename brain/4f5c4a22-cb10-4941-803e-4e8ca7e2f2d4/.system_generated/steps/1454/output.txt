@@ -1,0 +1,23 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\dispatcher.py:43:            "completions": CompletionFlowbackCalculator(),
+new\server\calculations\dispatcher.py:530:            elif process_type == "completions":
+new\server\calculations\legacy_engine.py:315:    def calculate_completions(self, duration, rate, eff):
+new\server\calculations\legacy_engine.py:385:    elif process == "well completions":
+new\server\calculations\legacy_engine.py:386:        process = "completions"
+new\server\calculations\legacy_engine.py:433:        # BUG-15/16 FIX: handle None results from CH4-only calculators 
+(e.g. MudDegassing, Completions)
+new\server\calculations\legacy_engine.py:491:        if process == "completions":
+new\server\calculations\legacy_engine.py:496:            res = ghg_calc.calculate_completions(dur, rate, eff_pct / 
+100.0)
+new\server\calculations\legacy_engine.py:500:            return em, "server_completions_calc"
+new\server\calculations\legacy_engine.py:887:    elif process in ["completions", "unloading"]:
+new\server\calculations\uncertainty.py:117:    "completions": "vented",
+new\server\calculations\vented.py:3:Implementation of equations for mud degassing, completions, liquids unloading, 
+new\server\calculations\vented.py:189:        API Compendium 2021 �6.3 & EPA Subpart W �98.233(c) Completions & 
+Workovers Flowback:
+
+
+

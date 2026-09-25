@@ -1,0 +1,27 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -270,11 +270,16 @@
+             "flare",
+             "separation",
+         ]:
+-            if factor_source == "specific" and (
+-                flat_inputs.get("specific_factors")
+-                or flat_inputs.get("specificFactors")
+-            ):
+-                if flat_inputs.get("c1") in [None, "", "-"]:
++            spec = flat_inputs.get("specific_factors") or flat_inputs.get("specificFactors")
++            has_spec = isinstance(spec, dict) and any(
++                str(v).strip() not in [None, "", "-"]
++                for k, v in spec.items()
++                if not k.endswith("Unit")
++            )
++            if factor_source == "specific" and has_spec:
++                has_ef = bool(spec.get("co2") or spec.get("ch4"))
++                c1_val = flat_inputs.get("c1") or flat_inputs.get("ch4_content") or flat_inputs.get("gas_ch4_content")
++                if not has_ef and c1_val in [None, "", "-"]:
+                     raise ValueError(
+                         "Missing required gas composition (C1 mole fraction) for Tier 3 specific calculation"
+                     )
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

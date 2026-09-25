@@ -1,0 +1,8 @@
+
+The command exited with code 0.
+Output:
+Login a status: 200
+User a role: admin
+Login z status: 200
+User z role: it_manager
+

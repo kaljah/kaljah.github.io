@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+new/server/app.py:333:                "email": "a@a",
+new/server/restore_full_data.py:186:        # 1. Ensure user a, a@a, z, z@z exist
+new/server/restore_full_data.py:209:        user_aa = User.query.filter_by(email="a@a").first()
+new/server/restore_full_data.py:214:                email="a@a",
+new/server/restore_full_data.py:480:        print("[SUCCESS] All operational data, facilities, Scope 1, 2, 3 emissions, production data, and SBTi targets restored successfully for user 'a@a'!")
+new/server/routes/auth.py:349:        if email_input.lower() in ["a", "a@a"]:
+new/server/routes/auth.py:350:            user = User.query.filter(User.email.in_(["a", "a@a"])).first()
+new/server/seed_admin.py:50:                "email": "a@a",
+new/server/tests/test_production_smoke.py:121:    """SMOKE-10: Insecure hard-coded dev accounts (a@a, a) do not exist."""
+new/server/tests/test_production_smoke.py:123:    for email in ["a@a", "a"]:
+new/server/tests/test_security_hardening.py:4:  - Hard-coded dev accounts (a@a, a) are not auto-created
+new/server/tests/test_security_hardening.py:34:    SECURITY REGRESSION (CRIT-02): The 'a@a' dev shortcut account must not be
+new/server/tests/test_security_hardening.py:39:        user = User.query.filter_by(email="a@a").first()
+new/server/tests/test_security_hardening.py:41:            "SECURITY FAILURE: Account 'a@a' exists in the database. "
+new/server/tests/test_security_hardening.py:42:            "Hard-coded dev credential 'a@a'/'a' must never be auto-seeded."
+

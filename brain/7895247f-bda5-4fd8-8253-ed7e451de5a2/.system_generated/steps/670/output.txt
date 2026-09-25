@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\utils\ModernReportGenerator.js:1141:      ["Flaring Intensity (% Gross Gas)", 
+`${flareIntensityVal.toFixed(3)}%`, "= 1.00%", "Executive Decree 21-330 Art. 9", isCompliantFlare ? "COMPLIANT (PASS)" 
+: "EXCEEDED"],
+new\client\src\utils\ModernReportGenerator.js:1239:      ["Flaring Intensity (Gas Ratio)", 
+`${flareIntensityVal.toFixed(3)} vol.%`, "Executive Decree 21-330 Art. 9", "COMPLIANT with = 1.00% statutory ceiling"],
+new\client\src\utils\ModernReportGenerator.js:1463:      [{ content: "Decree 21-330 Status", styles: { fontStyle: 
+"bold" } }, { content: "Limit: =1.00%", styles: { fontStyle: "bold" } }, { content: "Exceeded", styles: { fontStyle: 
+"bold" } }, { content: "Exceeded", styles: { fontStyle: "bold" } }, { content: "Exceeded", styles: { fontStyle: "bold" 
+} }, { content: "Exceeded", styles: { fontStyle: "bold" } }, { content: "COMPLIANT", styles: { fontStyle: "bold", 
+textColor: [16, 185, 129] } }],
+
+
+

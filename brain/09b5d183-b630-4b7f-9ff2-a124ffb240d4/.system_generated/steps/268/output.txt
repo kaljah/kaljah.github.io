@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+(node:24716) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Connected to CDP browser: [<BrowserContext browser=<Browser type=<BrowserType name=chromium executable_path=C:\Users\samsung\AppData\Local\ms-playwright\chromium-1208\chrome-win64\chrome.exe> version=153.0.8010.53>>]
+Open pages: 1
+Page title: Carbon Tech URL: http://localhost:5173/login
+

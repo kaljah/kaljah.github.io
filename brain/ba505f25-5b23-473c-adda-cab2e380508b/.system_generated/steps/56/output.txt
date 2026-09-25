@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":40,"LineContent":"  if ([\"it_admin\", \"it_manager\", \"it\"].includes(user.role)) return \u003cNavigate to=\"/user-management\" /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":48,"LineContent":"  if (![\"it_admin\", \"it_manager\", \"it\"].includes(user.role)) return \u003cNavigate to=\"/\" /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":56,"LineContent":"  if (user.role !== \"admin\") return \u003cNavigate to=\"/\" /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":64,"LineContent":"  if (![\"admin\", \"superuser\"].includes(user.role)) return \u003cNavigate to=\"/\" /\u003e;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":72,"LineContent":"  if (![\"admin\", \"superuser\", \"it_admin\", \"it_manager\"].includes(user.role))"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\userDefaults.js","LineNumber":80,"LineContent":"  const isUnrestricted = isUnrestrictedLocation(userLocation) \u0026\u0026 user.role === 'admin';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":668,"LineContent":"        const isGlobalAdmin = user.role === 'admin' \u0026\u0026 isUnrestrictedLocation(userLoc);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\SbtiDashboard.jsx","LineNumber":144,"LineContent":"    if (!user || (user.role !== \"admin\" \u0026\u0026 user.role !== \"superuser\")) {"}

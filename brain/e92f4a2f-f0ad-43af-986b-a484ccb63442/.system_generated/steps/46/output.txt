@@ -1,0 +1,194 @@
+
+The command exited with code 0.
+Output:
+commit 9a69efc85c965c20a4a168330299c82bb54c26b7
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sun Sep 20 15:49:52 2026 +0200
+
+    y
+
+A	docs/calculation-specification.md
+A	docs/validation-report.md
+A	docs/validation/FINAL_VALIDATION_REPORT.md
+A	docs/validation/HUMAN_REVIEW_REQUIRED.md
+A	docs/validation/calculation-inventory.md
+A	docs/validation/methodology-matrix.md
+A	docs/validation/repository-audit.md
+A	docs/validation/unit-and-dimensional-analysis.md
+M	graphify-out/.graphify_labels.json
+M	graphify-out/.graphify_labels.json.sig
+A	graphify-out/2026-09-20/.graphify_analysis.json
+A	graphify-out/2026-09-20/.graphify_labels.json
+A	graphify-out/2026-09-20/.graphify_semantic_marker
+A	graphify-out/2026-09-20/GRAPH_REPORT.md
+A	graphify-out/2026-09-20/graph.json
+A	graphify-out/2026-09-20/manifest.json
+M	graphify-out/GRAPH_REPORT.md
+M	graphify-out/graph.html
+M	graphify-out/graph.json
+M	graphify-out/manifest.json
+M	new/client/src/App.jsx
+M	new/client/src/components/layout/Sidebar.jsx
+M	new/client/src/components/scope1/DehydratorForm.jsx
+M	new/client/src/constants.js
+M	new/client/src/pages/ManageData.jsx
+M	new/client/src/pages/Reports.jsx
+M	new/client/src/pages/UserManagement.jsx
+M	new/client/src/utils/ModernReportGenerator.js
+M	new/client/stats.html
+M	new/server/app.py
+M	new/server/calculations/dispatcher.py
+M	new/server/calculations/midstream.py
+M	new/server/models.py
+M	new/server/pytest.ini
+M	new/server/routes/auth.py
+M	new/server/routes/custom_factors.py
+M	new/server/routes/emissions.py
+M	new/server/routes/facilities.py
+M	new/server/routes/managedata.py
+M	new/server/routes/reports.py
+M	new/server/routes/scope2.py
+M	new/server/routes/scope3.py
+A	new/server/tests/test_aggregation_reconciliation.py
+M	new/server/tests/test_audit_remediation.py
+A	new/server/tests/test_battery_compressor_fugitives_equipment.py
+A	new/server/tests/test_battery_concurrency_stress_invariants.py
+A	new/server/tests/test_battery_gwp_horizons_regulatory.py
+A	new/server/tests/test_battery_midstream_process_equipment.py
+A	new/server/tests/test_battery_statistical_anomaly_detection.py
+A	new/server/tests/test_battery_stoichiometry_indirect_energy.py
+A	new/server/tests/test_boundary_and_negative.py
+A	new/server/tests/test_emission_factor_selection.py
+A	new/server/tests/test_golden_dataset_validation.py
+A	new/server/tests/test_independent_differential.py
+M	new/server/tests/test_it_role_security.py
+M	new/server/tests/test_operational_defaults.py
+A	new/server/tests/test_property_invariants.py
+M	new/server/tests/test_stress_memory_leaks.py
+M	new/server/tests/test_stress_volume_analytics.py
+A	new/server/tests/test_unit_conversions_exhaustive.py
+M	new/server/utils.py
+A	pytest.ini
+A	validation/__init__.py
+A	validation/expected_results/expected_results.json
+A	validation/expected_results/export_expected.py
+A	validation/golden_dataset/__init__.py
+A	validation/golden_dataset/dataset_generator.py
+A	validation/golden_dataset/golden_cases.json
+A	validation/mutation/test_calculation_mutations.py
+A	validation/reference_model/__init__.py
+A	validation/reference_model/aggregation_intensity.py
+A	validation/reference_model/combustion_flaring.py
+A	validation/reference_model/fugitives.py
+A	validation/reference_model/gwp.py
+A	validation/reference_model/midstream.py
+A	validation/reference_model/ogmp.py
+A	validation/reference_model/scope2.py
+A	validation/reference_model/scope3.py
+A	validation/reference_model/uncertainty.py
+A	validation/reference_model/unit_conversions.py
+A	validation/reference_model/vented_processes.py
+A	validation/regression/__init__.py
+A	validation/regression/test_regression_archive.py
+A	validation/scripts/run_full_validation_suite.py
+A	validation/test_cases/test_definitions.py
+
+commit e750f7761deed6c1edff2fa833c293905396efc9
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sun Sep 20 00:36:04 2026 +0200
+
+    j
+
+M	graphify-out/.graphify_labels.json
+M	graphify-out/.graphify_labels.json.sig
+A	graphify-out/2026-09-19/.graphify_analysis.json
+A	graphify-out/2026-09-19/.graphify_labels.json
+A	graphify-out/2026-09-19/.graphify_semantic_marker
+A	graphify-out/2026-09-19/GRAPH_REPORT.md
+A	graphify-out/2026-09-19/graph.json
+A	graphify-out/2026-09-19/manifest.json
+M	graphify-out/GRAPH_REPORT.md
+M	graphify-out/graph.html
+M	graphify-out/graph.json
+M	graphify-out/manifest.json
+M	new/client/src/App.jsx
+M	new/client/src/components/BatchReviewWizard.jsx
+M	new/client/src/components/CustomDropdown.css
+M	new/client/src/components/CustomDropdown.jsx
+A	new/client/src/components/Drawer.css
+A	new/client/src/components/Drawer.jsx
+M	new/client/src/components/MultiSelectDropdown.jsx
+M	new/client/src/components/Scope1Form.jsx
+M	new/client/src/components/Scope2Form.jsx
+M	new/client/src/components/Scope3Form.jsx
+M	new/client/src/components/layout/Layout.css
+M	new/client/src/components/layout/Layout.jsx
+M	new/client/src/components/layout/Sidebar.css
+M	new/client/src/components/layout/Sidebar.jsx
+M	new/client/src/components/layout/TopBar.css
+M	new/client/src/components/layout/TopBar.jsx
+M	new/client/src/context/LayoutContext.jsx
+M	new/client/src/index.css
+M	new/client/src/pages/CarbonIntensity.jsx
+M	new/client/src/pages/Dashboard.css
+M	new/client/src/pages/DashboardEnhanced.jsx
+M	new/client/src/pages/Emissions.css
+M	new/client/src/pages/ManageData.css
+M	new/client/src/pages/ManageData.jsx
+M	new/client/src/pages/MethaneExplorer.jsx
+M	new/client/src/pages/MethaneIntensity.jsx
+M	new/client/src/pages/QADashboard.css
+M	new/client/src/pages/QADashboard.jsx
+M	new/client/src/pages/Reports.jsx
+M	new/client/src/pages/UncertaintyAssessment.jsx
+M	new/client/src/pages/UserManagement.jsx
+A	new/client/src/utils/userDefaults.js
+M	new/client/stats.html
+M	new/server/app.py
+M	new/server/routes/auth.py
+M	new/server/routes/custom_factors.py
+M	new/server/routes/dashboard.py
+M	new/server/routes/emissions.py
+M	new/server/routes/facilities.py
+M	new/server/routes/managedata.py
+M	new/server/routes/qaqc.py
+M	new/server/routes/reports.py
+M	new/server/routes/scope2.py
+M	new/server/routes/scope3.py
+M	new/server/seed_admin.py
+A	new/server/tests/test_it_role_security.py
+A	new/server/tests/test_operational_defaults.py
+M	new/server/tests/test_qaqc_diagnostics.py
+A	new/server/tests/test_user_profile_update.py
+M	new/server/utils.py
+
+commit 0ecab4b4940afd121f40f8e283a62b2d38cfb6c9
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 16:31:35 2026 +0200
+
+    5
+
+M	new/client/src/App.jsx
+M	new/client/stats.html
+M	new/server/app.py
+M	new/server/config.py
+
+commit 769b80bd37e02ae68e4a2019577293d40cc966f3
+Author: ramzi <ramzibirdman@gmail.com>
+Date:   Sat Sep 19 16:16:37 2026 +0200
+
+    a
+
+A	.python-version
+A	new/server/.python-version
+M	new/server/requirements.txt
+
+commit ff4c366bc0f08049f2255c79c2f1bc03c4550d6a
+Merge: bf852d3 393817f
+Author: kaljah <148354441+kaljah@users.noreply.github.com>
+Date:   Sat Sep 19 16:04:13 2026 +0200
+
+    Merge pull request #1 from kaljah/fix/audit-remediation
+    
+    hFix/audit remediation
+

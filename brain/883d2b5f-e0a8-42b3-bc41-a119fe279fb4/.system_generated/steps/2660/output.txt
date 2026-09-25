@@ -1,0 +1,140 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\units.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -116,6 +116,10 @@
+         return max(0.0, (v * 14.5038) + atmospheric_psia)
+     elif u in ["bar", "bara"]:
+         return max(0.0, v * 14.5038)
++    elif u in ["mbarg", "mbar_g"]:
++        return max(0.0, (v * 0.0145038) + atmospheric_psia)
++    elif u in ["mbar", "mbara"]:
++        return max(0.0, v * 0.0145038)
+     elif u in ["kpag", "kpa_g"]:
+         return max(0.0, (v * 0.145038) + atmospheric_psia)
+     elif u in ["kpa", "kpaa"]:
+@@ -122,3 +122,11 @@
++    elif u in ["mpag", "mpa_g"]:
++        return max(0.0, (v * 145.0377) + atmospheric_psia)
++    elif u in ["mpa", "mpaa"]:
++        return max(0.0, v * 145.0377)
++    elif u in ["pa", "paa"]:
++        return max(0.0, v * 0.000145038)
++    elif u in ["pag", "pa_g"]:
++        return max(0.0, (v * 0.000145038) + atmospheric_psia)
+     elif u in ["atm"]:
+         return max(0.0, v * STD_PRESSURE_PSIA)
+     return max(0.0, v + atmospheric_psia)
+@@ -162,18 +162,102 @@
+     return vol * p_factor * t_factor * (1.0 / z)
+ 
+ 
++VOLUME_UNITS_TO_M3 = {
++    "m3": 1.0,
++    "m³": 1.0,
++    "cubic_meter": 1.0,
++    "cubic_meters": 1.0,
++    "scf": 0.028316846592,
++    "cf": 0.028316846592,
++    "ft3": 0.028316846592,
++    "mscf": 28.316846592,
++    "mcf": 28.316846592,
++    "mmscf": 28316.846592,
++    "bbl": 0.158987295,
++    "barrel": 0.158987295,
++    "barrels": 0.158987295,
++    "gal": 0.003785411784,
++    "gallon": 0.003785411784,
++    "gallons": 0.003785411784,
++    "l": 0.001,
++    "liter": 0.001,
++    "liters": 0.001,
++}
++
++MASS_UNITS_TO_KG = {
++    "kg": 1.0,
++    "kgs": 1.0,
++    "kilogram": 1.0,
++    "kilograms": 1.0,
++    "g": 0.001,
++    "gram": 0.001,
++    "grams": 0.001,
++    "tonne": 1000.0,
++    "tonnes": 1000.0,
++    "metric_ton": 1000.0,
++    "metric_tons": 1000.0,
++    "mt": 1000.0,
++    "t": 1000.0,
++    "lb": 0.45359237,
++    "lbs": 0.45359237,
++    "pound": 0.45359237,
++    "pounds": 0.45359237,
++    "ton": 907.18474,
++    "tons": 907.18474,
++    "short_ton": 907.18474,
++    "short_tons": 907.18474,
++    "us_ton": 907.18474,
++    "long_ton": 1016.0469088,
++    "long_tons": 1016.0469088,
++}
++
++ENERGY_UNITS_TO_MJ = {
++    "mj": 1.0,
++    "megajoule": 1.0,
++    "megajoules": 1.0,
++    "kj": 0.001,
++    "kilojoule": 0.001,
++    "kilojoules": 0.001,
++    "gj": 1000.0,
++    "gigajoule": 1000.0,
++    "gigajoules": 1000.0,
++    "btu": 0.00105505585262,
++    "btus": 0.00105505585262,
++    "mmbtu": 1055.05585262,
++    "mm_btu": 1055.05585262,
++    "kwh": 3.6,
++    "kilowatt_hour": 3.6,
++    "mwh": 3600.0,
++    "megawatt_hour": 3600.0,
++    "therm": 105.4804,
++    "therms": 105.4804,
++}
++
++
+ def convert(value, from_unit, to_unit):
+-    """Simple unit conversion wrapper."""
+-    if from_unit == to_unit:
+-        return value
+-    key = f"{from_unit}_to_{to_unit}"
++    """Simple unit conversion wrapper supporting direct keys and dimensional base units."""
++    if value is None:
++        return 0.0
++    val = float(value)
++    u_from = str(from_unit).strip().lower()
++    u_to = str(to_unit).strip().lower()
++    if u_from == u_to:
++        return val
++
++    # Direct / reverse lookup in legacy CONVERSIONS
++    key = f"{u_from}_to_{u_to}"
+     if key in CONVERSIONS:
+-        return value * CONVERSIONS[key]
+-
+-    # Reverse conversion
+-    rev_key = f"{to_unit}_to_{from_unit}"
++        return val * CONVERSIONS[key]
++
++    rev_key = f"{u_to}_to_{u_from}"
+     if rev_key in CONVERSIONS:
+-        return value / CONVERSIONS[rev_key]
++        return val / CONVERSIONS[rev_key]
++
++    # Dimensional base-unit conversions
++    for dim_map in [VOLUME_UNITS_TO_M3, MASS_UNITS_TO_KG, ENERGY_UNITS_TO_MJ]:
++        if u_from in dim_map and u_to in dim_map:
++            val_base = val * dim_map[u_from]
++            return val_base / dim_map[u_to]
+ 
+     raise ValueError(f"Unsupported conversion: {from_unit} to {to_unit}")
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

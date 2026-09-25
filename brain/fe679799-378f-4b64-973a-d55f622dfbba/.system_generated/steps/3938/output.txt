@@ -1,0 +1,26 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\components\Scope1Form.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -197,7 +197,11 @@
+   useEffect(() => {
+     if (!processType) return;
+ 
+-    if (sourceType === "default" || sourceType === "specific") {
++    if (
++      sourceType === "default" ||
++      sourceType === "specific" ||
++      (sourceType === "custom" && tier2Mode === "override")
++    ) {
+       const options = Object.keys(API_FACTORS)
+         .filter((key) => {
+           const factor = API_FACTORS[key];
+@@ -236,6 +236,7 @@
+   }, [
+     processType,
+     sourceType,
++    tier2Mode,
+     customFactors,
+     streamType,
+     formData.fugitive_method,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

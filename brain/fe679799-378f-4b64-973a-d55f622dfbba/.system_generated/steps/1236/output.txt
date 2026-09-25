@@ -1,0 +1,17 @@
+
+Encountered error in step execution: context canceled
+Output:
+================================================================================
+STARTING EXHAUSTIVE MANAGE DATA FRONTEND BROWSER AUDIT
+================================================================================
+[CDP] Connecting to Chrome on port 9222...
+(node:18548) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[Step 1] Navigating to /login...
+  Filling login form as admin...
+  Current URL: http://localhost:5173/
+
+[Step 2] Navigating to /manage-data...
+  Manage Data container loaded successfully.
+

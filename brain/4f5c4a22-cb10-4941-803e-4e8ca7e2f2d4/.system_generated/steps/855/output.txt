@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -466,8 +466,8 @@
+       await ef.setup();
+       await page.waitForTimeout(300);
+ 
+-      // 4. Fill uncertainties (Meter ±2.5%, GC ±1.8%, User CO2 ±3%, CH4 ±5%, N2O ±7%)
+-      const meterUnc = page.locator('div:has-text("Meter Calibration Tolerance") input.mole-input, input[placeholder="2.0"]').first();
++      // 4. Fill uncertainties (Meter ±2.5%, GC ±1.8%)
++      const meterUnc = page.locator('input[placeholder="2.0"]').first();
+       if (await meterUnc.isVisible().catch(() => false)) {
+         await meterUnc.fill('2.5');
+       }
+@@ -474,4 +474,4 @@
+-      const gcUnc = page.locator('div:has-text("GC Analytical Precision") input.mole-input, input[placeholder="Opt."]').first();
++      const gcUnc = page.locator('input[placeholder="Opt."]').first();
+       if (await gcUnc.isVisible().catch(() => false)) {
+         await gcUnc.fill('1.8');
+       }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

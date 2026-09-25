@@ -1,0 +1,21 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -371,6 +371,7 @@
+         """Proves that dispatcher.dispatch rejects NaN and Inf quantities."""
+         with pytest.raises(ValueError, match="cannot be NaN or Infinite"):
+             dispatcher.dispatch(
++                process_type="stationary_combustion",
+                 inputs={
+                     "process_type": "stationary_combustion",
+                     "fuel": "Diesel",
+@@ -383,6 +383,7 @@
+ 
+         with pytest.raises(ValueError, match="cannot be NaN or Infinite"):
+             dispatcher.dispatch(
++                process_type="stationary_combustion",
+                 inputs={
+                     "process_type": "stationary_combustion",
+                     "fuel": "Diesel",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

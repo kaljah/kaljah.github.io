@@ -1,0 +1,47 @@
+
+The command exited with code 0.
+Output:
+================================================================================
+STARTING FULL API HEALTH & RESILIENCE AUDIT
+Target Base URL: http://127.0.0.1:5000
+================================================================================
+
+[Step 1] Checking Core Health Endpoint...
+GET /api/health -> Status: 200 (8.7ms), Body: {"status":"ok","version":"1.0.0"}
+
+[Step 2] Fetching CSRF Token...
+CSRF Token obtained: YES
+
+[Step 3] Authenticating Admin Session...
+POST /api/auth/login -> Status: 200, User: admin@ghg.com
+
+[Step 4] Enumerating all registered API endpoints...
+Discovered 166 API route rules in Flask.
+
+================================================================================
+PROBING UNAUTHENTICATED SECURITY BOUNDARIES & RBAC INTEGRITY
+================================================================================
+  [Unauth Probe] GET  /api/auth/me              -> Status: 200 (FAILED)
+  [Unauth Probe] GET  /api/emissions/           -> Status: 401 (SECURE)
+  [Unauth Probe] GET  /api/facilities           -> Status: 401 (SECURE)
+  [Unauth Probe] GET  /api/dashboard/summary    -> Status: 401 (SECURE)
+  [Unauth Probe] POST /api/reports/generate     -> Status: 400 (FAILED)
+  [Unauth Probe] GET  /api/audit/logs           -> Status: 404 (FAILED)
+
+================================================================================
+API HEALTH AUDIT RESULTS SUMMARY
+================================================================================
+Total API Endpoints / Methods Tested: 171
+Healthy (Status < 500):               171 / 171 (100.0%)
+Failed (500 Server Crash):            0
+Unauthenticated Security Probes:      3 / 6 protected endpoints verified
+Latency Profile:                      Avg: 83.1ms | Min: 4.7ms | Max: 6735.0ms
+
+HTTP Status Code Distribution:
+  HTTP 200: 76 endpoints
+  HTTP 400: 90 endpoints
+  HTTP 403: 2 endpoints
+  HTTP 404: 3 endpoints
+
+ALL ENDPOINTS HEALTHY! Zero unhandled server crashes detected across all APIs.
+

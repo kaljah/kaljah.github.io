@@ -1,0 +1,38 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\pages\DashboardEnhanced.jsx:208:        setPendingCount(batch.pending_stats.count || 0);
+new\client\src\pages\DashboardEnhanced.jsx:209:        setPendingCo2e(batch.pending_stats.totalCo2e || 0);
+new\client\src\pages\DashboardEnhanced.jsx:572:          value: Number((stats.combustion ?? 0).toFixed(2)),
+new\client\src\pages\DashboardEnhanced.jsx:577:          value: Number((stats.flaring ?? 0).toFixed(2)),
+new\client\src\pages\DashboardEnhanced.jsx:582:          value: Number((stats.venting ?? 0).toFixed(2)),
+new\client\src\pages\DashboardEnhanced.jsx:587:          value: Number((stats.other ?? 0).toFixed(2)),
+new\client\src\pages\DashboardEnhanced.jsx:916:        {!loading && stats.totalEmissions === 0 && stats.netEmissions 
+=== 0 && stats.scope3 === 0 && trendData.length === 0 && (
+new\client\src\pages\DashboardEnhanced.jsx:1105:                  {formatCompactNumber(stats.totalEmissions)}
+new\client\src\pages\DashboardEnhanced.jsx:1120:                      stats.totalEmissions / goal.target_amount > 1
+new\client\src\pages\DashboardEnhanced.jsx:1122:                        : stats.totalEmissions / goal.target_amount > 
+0.9
+new\client\src\pages\DashboardEnhanced.jsx:1128:                      (stats.totalEmissions / goal.target_amount) *
+new\client\src\pages\DashboardEnhanced.jsx:1141:                  {formatCompactNumber(stats.netEmissions)}
+new\client\src\pages\DashboardEnhanced.jsx:1148:                  {formatCompactNumber(stats.mitigation)}
+new\client\src\pages\DashboardEnhanced.jsx:1158:                  {formatCompactNumber(stats.methaneEmissions)}
+new\client\src\pages\DashboardEnhanced.jsx:1170:                    color: !hasProductionData && stats.totalEmissions 
+> 0 ? "#f59e0b" : "#8b5cf6",
+new\client\src\pages\DashboardEnhanced.jsx:1171:                    fontSize: !hasProductionData && 
+stats.totalEmissions > 0 ? "1.25rem" : undefined,
+new\client\src\pages\DashboardEnhanced.jsx:1174:                  {!hasProductionData && stats.totalEmissions > 0 ? 
+"Pending" : formatCompactNumber(intensity, 2)}
+new\client\src\pages\DashboardEnhanced.jsx:1177:                  {!hasProductionData && stats.totalEmissions > 0 ? 
+"Production" : "kg/BOE"}
+new\client\src\pages\DashboardEnhanced.jsx:1188:                {!hasProductionData && stats.totalEmissions > 0 ? (
+new\client\src\pages\DashboardEnhanced.jsx:1201:                {formatCompactNumber(stats.scope1)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1207:                {formatCompactNumber(stats.scope2)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1213:                {formatCompactNumber(stats.scope3)} tCO�e
+new\client\src\pages\DashboardEnhanced.jsx:1553:                          {formatCompactNumber(stats.scope1)}
+new\client\src\pages\DashboardEnhanced.jsx:1559:                          {formatCompactNumber(stats.combustion)}
+new\client\src\pages\DashboardEnhanced.jsx:1565:                          {formatCompactNumber(stats.flaring)}
+
+
+

@@ -1,0 +1,60 @@
+
+The command exited with code 0.
+Output:
+                    _process_file_thread,
+                    app,
+                    jid,
+                    filepath,
+                    f"stress_data_{jid}.csv",
+                    user_id,
+                    "default",
+                    {},
+                    1,
+                    False,
+                )
+                futures.append(f)
+    
+            # Wait for all thread jobs to finish execution
+            for f in concurrent.futures.as_completed(futures):
+                f.result()
+    
+        total_elapsed = time.perf_counter() - t_start
+    
+        # Verify job statuses and outcomes
+        completed_count = 0
+        total_ingested_rows = 0
+        with upload_jobs_lock:
+            for jid in job_ids:
+                job = upload_jobs.get(jid, {})
+>               assert job.get("status") == "completed", f"Job {jid} failed: {job.get('errors')}"
+E               AssertionError: Job stress_job_4_1790171819741 failed: ['Fatal error: (sqlite3.InterfaceError) bad parameter or other API misuse\n[SQL: INSERT INTO emissions (record_id, year, month, group_name, equipment_id, process_type, fuel_type, quantity, unit, factor_source, ef_used_co2, ef_used_ch4, ef_used_n2o, ef_used_co, co2_emissions, ch4_emissions, n2o_emissions, co_emissions, co2e_total, co2_biogenic, combustion_efficiency, uncertainty, uncertainty_ch4, uncertainty_n2o, status, facility_id, activity, division, region, field, calc_method, ogmp_level, gwp_version, source_payload, created_by, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]\n[parameters: (\'7c4b5546-855f-4ca6-87ea-df87f738c8d8\', 2024, 9, \'\', \'\', \'combustion\', \'Natural Gas\', 308.0, \'m3\', \'gases\', 53.06, 0.001, 0.0001, 0.0, 0.58867237402512, 1.1094466152e-05, 1.1094466152e-06, 0.0, 0.5892770224304039, 0.0, 0.0, 0.05590169943749475, 0.1118033988749895, 0.1118033988749895, \'Pending\', 17, \'Gathering\', \'Production\', \'South\', \'Gas Field\', \'Stationary Combustion\', 3, \'AR5\', \'{"year": 2024, "month": 9, "facility_id": 17, "process_type": "combustion", "fuel": "Natural Gas", "amount": 308.0, "unit": "m3", "factor_source": "d ... (85 characters truncated) ... ", "factorsource": "default", "facility_name": "Bulk Pipeline Hub", "factor_type": "default", "ch4_content": 85.0, "co2_content": 2.0, "hhv": 1020.0}\', 38, \'2026-09-23 13:57:00.227539\')]\n(Background on this error at: https://sqlalche.me/e/20/rvf5)']
+E               assert 'error' == 'completed'
+E                 
+E                 - completed
+E                 + error
+
+new\server\tests\test_stress_bulk_pipeline.py:147: AssertionError
+---------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+Traceback (most recent call last):
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.InterfaceError: bad parameter or other API misuse
+  File "C:\Users\samsung\anaconda3\Lib\site-packages\sqlalchemy\engine\default.py", line 924, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.InterfaceError: bad parameter or other API misuse
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+
+

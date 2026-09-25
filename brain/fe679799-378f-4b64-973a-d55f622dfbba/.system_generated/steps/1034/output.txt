@@ -1,0 +1,8 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":302,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":319,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":389,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":548,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":590,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":627,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":684,"LineContent":"    if user and user.role == 'it_admin':"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\data.py","LineNumber":792,"LineContent":"    if user and user.role == 'it_admin':"}

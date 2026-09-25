@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm\agent_02_seed_db.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -16,11 +16,11 @@
+ OUTPUT_DIR = r"c:\Users\samsung\Desktop\H2\new\test_results\bug_swarm"
+ 
+ ACCOUNTS = [
+-    {"fullName": "Test Admin",     "email": "test_admin@ghg-test.com",     "password": "TestAdmin#2026!",   "role": "admin"},
+-    {"fullName": "Test Superuser", "email": "test_superuser@ghg-test.com", "password": "TestSuper#2026!",   "role": "superuser"},
+-    {"fullName": "Test User",      "email": "test_user@ghg-test.com",      "password": "TestUser#2026!",    "role": "user"},
+-    {"fullName": "Test IT Admin",  "email": "test_itadmin@ghg-test.com",   "password": "TestIT#2026!",      "role": "it_admin"},
+-    {"fullName": "Test Viewer",    "email": "test_viewer@ghg-test.com",    "password": "TestViewer#2026!",  "role": "viewer"},
++    {"fullName": "Test Admin",     "email": "test_admin@ghg-test.com",     "password": "TestAdmin#2026!",   "role": "admin", "location": "Global"},
++    {"fullName": "Test Superuser", "email": "test_superuser@ghg-test.com", "password": "TestSuper#2026!",   "role": "superuser", "location": "West"},
++    {"fullName": "Test User",      "email": "test_user@ghg-test.com",      "password": "TestUser#2026!",    "role": "user", "location": "West"},
++    {"fullName": "Test IT Admin",  "email": "test_itadmin@ghg-test.com",   "password": "TestIT#2026!",      "role": "it_admin", "location": "Global"},
++    {"fullName": "Test IT Manager","email": "test_itmanager@ghg-test.com", "password": "TestITMgr#2026!",   "role": "it_manager", "location": "Global"},
+ ]
+ 
+ # Valid roles per source code (ROLE_RANK in auth.py)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

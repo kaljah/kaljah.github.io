@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\app.py","LineNumber":362,"LineContent":"def init_admin_route():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":31,"LineContent":"        it_admin_email = os.environ.get(\"IT_ADMIN_EMAIL\", \"itadmin@ghg.com\").strip().lower()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":32,"LineContent":"        it_admin_password = os.environ.get(\"IT_ADMIN_PASSWORD\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":35,"LineContent":"        if is_production and (not admin_password or not it_admin_password):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":44,"LineContent":"        if not it_admin_password:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":45,"LineContent":"            it_admin_password = \"ChangeMeITAdmin2026!\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":60,"LineContent":"                \"email\": it_admin_email,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":61,"LineContent":"                \"password\": it_admin_password,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\seed_admin.py","LineNumber":62,"LineContent":"                \"role\": \"it_admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":24,"LineContent":"    Returns [] for it_admin (zero facility/emission data access)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":31,"LineContent":"    if user.role in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\utils.py","LineNumber":63,"LineContent":"    if not user or user.role in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":92,"LineContent":"                        \"role\": { \"type\": \"string\", \"example\": \"it_admin\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\static\\swagger.json","LineNumber":125,"LineContent":"                    \"role\": { \"type\": \"string\", \"example\": \"it_admin\" },"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":37,"LineContent":"def it_admin_user():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":39,"LineContent":"        user = User.query.filter_by(email=\"it_admin_audit@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":42,"LineContent":"                email=\"it_admin_audit@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":46,"LineContent":"                role=\"it_admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":51,"LineContent":"        return \"it_admin_audit@test.com\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":126,"LineContent":"def test_audit_admin_and_it_admin_authorized(client, admin_user, it_admin_user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit.py","LineNumber":140,"LineContent":"        json={\"email\": it_admin_user, \"password\": \"Password123!\"},"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":57,"LineContent":"def it_admin_user():"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":66,"LineContent":"                role=\"it_admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_calculations_page.py","LineNumber":94,"LineContent":"def test_calculations_rbac_and_it_admin(client, regular_user, it_admin_user):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":21,"LineContent":"        admin = User.query.filter_by(email=\"audit_admin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":24,"LineContent":"                email=\"audit_admin@test.com\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":34,"LineContent":"        it_admin = User.query.filter_by(email=\"audit_itadmin@test.com\").first()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":35,"LineContent":"        if not it_admin:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":36,"LineContent":"            it_admin = User("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":41,"LineContent":"                role=\"it_admin\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":44,"LineContent":"            it_admin.set_password(\"AuditItAdmin123!\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":45,"LineContent":"            db.session.add(it_admin)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":73,"LineContent":"            \"it_admin\": it_admin.id,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":163,"LineContent":"def test_audit_sod_for_it_admin(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":189,"LineContent":"        sess[\"user_id\"] = test_users[\"it_admin\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1041,"LineContent":"    \"\"\"Defect 6: Verify bulk import for Scope 2 \u0026 3 blocks it_admin and enforces allowed_fids.\"\"\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1043,"LineContent":"        sess[\"user_id\"] = test_users[\"it_admin\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1062,"LineContent":"def test_qaqc_maker_checker_and_it_admin_blocked(client, test_users):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1065,"LineContent":"        sess[\"user_id\"] = test_users[\"it_admin\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1101,"LineContent":"        sess[\"user_id\"] = test_users[\"it_admin\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\tests\\test_audit_remediation.py","LineNumber":1236,"LineContent":"        sess[\"user_id\"] = test_users[\"it_admin\"]"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":21,"LineContent":"    if user.role in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\facilities.py","LineNumber":78,"LineContent":"    if not caller or caller.role not in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":140,"LineContent":"def it_admin_required(f):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":156,"LineContent":"        if user.role != \"it_admin\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":179,"LineContent":"        if user.role not in [\"it_admin\", \"it\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":211,"LineContent":"    NOTE: it_admin is intentionally excluded — they manage accounts only, not data."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":236,"LineContent":"@it_admin_required"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":390,"LineContent":"        it_admins = User.query.filter(User.role == \"it_admin\", User.status == \"active\").all()"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\auth.py","LineNumber":399,"LineContent":"        for admin in it_admins:"}
+(...121 more results not shown)

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+{'upstream': 0, 'midstream': 0, 'downstream': 0}
+

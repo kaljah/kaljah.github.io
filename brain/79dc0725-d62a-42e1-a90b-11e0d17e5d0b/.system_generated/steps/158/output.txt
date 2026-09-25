@@ -1,0 +1,56 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -466,10 +466,10 @@
+   };
+ 
+   const getActivityOptions = () => {
+-    const filtered = availableFilters.regions.filter(
+-      (r) => currentSegment === "all" || r.segment === currentSegment,
+-    );
+-    const activities = new Set(filtered.map((r) => r.activity));
++    const filtered = facilities.filter(
++      (f) => currentSegment === "all" || f.segment === currentSegment,
++    );
++    const activities = new Set(filtered.map((f) => f.activity).filter(Boolean));
+     return [
+       { value: "all", label: "All Activities" },
+       ...Array.from(activities)
+@@ -479,12 +479,12 @@
+ 
+   const getDivisionOptions = () => {
+     let divisionsSet = new Set();
+-    const filtered = availableFilters.regions.filter(
+-      (r) =>
+-        (currentSegment === "all" || r.segment === currentSegment) &&
+-        (currentActivity === "all" || r.activity === currentActivity),
+-    );
+-    filtered.forEach((r) => divisionsSet.add(r.division));
++    const filtered = facilities.filter(
++      (f) =>
++        (currentSegment === "all" || f.segment === currentSegment) &&
++        (currentActivity === "all" || f.activity === currentActivity),
++    );
++    filtered.forEach((f) => { if (f.division) divisionsSet.add(f.division); });
+     return [
+       { value: "all", label: "All Divisions" },
+       ...Array.from(divisionsSet)
+@@ -493,7 +493,7 @@
+   };
+ 
+   const getRegionOptions = () => {
+-    const filtered = availableFilters.regions.filter(
++    const filtered = facilities.filter(
+       (f) =>
+         (currentSegment === "all" || f.segment === currentSegment) &&
+         (currentActivity === "all" || f.activity === currentActivity) &&
+@@ -508,6 +508,7 @@
+     ];
+   };
+ 
++
+   const getYearOptions = () => {
+     return [
+       { value: "all", label: "All Years" },
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

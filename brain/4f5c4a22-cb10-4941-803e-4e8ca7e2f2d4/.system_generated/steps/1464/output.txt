@@ -1,0 +1,68 @@
+
+The command exited with code 0.
+Output:
+
+> new\server\calculations\dispatcher.py:7:    TankFlashingCalculator,
+  new\server\calculations\dispatcher.py:8:    CompletionFlowbackCalculator,
+  new\server\calculations\dispatcher.py:9:    BlowdownCalculator,
+  new\server\calculations\dispatcher.py:10:)
+> new\server\calculations\dispatcher.py:47:            "tank": TankFlashingCalculator(),
+> new\server\calculations\dispatcher.py:48:            "tank_flashing": TankFlashingCalculator(),
+> new\server\calculations\dispatcher.py:49:            "tank_working": TankFlashingCalculator(),
+> new\server\calculations\dispatcher.py:50:            "tank_breathing": TankFlashingCalculator(),
+> new\server\calculations\dispatcher.py:51:            "storage_tanks": TankFlashingCalculator(),
+  new\server\calculations\dispatcher.py:52:            "pneumatic_devices": PneumaticDeviceCalculator(),
+  new\server\calculations\dispatcher.py:53:            "pneumatic_device": PneumaticDeviceCalculator(),
+  new\server\calculations\dispatcher.py:54:            "pneumatics": PneumaticDeviceCalculator(),
+> new\server\calculations\dispatcher.py:712:                "tank",
+> new\server\calculations\dispatcher.py:713:                "tank_flashing",
+> new\server\calculations\dispatcher.py:714:                "storage_tanks",
+> new\server\calculations\dispatcher.py:715:                "tank_working",
+> new\server\calculations\dispatcher.py:716:                "tank_breathing",
+  new\server\calculations\dispatcher.py:717:            ]:
+  new\server\calculations\dispatcher.py:718:                raw_throughput = self._require_float(
+  new\server\calculations\dispatcher.py:719:                    flat_inputs,
+> new\server\calculations\dispatcher.py:721:                    "tank liquid throughput",
+  new\server\calculations\dispatcher.py:722:                )
+  new\server\calculations\dispatcher.py:723:                t_unit = str(
+> new\server\calculations\dispatcher.py:724:                    flat_inputs.get("tank_unit")
+  new\server\calculations\dispatcher.py:725:                    or flat_inputs.get("throughput_unit")
+  new\server\calculations\dispatcher.py:726:                    or unit
+  new\server\calculations\dispatcher.py:727:                    or "bbl"
+> new\server\calculations\dispatcher.py:743:                    flat_inputs, ["tank_gor", "gor"], "Gas-Oil Ratio (GOR 
+scf/bbl)"
+  new\server\calculations\dispatcher.py:744:                )
+  new\server\calculations\dispatcher.py:745:                ch4_content = self._require_fraction(
+  new\server\calculations\dispatcher.py:746:                    flat_inputs,
+> new\server\calculations\dispatcher.py:747:                    ["tank_ch4_content", "ch4_content", "c1"],
+> new\server\calculations\dispatcher.py:748:                    "tank flash gas CH4 content %",
+  new\server\calculations\dispatcher.py:749:                )
+> new\server\calculations\dispatcher.py:750:                tank_eff = self._optional_fraction(
+> new\server\calculations\dispatcher.py:751:                    flat_inputs, ["tank_control_eff", 
+"control_efficiency"], 0.0
+  new\server\calculations\dispatcher.py:752:                )
+  new\server\calculations\dispatcher.py:753:                co2_content = self._optional_fraction(
+> new\server\calculations\dispatcher.py:754:                    flat_inputs, ["tank_co2_content", "co2_content", 
+"co2_mol"], 0.0
+  new\server\calculations\dispatcher.py:755:                )
+  new\server\calculations\dispatcher.py:756:
+  new\server\calculations\dispatcher.py:757:                ef_ch4_val = emission_factors.get("ch4", 0)
+> new\server\calculations\dispatcher.py:763:                            "[Dispatcher] Storage tank calculation: both 
+EF CH4 and GOR are zero."
+  new\server\calculations\dispatcher.py:764:                        )
+  new\server\calculations\dispatcher.py:765:
+  new\server\calculations\dispatcher.py:766:                return calculator.calculate(
+> new\server\calculations\dispatcher.py:770:                    control_efficiency=tank_eff,
+  new\server\calculations\dispatcher.py:771:                    uncertainties=uncertainties,
+> new\server\calculations\dispatcher.py:772:                    process_type="tank_flashing",
+  new\server\calculations\dispatcher.py:773:                    ef_ch4=ef_ch4_val,
+  new\server\calculations\dispatcher.py:774:                    co2_content=co2_content,
+  new\server\calculations\dispatcher.py:775:                    hhv=float(flat_inputs.get("hhv") or 
+emission_factors.get("hhv") or 1020.0),
+> new\server\calculations\dispatcher.py:1180:                    has_flash_tank=has_flash,
+  new\server\calculations\dispatcher.py:1181:                    flash_control_eff=flash_eff,
+  new\server\calculations\dispatcher.py:1182:                    still_control_type=still_type,
+  new\server\calculations\dispatcher.py:1183:                    flash_control_type=flash_type,
+
+
+

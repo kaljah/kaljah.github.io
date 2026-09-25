@@ -1,0 +1,37 @@
+
+The command exited with code 0.
+Output:
+test_concurrent_session_and_token_isolation _
+
+self = <test_stress_concurrency.TestConcurrencyAndLockResilience object at 0x000002C3B5B0C9B0>
+test_env = {'facility_id': 18, 'admin_id': 42}
+
+    def test_concurrent_session_and_token_isolation(self, test_env):
+        """Verify that concurrent requests maintain strict session identity and authorization."""
+        facility_id = test_env["facility_id"]
+        num_sessions = 15
+    
+        def session_task(idx):
+            with app.test_client() as client:
+                client.post(
+                    "/api/auth/login",
+                    json={"email": "concurrency_admin@test.com", "password": "StressPass2026!"},
+                )
+                res = client.get("/api/auth/me")
+                if res.status_code != 200:
+                    return False
+                data = res.get_json()
+                return data.get("email") == "concurrency_admin@test.com"
+    
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_sessions) as executor:
+            futures = [executor.submit(session_task, i) for i in range(num_sessions)]
+            results = [f.result() for f in concurrent.futures.as_completed(futures)]
+    
+>       assert all(results)
+E       assert False
+E        +  where False = all([True, True, False, True, True, True, ...])
+
+new\server\tests\test_stress_concurrency.py:194: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[2026-09-23 15:07:42,395] INFO 
+

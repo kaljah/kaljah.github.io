@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Total test files: 47, Total test functions: 436
+

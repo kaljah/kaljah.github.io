@@ -1,0 +1,36 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\uncertainty.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -277,27 +277,10 @@
+ 
+     # --- Resolve activity uncertainty from tier if not explicitly provided ---
+     if activity_uncertainty is None:
+-        if process_category in (
+-            "fugitive",
+-            "fugitive_component",
+-            "equipment_fugitive",
+-            "compressor_fugitive",
+-        ):
++        resolved_cat = PROCESS_CATEGORY.get(str(process_category).lower(), process_category)
++        if resolved_cat == "fugitive":
+             activity_uncertainty = ACTIVITY_UNCERTAINTY_FUGITIVE
+-        elif process_category in (
+-            "vented",
+-            "venting",
+-            "blowdown",
+-            "completions",
+-            "drilling",
+-            "unloading",
+-            "tank",
+-            "tank_flashing",
+-            "tank_working",
+-            "tank_breathing",
+-            "pneumatic",
+-            "pneumatic_devices",
+-        ):
++        elif resolved_cat == "vented":
+             if tier == Tier.T3:
+                 activity_uncertainty = ACTIVITY_UNCERTAINTY[Tier.T3]
+             else:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

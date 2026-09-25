@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+  File "<string>", line 1
+    import sqlite3; conn = sqlite3.connect('new/server/ghg_app.db'); c = conn.cursor(); c.execute('SELECT id, email, username, role, location FROM users WHERE email=" a\
+                                                                                                  ^
+SyntaxError: unterminated string literal (detected at line 1)
+

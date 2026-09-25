@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+
+LineNumber Line                                                                                                        
+---------- ----                                                                                                        
+      1468                                         {availableFilters.regions?.map(r => <option key={r} value={r}>{r}...
+       108   const [availableRegions, setAvailableRegions] = useState([]);                                             
+       183       setAvailableRegions(regions);                                                                         
+      1047                   {availableRegions.map((reg) => (                                                          
+       794                   {availableFilters.regions.map((f) => (                                                    
+
+
+

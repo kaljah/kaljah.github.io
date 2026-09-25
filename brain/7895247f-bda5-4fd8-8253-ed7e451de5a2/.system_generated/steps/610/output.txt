@@ -1,0 +1,15 @@
+
+The command exited with code 0.
+Output:
+
+  new\client\src\utils\ModernReportGenerator.js:1905:        id: "whiteBg",
+  new\client\src\utils\ModernReportGenerator.js:1906:        beforeDraw(cInst) {
+  new\client\src\utils\ModernReportGenerator.js:1907:          const c = cInst.canvas.getContext("2d");
+> new\client\src\utils\ModernReportGenerator.js:1908:          c.save();
+  new\client\src\utils\ModernReportGenerator.js:1909:          c.globalCompositeOperation = "destination-over";
+  new\client\src\utils\ModernReportGenerator.js:1910:          c.fillStyle = "#ffffff";
+  new\client\src\utils\ModernReportGenerator.js:1911:          c.fillRect(0, 0, cInst.canvas.width, 
+cInst.canvas.height);
+
+
+

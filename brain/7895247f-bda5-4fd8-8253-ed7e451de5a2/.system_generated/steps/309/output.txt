@@ -1,0 +1,19 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\pages
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/19/2026   5:42 PM          26690 Dashboard.css                                                        
+-a----         9/21/2026   1:20 PM          67652 DashboardEnhanced.jsx                                                
+-a----         9/19/2026   9:20 PM          18009 QADashboard.css                                                      
+-a----         9/19/2026   9:20 PM          69195 QADashboard.jsx                                                      
+-a----          9/8/2026  11:37 PM           8563 SbtiDashboard.css                                                    
+-a----          9/8/2026  11:36 PM          25355 SbtiDashboard.jsx                                                    
+
+
+

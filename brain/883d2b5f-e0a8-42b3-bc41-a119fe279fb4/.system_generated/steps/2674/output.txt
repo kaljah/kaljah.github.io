@@ -1,0 +1,17 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_deep_injection_matrix.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -87,9 +87,8 @@
+             region="Illizi",
+             division="Production",
+             field="Gas Field",
+-            group_name="Sonatrach",
+-            company_name="Sonatrach Exploration",
+-            source_type="Upstream Facility",
++            segment="Upstream",
++            created_by=test_user.id,
+         )
+         db_session.add(f)
+         db_session.commit()
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,74 @@
+
+The command exited with code 0.
+Output:
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\components\scope1
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/22/2026   5:53 PM          10562 CombustionForm.jsx                                                   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\calculations\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/24/2026   1:09 PM          18723 combustion.cpython-312.pyc                                           
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\calculations
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/24/2026   1:09 PM          21168 combustion.py                                                        
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\tests\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          9/5/2026   4:51 PM           4317 test_combustion.cpython-312-pytest-9.1.1.pyc                         
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\server\tests
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         8/11/2026  12:56 PM           1351 test_combustion.py                                                   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\test_results\screenshots
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/22/2026   3:43 PM         162553 scope1_combustion__tier_3_.png                                       
+-a----         9/22/2026  10:04 AM          49262 scope1_eng_combustion.png                                            
+-a----         9/22/2026   3:44 PM         156708 scope1_t3_ext_multi_component_combustion_with_gas_chromatography.png 
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\reference_model\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026  10:19 AM           9662 combustion_flaring.cpython-312.pyc                                   
+-a----         9/20/2026   6:27 PM           7401 ref_combustion.cpython-312.pyc                                       
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation\reference_model
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----         9/20/2026  10:17 AM           9255 combustion_flaring.py                                                
+-a----         9/20/2026   6:27 PM           6198 ref_combustion.py                                                    
+
+
+

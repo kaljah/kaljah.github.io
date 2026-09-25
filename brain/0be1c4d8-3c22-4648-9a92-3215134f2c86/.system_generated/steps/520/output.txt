@@ -1,0 +1,22 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -918,8 +918,8 @@
+ 
+         db.session.add(recalc)
+ 
+-        # Keep BaseYear singleton synchronized
+-        base_year_singleton = BaseYear.query.get(1)
++        # Keep BaseYear singleton synchronized (atomic upsert)
++        base_year_singleton = db.session.get(BaseYear, 1)
+         if base_year_singleton:
+             base_year_singleton.year = year_val
+         else:
+@@ -926,4 +926,4 @@
+-            db.session.add(base_year_singleton)
++            db.session.merge(base_year_singleton)
+ 
+         db.session.commit()
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

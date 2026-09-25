@@ -1,0 +1,50 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\dashboard.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -236,6 +236,36 @@
+             else None
+         )
+ 
++        # Compute pending summary stats
++        p_q1 = db.session.query(
++            func.count(Emission.id).label("cnt"),
++            func.sum(Emission.co2e_total).label("tot"),
++        ).filter(Emission.status == "Pending")
++        if allowed_fids is not None:
++            p_q1 = p_q1.filter(Emission.facility_id.in_(allowed_fids))
++        if facility_id and facility_id != "all":
++            p_q1 = p_q1.filter(Emission.facility_id == int(facility_id))
++        if year and year != "all" and str(year).isdigit():
++            p_q1 = p_q1.filter(Emission.year == int(year))
++        p1 = p_q1.first()
++
++        p_q2 = db.session.query(
++            func.count(Scope2Emission.id).label("cnt"),
++            func.sum(Scope2Emission.co2e).label("tot"),
++        ).filter(Scope2Emission.status == "Pending")
++        if allowed_fids is not None:
++            p_q2 = p_q2.filter(Scope2Emission.facility_id.in_(allowed_fids))
++        if facility_id and facility_id != "all":
++            p_q2 = p_q2.filter(Scope2Emission.facility_id == int(facility_id))
++        if year and year != "all" and str(year).isdigit():
++            p_q2 = p_q2.filter(Scope2Emission.year == int(year))
++        p2 = p_q2.first()
++
++        pending_stats = {
++            "count": int(p1.cnt or 0) + int(p2.cnt or 0),
++            "totalCo2e": round(float(p1.tot or 0.0) + float(p2.tot or 0.0), 2),
++        }
++
+         return jsonify(
+             {
+                 "summary": f_summary.result(),
+@@ -246,6 +246,7 @@
+                 "years": f_years.result(),
+                 "goal": goal_obj,
+                 "base_year": base_year_obj,
++                "pending_stats": pending_stats,
+             }
+         )
+     except Exception as e:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

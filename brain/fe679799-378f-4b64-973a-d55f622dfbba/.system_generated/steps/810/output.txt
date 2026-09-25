@@ -1,0 +1,17 @@
+
+The command exited with code 0.
+Output:
+9: PieChart as PieChartWrapper,
+10: LineChart as LineChartWrapper,
+566: const sourceChartData = useMemo(
+624: const activityChartData = useMemo(() => {
+1221: {/* Trend Chart */}
+1258: <LineChartWrapper
+1300: {/* Donut Charts Column (1fr) */}
+1315: <PieChartWrapper
+1316: data={activityChartData}
+1336: <PieChartWrapper
+1337: data={sourceChartData}
+1380: <LineChartWrapper
+1685: {/* Moved Trend Chart to Top */}
+

@@ -1,0 +1,2 @@
+## Pages
+1: http://localhost:5173/emissions?scope=scope2 [selected]

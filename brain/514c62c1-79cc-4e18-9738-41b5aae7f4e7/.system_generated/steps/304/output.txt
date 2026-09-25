@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\base.py","LineNumber":29,"LineContent":"    def calculate_uncertainty(self, value, relative_uncertainty, coverage_factor=2.0):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":161,"LineContent":"    def calculate_energy(self, amount, unit, hhv):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":188,"LineContent":"    def calculate_default_kg(self, amount, unit, hhv, factor_data, gas):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":315,"LineContent":"    def calculate_completions(self, duration, rate, eff):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":344,"LineContent":"    def calculate_unloading(self, freq, diam, depth, press):"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\units.py","LineNumber":465,"LineContent":"def calculate_co2e("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\scope3.py","LineNumber":508,"LineContent":"def calculate_eeio():"}

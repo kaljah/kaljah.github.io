@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\tests\test_carbon_intensity_validation.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -162,7 +162,7 @@
+     """Verify trend query filters Scope 2 and Scope 3 strictly by activity."""
+     with flask_app.app_context():
+         # Query with activity = 'Steel & Iron (Acier DRI)'
+-        trend = _query_intensity_trend(
++        trend = _query_intensity_trend_bulk(
+             activity="Steel & Iron (Acier DRI)",
+             years=[2024, 2026]
+         )
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

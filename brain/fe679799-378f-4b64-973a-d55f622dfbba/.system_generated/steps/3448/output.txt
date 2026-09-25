@@ -1,0 +1,20 @@
+
+The command exited with code 0.
+Output:
+app.register_blueprint(auth_bp, url_prefix="/api/auth")
+app.register_blueprint(emissions_bp, url_prefix="/api/emissions")
+app.register_blueprint(facilities_bp, url_prefix="/api/facilities")
+app.register_blueprint(data_bp, url_prefix="/api/data")
+app.register_blueprint(reports_bp, url_prefix="/api/reports")
+app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
+app.register_blueprint(custom_factors_bp, url_prefix="/api/custom-factors")
+app.register_blueprint(scope2_bp, url_prefix="/api/scope2")
+app.register_blueprint(scope3_bp, url_prefix="/api/scope3")
+app.register_blueprint(managedata_bp, url_prefix="/api")
+app.register_blueprint(factors_bp)
+app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
+app.register_blueprint(audit_bp, url_prefix="/api/audit")
+app.register_blueprint(satellite_bp, url_prefix="/api/satellite")
+app.register_blueprint(qaqc_bp, url_prefix="/api/qaqc")
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+

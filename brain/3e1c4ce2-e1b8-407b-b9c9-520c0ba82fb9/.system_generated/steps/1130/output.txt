@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+[(10, '27ad8b57-cf1e-4cc7-8657-b61be37ad15c', None, None, 'Activit� E&P'), (13, '4d9f0b79-4a34-4815-9184-9832aae4e042', None, None, 'Activit� E&P'), (17, '86c7cd25-8b45-41da-927e-bcb23f917aa5', None, None, 'Activit� E&P'), (20, '6d99c192-2cd7-48a1-a6aa-419f2cb87c2d', None, None, 'Activit� E&P'), (30, '2f044f05-3a56-4e2d-8f00-5617fff28bb2', None, None, 'Activit� E&P')]
+

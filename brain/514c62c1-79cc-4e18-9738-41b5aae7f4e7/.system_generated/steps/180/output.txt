@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":51,"LineContent":"  grid-template-columns: repeat(3, 1fr);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":316,"LineContent":"  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":391,"LineContent":"  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.css","LineNumber":476,"LineContent":"  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));"}

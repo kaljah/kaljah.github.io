@@ -1,0 +1,125 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\samsung\anaconda3\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default'
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collecting ... collected 5 items
+
+tests/test_zero_trust_adversarial.py::test_lookup_api_factor_resilience FAILED [ 20%]
+tests/test_zero_trust_adversarial.py::test_mass_conservation_combustion FAILED [ 40%]
+tests/test_zero_trust_adversarial.py::test_extreme_temperature_and_pressure_normalization FAILED [ 60%]
+tests/test_zero_trust_adversarial.py::test_flaring_destruction_efficiency_boundary FAILED [ 80%]
+tests/test_zero_trust_adversarial.py::test_gwp_horizon_consistency PASSED [100%]
+
+================================== FAILURES ===================================
+______________________ test_lookup_api_factor_resilience ______________________
+
+    def test_lookup_api_factor_resilience():
+        """Verify that _lookup_api_factor resolves fuels regardless of casing, underscores, or common aliases."""
+        # Exact match
+        ng = _lookup_api_factor("Natural Gas")
+        assert ng is not None
+        assert ng.get("code") == "NG"
+    
+        # Lowercase with underscore
+        ng_snake = _lookup_api_factor("natural_gas")
+        assert ng_snake == ng
+    
+        # Lowercase with space
+        ng_lower = _lookup_api_factor("natural gas")
+        assert ng_lower == ng
+    
+        # Common alias
+        alias_gas = _lookup_api_factor("gas")
+        assert alias_gas == ng
+    
+        # Diesel alias
+        diesel = _lookup_api_factor("diesel")
+        assert diesel is not None
+>       assert "Diesel" in diesel.get("source", "") or diesel.get("code") == "DF"
+E       AssertionError: assert ('Diesel' in 'API Compendium 2021 Section 5, Table 5-1' or 'DSL' == 'DF'
+E        +  where 'API Compendium 2021 Section 5, Table 5-1' = <built-in method get of dict object at 0x000002093F554780>('source', '')
+E        +    where <built-in method get of dict object at 0x000002093F554780> = {'code': 'DSL', 'hhv': 138000, 'co2': 73.96, 'ch4': 0.003, ...}.get
+E         
+E         - DF
+E         + DSL)
+
+tests\test_zero_trust_adversarial.py:49: AssertionError
+______________________ test_mass_conservation_combustion ______________________
+
+    def test_mass_conservation_combustion():
+        """Verify that carbon mass is strictly conserved in Tier 3 combustion."""
+        calc = CombustionCalculator()
+        vol = 10000.0  # m3
+        c1 = 0.90
+        c2 = 0.06
+        c3 = 0.04
+        eff = 0.992
+    
+        res = calc.calculate(
+            fuel_quantity=vol, ef_co2=0, ef_ch4=0, ef_n2o=0, uncertainties={}, hhv=1020.0,
+            ef_unit="kg/m3", fuel_unit="m3", fuel_type="Natural Gas", combustion_efficiency=eff,
+            c1=c1, c2=c2, c3=c3
+        )
+    
+>       co2_tonnes = res["co2"]["value"]
+                     ^^^^^^^^^^
+E       KeyError: 'co2'
+
+tests\test_zero_trust_adversarial.py:72: KeyError
+_____________ test_extreme_temperature_and_pressure_normalization _____________
+
+    def test_extreme_temperature_and_pressure_normalization():
+        """Verify thermodynamic correction factors under high pressure and temperature."""
+        calc = CombustionCalculator()
+        # High pressure (2000 psig) and high temperature (100 C)
+        res_ambient = calc.calculate(
+            fuel_quantity=1000.0, ef_co2=1.9, ef_ch4=0.00004, ef_n2o=0.000002,
+            uncertainties={}, hhv=1020.0, ef_unit="kg/m3", fuel_unit="m3", fuel_type="Natural Gas",
+            operating_temperature=15.556, temp_unit="C", operating_pressure=0.0, press_unit="psig"
+        )
+        res_high_p = calc.calculate(
+            fuel_quantity=1000.0, ef_co2=1.9, ef_ch4=0.00004, ef_n2o=0.000002,
+            uncertainties={}, hhv=1020.0, ef_unit="kg/m3", fuel_unit="m3", fuel_type="Natural Gas",
+            operating_temperature=15.556, temp_unit="C", operating_pressure=146.96, press_unit="psig"
+        )
+        # Higher actual pressure means more standard volume -> higher emissions
+>       assert res_high_p["co2"]["value"] > res_ambient["co2"]["value"]
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'co2'
+
+tests\test_zero_trust_adversarial.py:101: KeyError
+________________ test_flaring_destruction_efficiency_boundary _________________
+
+    def test_flaring_destruction_efficiency_boundary():
+        """Verify flaring emissions at 100% and 0% destruction efficiencies."""
+        calc = FlaringCalculator()
+        # At 100% destruction efficiency (eta_d=1.0), unburned methane slip must be 0
+        res_100 = calc.calculate(
+            gas_volume=10000.0, ch4_fraction=0.85, flare_type="elevated", uncertainties={},
+            combustion_efficiency=1.0, destruction_efficiency=1.0, c1=0.85
+        )
+>       assert res_100["ch4"]["value"] == 0.0
+               ^^^^^^^^^^^^^^
+E       KeyError: 'ch4'
+
+tests\test_zero_trust_adversarial.py:112: KeyError
+============================== warnings summary ===============================
+..\..\..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_zero_trust_adversarial.py::test_lookup_api_factor_resilience
+FAILED tests/test_zero_trust_adversarial.py::test_mass_conservation_combustion
+FAILED tests/test_zero_trust_adversarial.py::test_extreme_temperature_and_pressure_normalization
+FAILED tests/test_zero_trust_adversarial.py::test_flaring_destruction_efficiency_boundary
+=================== 4 failed, 1 passed, 1 warning in 1.59s ====================
+

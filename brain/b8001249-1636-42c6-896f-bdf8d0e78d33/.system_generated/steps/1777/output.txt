@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+routes\auth.py:338:@limiter.limit(os.environ.get("LOGIN_RATE_LIMIT", "20 per 15 minutes"))
+tests\test_api_security.py:255:    def test_login_rate_limit(self, client):
+tests\test_rate_limiting.py:24:def test_login_rate_limit_exceeded(rate_limit_client):
+
+
+

@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+Deleted. Free space recovery: ~4.1 GB
+

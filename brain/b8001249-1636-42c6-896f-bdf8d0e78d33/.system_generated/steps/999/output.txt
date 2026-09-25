@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -2985,6 +2985,12 @@
+ 
+     data = request.get_json(silent=True) or {}
+ 
++    # Map source_type to process_type if missing, and vice versa
++    if not data.get("process_type") and data.get("source_type"):
++        data["process_type"] = data["source_type"]
++    if not data.get("source_type") and data.get("process_type"):
++        data["source_type"] = data["process_type"]
++
+     # Validation
+     required = ["year", "month", "facility_id", "process_type"]
+     for field in required:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

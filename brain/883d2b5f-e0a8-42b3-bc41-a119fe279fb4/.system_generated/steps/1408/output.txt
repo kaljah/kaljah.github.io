@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":33,"LineContent":"reports_bp = Blueprint(\"reports\", __name__)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":253,"LineContent":"@reports_bp.route(\"/generate\", methods=[\"POST\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":454,"LineContent":"@reports_bp.route(\"/export\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\reports.py","LineNumber":696,"LineContent":"@reports_bp.route(\"/ogmp-export\", methods=[\"GET\"])"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\routes\\__init__.py","LineNumber":7,"LineContent":"reports_bp = Blueprint(\"reports\", __name__)"}

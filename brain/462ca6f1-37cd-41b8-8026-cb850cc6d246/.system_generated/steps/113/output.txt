@@ -1,0 +1,30 @@
+
+The command exited with code 0.
+Output:
+
+new\server\calculations\legacy_engine.py:284:        # The JS `efFugitiveScreeningRange` wasn't fully shown in the 
+`emission-factors.js` view
+new\server\calculations\legacy_engine.py:286:        # Let's verify `emission-factors.js` or implement a reasonable 
+approximation based on API 2021 Table 7-7 values
+new\server\routes\emission_factors_routes.py:33:@factors_bp.route("/api/emission-factors", methods=["GET"])
+new\server\routes\emission_factors_routes.py:47:@factors_bp.route("/api/emission-factors/segments", methods=["GET"])
+new\server\routes\emission_factors_routes.py:59:@factors_bp.route("/api/emission-factors/by-segment/<segment>", 
+methods=["GET"])
+new\server\routes\emission_factors_routes.py:89:@factors_bp.route("/api/emission-factors/process-types", 
+methods=["GET"])
+new\server\routes\emission_factors_routes.py:101:@factors_bp.route("/api/emission-factors/process-types/<segment>", 
+methods=["GET"])
+new\server\routes\emission_factors_routes.py:150:    "/api/emission-factors/by-process/<process_category>", 
+methods=["GET"]
+new\server\routes\emission_factors_routes.py:182:@factors_bp.route("/api/emission-factors/by-segment-and-process", 
+methods=["GET"])
+new\server\routes\emission_factors_routes.py:229:@factors_bp.route("/api/emission-factors/search", methods=["GET"])
+new\server\routes\emission_factors_routes.py:290:@factors_bp.route("/api/emission-factors/uncertainties", 
+methods=["GET"])
+new\server\routes\emission_factors_routes.py:332:@factors_bp.route("/api/emission-factors/stats", methods=["GET"])
+new\server\routes\emission_factors_routes.py:375:@factors_bp.route("/api/emission-factors/version", methods=["GET"])
+new\server\routes\scope2.py:688:@scope2_bp.route("/emission-factors", methods=["GET"])
+new\server\tests\test_api_security.py:121:        res = client.get("/api/emission-factors")
+
+
+

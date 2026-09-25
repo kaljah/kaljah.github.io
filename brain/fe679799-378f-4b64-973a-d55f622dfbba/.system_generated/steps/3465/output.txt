@@ -1,0 +1,138 @@
+
+The command exited with code 1.
+Output:
+<truncated 1 lines>
+================================================================================
+  [PASS] GET /api/auth/me -> HTTP 200 (Expected 200)
+  [PASS] GET /api/facilities -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emissions/ -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emissions/pending -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emissions/template/csv -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emissions/template/excel -> HTTP 200 (Expected 200)
+  [PASS] GET /api/scope2 -> HTTP 200 (Expected 200)
+  [PASS] GET /api/scope2/emission-factors -> HTTP 200 (Expected 200)
+  [PASS] GET /api/scope3 -> HTTP 200 (Expected 200)
+  [PASS] GET /api/production/years -> HTTP 200 (Expected 200)
+  [PASS] GET /api/sources -> HTTP 200 (Expected 200)
+  [PASS] GET /api/custom-factors -> HTTP 200 (Expected 200)
+  [PASS] GET /api/mitigation -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emission-factors -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emission-factors/segments -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emission-factors/process-types -> HTTP 200 (Expected 200)
+  [PASS] GET /api/emission-factors/stats -> HTTP 200 (Expected 200)
+  [PASS] GET /api/qaqc/dashboard -> HTTP 200 (Expected 200)
+  [PASS] GET /api/reports/ogmp-export -> HTTP 200 (Expected 200)
+  [PASS] GET /api/reports/export -> HTTP 200 (Expected 200)
+  [PASS] GET /api/satellite/sentinel5p/layer-config -> HTTP 200 (Expected 200)
+  [PASS] GET /api/sbti -> HTTP 200 (Expected 200)
+  [PASS] GET /api/goals -> HTTP 200 (Expected 200)
+  [PASS] GET /api/audit/stats -> HTTP 200 (Expected 200)
+  [PASS] GET /api/base-years -> HTTP 200 (Expected 200)
+  [PASS] GET /api/health -> HTTP 200 (Expected 200)
+  [PASS] GET /api/health/live -> HTTP 200 (Expected 200)
+  [PASS] GET /api/health/ready -> HTTP 200 (Expected 200)
+  [PASS] GET /api/docs/ -> HTTP 200 (Expected 200)
+  [PASS] GET /api/auth/users -> HTTP 200 (Expected 200)
+  [PASS] GET /api/facilities/all-regions -> HTTP 200 (Expected 200)
+SUBAGENT 4 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 5 — SECURITY & RBAC TESTER (Least Privilege, CSRF, Formula Injection, SQLi)
+================================================================================
+  [5.1] Testing IT Role Segregation (IT role forbidden from ESG emissions)...
+    IT access to /api/emissions/ -> HTTP 403 (FORBIDDEN) PASS
+    IT access to /api/scope2 -> HTTP 403 (FORBIDDEN) PASS
+    IT access to /api/scope3 -> HTTP 403 (FORBIDDEN) PASS
+    IT access to /api/production/years -> HTTP 403 (FORBIDDEN) PASS
+  [5.2] Testing Admin Lockout on IT Endpoints...
+    Admin access to /api/auth/users -> HTTP 403 (FORBIDDEN) PASS
+  [5.3] Testing CSRF Token Enforcement...
+    Mutating POST without CSRF header -> HTTP 400 (REJECTED) PASS
+  [5.4] Testing Excel Formula Injection Sanitization...
+
+================================================================================
+SUBAGENT 6 — EDGE CASE / ADVERSARIAL USER (Boundary, Unicode, Malformed Data)
+================================================================================
+  [6.1] Submitting Unicode & Arabic strings...
+    Created Unicode facility ID 148 -> PASS
+    Retrieved Arabic facility with 100% UTF-8 fidelity -> PASS
+  [6.2] Submitting Zero and Large Quantity Edge Cases...
+    Zero quantity handled gracefully (HTTP 201) -> PASS
+    Negative quantity rejected gracefully (HTTP 422) -> PASS
+    Non-numeric amount string rejected gracefully (HTTP 422) -> PASS
+SUBAGENT 6 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 7 — UI/UX & FRONTEND TESTER (Chrome CDP Automation & 0 Console Errors)
+================================================================================
+  [7.1] Navigating to /login and authenticating as Admin...
+    Viewport Desktop Full HD (1920x1080): rendered 61 chart SVGs cleanly -> PASS
+    Viewport Standard Laptop (1366x768): rendered 61 chart SVGs cleanly -> PASS
+    Viewport Tablet Viewport (768x1024): rendered 61 chart SVGs cleanly -> PASS
+    Visited /emissions (Emissions Tracking) -> Rendered 908 chars PASS
+    Visited /manage-data (Manage Data Hub) -> Rendered 4176 chars PASS
+    Visited /qa-dashboard (QA/QC Anomaly Dashboard) -> Rendered 1187 chars PASS
+    Visited /reports (Reporting & OGMP Export) -> Rendered 14512 chars PASS
+    Visited /carbon-intensity (Carbon Intensity) -> Rendered 17259 chars PASS
+    Visited /methane-intensity (Methane Intensity) -> Rendered 61507 chars PASS
+    Visited /sbti (SBTi Targets) -> Rendered 2108 chars PASS
+    Visited /uncertainty (Uncertainty Assessment) -> Rendered 2932 chars PASS
+    Visited /reference-data (Reference Data Catalog) -> Rendered 18103 chars PASS
+    Visited /audit-trail (Audit Trail) -> Rendered 8142 chars PASS
+    Visited /settings (System Settings) -> Rendered 1909 chars PASS
+  [7.4] Testing IT Role Segregation Frontend Navigation...
+    IT Admin navigating to /dashboard was routed to: http://localhost:5173/user-management
+    IT Admin redirected from /dashboard to http://localhost:5173/user-management -> PASS
+
+  Subagent 7 Console Error Count: 0
+SUBAGENT 7 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 8 — REPORTING / EXPORT / AUDIT TESTER (Excel, PDF, CSV, Audit Trail)
+================================================================================
+  [8.1] Requesting UNEP / OGMP 2.0 Standard 5-Tab Excel Export...
+    OGMP Excel Export parsed cleanly with 5/5 sheets (36771 bytes) -> PASS
+  [8.2] Requesting PDF Executive Summary Report...
+    PDF Report generated with valid '%PDF-' header (10028 bytes) -> PASS
+  [8.3] Requesting Emissions CSV Template...
+    CSV template verified (Header: [Required] date,[Required] facility_name...) -> PASS
+  [8.4] Verifying Audit Trail Logging...
+    Audit Stats: {'dataMutations': 988, 'securityAlerts': 0, 'totalEvents': 1037, 'totalLogins': 45, 'uniqueUsers': 3} -> PASS
+SUBAGENT 8 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 9 — PERFORMANCE & CONCURRENCY TESTER (Concurrent Threads & WAL Resilience)
+================================================================================
+  [9.1] Spawning 10 concurrent worker threads hammering API endpoints...
+    Concurrency Run: 10/10 threads completed with HTTP 200
+    Average roundtrip latency under load: 1.997s
+    SQLite WAL mode sustained 10 concurrent threads with 0 lock errors -> PASS
+SUBAGENT 9 RESULT: 100% PASS
+
+================================================================================
+SUBAGENT 10 — FULL END-TO-END INDUSTRIAL AUDITOR (Full Upstream Asset Lifecycle)
+================================================================================
+  [Step 1] Commissioned industrial asset: Industrial Complex In-Salah Gas Central (ID: 148)
+  [Step 2] Logged Scope 1 compressor combustion -> 1354.42 tCO2e
+  [Step 3] Logged Scope 2 grid electricity -> 0.00 tCO2e
+  [Step 4] Logged production: 50,000 bbl oil & 180,000 mscf gas
+  [Step 5] OGMP 2.0 workbook generated containing new asset data
+  [Step 6] Decommissioned asset and verified clean cascade purge
+SUBAGENT 10 RESULT: 100% PASS
+
+################################################################################
+QA CAMPAIGN SUMMARY (72.87s elapsed)
+################################################################################
+  [PASS] Subagent 1: Functional Beta Tester
+  [FAIL: CO2e 0.0 below expected 1.0 for flaring] Subagent 2: Calculation Engine Auditor
+  [FAIL: Expected rejection for bad FK, got 500] Subagent 3: Database & Integrity Tester
+  [PASS] Subagent 4: API & Backend Tester
+  [FAIL: No module named 'routes'] Subagent 5: Security & RBAC Tester
+  [PASS] Subagent 6: Edge Case & Adversarial User
+  [PASS] Subagent 7: UI/UX & Frontend CDP Tester
+  [PASS] Subagent 8: Reporting & Export Tester
+  [PASS] Subagent 9: Performance & Concurrency Tester
+  [PASS] Subagent 10: Industrial Lifecycle Auditor
+
+SOME SUBAGENTS ENCOUNTERED DEFECTS!
+

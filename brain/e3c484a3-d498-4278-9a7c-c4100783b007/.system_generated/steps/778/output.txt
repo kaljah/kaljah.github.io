@@ -1,0 +1,73 @@
+
+The command exited with code 0.
+Output:
+======================================================================
+STARTING INDEPENDENT GHG VALIDATION SUITE EXECUTION
+======================================================================
+
+[RUNNING] Permanent Regression Archive (test_regression_archive.py)...
+[PASSED] in 2.92s | Summary: ============================== 9 passed in 0.51s ==============================
+
+[RUNNING] Independent Differential Suite (test_independent_differential.py)...
+[PASSED] in 4.84s | Summary: ============================= 16 passed in 0.72s ==============================
+
+[RUNNING] Golden Dataset Validation Suite (test_golden_dataset_validation.py)...
+[PASSED] in 4.99s | Summary: ============================= 25 passed in 0.57s ==============================
+
+[RUNNING] Exhaustive Unit Conversions (test_unit_conversions_exhaustive.py)...
+[PASSED] in 5.65s | Summary: ============================= 277 passed in 1.01s =============================
+
+[RUNNING] Property Invariants (Hypothesis) (test_property_invariants.py)...
+[PASSED] in 5.63s | Summary: ============================== 6 passed in 1.16s ==============================
+
+[RUNNING] Emission Factor Selection (test_emission_factor_selection.py)...
+[PASSED] in 5.04s | Summary: ============================= 10 passed in 0.57s ==============================
+
+[RUNNING] Boundary & Resilience Suite (test_boundary_and_negative.py)...
+[PASSED] in 5.00s | Summary: ============================= 13 passed in 0.53s ==============================
+
+[RUNNING] Aggregation & Reconciliation (test_aggregation_reconciliation.py)...
+[PASSED] in 5.18s | Summary: ============================== 6 passed in 0.57s ==============================
+
+[RUNNING] Battery: Midstream & Process Equipment (test_battery_midstream_process_equipment.py)...
+[PASSED] in 5.23s | Summary: ============================= 16 passed in 0.55s ==============================
+
+[RUNNING] Battery: Stoichiometry & Indirect Energy (test_battery_stoichiometry_indirect_energy.py)...
+[PASSED] in 5.10s | Summary: ============================= 21 passed in 0.62s ==============================
+
+[RUNNING] Battery: Statistical Anomaly Detection (test_battery_statistical_anomaly_detection.py)...
+[PASSED] in 5.01s | Summary: ============================= 12 passed in 0.57s ==============================
+
+[RUNNING] Battery: Compressor Seals & Fugitives (test_battery_compressor_fugitives_equipment.py)...
+[PASSED] in 5.11s | Summary: ============================== 6 passed in 0.54s ==============================
+
+[RUNNING] Battery: GWP Horizons & Regulatory (test_battery_gwp_horizons_regulatory.py)...
+[PASSED] in 5.14s | Summary: ============================= 10 passed in 0.63s ==============================
+
+[RUNNING] Battery: Concurrency & Stress Invariants (test_battery_concurrency_stress_invariants.py)...
+[PASSED] in 5.03s | Summary: ============================== 5 passed in 0.58s ==============================
+
+======================================================================
+VALIDATION SUITE SUMMARY REPORT
+======================================================================
+Suite Name                          | Status   | Time (s) | Results
+----------------------------------------------------------------------
+Permanent Regression Archive        | PASSED   | 2.92     | ============================== 9 passed in 0.51s ==============================
+Independent Differential Suite      | PASSED   | 4.84     | ============================= 16 passed in 0.72s ==============================
+Golden Dataset Validation Suite     | PASSED   | 4.99     | ============================= 25 passed in 0.57s ==============================
+Exhaustive Unit Conversions         | PASSED   | 5.65     | ============================= 277 passed in 1.01s =============================
+Property Invariants (Hypothesis)    | PASSED   | 5.63     | ============================== 6 passed in 1.16s ==============================
+Emission Factor Selection           | PASSED   | 5.04     | ============================= 10 passed in 0.57s ==============================
+Boundary & Resilience Suite         | PASSED   | 5.00     | ============================= 13 passed in 0.53s ==============================
+Aggregation & Reconciliation        | PASSED   | 5.18     | ============================== 6 passed in 0.57s ==============================
+Battery: Midstream & Process Equipment | PASSED   | 5.23     | ============================= 16 passed in 0.55s ==============================
+Battery: Stoichiometry & Indirect Energy | PASSED   | 5.10     | ============================= 21 passed in 0.62s ==============================
+Battery: Statistical Anomaly Detection | PASSED   | 5.01     | ============================= 12 passed in 0.57s ==============================
+Battery: Compressor Seals & Fugitives | PASSED   | 5.11     | ============================== 6 passed in 0.54s ==============================
+Battery: GWP Horizons & Regulatory  | PASSED   | 5.14     | ============================= 10 passed in 0.63s ==============================
+Battery: Concurrency & Stress Invariants | PASSED   | 5.03     | ============================== 5 passed in 0.58s ==============================
+----------------------------------------------------------------------
+Total Validation Wall-Clock Time: 69.87s
+Overall Validation Result: ALL SUITES PASSED / VERIFIED
+======================================================================
+

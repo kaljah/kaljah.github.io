@@ -1,0 +1,29 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\reports.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -451,6 +451,23 @@
+         )
+ 
+ 
++@reports_bp.route("/master-annual-report", methods=["GET"])
++@login_required
++def get_master_annual_report():
++    """Download the comprehensive Groupement Berkine master annual GHG & CAP report."""
++    import os
++    pdf_path = os.path.abspath("c:/Users/samsung/Desktop/H2/Groupement_Berkine_2025_Annual_GHG_Report.pdf")
++    if not os.path.exists(pdf_path):
++        from generate_berkine_master_report import build_master_pdf
++        build_master_pdf(pdf_path)
++    return send_file(
++        pdf_path,
++        mimetype="application/pdf",
++        as_attachment=True,
++        download_name="Groupement_Berkine_2025_Annual_GHG_Report.pdf",
++    )
++
++
+ @reports_bp.route("/export", methods=["GET"])
+ @login_required
+ def export_emissions():
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

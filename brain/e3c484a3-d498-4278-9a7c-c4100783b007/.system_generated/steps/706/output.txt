@@ -1,0 +1,105 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 16 items
+
+new\server\tests\test_battery_midstream_process_equipment.py ........FF. [ 68%]
+.....                                                                    [100%]
+
+================================== FAILURES ===================================
+______ TestLiquidsUnloadingBattery.test_liquids_unloading_imperial_units ______
+
+self = <test_battery_midstream_process_equipment.TestLiquidsUnloadingBattery object at 0x00000190F37771D0>
+
+    def test_liquids_unloading_imperial_units(self):
+        calc = LiquidsUnloadingCalculator()
+        depth_ft = 8500.0
+        diam_in = 2.875
+        press_psig = 250.0
+        temp_f = 120.0
+        events = 15
+        ch4 = 0.88
+    
+        res = calc.calculate(
+            well_depth=depth_ft,
+            diameter=diam_in,
+            pressure=press_psig,
+            ch4_content=ch4,
+            events=events,
+            uncertainties={},
+            operating_temperature=temp_f,
+            temp_unit="F",
+            depth_unit="ft",
+            diameter_unit="in",
+            press_unit="psig",
+            gwp_dict=GWP_AR5,
+        )
+>       ref = IndependentLiquidsUnloading.calculate(
+            depth=depth_ft,
+            diameter=diam_in,
+            pressure=press_psig,
+            events=events,
+            ch4_content=ch4,
+            temp_val=temp_f,
+            depth_unit="ft",
+            diam_unit="in",
+            press_unit="psig",
+            temp_unit="F",
+            gwp_standard="AR5",
+        )
+E       TypeError: IndependentLiquidsUnloading.calculate() got an unexpected keyword argument 'depth'
+
+new\server\tests\test_battery_midstream_process_equipment.py:170: TypeError
+_______ TestLiquidsUnloadingBattery.test_liquids_unloading_metric_units _______
+
+self = <test_battery_midstream_process_equipment.TestLiquidsUnloadingBattery object at 0x00000190F37774A0>
+
+    def test_liquids_unloading_metric_units(self):
+        calc = LiquidsUnloadingCalculator()
+        depth_m = 2500.0
+        diam_mm = 73.0
+        press_bar = 20.0
+        temp_c = 45.0
+        events = 8
+    
+        res = calc.calculate(
+            well_depth=depth_m,
+            diameter=diam_mm,
+            pressure=press_bar,
+            ch4_content=0.90,
+            events=events,
+            uncertainties={},
+            operating_temperature=temp_c,
+            temp_unit="C",
+            depth_unit="m",
+            diameter_unit="mm",
+            press_unit="bar",
+            gwp_dict=GWP_AR5,
+        )
+>       ref = IndependentLiquidsUnloading.calculate(
+            depth=depth_m,
+            diameter=diam_mm,
+            pressure=press_bar,
+            events=events,
+            ch4_content=0.90,
+            temp_val=temp_c,
+            depth_unit="m",
+            diam_unit="mm",
+            press_unit="bar",
+            temp_unit="C",
+            gwp_standard="AR5",
+        )
+E       TypeError: IndependentLiquidsUnloading.calculate() got an unexpected keyword argument 'depth'
+
+new\server\tests\test_battery_midstream_process_equipment.py:209: TypeError
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestLiquidsUnloadingBattery::test_liquids_unloading_imperial_units
+FAILED new\server\tests\test_battery_midstream_process_equipment.py::TestLiquidsUnloadingBattery::test_liquids_unloading_metric_units
+======================== 2 failed, 14 passed in 0.86s =========================
+

@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\data.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -772,6 +772,8 @@
+             details=f'{action} CBAM Export: {product_name} ({quantity_tonnes} t) to {export_destination}'
+         )
+         db.session.commit()
++        from routes.dashboard import clear_dashboard_cache
++        clear_dashboard_cache()
+         return jsonify({'message': 'CBAM Export saved successfully', 'id': record.id})
+     except Exception as e:
+         import traceback
+@@ -803,6 +803,8 @@
+             details=f'Deleted CBAM Export: {prod_name}'
+         )
+         db.session.commit()
++        from routes.dashboard import clear_dashboard_cache
++        clear_dashboard_cache()
+         return jsonify({'message': 'CBAM export deleted successfully'})
+     except Exception as e:
+         import traceback
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

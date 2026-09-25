@@ -1,0 +1,60 @@
+
+The command exited with code 0.
+Output:
+new/server/app.py:69:_custom_factors_migrated = False
+new/server/app.py:74:    global _custom_factors_migrated
+new/server/app.py:81:        if not _custom_factors_migrated:
+new/server/app.py:82:            _custom_factors_migrated = True
+new/server/app.py:84:                cursor.execute("SELECT description FROM custom_factors LIMIT 1")
+new/server/app.py:87:                    cursor.execute("ALTER TABLE custom_factors ADD COLUMN description TEXT")
+new/server/app.py:255:from routes.custom_factors import custom_factors_bp
+new/server/app.py:273:app.register_blueprint(custom_factors_bp, url_prefix="/api/custom-factors")
+new/server/background_processor.py:338:            custom_factors = CustomFactor.query.all()
+new/server/background_processor.py:339:            cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
+new/server/background_processor.py:494:                elif str(scope) == "custom_factors":
+new/server/background_processor.py:495:                    emission_obj, row_errors = _process_row_custom_factors(
+new/server/background_processor.py:1520:def _process_row_custom_factors(row, user_id):
+new/server/calculations/legacy_engine.py:850:        calc_method = "server_custom_factor"
+new/server/migrations/versions/2ef6f882b02c_add_ghg_uncertainties_to_customfactor.py:22:    with op.batch_alter_table("custom_factors", schema=None) as batch_op:
+new/server/migrations/versions/2ef6f882b02c_add_ghg_uncertainties_to_customfactor.py:110:    with op.batch_alter_table("custom_factors", schema=None) as batch_op:
+new/server/migrations/versions/52c620a620d2_add_uncertainty_pct_and_qa_flag.py:21:    with op.batch_alter_table('custom_factors', schema=None) as batch_op:
+new/server/migrations/versions/52c620a620d2_add_uncertainty_pct_and_qa_flag.py:53:    with op.batch_alter_table('custom_factors', schema=None) as batch_op:
+new/server/models.py:262:    __tablename__ = "custom_factors"
+new/server/routes/__init__.py:8:custom_factors_bp = Blueprint("custom_factors", __name__)
+new/server/routes/auth.py:1102:        "custom_factors",
+new/server/routes/custom_factors.py:8:custom_factors_bp = Blueprint("custom_factors", __name__)
+new/server/routes/custom_factors.py:11:@custom_factors_bp.route("", methods=["GET"])
+new/server/routes/custom_factors.py:12:@custom_factors_bp.route("/", methods=["GET"])
+new/server/routes/custom_factors.py:14:def get_custom_factors():
+new/server/routes/custom_factors.py:84:@custom_factors_bp.route("", methods=["POST"])
+new/server/routes/custom_factors.py:86:@custom_factors_bp.route("/", methods=["POST"])
+new/server/routes/custom_factors.py:88:def create_custom_factor():
+new/server/routes/custom_factors.py:164:@custom_factors_bp.route("/<int:factor_id>", methods=["PUT"])
+new/server/routes/custom_factors.py:166:def update_custom_factor(factor_id):
+new/server/routes/custom_factors.py:250:@custom_factors_bp.route("/<int:factor_id>", methods=["DELETE"])
+new/server/routes/custom_factors.py:252:def delete_custom_factor(factor_id):
+new/server/routes/custom_factors.py:299:@custom_factors_bp.route("/import", methods=["POST"])
+new/server/routes/custom_factors.py:301:def import_custom_factors():
+new/server/routes/emissions.py:508:    custom_factors = CustomFactor.query.filter_by(created_by=user.id).all()
+new/server/routes/emissions.py:509:    cf_name_map = {cf.name.lower(): cf for cf in custom_factors}
+new/server/routes/emissions.py:3056:    custom_factor_id = data.get("custom_factor_id")
+new/server/routes/emissions.py:3057:    if custom_factor_id:
+new/server/routes/emissions.py:3058:        cf = db.session.get(CustomFactor, custom_factor_id)
+new/server/routes/emissions.py:3474:    recalc_keys = {"quantity", "amount", "fuel", "fuel_type", "unit", "custom_factor_id", "calc_method", "process_type"}
+new/server/routes/emissions.py:3486:        cf_id = data.get("custom_factor_id")
+new/server/routes/emissions.py:3850:            cf_id = rec_data.get("custom_factor_id")
+new/server/routes/qaqc.py:316:            total_custom_factors = CustomFactor.query.count()
+new/server/routes/qaqc.py:318:            total_custom_factors = 0
+new/server/routes/qaqc.py:519:        if total_custom_factors == 0:
+new/server/routes/qaqc.py:521:                "id": "no_custom_factors",
+new/server/routes/qaqc.py:554:            "total_custom_factors": total_custom_factors,
+new/server/scripts/migrate_sqlite_to_postgres.py:19:    "custom_factors",
+new/server/services/ogmp.py:44:        or calc_method in ("tier2", "component_count", "hi_flow", "custom_factor")
+new/server/tests/test_all_bulk_imports.py:155:def test_bulk_import_custom_factors(logged_client, app):
+new/server/tests/test_all_bulk_imports.py:181:        "scope": "custom_factors",
+new/server/tests/test_audit_remediation.py:970:def test_custom_factor_percentage_uncertainty_in_add_emission(client, test_users):
+new/server/tests/test_audit_remediation.py:999:        "custom_factor_id": cf_id,
+new/server/tests/test_audit_remediation.py:1581:def test_custom_factor_description_and_source_roundtrip(client, test_users):
+new/server/tests/test_deep_injection_matrix.py:450:    def test_scope1_tier2_bulk_csv_upload_custom_factors(self, app, test_user, test_facility, db_session):
+new/server/tests/test_emission_factor_selection.py:65:    def test_custom_factor_overrides_default(self, dispatcher):
+

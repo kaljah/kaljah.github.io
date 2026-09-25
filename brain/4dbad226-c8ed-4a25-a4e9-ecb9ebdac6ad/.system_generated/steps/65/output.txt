@@ -1,0 +1,8 @@
+
+The command exited with code 1.
+Output:
+Playwright installed
+ghg@1.0.0 C:\Users\samsung\Desktop\H2
+`-- (empty)
+
+

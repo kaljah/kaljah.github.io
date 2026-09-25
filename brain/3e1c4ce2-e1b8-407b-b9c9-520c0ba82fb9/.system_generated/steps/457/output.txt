@@ -1,0 +1,11 @@
+
+The command exited with code 0.
+Output:
+[2026-09-21 12:46:34,496] INFO in app: Updated account: a
+[2026-09-21 12:46:34,604] INFO in app: Updated account: a@a
+[2026-09-21 12:46:34,698] INFO in app: Updated account: z
+[2026-09-21 12:46:34,881] INFO in app: Updated account: z@z
+Total 2025 records: 2
+ID 830: status=Verified, fac=1, proc=combustion, co2=0.0, ch4=0.0, n2o=0.0, co2e=0.0
+ID 831: status=Verified, fac=1, proc=combustion, co2=0.0, ch4=0.0, n2o=0.0, co2e=0.0
+

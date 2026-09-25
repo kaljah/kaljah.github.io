@@ -1,0 +1,6 @@
+
+The command exited with code 0.
+Output:
+<string>:1: SyntaxWarning: invalid escape sequence '\:'
+p1: 0
+

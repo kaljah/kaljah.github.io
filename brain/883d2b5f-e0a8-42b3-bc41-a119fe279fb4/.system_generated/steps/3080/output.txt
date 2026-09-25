@@ -1,0 +1,17 @@
+Task: 883d2b5f-e0a8-42b3-bc41-a119fe279fb4/task-3078
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\.system_generated\tasks\task-3078.log
+Log output:
+<truncated 153 lines>
+ C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope1UINumericalParity::test_cems_tier3_continuous_measurement_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_grid_electricity_location_based_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_indirect_steam_heat_ui_parity
+FAILED new\server\tests\test_ui_calculation_parity.py::TestScope2UINumericalParity::test_cogen_allocation_wri_efficiency_ui_parity
+================= 4 failed, 10 deselected, 1 warning in 3.10s =================
+
+Last progress: 3s ago

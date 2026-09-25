@@ -1,0 +1,5 @@
+
+The command exited with code 0.
+Output:
+DB URI: sqlite:///C:\Users\samsung\Desktop\H2\new\server\ghg_app.db
+

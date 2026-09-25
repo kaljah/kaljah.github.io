@@ -1,0 +1,4 @@
+Found 3 results
+implementation_plan.md
+implementation_plan.md.metadata.json
+scratch

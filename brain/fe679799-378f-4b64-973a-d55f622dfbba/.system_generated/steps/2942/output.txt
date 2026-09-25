@@ -1,0 +1,90 @@
+
+The command exited with code 0.
+Output:
+<truncated 88 lines>
+/api/emissions/                               ['GET']              emissions.get_emissions
+/api/emissions/                               ['POST']             emissions.add_emission
+/api/emissions/<id>                           ['DELETE']           emissions.delete_emission
+/api/emissions/<id>                           ['PUT']              emissions.update_emission
+/api/emissions/approve/<int:emission_id>      ['POST']             emissions.approve_emission
+/api/emissions/approve/batch                  ['POST']             emissions.approve_batch_emissions
+/api/emissions/bulk-delete                    ['POST']             emissions.bulk_delete_emissions
+/api/emissions/bulk-upload                    ['POST']             emissions.add_bulk_upload
+/api/emissions/erp/sync                       ['POST']             emissions.trigger_erp_sync
+/api/emissions/export                         ['GET']              emissions.export_emissions
+/api/emissions/import                         ['POST']             emissions.import_emissions
+/api/emissions/pending                        ['GET']              emissions.get_pending_emissions
+/api/emissions/reject/<int:emission_id>       ['POST']             emissions.reject_emission
+/api/emissions/reject/batch                   ['POST']             emissions.reject_batch_emissions
+/api/emissions/template/csv                   ['GET']              emissions.get_csv_template
+/api/emissions/template/excel                 ['GET']              emissions.get_excel_template
+/api/emissions/upload/errors/<job_id>         ['GET']              emissions.upload_errors
+/api/emissions/upload/start                   ['POST']             emissions.upload_start
+/api/emissions/upload/status/<job_id>         ['GET']              emissions.upload_status
+/api/facilities                               ['GET']              facilities.get_facilities
+/api/facilities                               ['POST']             facilities.add_facility
+/api/facilities/                              ['GET']              facilities.get_facilities
+/api/facilities/                              ['POST']             facilities.add_facility
+/api/facilities/<int:facility_id>             ['DELETE']           facilities.delete_facility
+/api/facilities/<int:facility_id>             ['PUT']              facilities.update_facility
+/api/facilities/all-regions                   ['GET']              facilities.get_all_regions
+/api/facilities/import                        ['POST']             facilities.import_facilities
+/api/filters/available                        ['GET']              managedata.get_available_filters
+/api/goals                                    ['GET']              managedata.get_all_goals
+/api/goals                                    ['POST']             managedata.add_or_update_goal
+/api/goals/                                   ['GET']              managedata.get_all_goals
+/api/goals/                                   ['POST']             managedata.add_or_update_goal
+/api/goals/<int:year>                         ['DELETE']           managedata.delete_goal
+/api/health                                   ['GET']              health_check
+/api/health/live                              ['GET']              health_liveness
+/api/health/ready                             ['GET']              health_readiness
+/api/manage/sbti                              ['GET', 'POST']      managedata.manage_sbti
+/api/mitigation                               ['GET']              managedata.get_mitigations
+/api/mitigation                               ['POST']             managedata.add_mitigation
+/api/mitigation/                              ['GET']              managedata.get_mitigations
+/api/mitigation/                              ['POST']             managedata.add_mitigation
+/api/mitigation/<string:mitigation_id>        ['DELETE']           managedata.delete_mitigation
+/api/mitigation/bulk-import                   ['POST']             managedata.bulk_import_mitigation
+/api/notifications/                           ['GET']              notifications.get_notifications
+/api/notifications/<int:id>                   ['DELETE']           notifications.delete_notification
+/api/notifications/<int:id>/read              ['PUT']              notifications.mark_read
+/api/notifications/all                        ['DELETE']           notifications.delete_all_notifications
+/api/notifications/dismiss-all                ['POST']             notifications.dismiss_all
+/api/notifications/stream                     ['GET']              notifications.stream_notifications
+/api/production/years                         ['GET']              managedata.get_production_years
+/api/qaqc/bulk-resolve                        ['POST']             qaqc_bp.bulk_resolve
+/api/qaqc/dashboard                           ['GET']              qaqc_bp.get_qaqc_dashboard
+/api/qaqc/export                              ['GET']              qaqc_bp.export_qaqc_report
+/api/qaqc/resolve/<int:record_id>             ['POST']             qaqc_bp.resolve_flagged_record
+/api/reporting-metadata                       ['GET']              managedata.get_reporting_metadata
+/api/reporting-metadata                       ['POST']             managedata.save_reporting_metadata
+/api/reports/export                           ['GET']              reports.export_emissions
+/api/reports/generate                         ['POST']             reports.generate_report
+/api/reports/ogmp-export                      ['GET']              reports.export_ogmp_excel
+/api/satellite/sentinel5p/export-to-ogmp      ['POST']             satellite.export_satellite_to_ogmp
+/api/satellite/sentinel5p/facility-timeseries ['GET', 'POST']      satellite.get_facility_satellite_data
+/api/satellite/sentinel5p/layer-config        ['GET']              satellite.get_satellite_layer_config
+/api/satellite/sentinel5p/poll-new-passes     ['POST']             satellite.poll_new_satellite_passes
+/api/satellite/sentinel5p/query               ['GET', 'POST']      satellite.get_facility_satellite_data
+/api/satellite/sentinel5p/test-connection     ['POST']             satellite.test_copernicus_connection
+/api/sbti                                     ['GET', 'POST']      managedata.manage_sbti
+/api/scope2                                   ['GET']              scope2.get_scope2_emissions
+/api/scope2                                   ['POST']             scope2.create_scope2_emission
+/api/scope2/<int:emission_id>                 ['DELETE']           scope2.delete_scope2_emission
+/api/scope2/<int:emission_id>                 ['PUT']              scope2.update_scope2_emission
+/api/scope2/bulk-import                       ['POST']             scope2.bulk_import_scope2
+/api/scope2/emission-factors                  ['GET']              scope2.get_emission_factors
+/api/scope3                                   ['GET']              scope3.get_scope3_emissions
+/api/scope3                                   ['POST']             scope3.create_scope3_emission
+/api/scope3/<int:emission_id>                 ['DELETE']           scope3.delete_scope3_emission
+/api/scope3/<int:emission_id>                 ['PUT']              scope3.update_scope3_emission
+/api/scope3/bulk-import                       ['POST']             scope3.bulk_import_scope3
+/api/scope3/eeio-calculate                    ['POST']             scope3.calculate_eeio
+/api/sources                                  ['GET']              managedata.get_sources
+/api/sources                                  ['POST']             managedata.add_source
+/api/sources/                                 ['GET']              managedata.get_sources
+/api/sources/                                 ['POST']             managedata.add_source
+/api/sources/<int:source_id>                  ['DELETE']           managedata.delete_source
+/api/sources/bulk-import                      ['POST']             managedata.bulk_import_sources
+/static/<path:filename>                       ['GET']              static
+

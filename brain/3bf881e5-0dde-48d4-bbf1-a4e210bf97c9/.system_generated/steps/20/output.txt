@@ -1,0 +1,32 @@
+
+The command exited with code 0.
+Output:
+CSRF token: ImEwZDk0YTJlYzdlNjJl...
+PASS T1: Login | Expected: 200 | Got: 200 | Login OK
+PASS T2: GET /auth/me | Expected: 200+role=it_admin | Got: 200 | role=it_admin
+PASS T3: GET /auth/users | Expected: 200 | Got: 200 | OK
+FAIL T4: Register user role | Expected: 201 | Got: 400 | {'code': 400, 'error': 'CSRF token missing or invalid. Refresh the page and try again.'}
+PASS T5: Register admin role (sep. duties) | Expected: 403 | Got: 400 | Unexpected: 400
+PASS T6: Register superuser role | Expected: 403 or allowed | Got: 400 | Status=400
+PASS T7: Register empty body | Expected: 400 | Got: 400 | Correctly returns 400
+PASS T8: GET /emissions RBAC | Expected: 403 | Got: 403 | Correctly blocked
+PASS T9: POST /emissions RBAC | Expected: 403 | Got: 400 | Got 400
+PASS T10: GET /facilities RBAC | Expected: 403 | Got: 403 | Correctly blocked
+PASS T11: POST /facilities RBAC | Expected: 403 | Got: 400 | Got 400
+PASS T12: GET /dashboard/summary RBAC | Expected: 403 | Got: 403 | Correctly blocked
+PASS T13: GET /reports/list RBAC | Expected: 403 | Got: 404 | Got 404
+PASS T14: GET /qaqc/dashboard RBAC | Expected: 403 | Got: 403 | Correctly blocked
+PASS T15: GET /notifications | Expected: 200 | Got: 200 | OK
+PASS T16: Logout | Expected: 200 | Got: 400 | Status=400
+FAIL T17: GET /auth/me after logout | Expected: 401 | Got: 200 | Auth bypass - session persists after logout
+
+=== SUMMARY ===
+Total tests: 17
+Total bugs: 2
+Critical bugs: 1
+High bugs: 1
+
+Bugs found:
+  [HIGH] T4: Register user role - Unexpected status
+  [CRITICAL] T17: GET /auth/me after logout - Session not invalidated after logout
+

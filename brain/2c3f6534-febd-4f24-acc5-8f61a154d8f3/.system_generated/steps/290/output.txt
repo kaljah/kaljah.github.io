@@ -1,0 +1,23 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\generate_pdf_report.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -473,6 +473,9 @@
+     story.append(ghg_table)
+     story.append(Spacer(1, 12))
+ 
++    # Page Break for Clean Section Separation
++    story.append(PageBreak())
++
+     # ─────────────────────────────────────────────────────────────────────────
+     # 4. SECURITY, RBAC & SEGREGATION OF DUTIES AUDIT
+     # ─────────────────────────────────────────────────────────────────────────
+@@ -517,7 +517,6 @@
+     # ─────────────────────────────────────────────────────────────────────────
+     # 6. MANDATORY HUMAN REVIEW GOVERNANCE REGISTER
+     # ─────────────────────────────────────────────────────────────────────────
+-    story.append(PageBreak())
+     story.append(Paragraph("6. Mandatory Human Review & Governance Register", styles["SectionH1"]))
+     story.append(HRFlowable(width="100%", thickness=1.5, color=PRIMARY, spaceBefore=1, spaceAfter=6))
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

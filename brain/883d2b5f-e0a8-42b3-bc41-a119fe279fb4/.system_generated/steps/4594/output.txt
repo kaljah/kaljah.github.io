@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\883d2b5f-e0a8-42b3-bc41-a119fe279fb4\walkthrough.md. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -293,6 +293,35 @@
+ - **All 431 Regression Test Suites**: **100% PASS** (47.25s)
+ - **Numerical Invariants**: **100% PASS** (24/24 in 0.24s)
+ 
++---
++
++## 11. Comprehensive Software Bug Audit & Hardening
++
++An exhaustive audit of backend transaction lifecycles, route error handling, calculation engines, and input validation was executed across the entire platform.
++
++### A. Vulnerabilities Identified and Remediated
++
++| # | File & Location | Vulnerability / Bug Discovered | Root Cause & Failure Mode | Hardening Solution Applied |
++| :- | :--- | :--- | :--- | :--- |
++| **1** | [`routes/data.py:359-360`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/data.py#L359-L360) | **Unhandled `TypeError` in OGMP Survey Retrieval** | `d.estimated_annual_tch4 or round(d.measured_rate_kg_hr * ...)` threw `TypeError: unsupported operand type(s) for *: 'NoneType'` when `d.measured_rate_kg_hr` was `None`. | Added explicit non-null guard: `(round(d.measured_rate_kg_hr * ...) if d.measured_rate_kg_hr is not None else 0.0)`. |
++| **2** | [`routes/data.py:278`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/data.py#L278) | **Dangling Transaction in Production Bulk Import** | `db.session.commit()` was executed outside a `try...except` block, risking un-rolled-back dirty sessions in connection pool upon constraint error. | Wrapped commit in `try...except Exception as e: db.session.rollback()` returning a 500 JSON error. |
++| **3** | [`routes/data.py:570`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/data.py#L570) | **Missing Rollback in Level Upgrade Logging** | `db.session.add(log)` and `db.session.commit()` lacked error boundaries and rollback protection. | Enclosed mutation in `try...except Exception: db.session.rollback()` block. |
++| **4** | [`routes/managedata.py`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/managedata.py) | **Bare Commits Across Source, Mitigation, and Metadata Routes** | Bare `db.session.commit()` in `add_source`, `delete_source`, `bulk_import_sources`, `add_mitigation`, `delete_mitigation`, `reporting_metadata`, and `bulk_import_mitigation`. | Implemented systematic rollback guards across all database mutation boundaries; added safe ID prefix parsing in `delete_mitigation` preventing 500 crashes on non-numeric IDs. |
++| **5** | [`routes/facilities.py:344`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/facilities.py#L344) | **Unguarded `db.session.delete` in Facility Deletion** | `db.session.delete(facility)` and `db.session.flush()` preceded the `try` block, leaking dirty sessions on foreign key violations. | Relocated `delete()` and `flush()` inside the protected `try...except Exception: db.session.rollback()` boundary. |
++| **6** | [`routes/reports.py:816`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/reports.py#L816) | **Potential `TypeError` in OGMP Excel Export** | `float(_active_goal.target_amount)` could crash with `TypeError` if `target_amount` is `None`. | Hardened to `float(_active_goal.target_amount or 0)`. |
++| **7** | [`routes/scope2.py` & `routes/scope3.py`](file:///c:/Users/samsung/Desktop/H2/new/server/routes/scope2.py) | **Missing Transaction Rollbacks in Scope 2 and 3 Creation & Bulk Imports** | `add_scope2_emission`, `update_scope2_emission`, `bulk_import_scope2`, `add_scope3_emission`, `update_scope3_emission`, and `bulk_import_scope3` called bare commits. | Wrapped all write operations in robust `try...except: db.session.rollback()` handlers. |
++| **8** | [`calculations/fugitive.py:26`](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/fugitive.py#L26) | **`AttributeError` on Scalar Component Counts** | `ComponentFugitiveCalculator` called `data.get()` assuming dict structures, crashing if passed scalar counts like `{"valves": 50}`. | Added type guard: `isinstance(data, dict)` fallback to scalar float count. |
++| **9** | [`calculations/vented.py:544`](file:///c:/Users/samsung/Desktop/H2/new/server/calculations/vented.py#L544) | **`TypeError` on Missing GOR in Tank Flashing** | `TankFlashingCalculator` executed `float(gas_oil_ratio)` without checking for `None`. | Sanitized input: `float(gas_oil_ratio or 0.0)`. |
++
++### B. Validation & Verification Metrics
++
++- **Regression Test Suite (`new/server/tests/test_audit_bug_fixes.py`):** **4 / 4 PASSED (100%)**.
++- **Complete Platform Test Suite (`pytest`):** **435 / 435 PASSED in 62.35s (100% pass rate)**.
++- **Frontend UI Visual Audit (`test_ui_audit_visuals.mjs`):** **31 / 31 PASSED (100%)**.
++- **Vite Production Build (`npm run build`):** **Clean compile in 22.20s** (0 errors).
++- **Knowledge Graph Synchronization:** Updated via `graphify update .` (2,517 nodes, 5,302 edges, 219 communities).
++
++
+ 
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

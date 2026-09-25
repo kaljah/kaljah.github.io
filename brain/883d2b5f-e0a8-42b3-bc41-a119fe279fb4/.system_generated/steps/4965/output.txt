@@ -1,0 +1,77 @@
+
+The command exited with code 0.
+Output:
+Authenticating as Admin (admin@ghg.com)...
+Logged in as Admin successfully.
+  [Executive Dashboard] Found 8 interactive controls
+  [Executive Dashboard] Verified 7 unique button interactions cleanly.
+  [Emissions Scope Selection] Found 5 interactive controls
+  [Emissions Scope Selection] Verified 4 unique button interactions cleanly.
+  [Emissions Scope 1 Direct] Found 35 interactive controls
+  [Emissions Scope 1 Direct] Verified 5 unique button interactions cleanly.
+  [Emissions Scope 2 Indirect] Found 41 interactive controls
+  [Emissions Scope 2 Indirect] Verified 5 unique button interactions cleanly.
+  [Emissions Scope 3 Value Chain] Found 31 interactive controls
+  [Emissions Scope 3 Value Chain] Verified 5 unique button interactions cleanly.
+  [Manage Data (pending)] Found 1145 interactive controls
+  [Manage Data (pending)] Verified 17 unique button interactions cleanly.
+  [Manage Data (factors)] Found 22 interactive controls
+  [Manage Data (factors)] Verified 15 unique button interactions cleanly.
+  [Manage Data (facilities)] Found 31 interactive controls
+  [Manage Data (facilities)] Verified 15 unique button interactions cleanly.
+  [Manage Data (production)] Found 21 interactive controls
+  [Manage Data (production)] Verified 15 unique button interactions cleanly.
+  [Manage Data (sources)] Found 31 interactive controls
+  [Manage Data (sources)] Verified 15 unique button interactions cleanly.
+  [Manage Data (goals)] Found 56 interactive controls
+  [Manage Data (goals)] Verified 17 unique button interactions cleanly.
+  [Manage Data (mitigation)] Found 31 interactive controls
+  [Manage Data (mitigation)] Verified 15 unique button interactions cleanly.
+  [Manage Data (ogmp)] Found 16 interactive controls
+  [Manage Data (ogmp)] Verified 14 unique button interactions cleanly.
+  [Manage Data (cbam)] Found 44 interactive controls
+  [Manage Data (cbam)] Verified 15 unique button interactions cleanly.
+  [Manage Data (metadata)] Found 11 interactive controls
+  [Manage Data (metadata)] Verified 10 unique button interactions cleanly.
+  [Manage Data (level_upgrades)] Found 11 interactive controls
+  [Manage Data (level_upgrades)] Verified 10 unique button interactions cleanly.
+  [QA Dashboard (Anomaly Queue)] Found 213 interactive controls
+  [QA Dashboard (Anomaly Queue)] Verified 6 unique button interactions cleanly.
+  [QA Dashboard (Health & Completeness Diagnostics)] Found 10 interactive controls
+  [QA Dashboard (Health & Completeness Diagnostics)] Verified 6 unique button interactions cleanly.
+  [QA Dashboard (Uncertainty & Rigor Analysis (IPCC))] Found 7 interactive controls
+  [QA Dashboard (Uncertainty & Rigor Analysis (IPCC))] Verified 6 unique button interactions cleanly.
+  [Reports (Main)] Found 9 interactive controls
+  [Reports (Main)] Verified 7 unique button interactions cleanly.
+  [Carbon Intensity] Found 2 interactive controls
+  [Carbon Intensity] Verified 1 unique button interactions cleanly.
+  [Methane Intensity] Found 0 interactive controls
+  [Methane Intensity] Verified 0 unique button interactions cleanly.
+  [Methane Explorer Map] Found 2 interactive controls
+  [Methane Explorer Map] Verified 1 unique button interactions cleanly.
+  [SBTi Trajectory] Found 0 interactive controls
+  [SBTi Trajectory] Verified 0 unique button interactions cleanly.
+  [Uncertainty Assessment] Found 2 interactive controls
+  [Uncertainty Assessment] Verified 1 unique button interactions cleanly.
+  [Reference Data Factors] Found 0 interactive controls
+  [Reference Data Factors] Verified 0 unique button interactions cleanly.
+  [Audit Trail (Admin)] Found 0 interactive controls
+  [Audit Trail (Admin)] Verified 0 unique button interactions cleanly.
+  [Settings] Found 0 interactive controls
+  [Settings] Verified 0 unique button interactions cleanly.
+
+Authenticating as IT Admin (itadmin@ghg.com)...
+Logged in as IT Admin successfully.
+  [User Management & RBAC] Found 4 interactive controls
+  [User Management & RBAC] Verified 3 unique button interactions cleanly.
+  [Audit Trail (IT Admin)] Found 2 interactive controls
+  [Audit Trail (IT Admin)] Verified 1 unique button interactions cleanly.
+
+=================================================================
+ MASTER SOFTWARE BUTTON AUDIT SUMMARY
+=================================================================
+Total Unique Button Actions Executed: 220
+Total Console Errors Encountered: 0
+
+[SUCCESS] Pressed every button across all 28 views in the software with 100% CLEAN CONSOLE (0 ERRORS)!
+

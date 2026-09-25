@@ -1,0 +1,4 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\constants.js","LineNumber":35,"LineContent":"export const getActiveGwpFactors = (standard = \"AR5\", horizon = \"100\") =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":10,"LineContent":"import { getActiveGwpFactors } from \"../constants\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":493,"LineContent":"                  const f100 = getActiveGwpFactors(activeGwpStandard, \"100\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\CarbonIntensity.jsx","LineNumber":494,"LineContent":"                  const f20 = getActiveGwpFactors(activeGwpStandard, \"20\");"}

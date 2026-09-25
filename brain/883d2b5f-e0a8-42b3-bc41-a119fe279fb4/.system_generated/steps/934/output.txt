@@ -1,0 +1,84 @@
+
+The command exited with code 1.
+Output:
+<truncated 69 lines>
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py:207
+_ ERROR at setup of TestCSVBufferIngestionMatrix.test_csv_delimiters_tab_and_pipe _
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py, line 221
+      def test_csv_delimiters_tab_and_pipe(self, app, test_user, test_facility):
+E       fixture 'app' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, test_facility, test_user, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py:221
+_ ERROR at setup of TestCSVBufferIngestionMatrix.test_csv_encoding_utf8_bom_and_windows_1252 _
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py, line 245
+      def test_csv_encoding_utf8_bom_and_windows_1252(self, app, test_user, test_facility):
+E       fixture 'app' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, test_facility, test_user, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py:245
+_ ERROR at setup of TestCSVBufferIngestionMatrix.test_csv_row_terminator_crlf_and_legacy_cr _
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py, line 267
+      def test_csv_row_terminator_crlf_and_legacy_cr(self, app, test_user, test_facility):
+E       fixture 'app' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, test_facility, test_user, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py:267
+_ ERROR at setup of TestCSVBufferIngestionMatrix.test_csv_whitespace_and_empty_rows _
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py, line 283
+      def test_csv_whitespace_and_empty_rows(self, app, test_user, test_facility):
+E       fixture 'app' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, test_facility, test_user, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py:283
+_ ERROR at setup of TestCSVBufferIngestionMatrix.test_csv_volumetric_extremes _
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py, line 298
+      def test_csv_volumetric_extremes(self, app, test_user):
+E       fixture 'app' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, test_facility, test_user, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py:298
+_ ERROR at setup of TestCSVBufferIngestionMatrix.test_process_type_missing_signature_fallback _
+file C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py, line 311
+      def test_process_type_missing_signature_fallback(self, app, test_user, test_facility):
+E       fixture 'app' not found
+>       available fixtures: _session_faker, anyio_backend, anyio_backend_name, anyio_backend_options, benchmark, benchmark_weave, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, class_mocker, doctest_namespace, faker, fastsession, mocker, module_mocker, monkeypatch, package_mocker, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, session, session_mocker, subtests, test_facility, test_user, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\samsung\Desktop\H2\new\server\tests\test_csv_engine_matrix.py:311
+================================== FAILURES ===================================
+___ TestMetrologyAndEngineeringPrecision.test_dispatcher_nan_and_inf_guard ____
+
+self = <test_csv_engine_matrix.TestMetrologyAndEngineeringPrecision object at 0x000001F24B603D70>
+
+    def test_dispatcher_nan_and_inf_guard(self):
+        """Proves that dispatcher.dispatch rejects NaN and Inf quantities."""
+        with pytest.raises(ValueError, match="cannot be NaN or Infinite"):
+>           dispatcher.dispatch({
+                "process_type": "stationary_combustion",
+                "fuel": "Diesel",
+                "quantity": float("nan"),
+                "unit": "m3",
+                "factor_source": "default",
+            })
+E           TypeError: CalculationDispatcher.dispatch() missing 3 required positional arguments: 'inputs', 'emission_factors', and 'uncertainties'
+
+new\server\tests\test_csv_engine_matrix.py:346: TypeError
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_csv_engine_matrix.py::TestMetrologyAndEngineeringPrecision::test_dispatcher_nan_and_inf_guard
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_delimiters_semicolon
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_delimiters_tab_and_pipe
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_encoding_utf8_bom_and_windows_1252
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_row_terminator_crlf_and_legacy_cr
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_whitespace_and_empty_rows
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_csv_volumetric_extremes
+ERROR new\server\tests\test_csv_engine_matrix.py::TestCSVBufferIngestionMatrix::test_process_type_missing_signature_fallback
+=================== 1 failed, 45 passed, 7 errors in 1.57s ====================
+

@@ -1,0 +1,138 @@
+
+The command exited with code 0.
+Output:
+<truncated 34 lines>
+-a----          8/5/2026   2:29 PM          13431 inferer-reference.js.map                                             
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\@babel\types\lib\validators
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           2615 isReferenced.js                                                      
+-a----          8/5/2026   2:29 PM           7035 isReferenced.js.map                                                  
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\caniuse-lite\data\features
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           2011 wasm-reference-types.js                                              
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\eslint\lib\rules
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           7662 no-useless-backreference.js                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\eslint-scope\lib
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           4773 reference.js                                                         
+-a----          8/5/2026   2:29 PM          20975 referencer.js                                                        
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\lz-string
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   5:26 PM                reference                                                            
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright-core\lib\tools\skills\playwright-cli
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   5:29 PM                references                                                           
+
+
+    Directory: 
+    C:\Users\samsung\Desktop\H2\new\client\node_modules\playwright-core\lib\tools\skills\playwright-component-testing
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   5:29 PM                references                                                           
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\recharts\es6\cartesian
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           7763 ReferenceArea.js                                                     
+-a----          8/5/2026   2:29 PM           6483 ReferenceDot.js                                                      
+-a----          8/5/2026   2:29 PM           9931 ReferenceLine.js                                                     
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\recharts\es6\state
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           1303 referenceElementsSlice.js                                            
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\recharts\lib\cartesian
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           8948 ReferenceArea.js                                                     
+-a----          8/5/2026   2:29 PM           7608 ReferenceDot.js                                                      
+-a----          8/5/2026   2:29 PM          11337 ReferenceLine.js                                                     
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\recharts\lib\state
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           1848 referenceElementsSlice.js                                            
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\recharts\types\cartesian
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           5378 ReferenceArea.d.ts                                                   
+-a----          8/5/2026   2:29 PM           4944 ReferenceDot.d.ts                                                    
+-a----          8/5/2026   2:29 PM           5851 ReferenceLine.d.ts                                                   
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\node_modules\recharts\types\state
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          8/5/2026   2:29 PM           2582 referenceElementsSlice.d.ts                                          
+
+
+    Directory: C:\Users\samsung\Desktop\H2\new\client\src\pages
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+-a----          9/1/2026   9:33 PM           3712 ReferenceData.css                                                    
+-a----         9/12/2026  11:51 PM          18928 ReferenceData.jsx                                                    
+
+
+    Directory: C:\Users\samsung\Desktop\H2\validation
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         9/20/2026   6:24 PM                reference_model                                                      
+
+
+

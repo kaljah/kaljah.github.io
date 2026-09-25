@@ -1,0 +1,53 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -18,7 +18,7 @@
+     compute_emissions,
+     calculate_co2e,
+ )
+-from emission_factors import API_FACTORS
++from emission_factors import API_FACTORS, ALL_EMISSION_FACTORS
+ from routes.auth import login_required
+ import datetime
+ import uuid
+@@ -35,13 +35,14 @@
+ 
+ 
+ def _lookup_api_factor(fuel_name: str) -> dict:
+-    """Look up an emission factor from API_FACTORS supporting exact, normalized, and alias matches."""
++    """Look up an emission factor from ALL_EMISSION_FACTORS / API_FACTORS supporting exact, normalized, and alias matches."""
+     if not fuel_name:
+         return {}
+-    if fuel_name in API_FACTORS:
+-        return API_FACTORS[fuel_name]
++    factor_catalog = {**API_FACTORS, **ALL_EMISSION_FACTORS}
++    if fuel_name in factor_catalog:
++        return factor_catalog[fuel_name]
+     norm = str(fuel_name).lower().replace("_", " ").replace("-", " ").strip()
+-    for k, v in API_FACTORS.items():
++    for k, v in factor_catalog.items():
+         if k.lower().replace("_", " ").replace("-", " ").strip() == norm:
+             return v
+         if v.get("code") and v.get("code").lower() == norm:
+@@ -56,10 +56,17 @@
+         "gasoline": "Motor Gasoline",
+         "kerosene": "Kerosene",
+         "coal": "Bituminous Coal",
++        "tank flash emissions oil": "Tank - Flash Emissions (Oil)",
++        "tank flash oil": "Tank - Flash Emissions (Oil)",
++        "tank flash": "Tank - Flash Emissions (Oil)",
++        "tank working losses oil": "Tank - Working Losses (Oil)",
++        "tank breathing losses oil": "Tank - Breathing Losses (Oil)",
++        "asphalt": "Asphalt",
++        "asphalt blowing": "Asphalt",
+     }
+     canonical = aliases.get(norm)
+-    if canonical and canonical in API_FACTORS:
+-        return API_FACTORS[canonical]
++    if canonical and canonical in factor_catalog:
++        return factor_catalog[canonical]
+     return {}
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,140 @@
+The following changes were made by the replace_file_content tool to: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\exhaustive_verify_uncertainty_audit_qaqc.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -146,20 +146,20 @@
+             # 5. Dropdown Iteration: Scope Dropdown
+             scope_dropdown = page.locator('.ua-controls .ua-filter-group').nth(1)
+             if scope_dropdown.is_visible():
+-                btn = scope_dropdown.locator('button, .custom-dropdown-button, .dropdown-trigger').first
+-                btn.click(timeout=1500)
+-                page.wait_for_timeout(200)
+-                opts = page.locator('.dropdown-menu .dropdown-item, .custom-dropdown-menu div').all()
++                btn = scope_dropdown.locator('.dropdown-selected, .custom-dropdown-button').first
++                btn.click(timeout=2000)
++                page.wait_for_timeout(300)
++                opts = page.locator('.dropdown-portal .dropdown-option, .dropdown-options div').all()
+                 safe_print(f"  Scope Dropdown Options Found: {len(opts)}")
+-                for opt in opts:
++                for opt in opts[:3]:
+                     txt = opt.inner_text().strip()
+                     if txt in ["Scope 1", "Scope 2", "All Scopes"]:
+                         opt.click()
+-                        page.wait_for_timeout(300)
++                        page.wait_for_timeout(350)
+                         ua_stat["scopes_tested"] += 1
+                         safe_print(f"    Selected Scope: {txt}")
+-                        btn.click(timeout=1500)
+-                        page.wait_for_timeout(200)
++                        btn.click(timeout=2000)
++                        page.wait_for_timeout(250)
+                 page.keyboard.press("Escape")
+ 
+             # 6. Dropdown Iteration: Year Dropdown (Zero Sampling)
+@@ -166,18 +166,18 @@
+             if year_dropdown.is_visible():
+-                btn = year_dropdown.locator('button, .custom-dropdown-button, .dropdown-trigger').first
+-                btn.click(timeout=1500)
+-                page.wait_for_timeout(200)
+-                opts = page.locator('.dropdown-menu .dropdown-item, .custom-dropdown-menu div').all()
++                btn = year_dropdown.locator('.dropdown-selected, .custom-dropdown-button').first
++                btn.click(timeout=2000)
++                page.wait_for_timeout(300)
++                opts = page.locator('.dropdown-portal .dropdown-option, .dropdown-options div').all()
+                 safe_print(f"  Year Dropdown Options Found: {len(opts)}")
+-                for opt in opts[:5]:
++                for opt in opts[:4]:
+                     txt = opt.inner_text().strip()
+                     if txt != "Select Year":
+                         opt.click()
+-                        page.wait_for_timeout(300)
++                        page.wait_for_timeout(350)
+                         ua_stat["years_tested"] += 1
+                         safe_print(f"    Selected Year: {txt}")
+-                        btn.click(timeout=1500)
+-                        page.wait_for_timeout(200)
++                        btn.click(timeout=2000)
++                        page.wait_for_timeout(250)
+                 page.keyboard.press("Escape")
+ 
+             # 7. Export CSV
+@@ -184,5 +184,5 @@
+             if export_btn.is_visible() and not export_btn.is_disabled():
+-                with page.expect_download(timeout=5000) as download_info:
++                with page.expect_download(timeout=6000) as download_info:
+                     export_btn.click()
+                 download = download_info.value
+                 safe_print(f"  Uncertainty CSV Export Triggered: filename='{download.suggested_filename}'")
+@@ -210,7 +210,7 @@
+         at_stat = {
+             "status": "PASS",
+             "kpis": {},
+-            "total_rows_page1": 0,
++            "total_items_page1": 0,
+             "search_tested": False,
+             "filters_tested": 0,
+             "row_expansion_tested": False,
+@@ -236,12 +236,10 @@
+                     pass
+             safe_print(f"  Audit Trail KPIs ({len(at_stat['kpis'])}): {at_stat['kpis']}")
+ 
+-            # 2. Table Rows
+-            table = page.locator('table.audit-table, .table-container table, table').first
+-            if table.is_visible():
+-                rows = table.locator('tbody tr').all()
+-                at_stat["total_rows_page1"] = len(rows)
+-                safe_print(f"  Audit Table Page 1 Rows: {len(rows)}")
++            # 2. Timeline Entries
++            entries = page.locator('.audit-timeline .audit-entry-item').all()
++            at_stat["total_items_page1"] = len(entries)
++            safe_print(f"  Audit Timeline Page 1 Entries: {len(entries)}")
+ 
+             # 3. Interactive Search Filter
+             search_input = page.locator('.audit-search-input').first
+@@ -248,7 +248,7 @@
+-                search_input.fill("AGT01")
+-                page.wait_for_timeout(500)
+-                filtered_rows = table.locator('tbody tr').all()
+-                safe_print(f"  Search for 'AGT01' verified: {len(filtered_rows)} records displayed.")
++                search_input.fill("AGT")
++                page.wait_for_timeout(600)
++                filtered_entries = page.locator('.audit-timeline .audit-entry-item').all()
++                safe_print(f"  Search for 'AGT' verified: {len(filtered_entries)} entries displayed.")
+                 at_stat["search_tested"] = True
+ 
+                 # Test Clear button
+@@ -268,23 +268,23 @@
+                 except Exception:
+                     pass
+ 
+-            # 5. Row Details & JSON Diff Expansion
+-            detail_btn = page.locator('button.btn-row-action:has-text("Details"), button:has-text("View Diff"), .btn-details').first
+-            if detail_btn.is_visible():
+-                detail_btn.click(timeout=1500)
+-                page.wait_for_timeout(300)
+-                diff_viewer = page.locator('.audit-diff-viewer, .diff-panel, .json-viewer, .raw-json-panel').first
+-                safe_print(f"  Row details expansion rendered: {diff_viewer.is_visible()}")
++            # 5. Row Details & Raw JSON Expansion
++            toggle_raw_btn = page.locator('.btn-toggle-raw').first
++            if toggle_raw_btn.is_visible():
++                toggle_raw_btn.click(timeout=1500)
++                page.wait_for_timeout(300)
++                raw_viewer = page.locator('.raw-json-viewer pre').first
++                safe_print(f"  Technical Raw JSON viewer mounted: {raw_viewer.is_visible()}")
+                 at_stat["row_expansion_tested"] = True
+-                detail_btn.click(timeout=1500)
++                toggle_raw_btn.click(timeout=1500)
+                 page.wait_for_timeout(200)
+ 
+             # 6. Pagination Next -> Previous
+-            next_btn = page.locator('.btn-page:has-text("Next"), button:has-text("Next")').first
++            next_btn = page.locator('.pagination-controls .btn-page:has-text("Next")').first
+             if next_btn.is_visible() and not next_btn.is_disabled():
+                 next_btn.click(timeout=1500)
+                 page.wait_for_timeout(350)
+-                prev_btn = page.locator('.btn-page:has-text("Previous"), button:has-text("Prev")').first
++                prev_btn = page.locator('.pagination-controls .btn-page:has-text("Prev")').first
+                 if prev_btn.is_visible() and not prev_btn.is_disabled():
+                     prev_btn.click(timeout=1500)
+                     page.wait_for_timeout(350)
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

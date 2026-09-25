@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+GET /api/auth/users: 403  {"error":"IT privileges required"}
+
+
+GET /api/users: 404  {"code":404,"error":"Not found","request_id":"f3a338af-2765-43d8-ae21-4943785dc9e7"}
+
+
+GET /api/admin/users: 404  {"code":404,"error":"Not found","request_id":"846ca90a-0246-4147-8f79-2342d426956c"}
+
+
+

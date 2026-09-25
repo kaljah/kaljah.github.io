@@ -1,0 +1,2 @@
+Created file file:///c:/Users/samsung/Desktop/H2/docs/validation/03-security-audit.md with requested content.
+If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.

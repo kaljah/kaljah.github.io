@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\models.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -183,6 +183,8 @@
+     __table_args__ = (
+         db.Index("ix_emissions_fac_yr_status", "facility_id", "year", "status"),
+         db.Index("ix_emissions_act_div", "activity", "division"),
++        db.Index("ix_emissions_status_yr_co2e", "status", "year", "co2e_total"),
++        db.Index("ix_emissions_yr_status_proc", "year", "status", "process_type"),
+     )
+ 
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

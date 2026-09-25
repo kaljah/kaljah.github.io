@@ -1,0 +1,10 @@
+
+The command exited with code 0.
+Output:
+
+new\server\tests\test_audit_remediation.py:901:    res = client.get("/api/notifications/stream")
+new\server\tests\test_zero_trust_adversarial.py:230:    res_read = client.put(f"/api/notifications/{notif_id}/read")
+new\server\tests\test_zero_trust_adversarial.py:243:    res_dismiss = client.post("/api/notifications/dismiss-all")
+
+
+

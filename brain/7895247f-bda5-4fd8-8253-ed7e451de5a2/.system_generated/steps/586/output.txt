@@ -1,0 +1,15 @@
+
+The command exited with code 1.
+Output:
+Re-extracting code files in . (no LLM needed)...
+  AST extraction: 100/350 uncached files (28%) [8 workers]
+  AST extraction: 200/350 uncached files (57%) [8 workers]
+  AST extraction: 300/350 uncached files (85%) [8 workers]
+  AST extraction: 350/350 uncached files (100%) [8 workers]
+  warning: 231 source file(s) produced zero nodes and are absent from the graph: init-options.json, integration.json, gemini.manifest.json, speckit.manifest.json, .constitution-template.json (+226 more). A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+  warning: 27 file(s) had syntax errors and may be partially extracted: BatchReviewWizard.jsx (first error at line 490), BulkImportModal.jsx (first error at line 1603), CalculationDetails.jsx (first error at line 45), ColumnMappingWizard.jsx (first error at line 1361), QuickAddCustomFactorModal.jsx (first error at line 488) (+22 more) (#2551)
+[graphify watch] community set changed since labeling (435 saved labels, 449 communities now; renamed 62 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.
+Nothing to update or rebuild failed — check output above.
+[graphify] backed up semantic+curated graph (6 files) -> 2026-09-24/
+[graphify watch] Rebuild failed: [Errno 22] Invalid argument: 'graphify-out\\.graphify_labels.json.sig'
+

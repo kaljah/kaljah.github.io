@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":383,"LineContent":"        flare_type,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":409,"LineContent":"        # Determine efficiencies based on flare type or custom parameter overrides"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":410,"LineContent":"        ft = str(flare_type or \"elevated\").lower().strip().replace(\"-\", \"_\").replace(\" \", \"_\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":414,"LineContent":"        elif ft in [\"elevated\", \"steam_assisted\", \"air_assisted\", \"unassisted\", \"flare\", \"open\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":489,"LineContent":"        # Add Native Uncombusted CO2 passing through the flare"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":523,"LineContent":"                flared_mmbtu = (vol_scf * hhv_val) / 1_000_000.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":524,"LineContent":"                n2o_tonnes = (flared_mmbtu * float(ef_n2o)) / 1000.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\combustion.py","LineNumber":552,"LineContent":"                \"flare_type\": flare_type,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":40,"LineContent":"            \"flare\": FlaringCalculator(),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":270,"LineContent":"            \"flare\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":425,"LineContent":"                    \"flared gas volume\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":430,"LineContent":"                    [\"c1\", \"ch4_content\", \"flare_ch4_content\"],"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":431,"LineContent":"                    \"flared gas CH4 content %\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":433,"LineContent":"                flare_type = flat_inputs.get(\"flare_type\", \"elevated\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":477,"LineContent":"                    flare_type=flare_type,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":542,"LineContent":"                flare_eff = self._optional_fraction("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":543,"LineContent":"                    flat_inputs, [\"comp_flare_eff\", \"control_efficiency\"], 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":553,"LineContent":"                    control_efficiency=flare_eff,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":599,"LineContent":"                flare_eff = self._optional_fraction("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":600,"LineContent":"                    flat_inputs, [\"unload_flare_eff\", \"control_efficiency\"], 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":628,"LineContent":"                    control_efficiency=flare_eff,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":668,"LineContent":"                flare_eff = self._optional_fraction("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\dispatcher.py","LineNumber":683,"LineContent":"                    control_efficiency=flare_eff,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":48,"LineContent":"        - acid_gas_control_type: Control technology ('vent', 'agi', 'ccus', 'claus', 'thermal_oxidizer', 'flare')"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":80,"LineContent":"        elif ctype in [\"claus\", \"thermal_oxidizer\", \"incinerator\", \"flare\", \"combustor\"]:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":251,"LineContent":"            if s_type == \"flare\" or s_type == \"combustor\":"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":260,"LineContent":"        still_is_combustion = s_type in (\"flare\", \"combustor\", \"thermal_oxidizer\", \"incinerator\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\midstream.py","LineNumber":262,"LineContent":"        flash_is_combustion = f_type in (\"flare\", \"combustor\", \"thermal_oxidizer\", \"incinerator\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":320,"LineContent":"        # If flared (eff\u003e0), emissions are unburnt gas + combustion CO2."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":492,"LineContent":"            # inputs = { comp_duration, comp_rate, comp_flare_eff }"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":495,"LineContent":"            eff_pct = float(inputs.get(\"comp_flare_eff\") or 0)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\legacy_engine.py","LineNumber":888,"LineContent":"        # Primarily CH4 from gas release, minor CO2 if flared"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\uncertainty.py","LineNumber":107,"LineContent":"    \"flare\": \"flaring\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":22,"LineContent":"def _split_vented_and_flared("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":32,"LineContent":"    Partitions total gas into vented (1 - ctrl_eff) and flared (ctrl_eff)."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":33,"LineContent":"    Flared combustion:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":35,"LineContent":"      - Native CO2 in flared stream passes through unreacted"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":37,"LineContent":"      - N2O emitted = flared_mmbtu * (ef_n2o or 0.0001) where flared_scf = flared_m3 * (1 / scf_to_m3)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":38,"LineContent":"        and flared_mmbtu = flared_scf * (hhv or 1020.0) / 1e6."}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":47,"LineContent":"    flared_co2 = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":48,"LineContent":"    flared_unburnt_ch4 = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":49,"LineContent":"    flared_n2o = 0.0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":52,"LineContent":"        flared_ch4_mass = ch4_tonnes * ctrl"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":53,"LineContent":"        flared_native_co2 = co2_tonnes * ctrl"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":56,"LineContent":"        flared_ch4_combusted = flared_ch4_mass * 0.98"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":57,"LineContent":"        flared_co2 = (flared_ch4_combusted * (44.01 / 16.04)) + flared_native_co2"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":58,"LineContent":"        flared_unburnt_ch4 = flared_ch4_mass * 0.02"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":60,"LineContent":"        # N2O from energy of flared gas"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":61,"LineContent":"        flared_m3 = total_gas_m3 * ctrl"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\calculations\\vented.py","LineNumber":62,"LineContent":"        flared_scf = convert(flared_m3, \"m3\", \"scf\")"}
+(...28 more results not shown)

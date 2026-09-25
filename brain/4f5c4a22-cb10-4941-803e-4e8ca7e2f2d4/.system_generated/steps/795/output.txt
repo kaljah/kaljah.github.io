@@ -1,0 +1,2 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CombustionForm.jsx","LineNumber":221,"LineContent":"                value={data.flare_type || \"elevated\"}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\scope1\\CombustionForm.jsx","LineNumber":222,"LineContent":"                onChange={(e) =\u003e onChange(\"flare_type\", e.target.value)}"}

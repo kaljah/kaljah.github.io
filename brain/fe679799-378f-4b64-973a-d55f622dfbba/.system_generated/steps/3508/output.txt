@@ -1,0 +1,16 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-3502
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-3502.log
+Log output:
+<truncated 27 lines>
+File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 413, in test_subagent_6_edge_cases
+    admin_session, _ = get_auth_session(ADMIN_EMAIL, ADMIN_PASS)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\scratch\run_full_software_qa_campaign.py", line 56, in get_auth_session
+    raise ValueError(f"Failed to login as {email}: {r_login.status_code} {r_login.text}")
+ValueError: Failed to login as admin@ghg.com: 429 {"code":429,"error":"20 per 15 minute","request_id":"219fd0d6-8f8b-4848-84de-04420db363d3"}
+
+(node:21380) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Last progress: 18s ago

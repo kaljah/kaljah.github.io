@@ -1,0 +1,18 @@
+
+The command exited with code 0.
+Output:
+
+new\server\routes\auth.py:433:        it_admins = User.query.filter(User.role.in_(["it_admin", "it_manager"]), 
+User.status == "active").all()
+new\server\routes\auth.py:510:    resp.delete_cookie(
+new\server\routes\auth.py:1030:        user.status = data["status"]
+new\server\routes\auth.py:1060:@auth_bp.route("/users/<int:id>", methods=["DELETE"])
+new\server\routes\auth.py:1062:def delete_user(id):
+new\server\routes\auth.py:1064:        return jsonify({"error": "Cannot delete your own account"}), 400
+new\server\routes\auth.py:1078:    # Delete notifications belonging to the user
+new\server\routes\auth.py:1080:        text("DELETE FROM notifications WHERE user_id = :uid"),
+new\server\routes\auth.py:1117:    db.session.delete(user)
+new\server\routes\auth.py:1119:    return jsonify({"message": "User deleted successfully"})
+
+
+

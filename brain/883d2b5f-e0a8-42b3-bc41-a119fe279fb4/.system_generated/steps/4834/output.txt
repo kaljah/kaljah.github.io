@@ -1,0 +1,91 @@
+
+Encountered error in step execution: context canceled
+Output:
+<truncated 1 lines>
+[2026-09-17 11:59:53,455] INFO in app: GET /api/qaqc/export 200 [0.008s] [ReqID: 4cfc08f3-ea09-4148-8762-6401a8766b72]
+127.0.0.1 - - [17/Sep/2026 11:59:53] "GET /api/qaqc/export?year=2024 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:53] "POST /api/qaqc/resolve/1 HTTP/1.1" 400 -
+[2026-09-17 11:59:53,468] INFO in app: GET /api/reporting-metadata 400 [0.001s] [ReqID: a8a8a20c-cc5b-418a-b31d-901146343cec]
+127.0.0.1 - - [17/Sep/2026 11:59:53] "GET /api/reporting-metadata HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:53] "POST /api/reporting-metadata HTTP/1.1" 400 -
+[2026-09-17 11:59:54,091] INFO in app: GET /api/reports/export 200 [0.611s] [ReqID: b4d9e67f-921d-482c-a217-83a197014cc5]
+127.0.0.1 - - [17/Sep/2026 11:59:54] "GET /api/reports/export?year=2024 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:54] "POST /api/reports/generate HTTP/1.1" 400 -
+[2026-09-17 11:59:55,718] INFO in app: GET /api/reports/ogmp-export 200 [1.615s] [ReqID: 79dca644-fe7f-4c30-943e-635bd9444b91]
+127.0.0.1 - - [17/Sep/2026 11:59:55] "GET /api/reports/ogmp-export?year=2024 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:55] "POST /api/satellite/sentinel5p/export-to-ogmp HTTP/1.1" 400 -
+[2026-09-17 11:59:55,751] INFO in app: GET /api/satellite/sentinel5p/facility-timeseries 400 [0.002s] [ReqID: 21af9e05-6575-4c45-bc4c-d6e99f93edbb]
+127.0.0.1 - - [17/Sep/2026 11:59:55] "GET /api/satellite/sentinel5p/facility-timeseries HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:55] "POST /api/satellite/sentinel5p/facility-timeseries HTTP/1.1" 400 -
+[2026-09-17 11:59:55,776] INFO in app: GET /api/satellite/sentinel5p/layer-config 200 [0.001s] [ReqID: 9519e3c9-db85-4eef-8f23-edaf55ad4b69]
+127.0.0.1 - - [17/Sep/2026 11:59:55] "GET /api/satellite/sentinel5p/layer-config HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:55] "POST /api/satellite/sentinel5p/poll-new-passes HTTP/1.1" 400 -
+[2026-09-17 11:59:55,823] INFO in app: GET /api/satellite/sentinel5p/query 400 [0.001s] [ReqID: 78a27eb3-a557-4275-b4ce-2eedc83e91dd]
+127.0.0.1 - - [17/Sep/2026 11:59:55] "GET /api/satellite/sentinel5p/query HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:55] "POST /api/satellite/sentinel5p/query HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:55] "POST /api/satellite/sentinel5p/test-connection HTTP/1.1" 400 -
+[2026-09-17 11:59:56,271] INFO in app: GET /api/sbti 200 [0.382s] [ReqID: 74e9eae1-1551-4eb9-9bdb-7cad3c9dd609]
+127.0.0.1 - - [17/Sep/2026 11:59:56] "GET /api/sbti HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:56] "POST /api/sbti HTTP/1.1" 400 -
+[2026-09-17 11:59:56,845] INFO in app: GET /api/scope2 200 [0.551s] [ReqID: 1cf8d3e5-f0c9-47a4-840a-e04616af2ac3]
+127.0.0.1 - - [17/Sep/2026 11:59:56] "GET /api/scope2 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:56] "POST /api/scope2 HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:56] "PUT /api/scope2/1 HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:56] "DELETE /api/scope2/999999 HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:56] "POST /api/scope2/bulk-import HTTP/1.1" 400 -
+[2026-09-17 11:59:56,925] INFO in app: GET /api/scope2/emission-factors 200 [0.002s] [ReqID: c1c386bb-bfd4-43a4-819e-1c390a7f17b1]
+127.0.0.1 - - [17/Sep/2026 11:59:56] "GET /api/scope2/emission-factors HTTP/1.1" 200 -
+[2026-09-17 11:59:57,107] INFO in app: GET /api/scope3 200 [0.176s] [ReqID: 44c07b74-b15d-44d0-a38a-c250495ec47c]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/scope3 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/scope3 HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "PUT /api/scope3/1 HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "DELETE /api/scope3/999999 HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/scope3/bulk-import HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/scope3/eeio-calculate HTTP/1.1" 400 -
+[2026-09-17 11:59:57,170] INFO in app: GET /api/sources 200 [0.005s] [ReqID: 51b329e8-2c03-4fbf-80be-262b485a26bc]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/sources HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/sources HTTP/1.1" 400 -
+[2026-09-17 11:59:57,212] INFO in app: GET /api/sources/ 200 [0.004s] [ReqID: a0f02026-98ad-4285-8650-f6eae3e3eaaa]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/sources/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/sources/ HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "DELETE /api/sources/999999 HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/sources/bulk-import HTTP/1.1" 400 -
+[2026-09-17 11:59:57,235] INFO in app: GET /api/emissions/ 401 [0.001s] [ReqID: cf4b47a5-1b01-4ed5-85e6-a1b9c52e0863]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/emissions/ HTTP/1.1" 401 -
+[2026-09-17 11:59:57,240] INFO in app: GET /api/facilities 401 [0.000s] [ReqID: f553f49e-35f6-486c-892e-bd64bfe78124]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/facilities HTTP/1.1" 401 -
+[2026-09-17 11:59:57,245] INFO in app: GET /api/dashboard/summary 401 [0.001s] [ReqID: e43335f0-b9e3-46ed-ab7e-80cc2d24af5f]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/dashboard/summary HTTP/1.1" 401 -
+[2026-09-17 11:59:57,249] INFO in app: GET /api/audit/ 401 [0.000s] [ReqID: af584d5e-321d-4168-9b1e-7cf310c4f7c4]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/audit/ HTTP/1.1" 401 -
+[2026-09-17 11:59:57,254] INFO in app: GET /api/scope2 401 [0.001s] [ReqID: 54ad6865-6cf3-40b9-8d06-cb82f9cf8e7e]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/scope2 HTTP/1.1" 401 -
+[2026-09-17 11:59:57,258] INFO in app: GET /api/scope3 401 [0.000s] [ReqID: 438a1b72-3703-4a95-8a1c-87f98a408b70]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/scope3 HTTP/1.1" 401 -
+[2026-09-17 11:59:57,262] INFO in app: GET /api/auth/users 401 [0.001s] [ReqID: 1ea9a8b0-7b22-4a32-9f75-5aca1a2978a7]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/auth/users HTTP/1.1" 401 -
+[2026-09-17 11:59:57,267] INFO in app: GET /api/csrf-token 200 [0.001s] [ReqID: 2088b2b9-b384-4b2e-8abd-e067182c8935]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-17 11:59:57,370] INFO in app: POST /api/auth/login 200 [0.097s] [ReqID: b6a3a6a1-c2b6-41a0-b579-0df01fbf54ad]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-17 11:59:57,386] INFO in emissions: [Emissions] Fetch requested by user_id: 24
+[2026-09-17 11:59:57,394] INFO in emissions: [Emissions] Scope 1 count: 746
+[2026-09-17 11:59:57,401] INFO in emissions: [Emissions] Scope 2 count: 558
+[2026-09-17 11:59:57,499] INFO in app: GET /api/emissions/ 200 [0.114s] [ReqID: d8e4a7ca-729c-4291-b61a-cfbfe889eefc]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/emissions/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/emissions/ HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/emissions/erp/sync HTTP/1.1" 400 -
+127.0.0.1 - - [17/Sep/2026 11:59:57] "DELETE /api/facilities/999999 HTTP/1.1" 400 -
+[2026-09-17 11:59:57,526] INFO in app: GET /api/auth/users 403 [0.002s] [ReqID: 3dabf82e-161f-490b-94ee-8a49ac8030a9]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/auth/users HTTP/1.1" 403 -
+[2026-09-17 11:59:57,531] INFO in app: GET /api/csrf-token 200 [0.000s] [ReqID: 2124c74f-3667-4572-93df-e4e160122c9f]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/csrf-token HTTP/1.1" 200 -
+[2026-09-17 11:59:57,629] INFO in app: POST /api/auth/login 200 [0.093s] [ReqID: db72be6e-2ffd-40e8-b9b3-9524588405ac]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "POST /api/auth/login HTTP/1.1" 200 -
+[2026-09-17 11:59:57,638] INFO in app: GET /api/auth/users 200 [0.003s] [ReqID: bc99b721-a9c9-4d6c-9ac6-cd056cfa1329]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/auth/users HTTP/1.1" 200 -
+[2026-09-17 11:59:57,645] INFO in app: GET /api/reports/export 403 [0.001s] [ReqID: 87b99896-8513-4390-8eb8-3289b0411a1d]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/reports/export HTTP/1.1" 403 -
+[2026-09-17 11:59:57,654] INFO in app: GET /api/reports/ogmp-export 403 [0.002s] [ReqID: 3730ccf5-32f5-4695-82ba-c2161881d7ec]
+127.0.0.1 - - [17/Sep/2026 11:59:57] "GET /api/reports/ogmp-export HTTP/1.1" 403 -
+

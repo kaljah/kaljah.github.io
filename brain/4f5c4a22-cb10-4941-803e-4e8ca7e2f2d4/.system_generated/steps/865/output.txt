@@ -1,0 +1,14 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\routes\emissions.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -3063,7 +3063,7 @@
+ 
+         match = re.search(r"Missing required field: (\w+)", str(e))
+         field = match.group(1) if match else "unknown"
+-        return jsonify({"error": "Missing required field", "field": field}), 422
++        return jsonify({"error": str(e), "field": field, "detail": str(e)}), 422
+ 
+     # Fallback: Calculate totalCo2e if it's missing or zero
+     if not em_result.get("totalCo2e") or em_result.get("totalCo2e") == 0:
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

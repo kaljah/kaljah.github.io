@@ -1,0 +1,47 @@
+<current_snapshot_explanation>
+This is a temporary snapshot of the current page's accessibility tree structure. The accessibility tree will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the accessibility tree in your trajectory if needed for later reference.
+</current_snapshot_explanation>
+<current_snapshot>
+## Latest page snapshot
+uid=342_0 RootWebArea "Carbon Tech" url="http://localhost:5173/"
+  uid=391_0 complementary
+    uid=391_1 image "Carbon Tech Logo" url="http://localhost:5173/carbon_tech.svg"
+    uid=391_2 StaticText "Carbon tech"
+    uid=391_3 navigation
+      uid=391_4 link "Dashboard" url="http://localhost:5173/"
+        uid=391_5 StaticText "Dashboard"
+      uid=391_6 link "Carbon Intensity" url="http://localhost:5173/carbon-intensity"
+        uid=391_7 StaticText "Carbon Intensity"
+      uid=391_8 link "Methane Intensity" url="http://localhost:5173/methane-intensity"
+        uid=391_9 StaticText "Methane Intensity"
+      uid=391_10 link "SBTi Net-Zero" url="http://localhost:5173/sbti"
+        uid=391_11 StaticText "SBTi Net-Zero"
+      uid=391_12 link "Calculations" url="http://localhost:5173/emissions"
+        uid=391_13 StaticText "Calculations"
+      uid=391_14 link "Emissions Map" url="http://localhost:5173/methane-explorer"
+        uid=391_15 StaticText "Emissions Map"
+      uid=391_16 link "Manage Data" url="http://localhost:5173/manage-data"
+        uid=391_17 StaticText "Manage Data"
+      uid=391_18 link "Reports" url="http://localhost:5173/reports"
+        uid=391_19 StaticText "Reports"
+      uid=391_20 link "Reference Data" url="http://localhost:5173/reference-data"
+        uid=391_21 StaticText "Reference Data"
+      uid=391_22 link "Uncertainty" url="http://localhost:5173/uncertainty"
+        uid=391_23 StaticText "Uncertainty"
+      uid=391_24 link "Audit Trail" url="http://localhost:5173/audit-trail"
+        uid=391_25 StaticText "Audit Trail"
+      uid=391_26 link "QA/QC & Diagnostics" url="http://localhost:5173/qa-dashboard"
+        uid=391_27 StaticText "QA/QC & Diagnostics"
+    uid=391_28 link "Settings" description="Settings & Standards" url="http://localhost:5173/settings"
+      uid=391_29 StaticText "Settings"
+    uid=391_30 StaticText "A"
+    uid=391_31 StaticText "Administrator"
+    uid=391_32 StaticText "Sustainability Lead"
+  uid=391_33 main
+    uid=391_34 StaticText "Corporate ESG"
+    uid=391_35 button "Notifications"
+    uid=391_36 button "User Profile" description="User Profile"
+    uid=391_37 StaticText "Administrator"
+    uid=395_0 StaticText "Loading Dashboard Data..."
+
+</current_snapshot>

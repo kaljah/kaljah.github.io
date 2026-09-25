@@ -1,0 +1,63 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\calculations\dispatcher.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -827,6 +827,57 @@
+                         gwp_dict=gwp_dict,
+                     )
+ 
++            elif process_type in ["compressor_seal", "compressor_fugitive"]:
++                count = self._require_float(
++                    flat_inputs,
++                    ["compressor_count", "count", "amount", "quantity"],
++                    "compressor count",
++                )
++                raw_seal = str(
++                    flat_inputs.get("seal_type")
++                    or flat_inputs.get("comp_mode")
++                    or flat_inputs.get("compressor_type")
++                    or "reciprocating"
++                ).lower().strip()
++                if "dry" in raw_seal:
++                    seal_type = "centrifugal_dry"
++                elif "wet" in raw_seal:
++                    seal_type = "centrifugal_wet"
++                else:
++                    seal_type = "reciprocating"
++
++                return calculator.calculate(
++                    compressor_count=count,
++                    seal_type=seal_type,
++                    uncertainties=uncertainties,
++                    gwp_dict=gwp_dict,
++                )
++
++            elif process_type in ["equipment_fugitive", "wellhead_fugitive", "separator_fugitive"]:
++                count = self._require_float(
++                    flat_inputs,
++                    ["equipment_count", "well_count", "count", "amount", "quantity"],
++                    "equipment count",
++                )
++                ef = float(
++                    emission_factors.get("ch4")
++                    or emission_factors.get("factor")
++                    or flat_inputs.get("ef")
++                    or 0.0
++                )
++                ch4_content = self._optional_fraction(
++                    flat_inputs, ["ch4_content", "ch4_fraction", "c1"], 0.85
++                )
++                ef_unit = str(emission_factors.get("unit") or flat_inputs.get("unit") or "kg/hr")
++                return calculator.calculate(
++                    equipment_count=count,
++                    ef=ef,
++                    ch4_content=ch4_content,
++                    uncertainties=uncertainties,
++                    ef_unit=ef_unit,
++                    gwp_dict=gwp_dict,
++                )
++
+             elif process_type == "agr":
+                 agr_vol = self._require_float(
+                     flat_inputs,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

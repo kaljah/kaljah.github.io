@@ -1,0 +1,60 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\server\background_processor.py. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1663,6 +1663,54 @@
+         import uuid
+         import json
+ 
++        eq_id = str(row.get("equipment_id") or row.get("equipment") or "").strip().lower()
++        key = (
++            facility.id,
++            year,
++            month,
++            process_type.strip().lower(),
++            fuel.strip().lower(),
++            eq_id,
++        )
++        if batch_keys is not None:
++            if key in batch_keys:
++                existing_id = batch_keys[key]
++                if not overwrite_duplicates:
++                    return None, [
++                        f"Duplicate record: Scope 1 emission for facility '{facility.name}' "
++                        f"({year}-{month:02d}, process '{process_type}', fuel '{fuel}') already exists. "
++                        f"Enable 'Overwrite Duplicates' to replace it."
++                    ]
++                else:
++                    from extensions import db
++                    existing_obj = db.session.get(Emission, existing_id) if existing_id else None
++                    if existing_obj:
++                        existing_obj.quantity = amount
++                        existing_obj.unit = unit
++                        existing_obj.co2_emissions = co2_val
++                        existing_obj.ch4_emissions = ch4_val
++                        existing_obj.n2o_emissions = n2o_val
++                        existing_obj.co2e_total = total
++                        existing_obj.calc_method = _method
++                        existing_obj.gwp_version = gwp_std
++                        existing_obj.source_payload = json.dumps(calc_data)
++                        existing_obj.factor_source = factor_data.get("type", "API")
++                        existing_obj.ef_used_co2 = factor_data.get("co2", 0)
++                        existing_obj.ef_used_ch4 = factor_data.get("ch4", 0)
++                        existing_obj.ef_used_n2o = factor_data.get("n2o", 0)
++                        existing_obj.uncertainty = (
++                            unc.get("co2", None) if isinstance(unc, dict) else (unc or None)
++                        )
++                        existing_obj.uncertainty_ch4 = (
++                            unc.get("ch4", None) if isinstance(unc, dict) else (unc or None)
++                        )
++                        existing_obj.uncertainty_n2o = (
++                            unc.get("n2o", None) if isinstance(unc, dict) else (unc or None)
++                        )
++                        existing_obj.status = "Pending"
++                        return None, []
++            batch_keys[key] = None
++
+         emission = Emission(
+             record_id=str(uuid.uuid4()),
+             created_by=user_id,
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

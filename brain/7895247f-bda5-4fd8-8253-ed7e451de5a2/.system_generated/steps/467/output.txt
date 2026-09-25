@@ -1,0 +1,14 @@
+
+The command exited with code 0.
+Output:
+[2026-09-24 17:11:46,467] INFO in app: Admin seeding skipped (SEED_ADMIN is not set)
+[2026-09-24 17:11:46,553] INFO in app: GET /api/dashboard/flaring-summary 401 [0.000s] [ReqID: 63e4814a-0c68-433d-b72c-5ce33e5ebb2e]
+[2026-09-24 17:11:46,555] INFO in app: GET /api/dashboard/granular-intensities 401 [0.000s] [ReqID: 6efa6265-6cd2-44da-aa0c-0bc8c50a188f]
+[2026-09-24 17:11:46,556] INFO in app: GET /api/cap/compliance 401 [0.000s] [ReqID: 9f23deff-4194-4b8f-9f46-0703dcacae19]
+[2026-09-24 17:11:46,557] INFO in app: GET /api/equity/allocation 401 [0.000s] [ReqID: a699c82d-13cc-4eb7-a579-4857ff95dd86]
+HBNS ID: 169 ELM ID: 170
+Flaring Summary HBNS 2025 status: 401 {'error': 'Not authenticated'}
+Granular Intensities HBNS 2025 status: 401 {'error': 'Not authenticated'}
+CAP Compliance status: 401 {'error': 'Not authenticated'}
+Equity Allocation status: 401 1
+

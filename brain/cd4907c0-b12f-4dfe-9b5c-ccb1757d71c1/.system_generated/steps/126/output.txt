@@ -1,0 +1,5 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\config.py","LineNumber":57,"LineContent":"        SQLALCHEMY_DATABASE_URI = os.environ.get(\"DATABASE_URL\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\config.py","LineNumber":58,"LineContent":"        if not SQLALCHEMY_DATABASE_URI:"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\config.py","LineNumber":63,"LineContent":"        SQLALCHEMY_DATABASE_URI = os.environ.get("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\migrate_ogmp.py","LineNumber":78,"LineContent":"            \"SQLALCHEMY_DATABASE_URI\", \"sqlite:///ghg_app.db\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\server\\test_csv_uploader.py","LineNumber":27,"LineContent":"        app.config[\"SQLALCHEMY_DATABASE_URI\"] = f\"sqlite:///{cls.db_file}\""}

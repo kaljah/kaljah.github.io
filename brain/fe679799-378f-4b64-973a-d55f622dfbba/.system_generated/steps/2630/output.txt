@@ -1,0 +1,19 @@
+Task: fe679799-378f-4b64-973a-d55f622dfbba/task-2628
+Status: DONE
+Log: C:\Users\samsung\.gemini\antigravity\brain\fe679799-378f-4b64-973a-d55f622dfbba\.system_generated\tasks\task-2628.log
+Log output:
+<truncated 1387 lines>
+lchemy.orm.exc.ObjectDeletedError: Instance '<Emission at 0x2b0284f8d70>' has been deleted, or its row is otherwise not present.
+
+INFO     app:app.py:183 POST /api/emissions 500 [0.282s] [ReqID: 8445b3ef-601c-4c50-965b-3c2fa53cfa48]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_stress_concurrency.py::TestConcurrencyAndLockResilience::test_concurrent_multi_scope_writes_and_reads
+=================== 1 failed, 1 passed, 1 warning in 3.73s ====================
+
+Last progress: 3s ago

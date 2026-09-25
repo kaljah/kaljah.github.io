@@ -1,0 +1,15 @@
+Task: 9d34f1cc-2595-4c4a-962f-f853c3e22d4e/task-1136
+Status: RUNNING
+Log: C:\Users\samsung\.gemini\antigravity\brain\9d34f1cc-2595-4c4a-962f-f853c3e22d4e\.system_generated\tasks\task-1136.log
+Log output:
+<truncated 561 lines>
+ent_differential.py::TestDifferentialScope2and3::test_diff_scope2_grid_electricity PASSED [ 48%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_indirect_steam PASSED [ 48%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope2_cogen_allocation FAILED [ 48%]
+tests/test_independent_differential.py::TestDifferentialScope2and3::test_diff_scope3_spend_and_physical PASSED [ 48%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_uncertainty_product_and_sum PASSED [ 48%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_boe_and_carbon_intensity PASSED [ 48%]
+tests/test_independent_differential.py::TestDifferentialUncertaintyAndCompliance::test_diff_ogmp_survey_reconciliation PASSED [ 48%]
+tests/test_it_role_security.py::test_it_user_can_login_and_fetch_users PASSED [ 49%]
+tests/test_it_role_security.py::test_it_user_can_reset_password 
+Last progress: 0s ago

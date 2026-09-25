@@ -1,0 +1,33 @@
+
+The command exited with code 1.
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\samsung\Desktop\H2\new\server
+configfile: pytest.ini
+plugins: anyio-4.2.0, Faker-19.13.0, hypothesis-6.168.0, langsmith-0.4.42, locust-2.46.3, benchmark-5.2.3, mock-3.15.1
+collected 52 items / 51 deselected / 1 selected
+
+new\server\tests\test_audit_remediation.py F                             [100%]
+
+================================== FAILURES ===================================
+___________________ test_production_upsert_and_delete_audit ___________________
+new\server\tests\test_audit_remediation.py:247: in test_production_upsert_and_delete_audit
+    assert res1.status_code == 200
+E   assert 201 == 200
+E    +  where 201 = <WrapperTestResponse streamed [201 CREATED]>.status_code
+---------------------------- Captured stderr call -----------------------------
+[2026-09-23 15:59:10,669] INFO in app: POST /api/data/production 201 [0.009s] [ReqID: 31d989d8-d416-429c-9b05-7fe00b02eb00]
+------------------------------ Captured log call ------------------------------
+INFO     app:app.py:177 POST /api/data/production 201 [0.009s] [ReqID: 31d989d8-d416-429c-9b05-7fe00b02eb00]
+============================== warnings summary ===============================
+..\..\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11
+  C:\Users\samsung\anaconda3\Lib\site-packages\reportlab\lib\rl_safe_eval.py:11: DeprecationWarning: ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    haveNameConstant = hasattr(ast,'NameConstant')
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED new\server\tests\test_audit_remediation.py::test_production_upsert_and_delete_audit
+================= 1 failed, 51 deselected, 1 warning in 1.72s =================
+

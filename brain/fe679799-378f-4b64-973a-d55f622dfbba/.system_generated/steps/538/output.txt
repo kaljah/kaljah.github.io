@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Total beta records found via search: 400
+Sample beta records:
+ - ID: s1_114 Equipment: BETA-T05_0451 Process: stationary_combustion Quantity: None mmbtu CO2e: 224.88054449999998 Uncertainty %: None Status: Verified
+ - ID: s1_115 Equipment: BETA-T05_0501 Process: stationary_combustion Quantity: None bbl CO2e: 291.102804 Uncertainty %: None Status: Verified
+ - ID: s1_116 Equipment: BETA-T05_0551 Process: stationary_combustion Quantity: None mmbtu CO2e: 306.6981385 Uncertainty %: None Status: Verified
+

@@ -1,0 +1,7 @@
+
+The command exited with code 0.
+Output:
+Current URL after login: http://localhost:5173/
+Current URL after navigating to emissions: http://localhost:5173/emissions?scope=1
+Labels on emissions page: ['Activity', 'Division', 'Region', 'Field', 'Year', 'Month', 'Group Name', 'Emission Source(from inventory)', 'Equipment ID/Name', 'Process Type', 'Emission Factor', 'Fuel / Activity Quantity', 'Unit', 'Emission Factor / Direct Measurement Uncertainty Override (�%)']
+

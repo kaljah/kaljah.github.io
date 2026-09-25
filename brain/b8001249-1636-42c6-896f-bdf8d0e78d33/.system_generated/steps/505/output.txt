@@ -1,0 +1,1 @@
+A1: Do not add aliases; keep only the existing internal endpoint paths and document them clearly in the API schema

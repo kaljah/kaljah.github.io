@@ -1,0 +1,17 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\ManageData.jsx","LineNumber":11,"LineContent":"import { ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, Database, Shield, Zap, Upload } from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\old_ManageData.jsx","LineNumber":11,"LineContent":"import { ChevronRight, Download, Plus, Search, MapPin, Layers, Settings, FileText, Database, Shield, Zap, Upload } from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_client_src_pages_Settings.jsx.txt","LineNumber":21,"LineContent":"+} from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_client_src_pages_MethaneIntensity.jsx.txt","LineNumber":9,"LineContent":"-import { Wind, Flame, Activity, BarChart2, Grid, Layers, ShieldCheck, AlertTriangle, CheckCircle, Compass, Radio } from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_client_src_pages_MethaneIntensity.jsx.txt","LineNumber":14,"LineContent":"+} from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\cbam_diff_new_client_src_pages_CarbonIntensity.jsx.txt","LineNumber":10,"LineContent":" import { Cloud, Flame, Activity, BarChart2, Grid, Layers, ShieldCheck, FileText, ToggleLeft, ToggleRight, ArrowUpRight } from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\temp_old\\CarbonIntensity.jsx","LineNumber":10,"LineContent":"import { Cloud, Flame, Activity, BarChart2, Grid, Layers, ShieldCheck, FileText, ToggleLeft, ToggleRight, ArrowUpRight } from 'lucide-react';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":392,"LineContent":"      \"label\": \"lucide-react\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":397,"LineContent":"      \"id\": \"client_package_dependencies_lucide_react\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":400,"LineContent":"      \"norm_label\": \"lucide-react\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":403,"LineContent":"      \"label\": \"lucide-react\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":408,"LineContent":"      \"id\": \"lucide_react\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":411,"LineContent":"      \"norm_label\": \"lucide-react\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":13852,"LineContent":"      \"target\": \"client_package_dependencies_lucide_react\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":14105,"LineContent":"      \"source\": \"client_package_dependencies_lucide_react\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\graphify-out\\graph.json","LineNumber":14106,"LineContent":"      \"target\": \"lucide_react\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\brain\\5cbdeed4-f792-41df-8b3b-d02e016b1a27\\implementation_plan.md","LineNumber":3,"LineContent":"Merge the standalone Diagnostics page (`Diagnostics.jsx`) with the QA/QC Dashboard (`QADashboard.jsx`) into a unified, production-grade page named **QAQC**. The new page will strictly adhere to Carbon Tech's glassmorphic design system (`#f1f5f9` slate background, frosted glass cards, `#ff6600` brand accent, tabular numerals, Lucide icons, responsive layout)."}

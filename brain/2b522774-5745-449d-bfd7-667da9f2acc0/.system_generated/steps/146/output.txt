@@ -1,0 +1,43 @@
+
+The command exited with code 0.
+Output:
+
+> new\client\src\pages\CarbonIntensity.jsx:11:import { getUserOperationalDefaults } from "../utils/userDefaults";
+  new\client\src\pages\CarbonIntensity.jsx:12:import {
+  new\client\src\pages\CarbonIntensity.jsx:13:  Cloud,
+  new\client\src\pages\CarbonIntensity.jsx:14:  Flame,
+  new\client\src\pages\CarbonIntensity.jsx:15:  Activity,
+  new\client\src\pages\CarbonIntensity.jsx:16:  BarChart2,
+  new\client\src\pages\CarbonIntensity.jsx:17:  Grid,
+  new\client\src\pages\CarbonIntensity.jsx:18:  Layers,
+  new\client\src\pages\CarbonIntensity.jsx:19:  ShieldCheck,
+  new\client\src\pages\CarbonIntensity.jsx:20:  FileText,
+  new\client\src\pages\CarbonIntensity.jsx:21:  ToggleLeft,
+> new\client\src\pages\CarbonIntensity.jsx:108:        const opDefaults = getUserOperationalDefaults(user, 
+facilitiesData);
+  new\client\src\pages\CarbonIntensity.jsx:109:        if (opDefaults.isRestricted || facilitiesData.length === 1) {
+  new\client\src\pages\CarbonIntensity.jsx:110:          if (opDefaults.defaultActivity) 
+setCurrentActivity(opDefaults.defaultActivity);
+  new\client\src\pages\CarbonIntensity.jsx:111:          if (opDefaults.defaultDivision) 
+setCurrentDivision(opDefaults.defaultDivision);
+  new\client\src\pages\CarbonIntensity.jsx:112:          if (opDefaults.defaultFacilityId) 
+setCurrentRegion(opDefaults.defaultFacilityId);
+  new\client\src\pages\CarbonIntensity.jsx:113:        }
+  new\client\src\pages\CarbonIntensity.jsx:114:      } catch (error) {
+  new\client\src\pages\CarbonIntensity.jsx:115:        console.error("Initialization error:", error);
+  new\client\src\pages\CarbonIntensity.jsx:116:      }
+  new\client\src\pages\CarbonIntensity.jsx:117:    };
+> new\client\src\pages\CarbonIntensity.jsx:118:    init();
+  new\client\src\pages\CarbonIntensity.jsx:119:  }, [user]);
+  new\client\src\pages\CarbonIntensity.jsx:120:
+  new\client\src\pages\CarbonIntensity.jsx:121:  // Load data on filter changes
+  new\client\src\pages\CarbonIntensity.jsx:122:  useEffect(() => {
+  new\client\src\pages\CarbonIntensity.jsx:123:    loadIntensityData();
+  new\client\src\pages\CarbonIntensity.jsx:124:  }, [
+  new\client\src\pages\CarbonIntensity.jsx:125:    currentActivity,
+  new\client\src\pages\CarbonIntensity.jsx:126:    currentDivision,
+  new\client\src\pages\CarbonIntensity.jsx:127:    currentRegion,
+  new\client\src\pages\CarbonIntensity.jsx:128:    selectedYear,
+
+
+

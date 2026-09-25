@@ -1,0 +1,53 @@
+
+The command exited with code 0.
+Output:
+
+new\client\src\components\BulkImportModal.jsx:14:import { PROCESS_TYPES } from "../utils/EmissionFactors";
+new\client\src\components\ColumnMappingWizard.jsx:7:import { PROCESS_TYPES } from "../utils/EmissionFactors";
+new\client\src\components\EmissionFactorOption.jsx:12:} from "../utils/emissionFactorsAPI";
+new\client\src\components\EmissionFactorOption.jsx:13:import { API_FACTORS } from "../utils/EmissionFactors";
+new\client\src\components\EmissionFactorOption.jsx:20:  const factor = API_FACTORS[factorKey];
+new\client\src\components\Scope1Form.jsx:35:  API_FACTORS,
+new\client\src\components\Scope1Form.jsx:38:} from "../utils/EmissionFactors";
+new\client\src\components\Scope1Form.jsx:45:} from "../utils/emissionFactorsAPI";
+new\client\src\components\Scope1Form.jsx:205:      const options = Object.keys(API_FACTORS)
+new\client\src\components\Scope1Form.jsx:207:          const factor = API_FACTORS[key];
+new\client\src\components\Scope1Form.jsx:230:          factor: API_FACTORS[k],
+new\client\src\components\Scope1Form.jsx:381:      API_FACTORS[formData.fuel]
+new\client\src\components\Scope1Form.jsx:383:      const f = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1Form.jsx:402:      if (API_FACTORS[formData.fuel]) {
+new\client\src\components\Scope1Form.jsx:403:        factorToUse = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1Form.jsx:407:        const found = Object.values(API_FACTORS).find(
+new\client\src\components\Scope1Form.jsx:420:      if (API_FACTORS[mudKey]) {
+new\client\src\components\Scope1Form.jsx:421:        factorToUse = API_FACTORS[mudKey];
+new\client\src\components\Scope1Form.jsx:831:        API_FACTORS[formData.fuel]
+new\client\src\components\Scope1Form.jsx:833:        const factor = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1ImportWizard.jsx:6:import { PROCESS_TYPES } from "../utils/EmissionFactors";
+new\client\src\pages\ManageData.jsx:8:import { PROCESS_TYPES } from '../utils/EmissionFactors';
+new\client\src\utils\EmissionFactors.js:7:export const API_FACTORS = {
+new\client\src\utils\emissionFactorsAPI.js:105:export const searchEmissionFactors = async (
+new\client\src\components\BulkImportModal.jsx:14:import { PROCESS_TYPES } from "../utils/EmissionFactors";
+new\client\src\components\ColumnMappingWizard.jsx:7:import { PROCESS_TYPES } from "../utils/EmissionFactors";
+new\client\src\components\EmissionFactorOption.jsx:12:} from "../utils/emissionFactorsAPI";
+new\client\src\components\EmissionFactorOption.jsx:13:import { API_FACTORS } from "../utils/EmissionFactors";
+new\client\src\components\EmissionFactorOption.jsx:20:  const factor = API_FACTORS[factorKey];
+new\client\src\components\Scope1Form.jsx:35:  API_FACTORS,
+new\client\src\components\Scope1Form.jsx:38:} from "../utils/EmissionFactors";
+new\client\src\components\Scope1Form.jsx:45:} from "../utils/emissionFactorsAPI";
+new\client\src\components\Scope1Form.jsx:205:      const options = Object.keys(API_FACTORS)
+new\client\src\components\Scope1Form.jsx:207:          const factor = API_FACTORS[key];
+new\client\src\components\Scope1Form.jsx:230:          factor: API_FACTORS[k],
+new\client\src\components\Scope1Form.jsx:381:      API_FACTORS[formData.fuel]
+new\client\src\components\Scope1Form.jsx:383:      const f = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1Form.jsx:402:      if (API_FACTORS[formData.fuel]) {
+new\client\src\components\Scope1Form.jsx:403:        factorToUse = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1Form.jsx:407:        const found = Object.values(API_FACTORS).find(
+new\client\src\components\Scope1Form.jsx:420:      if (API_FACTORS[mudKey]) {
+new\client\src\components\Scope1Form.jsx:421:        factorToUse = API_FACTORS[mudKey];
+new\client\src\components\Scope1Form.jsx:831:        API_FACTORS[formData.fuel]
+new\client\src\components\Scope1Form.jsx:833:        const factor = API_FACTORS[formData.fuel];
+new\client\src\components\Scope1ImportWizard.jsx:6:import { PROCESS_TYPES } from "../utils/EmissionFactors";
+new\client\src\pages\ManageData.jsx:8:import { PROCESS_TYPES } from '../utils/EmissionFactors';
+
+
+

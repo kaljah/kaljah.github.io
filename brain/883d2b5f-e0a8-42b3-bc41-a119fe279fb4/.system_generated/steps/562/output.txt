@@ -1,0 +1,41 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\ManageData.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -194,6 +194,35 @@
+         reason: ''
+     });
+ 
++    const [confirmDialog, setConfirmDialog] = useState({
++        isOpen: false,
++        title: "",
++        message: "",
++        confirmLabel: "Delete",
++        confirmVariant: "danger",
++        onConfirm: null,
++    });
++
++    const requestConfirm = ({
++        title = "Confirm Deletion",
++        message = "Are you sure you want to delete this item?",
++        confirmLabel = "Delete",
++        confirmVariant = "danger",
++        onConfirm,
++    }) => {
++        setConfirmDialog({
++            isOpen: true,
++            title,
++            message,
++            confirmLabel,
++            confirmVariant,
++            onConfirm: async () => {
++                setConfirmDialog(prev => ({ ...prev, isOpen: false }));
++                if (onConfirm) await onConfirm();
++            },
++        });
++    };
++
+     const QUICK_REJECTION_REASONS = [
+         "Incorrect Emission Factor Applied",
+         "Facility Allocation Mismatch",
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

@@ -1,0 +1,13 @@
+
+The command exited with code 0.
+Output:
+<unknown>:88: SyntaxWarning: invalid escape sequence '\}'
+<unknown>:6: SyntaxWarning: invalid escape sequence '\}'
+<unknown>:11: SyntaxWarning: invalid escape sequence '\}'
+<unknown>:12: SyntaxWarning: invalid escape sequence '\}'
+<unknown>:7: SyntaxWarning: invalid escape sequence '\)'
+<unknown>:37: SyntaxWarning: invalid escape sequence '\)'
+<unknown>:81: SyntaxWarning: invalid escape sequence '\}'
+<unknown>:92: SyntaxWarning: invalid escape sequence '\}'
+Indexed 113 Python files successfully.
+

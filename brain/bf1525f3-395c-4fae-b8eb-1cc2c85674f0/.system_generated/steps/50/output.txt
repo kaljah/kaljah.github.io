@@ -1,0 +1,51 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":24,"LineContent":"  Satellite,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":96,"LineContent":"  satellite: {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":97,"LineContent":"    name: \"Satellite Hybrid\","}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":100,"LineContent":"      '\u0026copy; \u003ca href=\"https://www.google.com/maps\"\u003eGoogle Satellite\u003c/a\u003e',"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":101,"LineContent":"    icon: Satellite,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":142,"LineContent":"  // Copernicus Sentinel-5P Satellite States \u0026 Real Database Surveys"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":143,"LineContent":"  const [satelliteConfig, setSatelliteConfig] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":144,"LineContent":"  const [showSatelliteLayer, setShowSatelliteLayer] = useState(true);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":145,"LineContent":"  const [satelliteOpacity, setSatelliteOpacity] = useState(0.75);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":146,"LineContent":"  const [satelliteObservation, setSatelliteObservation] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":147,"LineContent":"  const [loadingSatelliteData, setLoadingSatelliteData] = useState(false);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":151,"LineContent":"  const [satelliteAlert, setSatelliteAlert] = useState(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":153,"LineContent":"  const satellitePollRef = useRef(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":176,"LineContent":"          .get(\"/satellite/sentinel5p/layer-config\")"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":185,"LineContent":"        setSatelliteConfig(satConfigRes.data);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":295,"LineContent":"  // Fetch real satellite observation and authentic database OGMP surveys for selected facility"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":321,"LineContent":"    // 2. Fetch Copernicus Sentinel-5P satellite observation (/api/satellite/sentinel5p/facility-timeseries)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":323,"LineContent":"      setSatelliteObservation(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":328,"LineContent":"      setLoadingSatelliteData(true);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":329,"LineContent":"      const res = await api.get(\"/satellite/sentinel5p/facility-timeseries\", {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":337,"LineContent":"        setSatelliteObservation(res.data);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":340,"LineContent":"      console.error(\"Error fetching satellite observation:\", err);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":342,"LineContent":"        setSatelliteObservation({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":350,"LineContent":"        setLoadingSatelliteData(false);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":358,"LineContent":"      setSatelliteObservation(null);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":365,"LineContent":"  // Background polling for new satellite passes (every 30 mins)"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":366,"LineContent":"  const pollSatellitePasses = useCallback(async () =\u003e {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":368,"LineContent":"      const res = await api.post(\"/satellite/sentinel5p/poll-new-passes\");"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":377,"LineContent":"          setSatelliteAlert({"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":385,"LineContent":"          setTimeout(() =\u003e setSatelliteAlert(null), 12000);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":398,"LineContent":"    const initialTimeout = setTimeout(pollSatellitePasses, 5000);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":399,"LineContent":"    satellitePollRef.current = setInterval(pollSatellitePasses, 30 * 60 * 1000);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":402,"LineContent":"      clearInterval(satellitePollRef.current);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":404,"LineContent":"  }, [pollSatellitePasses]);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":423,"LineContent":"      !satelliteObservation ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":424,"LineContent":"      !satelliteObservation.summary"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":429,"LineContent":"      const res = await api.post(\"/satellite/sentinel5p/export-to-ogmp\", {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":432,"LineContent":"          satelliteObservation.summary.latest_observation_date ||"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":434,"LineContent":"        ch4_column_ppb: satelliteObservation.summary.mean_ch4_column_ppb,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":435,"LineContent":"        anomaly_ppb: satelliteObservation.summary.max_anomaly_ppb,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":437,"LineContent":"          satelliteObservation.summary.estimated_emission_rate_kg_hr,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":438,"LineContent":"        qa_score: satelliteObservation.summary.mean_qa_score,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":451,"LineContent":"          `Top-Down Satellite record reconciled with OGMP 2.0 Ledger!${surveyId ? ` (Survey #${surveyId})` : \"\"}`"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":609,"LineContent":"    if (!selectedFacility || !satelliteObservation?.summary) return null;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":612,"LineContent":"    const satelliteFluxTonnes = Number("}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":613,"LineContent":"      satelliteObservation.summary.annualized_ch4_tonnes || 0"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":616,"LineContent":"    if (reportedCh4Tonnes \u003c= 0 \u0026\u0026 satelliteFluxTonnes \u003c= 0) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":626,"LineContent":"    if (reportedCh4Tonnes \u003c= 0 \u0026\u0026 satelliteFluxTonnes \u003e 0) {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":631,"LineContent":"        deltaText: `Satellite detects ${satelliteFluxTonnes.toFixed(1)} tCH₄/yr with zero reported bottom-up emissions.`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\MethaneExplorer.jsx","LineNumber":636,"LineContent":"    const ratio = satelliteFluxTonnes / reportedCh4Tonnes;"}
+(...59 more results not shown)

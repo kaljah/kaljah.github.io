@@ -1,0 +1,37 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\e2e\test_scope1_form_engine.spec.js. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -227,6 +227,15 @@
+           const qty = page.locator('.combustion-form input[placeholder="0.00"]').first();
+           if (await qty.isVisible()) await qty.fill('150000');
+ 
++          const unitDropdown = page.locator('.combustion-form .input-group:has-text("Unit") .dropdown-selected').first();
++          if (await unitDropdown.isVisible().catch(() => false)) {
++            await unitDropdown.click();
++            await page.waitForTimeout(300);
++            const opt = page.locator('.dropdown-portal .dropdown-option:has-text("scf")').first();
++            if (await opt.isVisible().catch(() => false)) await opt.click();
++            else await page.keyboard.press('Escape');
++          }
++
+           const hhv = page.locator('#hhv-input, input[placeholder*="1020"]').first();
+           if (await hhv.isVisible()) await hhv.fill('1050');
+ 
+@@ -255,6 +255,15 @@
+           const qty = page.locator('.combustion-form input[placeholder="0.00"]').first();
+           if (await qty.isVisible()) await qty.fill('25000');
+ 
++          const unitDropdown = page.locator('.combustion-form .input-group:has-text("Unit") .dropdown-selected').first();
++          if (await unitDropdown.isVisible().catch(() => false)) {
++            await unitDropdown.click();
++            await page.waitForTimeout(300);
++            const opt = page.locator('.dropdown-portal .dropdown-option:has-text("m³")').first();
++            if (await opt.isVisible().catch(() => false)) await opt.click();
++            else await page.keyboard.press('Escape');
++          }
++
+           const hhv = page.locator('#hhv-input, input[placeholder*="983"]').first();
+           if (await hhv.isVisible()) await hhv.fill('1020');
+         }
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

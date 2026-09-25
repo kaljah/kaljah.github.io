@@ -1,0 +1,11 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":107,"LineContent":"          path=\"manage-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\patch_app.py","LineNumber":14,"LineContent":"          path=\"manage-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\patch_app.py","LineNumber":30,"LineContent":"          path=\"manage-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":715,"LineContent":"              onClick={() =\u003e navigate(\"/manage-data\", { state: { tab: \"goals\" } })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":724,"LineContent":"            onClick={() =\u003e navigate(\"/manage-data\", { state: { tab: \"goals\" } })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":871,"LineContent":"                  onClick={() =\u003e navigate('/manage-data', { state: { tab: 'pending' } })}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":945,"LineContent":"                  onClick={() =\u003e navigate(\"/manage-data\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1710,"LineContent":"                  navigate(\"/manage-data\", { state: { tab: \"factors\" } })"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":221,"LineContent":"                  to=\"/manage-data\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":450,"LineContent":"                    navigate(\"/manage-data\", { state: { tab: \"pending\" } });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":1311,"LineContent":"        \u003cdiv className=\"manage-data-page\" \u003e"}

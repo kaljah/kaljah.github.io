@@ -1,0 +1,123 @@
+
+The command exited with code 0.
+Output:
+<truncated 156 lines>
+[TIER 1 EXTENDED] Factor "Bituminous Coal" selected: true
+[TIER 1 EXT DB VERIFIED] Bituminous Coal (Center) -> ID: 2508, Facility: 3, Fuel: Bituminous Coal, Quantity: 150 ton, CO2: 0.34874577, CH4: 0.0000411345, Total: 0.351483084 tCO2e
+  ok  1 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:163:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 1. Tier 1 Extended Scenarios: Fuels, Units, Streams, Equipment Factors & Uncertainties (1.2m)
+[TIER 3 DB VERIFIED] Acid Gas Removal - AGR (Tier 3) -> ID: 2509, CO2: 80.15312794322995, CH4: 0.2835835908910387, Total: 88.09346848817903 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Drilling Mud Degassing - Water Based Mud
+========================================
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Glycol Dehydrator (Tier 3)
+========================================
+[TIER 3 EXT DB VERIFIED] Drilling Mud Degassing - Water Based Mud -> ID: 2511, CO2: 0, CH4: 1.0971219065924291, Total: 30.719413384588016 tCO2e
+[TIER 3 DB VERIFIED] Glycol Dehydrator (Tier 3) -> ID: 2511, CO2: 0, CH4: 1.0971219065924291, Total: 30.719413384588016 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Drilling Mud Degassing - Oil Based Mud (High Degassing Factor)
+========================================
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Pneumatic Devices (Tier 3)
+========================================
+[TIER 3 EXT DB VERIFIED] Drilling Mud Degassing - Oil Based Mud (High Degassing Factor) -> ID: 2512, CO2: 0, CH4: 1.33, Total: 37.24 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Average Method (Valve Count)
+========================================
+[TIER 3 DB VERIFIED] Pneumatic Devices (Tier 3) -> ID: 2513, CO2: 0, CH4: 11.996830895821681, Total: 335.91126508300704 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Liquids Unloading (Tier 3)
+========================================
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Average Method (Valve Count) -> ID: 2514, CO2: 0, CH4: 0.0005399999999999999, Total: 0.015119999999999998 tCO2e
+[TIER 3 DB VERIFIED] Liquids Unloading (Tier 3) -> ID: 2515, CO2: 0, CH4: 1.0158690021490293, Total: 28.44433206017282 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Screening PPM Method (15,000 PPM Multiplier)
+========================================
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Well Completions Flowback (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Well Completions Flowback (Tier 3) -> ID: 2517, CO2: 0, CH4: 0.00035999999999999997, Total: 0.010079999999999999 tCO2e
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Screening PPM Method (15,000 PPM Multiplier) -> ID: 2517, CO2: 0, CH4: 0.00035999999999999997, Total: 0.010079999999999999 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Fugitive Emissions - Pipeline Leaks (Length km)
+========================================
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+
+========================================
+[TIER 3 ENGINEERING] Testing: Blowdowns & Venting (Tier 3)
+========================================
+[TIER 3 DB VERIFIED] Blowdowns & Venting (Tier 3) -> ID: 2518, CO2: 0, CH4: 31.84231404316049, Total: 891.5847932084937 tCO2e
+[TIER 3 EXT DB VERIFIED] Fugitive Emissions - Pipeline Leaks (Length km) -> ID: 2519, CO2: 0, CH4: 1.17, Total: 32.76 tCO2e
+[TIER 3 TABLE VERIFIED] Top row: 2026	Upstream & Midstream Gas	Centre de Traitement Gazier Hassi Messaoud (Sonatrach)	Explo...
+  ok  7 [chromium] › e2e\test_scope1_form_engine.spec.js:210:3 › Scope 1 Manual Calculation & Engineering Formulas Audit › 2. Tier 3 Engineering Formulas: Combustion, Flaring, Tanks, AGR, Dehydrator & More (52.9s)
+
+========================================
+[TIER 3 EXTENDED] Running: Storage Tank Flashing with Vapor Recovery Unit (98% Control)
+========================================
+[TIER 3 EXT DB VERIFIED] Storage Tank Flashing with Vapor Recovery Unit (98% Control) -> ID: 2520, CO2: 0, CH4: 155.33694663645312, Total: 4349.434505820687 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Multi-Component Combustion with Gas Chromatography
+========================================
+[TIER 3 EXT DB VERIFIED] Multi-Component Combustion with Gas Chromatography -> ID: 2521, CO2: 0, CH4: 0.0076279752000000004, Total: 0.41572464840000006 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Flaring - Enclosed Flare with Ground Burner (99.5% Destruction)
+========================================
+[TIER 3 EXT DB VERIFIED] Flaring - Enclosed Flare with Ground Burner (99.5% Destruction) -> ID: 2522, CO2: 63.3603504, CH4: 0.4695220000000004, Total: 76.6129664 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Acid Gas Removal (AGR) - High Sour Gas with Thermal Oxidizer
+========================================
+[TIER 3 EXT DB VERIFIED] Acid Gas Removal (AGR) - High Sour Gas with Thermal Oxidizer -> ID: 2523, CO2: 0, CH4: 0.4495837416565248, Total: 12.588344766382695 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Glycol Dehydrator with Stripping Gas & Condenser Control
+========================================
+[TIER 3 EXT DB VERIFIED] Glycol Dehydrator with Stripping Gas & Condenser Control -> ID: 2524, CO2: 0, CH4: 1.65766822525478, Total: 46.414710307133845 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Liquids Unloading - Deep Gas Well with Flaring Control
+========================================
+[TIER 3 EXT DB VERIFIED] Liquids Unloading - Deep Gas Well with Flaring Control -> ID: 2525, CO2: 0, CH4: 7.29797372099449, Total: 204.3432641878457 tCO2e
+
+========================================
+[TIER 3 EXTENDED] Running: Pipeline Blowdown & Venting with Flaring Control
+========================================
+[TIER 3 EXT DB VERIFIED] Pipeline Blowdown & Venting with Flaring Control -> ID: 2526, CO2: 0, CH4: 163.3930373393492, Total: 4575.005045501778 tCO2e
+  ok 10 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:315:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 2. Tier 3 Extended Engineering Scenarios: Drilling, Fugitives, Controlled Tanks & Advanced Engineering (1.0m)
+[CSRF TOKEN EXTRACTED] Success
+[BATCH APPROVE STATUS] 200
+[UNVERIFIED RECORDS REMAINING] 0
+
+[POST-CALCULATION KPI AUDIT] Auditing Dashboard...
+[DASHBOARD RECALCULATED HERO] Gross: 9.8M, Net: 9.8M
+[DASHBOARD RECALCULATED S1 PILL] 9.8M tCO₂e
+[DASHBOARD GWP-20 RECALCULATED HERO] Gross: 13.2M
+
+[POST-CALCULATION KPI AUDIT] Auditing Carbon Intensity...
+[CBAM TABLE TOP ROWS] FACILITY	PRODUCT NAME	EU CN CODE	PERIOD	EXPORT QTY (T)	DESTINATION	DIRECT INTENSITY (TCO₂E/T)	INDIRECT INTENSITY (TCO₂E/T)	TOTAL EMBEDDED (TCO₂E) | Cent
+
+[POST-CALCULATION KPI AUDIT] Auditing Methane Intensity...
+[METHANE INTENSITY KPI] METHANE INTENSITY (AVG) 0.2254 kg CH₄ / BOE Total CH₄: 60,517.019 tCH₄
+
+========================================
+[ALL EXTENDED SCENARIOS AUDIT COMPLETED 100%]
+========================================
+  ok 11 [chromium] › e2e\test_scope1_extended_scenarios.spec.js:676:3 › Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit › 3. Maker-Checker Batch Approval & Post-Calculation KPI Recalculation (19.2s)
+
+  11 passed (2.5m)
+

@@ -1,0 +1,7 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":106,"LineContent":"  const [totalPages, setTotalPages] = useState(1);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":550,"LineContent":"        setTotalPages(Math.ceil(parseInt(totalCount) / RECORDS_PER_PAGE));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":552,"LineContent":"        setTotalPages(Math.ceil(allEntries.length / RECORDS_PER_PAGE) || 1);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":57,"LineContent":"  const [totalPages, setTotalPages] = useState(1);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2Form.jsx","LineNumber":134,"LineContent":"      setTotalPages(Math.ceil(sorted.length / RECORDS_PER_PAGE));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":85,"LineContent":"  const [totalPages, setTotalPages] = useState(1);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3Form.jsx","LineNumber":271,"LineContent":"      setTotalPages(Math.ceil(allEntries.length / RECORDS_PER_PAGE));"}

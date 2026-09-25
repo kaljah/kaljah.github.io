@@ -1,0 +1,153 @@
+
+The command exited with code 1.
+Output:
+<truncated 71 lines>
+ ❯ _TestTypeImpl._describe node_modules/playwright/lib/common/index.js:2266:24
+ ❯ Function.describe node_modules/playwright/lib/common/index.js:1154:12
+ ❯ e2e/test_carbon_intensity_deep_audit.spec.js:52:6
+     50| }
+     51|
+     52| test.describe('Carbon Intensity Page Deep Audit', () => {
+       |      ^
+     53|
+     54|   test('1. Core Layout & KPI Cards Verification', async ({ page }) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  e2e/test_dashboard_and_intensity_audit.spec.js [ e2e/test_dashboard_and_intensity_audit.spec.js ]
+Error: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
+ ❯ _TestTypeImpl._currentSuite node_modules/playwright/lib/common/index.js:2224:13
+ ❯ _TestTypeImpl._describe node_modules/playwright/lib/common/index.js:2266:24
+ ❯ Function.describe node_modules/playwright/lib/common/index.js:1154:12
+ ❯ e2e/test_dashboard_and_intensity_audit.spec.js:52:6
+     50| }
+     51|
+     52| test.describe('Baseline UX/UI Audit: Dashboard & Intensity Pages', () …
+       |      ^
+     53|
+     54|   test('1. Dashboard: Full Filter Permutations, Toggles & Tri-Layer Pa…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  e2e/test_dashboard_deep_audit.spec.js [ e2e/test_dashboard_deep_audit.spec.js ]
+Error: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
+ ❯ _TestTypeImpl._currentSuite node_modules/playwright/lib/common/index.js:2224:13
+ ❯ _TestTypeImpl._describe node_modules/playwright/lib/common/index.js:2266:24
+ ❯ Function.describe node_modules/playwright/lib/common/index.js:1154:12
+ ❯ e2e/test_dashboard_deep_audit.spec.js:46:6
+     44| }
+     45|
+     46| test.describe('Dashboard Page Deep Audit', () => {
+       |      ^
+     47|
+     48|   test('1. Core Dashboard Layout & Initial Numbers Verification', asyn…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  e2e/test_qfull_e2e_ui.spec.js [ e2e/test_qfull_e2e_ui.spec.js ]
+Error: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
+ ❯ _TestTypeImpl._currentSuite node_modules/playwright/lib/common/index.js:2224:13
+ ❯ _TestTypeImpl._describe node_modules/playwright/lib/common/index.js:2266:24
+ ❯ Function.describe node_modules/playwright/lib/common/index.js:1154:12
+ ❯ e2e/test_qfull_e2e_ui.spec.js:74:6
+     72| // ===================================================================…
+     73|
+     74| test.describe('QFULL Auth and Navigation', () => {
+       |      ^
+     75|   test('Login page renders with correct form elements', async ({ page …
+     76|     await page.goto(FRONTEND, { waitUntil: 'domcontentloaded', timeout…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  e2e/test_scope1_extended_scenarios.spec.js [ e2e/test_scope1_extended_scenarios.spec.js ]
+Error: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
+ ❯ _TestTypeImpl._currentSuite node_modules/playwright/lib/common/index.js:2224:13
+ ❯ _TestTypeImpl._describe node_modules/playwright/lib/common/index.js:2266:24
+ ❯ Function.describe node_modules/playwright/lib/common/index.js:1154:12
+ ❯ e2e/test_scope1_extended_scenarios.spec.js:161:6
+    159| }
+    160|
+    161| test.describe('Scope 1 Extended Scenarios: Tier 1 & Tier 3 Audit', () …
+       |      ^
+    162|
+    163|   test('1. Tier 1 Extended Scenarios: Fuels, Units, Streams, Equipment…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  e2e/test_scope1_form_engine.spec.js [ e2e/test_scope1_form_engine.spec.js ]
+Error: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
+ ❯ _TestTypeImpl._currentSuite node_modules/playwright/lib/common/index.js:2224:13
+ ❯ _TestTypeImpl._describe node_modules/playwright/lib/common/index.js:2266:24
+ ❯ Function.describe node_modules/playwright/lib/common/index.js:1154:12
+ ❯ e2e/test_scope1_form_engine.spec.js:89:6
+     87| }
+     88|
+     89| test.describe('Scope 1 Manual Calculation & Engineering Formulas Audit…
+       |      ^
+     90|
+     91|   test('1. Tier 1 Default Factors across All Database Regions (West, C…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  e2e/test_scope1_tier1_tier3_advanced.spec.js [ e2e/test_scope1_tier1_tier3_advanced.spec.js ]
+Error: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.
+- You are calling test.describe() from an async test.describe() block. Only sync ones are supported.
+ ❯ _TestTypeImpl._currentSuite node_modules/playwright/lib/common/index.js:2224:13
+ ❯ _TestTypeImpl._describe node_modules/playwright/lib/common/index.js:2266:24
+ ❯ Function.describe node_modules/playwright/lib/common/index.js:1154:12
+ ❯ e2e/test_scope1_tier1_tier3_advanced.spec.js:184:6
+    182| }
+    183|
+    184| test.describe('Advanced Scope 1 Calculations: Tier 1 & Tier 3 Full Aud…
+       |      ^
+    185|
+    186|   test('1. Tier 3 Advanced Engineering Scenarios: Completions, Pneumat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  9 failed | 1 passed (10)
+      Tests  3 passed (3)
+   Start at  23:30:23
+   Duration  50.06s (environment 84%, setup 15%)
+
+Environment  jsdom was created 10 times · 208.25s total, 84% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+

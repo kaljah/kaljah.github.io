@@ -1,0 +1,18 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -321,7 +321,11 @@
+         let totalBoeForIntensity = 0;
+         intensityData.forEach((d) => {
+           if (d.total_boe > 0) {
+-            totalEmissionsForIntensity += d.co2_intensity * d.total_boe;
++            const intVal =
++              gwpHorizon === "20" && d.co2_intensity_gwp20 != null
++                ? d.co2_intensity_gwp20
++                : d.co2_intensity;
++            totalEmissionsForIntensity += intVal * d.total_boe;
+             totalBoeForIntensity += d.total_boe;
+           }
+         });
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

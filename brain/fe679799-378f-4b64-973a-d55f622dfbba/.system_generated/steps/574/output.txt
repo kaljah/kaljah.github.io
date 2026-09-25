@@ -1,0 +1,9 @@
+
+The command exited with code 0.
+Output:
+Total beta records found via search: 400
+Sample beta records:
+ - ID: s1_359 | Equipment: BETA-T17_0701 | Process: stationary_combustion | Amount: 7142.2 bbl | CO2e: 439.92380899999995 | Unc CO2: 18.027756377319946 | Status: Verified
+ - ID: s1_360 | Equipment: BETA-T17_0751 | Process: stationary_combustion | Amount: 7507.7 mmbtu | CO2e: 440.4392205 | Unc CO2: 18.027756377319946 | Status: Verified
+ - ID: s1_361 | Equipment: BETA-T17_0801 | Process: stationary_combustion | Amount: 7873.2 bbl | CO2e: 545.8489559999999 | Unc CO2: 18.027756377319946 | Status: Verified
+

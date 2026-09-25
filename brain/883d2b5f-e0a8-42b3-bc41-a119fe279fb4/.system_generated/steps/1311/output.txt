@@ -1,0 +1,65 @@
+The following changes were made by the replace_file_content tool to: c:\Users\samsung\Desktop\H2\new\client\src\pages\DashboardEnhanced.jsx. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -757,8 +757,8 @@
+           </div>
+         </div>
+ 
+-        {['admin', 'superuser'].includes(user?.role) && pendingCount > 0 && (
+-          <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
++        {pendingCount > 0 && (
++          <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+               <div style={{ background: '#eab308', color: '#fff', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+@@ -765,19 +765,36 @@
+                 </svg>
+               </div>
+               <div>
+-                <h3 style={{ margin: 0, fontSize: '1rem', color: '#854d0e' }}>Pending Data Review</h3>
++                <h3 style={{ margin: 0, fontSize: '1rem', color: '#854d0e' }}>
++                  {includePending ? "Previewing Pending & Verified Emissions" : "Pending Records Awaiting Review"}
++                </h3>
+                 <p style={{ margin: '4px 0 0 0', fontSize: '0.875rem', color: '#a16207' }}>
+-                  There are <strong>{pendingCount}</strong> emission records pending your approval. These values are excluded from the dashboard until verified.
+-                </p>
+-              </div>
+-            </div>
+-            <button 
+-              className="btn-primary" 
+-              style={{ background: '#ca8a04', whiteSpace: 'nowrap' }}
+-              onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
+-            >
+-              Review Now
+-            </button>
++                  There are <strong>{pendingCount}</strong> emission records {pendingCo2e > 0 ? `(${pendingCo2e.toLocaleString()} tCO₂e) ` : ""}pending approval.
++                  {!includePending && " Official metrics display verified data only."}
++                </p>
++              </div>
++            </div>
++            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
++              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', background: 'rgba(234, 179, 8, 0.2)', padding: '6px 12px', borderRadius: '6px' }}>
++                <input 
++                  type="checkbox" 
++                  checked={includePending} 
++                  onChange={(e) => setIncludePending(e.target.checked)} 
++                />
++                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#854d0e' }}>
++                  Preview Pending Data
++                </span>
++              </label>
++              {['admin', 'superuser'].includes(user?.role) && (
++                <button 
++                  className="btn-primary" 
++                  style={{ background: '#ca8a04', whiteSpace: 'nowrap' }}
++                  onClick={() => navigate('/manage-data', { state: { tab: 'pending' } })}
++                >
++                  Review Now →
++                </button>
++              )}
++            </div>
+           </div>
+         )}
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

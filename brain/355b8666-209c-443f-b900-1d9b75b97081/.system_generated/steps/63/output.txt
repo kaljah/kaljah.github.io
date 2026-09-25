@@ -1,0 +1,40 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\App.jsx","LineNumber":14,"LineContent":"const Emissions = React.lazy(() =\u003e import(\"./pages/Emissions\"));"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":130,"LineContent":"      const res = await api.get('/emissions/pending?all=true');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":321,"LineContent":"      await api.post(`/emissions/approve/${id}`, { scope: String(scope) });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":347,"LineContent":"      const res = await api.post('/emissions/approve/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":382,"LineContent":"            const res = await api.post('/emissions/approve/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":395,"LineContent":"            const res = await api.post('/emissions/approve/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":425,"LineContent":"        await api.post(`/emissions/reject/${rejectionModal.targetItem.id}`, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":438,"LineContent":"        const res = await api.post('/emissions/reject/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":446,"LineContent":"        const res = await api.post('/emissions/reject/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":459,"LineContent":"        const res = await api.post('/emissions/reject/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":549,"LineContent":"          `/emissions/template/csv?tier=${selectedTier}\u0026process=${selectedProcess}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":566,"LineContent":"      window.location.href = `${baseUrl}/emissions/template/csv?tier=${selectedTier}\u0026process=${selectedProcess}`;"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":840,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", formData, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BulkImportModal.jsx","LineNumber":853,"LineContent":"          const statusRes = await api.get(`/emissions/upload/status/${jobId}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":623,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\ColumnMappingWizard.jsx","LineNumber":642,"LineContent":"          `/emissions/template/${fmt}?tier=${selectedTier}\u0026process=${selectedProcessScope === \"specific\" ? selectedProcess : \"all\"}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":128,"LineContent":"      api.get(\"/emissions\", { params }),"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\utils\\ModernReportGenerator.js","LineNumber":239,"LineContent":"        const cRes = await api.get(\"/emissions\", { params: compParams });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Emissions.jsx","LineNumber":6,"LineContent":"import \"./Emissions.css\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":212,"LineContent":"          const pRes = await api.get('/emissions/pending');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\DashboardEnhanced.jsx","LineNumber":1001,"LineContent":"                  onClick={() =\u003e navigate(\"/emissions\")}"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ErpSync.jsx","LineNumber":18,"LineContent":"            const res = await api.post('/emissions/erp/sync');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":168,"LineContent":"                  to=\"/emissions\""}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":243,"LineContent":"            const res = await api.get('/emissions/pending');"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":400,"LineContent":"            await api.post(`/emissions/approve/${id}`, { scope: String(scope) });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":448,"LineContent":"            const res = await api.post('/emissions/approve/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":473,"LineContent":"                await api.post(`/emissions/reject/${rejectionModal.recordId}`, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":487,"LineContent":"                const res = await api.post('/emissions/reject/batch', {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\ManageData.jsx","LineNumber":517,"LineContent":"                    await api.post('/emissions/approve/batch', { approve_all: true, scope: String(scopeNum) });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":170,"LineContent":"      const res = await api.get(\"/emissions\", { params });"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\pages\\Reports.jsx","LineNumber":206,"LineContent":"      const res = await api.get(\"/emissions/export\", {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":528,"LineContent":"      const res = await api.get(`/emissions?${filterParams}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1024,"LineContent":"      const res = await api.post(\"/emissions\", finalPayload);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1Form.jsx","LineNumber":1184,"LineContent":"      await api.delete(`/emissions/${realId}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":602,"LineContent":"        `/emissions/template/${fmt}?tier=${tier}\u0026process=${processParam}`,"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope1ImportWizard.jsx","LineNumber":622,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope3ImportWizard.jsx","LineNumber":372,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\Scope2ImportWizard.jsx","LineNumber":345,"LineContent":"      const res = await api.post(\"/emissions/upload/start\", form, {"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":136,"LineContent":"        const res = await api.get(`/emissions/upload/status/${jobId}`);"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":160,"LineContent":"      const res = await api.get(`/emissions/upload/errors/${jobId}`, {"}

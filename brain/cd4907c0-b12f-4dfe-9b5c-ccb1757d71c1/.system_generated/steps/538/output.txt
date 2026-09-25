@@ -1,0 +1,12 @@
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":10,"LineContent":"import { useAuth } from '../context/AuthContext';"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\BatchReviewWizard.jsx","LineNumber":93,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\NotificationCenter.jsx","LineNumber":17,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\NotificationCenter.jsx","LineNumber":267,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.jsx","LineNumber":3,"LineContent":"import { useAuth } from \"../../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\TopBar.jsx","LineNumber":9,"LineContent":"  const { user, logout } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":3,"LineContent":"import { useAuth } from \"../../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Sidebar.jsx","LineNumber":9,"LineContent":"  const { logout, user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":3,"LineContent":"import { useAuth } from \"../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\UploadProgress.jsx","LineNumber":115,"LineContent":"  const { user } = useAuth();"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Layout.jsx","LineNumber":7,"LineContent":"import { useAuth } from \"../../context/AuthContext\";"}
+{"File":"c:\\Users\\samsung\\Desktop\\H2\\new\\client\\src\\components\\layout\\Layout.jsx","LineNumber":13,"LineContent":"  const { sessionWarning } = useAuth() || {};"}

@@ -1,0 +1,3 @@
+Successfully navigated to http://localhost:5173/emissions?scope=scope2.
+## Pages
+1: http://localhost:5173/emissions?scope=scope2 [selected]
